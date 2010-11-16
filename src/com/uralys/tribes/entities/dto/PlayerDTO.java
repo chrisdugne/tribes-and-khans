@@ -1,8 +1,5 @@
 package com.uralys.tribes.entities.dto;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.jdo.annotations.Extension;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.IdentityType;
@@ -11,7 +8,7 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
-public class ProfilDTO {
+public class PlayerDTO {
 
 
     @PrimaryKey
@@ -21,10 +18,9 @@ public class ProfilDTO {
 
 	@Persistent
     @Extension(vendorName="datanucleus", key="gae.pk-name", value="true")
-	private String uralysUID;
+	private String playerUID;
 
-	@Persistent	private List<PlayerDTO> players = new ArrayList<PlayerDTO>();
-	
+	@Persistent private String name;
 	
 	//-----------------------------------------------------------------------------------//
 
@@ -34,17 +30,17 @@ public class ProfilDTO {
 	public void setKey(String key) {
 		this.key = key;
 	}
-	public String getUralysUID() {
-		return uralysUID;
+	public String getPlayerUID() {
+		return playerUID;
 	}
-	public void setUralysUID(String uralysUID) {
-		this.uralysUID = uralysUID;
+	public void setPlayerUID(String playerUID) {
+		this.playerUID = playerUID;
 	}
-	public List<PlayerDTO> getPlayers() {
-		return players;
+	public String getName() {
+		return name;
 	}
-	public void setPlayers(List<PlayerDTO> players) {
-		this.players = players;
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 	//-----------------------------------------------------------------------------------//

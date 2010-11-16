@@ -6,7 +6,7 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
 http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	<servlet>
 		<servlet-name>TribesAndKhans</servlet-name>
-		<servlet-class>ee.TribesAndKhansServlet</servlet-class>
+		<servlet-class>tests.TribesAndKhansServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>TribesAndKhans</servlet-name>

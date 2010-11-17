@@ -1,0 +1,49 @@
+
+Ville : population
+		cereales/moutons/vaches
+		bois/pierre/fer
+		armes
+		armees
+		
+Deplacements 
+	- fonction de x = on peut trouver le x ou elles se croisent
+	on regarde le t des deux pour arriver en ce x : si t1 == t2 : combat en t2.
+		
+	- angle + vitesse + casedepart + datedepart = positionactuelle
+
+exemple : deplacement de A1 a F6 : 1-1 : 6-6
+			on note : _X = xarrivee-xdepart
+					  _Y = yarrivee-ydepart
+ 			on stocke : xdepart 1 
+						ydepart 1
+						xarrivee 6 
+						yarrivee 6
+						pente : 1 ((_Y)/(_X))
+						hauteur : 0  (ydepart - 1)
+						armeeUID (vitesse : 1 cases/h)
+						alpha : arcos((_X)/(racinecarre(_X^2+_Y^2)))
+						datedepart millis
+					
+			pour connaitre la position a l'instant t :
+				x = vitesse*cos(alpha)*pente + hauteur
+				y = vitesse*sin(alpha)*pente + hauteur
+			 
+Move stocke :
+	xfrom 
+	xto
+	yfrom
+	yto
+	alpha
+
+pour calculer les croisements, on cherche parmi les Moves qui ont
+	xFrom2 =< xTo1
+et	xTo2 >= xFrom1
+et	yFrom2 =< yTo1
+et	yTo2 >= yFrom1
+
+
+			 
+
+
+}
+}

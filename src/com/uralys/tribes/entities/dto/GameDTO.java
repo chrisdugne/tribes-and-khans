@@ -1,5 +1,8 @@
 package com.uralys.tribes.entities.dto;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.jdo.annotations.Extension;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.IdentityType;
@@ -8,7 +11,7 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
-public class MoveDTO {
+public class GameDTO {
 
 
     @PrimaryKey
@@ -18,12 +21,10 @@ public class MoveDTO {
 
 	@Persistent
     @Extension(vendorName="datanucleus", key="gae.pk-name", value="true")
-	private String moveUID;
+	private String gameUID;
 
-	@Persistent private int xFrom;
-	@Persistent private int xTo;
-	@Persistent private int yFrom;
-	@Persistent private int yTo;
+	@Persistent	private String name;
+	@Persistent	private List<String> players = new ArrayList<String>();
 	
 	//-----------------------------------------------------------------------------------//
 
@@ -33,35 +34,23 @@ public class MoveDTO {
 	public void setKey(String key) {
 		this.key = key;
 	}
-	public String getMoveUID() {
-		return moveUID;
+	public String getGameUID() {
+		return gameUID;
 	}
-	public void setMoveUID(String moveUID) {
-		this.moveUID = moveUID;
+	public void setGameUID(String gameUID) {
+		this.gameUID = gameUID;
 	}
-	public int getxFrom() {
-		return xFrom;
+	public String getName() {
+		return name;
 	}
-	public void setxFrom(int xFrom) {
-		this.xFrom = xFrom;
+	public void setName(String name) {
+		this.name = name;
 	}
-	public int getxTo() {
-		return xTo;
+	public List<String> getPlayers() {
+		return players;
 	}
-	public void setxTo(int xTo) {
-		this.xTo = xTo;
-	}
-	public int getyFrom() {
-		return yFrom;
-	}
-	public void setyFrom(int yFrom) {
-		this.yFrom = yFrom;
-	}
-	public int getyTo() {
-		return yTo;
-	}
-	public void setyTo(int yTo) {
-		this.yTo = yTo;
+	public void setPlayers(List<String> players) {
+		this.players = players;
 	}
 	
 	//-----------------------------------------------------------------------------------//

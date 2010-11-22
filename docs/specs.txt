@@ -43,7 +43,31 @@ et	yTo2 >= yFrom1
 
 
 			 
+=======================================================================================
+
+Profil 
+	- uid (create account)
+	- email  (create account)
+	- password (create account)
+	- List<Player> (create/join game)
+			 
+			 
+Game
+	- uid (create game)
+	- name (create game)
+	- List<Player> (create/join game) 
+	- Board (create game)
 
 
-}
-}
+Player
+	- uid (create/join game) 
+	- name (create/join game) 
+	- List<Moves> (play)
+
+Move
+	- uid
+	- xFrom
+	- xTo
+	- yFrom
+	- yTo
+

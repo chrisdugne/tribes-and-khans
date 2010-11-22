@@ -1,11 +1,16 @@
 package com.uralys.tribes.entities.dto;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.jdo.annotations.Extension;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
+
+import com.uralys.tribes.dao.impl.UniversalDAO;
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 public class PlayerDTO {
@@ -21,6 +26,7 @@ public class PlayerDTO {
 	private String playerUID;
 
 	@Persistent private String name;
+	@Persistent private List<String> moveUIDs = new ArrayList<String>();
 	
 	//-----------------------------------------------------------------------------------//
 
@@ -41,6 +47,18 @@ public class PlayerDTO {
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	//-----------------------------------------------------------------------------------//
+	
+	public List<MoveDTO> getMoves() {
+		return UniversalDAO.getInstance().getListDTO(moveUIDs, MoveDTO.class, "moveUID");
+	}
+	public List<String> getMoveUIDs() {
+		return moveUIDs;
+	}
+	public void setMoveUIDs(List<String> moves) {
+		this.moveUIDs = moves;
 	}
 	
 	//-----------------------------------------------------------------------------------//

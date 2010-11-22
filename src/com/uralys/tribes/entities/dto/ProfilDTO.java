@@ -10,6 +10,8 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import com.uralys.tribes.dao.impl.UniversalDAO;
+
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 public class ProfilDTO {
 
@@ -23,8 +25,9 @@ public class ProfilDTO {
     @Extension(vendorName="datanucleus", key="gae.pk-name", value="true")
 	private String uralysUID;
 
-	@Persistent	private List<PlayerDTO> players = new ArrayList<PlayerDTO>();
-	
+	@Persistent	private String email;
+	@Persistent	private String password;
+	@Persistent	private List<String> playerUIDs = new ArrayList<String>();
 	
 	//-----------------------------------------------------------------------------------//
 
@@ -40,11 +43,29 @@ public class ProfilDTO {
 	public void setUralysUID(String uralysUID) {
 		this.uralysUID = uralysUID;
 	}
-	public List<PlayerDTO> getPlayers() {
-		return players;
+	public String getEmail() {
+		return email;
 	}
-	public void setPlayers(List<PlayerDTO> players) {
-		this.players = players;
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	//-----------------------------------------------------------------------------------//
+	
+	public List<PlayerDTO> getPlayers() {
+		return UniversalDAO.getInstance().getListDTO(playerUIDs, PlayerDTO.class, "playerUID");
+	}
+	public List<String> getPlayerUIDs() {
+		return playerUIDs;
+	}
+	public void setPlayerUIDs(List<String> playerUIDs) {
+		this.playerUIDs = playerUIDs;
 	}
 	
 	//-----------------------------------------------------------------------------------//

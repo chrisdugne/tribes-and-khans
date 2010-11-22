@@ -45,11 +45,11 @@ public class TribesAndKhansServlet extends HttpServlet {
 			player.setPlayerUID(playerUID);
 			player.setName(req.getParameter("createPlayer"));
 			
-			ProfilDTO profil = pm.getObjectById(ProfilDTO.class, "128998298816601660674803");
-			profil.getPlayers().add(player);
+			ProfilDTO profil = pm.getObjectById(ProfilDTO.class, req.getParameter("profil"));
+			profil.getPlayerUIDs().add(playerUID);
 			
-			pm.flush();
-			pm.refreshAll();
+			pm.makePersistent(player);
+			pm.close();
 			
 		}
 		else if(req.getParameter("createMoves") != null){
@@ -59,18 +59,20 @@ public class TribesAndKhansServlet extends HttpServlet {
 			Key key = KeyFactory.createKey(MoveDTO.class.getSimpleName(), moveUID);
 			
 			//org.datanucleus.store.appengine.query.StreamingQueryResult cannot be cast to com.uralys.tribes.entities.dto.PlayerDTO
-			Query q = pm.newQuery("select from " + PlayerDTO.class.getName() + " where name == 'coco'");
-			PlayerDTO player = (PlayerDTO) q.execute();
+			Query q = pm.newQuery("select from " + PlayerDTO.class.getName() + " where name == :name");
+			q.setUnique(true);
+			PlayerDTO player = (PlayerDTO) q.execute("coco");
 			
 			move.setKey(KeyFactory.keyToString(key));
-			move.setPlayer(player);
 			move.setxFrom(10);
 			move.setxTo(22);
 			move.setyFrom(10);
 			move.setyTo(12);
 			
+			player.getMoveUIDs().add(moveUID);
 			
 			pm.makePersistent(move);
+			pm.close();
 			
 		}
 		else if(req.getParameter("players") != null){
@@ -81,9 +83,12 @@ public class TribesAndKhansServlet extends HttpServlet {
 			@SuppressWarnings("unchecked")
 			List<ProfilDTO> profils = (List<ProfilDTO>) q.execute();
 			for(ProfilDTO p : profils){
-				out.println("profil : " + p.getUralysUID() + "<br/>");
+				out.println("profil : " + p.getUralysUID());
 				for(PlayerDTO pa : p.getPlayers()){
-					out.println("player : " + pa.getPlayerUID() + " " + pa.getName()  + "<br/>");				
+					out.println("player : " + pa.getPlayerUID() + " " + pa.getName());	
+					for(MoveDTO m : pa.getMoves()){
+						out.println("move : " + m.getMoveUID() + " " + m.getxFrom());				
+					}
 				}
 			}
 			out.close();

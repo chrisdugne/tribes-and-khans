@@ -10,6 +10,8 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import com.uralys.tribes.dao.impl.UniversalDAO;
+
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 public class GameDTO {
 
@@ -24,7 +26,7 @@ public class GameDTO {
 	private String gameUID;
 
 	@Persistent	private String name;
-	@Persistent	private List<String> players = new ArrayList<String>();
+	@Persistent	private List<String> playerUIDs = new ArrayList<String>();
 	
 	//-----------------------------------------------------------------------------------//
 
@@ -46,11 +48,17 @@ public class GameDTO {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public List<String> getPlayers() {
-		return players;
+	
+	//-----------------------------------------------------------------------------------//
+	
+	public List<PlayerDTO> getPlayers() {
+		return UniversalDAO.getInstance().getListDTO(playerUIDs, PlayerDTO.class, "playerUID");
 	}
-	public void setPlayers(List<String> players) {
-		this.players = players;
+	public List<String> getPlayerUIDs() {
+		return playerUIDs;
+	}
+	public void setPlayerUIDs(List<String> playerUIDs) {
+		this.playerUIDs = playerUIDs;
 	}
 	
 	//-----------------------------------------------------------------------------------//

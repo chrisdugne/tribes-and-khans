@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" 
+		 width="100%" height="100%"
+		 creationComplete="init()">
+	
+	<fx:Script>
+		<![CDATA[
+			import com.uralys.tribes.core.Pager;
+			
+			import flashx.textLayout.tlf_internal;
+			
+			import mx.effects.easing.Quadratic;
+			import mx.events.FlexEvent;
+			
+			import org.osmf.events.TimeEvent;
+			
+			private var isDragging:Boolean = false;
+			private var draggingImageXFrom:int;
+			private var draggingImageYFrom:int;
+			private var draggingImageXTo:int;
+			private var draggingImageYTo:int;
+			private var draggingStageXFrom:int;
+			private var draggingStageYFrom:int;
+			private var draggingStageXTo:int;
+			private var draggingStageYTo:int;
+			private var limitLeft:int;
+			private var limitUp:int;
+			
+			protected function mouseDown(event:MouseEvent):void{
+				isDragging = true;
+				draggingImageXFrom = event.localX;
+				draggingImageYFrom = event.localY;
+				draggingStageXFrom = event.stageX;
+				draggingStageYFrom = event.stageY;
+				
+				autoMoveNotNeeded = true;
+				autoMove.stop();
+			}
+			
+			private var timer:Timer;
+			private var autoMoveNotNeeded:Boolean;
+			protected function mouseMove(event:MouseEvent):void{
+				if(isDragging){
+					timer.stop();
+					timer.reset();
+					timer.start();
+					autoMoveNotNeeded = false;
+					// on decale l'image du nombre de pixels du dernier mouvement
+					// donc elle suit bien la souris et event.localXY a bien lieu au meme endroit sur l'image apres chaque mouseMove
+					image.x += (event.localX - draggingImageXFrom);
+					image.y += (event.localY - draggingImageYFrom);
+				}
+			}
+			
+			protected function stopDragging(event:MouseEvent):void{
+				isDragging = false;
+				
+				if(autoMoveNotNeeded)
+					return;
+				
+				draggingStageXTo = event.stageX;
+				draggingStageYTo = event.stageY;
+				
+				autoMove.duration = 40*(Math.abs(draggingStageXTo - draggingStageXFrom) + Math.abs(draggingStageYTo - draggingStageYFrom));
+				autoMove.xTo = image.x + (draggingStageXTo - draggingStageXFrom)*6;
+				autoMove.yTo = image.y + (draggingStageYTo - draggingStageYFrom)*6;
+				
+				
+				
+				if(autoMove.xTo > 0)
+					autoMove.xTo = 0;
+				if(autoMove.yTo > 0)
+					autoMove.yTo = 0;
+				if(autoMove.xTo < limitLeft)
+					autoMove.xTo = limitLeft;
+				if(autoMove.yTo < limitUp)
+					autoMove.yTo = limitUp;
+				
+				autoMove.play();
+			}
+				
+			private function moveStoppedDuringDragging(event:TimerEvent):void{
+				autoMoveNotNeeded = true;
+			}
+
+			protected function init():void{
+				timer = new Timer(60,1);
+				timer.addEventListener(TimerEvent.TIMER_COMPLETE, moveStoppedDuringDragging);
+
+				limitLeft = 120-image.width;
+				limitUp = 120-image.height;
+			}
+
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<mx:Move id="autoMove"
+				target="{image}"
+				easingFunction="{Quadratic.easeOut}"/>
+
+	</fx:Declarations>
+	
+	<s:Group width="120" height="120"
+			 x="20" y="20"
+			 clipAndEnableScrolling="true">
+		<mx:Image id="image" 
+				  source="{ImageContainer.IMAGE}"
+				  mouseDown="mouseDown(event)"
+				  mouseMove="mouseMove(event)"
+				  mouseOut="stopDragging(event)"
+				  mouseUp="stopDragging(event)"/>
+	</s:Group>
+</s:Group>

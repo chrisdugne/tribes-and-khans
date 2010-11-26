@@ -1,10 +1,10 @@
 package com.uralys.tribes.services;
 
-import java.util.List;
-
-import com.uralys.tribes.entities.Game;
+import com.uralys.tribes.entities.Player;
 
 public interface IPlayerService {
 
-	public List<Game> getCurrentGames(String playerUID);
+	public Player createPlayer(String uralysUID);
+	public Player getPlayer(String uralysUID);
+	
 }

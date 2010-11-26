@@ -3,10 +3,8 @@ package com.uralys.tribes.entities.converters;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.uralys.tribes.entities.Game;
 import com.uralys.tribes.entities.Move;
 import com.uralys.tribes.entities.Player;
-import com.uralys.tribes.entities.dto.GameDTO;
 import com.uralys.tribes.entities.dto.MoveDTO;
 import com.uralys.tribes.entities.dto.PlayerDTO;
 
@@ -29,7 +27,9 @@ public class EntitiesConverter {
 		
 		Player player = new Player();
 		
-		player.setPlayerUID(playerDTO.getPlayerUID());
+		player.setUralysUID(playerDTO.getUralysUID());
+		player.setEmail(playerDTO.getEmail());
+		player.setPassword(playerDTO.getPassword());
 		player.setName(playerDTO.getName());
 		
 		List<Move> moves = new ArrayList<Move>();
@@ -43,21 +43,4 @@ public class EntitiesConverter {
 		return player;
 	}
 	
-	public static Game convertGameDTO(GameDTO gameDTO) {
-		
-		Game game = new Game();
-		
-		game.setGameUID(gameDTO.getGameUID());
-		game.setName(gameDTO.getName());
-		
-		List<Player> players = new ArrayList<Player>();
-		
-		for(PlayerDTO playerDTO : gameDTO.getPlayers()){
-			players.add(convertPlayerDTO(playerDTO));
-		}
-		
-		game.setPlayers(players);
-		
-		return game;
-	}
 }

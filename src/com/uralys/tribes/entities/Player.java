@@ -5,18 +5,19 @@ import java.util.List;
 
 public class Player {
 
-	//-----------------------------------------------------------------------------------//
-	
-	private String uralysUID;
+	private String playerUID;
 
-	private String email;
-	private String password;
 	private String name;
-	
 	private List<Move> moves = new ArrayList<Move>();
 	
 	//-----------------------------------------------------------------------------------//
 
+	public String getPlayerUID() {
+		return playerUID;
+	}
+	public void setPlayerUID(String playerUID) {
+		this.playerUID = playerUID;
+	}
 	public String getName() {
 		return name;
 	}
@@ -28,24 +29,6 @@ public class Player {
 	}
 	public void setMoves(List<Move> moves) {
 		this.moves = moves;
-	}
-	public String getUralysUID() {
-		return uralysUID;
-	}
-	public void setUralysUID(String uralysUID) {
-		this.uralysUID = uralysUID;
-	}
-	public String getEmail() {
-		return email;
-	}
-	public void setEmail(String email) {
-		this.email = email;
-	}
-	public String getPassword() {
-		return password;
-	}
-	public void setPassword(String password) {
-		this.password = password;
 	}
 	
 	//-----------------------------------------------------------------------------------//

@@ -23,12 +23,9 @@ public class PlayerDTO {
 
 	@Persistent
     @Extension(vendorName="datanucleus", key="gae.pk-name", value="true")
-	private String uralysUID;
+	private String playerUID;
 
-	@Persistent	private String email;
-	@Persistent	private String password;
 	@Persistent private String name;
-	
 	@Persistent private List<String> moveUIDs = new ArrayList<String>();
 	
 	//-----------------------------------------------------------------------------------//
@@ -39,33 +36,21 @@ public class PlayerDTO {
 	public void setKey(String key) {
 		this.key = key;
 	}
+	public String getPlayerUID() {
+		return playerUID;
+	}
+	public void setPlayerUID(String playerUID) {
+		this.playerUID = playerUID;
+	}
 	public String getName() {
 		return name;
 	}
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getUralysUID() {
-		return uralysUID;
-	}
-	public void setUralysUID(String uralysUID) {
-		this.uralysUID = uralysUID;
-	}
-	public String getEmail() {
-		return email;
-	}
-	public void setEmail(String email) {
-		this.email = email;
-	}
-	public String getPassword() {
-		return password;
-	}
-	public void setPassword(String password) {
-		this.password = password;
-	}
 
 	//-----------------------------------------------------------------------------------//
-
+	
 	public List<MoveDTO> getMoves() {
 		return UniversalDAO.getInstance().getListDTO(moveUIDs, MoveDTO.class, "moveUID");
 	}

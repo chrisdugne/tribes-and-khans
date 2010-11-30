@@ -4,14 +4,6 @@ xmlns="http://java.sun.com/xml/ns/javaee"
 xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
 http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
-	<servlet>
-		<servlet-name>TribesAndKhans</servlet-name>
-		<servlet-class>tests.TribesAndKhansServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>TribesAndKhans</servlet-name>
-		<url-pattern>/tribesandkhans</url-pattern>
-	</servlet-mapping>
 	
 	
 	<!-- Spring -->

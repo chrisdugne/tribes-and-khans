@@ -30,11 +30,11 @@ public class GameDTO {
 	
 	//-----------------------------------------------------------------------------------//
 
-	public String getKey() {
+	public String getKey() { 
 		return key;
 	}
 	public void setKey(String key) {
-		this.key = key;
+		this.key = key; 
 	}
 	public String getGameUID() {
 		return gameUID;

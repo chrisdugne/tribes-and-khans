@@ -59,7 +59,8 @@ public class EntitiesConverter {
 		}
 		
 		game.setPlayers(players);
-		
+
+		System.out.println("converter  : " + game.getGameUID());
 		return game;
 	}
 

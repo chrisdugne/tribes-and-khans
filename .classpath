@@ -20,7 +20,6 @@
 	<classpathentry kind="lib" path="war/WEB-INF/lib/commons-io.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/commons-logging.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/consoleImpl.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/datanucleus-appengine-1.0.7.final.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/datanucleus-core-1.1.5.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/datanucleus-jpa-1.1.5.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/flex-messaging-common.jar"/>
@@ -54,5 +53,6 @@
 	<classpathentry kind="lib" path="war/WEB-INF/lib/spring-security-core-tiger-2.0.4.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/spring-security-taglibs-2.0.4.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/xalan.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/datanucleus-appengine-1.0.7.final.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>

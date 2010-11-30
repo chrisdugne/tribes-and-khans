@@ -36,7 +36,7 @@ public class GameDTO {
 	public void setKey(String key) {
 		this.key = key; 
 	}
-	public String getGameUID() {
+	public String getGameUID() { 
 		return gameUID;
 	}
 	public void setGameUID(String gameUID) {

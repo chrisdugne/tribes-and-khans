@@ -13,34 +13,19 @@ public class MainDAO {
 	//==================================================================================================//
 	
 	protected void persist(Object o) {
-
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		Transaction tx = pm.currentTransaction();
 		
 		try {
-			System.out.println("4345");
-			PersistenceManager pm = PMF.getInstance().getPersistenceManager();
-			System.out.println("7777");
-			Transaction tx = pm.currentTransaction();
-		
-			System.out.println("2");
 			tx.begin();
-			System.out.println("2");
 			pm.makePersistent(o);
-			System.out.println("2");
 			tx.commit();
-			System.out.println("2");
-		}
-		catch(Exception e){
-			System.out.println("craack");
-			e.printStackTrace();
-		}
+		} 
 		finally {        
-			System.out.println("fianlly");
-//			if (tx.isActive()) 
-//				tx.rollback();
-//
-//			System.out.println("f");
-//			pm.close();
-//			System.out.println("g");
+			if (tx.isActive()) 
+				tx.rollback();
+			
+			pm.close();
 		}
 	}
 

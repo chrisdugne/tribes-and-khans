@@ -8,6 +8,7 @@
 	
 	<fx:Declarations>
 		<maps:AccountEventMap/>
+		<maps:GameEventMap/>
 	</fx:Declarations>
 	
 	<fx:Script>
@@ -18,7 +19,7 @@
 			
 			private function init():void{
 				Pager.getInstance().window = window;
-				Pager.getInstance().goToPage(Map);
+				Pager.getInstance().goToPage(Login);
 			}
 		]]>
 	</fx:Script>

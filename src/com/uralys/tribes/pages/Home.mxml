@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="100%" height="100%">
+	
+	<fx:Script>
+		<![CDATA[
+			import com.uralys.tribes.core.Pager;
+			import com.uralys.tribes.managers.GameManager;
+			
+			private function getMyGames():void{
+			
+			}	
+			
+			private function createGame():void{
+				GameManager.getInstance().createGame(gameNameInput.text);
+			}
+			
+			private function getGamesToJoinList():void{
+
+			}
+		]]>
+	</fx:Script>
+	<s:VGroup>
+		<s:Button label="games" click="{getMyGames()}"/>
+		<s:HGroup>
+			<s:TextInput id="gameNameInput"/>
+			<s:Button label="createGame" click="{createGame()}"/>
+		</s:HGroup>
+		<s:Button label="joinGame" click="{getGamesToJoinList()}"/>
+	</s:VGroup>
+</s:Group>

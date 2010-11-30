@@ -3,20 +3,22 @@ package com.uralys.tribes.managers {
 	import com.asfusion.mate.events.Dispatcher;
 	import com.uralys.tribes.constants.Session;
 	import com.uralys.tribes.core.Pager;
+	import com.uralys.tribes.entities.Game;
 	import com.uralys.tribes.events.AccountEvent;
-	import com.uralys.tribes.pages.Home;
+	import com.uralys.tribes.events.GameEvent;
+	import com.uralys.tribes.pages.GameInCreation;
 	
 	import mx.collections.ArrayCollection;
 	
 	[Bindable]
-	public class AccountManager{
+	public class GameManager{
 
 		//============================================================================================//
 
 		private var dispatcher:Dispatcher = new Dispatcher();	
 
-		private static var instance:AccountManager = new AccountManager();
-		public static function getInstance():AccountManager{
+		private static var instance:GameManager = new GameManager();
+		public static function getInstance():GameManager{
 			return instance;
 		}
 		
@@ -33,37 +35,21 @@ package com.uralys.tribes.managers {
 		//============================================================================================//
 		//  ASKING SERVER
 		
-		public function register(email:String, password:String):void{
-			var event:AccountEvent = new AccountEvent(AccountEvent.REGISTER);
+		public function createGame(name:String):void{
+			var event:GameEvent = new GameEvent(GameEvent.GET_GAMES);
 			
-			event.email = email;
-			event.password = password;
+			event.gameName = name;
+			event.playerUID = Session.PLAYER_UID;
 			
-			dispatcher.generator = AccountEvent;
-			dispatcher.dispatchEvent( event );
-		}
-
-		public function login(email:String, password:String):void{
-			var event:AccountEvent = new AccountEvent(AccountEvent.LOGIN);
-			
-			event.email = email;
-			event.password = password;
-			
-			dispatcher.generator = AccountEvent;
+			dispatcher.generator = GameEvent;
 			dispatcher.dispatchEvent( event );
 		}
 
 		//============================================================================================//
 		//  RESULTS FROM SERVER	
 		
-		public function resultLogin(message:Object):void{
-			
-			if(message == "WRONG_PWD")
-				trace("authentication failed");
-			else{
-				Session.PLAYER_UID = message as String;
-				Pager.getInstance().goToPage(Home);
-			}
+		public function gameCreated(result:Object):void{
+			Pager.getInstance().goToPage(GameInCreation, result as Game);
 		}
 	}
 }

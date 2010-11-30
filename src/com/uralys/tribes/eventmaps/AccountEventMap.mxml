@@ -1,55 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<EventMap  
-	xmlns:mx="http://www.adobe.com/2006/mxml"
-	xmlns="http://mate.asfusion.com/">
-	<mx:Script>
+<EventMap xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		  xmlns:s="library://ns.adobe.com/flex/spark" 
+		  xmlns:mx="library://ns.adobe.com/flex/mx"
+		  xmlns="http://mate.asfusion.com/">
+	
+	<fx:Declarations>
+		<Debugger level="{Debugger.ALL}" />
+		
+		
+		<EventHandlers type="{AccountEvent.REGISTER}" debug="true">
+			<RemoteObjectInvoker
+				showBusyCursor = "true"
+				destination="PlayerWrapper" 
+				endpoint="{Names.URALYS_LOGGER_SERVER_AMF_ENDPOINT}"
+				arguments="{[event.email, event.password]}"
+				method = "createPlayer"
+				debug = "true">
+				
+				<faultHandlers>
+					<MethodInvoker generator="{FaultHandler}" method="handleRemoteServiceFault" arguments="{fault}"/>
+				</faultHandlers>
+			</RemoteObjectInvoker>
+		</EventHandlers>
+		
+		<EventHandlers type="{AccountEvent.LOGIN}" debug="true">
+			<RemoteObjectInvoker
+				showBusyCursor = "true"
+				destination="PlayerWrapper" 
+				endpoint="{Names.URALYS_LOGGER_SERVER_AMF_ENDPOINT}"
+				arguments="{[event.email, event.password]}"
+				method = "login"
+				debug = "true">
+				
+				<resultHandlers>
+					<MethodInvoker
+						generator 	= "{AccountManager}"
+						method 		= "resultLogin"
+						arguments 	= "{resultObject}"
+						/>
+				</resultHandlers>
+				<faultHandlers>
+					<MethodInvoker generator="{FaultHandler}" method="handleRemoteServiceFault" arguments="{fault}"/>
+				</faultHandlers>
+			</RemoteObjectInvoker>
+		</EventHandlers>
+
+	</fx:Declarations>
+	
+	<fx:Script>
 		<![CDATA[
 			import com.uralys.tribes.constants.Names;
 			import com.uralys.tribes.events.AccountEvent;
 			import com.uralys.tribes.managers.AccountManager;
 			import com.uralys.utils.FaultHandler;
 		]]>
-	</mx:Script>
+	</fx:Script>
 	
-	<Debugger level="{Debugger.ALL}" />
-
-	<EventHandlers type="{AccountEvent.REGISTER}" debug="true">
-		<RemoteObjectInvoker
-			showBusyCursor = "true"
-			destination="PlayerWrapper" 
-			endpoint="{Names.URALYS_LOGGER_SERVER_AMF_ENDPOINT}"
-			arguments="{[event.email, event.password]}"
-			method = "createPlayer"
-			debug = "true">
-			
-			<faultHandlers>
-				<MethodInvoker generator="{FaultHandler}" method="handleRemoteServiceFault" arguments="{fault}"/>
-			</faultHandlers>
-		</RemoteObjectInvoker>
-	</EventHandlers>
-
-	<EventHandlers type="{AccountEvent.LOGIN}" debug="true">
-		<RemoteObjectInvoker
-			showBusyCursor = "true"
-			destination="PlayerWrapper" 
-			endpoint="{Names.URALYS_LOGGER_SERVER_AMF_ENDPOINT}"
-			arguments="{[event.email, event.password]}"
-			method = "login"
-			debug = "true">
-			
-			<resultHandlers>
-				<MethodInvoker
-					generator 	= "{AccountManager}"
-					method 		= "resultLogin"
-					arguments 	= "{resultObject}"
-					/>
-			</resultHandlers>
-			<faultHandlers>
-				<MethodInvoker generator="{FaultHandler}" method="handleRemoteServiceFault" arguments="{fault}"/>
-			</faultHandlers>
-		</RemoteObjectInvoker>
-	</EventHandlers>
-
+	
 </EventMap>
 
 <!--

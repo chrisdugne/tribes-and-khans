@@ -51,12 +51,17 @@ public class Pager
 		
 		//======================================================================================//
 
-		public function goToPage(Page:Class):void{
+		public function goToPage(Page:Class, ...args):void{
 			
 			_currentPage = Page;
+			var page = new Page(); 
+			try{
+				page.params = args;
+			}catch(e:Error){}
+				
 			
 			_window.removeAllElements();
-			_window.addElement(new Page());
+			_window.addElement(page);
 			
 		}
 

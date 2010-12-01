@@ -1,10 +1,10 @@
 package com.uralys.tribes.dao;
 
-import com.uralys.tribes.entities.dto.PlayerDTO;
+import com.uralys.tribes.entities.dto.ProfilDTO;
 
 public interface IPlayerDAO {
 	
-	public PlayerDTO createPlayer(String uralysUID);
-	public PlayerDTO getPlayer(String uralysUID);
+	public ProfilDTO createProfil(String uralysUID, String email);
+	public ProfilDTO getProfil(String uralysUID);
 	
 }

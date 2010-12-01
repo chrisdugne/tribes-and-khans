@@ -33,6 +33,8 @@ public class EntitiesConverter {
 		
 		player.setPlayerUID(playerDTO.getPlayerUID());
 		player.setName(playerDTO.getName());
+		player.setGameName(playerDTO.getGameName());
+		player.setGameUID(playerDTO.getGameUID());
 		
 		List<Move> moves = new ArrayList<Move>();
 		
@@ -60,7 +62,6 @@ public class EntitiesConverter {
 		
 		game.setPlayers(players);
 
-		System.out.println("converter  : " + game.getGameUID());
 		return game;
 	}
 
@@ -70,7 +71,6 @@ public class EntitiesConverter {
 		
 		profil.setUralysUID(profilDTO.getUralysUID());
 		profil.setEmail(profilDTO.getEmail());
-		profil.setPassword(profilDTO.getPassword());
 		
 		List<Player> players = new ArrayList<Player>();
 		

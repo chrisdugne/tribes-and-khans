@@ -1,5 +1,7 @@
 package com.uralys.tribes.services.impl;
 
+import java.util.List;
+
 import com.uralys.tribes.domain.IGameManager;
 import com.uralys.tribes.entities.Game;
 import com.uralys.tribes.services.IGameService;
@@ -16,8 +18,16 @@ public class GameService implements IGameService {
 
 	//=========================================================================//
 
-	public Game createGame(String playerUID, String gameName) {
-		return gameManager.createGame(playerUID, gameName);
+	public Game createGame(String uralysUID, String gameName) {
+		return gameManager.createGame(uralysUID, gameName);
+	}
+
+	public Game joinGame(String uralysUID, String gameUID) {
+		return null;
+	}
+
+	public List<Game> getGamesToJoin() {
+		return null;
 	}
 
 }

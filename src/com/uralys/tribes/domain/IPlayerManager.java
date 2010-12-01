@@ -1,10 +1,10 @@
 package com.uralys.tribes.domain;
 
-import com.uralys.tribes.entities.Player;
+import com.uralys.tribes.entities.Profil;
 
 public interface IPlayerManager {
 
-	public Player createPlayer(String uralysUID);
-	public Player getPlayer(String uralysUID);
+	public Profil createProfil(String uralysUID, String email);
+	public Profil getProfil(String uralysUID);
 	
 }

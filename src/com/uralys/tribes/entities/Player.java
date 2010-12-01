@@ -8,6 +8,9 @@ public class Player {
 	private String playerUID;
 
 	private String name;
+	private String gameName;
+	private String gameUID;
+	
 	private List<Move> moves = new ArrayList<Move>();
 	
 	//-----------------------------------------------------------------------------------//
@@ -23,6 +26,18 @@ public class Player {
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+	public String getGameName() {
+		return gameName;
+	}
+	public void setGameName(String gameName) {
+		this.gameName = gameName;
+	}
+	public String getGameUID() {
+		return gameUID;
+	}
+	public void setGameUID(String gameUID) {
+		this.gameUID = gameUID;
 	}
 	public List<Move> getMoves() {
 		return moves;

@@ -17,8 +17,8 @@ public class GameManager implements IGameManager {
 
 	//==================================================================================================//
 	
-	public Game createGame(String playerUID, String gameName) {
-		return EntitiesConverter.convertGameDTO(gameDao.createGame(playerUID, gameName));
+	public Game createGame(String uralysUID, String gameName) {
+		return EntitiesConverter.convertGameDTO(gameDao.createGame(uralysUID, gameName));
 	}
 
 }

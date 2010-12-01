@@ -4,5 +4,5 @@ import com.uralys.tribes.entities.dto.GameDTO;
 
 public interface IGameDAO {
 
-	public GameDTO createGame(String playerUID, String gameName);
+	public GameDTO createGame(String uralysUID, String gameName);
 }

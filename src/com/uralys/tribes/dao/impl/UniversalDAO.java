@@ -41,7 +41,6 @@ public class UniversalDAO{
 
 	@SuppressWarnings("unchecked")
 	public <E> List<E> getListDTO(List<String> uids, Class<E> objectClass, String uidName) {
-		
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		Query query = pm.newQuery("select from " + objectClass.getName() + " where :uids.contains(key)");
 		

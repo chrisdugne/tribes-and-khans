@@ -7,7 +7,6 @@ public class Profil {
 
 	private String uralysUID;
 	private String email;
-	private String password;
 	private List<Player> players = new ArrayList<Player>();
 	
 	//-----------------------------------------------------------------------------------//
@@ -24,19 +23,12 @@ public class Profil {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	public String getPassword() {
-		return password;
-	}
-	public void setPassword(String password) {
-		this.password = password;
-	}
 	public List<Player> getPlayers() {
 		return players;
 	}
 	public void setPlayers(List<Player> players) {
 		this.players = players;
 	}
-
 	
 	//-----------------------------------------------------------------------------------//
 	

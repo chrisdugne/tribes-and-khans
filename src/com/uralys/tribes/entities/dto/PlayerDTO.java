@@ -26,6 +26,8 @@ public class PlayerDTO {
 	private String playerUID;
 
 	@Persistent private String name;
+	@Persistent private String gameUID;
+	@Persistent private String gameName;
 	@Persistent private List<String> moveUIDs = new ArrayList<String>();
 	
 	//-----------------------------------------------------------------------------------//
@@ -48,17 +50,33 @@ public class PlayerDTO {
 	public void setName(String name) {
 		this.name = name;
 	}
-
-	//-----------------------------------------------------------------------------------//
-	
-	public List<MoveDTO> getMoves() {
-		return UniversalDAO.getInstance().getListDTO(moveUIDs, MoveDTO.class, "moveUID");
+	public String getGameUID() {
+		return gameUID;
+	}
+	public void setGameUID(String gameUID) {
+		this.gameUID = gameUID;
+	}
+	public String getGameName() {
+		return gameName;
+	}
+	public void setGameName(String gameName) {
+		this.gameName = gameName;
 	}
 	public List<String> getMoveUIDs() {
 		return moveUIDs;
 	}
 	public void setMoveUIDs(List<String> moves) {
 		this.moveUIDs = moves;
+	}
+
+	//-----------------------------------------------------------------------------------//
+
+	public List<MoveDTO> getMoves() {
+		return UniversalDAO.getInstance().getListDTO(moveUIDs, MoveDTO.class, "moveUID");		
+	}
+	
+	public GameDTO getGame(){
+		return (GameDTO) UniversalDAO.getInstance().getObjectDTO(gameUID, GameDTO.class);
 	}
 	
 	//-----------------------------------------------------------------------------------//

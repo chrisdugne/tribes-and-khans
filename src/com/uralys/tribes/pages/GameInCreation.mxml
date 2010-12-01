@@ -9,9 +9,13 @@
 			import com.uralys.tribes.entities.Game;
 			import com.uralys.tribes.managers.GameManager;
 			
+			import mx.utils.ObjectUtil;
+			
 			[Bindable] public var game:Game;
 			
-			public function set params(...args):void{
+			public function set params(args:Array):void{
+				trace("GameInCreation set params");
+				trace(ObjectUtil.toString(args));
 				game = args [0];
 			}
 		]]>

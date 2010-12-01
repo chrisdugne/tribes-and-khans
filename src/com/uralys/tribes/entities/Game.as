@@ -3,7 +3,7 @@ package com.uralys.tribes.entities
 	import mx.collections.ArrayCollection;
 
 	[Bindable]
-	[RemoteClass(alias="com.uralys.tribes.entities.Board")]
+	[RemoteClass(alias="com.uralys.tribes.entities.Game")]
 	public class Game
 	{
 		private var _gameUID:String;

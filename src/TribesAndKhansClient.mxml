@@ -6,11 +6,6 @@
 			   minWidth="955" minHeight="600"
 			   creationComplete="init()">
 	
-	<fx:Declarations>
-		<maps:AccountEventMap/>
-		<maps:GameEventMap/>
-	</fx:Declarations>
-	
 	<fx:Script>
 		<![CDATA[
 			import com.uralys.tribes.core.Pager;

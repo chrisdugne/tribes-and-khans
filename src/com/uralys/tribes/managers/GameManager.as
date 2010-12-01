@@ -51,7 +51,7 @@ package com.uralys.tribes.managers {
 		//  ASKING SERVER
 		
 		public function createGame(name:String):void{
-			gameWrapper.createGame(Session.PLAYER_UID, name);
+			gameWrapper.createGame(Session.profil.uralysUID, name);
 		}
 
 		//============================================================================================//

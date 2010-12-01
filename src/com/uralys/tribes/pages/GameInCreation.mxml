@@ -14,14 +14,18 @@
 			[Bindable] public var game:Game;
 			
 			public function set params(args:Array):void{
-				trace("GameInCreation set params");
-				trace(ObjectUtil.toString(args));
 				game = args [0];
+				trace(ObjectUtil.toString(game.players.getItemAt(0)));
 			}
 		]]>
 	</fx:Script>
 	<s:VGroup>
 		<s:Label id="labelGameUID" text="{game.gameUID}"/>
 		<s:Label id="labelGameName" text="{game.name}"/>
+		<s:List id="playerList" 
+				height="157" 
+				width="160" 
+				itemRenderer="com.uralys.renderers.PlayerListRenderer"
+				dataProvider="{game.players}"/>
 	</s:VGroup>
 </s:Group>

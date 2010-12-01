@@ -3,11 +3,11 @@
 			   xmlns:s="library://ns.adobe.com/flex/spark" 
 			   xmlns:mx="library://ns.adobe.com/flex/mx" 
 			   xmlns:maps="com.uralys.tribes.eventmaps.*" 
-			   minWidth="955" minHeight="600"
 			   creationComplete="init()">
 	
 	<fx:Script>
 		<![CDATA[
+			import com.uralys.tribes.constants.Session;
 			import com.uralys.tribes.core.Pager;
 			import com.uralys.tribes.pages.Login;
 			import com.uralys.tribes.pages.Map;
@@ -18,6 +18,12 @@
 			}
 		]]>
 	</fx:Script>
-	
-	<s:Group id="window"/>
+	<s:VGroup width="100%">
+		<s:HGroup width="100%">
+			<mx:Spacer width="100%"/>
+			<s:Label text="{Session.profil ? 'Logged as : '+ Session.profil.email : 'Please log in'}"/>
+		</s:HGroup>	
+		<mx:HRule width="100%"/>
+		<s:Group id="window"/>
+	</s:VGroup>
 </s:Application>

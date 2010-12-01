@@ -3,6 +3,7 @@ package com.uralys.tribes.core
 
 import com.uralys.tribes.constants.*;
 
+import mx.core.IVisualElement;
 import mx.utils.ObjectUtil;
 
 import spark.components.Group;
@@ -54,12 +55,10 @@ public class Pager
 		
 		//======================================================================================//
 
-		public function goToPage(Page:Class, ...args):void{
+		public function goToPage(PageType:Class, ...args):void{
 			
-			trace("Pager");
-			trace(ObjectUtil.toString(args));
-			_currentPage = Page;
-			var page = new Page(); 
+			_currentPage = PageType;
+			var page = new PageType(); 
 			try{
 				page.params = args;
 			}catch(e:Error){}

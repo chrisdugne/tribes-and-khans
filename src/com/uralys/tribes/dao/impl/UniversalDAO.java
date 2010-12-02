@@ -1,6 +1,7 @@
 package com.uralys.tribes.dao.impl;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.jdo.PersistenceManager;
@@ -41,6 +42,10 @@ public class UniversalDAO{
 
 	@SuppressWarnings("unchecked")
 	public <E> List<E> getListDTO(List<String> uids, Class<E> objectClass, String uidName) {
+		
+		if(uids == null || uids.size() == 0)
+			return new ArrayList<E>();
+		
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		Query query = pm.newQuery("select from " + objectClass.getName() + " where :uids.contains(key)");
 		

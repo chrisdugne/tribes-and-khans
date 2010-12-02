@@ -1,5 +1,7 @@
 package com.uralys.tribes.dao.impl;
 
+import javax.jdo.PersistenceManager;
+
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.uralys.tribes.dao.IPlayerDAO;
@@ -23,7 +25,8 @@ public class PlayerDAO  extends MainDAO implements IPlayerDAO {
 	}
 	
 	public ProfilDTO getProfil(String uralysUID) {
-		return null;
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		return pm.getObjectById(ProfilDTO.class, uralysUID);
 	}
 
 }

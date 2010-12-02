@@ -1,7 +1,7 @@
 package com.uralys.tribes.managers {
 	
-	import com.uralys.tribes.constants.Names;
-	import com.uralys.tribes.constants.Session;
+	import com.uralys.tribes.commons.Names;
+	import com.uralys.tribes.commons.Session;
 	import com.uralys.tribes.core.Pager;
 	import com.uralys.tribes.entities.Game;
 	import com.uralys.tribes.pages.GameInCreation;

@@ -1,7 +1,7 @@
 package com.uralys.tribes.managers {
 	
-	import com.uralys.tribes.constants.Names;
-	import com.uralys.tribes.constants.Session;
+	import com.uralys.tribes.commons.Names;
+	import com.uralys.tribes.commons.Session;
 	import com.uralys.tribes.core.Pager;
 	import com.uralys.tribes.entities.Profil;
 	import com.uralys.tribes.pages.Home;
@@ -41,7 +41,7 @@ package com.uralys.tribes.managers {
 			playerWrapper.destination = "PlayerWrapper";
 			playerWrapper.endpoint = Names.SERVER_AMF_ENDPOINT;
 			playerWrapper.createProfil.addEventListener("result", profilCreated);
-			accountWrapper.getProfil.addEventListener("result", receivedProfil);
+			playerWrapper.getProfil.addEventListener("result", receivedProfil);
 		}
 
 		
@@ -75,7 +75,12 @@ package com.uralys.tribes.managers {
 		// UralysLogger
 		
 		public function registered(event:ResultEvent):void{
-			playerWrapper.createProfil(event.result, email); // event.result == uralysUID
+			if(event.result == "EMAIL_EXISTS"){
+				Alert.show("This email is registered yet");
+				Session.WAIT_FOR_SERVER = false;
+			}
+			else
+				playerWrapper.createProfil(event.result, email); // event.result == uralysUID
 		}
 		
 		
@@ -83,11 +88,12 @@ package com.uralys.tribes.managers {
 			
 			var uralysUID:String = event.result as String;
 			
-			if(uralysUID == "WRONG_PWD")
+			if(uralysUID == "WRONG_PWD"){
 				Alert.show("authentication failed");
-			else{
-				playerWrapper.getProfil(uralysUID);
+				Session.WAIT_FOR_SERVER = false;
 			}
+			else
+				playerWrapper.getProfil(uralysUID);
 		}
 
 		//-------------------------------------------------------------------------//
@@ -95,12 +101,14 @@ package com.uralys.tribes.managers {
 
 		public function profilCreated(event:ResultEvent):void{
 			Session.profil = event.result as Profil;
-			Alert.show("Profil Cree");
+			Alert.show("Profil Cree.");
+			Session.WAIT_FOR_SERVER = false;
 		}
 		
 		public function receivedProfil(event:ResultEvent):void{
 			var profil:Profil = event.result as Profil;
 			Session.profil = profil;
+			Session.WAIT_FOR_SERVER = false;
 			Pager.getInstance().goToPage(Home);
 		}
 

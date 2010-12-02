@@ -1,9 +1,6 @@
 package com.uralys.utils
 {
 
-import com.skooairs.constants.Session;
-import com.skooairs.constants.Numbers;
-
 import mx.collections.ArrayCollection;
 
 public class Utils
@@ -40,7 +37,8 @@ public class Utils
 		public static function round(n:Number, p:int):Number {
 		   return Math.round( n * Math.pow(10, p)) / Math.pow(10, p);
 		}
-
+		
+		/*
 		public static function getPositionName(p:int, gender:int):String {
 			
 			//gender : 1 male 
@@ -99,8 +97,7 @@ public class Utils
 			//never
 			return "";
 		}
-		
-/*
+
 		public static function getPlayerFirstName(playerUID:String):String{
 			
 			if(Session.fbook == null)

@@ -5,30 +5,69 @@
 	
 	<fx:Script>
 		<![CDATA[
+			import com.uralys.tribes.commons.Names;
+			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.core.Pager;
-			import com.uralys.utils.SHA1;
-			
 			import com.uralys.tribes.managers.AccountManager;
+			import com.uralys.utils.SHA1;
+			import com.uralys.utils.Utils;
+			
+			[Bindable] private var savedEmail:String = '';
+			
+			private function initForm():void{
+				var sharedObject:SharedObject = SharedObject.getLocal(Names.SHARED_OBJECT_NAME);
+				savedEmail = sharedObject.data.lastEmail;
+			}
 			
 			private function login():void{
-				AccountManager.getInstance().login(emailInput.text, SHA1.encrypt(passwordInput.text));
+				Session.WAIT_FOR_SERVER = true;
+				if(formChecked()){
+					var sharedObject:SharedObject = SharedObject.getLocal(Names.SHARED_OBJECT_NAME);
+					sharedObject.data.lastEmail = emailInput.text;
+					
+					AccountManager.getInstance().login(emailInput.text, SHA1.encrypt(passwordInput.text));
+				}
+				else
+					Session.WAIT_FOR_SERVER = false;
 			}	
 			
 			private function createAccount():void{
-				AccountManager.getInstance().register(emailInput.text, SHA1.encrypt(passwordInput.text));
+				Session.WAIT_FOR_SERVER = true;
+				if(formChecked()){
+					var sharedObject:SharedObject = SharedObject.getLocal(Names.SHARED_OBJECT_NAME);
+					sharedObject.data.lastEmail = emailInput.text;
+				
+					AccountManager.getInstance().register(emailInput.text, SHA1.encrypt(passwordInput.text));
+				}
+				else
+					Session.WAIT_FOR_SERVER = false;
+			}
+
+			private function formChecked():Boolean{
+				if(!Utils.isValidEmail(emailInput.text))
+					mx.controls.Alert.show('Check your email', 'Oops');
+				else if(passwordInput.text.length < 3)
+					mx.controls.Alert.show('Password must be at least 3 characters', 'Oops');
+				else
+					return true;
+				
+				return false;
 			}
 		]]>
 	</fx:Script>
-	<s:VGroup>
-		<s:Button label="createAccount" click="{createAccount()}"/>
-		<s:Button label="login" click="{login()}"/>
+	
+	<s:VGroup width="100%" 
+			  horizontalAlign="center"
+			  creationComplete="initForm()">
+		<mx:Spacer width="30"/>
 		<mx:Grid >
 			<mx:GridRow >
 				<mx:GridItem >
 					<s:Label text="email" />
 				</mx:GridItem>
 				<mx:GridItem>
-					<s:TextInput id="emailInput" 							
+					<s:TextInput id="emailInput"
+								 text="{savedEmail}"
 								 width="200"/>
 				</mx:GridItem>
 			</mx:GridRow>
@@ -37,10 +76,17 @@
 					<s:Label text="password" />
 				</mx:GridItem>
 				<mx:GridItem>
-					<s:TextInput id="passwordInput" 							
+					<s:TextInput id="passwordInput" 		
+								 displayAsPassword="true"
 								 width="200"/>
 				</mx:GridItem>
 			</mx:GridRow>
 		</mx:Grid>
+		<s:HGroup visible="{!Session.WAIT_FOR_SERVER}">
+			<mx:Spacer width="5"/>
+			<s:Button label="Create my account" click="{createAccount()}"/>
+			<mx:Spacer width="50"/>
+			<s:Button label="Log me in" click="{login()}"/>
+		</s:HGroup>
 	</s:VGroup>
 </s:Group>

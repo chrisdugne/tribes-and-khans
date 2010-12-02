@@ -1,7 +1,7 @@
 package com.uralys.tribes.core
 {
 
-import com.uralys.tribes.constants.*;
+import com.uralys.tribes.commons.*;
 
 import mx.core.IVisualElement;
 import mx.utils.ObjectUtil;

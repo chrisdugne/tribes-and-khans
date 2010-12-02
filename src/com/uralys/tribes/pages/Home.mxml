@@ -21,12 +21,33 @@
 			}
 		]]>
 	</fx:Script>
-	<s:VGroup>
-		<s:Button label="games" click="{getMyGames()}"/>
-		<s:HGroup>
-			<s:TextInput id="gameNameInput"/>
-			<s:Button label="createGame" click="{createGame()}"/>
-		</s:HGroup>
-		<s:Button label="joinGame" click="{getGamesToJoinList()}"/>
-	</s:VGroup>
+	<s:HGroup width="100%">
+		<s:Button label="My current Games" click="{viewstack.selectedIndex=0}"/>
+		<mx:Spacer width="100%"/>
+		<s:VGroup>
+			<s:Button label="Join a Game" click="{viewstack.selectedIndex=1}"/>
+			<s:Button label="Create a new Game" click="{viewstack.selectedIndex=2}"/>
+		</s:VGroup>
+	</s:HGroup>
+	<mx:ViewStack id="viewstack">
+		
+		<s:NavigatorContent id="myCurrentGamesView">
+			<s:Group>
+				<s:Label text="myCurrentGames"/>
+			</s:Group>
+		</s:NavigatorContent>
+		<s:NavigatorContent id="createGameView">
+			<s:VGroup>
+				<s:Label text="Enter a name :"/>
+				<s:TextInput id="gameNameInput"/>
+				<s:Button label="Create" click="{createGame()}"/>
+			</s:VGroup>
+		</s:NavigatorContent>
+		<s:NavigatorContent id="joinGameView">
+			<s:Group>
+				<s:Label text="joinGame"/>
+			</s:Group>
+		</s:NavigatorContent>
+		
+	</mx:ViewStack>
 </s:Group>

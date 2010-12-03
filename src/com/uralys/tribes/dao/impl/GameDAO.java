@@ -12,7 +12,7 @@ import com.uralys.utils.Utils;
 
 public class GameDAO  extends MainDAO implements IGameDAO {
 	
-	public GameDTO createGame(String uralysUID, String gameName) {
+	public GameDTO createGame(String uralysUID, String gameName, int autoEndTurnPeriod) {
 
 		//-----------------------------------------------------------------------//
 
@@ -28,6 +28,9 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		gameDTO.setKey(KeyFactory.keyToString(key));
 		gameDTO.setGameUID(gameUID);
 		gameDTO.setName(gameName);
+		gameDTO.setStatus(GameDTO.IN_CREATION);
+		gameDTO.setCurrentTurn(0);
+		gameDTO.setAutoEndTurnPeriod(autoEndTurnPeriod);
 		gameDTO.getPlayerUIDs().add(playerUID);
 		
 		persist(gameDTO);

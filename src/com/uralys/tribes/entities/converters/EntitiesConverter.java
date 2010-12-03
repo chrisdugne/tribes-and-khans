@@ -16,6 +16,9 @@ public class EntitiesConverter {
 	
 	public static Move convertMoveDTO(MoveDTO moveDTO) {
 		
+		if(moveDTO == null)
+			return null;
+		
 		Move move = new Move();
 		
 		move.setMoveUID(moveDTO.getMoveUID());
@@ -28,6 +31,9 @@ public class EntitiesConverter {
 	}
 	
 	public static Player convertPlayerDTO(PlayerDTO playerDTO) {
+		
+		if(playerDTO == null)
+			return null;
 		
 		Player player = new Player();
 		
@@ -48,11 +54,17 @@ public class EntitiesConverter {
 	}
 	
 	public static Game convertGameDTO(GameDTO gameDTO) {
+
+		if(gameDTO == null)
+			return null;
 		
 		Game game = new Game();
 		
 		game.setGameUID(gameDTO.getGameUID());
 		game.setName(gameDTO.getName());
+		game.setStatus(gameDTO.getStatus());
+		game.setCurrentTurn(gameDTO.getCurrentTurn());
+		game.setAutoEndTurnTime(gameDTO.getAutoEndTurnPeriod());
 		
 		List<Player> players = new ArrayList<Player>();
 		
@@ -66,6 +78,9 @@ public class EntitiesConverter {
 	}
 
 	public static Profil convertProfilDTO(ProfilDTO profilDTO) {
+		
+		if(profilDTO == null)
+			return null;
 		
 		Profil profil = new Profil();
 		

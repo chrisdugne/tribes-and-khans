@@ -26,7 +26,13 @@ public class PlayerDAO  extends MainDAO implements IPlayerDAO {
 	
 	public ProfilDTO getProfil(String uralysUID) {
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
-		return pm.getObjectById(ProfilDTO.class, uralysUID);
+		try{
+			return pm.getObjectById(ProfilDTO.class, uralysUID);
+		}
+		catch(Exception e){
+			// no Profil !!
+			return null;
+		}
 	}
 
 }

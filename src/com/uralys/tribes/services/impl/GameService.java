@@ -18,8 +18,8 @@ public class GameService implements IGameService {
 
 	//=========================================================================//
 
-	public Game createGame(String uralysUID, String gameName) {
-		return gameManager.createGame(uralysUID, gameName);
+	public Game createGame(String uralysUID, String gameName, int autoEndTurnPeriod) {
+		return gameManager.createGame(uralysUID, gameName, autoEndTurnPeriod);
 	}
 
 	public Game joinGame(String uralysUID, String gameUID) {

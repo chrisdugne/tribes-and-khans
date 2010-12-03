@@ -15,8 +15,14 @@ import com.uralys.tribes.dao.impl.UniversalDAO;
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 public class GameDTO {
 
+	//-----------------------------------------------------------------------------------//
 
-    @PrimaryKey
+	public final static int IN_CREATION = 1;
+	public final static int RUNNING = 2;
+	
+	//-----------------------------------------------------------------------------------//
+
+	@PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
     @Extension(vendorName="datanucleus", key="gae.encoded-pk", value="true")	
     protected String key;
@@ -26,6 +32,9 @@ public class GameDTO {
 	private String gameUID;
 
 	@Persistent	private String name;
+	@Persistent	private int status;
+	@Persistent	private int currentTurn;
+	@Persistent	private int autoEndTurnPeriod;	
 	@Persistent	private List<String> playerUIDs = new ArrayList<String>();
 	
 	//-----------------------------------------------------------------------------------//
@@ -47,6 +56,24 @@ public class GameDTO {
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+	public int getStatus() {
+		return status;
+	}
+	public void setStatus(int status) {
+		this.status = status;
+	}
+	public int getCurrentTurn() {
+		return currentTurn;
+	}
+	public void setCurrentTurn(int currentTurn) {
+		this.currentTurn = currentTurn;
+	}
+	public int getAutoEndTurnPeriod() {
+		return autoEndTurnPeriod;
+	}
+	public void setAutoEndTurnPeriod(int autoEndTurnPeriod) {
+		this.autoEndTurnPeriod = autoEndTurnPeriod;
 	}
 	
 	//-----------------------------------------------------------------------------------//

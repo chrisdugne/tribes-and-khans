@@ -36,7 +36,6 @@ package com.uralys.tribes.managers {
 			gameWrapper.createGame.addEventListener("result", gameCreated);
 		}
 
-		
 		//============================================================================================//
 		// CONTROLS
 		//============================================================================================//
@@ -50,8 +49,8 @@ package com.uralys.tribes.managers {
 		//============================================================================================//
 		//  ASKING SERVER
 		
-		public function createGame(name:String):void{
-			gameWrapper.createGame(Session.profil.uralysUID, name);
+		public function createGame(name:String, period:int):void{
+			gameWrapper.createGame(Session.profil.uralysUID, name, period);
 		}
 
 		//============================================================================================//

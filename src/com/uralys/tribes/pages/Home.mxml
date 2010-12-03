@@ -5,15 +5,30 @@
 	
 	<fx:Script>
 		<![CDATA[
+			//----------------------------------------------------------//
+
 			import com.uralys.tribes.core.Pager;
 			import com.uralys.tribes.managers.GameManager;
+			
+			import mx.collections.ArrayCollection;
+			
+			//----------------------------------------------------------//
+			
+			[Bindable]
+			public var periods:ArrayCollection = new ArrayCollection(
+				[ {periodLabel:"06h", period:1},
+				  {periodLabel:"12h", period:2},
+				  {periodLabel:"18h", period:3},
+				  {periodLabel:"Minuit", period:4} ]);
+
+			//----------------------------------------------------------//
 			
 			private function getMyGames():void{
 			
 			}	
 			
 			private function createGame():void{
-				GameManager.getInstance().createGame(gameNameInput.text);
+				GameManager.getInstance().createGame(gameNameInput.text, periodChoice.selectedItem.period);
 			}
 			
 			private function getGamesToJoinList():void{
@@ -25,29 +40,38 @@
 		<s:Button label="My current Games" click="{viewstack.selectedIndex=0}"/>
 		<mx:Spacer width="100%"/>
 		<s:VGroup>
-			<s:Button label="Join a Game" click="{viewstack.selectedIndex=1}"/>
-			<s:Button label="Create a new Game" click="{viewstack.selectedIndex=2}"/>
+			<s:Button label="Create a new Game" click="{viewstack.selectedIndex=1}"/>
+			<s:Button label="Join a Game" click="{viewstack.selectedIndex=2}"/>
 		</s:VGroup>
 	</s:HGroup>
-	<mx:ViewStack id="viewstack">
-		
-		<s:NavigatorContent id="myCurrentGamesView">
-			<s:Group>
-				<s:Label text="myCurrentGames"/>
-			</s:Group>
-		</s:NavigatorContent>
-		<s:NavigatorContent id="createGameView">
-			<s:VGroup>
-				<s:Label text="Enter a name :"/>
-				<s:TextInput id="gameNameInput"/>
-				<s:Button label="Create" click="{createGame()}"/>
-			</s:VGroup>
-		</s:NavigatorContent>
-		<s:NavigatorContent id="joinGameView">
-			<s:Group>
-				<s:Label text="joinGame"/>
-			</s:Group>
-		</s:NavigatorContent>
-		
-	</mx:ViewStack>
+	
+	<s:HGroup width="100%" horizontalAlign="center" paddingTop="35">
+		<mx:ViewStack id="viewstack">	
+			<s:NavigatorContent id="myCurrentGamesView">
+				<s:Group>
+					<s:Label text="myCurrentGames"/>
+				</s:Group>
+			</s:NavigatorContent>
+			<s:NavigatorContent id="createGameView">
+				<s:VGroup>
+					<s:Label text="Entrer un nom de jeu :"/>
+					<s:TextInput id="gameNameInput"/>
+					<s:HGroup>
+						<s:Label text="Heure de changement de tour automatique :"/>
+						<s:DropDownList id="periodChoice" 
+										dataProvider="{periods}"
+										labelField="periodLabel"
+										selectedIndex="0"/>
+					</s:HGroup>
+					<s:Button label="Create" click="{createGame()}"/>
+				</s:VGroup>
+			</s:NavigatorContent>
+			<s:NavigatorContent id="joinGameView">
+				<s:Group>
+					<s:Label text="joinGame"/>
+				</s:Group>
+			</s:NavigatorContent>
+			
+		</mx:ViewStack>
+	</s:HGroup>
 </s:Group>

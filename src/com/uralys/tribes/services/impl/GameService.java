@@ -27,7 +27,23 @@ public class GameService implements IGameService {
 	}
 
 	public List<Game> getGamesToJoin() {
-		return null;
+		try{
+			return gameManager.getGamesToJoin();
+		}
+		catch(Exception e){
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public List<Game> getCurrentGames(String uralysUID) {
+		try{
+			return gameManager.getCurrentGames(uralysUID);
+		}
+		catch(Exception e){
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 }

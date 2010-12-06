@@ -1,6 +1,10 @@
 package com.uralys.tribes.dao.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.jdo.PersistenceManager;
+import javax.jdo.Query;
 
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
@@ -53,10 +57,37 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		ProfilDTO profil = pm.getObjectById(ProfilDTO.class, uralysUID);
 		profil.getPlayerUIDs().add(playerUID);
+		pm.close();
 
 		//-----------------------------------------------------------------------//
 		
 		return gameDTO;
+	}
+
+	
+	public List<GameDTO> getCurrentGames(String uralysUID) {
+
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		ProfilDTO profil = pm.getObjectById(ProfilDTO.class, uralysUID);
+
+		List<String> gameUIDs = new ArrayList<String>();
+		
+		for(PlayerDTO player : profil.getPlayers())
+			gameUIDs.add(player.getGameUID());
+		
+
+		return UniversalDAO.getInstance().getListDTO(gameUIDs, GameDTO.class, "gameUID");
+		
+	}
+
+	
+	@SuppressWarnings("unchecked")
+	public List<GameDTO> getGamesToJoin(){
+		
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		Query query = pm.newQuery("select from " + GameDTO.class + " where status==" + GameDTO.IN_CREATION);
+		
+		return (List<GameDTO>) query.execute();
 	}
 
 }

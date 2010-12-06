@@ -1,9 +1,13 @@
 package com.uralys.tribes.domain.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.uralys.tribes.dao.IGameDAO;
 import com.uralys.tribes.domain.IGameManager;
 import com.uralys.tribes.entities.Game;
 import com.uralys.tribes.entities.converters.EntitiesConverter;
+import com.uralys.tribes.entities.dto.GameDTO;
 
 public class GameManager implements IGameManager {
 	
@@ -19,6 +23,28 @@ public class GameManager implements IGameManager {
 	
 	public Game createGame(String uralysUID, String gameName, int autoEndTurnPeriod) {
 		return EntitiesConverter.convertGameDTO(gameDao.createGame(uralysUID, gameName, autoEndTurnPeriod));
+	}
+
+	public List<Game> getCurrentGames(String uralysUID) {
+		
+		List<Game> games = new ArrayList<Game>();
+		
+		for(GameDTO gameDTO : gameDao.getCurrentGames(uralysUID)){
+			games.add(EntitiesConverter.convertGameDTO(gameDTO));
+		}
+		
+		return games;
+	}
+	
+	public List<Game> getGamesToJoin(){
+		
+		List<Game> games = new ArrayList<Game>();
+		
+		for(GameDTO gameDTO : gameDao.getGamesToJoin()){
+			games.add(EntitiesConverter.convertGameDTO(gameDTO));
+		}
+		
+		return games;
 	}
 
 }

@@ -9,5 +9,6 @@ public interface IGameService {
 	public Game joinGame(String uralysUID, String gameUID);
 
 	public List<Game> getGamesToJoin();
+	public List<Game> getCurrentGames(String uralysUID);
 	
 }

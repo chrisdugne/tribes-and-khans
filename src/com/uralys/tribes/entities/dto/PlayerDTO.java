@@ -75,10 +75,6 @@ public class PlayerDTO {
 		return UniversalDAO.getInstance().getListDTO(moveUIDs, MoveDTO.class, "moveUID");		
 	}
 	
-	public GameDTO getGame(){
-		return (GameDTO) UniversalDAO.getInstance().getObjectDTO(gameUID, GameDTO.class);
-	}
-	
 	//-----------------------------------------------------------------------------------//
 	
 }

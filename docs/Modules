@@ -1,0 +1,87 @@
+A propos des setData sur les Modules
+(lorsquon charge des donnees qui seront utilisees a linterieur d'un module)
+Le systeme est un peu complexe et semble faire deux fois la meme chose
+En fait selon le temps de chargement du module et le temps de reponse du serveur, on n'a 
+qu'un seul veritable chemin qui est suivi pour fair le setData.
+
+//------------------------------------------------------------------------------//
+on utilise : 
+
+- le ModuleLoader et l'evenement ready : 
+
+	<mx:ModuleLoader id="gameSelectionModule" 
+				 width="100%" height="100%" 
+				 url="com/uralys/tribes/pages/home/modules/GameSelectionModule.swf"
+				 ready="setGames4GameSelectionModule()"/>
+				 
+				 
+- le set params de la page : (voir comment marche le Pager et le passage de params a chaque page)	 
+	
+	public function set params(args:Array):void{
+		viewstack.selectedIndex = args [0];
+		games = args[1];
+		
+		switch(args[0]){
+			case CURRENT_GAMES :
+				setGames4GameSelectionModule();
+				break;
+			
+		}
+	}
+
+- l'appel au setter du module, ou l'on test si le module et les donnees sont pretes
+	
+	private function setGames4GameSelectionModule():void{
+		if(gameSelectionModule.child && games != null)
+			(gameSelectionModule.child as IGameSelectionModule).setGames(games);
+	}
+	
+//--------------------------------------------------------------------------------//
+	
+	CAS 1 :
+		le serveur renvoie les donnees avant que le module ne soit charge
+		
+ - on arrive dans set params : la donnee est non null (ici games)
+ - on redirige sur le set des donnees du module (ici setGames4GameSelectionModule())
+ - on test si le module est charge --> if(gameSelectionModule.child && games != null)
+ - comme le module n'est pas charge, child est null ==> pas d'appel a setGames ici.
+ - ensuite le module se charge > l'evenement "ready" est leve
+ - on revient sur le set : cette fois ci child est pret et games est non null
+  ===> on charge bien le setData du module (ici setGames)
+  
+//--------------------------------------------------------------------------------//
+	
+	CAS 2 :
+		le module se charge avant le retour du serveur (cas le plus classique, surtout
+		avec des modules de petit volume)
+		
+ - l'evenement 'ready' est leve : on arrive dans le set des donnees du module (ici setGames4GameSelectionModule())
+ - les donnees ne sont pas arrivees : (games == null)(lors d'un refresh, penser a forcer games = null)
+   => pas d'appel a setGames ici.
+ - ensuite les donnees arrivent : on arrive dans set params : la donnee est non null (ici games)
+ - on redirige sur le set des donnees du module (ici setGames4GameSelectionModule())
+ - on test si le module est charge --> if(gameSelectionModule.child && games != null)
+ - maintenant le module est charge et la donnee est non null
+  ===> on charge bien le setData du module (ici setGames)
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 

@@ -40,6 +40,10 @@
 						setGames4GameSelectionModule();
 						break;
 					
+					case GAMES_TO_JOIN :
+						setGames4JoinGameModule();
+						break;
+					
 				}
 			}
 			
@@ -53,6 +57,13 @@
 			private function getGamesToJoin():void{
 				//GameManager.getInstance().getGamesToJoin();
 				viewstack.selectedIndex = GAMES_TO_JOIN;
+			}
+			
+			//----------------------------------------------------------//
+			
+			private function setGames4JoinGameModule():void{
+				if(gameSelectionModule.child && games != null)
+					(gameSelectionModule.child as _IGameSelectionModule).setGames(games);
 			}
 			
 			//----------------------------------------------------------//

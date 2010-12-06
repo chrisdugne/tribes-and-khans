@@ -5,12 +5,14 @@ package com.uralys.tribes.managers {
 	import com.uralys.tribes.core.Pager;
 	import com.uralys.tribes.entities.Game;
 	import com.uralys.tribes.pages.GameInCreation;
+	import com.uralys.tribes.pages.Home;
 	
 	import mx.collections.ArrayCollection;
-
+	import mx.controls.Alert;
 	import mx.rpc.events.FaultEvent;
 	import mx.rpc.events.ResultEvent;
 	import mx.rpc.remoting.mxml.RemoteObject;
+	import mx.utils.ObjectUtil;
 	
 
 	[Bindable]
@@ -33,7 +35,6 @@ package com.uralys.tribes.managers {
 			gameWrapper = new RemoteObject();
 			gameWrapper.destination = "GameWrapper";
 			gameWrapper.endpoint = Names.SERVER_AMF_ENDPOINT;
-			gameWrapper.createGame.addEventListener("result", gameCreated);
 		}
 
 		//============================================================================================//
@@ -50,7 +51,18 @@ package com.uralys.tribes.managers {
 		//  ASKING SERVER
 		
 		public function createGame(name:String, period:int):void{
+			gameWrapper.createGame.addEventListener("result", gameCreated);
 			gameWrapper.createGame(Session.profil.uralysUID, name, period);
+		}
+
+		public function getCurrentGames():void{
+			gameWrapper.getCurrentGames.addEventListener("result", receivedCurrentGames);
+			gameWrapper.getCurrentGames(Session.profil.uralysUID);
+		}
+
+		public function getGamesToJoin():void{
+			gameWrapper.getGamesToJoin.addEventListener("result", receivedGamesToJoin);
+			gameWrapper.getGamesToJoin();
 		}
 
 		//============================================================================================//
@@ -59,6 +71,14 @@ package com.uralys.tribes.managers {
 		public function gameCreated(event:ResultEvent):void{
 			var game:Game = event.result as Game;
 			Pager.getInstance().goToPage(GameInCreation, game);
+		}
+		
+		public function receivedCurrentGames(event:ResultEvent):void{
+			Pager.getInstance().goToPage(Home, Home.CURRENT_GAMES, event.result as ArrayCollection);
+		}
+		
+		public function receivedGamesToJoin(event:ResultEvent):void{
+			Pager.getInstance().goToPage(Home, Home.GAMES_TO_JOIN, event.result as ArrayCollection);
 		}
 	}
 }

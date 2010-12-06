@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:ItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+				xmlns:s="library://ns.adobe.com/flex/spark" 
+				xmlns:mx="library://ns.adobe.com/flex/mx" 
+				autoDrawBackground="true">
+	<s:VGroup horizontalAlign="center">
+		<s:HGroup>
+			<s:Label text="Game  : "/>
+			<s:Label id="labelGameName" text="{data.name}"/>
+		</s:HGroup>
+		<s:Label text="Liste des joueurs inscrits"/>
+		<s:List id="playerList" 
+				borderVisible="false" 
+				width="160" 
+				itemRenderer="com.uralys.renderers.PlayerListRenderer"
+				dataProvider="{data.players}"/>
+		<s:HGroup>
+			<s:Label text="Fin de tours automatique : "/>
+			<s:Label text="{data.getPeriod()}"/>
+		</s:HGroup>	
+	</s:VGroup>
+	
+</s:ItemRenderer>

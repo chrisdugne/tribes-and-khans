@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:ItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+				xmlns:s="library://ns.adobe.com/flex/spark" 
+				xmlns:mx="library://ns.adobe.com/flex/mx" 
+				autoDrawBackground="true"
+				click="onClick(event)">
+	<fx:Script>
+		<![CDATA[
+			import com.uralys.tribes.entities.Game;
+			import mx.events.ItemClickEvent;
+			
+			private function onClick(event:MouseEvent):void{
+				var e:ItemClickEvent = new ItemClickEvent(ItemClickEvent.ITEM_CLICK, true);
+				e.item = data;
+				e.index = itemIndex;
+
+				dispatchEvent(e);
+			}
+		]]>
+	</fx:Script>
+	<s:VGroup horizontalAlign="center"
+			  width="100%"
+			  paddingTop="20"
+			  paddingBottom="20">
+		<s:HGroup width="100%">
+			<s:Label text="Game  : "/>
+			<s:Label id="labelGameName" text="{data.name}" fontWeight="bold"/>
+		</s:HGroup>
+		<s:Label text="{data.status == Game.IN_CREATION ? 'Vous etes le createur de ce jeu' : 'Tour en cours : ' + data.currentTurn}"/>
+		<s:Label text="{data.status == Game.IN_CREATION ? 'Il n\'est pas encore lance' : 'Fin du tour : ' + data.getPeriod()}"/>
+		<s:Button label="{data.status == Game.IN_CREATION ? 'Voir la liste des joueurs inscrits' : 'Jouer le tour'}"/>
+	</s:VGroup>
+	
+</s:ItemRenderer>

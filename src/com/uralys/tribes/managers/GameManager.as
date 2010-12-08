@@ -51,7 +51,7 @@ package com.uralys.tribes.managers {
 		//  ASKING SERVER
 		
 		public function createGame(name:String, period:int):void{
-			gameWrapper.createGame.addEventListener("result", gameCreated);
+			gameWrapper.createGame.addEventListener("result", receivedCurrentGames);
 			gameWrapper.createGame(Session.profil.uralysUID, name, period);
 		}
 
@@ -68,10 +68,6 @@ package com.uralys.tribes.managers {
 		//============================================================================================//
 		//  RESULTS FROM SERVER	
 		
-		public function gameCreated(event:ResultEvent):void{
-			var game:Game = event.result as Game;
-			Pager.getInstance().goToPage(GameInCreation, game);
-		}
 		
 		public function receivedCurrentGames(event:ResultEvent):void{
 			Pager.getInstance().goToPage(Home, Home.CURRENT_GAMES, event.result as ArrayCollection);

@@ -4,6 +4,13 @@
 				xmlns:mx="library://ns.adobe.com/flex/mx" 
 				autoDrawBackground="true"
 				click="onClick(event)">
+	
+	<s:states>
+		<s:State name="normal" />
+		<s:State name="hovered" />
+		<s:State name="selected" />
+	</s:states>
+	
 	<fx:Script>
 		<![CDATA[
 			import com.uralys.tribes.entities.Game;
@@ -18,17 +25,43 @@
 			}
 		]]>
 	</fx:Script>
-	<s:VGroup horizontalAlign="center"
-			  width="100%"
-			  paddingTop="20"
-			  paddingBottom="20">
-		<s:HGroup width="100%">
-			<s:Label text="Game  : "/>
-			<s:Label id="labelGameName" text="{data.name}" fontWeight="bold"/>
-		</s:HGroup>
-		<s:Label text="{data.status == Game.IN_CREATION ? 'Vous etes le createur de ce jeu' : 'Tour en cours : ' + data.currentTurn}"/>
-		<s:Label text="{data.status == Game.IN_CREATION ? 'Il n\'est pas encore lance' : 'Fin du tour : ' + data.getPeriod()}"/>
-		<s:Button label="{data.status == Game.IN_CREATION ? 'Voir la liste des joueurs inscrits' : 'Jouer le tour'}"/>
-	</s:VGroup>
+	
+	<s:transitions>
+		<mx:Transition fromState="*" toState="hovered">
+			<s:Animate target="{groupDetails}" duration="200">
+				<s:SimpleMotionPath property="width" />
+			</s:Animate>
+		</mx:Transition>
+		<mx:Transition fromState="hovered" toState="*">
+			<s:Animate target="{groupDetails}" duration="200" >
+				<s:SimpleMotionPath property="width" />
+			</s:Animate>
+		</mx:Transition>
+		<mx:Transition fromState="selected" toState="*">
+			<s:Animate target="{groupDetails}" duration="200" >
+				<s:SimpleMotionPath property="width" />
+			</s:Animate>
+		</mx:Transition>
+	</s:transitions>
+	
+	<s:Group id="groupDetails" height="20" width="200" width.hovered="230" width.selected="230">
+		<s:Rect left="0" right="0" top="0" bottom="0" radiusX="5" radiusY="5">
+			<s:fill>
+				<s:SolidColor color="#dddddd" color.hovered="#aaaaff" color.selected="#9999ff" />
+			</s:fill>
+		</s:Rect>
+		<s:Label id="labelName" 
+				 color="#FFFFFF" 
+				 fontWeight="bold" 
+				 left="20" 
+				 verticalCenter="2"
+				 text="{data.name}"/>
+		<s:Label id="labelStatus" 
+				 color="#FFFFFF" 
+				 fontWeight="bold" 
+				 right="20" 
+				 verticalCenter="2"
+				 text="{data.status == Game.IN_CREATION ? 'En creation' : 'En cours'}"/>
+	</s:Group>
 	
 </s:ItemRenderer>

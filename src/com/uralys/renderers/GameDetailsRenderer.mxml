@@ -3,21 +3,50 @@
 				xmlns:s="library://ns.adobe.com/flex/spark" 
 				xmlns:mx="library://ns.adobe.com/flex/mx" 
 				autoDrawBackground="true">
-	<s:VGroup horizontalAlign="center">
-		<s:HGroup>
-			<s:Label text="Game  : "/>
-			<s:Label id="labelGameName" text="{data.name}"/>
-		</s:HGroup>
-		<s:Label text="Liste des joueurs inscrits"/>
-		<s:List id="playerList" 
-				borderVisible="false" 
-				width="160" 
-				itemRenderer="com.uralys.renderers.PlayerListRenderer"
-				dataProvider="{data.players}"/>
-		<s:HGroup>
-			<s:Label text="Fin de tours automatique : "/>
-			<s:Label text="{data.getPeriod()}"/>
-		</s:HGroup>	
-	</s:VGroup>
+	<fx:Script>
+		<![CDATA[
+			import com.uralys.tribes.entities.Game;
+		]]>
+	</fx:Script>
+	
+	<s:Group id="groupDetails">
+		<s:Rect left="0" right="0" top="0" bottom="0" radiusX="5" radiusY="5">
+			<s:fill>
+				<s:SolidColor color="#aaaaff"/>
+			</s:fill>
+		</s:Rect>
+		<s:VGroup width="100%" 
+				  paddingTop="10"
+				  paddingRight="10"
+				  paddingLeft="10">
+			<s:HGroup width="100%"  horizontalAlign="center">
+				<s:Label id="labelGameName" text="{data.name}" fontWeight="bold"/>
+			</s:HGroup>
+			<s:Label text="Joueurs :"/>
+			<s:List id="playerList" 
+					borderVisible="false" 
+					width="160" 
+					itemRenderer="com.uralys.renderers.PlayerListRenderer"
+					dataProvider="{data.players}"/>
+			<s:HGroup>
+				<s:Label text="Fin de tours automatique : "/>
+				<s:Label text="{data.getPeriod()}" fontWeight="bold"/>
+			</s:HGroup>			
+			<s:Group width="100%">
+				<s:VGroup horizontalAlign="center" 
+						  paddingTop="5"
+						  paddingBottom="5">
+					<s:Label text="{data.status == Game.IN_CREATION ? 'Vous etes le createur de ce jeu' : 'Tour en cours : ' + data.currentTurn}"/>
+					<mx:Spacer height="10"/>
+					<s:Label text="{data.status == Game.IN_CREATION ? 'Il n\'est pas encore lance' : 'Fin du tour : ' + data.getPeriod()}"/>
+					<s:Button label="{data.status == Game.IN_CREATION ? 'Lancer la partie' : 'Entrer'}"
+							  id="buttonLaunch"
+							  visible="{data.status == Game.IN_CREATION ? data.players.length>1 : false}"
+							  includeInLayout="{buttonLaunch.visible}"/>
+					<s:Label text="(Pas assez de joueurs)" visible="{!buttonLaunch.visible}"/>
+				</s:VGroup>
+			</s:Group>
+		</s:VGroup>
+	</s:Group>
 	
 </s:ItemRenderer>

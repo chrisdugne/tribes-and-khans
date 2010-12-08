@@ -32,7 +32,7 @@
 			//----------------------------------------------------------//
 
 			protected function init():void{
-				gameList.addEventListener(ItemClickEvent.ITEM_CLICK, onClick);
+				dataGroup.addEventListener(ItemClickEvent.ITEM_CLICK, onClick);
 			}
 
 			protected function onClick(event:ItemClickEvent):void{
@@ -43,15 +43,27 @@
 		]]>
 	</fx:Script>
 	
-	<s:VGroup width="100%" horizontalAlign="center">
-		<s:Label text="Liste des jeux en cours" fontWeight="bold"/>
-		<s:List width="300"
-			id="gameList"
-			dataProvider="{games}"
-			itemRenderer="com.uralys.renderers.GameSimpleInfoRenderer"
-			borderVisible="false"
-			/>
-		<s:Label text="selection" fontWeight="bold"/>
-		<custom:GameSimpleInfoRenderer data="{selectedGame}"/>
-	</s:VGroup>
+	<s:HGroup width="100%" horizontalAlign="center" paddingLeft="40">
+		<s:VGroup width="300" horizontalAlign="center" paddingLeft="40">
+			<s:Label text="{games.length > 0 ? 'Liste des jeux en cours' : '(Pas de jeu en cours)'}" fontWeight="bold"/>
+			<s:Scroller width="270" height="450">
+				<s:Group>
+					<s:List id="dataGroup"
+							itemRenderer="com.uralys.renderers.GameSimpleInfoRenderer"
+							dataProvider="{games}"
+							borderVisible="false">
+						<s:layout>
+							<s:VerticalLayout gap="1" useVirtualLayout="true" />
+						</s:layout>
+					</s:List>
+				</s:Group>
+			</s:Scroller>
+		</s:VGroup>
+		<s:VGroup width="300" 
+				  horizontalAlign="center" 
+				  paddingLeft="40"
+				  visible="{selectedGame != null}">
+			<custom:GameDetailsRenderer data="{selectedGame}"/>
+		</s:VGroup>
+	</s:HGroup>
 </mx:Module>

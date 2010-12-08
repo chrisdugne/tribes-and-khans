@@ -16,7 +16,7 @@ import com.uralys.utils.Utils;
 
 public class GameDAO  extends MainDAO implements IGameDAO {
 	
-	public GameDTO createGame(String uralysUID, String gameName, int autoEndTurnPeriod) {
+	public void createGame(String uralysUID, String gameName, int autoEndTurnPeriod) {
 
 		//-----------------------------------------------------------------------//
 
@@ -60,8 +60,6 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		pm.close();
 
 		//-----------------------------------------------------------------------//
-		
-		return gameDTO;
 	}
 
 	

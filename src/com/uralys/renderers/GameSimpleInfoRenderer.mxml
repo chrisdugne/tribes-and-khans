@@ -14,10 +14,14 @@
 	<fx:Script>
 		<![CDATA[
 			import com.uralys.tribes.entities.Game;
+			
 			import mx.events.ItemClickEvent;
+			import mx.utils.ObjectUtil;
 			
 			private function onClick(event:MouseEvent):void{
+				
 				var e:ItemClickEvent = new ItemClickEvent(ItemClickEvent.ITEM_CLICK, true);
+				
 				e.item = data;
 				e.index = itemIndex;
 

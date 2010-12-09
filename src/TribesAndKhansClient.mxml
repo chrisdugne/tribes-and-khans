@@ -12,9 +12,19 @@
 			import com.uralys.tribes.pages.Login;
 			import com.uralys.tribes.pages.Map;
 			
+			
 			private function init():void{
+				initBlazeDS();
 				Pager.getInstance().window = window;
 				Pager.getInstance().goToPage(Login);
+			}
+
+			// parfois le mapping flex-java n'est pas fait au premier appel, mais au 2e seulement..
+			// donc on force le mapping a l'avance pour que ca marche des le premier appel
+			import flash.net.registerClassAlias;
+			import com.uralys.tribes.entities.Game;
+			private function initBlazeDS():void{
+				registerClassAlias("com.uralys.tribes.entities.Game", Game);
 			}
 		]]>
 	</fx:Script>

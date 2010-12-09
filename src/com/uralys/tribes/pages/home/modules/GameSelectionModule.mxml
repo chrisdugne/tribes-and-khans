@@ -15,6 +15,7 @@
 			import mx.collections.ArrayCollection;
 			import mx.events.FlexEvent;
 			import mx.events.ItemClickEvent;
+			import mx.utils.ObjectUtil;
 			
 			import spark.events.IndexChangeEvent;
 			
@@ -43,15 +44,18 @@
 		]]>
 	</fx:Script>
 	
-	<s:HGroup width="100%" horizontalAlign="center" paddingLeft="40">
-		<s:VGroup width="300" horizontalAlign="center" paddingLeft="40">
+	<s:HGroup width="100%" 
+			  horizontalAlign="center">
+		<s:VGroup horizontalAlign="center" 
+				  paddingLeft="40">
 			<s:Label text="{games.length > 0 ? 'Liste des jeux en cours' : '(Pas de jeu en cours)'}" fontWeight="bold"/>
-			<s:Scroller width="270" height="450">
+			<s:Scroller height="450">
 				<s:Group>
 					<s:List id="dataGroup"
 							itemRenderer="com.uralys.renderers.GameSimpleInfoRenderer"
 							dataProvider="{games}"
-							borderVisible="false">
+							borderVisible="false"
+							width="235">
 						<s:layout>
 							<s:VerticalLayout gap="1" useVirtualLayout="true" />
 						</s:layout>
@@ -59,9 +63,8 @@
 				</s:Group>
 			</s:Scroller>
 		</s:VGroup>
-		<s:VGroup width="300" 
-				  horizontalAlign="center" 
-				  paddingLeft="40"
+		<s:VGroup width="230" 
+				  horizontalAlign="center"
 				  visible="{selectedGame != null}">
 			<custom:GameDetailsRenderer data="{selectedGame}"/>
 		</s:VGroup>

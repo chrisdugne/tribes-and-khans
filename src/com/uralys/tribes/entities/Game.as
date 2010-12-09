@@ -29,7 +29,7 @@ package com.uralys.tribes.entities
 
 		//-------------------------------------------------------//
 
-		public function getPeriod():String{
+/*		public function getPeriod():String{
 			switch(autoEndTurnTime){
 				case H00 : return 'Minuit';
 				case H06 : return '06h';
@@ -37,7 +37,7 @@ package com.uralys.tribes.entities
 				case H18 : return '18h';
 				default : return null; //never
 			}
-		}
+		}*/
 		
 		//-------------------------------------------------------//
 		

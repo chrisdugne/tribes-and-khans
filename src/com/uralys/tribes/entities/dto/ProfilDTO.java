@@ -25,7 +25,6 @@ public class ProfilDTO {
     @Extension(vendorName="datanucleus", key="gae.pk-name", value="true")
 	private String uralysUID;
 
-	@Persistent	private String email;
 	@Persistent	private List<String> playerUIDs = new ArrayList<String>();
 	
 	//-----------------------------------------------------------------------------------//
@@ -41,12 +40,6 @@ public class ProfilDTO {
 	}
 	public void setUralysUID(String uralysUID) {
 		this.uralysUID = uralysUID;
-	}
-	public String getEmail() {
-		return email;
-	}
-	public void setEmail(String email) {
-		this.email = email;
 	}
 
 	//-----------------------------------------------------------------------------------//

@@ -85,7 +85,6 @@ public class EntitiesConverter {
 		Profil profil = new Profil();
 		
 		profil.setUralysUID(profilDTO.getUralysUID());
-		profil.setEmail(profilDTO.getEmail());
 		
 		List<Player> players = new ArrayList<Player>();
 		

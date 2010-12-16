@@ -17,7 +17,6 @@ public class PlayerDAO  extends MainDAO implements IPlayerDAO {
 		
 		profilDTO.setKey(KeyFactory.keyToString(key));
 		profilDTO.setUralysUID(uralysUID);
-		profilDTO.setEmail(email);
 		
 		persist(profilDTO);
 

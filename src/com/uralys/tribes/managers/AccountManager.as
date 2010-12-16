@@ -8,10 +8,10 @@ package com.uralys.tribes.managers {
 	
 	import mx.collections.ArrayCollection;
 	import mx.controls.Alert;
+	
 	import mx.rpc.events.FaultEvent;
 	import mx.rpc.events.ResultEvent;
 	import mx.rpc.remoting.mxml.RemoteObject;
-	import mx.validators.EmailValidator;
 	
 	[Bindable]
 	public class AccountManager{
@@ -33,7 +33,8 @@ package com.uralys.tribes.managers {
 		public function AccountManager(){
 			accountWrapper = new RemoteObject();
 			accountWrapper.destination = "UralysAccountWrapper";
-			accountWrapper.endpoint = Names.URALYS_LOGGER_SERVER_AMF_ENDPOINT;
+			accountWrapper.endpoint = Session.isLocal ? Names.LOCAL_LOGGER_SERVER_AMF_ENDPOINT 
+													  : Names.URALYS_LOGGER_SERVER_AMF_ENDPOINT;
 
 			playerWrapper = new RemoteObject();
 			playerWrapper.destination = "PlayerWrapper";

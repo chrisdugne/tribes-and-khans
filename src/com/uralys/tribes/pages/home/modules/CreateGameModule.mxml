@@ -16,10 +16,19 @@
 			
 			[Bindable]
 			public var periods:ArrayCollection = new ArrayCollection(
-				[ {periodLabel:"06h", period:1},
-					{periodLabel:"12h", period:2},
-					{periodLabel:"18h", period:3},
-					{periodLabel:"Minuit", period:4} ]);
+				[ {periodLabel:"1 min", period:1},
+					{periodLabel:"2 min", period:2},
+					{periodLabel:"5 min", period:3},
+					{periodLabel:"10 min", period:4},
+					{periodLabel:"30 min", period:5},
+					{periodLabel:"1 h", period:6},
+					{periodLabel:"2 h", period:7},
+					{periodLabel:"6 h", period:8},
+					{periodLabel:"12 h", period:9},
+					{periodLabel:"24 h", period:10},
+					{periodLabel:"36 h", period:11},
+					{periodLabel:"48 h", period:12},
+					{periodLabel:"1 week", period:13} ]);
 			
 			//--------------------------------------------------------------//
 			
@@ -29,16 +38,20 @@
 		]]>
 	</fx:Script>
 	
-	<s:VGroup>
-		<s:Label text="Entrer un nom de jeu :"/>
-		<s:TextInput id="gameNameInput"/>
-		<s:HGroup>
-			<s:Label text="Heure de changement de tour automatique :"/>
-			<s:DropDownList id="periodChoice" 
-							dataProvider="{periods}"
-							labelField="periodLabel"
-							selectedIndex="0"/>
-		</s:HGroup>
-		<s:Button label="Create" click="{createGame()}"/>
-	</s:VGroup>
+	<s:HGroup width="100%" 
+			  horizontalAlign="center">
+		<s:VGroup horizontalAlign="center" 
+				  paddingLeft="40">
+			<s:Label text="Entrer un nom de jeu :"/>
+			<s:TextInput id="gameNameInput"/>
+			<s:HGroup>
+				<s:Label text="Heure de changement de tour automatique :"/>
+				<s:DropDownList id="periodChoice" 
+								dataProvider="{periods}"
+								labelField="periodLabel"
+								selectedIndex="0"/>
+			</s:HGroup>
+			<s:Button label="Create" click="{createGame()}"/>
+		</s:VGroup>
+	</s:HGroup>
 </mx:Module>

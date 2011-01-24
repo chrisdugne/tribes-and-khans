@@ -91,16 +91,16 @@
 			
 			<mx:ModuleLoader id="gameSelectionModule" 
 							 width="100%" height="100%" 
-							 url="com/uralys/tribes/pages/home/modules/GameSelectionModule.swf"
+							 url="webresources/flex/com/uralys/tribes/pages/home/modules/GameSelectionModule.swf"
 							 ready="setGames4GameSelectionModule()"/>
 			
 			<mx:ModuleLoader id="createGameModule" 
 							 width="100%" height="100%" 
-							 url="com/uralys/tribes/pages/home/modules/CreateGameModule.swf"/>
+							 url="webresources/flex/com/uralys/tribes/pages/home/modules/CreateGameModule.swf"/>
 			
 			<mx:ModuleLoader id="joinGameModule" 
 							 width="100%" height="100%" 
-							 url="com/uralys/tribes/pages/home/modules/JoinGameModule.swf"/>
+							 url="webresources/flex/com/uralys/tribes/pages/home/modules/JoinGameModule.swf"/>
 		
 		</mx:ViewStack>
 	</s:HGroup>

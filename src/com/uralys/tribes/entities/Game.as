@@ -11,44 +11,38 @@ package com.uralys.tribes.entities
 		public static var IN_CREATION:int = 1;
 		public static var RUNNING:int = 2;
 		
-		public static var H00:int = 1;
-		public static var H06:int = 2;
-		public static var H12:int = 3;
-		public static var H18:int = 4;
-		
 		//-------------------------------------------------------//
 
 		private var _gameUID:String;
 		private var _name:String;
 		private var _status:int;
 		private var _currentTurn:int;
-		private var _autoEndTurnTime:int;
+		private var _nbMinByTurn:int;
+		private var _beginTurnTimeMillis:Number;
 		private var _players:ArrayCollection;
 		
 		public function Game(){}
 
 		//-------------------------------------------------------//
 
-/*		public function getPeriod():String{
-			switch(autoEndTurnTime){
-				case H00 : return 'Minuit';
-				case H06 : return '06h';
-				case H12 : return 'Midi';
-				case H18 : return '18h';
-				default : return null; //never
-			}
-		}*/
-		
-		//-------------------------------------------------------//
-		
-		public function get autoEndTurnTime():int
+		public function get beginTurnTimeMillis():Number
 		{
-			return _autoEndTurnTime;
+			return _beginTurnTimeMillis;
 		}
 
-		public function set autoEndTurnTime(value:int):void
+		public function set beginTurnTimeMillis(value:Number):void
 		{
-			_autoEndTurnTime = value;
+			_beginTurnTimeMillis = value;
+		}
+		
+		public function get nbMinByTurn():int
+		{
+			return _nbMinByTurn;
+		}
+
+		public function set nbMinByTurn(value:int):void
+		{
+			_nbMinByTurn = value;
 		}
 
 		public function get currentTurn():int

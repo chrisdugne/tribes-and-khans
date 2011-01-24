@@ -130,7 +130,6 @@ package com.uralys.tribes.managers {
 			else{
 				Session.profil = profil;
 				finalizeLogin();
-				Pager.getInstance().goToPage(Home);
 			}
 				
 		}

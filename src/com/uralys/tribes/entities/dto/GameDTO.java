@@ -14,11 +14,6 @@ import com.uralys.tribes.dao.impl.UniversalDAO;
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 public class GameDTO {
-
-	//-----------------------------------------------------------------------------------//
-
-	public final static int IN_CREATION = 1;
-	public final static int RUNNING = 2;
 	
 	//-----------------------------------------------------------------------------------//
 
@@ -33,8 +28,9 @@ public class GameDTO {
 
 	@Persistent	private String name;
 	@Persistent	private int status;
-	@Persistent	private int currentTurn;
-	@Persistent	private int autoEndTurnPeriod;	
+	@Persistent	private int nbMinByTurn;
+	@Persistent	private int currentTurn; 
+	@Persistent	private long beginTurnTimeMillis;	
 	@Persistent	private List<String> playerUIDs = new ArrayList<String>();
 	
 	//-----------------------------------------------------------------------------------//
@@ -69,11 +65,17 @@ public class GameDTO {
 	public void setCurrentTurn(int currentTurn) {
 		this.currentTurn = currentTurn;
 	}
-	public int getAutoEndTurnPeriod() {
-		return autoEndTurnPeriod;
+	public long getBeginTurnTimeMillis() {
+		return beginTurnTimeMillis;
 	}
-	public void setAutoEndTurnPeriod(int autoEndTurnPeriod) {
-		this.autoEndTurnPeriod = autoEndTurnPeriod;
+	public void setBeginTurnTimeMillis(long beginTurnTimeMillis) {
+		this.beginTurnTimeMillis = beginTurnTimeMillis;
+	}
+	public int getNbMinByTurn() {
+		return nbMinByTurn;
+	}
+	public void setNbMinByTurn(int nbMinByTurn) {
+		this.nbMinByTurn = nbMinByTurn;
 	}
 	
 	//-----------------------------------------------------------------------------------//

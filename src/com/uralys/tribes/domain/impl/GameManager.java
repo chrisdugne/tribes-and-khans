@@ -21,8 +21,8 @@ public class GameManager implements IGameManager {
 
 	//==================================================================================================//
 	
-	public void createGame(String uralysUID, String gameName, int autoEndTurnPeriod) {
-		gameDao.createGame(uralysUID, gameName, autoEndTurnPeriod);
+	public void createGame(String uralysUID, String gameName, int nbMinByTurn)  {
+		gameDao.createGame(uralysUID, gameName, nbMinByTurn);
 	}
 
 	public List<Game> getCurrentGames(String uralysUID) {

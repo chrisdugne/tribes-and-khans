@@ -11,7 +11,6 @@ public class Game {
 	public final static int RUNNING = 2;
 	
 	public final static int H00 = 1;
-	public final static int H06 = 2;
 	public final static int H12 = 3;
 	public final static int H18 = 4;
 	
@@ -21,8 +20,9 @@ public class Game {
 
 	private String name;
 	private int status;
-	private int autoEndTurnTime;	
-	private int currentTurn;
+	private int nbMinByTurn;
+	private int currentTurn; 
+	private long beginTurnTimeMillis;	
 	private List<Player> players = new ArrayList<Player>();
 	
 	//-----------------------------------------------------------------------------------//
@@ -51,12 +51,19 @@ public class Game {
 	public void setCurrentTurn(int currentTurn) {
 		this.currentTurn = currentTurn;
 	}
-	public int getAutoEndTurnTime() {
-		return autoEndTurnTime;
+	public long getBeginTurnTimeMillis() {
+		return beginTurnTimeMillis;
 	}
-	public void setAutoEndTurnTime(int autoEndTurnTime) {
-		this.autoEndTurnTime = autoEndTurnTime;
+	public void setBeginTurnTimeMillis(long beginTurnTimeMillis) {
+		this.beginTurnTimeMillis = beginTurnTimeMillis;
 	}
+	public int getNbMinByTurn() {
+		return nbMinByTurn;
+	}
+	public void setNbMinByTurn(int nbMinByTurn) {
+		this.nbMinByTurn = nbMinByTurn;
+	}
+	
 	public List<Player> getPlayers() {
 		return players;
 	}

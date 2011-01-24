@@ -64,7 +64,8 @@ public class EntitiesConverter {
 		game.setName(gameDTO.getName());
 		game.setStatus(gameDTO.getStatus());
 		game.setCurrentTurn(gameDTO.getCurrentTurn());
-		game.setAutoEndTurnTime(gameDTO.getAutoEndTurnPeriod());
+		game.setBeginTurnTimeMillis(gameDTO.getBeginTurnTimeMillis());
+		game.setNbMinByTurn(gameDTO.getNbMinByTurn());
 		
 		List<Player> players = new ArrayList<Player>();
 		

@@ -1,9 +1,7 @@
 package com.uralys.tribes.dao.impl;
 
 import javax.jdo.PersistenceManager;
-
 import com.uralys.tribes.entities.dto.ServerDataDTO;
-
 
 public class InitDAO extends MainDAO{
 
@@ -17,5 +15,6 @@ public class InitDAO extends MainDAO{
 		
 		pm.close();
 	}
+
 
 }

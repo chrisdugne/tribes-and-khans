@@ -1,0 +1,302 @@
+
+
+@font-face {
+   src:url("fonts/Corv2.ttf");
+   embedAsCff : true;
+   fontFamily: corinthians;
+}
+
+@namespace mx "library://ns.adobe.com/flex/mx";
+@namespace controls "qs.controls.*";
+@namespace "library://ns.adobe.com/flex/spark";
+
+Label {
+    fontFamily: corinthians;
+	fontSize:20;
+}
+
+.littleYellowStyle {
+   fontSize: 18;
+   color: #ffff66;
+   /* themeColor: #135b19; */
+   cornerRadius: 5;
+}
+
+.normalYellowStyle {
+   fontSize: 22;
+   color: #ffff66;
+   /* themeColor: #135b19; */
+   cornerRadius: 5;
+}
+
+.bigYellowStyle {
+   fontSize: 28;
+   color: #ffff66;
+   /* themeColor: #135b19; */
+   cornerRadius: 5;
+}
+
+.biggestYellowStyle {
+   fontSize: 54;
+   color: #ffff66;
+   /* themeColor: #135b19; */
+   cornerRadius: 5;
+}
+
+.littleYellow2Style {
+   fontSize: 18;
+   color: #ffff66;
+   themeColor: #FF9933;
+   cornerRadius: 5;
+}
+
+.littleGreenStyle {
+   fontSize: 18;
+   color: #228b20;
+   /* themeColor: #135b19; */
+   cornerRadius: 5;
+}
+
+.normalGreenStyle {
+   fontSize: 22;
+   color: #228b20;
+   /* themeColor: #135b19; */
+   cornerRadius: 5;
+}
+
+.normalGreen2Style {
+   fontSize: 22;
+   color: #228b20;
+   /* themeColor: #135b19; */
+   cornerRadius: 5;
+}
+
+.bigGreenStyle {
+   fontSize: 30;
+   color: #228b20;
+   /* themeColor: #135b19; */
+   cornerRadius: 5;
+}
+
+.bigGreen2Style {
+   fontSize: 30;
+   color: #228b20;
+   /* themeColor: #135b19; */
+   cornerRadius: 5;
+}
+
+.bigGreenStyle {
+   fontSize: 30;
+   color: #228b20;
+   /* themeColor: #135b19; */
+   cornerRadius: 5;
+}
+
+.biggestGreenStyle {
+   fontSize: 54;
+   color: #135b19;
+   /* themeColor: #135b19; */
+   cornerRadius: 5;
+}
+
+/**************************************************************/.littleBlueStyle {
+   fontSize: 18;
+   color: #3399FF;
+   cornerRadius: 5;
+}
+
+.normalBlueStyle {
+   fontSize: 23;
+   color: #3399FF;
+   cornerRadius: 5;
+}
+
+.bigBlueStyle {
+   fontSize: 30;
+   color: #3399FF;
+   cornerRadius: 5;
+}
+
+.biggestBlueStyle {
+   fontSize: 54;
+   color: #3399FF;
+   cornerRadius: 5;
+}
+
+/**************************************************************/
+
+.littlePurpleStyle {
+   fontSize: 18;
+   color: #660099;
+   cornerRadius: 5;
+}
+
+.normalPurpleStyle {
+   fontSize: 23;
+   color: #660099;
+   cornerRadius: 5;
+}
+
+.littlePurple2Style {
+   fontSize: 18;
+   color: #660033;
+   cornerRadius: 5;
+}
+
+.littleWhiteStyle {
+   fontSize: 18;
+   color: #ffffff;
+   cornerRadius: 5;
+}
+
+.normalWhiteStyle {
+   fontSize: 23;
+   color: #ffffff;
+   cornerRadius: 5;
+}
+
+.bigWhiteStyle {
+   fontSize: 30;
+   color: #ffffff;
+   cornerRadius: 5;
+}
+
+.biggestWhiteStyle {
+   fontSize: 54;
+   color: #ffffff;
+   cornerRadius: 5;
+}
+
+.littleRedStyle {
+   fontSize: 18;
+   color: #CC0000;
+   cornerRadius: 5;
+}
+
+.normalRedStyle {
+   fontSize: 22;
+   color: #CC0000;
+   cornerRadius: 5;
+}
+
+.bigRedStyle {
+   fontSize: 30;
+   color: #CC0000;
+   cornerRadius: 5;
+}
+
+.biggestRedStyle {
+   fontSize: 54;
+   color: #CC0000;
+   cornerRadius: 5;
+}
+
+/**************************************************************/
+
+.insetBox {
+	paddingBottom: 0;
+	paddingLeft: 0;
+	paddingRight: 0;
+	paddingTop: 0;
+}
+
+/**************************************************************/
+
+TextInput {
+    fontFamily: corinthians;
+    fontSize: 24;
+    color:#135b19;
+}
+
+.classicButtonStyle {
+    fontFamily: corinthians;
+    fontWeight: normal;
+    fontSize: 27;
+    cornerRadius: 7;
+    letterSpacing: 2;
+    
+    fillAlphas : .7, .7;
+    fillColors : #ffffff, #666666;
+    disabledSkin : Embed(source="css/tab_disabled.png");
+    downSkin : Embed(source="css/tab_down.png");
+    overSkin : Embed(source="css/tab_over.png");
+    upSkin : Embed(source="css/tab_disabled.png");
+    selectedDisabledSkin : Embed(source="css/tab_disabled.png");
+    selectedUpSkin : Embed(source="css/tab_selected.png");
+    selectedOverSkin : Embed(source="css/tab_over.png");
+	
+    color: #ffffff;
+    /* themeColor: #135b19; */
+    textRollOverColor: #1af31a;
+}
+
+.littleButtonStyle {
+    fontFamily: corinthians;
+    fontWeight: normal;
+    fontSize: 17;
+    cornerRadius: 7;
+    letterSpacing: 2;
+    
+    fillAlphas : .7, .7;
+    fillColors : #ffffff, #666666;
+    disabledSkin : Embed(source="css/tab_disabled.png");
+    downSkin : Embed(source="css/tab_down.png");
+    overSkin : Embed(source="css/tab_over.png");
+    upSkin : Embed(source="css/tab_disabled.png");
+    selectedDisabledSkin : Embed(source="css/tab_disabled.png");
+    selectedUpSkin : Embed(source="css/tab_selected.png");
+    selectedOverSkin : Embed(source="css/tab_over.png");
+	
+    color: #ffffff;
+    /* themeColor: #135b19; */
+    textRollOverColor: #1af31a;
+}
+
+.biggestButtonStyle {
+    fontFamily: corinthians;
+    fontWeight: normal;
+    fontSize: 64;
+    cornerRadius: 7;
+    letterSpacing: 2;
+    
+    fillAlphas : 0, 0;
+    fillColors : #ffffff, #666666;
+    disabledSkin : Embed(source="css/tab_disabled.png");
+    downSkin : Embed(source="css/tab_down.png");
+    overSkin : Embed(source="css/tab_over.png");
+    upSkin : Embed(source="css/tab_disabled.png");
+    selectedDisabledSkin : Embed(source="css/tab_disabled.png");
+    selectedUpSkin : Embed(source="css/tab_selected.png");
+    selectedOverSkin : Embed(source="css/tab_over.png");
+	
+    color: #ffffff;
+    /* themeColor: #135b19; */
+    textRollOverColor: #1af31a;
+}
+
+ .myVScrollBar {
+  	cornerRadius: 16;
+    highlightAlphas: 0, 0;
+    fillColors: #000000, #006600, #00cc00, #00cc66;
+    /* themeColor: #135b19; */
+    trackColors: #000000, #ffffff;
+}
+/*
+s|Scroller{
+   verticalScrollBarStyleName: myVScrollBar;
+}
+*/
+mx|ToolTip {
+   backgroundAlpha: 0.46;
+   cornerRadius: 13;
+   backgroundColor: #000000;
+   color: #ffffff;
+   fontSize: 21;
+}
+/*
+controls|DragTile{
+   verticalScrollBarStyleName: myVScrollBar;		     
+   horizontalScrollBarStyleName: myVScrollBar;		     
+}
+*/
+/**************************************************************/

@@ -4,14 +4,15 @@ package com.uralys.tribes.managers {
 	import com.uralys.tribes.commons.Session;
 	import com.uralys.tribes.core.Pager;
 	import com.uralys.tribes.entities.Profil;
+	import com.uralys.tribes.entities.UralysProfile;
 	import com.uralys.tribes.pages.Home;
 	
 	import mx.collections.ArrayCollection;
-	import mx.controls.Alert;
-	
+	import mx.core.FlexGlobals;
 	import mx.rpc.events.FaultEvent;
 	import mx.rpc.events.ResultEvent;
 	import mx.rpc.remoting.mxml.RemoteObject;
+	import mx.utils.ObjectUtil;
 	
 	[Bindable]
 	public class AccountManager{
@@ -43,14 +44,6 @@ package com.uralys.tribes.managers {
 
 		
 		//============================================================================================//
-		// CONTROLS
-		//============================================================================================//
-		//  Controles pour les actions depuis les vues
-		
-		
-		
-		
-		//============================================================================================//
 		// DATA MANAGEMENT
 		//============================================================================================//
 		//  ASKING SERVER
@@ -79,31 +72,37 @@ package com.uralys.tribes.managers {
 		//-------------------------------------------------------------------------//
 		// UralysLogger
 		
-		public function registered(event:ResultEvent):void{
-			if(event.result == "EMAIL_EXISTS"){
-				Alert.show("This email is registered yet");
-				Session.WAIT_FOR_SERVER = false;
+		private function registered(event:ResultEvent):void{
+			
+			Session.uralysProfile = event.result as UralysProfile;
+			trace("registered");
+			trace(ObjectUtil.toString(Session.uralysProfile));
+			
+			if(Session.uralysProfile.uralysUID == "EMAIL_EXISTS"){
+				FlexGlobals.topLevelApplication.message("This email is registered yet", 3);
+				Session.WAIT_FOR_CONNECTION = false;
 			}
 			else{
 				playerWrapper.createProfil.addEventListener("result", profilCreated);
-				playerWrapper.createProfil(event.result, this.email); // event.result == uralysUID
+				playerWrapper.createProfil(Session.uralysProfile.uralysUID, this.email); 
 			}
 		}
 		
 		
-		private var uralysUID:String; // utilise si le compte uralys existe et pas le profil TAK
-		public function resultLogin(event:ResultEvent):void{
+		private function resultLogin(event:ResultEvent):void{
 			
-			var uralysUID:String = event.result as String;
-			this.uralysUID = uralysUID;
+			Session.uralysProfile = event.result as UralysProfile;
+			trace("resultLogin");
+			trace(ObjectUtil.toString(Session.uralysProfile));
+			Session.LANGUAGE = Session.uralysProfile.language;
 			
-			if(uralysUID == "WRONG_PWD"){
-				Alert.show("authentication failed");
-				Session.WAIT_FOR_SERVER = false;
+			if(Session.uralysProfile.uralysUID == "WRONG_PWD"){
+				FlexGlobals.topLevelApplication.message("Authentication Failed", 3);
+				Session.WAIT_FOR_CONNECTION = false;
 			}
 			else{
 				playerWrapper.getProfil.addEventListener("result", receivedProfil);
-				playerWrapper.getProfil(uralysUID);
+				playerWrapper.getProfil(Session.uralysProfile.uralysUID);
 			}
 		}
 
@@ -114,11 +113,9 @@ package com.uralys.tribes.managers {
 			Session.profil = event.result as Profil;
 			
 			if(!profilCreatedAutomatically)
-				Alert.show("Profil Uralys cree.\n " +
-						   "Bienvenue !");
+				FlexGlobals.topLevelApplication.message("Profil Uralys cree. Bienvenue !", 5);
 			
-			Session.WAIT_FOR_SERVER = false;
-			login(this.email, this.password);
+			finalizeLogin();
 		}
 		
 		private var profilCreatedAutomatically:Boolean = false;
@@ -128,15 +125,24 @@ package com.uralys.tribes.managers {
 			if(profil == null){
 				profilCreatedAutomatically = true;
 				playerWrapper.createProfil.addEventListener("result", profilCreated);
-				playerWrapper.createProfil(this.uralysUID, this.email);
+				playerWrapper.createProfil(Session.uralysProfile.uralysUID, this.email);
 			}
 			else{
 				Session.profil = profil;
-				Session.WAIT_FOR_SERVER = false;
+				finalizeLogin();
 				Pager.getInstance().goToPage(Home);
 			}
 				
 		}
 
+		private function finalizeLogin():void{
+			
+			Session.WAIT_FOR_CONNECTION = false;
+			Session.WAIT_FOR_SERVER = false;
+			Session.LOGGED_IN = true;
+			Pager.getInstance().goToPage(Home);
+			
+		}
+		
 	}
 }

@@ -2,8 +2,13 @@
 <s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
 			   xmlns:s="library://ns.adobe.com/flex/spark" 
 			   xmlns:mx="library://ns.adobe.com/flex/mx" 
-			   xmlns:maps="com.uralys.tribes.eventmaps.*" 
+			   xmlns:windows="com.uralys.tribes.windows.*" 
 			   creationComplete="init()">
+	
+	<fx:Declarations>
+		<s:Move id="hidedisplaymessage" target="{displayMessage}" yTo="-50"/>
+		<s:Move id="showdisplaymessage" target="{displayMessage}" yTo="0"/>
+	</fx:Declarations>
 	
 	<fx:Script>
 		<![CDATA[
@@ -12,11 +17,14 @@
 			import com.uralys.tribes.pages.Login;
 			import com.uralys.tribes.pages.Map;
 			
+			import mx.core.FlexGlobals;
 			
 			private function init():void{
 				
-				if(url == "http://localhost:8888/TribesAndKhansClient.swf")
+				if(url == "http://localhost:8888/webresources/flex/TribesAndKhansClient.swf")
 					Session.isLocal = true;
+				
+				Session.APPLICATION_WIDTH = FlexGlobals.topLevelApplication.width;
 				
 				initBlazeDS();
 				Pager.getInstance().window = window;
@@ -30,23 +38,49 @@
 			private function initBlazeDS():void{
 				registerClassAlias("com.uralys.tribes.entities.Game", Game);
 			}
+			
+			//-----------------------------------------------------------------------//
+			
+			public function message(message:String, time:int):void {
+				displayMessage.message = message;
+				displayMessage.time = time;
+				displayMessage.showMessage();
+			}
+			
 		]]>
 	</fx:Script>
 	<s:VGroup width="100%" height="100%" paddingTop="3" paddingBottom="3">
 		
+		<!-- header -->
 		<s:HGroup width="100%">
 			<mx:Spacer width="100%"/>
-			<s:Label text="{Session.profil ? 'Logged as : '+ Session.profil.email : 'Please log in'}"
+			<s:Label text="{Session.profil ? 'Logged as : '+ Session.uralysProfile.email : 'Please log in'}"
 					 color="#222299"/>
 		</s:HGroup>	
 		<mx:HRule width="100%" chromeColor="#222299"/>
 		
+		
+		<!-- content -->
 		<s:Group id="window" width="100%" height="100%"/>
 		
+
+		<!-- footer -->
 		<mx:HRule width="100%" chromeColor="#222299"/>
 		<s:HGroup width="100%" horizontalAlign="center">
 			<s:Label text="Uralys 2010 - Tribes And Khans - version {Session.VERSION}" 
 					 color="#222299"/>
 		</s:HGroup>	
 	</s:VGroup>
+	
+	<!-- ========================================================================== -->
+	<!-- windows -->
+	
+	<windows:SimpleMessageCanvas id="displayMessage" x="{(Session.APPLICATION_WIDTH - 600) / 2}" y="-50"/>
+	
+	<!-- ========================================================================== -->
+	
+	<fx:Style source="resources/style/style.css"/> 
+	
+	<!-- ========================================================================== -->
+	
 </s:Application>

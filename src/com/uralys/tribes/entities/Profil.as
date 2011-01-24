@@ -7,7 +7,6 @@ package com.uralys.tribes.entities
 	public class Profil
 	{
 		private var _uralysUID:String;
-		private var _email:String;
 		private var _players:ArrayCollection;
 		
 		public function Profil(){}
@@ -22,16 +21,6 @@ package com.uralys.tribes.entities
 		public function set players(value:ArrayCollection):void
 		{
 			_players = value;
-		}
-
-		public function get email():String
-		{
-			return _email;
-		}
-
-		public function set email(value:String):void
-		{			
-			_email = value;
 		}
 
 		public function get uralysUID():String

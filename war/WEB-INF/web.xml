@@ -5,6 +5,17 @@ xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
 http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	
+	
+	<servlet>
+		<servlet-name>DataviewerServer</servlet-name>
+		<servlet-class>com.uralys.tribes.servlets.DataviewerServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DataviewerServer</servlet-name>
+		<url-pattern>/dataviewer</url-pattern>
+	</servlet-mapping>
+	
+	
 	<!-- Spring -->
 	<context-param>
 	        <param-name>contextConfigLocation</param-name>

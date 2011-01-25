@@ -67,3 +67,4 @@ package com.uralys.tribes.entities
 			_playerUID = value;
 		}
 }
+}

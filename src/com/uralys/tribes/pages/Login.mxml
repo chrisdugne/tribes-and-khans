@@ -15,10 +15,12 @@
 			import mx.core.FlexGlobals;
 			
 			[Bindable] private var savedEmail:String = '';
+			[Bindable] private var savedPassword:String = '';
 			
 			private function initForm():void{
 				var sharedObject:SharedObject = SharedObject.getLocal(Names.SHARED_OBJECT_NAME);
 				savedEmail = sharedObject.data.lastEmail;
+				savedPassword = sharedObject.data.lastPassword;
 			}
 			
 			private function login():void{
@@ -26,6 +28,7 @@
 				if(formChecked()){
 					var sharedObject:SharedObject = SharedObject.getLocal(Names.SHARED_OBJECT_NAME);
 					sharedObject.data.lastEmail = emailInput.text;
+					sharedObject.data.lastPassword = passwordInput.text;
 					
 					AccountManager.getInstance().login(emailInput.text, SHA1.encrypt(passwordInput.text));
 				}
@@ -38,6 +41,7 @@
 				if(formChecked()){
 					var sharedObject:SharedObject = SharedObject.getLocal(Names.SHARED_OBJECT_NAME);
 					sharedObject.data.lastEmail = emailInput.text;
+					sharedObject.data.lastPassword = passwordInput.text;
 				
 					AccountManager.getInstance().register(emailInput.text, SHA1.encrypt(passwordInput.text));
 				}
@@ -78,7 +82,8 @@
 					<s:Label text="password" />
 				</mx:GridItem>
 				<mx:GridItem>
-					<s:TextInput id="passwordInput" 		
+					<s:TextInput id="passwordInput" 	
+								 text="{savedPassword}"	
 								 displayAsPassword="true"
 								 width="200"/>
 				</mx:GridItem>

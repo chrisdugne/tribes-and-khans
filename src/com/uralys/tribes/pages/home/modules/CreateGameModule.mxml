@@ -33,7 +33,7 @@
 			//--------------------------------------------------------------//
 			
 			private function createGame():void{
-				GameManager.getInstance().createGame(gameNameInput.text, periodChoice.selectedItem.period);
+				GameManager.getInstance().createGame(gameNameInput.text, playerNameInput.text, periodChoice.selectedItem.period);
 			}
 		]]>
 	</fx:Script>
@@ -42,8 +42,13 @@
 			  horizontalAlign="center">
 		<s:VGroup horizontalAlign="center" 
 				  paddingLeft="40">
-			<s:Label text="Entrer un nom de jeu :"/>
-			<s:TextInput id="gameNameInput"/>
+			<mx:Spacer height="20"/>
+			<s:Label text="Choisir votre nom dans cette partie :"/>
+			<s:TextInput id="playerNameInput" text="Dede"/>
+			<mx:Spacer height="20"/>
+			<s:Label text="Entrer un nom pour la partie:"/>
+			<s:TextInput id="gameNameInput" text="Partie de Dede"/>
+			<mx:Spacer height="20"/>
 			<s:HGroup>
 				<s:Label text="Heure de changement de tour automatique :"/>
 				<s:DropDownList id="periodChoice" 
@@ -51,6 +56,7 @@
 								labelField="periodLabel"
 								selectedIndex="0"/>
 			</s:HGroup>
+			<mx:Spacer height="20"/>
 			<s:Button label="Create" click="{createGame()}"/>
 		</s:VGroup>
 	</s:HGroup>

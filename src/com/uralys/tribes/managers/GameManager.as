@@ -4,6 +4,7 @@ package com.uralys.tribes.managers {
 	import com.uralys.tribes.commons.Session;
 	import com.uralys.tribes.core.Pager;
 	import com.uralys.tribes.entities.Game;
+	import com.uralys.tribes.entities.Player;
 	import com.uralys.tribes.pages.GameInCreation;
 	import com.uralys.tribes.pages.Home;
 	
@@ -50,9 +51,9 @@ package com.uralys.tribes.managers {
 		//============================================================================================//
 		//  ASKING SERVER
 		
-		public function createGame(name:String, period:int):void{
+		public function createGame(name:String, playerName:String, period:int):void{
 			gameWrapper.createGame.addEventListener("result", receivedCurrentGames);
-			gameWrapper.createGame(Session.profil.uralysUID, name, period);
+			gameWrapper.createGame(Session.profil.uralysUID, name, playerName, period);
 		}
 
 		public function getCurrentGames():void{
@@ -64,17 +65,39 @@ package com.uralys.tribes.managers {
 			gameWrapper.getGamesToJoin.addEventListener("result", receivedGamesToJoin);
 			gameWrapper.getGamesToJoin();
 		}
-
+		
+		public function join(gameUID:String, playerName:String):void{
+			gameWrapper.joinGame.addEventListener("result", receivedCurrentGames);
+			gameWrapper.joinGame(Session.profil.uralysUID, gameUID, playerName);
+		}
+		
 		//============================================================================================//
 		//  RESULTS FROM SERVER	
 		
 		
 		public function receivedCurrentGames(event:ResultEvent):void{
+			Session.GAMES_PLAYING = event.result as ArrayCollection;
 			Pager.getInstance().goToPage(Home, Home.CURRENT_GAMES, event.result as ArrayCollection);
 		}
 		
 		public function receivedGamesToJoin(event:ResultEvent):void{
-			Pager.getInstance().goToPage(Home, Home.GAMES_TO_JOIN, event.result as ArrayCollection);
+			
+			var games:ArrayCollection = new ArrayCollection();
+			
+			// enleve tous les jeux deja en cours
+			for each(var gameToJoin:Game in event.result){
+	
+				var joinedYet:Boolean = false;
+				for each(var gameJoinedYet:Game in Session.GAMES_PLAYING){
+					if(gameToJoin.gameUID == gameJoinedYet.gameUID)
+						joinedYet = true;
+				}
+				
+				if(!joinedYet)
+					games.addItem(gameToJoin);
+			}
+			
+			Pager.getInstance().goToPage(Home, Home.GAMES_TO_JOIN, games);
 		}
 	}
 }

@@ -14,6 +14,7 @@ package com.uralys.tribes.entities
 		//-------------------------------------------------------//
 
 		private var _gameUID:String;
+		private var _creatorUralysUID:String;
 		private var _name:String;
 		private var _status:int;
 		private var _currentTurn:int;
@@ -95,5 +96,17 @@ package com.uralys.tribes.entities
 			_gameUID = value;
 		}
 
+		public function get creatorUralysUID():String
+		{
+			return _creatorUralysUID;
+		}
+
+		public function set creatorUralysUID(value:String):void
+		{
+			_creatorUralysUID = value;
+		}
+
+		//--------------------------------------------------------------//
+		
 	}
 }

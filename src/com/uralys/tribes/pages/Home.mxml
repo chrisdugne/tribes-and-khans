@@ -3,10 +3,12 @@
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
 		 xmlns:mx="library://ns.adobe.com/flex/mx" 
 		 xmlns:home="com.uralys.tribes.pages.home.modules.*" 
-		 width="100%" height="100%">
+		 width="100%" height="100%"
+		 creationComplete="{creationComplete()}">
 	
 	<fx:Script>
 		<![CDATA[
+			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.core.Pager;
 			import com.uralys.tribes.managers.GameManager;
 			import com.uralys.tribes.pages.home.modules._IGameSelectionModule;
@@ -27,11 +29,21 @@
 			[Bindable] private var games:ArrayCollection;
 			
 			//-----------------------------------------------------------//
+
+			private function creationComplete():void{
+				if(!Session.firstHomeLoadingDone){
+					Session.firstHomeLoadingDone = true;
+					getMyGames();
+				}
+			}
+
+			//-----------------------------------------------------------//
 			
 			// ici args contient 2 valeurs.
 			// args[0] indique si on a la liste des CURRENT_GAMES ou des GAMES_TO_JOIN
 			// args[1] contient la liste des Games
 			public function set params(args:Array):void{
+				
 				viewstack.selectedIndex = args [0];
 				games = args[1];
 				
@@ -47,30 +59,31 @@
 				}
 			}
 			
-			//----------------------------------------------------------//
 
+			//----------------------------------------------------------//
+		
 			protected function getMyGames():void{
 				games = null;
 				GameManager.getInstance().getCurrentGames();
 			}
 			
 			private function getGamesToJoin():void{
-				//GameManager.getInstance().getGamesToJoin();
-				viewstack.selectedIndex = GAMES_TO_JOIN;
+				games = null;
+				GameManager.getInstance().getGamesToJoin();
 			}
 			
 			//----------------------------------------------------------//
 			
 			private function setGames4JoinGameModule():void{
-				if(gameSelectionModule.child && games != null)
-					(gameSelectionModule.child as _IGameSelectionModule).setGames(games);
+				if(joinGameModule.child && games != null)
+					(joinGameModule.child as _IGameSelectionModule).setGames(games, 2);
 			}
 			
 			//----------------------------------------------------------//
 			
 			private function setGames4GameSelectionModule():void{
 				if(gameSelectionModule.child && games != null)
-					(gameSelectionModule.child as _IGameSelectionModule).setGames(games);
+					(gameSelectionModule.child as _IGameSelectionModule).setGames(games, 1);
 			}
 			
 		]]>
@@ -100,7 +113,8 @@
 			
 			<mx:ModuleLoader id="joinGameModule" 
 							 width="100%" height="100%" 
-							 url="webresources/flex/com/uralys/tribes/pages/home/modules/JoinGameModule.swf"/>
+							 url="webresources/flex/com/uralys/tribes/pages/home/modules/GameSelectionModule.swf"
+							 ready="setGames4JoinGameModule()"/>
 		
 		</mx:ViewStack>
 	</s:HGroup>

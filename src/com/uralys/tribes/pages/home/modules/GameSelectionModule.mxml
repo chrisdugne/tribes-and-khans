@@ -10,6 +10,7 @@
 	
 	<fx:Script>
 		<![CDATA[
+			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.entities.Game;
 			
 			import mx.collections.ArrayCollection;
@@ -17,17 +18,17 @@
 			import mx.events.ItemClickEvent;
 			import mx.utils.ObjectUtil;
 			
-			import spark.events.IndexChangeEvent;
-			
 			//----------------------------------------------------------//
 			
 			[Bindable] private var games:ArrayCollection;
 			[Bindable] private var selectedGame:Game;
+			[Bindable] private var typeOfGameSelection:int; // 1:Games en cours  |  2:Games to join
 			
 			//----------------------------------------------------------//
 			
-			public function setGames(games:ArrayCollection):void{
+			public function setGames(games:ArrayCollection, typeOfGameSelection:int):void{
 				this.games = games;
+				this.typeOfGameSelection = typeOfGameSelection;
 			}
 
 			//----------------------------------------------------------//
@@ -42,20 +43,20 @@
 
 			//----------------------------------------------------------//
 		]]>
-	</fx:Script>
+	</fx:Script> 
 	
 	<s:HGroup width="100%" 
 			  horizontalAlign="center">
 		<s:VGroup horizontalAlign="center" 
 				  paddingLeft="40">
-			<s:Label text="{games.length > 0 ? 'Liste des jeux en cours' : '(Pas de jeu en cours)'}" fontWeight="bold"/>
+			<s:Label text="{games.length > 0 ? (typeOfGameSelection == 1 ? 'Liste des parties en cours' : 'Joindre une partie') : (typeOfGameSelection == 1 ? '(Pas de partie en cours)' : '(Pas de partie à joindre)')}" fontWeight="bold"/>
 			<s:Scroller height="450">
 				<s:Group>
 					<s:List id="dataGroup"
 							itemRenderer="com.uralys.renderers.GameSimpleInfoRenderer"
 							dataProvider="{games}"
 							borderVisible="false"
-							width="235">
+							width="275">
 						<s:layout>
 							<s:VerticalLayout gap="1" useVirtualLayout="true" />
 						</s:layout>
@@ -66,7 +67,7 @@
 		<s:VGroup width="230" 
 				  horizontalAlign="center"
 				  visible="{selectedGame != null}">
-			<custom:GameDetailsRenderer data="{selectedGame}"/>
+			<custom:GameDetailsRenderer data="{selectedGame}" id="gameDetails" joinable="{typeOfGameSelection == 2}"/>
 		</s:VGroup>
 	</s:HGroup>
 </mx:Module>

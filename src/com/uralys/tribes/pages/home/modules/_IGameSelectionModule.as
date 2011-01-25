@@ -4,6 +4,6 @@ package com.uralys.tribes.pages.home.modules
 
 	public interface _IGameSelectionModule
 	{
-		function setGames(games:ArrayCollection):void;
+		function setGames(games:ArrayCollection, typeOfGameSelection:int):void;
 	}
 }

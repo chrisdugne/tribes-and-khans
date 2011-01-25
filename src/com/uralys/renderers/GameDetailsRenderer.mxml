@@ -7,7 +7,16 @@
 				height="100%">
 	<fx:Script>
 		<![CDATA[
+			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.entities.Game;
+			import com.uralys.tribes.entities.Player;
+			import com.uralys.tribes.managers.GameManager;
+			
+			import mx.utils.ObjectUtil;
+			
+			[Bindable]
+			public var joinable:Boolean;
+			
 		]]>
 	</fx:Script>
 	
@@ -22,34 +31,43 @@
 		<s:VGroup width="100%" 
 				  paddingTop="10"
 				  paddingRight="10"
-				  paddingLeft="10">
+				  paddingLeft="10"
+				  paddingBottom="10"
+				  horizontalAlign="center">
 			<s:HGroup width="100%"  horizontalAlign="center">
 				<s:Label id="labelGameName" text="{data.name}" fontWeight="bold"/>
 			</s:HGroup>
 			<s:Label text="Joueurs :"/>
 			<s:List id="playerList" 
 					borderVisible="false" 
-					width="160" 
+					width="210" 
 					itemRenderer="com.uralys.renderers.PlayerListRenderer"
 					dataProvider="{data.players}"/>
 			<s:HGroup>
-				<s:Label text="Fin de tours automatique : "/>
-				<s:Label text="{data.getPeriod()}" fontWeight="bold"/>
-			</s:HGroup>			
-			<s:Group width="100%">
-				<s:VGroup horizontalAlign="center" 
-						  paddingTop="5"
-						  paddingBottom="5">
-					<s:Label text="{data.status == Game.IN_CREATION ? 'Vous etes le createur de ce jeu' : 'Tour en cours : ' + data.currentTurn}"/>
-					<mx:Spacer height="10"/>
-					<s:Label text="{data.status == Game.IN_CREATION ? 'Il n\'est pas encore lance' : 'Fin du tour : ' + data.getPeriod()}"/>
-					<s:Button label="{data.status == Game.IN_CREATION ? 'Lancer la partie' : 'Entrer'}"
-							  id="buttonLaunch"
-							  visible="{data.status == Game.IN_CREATION ? data.players.length>1 : false}"
-							  includeInLayout="{buttonLaunch.visible}"/>
-					<s:Label text="(Pas assez de joueurs)" visible="{!buttonLaunch.visible}"/>
-				</s:VGroup>
-			</s:Group>
+				<s:Label text="Minutes max par tour : "/>
+				<s:Label text="{data.nbMinByTurn}" fontWeight="bold"/>
+			</s:HGroup>	
+			
+			<s:Label text="{data.status == Game.IN_CREATION ? '' : 'Tour en cours : ' + data.currentTurn}"/>
+			<mx:Spacer height="10"/>
+			<s:Label text="{data.status == Game.IN_CREATION ? 'Elle n\'est pas encore lancee' : 'Fin du tour : ' + data.getPeriod()}"/>
+			<s:Button label="{data.status == Game.IN_CREATION ? 'Lancer la partie' : 'Entrer'}"
+					  id="buttonLaunch"
+					  visible="{data.status == Game.IN_CREATION &amp;&amp; data.players.length>1 &amp;&amp; data.creatorUralysUID == Session.profil.uralysUID}"
+					  includeInLayout="{buttonLaunch.visible}"/>
+			<s:Label text="(Pas assez de joueurs)" visible="{data.players.length==1}"/>
+			
+			<s:VGroup width="100%" 
+					  horizontalAlign="center"
+					  visible="{joinable}"
+					  click="{GameManager.getInstance().join(data.gameUID, playerNameInput.text)}"
+					  includeInLayout="{joinable}">
+				<mx:Spacer height="20"/>
+				<s:Label text="Choisir votre nom dans cette partie :"/>
+				<s:TextInput id="playerNameInput" text="Dede"/>
+				<s:Button label="Join"
+						  id="buttonJoin"/>
+			</s:VGroup>
 		</s:VGroup>
 	</s:Group>
 	

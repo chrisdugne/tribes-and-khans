@@ -35,8 +35,10 @@
 			// donc on force le mapping a l'avance pour que ca marche des le premier appel
 			import flash.net.registerClassAlias;
 			import com.uralys.tribes.entities.Game;
+			import com.uralys.tribes.entities.Player;
 			private function initBlazeDS():void{
 				registerClassAlias("com.uralys.tribes.entities.Game", Game);
+				registerClassAlias("com.uralys.tribes.entities.Player", Player);
 			}
 			
 			//-----------------------------------------------------------------------//

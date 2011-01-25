@@ -65,6 +65,12 @@ package com.uralys.tribes.managers {
 			accountWrapper.login.addEventListener("result", resultLogin);
 			accountWrapper.login(email, password);
 		}
+		
+		public function refreshProfil():void{
+			playerWrapper.getProfil.addEventListener("result", receivedProfil);
+			playerWrapper.getProfil(Session.uralysProfile.uralysUID);
+		}
+		
 
 		//============================================================================================//
 		//  RESULTS FROM SERVER	
@@ -75,8 +81,6 @@ package com.uralys.tribes.managers {
 		private function registered(event:ResultEvent):void{
 			
 			Session.uralysProfile = event.result as UralysProfile;
-			trace("registered");
-			trace(ObjectUtil.toString(Session.uralysProfile));
 			
 			if(Session.uralysProfile.uralysUID == "EMAIL_EXISTS"){
 				FlexGlobals.topLevelApplication.message("This email is registered yet", 3);
@@ -92,8 +96,6 @@ package com.uralys.tribes.managers {
 		private function resultLogin(event:ResultEvent):void{
 			
 			Session.uralysProfile = event.result as UralysProfile;
-			trace("resultLogin");
-			trace(ObjectUtil.toString(Session.uralysProfile));
 			Session.LANGUAGE = Session.uralysProfile.language;
 			
 			if(Session.uralysProfile.uralysUID == "WRONG_PWD"){
@@ -128,6 +130,7 @@ package com.uralys.tribes.managers {
 				playerWrapper.createProfil(Session.uralysProfile.uralysUID, this.email);
 			}
 			else{
+				
 				Session.profil = profil;
 				finalizeLogin();
 			}

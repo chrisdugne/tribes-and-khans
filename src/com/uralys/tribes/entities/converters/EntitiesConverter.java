@@ -60,6 +60,7 @@ public class EntitiesConverter {
 		
 		Game game = new Game();
 		
+		game.setCreatorUralysUID(gameDTO.getCreatorUralysUID());
 		game.setGameUID(gameDTO.getGameUID());
 		game.setName(gameDTO.getName());
 		game.setStatus(gameDTO.getStatus());

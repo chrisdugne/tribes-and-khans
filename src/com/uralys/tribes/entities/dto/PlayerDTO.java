@@ -72,7 +72,7 @@ public class PlayerDTO {
 	//-----------------------------------------------------------------------------------//
 
 	public List<MoveDTO> getMoves() {
-		return UniversalDAO.getInstance().getListDTO(moveUIDs, MoveDTO.class, "moveUID");		
+		return UniversalDAO.getInstance().getListDTO(moveUIDs, MoveDTO.class);		
 	}
 	
 	//-----------------------------------------------------------------------------------//

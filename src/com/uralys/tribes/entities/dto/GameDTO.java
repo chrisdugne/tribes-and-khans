@@ -26,6 +26,7 @@ public class GameDTO {
     @Extension(vendorName="datanucleus", key="gae.pk-name", value="true")
 	private String gameUID;
 
+	@Persistent	private String creatorUralysUID;
 	@Persistent	private String name;
 	@Persistent	private int status;
 	@Persistent	private int nbMinByTurn;
@@ -46,6 +47,12 @@ public class GameDTO {
 	}
 	public void setGameUID(String gameUID) {
 		this.gameUID = gameUID;
+	}
+	public String getCreatorUralysUID() {
+		return creatorUralysUID;
+	}
+	public void setCreatorUralysUID(String creatorUralysUID) {
+		this.creatorUralysUID = creatorUralysUID;
 	}
 	public String getName() {
 		return name;
@@ -81,7 +88,7 @@ public class GameDTO {
 	//-----------------------------------------------------------------------------------//
 	
 	public List<PlayerDTO> getPlayers() {
-		return UniversalDAO.getInstance().getListDTO(playerUIDs, PlayerDTO.class, "playerUID");
+		return UniversalDAO.getInstance().getListDTO(playerUIDs, PlayerDTO.class);
 	}
 	public List<String> getPlayerUIDs() {
 		return playerUIDs;

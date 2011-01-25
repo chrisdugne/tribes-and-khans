@@ -41,7 +41,7 @@ public class UniversalDAO{
 	}
 
 	@SuppressWarnings("unchecked")
-	public <E> List<E> getListDTO(List<String> uids, Class<E> objectClass, String uidName) {
+	public <E> List<E> getListDTO(List<String> uids, Class<E> objectClass) {
 		
 		if(uids == null || uids.size() == 0)
 			return new ArrayList<E>();

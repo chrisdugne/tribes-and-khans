@@ -17,6 +17,7 @@ public class Game {
 	//-----------------------------------------------------------------------------------//
 
 	private String gameUID;
+	private String creatorUralysUID;
 
 	private String name;
 	private int status;
@@ -32,6 +33,12 @@ public class Game {
 	}
 	public void setGameUID(String gameUID) {
 		this.gameUID = gameUID;
+	}
+	public String getCreatorUralysUID() {
+		return creatorUralysUID;
+	}
+	public void setCreatorUralysUID(String creatorUralysUID) {
+		this.creatorUralysUID = creatorUralysUID;
 	}
 	public String getName() {
 		return name;

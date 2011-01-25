@@ -17,7 +17,7 @@ import com.uralys.utils.Utils;
 
 public class GameDAO  extends MainDAO implements IGameDAO {
 	
-	public void createGame(String uralysUID, String gameName, int nbMinByTurn) {
+	public void createGame(String uralysUID, String gameName, String playerName, int nbMinByTurn) {
 
 		//-----------------------------------------------------------------------//
 
@@ -43,48 +43,48 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		*/
 		
 		switch (nbMinByTurn) {
-		case 1:
-			nbMinByTurn = 1;
-			break;
-		case 2:
-			nbMinByTurn = 2;
-			break;
-		case 3:
-			nbMinByTurn = 5;
-			break;
-		case 4:
-			nbMinByTurn = 10;
-			break;
-		case 5:
-			nbMinByTurn = 30;
-			break;
-		case 6:
-			nbMinByTurn = 60;
-			break;
-		case 7:
-			nbMinByTurn = 120;
-			break;
-		case 8:
-			nbMinByTurn = 360;
-			break;
-		case 9:
-			nbMinByTurn = 720;
-			break;
-		case 10:
-			nbMinByTurn = 24*60;
-			break;
-		case 11:
-			nbMinByTurn = 36*60;
-			break;
-		case 12:
-			nbMinByTurn = 48*60;
-			break;
-		case 13:
-			nbMinByTurn = 7*24*60;
-			break;
-
-		default:
-			break;
+			case 1:
+				nbMinByTurn = 1;
+				break;
+			case 2:
+				nbMinByTurn = 2;
+				break;
+			case 3:
+				nbMinByTurn = 5;
+				break;
+			case 4:
+				nbMinByTurn = 10;
+				break;
+			case 5:
+				nbMinByTurn = 30;
+				break;
+			case 6:
+				nbMinByTurn = 60;
+				break;
+			case 7:
+				nbMinByTurn = 120;
+				break;
+			case 8:
+				nbMinByTurn = 360;
+				break;
+			case 9:
+				nbMinByTurn = 720;
+				break;
+			case 10:
+				nbMinByTurn = 24*60;
+				break;
+			case 11:
+				nbMinByTurn = 36*60;
+				break;
+			case 12:
+				nbMinByTurn = 48*60;
+				break;
+			case 13:
+				nbMinByTurn = 7*24*60;
+				break;
+	
+			default:
+				break;
 		}
 
 		//-----------------------------------------------------------------------//
@@ -95,6 +95,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		
 		gameDTO.setKey(KeyFactory.keyToString(key));
 		gameDTO.setGameUID(gameUID);
+		gameDTO.setCreatorUralysUID(uralysUID);
 		gameDTO.setName(gameName);
 		gameDTO.setStatus(Game.IN_CREATION);
 		gameDTO.setCurrentTurn(0);
@@ -112,7 +113,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		playerDTO.setPlayerUID(playerUID);
 		playerDTO.setGameUID(gameUID);
 		playerDTO.setGameName(gameName);
-		playerDTO.setName("Creator");
+		playerDTO.setName(playerName);
 		
 		persist(playerDTO);
 
@@ -138,7 +139,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			gameUIDs.add(player.getGameUID());
 		
 
-		return UniversalDAO.getInstance().getListDTO(gameUIDs, GameDTO.class, "gameUID");
+		return UniversalDAO.getInstance().getListDTO(gameUIDs, GameDTO.class);
 		
 	}
 
@@ -147,9 +148,10 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	public List<GameDTO> getGamesToJoin(){
 		
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
-		Query query = pm.newQuery("select from " + GameDTO.class + " where status==" + Game.IN_CREATION);
+		Query query = pm.newQuery("select from " + GameDTO.class.getName());
+		query.setFilter("status == :status");
 		
-		return (List<GameDTO>) query.execute();
+		return (List<GameDTO>) query.execute(Game.IN_CREATION);
 	}
 
 }

@@ -21,8 +21,8 @@ public class GameManager implements IGameManager {
 
 	//==================================================================================================//
 	
-	public void createGame(String uralysUID, String gameName, int nbMinByTurn)  {
-		gameDao.createGame(uralysUID, gameName, nbMinByTurn);
+	public void createGame(String uralysUID, String gameName, String playerName, int nbMinByTurn)  {
+		gameDao.createGame(uralysUID, gameName, playerName, nbMinByTurn);
 	}
 
 	public List<Game> getCurrentGames(String uralysUID) {

@@ -45,7 +45,7 @@ public class ProfilDTO {
 	//-----------------------------------------------------------------------------------//
 	
 	public List<PlayerDTO> getPlayers() {
-		return UniversalDAO.getInstance().getListDTO(playerUIDs, PlayerDTO.class, "playerUID");
+		return UniversalDAO.getInstance().getListDTO(playerUIDs, PlayerDTO.class);
 	}
 	public List<String> getPlayerUIDs() {
 		return playerUIDs;

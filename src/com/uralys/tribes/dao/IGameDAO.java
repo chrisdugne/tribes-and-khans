@@ -6,7 +6,7 @@ import com.uralys.tribes.entities.dto.GameDTO;
 
 public interface IGameDAO {
 
-	public void createGame(String uralysUID, String gameName, int nbMinByTurn) ;
+	public void createGame(String uralysUID, String gameName, String playerName, int nbMinByTurn) ;
 	public List<GameDTO> getCurrentGames(String uralysUID);
 	public List<GameDTO> getGamesToJoin();
 }

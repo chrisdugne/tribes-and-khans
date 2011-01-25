@@ -6,7 +6,7 @@ import com.uralys.tribes.entities.Game;
 
 public interface IGameManager {
 
-	public void createGame(String uralysUID, String gameName, int nbMinByTurn);
+	public void createGame(String uralysUID, String gameName, String playerName, int nbMinByTurn);
 	public List<Game> getCurrentGames(String uralysUID);
 	public List<Game> getGamesToJoin(); 
 }

@@ -3,7 +3,7 @@ package com.uralys.tribes.commons
 	import mx.collections.ArrayCollection;
 
 
-public class Session{
+public class Session{ 
 
 	import com.uralys.tribes.entities.UralysProfile;
 	import com.uralys.tribes.entities.Profil;
@@ -11,7 +11,7 @@ public class Session{
 
 	//=====================================================//
 
-	[Bindable] public static var VERSION:String = "1.0.4";
+	[Bindable] public static var VERSION:String = "1.0.5";
 	[Bindable] public static var LOGGED_IN:Boolean = false; 
 	[Bindable] public static var CONNECTED_TO_FACEBOOK:Boolean = false;
 

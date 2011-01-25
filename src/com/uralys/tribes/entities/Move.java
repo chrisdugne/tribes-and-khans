@@ -8,6 +8,9 @@ public class Move {
 	private int xTo;
 	private int yFrom;
 	private int yTo;
+
+	private int type; // 1:Army | 2:Merchants
+	private int movingUID; // the uid of the entity moving (1 or 2)
 	
 	//-----------------------------------------------------------------------------------//
 
@@ -16,6 +19,18 @@ public class Move {
 	}
 	public void setMoveUID(String moveUID) {
 		this.moveUID = moveUID;
+	}
+	public int getType() {
+		return type;
+	}
+	public void setType(int type) {
+		this.type = type;
+	}
+	public int getMovingUID() {
+		return movingUID;
+	}
+	public void setMovingUID(int movingUID) {
+		this.movingUID = movingUID;
 	}
 	public int getxFrom() {
 		return xFrom;

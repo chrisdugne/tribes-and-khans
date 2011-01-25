@@ -3,14 +3,24 @@ package com.uralys.tribes.entities.converters;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.uralys.tribes.entities.Army;
+import com.uralys.tribes.entities.City;
+import com.uralys.tribes.entities.Equipment;
 import com.uralys.tribes.entities.Game;
+import com.uralys.tribes.entities.Merchant;
 import com.uralys.tribes.entities.Move;
 import com.uralys.tribes.entities.Player;
 import com.uralys.tribes.entities.Profil;
+import com.uralys.tribes.entities.Weapon;
+import com.uralys.tribes.entities.dto.ArmyDTO;
+import com.uralys.tribes.entities.dto.CityDTO;
+import com.uralys.tribes.entities.dto.EquipmentDTO;
 import com.uralys.tribes.entities.dto.GameDTO;
+import com.uralys.tribes.entities.dto.MerchantDTO;
 import com.uralys.tribes.entities.dto.MoveDTO;
 import com.uralys.tribes.entities.dto.PlayerDTO;
 import com.uralys.tribes.entities.dto.ProfilDTO;
+import com.uralys.tribes.entities.dto.WeaponDTO;
 
 public class EntitiesConverter {
 	
@@ -26,6 +36,8 @@ public class EntitiesConverter {
 		move.setxTo(moveDTO.getxTo());
 		move.setyFrom(moveDTO.getyFrom());
 		move.setyTo(moveDTO.getyTo());
+		move.setMovingUID(moveDTO.getMovingUID());
+		move.setType(moveDTO.getType());
 		
 		return move;
 	}
@@ -97,5 +109,112 @@ public class EntitiesConverter {
 		profil.setPlayers(players);
 		
 		return profil;
+	}
+	
+
+	public static City convertCityDTO(CityDTO cityDTO) {
+		
+		if(cityDTO == null)
+			return null;
+		
+		City city = new City();
+
+		city.setCityUID(cityDTO.getCityUID());
+		city.setGold(cityDTO.getGold());
+		city.setIron(cityDTO.getIron());
+		city.setName(cityDTO.getName());
+		city.setPopulation(cityDTO.getPopulation());
+		city.setRadius(cityDTO.getRadius());
+		city.setWheat(cityDTO.getWheat());
+		city.setWood(cityDTO.getWood());
+		city.setX(cityDTO.getX());
+		city.setY(cityDTO.getY());
+		
+		List<Equipment> stock = new ArrayList<Equipment>();
+		
+		for(EquipmentDTO equipmentDTO : cityDTO.getEquipmentStock()){
+			stock.add(convertEquipmentDTO(equipmentDTO));
+		}
+		
+		city.setEquipmentStock(stock);
+		
+		return city;
+	}
+	
+	public static Army convertArmyDTO(ArmyDTO armyDTO) {
+		
+		if(armyDTO == null)
+			return null;
+		
+		Army army = new Army();
+		
+		army.setArmyUID(armyDTO.getArmyUID());
+		army.setRadius(armyDTO.getRadius());
+		army.setSize(armyDTO.getSize());
+		army.setSpeed(armyDTO.getSpeed());
+		army.setValue(armyDTO.getValue());
+		army.setX(armyDTO.getX());
+		army.setY(armyDTO.getY());
+		
+		List<Equipment> equipments = new ArrayList<Equipment>();
+		
+		for(EquipmentDTO equipmentDTO : armyDTO.getEquipments()){
+			equipments.add(convertEquipmentDTO(equipmentDTO));
+		}
+		
+		army.setEquipments(equipments);
+		
+		return army;
+	}
+	
+	public static Merchant convertMerchantDTO(MerchantDTO merchantDTO) {
+		
+		if(merchantDTO == null)
+			return null;
+		
+		Merchant merchant = new Merchant();
+		
+		merchant.setGold(merchantDTO.getGold());
+		merchant.setIron(merchantDTO.getIron());
+		merchant.setMerchantUID(merchantDTO.getMerchantUID());
+		merchant.setRadius(merchantDTO.getRadius());
+		merchant.setSize(merchantDTO.getSize());
+		merchant.setSpeed(merchantDTO.getSpeed());
+		merchant.setWheat(merchantDTO.getWheat());
+		merchant.setWood(merchantDTO.getWood());
+		merchant.setX(merchantDTO.getX());
+		merchant.setY(merchantDTO.getY());
+
+		return merchant;
+	}
+	
+	public static Weapon convertArmyDTO(WeaponDTO weaponDTO) {
+		
+		if(weaponDTO == null)
+			return null;
+		
+		Weapon weapon = new Weapon();
+		
+		weapon.setGoldPrice(weaponDTO.getGoldPrice());
+		weapon.setIron(weaponDTO.getIron());
+		weapon.setValue(weaponDTO.getValue());
+		weapon.setWeaponUID(weaponDTO.getWeaponUID());
+		weapon.setWood(weaponDTO.getWood());
+
+		return weapon;
+	}
+	
+	public static Equipment convertEquipmentDTO(EquipmentDTO equipmentDTO) {
+		
+		if(equipmentDTO == null)
+			return null;
+		
+		Equipment equipment = new Equipment();
+
+		equipment.setEquimentUID(equipmentDTO.getEquimentUID());
+		equipment.setSize(equipmentDTO.getSize());
+		equipment.setWeaponUID(equipmentDTO.getWeaponUID());
+		
+		return equipment;
 	}
 }

@@ -23,8 +23,9 @@ public class GameService implements IGameService {
 		return getCurrentGames(uralysUID);
 	}
 
-	public Game joinGame(String uralysUID, String gameUID) {
-		return null;
+	public List<Game> joinGame(String uralysUID, String gameUID, String playerName) {
+		gameManager.joinGame(uralysUID, gameUID, playerName);
+		return getCurrentGames(uralysUID);
 	}
 
 	public List<Game> getGamesToJoin() {

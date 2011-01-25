@@ -126,7 +126,45 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 
 		//-----------------------------------------------------------------------//
 	}
+	
+	public void joinGame(String uralysUID, String gameUID, String playerName) {
+		
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 
+		//-----------------------------------------------------------------------//
+
+		String playerUID = Utils.generateUID();
+		
+		//-----------------------------------------------------------------------//
+		
+		GameDTO game = pm.getObjectById(GameDTO.class, gameUID);
+		game.getPlayerUIDs().add(playerUID);
+		
+		//-----------------------------------------------------------------------//
+		
+		ProfilDTO profil = pm.getObjectById(ProfilDTO.class, uralysUID);
+		profil.getPlayerUIDs().add(playerUID);
+		
+		//-----------------------------------------------------------------------//
+
+		pm.close();
+
+		//-----------------------------------------------------------------------//
+		
+		PlayerDTO playerDTO = new PlayerDTO();
+		Key key = KeyFactory.createKey(PlayerDTO.class.getSimpleName(), playerUID);
+		
+		playerDTO.setKey(KeyFactory.keyToString(key));
+		playerDTO.setPlayerUID(playerUID);
+		playerDTO.setGameUID(gameUID);
+		playerDTO.setGameName(game.getName());
+		playerDTO.setName(playerName);
+		
+		persist(playerDTO);
+		
+		//-----------------------------------------------------------------------//
+
+	}
 	
 	public List<GameDTO> getCurrentGames(String uralysUID) {
 

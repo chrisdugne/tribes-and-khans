@@ -25,6 +25,10 @@ public class GameManager implements IGameManager {
 		gameDao.createGame(uralysUID, gameName, playerName, nbMinByTurn);
 	}
 
+	public void joinGame(String uralysUID, String gameUID, String playerName)  {
+		gameDao.joinGame(uralysUID, gameUID, playerName);
+	}
+
 	public List<Game> getCurrentGames(String uralysUID) {
 		
 		List<Game> games = new ArrayList<Game>();

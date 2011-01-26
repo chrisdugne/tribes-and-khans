@@ -7,6 +7,7 @@ package com.uralys.tribes.managers {
 	import com.uralys.tribes.entities.Player;
 	import com.uralys.tribes.pages.GameInCreation;
 	import com.uralys.tribes.pages.Home;
+	import com.uralys.tribes.pages.Map;
 	
 	import mx.collections.ArrayCollection;
 	import mx.controls.Alert;
@@ -71,16 +72,21 @@ package com.uralys.tribes.managers {
 			gameWrapper.joinGame(Session.profil.uralysUID, gameUID, playerName);
 		}
 		
+		public function launchGame(gameUID:String):void{
+			gameWrapper.launchGame.addEventListener("result", gameLaunched);
+			gameWrapper.launchGame(gameUID);
+		}
+		
 		//============================================================================================//
 		//  RESULTS FROM SERVER	
 		
 		
-		public function receivedCurrentGames(event:ResultEvent):void{
+		private function receivedCurrentGames(event:ResultEvent):void{
 			Session.GAMES_PLAYING = event.result as ArrayCollection;
 			Pager.getInstance().goToPage(Home, Home.CURRENT_GAMES, event.result as ArrayCollection);
 		}
 		
-		public function receivedGamesToJoin(event:ResultEvent):void{
+		private function receivedGamesToJoin(event:ResultEvent):void{
 			
 			var games:ArrayCollection = new ArrayCollection();
 			
@@ -99,5 +105,10 @@ package com.uralys.tribes.managers {
 			
 			Pager.getInstance().goToPage(Home, Home.GAMES_TO_JOIN, games);
 		}
+		
+		private function gameLaunched(event:ResultEvent):void{
+			Pager.getInstance().goToPage(Map);
+		}
+			
 	}
 }

@@ -17,6 +17,11 @@
 			[Bindable]
 			public var joinable:Boolean;
 			
+			private function launchGame():void{
+				GameManager.getInstance().launchGame(data.gameUID);
+				data.status = Game.RUNNING;
+			}
+		
 		]]>
 	</fx:Script>
 	
@@ -54,7 +59,8 @@
 			<s:Button label="{data.status == Game.IN_CREATION ? 'Lancer la partie' : 'Entrer'}"
 					  id="buttonLaunch"
 					  visible="{data.status == Game.IN_CREATION &amp;&amp; data.players.length>1 &amp;&amp; data.creatorUralysUID == Session.profil.uralysUID}"
-					  includeInLayout="{buttonLaunch.visible}"/>
+					  includeInLayout="{buttonLaunch.visible}"
+					  click="launchGame()"/>
 			<s:Label text="(Pas assez de joueurs)" visible="{data.players.length==1}"/>
 			
 			<s:VGroup width="100%" 
@@ -64,7 +70,7 @@
 					  includeInLayout="{joinable}">
 				<mx:Spacer height="20"/>
 				<s:Label text="Choisir votre nom dans cette partie :"/>
-				<s:TextInput id="playerNameInput" text="Dede"/>
+				<s:TextInput id="playerNameInput" text="Dede le Fourbe"/>
 				<s:Button label="Join"
 						  id="buttonJoin"/>
 			</s:VGroup>

@@ -10,6 +10,9 @@ package com.uralys.tribes.entities
 		private var _name:String;
 		private var _gameUID:String;
 		private var _gameName:String;
+		private var _cities:ArrayCollection;
+		private var _armies:ArrayCollection;
+		private var _merchants:ArrayCollection;
 		private var _moves:ArrayCollection;
 		
 		public function Player(){}
@@ -65,6 +68,35 @@ package com.uralys.tribes.entities
 		public function set playerUID(value:String):void
 		{
 			_playerUID = value;
+		}
+		
+		public function get cities():ArrayCollection
+		{
+			return _cities;
+		}
+		
+		public function set cities(value:ArrayCollection):void
+		{
+			_cities = value;
+		}
+		public function get armies():ArrayCollection
+		{
+			return _armies;
+		}
+		
+		public function set armies(value:ArrayCollection):void
+		{
+			_armies = value;
+		}
+		
+		public function get merchants():ArrayCollection
+		{
+			return _merchants;
+		}
+		
+		public function set merchants(value:ArrayCollection):void
+		{
+			_merchants = value;
 		}
 }
 }

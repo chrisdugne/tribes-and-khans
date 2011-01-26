@@ -1,6 +1,7 @@
 package com.uralys.tribes.dao.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.jdo.PersistenceManager;
@@ -10,6 +11,7 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.uralys.tribes.dao.IGameDAO;
 import com.uralys.tribes.entities.Game;
+import com.uralys.tribes.entities.dto.CityDTO;
 import com.uralys.tribes.entities.dto.GameDTO;
 import com.uralys.tribes.entities.dto.PlayerDTO;
 import com.uralys.tribes.entities.dto.ProfilDTO;
@@ -192,4 +194,49 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		return (List<GameDTO>) query.execute(Game.IN_CREATION);
 	}
 
+
+	//==================================================================================================//	
+	
+	public boolean launchGame(String gameUID) {
+
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		GameDTO game = pm.getObjectById(GameDTO.class, gameUID);
+		
+		game.setBeginTurnTimeMillis(new Date().getTime());
+		game.setStatus(Game.RUNNING);
+		game.setCurrentTurn(1);
+		
+		
+		//-----------------------------------------------------------------------------------//
+		for (String playerUID : game.getPlayerUIDs()){
+			PlayerDTO player = pm.getObjectById(PlayerDTO.class, playerUID);
+			
+			CityDTO city = new CityDTO();
+			String cityUID = Utils.generateUID();
+			Key key = KeyFactory.createKey(CityDTO.class.getSimpleName(), cityUID);
+			
+			city.setKey(KeyFactory.keyToString(key));
+			city.setCityUID(cityUID);
+			city.setName("Ville de " + player.getName());
+			city.setPopulation(1000);
+			city.setWheat(400);
+			city.setWood(200);
+			city.setIron(200);
+			city.setGold(100);
+
+			city.setX(Utils.random(900));
+			city.setY(Utils.random(900));
+			
+			city.setRadius(20);
+			pm.makePersistent(city);
+			
+			player.getCityUIDs().add(cityUID);
+		}
+		
+		//-----------------------------------------------------------------------------------//
+		
+		pm.close();
+		
+		return true;
+	}
 }

@@ -11,6 +11,9 @@ public class Player {
 	private String gameName;
 	private String gameUID;
 	
+	private List<City> cities = new ArrayList<City>();
+	private List<Army> armies = new ArrayList<Army>();
+	private List<Merchant> merchants = new ArrayList<Merchant>();
 	private List<Move> moves = new ArrayList<Move>();
 	
 	//-----------------------------------------------------------------------------------//
@@ -44,6 +47,24 @@ public class Player {
 	}
 	public void setMoves(List<Move> moves) {
 		this.moves = moves;
+	}
+	public List<City> getCities() {
+		return cities;
+	}
+	public void setCities(List<City> cities) {
+		this.cities = cities;
+	}
+	public List<Army> getArmies() {
+		return armies;
+	}
+	public void setArmies(List<Army> armies) {
+		this.armies = armies;
+	}
+	public List<Merchant> getMerchants() {
+		return merchants;
+	}
+	public void setMerchants(List<Merchant> merchants) {
+		this.merchants = merchants;
 	}
 	
 	//-----------------------------------------------------------------------------------//

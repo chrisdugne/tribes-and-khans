@@ -24,6 +24,8 @@ import com.uralys.tribes.entities.dto.WeaponDTO;
 
 public class EntitiesConverter {
 	
+	//-----------------------------------------------------------------------------------//
+	
 	public static Move convertMoveDTO(MoveDTO moveDTO) {
 		
 		if(moveDTO == null)
@@ -42,6 +44,8 @@ public class EntitiesConverter {
 		return move;
 	}
 	
+	//-----------------------------------------------------------------------------------//
+	
 	public static Player convertPlayerDTO(PlayerDTO playerDTO) {
 		
 		if(playerDTO == null)
@@ -54,6 +58,16 @@ public class EntitiesConverter {
 		player.setGameName(playerDTO.getGameName());
 		player.setGameUID(playerDTO.getGameUID());
 		
+		//-----------------------------------------------------------------------------------//
+		List<City> cities = new ArrayList<City>();
+		
+		for(CityDTO cityDTO : playerDTO.getCities()){
+			cities.add(convertCityDTO(cityDTO));
+		}
+		
+		player.setCities(cities);
+		
+		//-----------------------------------------------------------------------------------//
 		List<Move> moves = new ArrayList<Move>();
 		
 		for(MoveDTO moveDTO : playerDTO.getMoves()){
@@ -62,9 +76,31 @@ public class EntitiesConverter {
 		
 		player.setMoves(moves);
 		
+		//-----------------------------------------------------------------------------------//		
+		List<Army> armies = new ArrayList<Army>();
+		
+		for(ArmyDTO armyDTO : playerDTO.getArmies()){
+			armies.add(convertArmyDTO(armyDTO));
+		}
+		
+		player.setArmies(armies);
+		
+		//-----------------------------------------------------------------------------------//		
+		List<Merchant> merchants = new ArrayList<Merchant>();
+		
+		for(MerchantDTO merchantDTO : playerDTO.getMerchants()){
+			merchants.add(convertMerchantDTO(merchantDTO));
+		}
+		
+		player.setMerchants(merchants);
+		
+		//-----------------------------------------------------------------------------------//
 		return player;
 	}
 	
+	
+	//-----------------------------------------------------------------------------------//
+	
 	public static Game convertGameDTO(GameDTO gameDTO) {
 
 		if(gameDTO == null)
@@ -91,6 +127,9 @@ public class EntitiesConverter {
 		return game;
 	}
 
+	
+	//-----------------------------------------------------------------------------------//
+	
 	public static Profil convertProfilDTO(ProfilDTO profilDTO) {
 		
 		if(profilDTO == null)
@@ -112,6 +151,8 @@ public class EntitiesConverter {
 	}
 	
 
+	//-----------------------------------------------------------------------------------//
+	
 	public static City convertCityDTO(CityDTO cityDTO) {
 		
 		if(cityDTO == null)
@@ -141,6 +182,9 @@ public class EntitiesConverter {
 		return city;
 	}
 	
+	
+	//-----------------------------------------------------------------------------------//
+	
 	public static Army convertArmyDTO(ArmyDTO armyDTO) {
 		
 		if(armyDTO == null)
@@ -167,6 +211,9 @@ public class EntitiesConverter {
 		return army;
 	}
 	
+	
+	//-----------------------------------------------------------------------------------//
+	
 	public static Merchant convertMerchantDTO(MerchantDTO merchantDTO) {
 		
 		if(merchantDTO == null)
@@ -188,6 +235,9 @@ public class EntitiesConverter {
 		return merchant;
 	}
 	
+	
+	//-----------------------------------------------------------------------------------//
+	
 	public static Weapon convertArmyDTO(WeaponDTO weaponDTO) {
 		
 		if(weaponDTO == null)
@@ -203,6 +253,8 @@ public class EntitiesConverter {
 
 		return weapon;
 	}
+	
+	//-----------------------------------------------------------------------------------//
 	
 	public static Equipment convertEquipmentDTO(EquipmentDTO equipmentDTO) {
 		

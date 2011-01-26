@@ -47,5 +47,8 @@ public class GameService implements IGameService {
 			return null;
 		}
 	}
-
+	
+	public boolean launchGame(String gameUID) {
+		return gameManager.launchGame(gameUID);
+	}
 }

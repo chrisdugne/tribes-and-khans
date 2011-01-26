@@ -12,11 +12,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.uralys.tribes.dao.impl.UniversalDAO;
+import com.uralys.tribes.entities.dto.ArmyDTO;
+import com.uralys.tribes.entities.dto.CityDTO;
+import com.uralys.tribes.entities.dto.EquipmentDTO;
 import com.uralys.tribes.entities.dto.GameDTO;
+import com.uralys.tribes.entities.dto.MerchantDTO;
 import com.uralys.tribes.entities.dto.MoveDTO;
 import com.uralys.tribes.entities.dto.PlayerDTO;
 import com.uralys.tribes.entities.dto.ProfilDTO;
 import com.uralys.tribes.entities.dto.ServerDataDTO;
+import com.uralys.tribes.entities.dto.WeaponDTO;
 import com.uralys.utils.Utils;
 
 
@@ -35,7 +40,7 @@ public class DataviewerServlet extends HttpServlet {
 		PrintWriter out = res.getWriter();
 
 		if(!req.getRemoteHost().equals("127.0.0.1") && !req.getRequestURL().toString().startsWith("https")){
-			out.println("<meta http-equiv=\"refresh\" content=\"0.1; URL=https://skooairs.appspot.com/dataviewer\"/>");	
+			out.println("<meta http-equiv=\"refresh\" content=\"0.1; URL=https://tribes-and-khans.appspot.com/dataviewer\"/>");	
 			out.close();
 			return;
 		}
@@ -43,7 +48,7 @@ public class DataviewerServlet extends HttpServlet {
 
 		if(!req.getRemoteHost().equals("127.0.0.1") && (req.getParameter("pwd")==null || !Utils.SHA1(req.getParameter("pwd")).equals(PASSWORD))){
 			out.println("<html><body>");
-			out.println("<center><span style=\"color:#009933\"><h2>Skooairs Dataviewer - "+VERSION+" (Off)</h2></center>");
+			out.println("<center><span style=\"color:#009933\"><h2>Tribes And Khans Dataviewer - "+VERSION+" (Off)</h2></center>");
 			out.println("</body></html>");
 			out.close();
 			return;
@@ -128,6 +133,11 @@ public class DataviewerServlet extends HttpServlet {
 				" <OPTION VALUE=\"profil\">ProfilDTO" +
 				" <OPTION VALUE=\"player\">PlayerDTO" +
 				" <OPTION VALUE=\"game\">GameDTO" +
+				" <OPTION VALUE=\"city\">CityDTO" +
+				" <OPTION VALUE=\"army\">ArmyDTO" +
+				" <OPTION VALUE=\"merchant\">MerchantDTO" +
+				" <OPTION VALUE=\"weapon\">WeaponDTO" +
+				" <OPTION VALUE=\"equipment\">EquipmentDTO" +
 				" <OPTION VALUE=\"move\">MoveDTO" +
 				" <OPTION VALUE=\"serverdata\">ServerDataDTO" +
 				
@@ -370,6 +380,16 @@ public class DataviewerServlet extends HttpServlet {
 			return ProfilDTO.class;
 		else if(dto.equals("game"))
 			return GameDTO.class;
+		else if(dto.equals("city"))
+			return CityDTO.class;
+		else if(dto.equals("army"))
+			return ArmyDTO.class;
+		else if(dto.equals("merchant"))
+			return MerchantDTO.class;
+		else if(dto.equals("equipment"))
+			return EquipmentDTO.class;
+		else if(dto.equals("weapon"))
+			return WeaponDTO.class;
 		else if(dto.equals("move"))
 			return MoveDTO.class;
 		else if(dto.equals("serverdata"))

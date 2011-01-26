@@ -10,5 +10,7 @@ public interface IGameService {
 
 	public List<Game> getGamesToJoin();
 	public List<Game> getCurrentGames(String uralysUID);
+
+	public boolean launchGame(String gameUID);
 	
 }

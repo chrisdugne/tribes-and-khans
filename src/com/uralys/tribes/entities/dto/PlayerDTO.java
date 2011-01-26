@@ -28,6 +28,9 @@ public class PlayerDTO {
 	@Persistent private String name;
 	@Persistent private String gameUID;
 	@Persistent private String gameName;
+	@Persistent private List<String> cityUIDs = new ArrayList<String>();
+	@Persistent private List<String> armyUIDs = new ArrayList<String>();
+	@Persistent private List<String> merchantUIDs = new ArrayList<String>();
 	@Persistent private List<String> moveUIDs = new ArrayList<String>();
 	
 	//-----------------------------------------------------------------------------------//
@@ -68,13 +71,44 @@ public class PlayerDTO {
 	public void setMoveUIDs(List<String> moves) {
 		this.moveUIDs = moves;
 	}
-
+	public List<String> getCityUIDs() {
+		return cityUIDs;
+	}
+	public void setCityUIDs(List<String> cityUIDs) {
+		this.cityUIDs = cityUIDs;
+	}
+	public List<String> getArmyUIDs() {
+		return armyUIDs;
+	}
+	public void setArmyUIDs(List<String> armyUIDs) {
+		this.armyUIDs = armyUIDs;
+	}
+	public List<String> getMerchantUIDs() {
+		return merchantUIDs;
+	}
+	public void setMerchantUIDs(List<String> merchantUIDs) {
+		this.merchantUIDs = merchantUIDs;
+	}
+	
 	//-----------------------------------------------------------------------------------//
 
 	public List<MoveDTO> getMoves() {
 		return UniversalDAO.getInstance().getListDTO(moveUIDs, MoveDTO.class);		
 	}
 	
+	public List<CityDTO> getCities() {
+		return UniversalDAO.getInstance().getListDTO(cityUIDs, CityDTO.class);		
+	}
+	
+	public List<ArmyDTO> getArmies() {
+		return UniversalDAO.getInstance().getListDTO(armyUIDs, ArmyDTO.class);		
+	}
+	
+	public List<MerchantDTO> getMerchants() {
+		return UniversalDAO.getInstance().getListDTO(merchantUIDs, MerchantDTO.class);		
+	}
+	
 	//-----------------------------------------------------------------------------------//
 	
 }
+

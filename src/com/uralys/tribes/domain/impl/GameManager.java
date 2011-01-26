@@ -29,6 +29,8 @@ public class GameManager implements IGameManager {
 		gameDao.joinGame(uralysUID, gameUID, playerName);
 	}
 
+	//==================================================================================================//
+
 	public List<Game> getCurrentGames(String uralysUID) {
 		
 		List<Game> games = new ArrayList<Game>();
@@ -51,4 +53,9 @@ public class GameManager implements IGameManager {
 		return games;
 	}
 
+	//==================================================================================================//
+
+	public boolean launchGame(String gameUID) {
+		return gameDao.launchGame(gameUID);
+	}
 }

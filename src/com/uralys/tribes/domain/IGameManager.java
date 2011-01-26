@@ -10,4 +10,6 @@ public interface IGameManager {
 	public void joinGame(String uralysUID, String gameUID, String playerName); 
 	public List<Game> getCurrentGames(String uralysUID);
 	public List<Game> getGamesToJoin();
+	
+	public boolean launchGame(String gameUID);
 }

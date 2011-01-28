@@ -28,6 +28,9 @@ public class PlayerDTO {
 	@Persistent private String name;
 	@Persistent private String gameUID;
 	@Persistent private String gameName;
+
+	@Persistent private Integer lastTurnPlayed;
+	
 	@Persistent private List<String> cityUIDs = new ArrayList<String>();
 	@Persistent private List<String> armyUIDs = new ArrayList<String>();
 	@Persistent private List<String> merchantUIDs = new ArrayList<String>();
@@ -88,6 +91,12 @@ public class PlayerDTO {
 	}
 	public void setMerchantUIDs(List<String> merchantUIDs) {
 		this.merchantUIDs = merchantUIDs;
+	}
+	public Integer getLastTurnPlayed() {
+		return lastTurnPlayed;
+	}
+	public void setLastTurnPlayed(Integer lastTurnPlayed) {
+		this.lastTurnPlayed = lastTurnPlayed;
 	}
 	
 	//-----------------------------------------------------------------------------------//

@@ -57,6 +57,7 @@ public class EntitiesConverter {
 		player.setName(playerDTO.getName());
 		player.setGameName(playerDTO.getGameName());
 		player.setGameUID(playerDTO.getGameUID());
+		player.setLastTurnPlayed(playerDTO.getLastTurnPlayed());
 		
 		//-----------------------------------------------------------------------------------//
 		List<City> cities = new ArrayList<City>();

@@ -29,7 +29,7 @@ public class DataviewerServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 	private String PASSWORD = "3bc7c708f8d865b506ffd1acde3b47f61af9445d";
-	private String VERSION = "1.0.8";
+	private String VERSION = "1.0.9";
 
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -118,7 +118,7 @@ public class DataviewerServlet extends HttpServlet {
 					"" +
 					"</head>" +
 					"<body>");
-		out.println("<center><span style=\"color:#009933\"><h2>Skooairs Dataviewer - "+VERSION+"</h2></center>");
+		out.println("<center><span style=\"color:#009933\"><h2>Tribes And Khans Dataviewer - "+VERSION+"</h2></center>");
 
 		out.println("<hr>");
 		out.println("<br>");
@@ -148,12 +148,13 @@ public class DataviewerServlet extends HttpServlet {
 		out.println(dropdown);
 		out.println("<br>");
 		out.println("<input type=\"button\" value=\"Refresh\" onclick=\"window.location.reload();\">");
-		out.println("<br>");
 		
 		
-		//-----------------------------------------------------------------------------------//		// - edit
-				
+		//-----------------------------------------------------------------------------------//
+		// - edit				
 		if(req.getParameter("action") != null && req.getParameter("action").equals("edit")){
+
+			
 			Class selectedDTO = getDTOClass(req.getParameter("entity"));
 			
 			Object o = universalDao.getObjectDTO(req.getParameter("___uid"), selectedDTO);
@@ -274,7 +275,9 @@ public class DataviewerServlet extends HttpServlet {
 		
 		else if(req.getParameter("dto") != null && !req.getParameter("dto").equals("___")){
 
-			Class selectedDTO = getDTOClass(req.getParameter("dto"));			
+			Class selectedDTO = getDTOClass(req.getParameter("dto"));
+			out.println("<h4>"+selectedDTO.getSimpleName()+"</h4>");
+			
 			int from = 1;
 			int to = 100;
 			
@@ -285,8 +288,6 @@ public class DataviewerServlet extends HttpServlet {
 				
 			List<Object> list = universalDao.getListDTO(selectedDTO, from, to);
 			
-			out.println("<br>");
-			out.println("<br>");
 			String table = " <table class=\"entities\" cellpadding=\"2\">" +
 							"<tr class=\"title\"> ";
 			

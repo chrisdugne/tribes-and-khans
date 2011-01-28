@@ -230,6 +230,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			city.setRadius(20);
 			pm.makePersistent(city);
 			
+			player.setLastTurnPlayed(0);
 			player.getCityUIDs().add(cityUID);
 		}
 		

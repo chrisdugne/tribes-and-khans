@@ -10,6 +10,7 @@ public class Player {
 	private String name;
 	private String gameName;
 	private String gameUID;
+	private Integer lastTurnPlayed;
 	
 	private List<City> cities = new ArrayList<City>();
 	private List<Army> armies = new ArrayList<Army>();
@@ -65,6 +66,12 @@ public class Player {
 	}
 	public void setMerchants(List<Merchant> merchants) {
 		this.merchants = merchants;
+	}
+	public Integer getLastTurnPlayed() {
+		return lastTurnPlayed;
+	}
+	public void setLastTurnPlayed(Integer lastTurnPlayed) {
+		this.lastTurnPlayed = lastTurnPlayed;
 	}
 	
 	//-----------------------------------------------------------------------------------//

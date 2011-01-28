@@ -81,9 +81,13 @@ package com.uralys.tribes.managers {
 		//  RESULTS FROM SERVER	
 		
 		
+		
+		
 		private function receivedCurrentGames(event:ResultEvent):void{
+			// refresh des games en session
 			Session.GAMES_PLAYING = event.result as ArrayCollection;
-			Pager.getInstance().goToPage(Home, Home.CURRENT_GAMES, event.result as ArrayCollection);
+			
+			AccountManager.getInstance().refreshProfil(event.result as ArrayCollection);
 		}
 		
 		private function receivedGamesToJoin(event:ResultEvent):void{
@@ -107,7 +111,8 @@ package com.uralys.tribes.managers {
 		}
 		
 		private function gameLaunched(event:ResultEvent):void{
-			Pager.getInstance().goToPage(Map);
+			//refresh de la liste
+			getCurrentGames();
 		}
 			
 	}

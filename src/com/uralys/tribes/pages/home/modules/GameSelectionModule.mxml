@@ -12,6 +12,7 @@
 		<![CDATA[
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.entities.Game;
+			import com.uralys.tribes.managers.GameManager;
 			
 			import mx.collections.ArrayCollection;
 			import mx.events.FlexEvent;
@@ -47,16 +48,19 @@
 	
 	<s:HGroup width="100%" 
 			  horizontalAlign="center">
-		<s:VGroup horizontalAlign="center" 
-				  paddingLeft="40">
-			<s:Label text="{games.length > 0 ? (typeOfGameSelection == 1 ? 'Liste des parties en cours' : 'Joindre une partie') : (typeOfGameSelection == 1 ? '(Pas de partie en cours)' : '(Pas de partie à joindre)')}" fontWeight="bold"/>
+		<s:VGroup horizontalAlign="center">
+			<s:HGroup>
+				<s:Label text="{games.length > 0 ? (typeOfGameSelection == 1 ? 'Liste des parties en cours' : 'Joindre une partie') : (typeOfGameSelection == 1 ? '(Pas de partie en cours)' : '(Pas de partie à joindre)')}"/>
+				<s:Button label="Refresh" click="{typeOfGameSelection == 1 ? GameManager.getInstance().getCurrentGames() : GameManager.getInstance().getGamesToJoin()}"/>
+			</s:HGroup> 
+			
 			<s:Scroller height="450">
 				<s:Group>
 					<s:List id="dataGroup"
 							itemRenderer="com.uralys.renderers.GameSimpleInfoRenderer"
 							dataProvider="{games}"
 							borderVisible="false"
-							width="275">
+							width="345">
 						<s:layout>
 							<s:VerticalLayout gap="1" useVirtualLayout="true" />
 						</s:layout>
@@ -67,7 +71,10 @@
 		<s:VGroup width="230" 
 				  horizontalAlign="center"
 				  visible="{selectedGame != null}">
-			<custom:GameDetailsRenderer data="{selectedGame}" id="gameDetails" joinable="{typeOfGameSelection == 2}"/>
+			<custom:GameDetailsRenderer data="{selectedGame}" 
+										id="gameDetails" 
+										joinable="{typeOfGameSelection == 2}"
+										color="{Session.gameColor}"/>
 		</s:VGroup>
 	</s:HGroup>
 </mx:Module>

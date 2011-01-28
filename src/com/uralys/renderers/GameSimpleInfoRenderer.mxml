@@ -3,7 +3,8 @@
 				xmlns:s="library://ns.adobe.com/flex/spark" 
 				xmlns:mx="library://ns.adobe.com/flex/mx" 
 				autoDrawBackground="true"
-				click="onClick(event)">
+				click="onClick(event)"
+				creationComplete="initGame()">
 	
 	<s:states>
 		<s:State name="normal" />
@@ -13,19 +14,87 @@
 	
 	<fx:Script>
 		<![CDATA[
+			import com.uralys.tribes.commons.Numbers;
+			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.entities.Game;
+			import com.uralys.tribes.entities.Player;
+			import com.uralys.utils.Utils;
 			
 			import mx.events.ItemClickEvent;
 			import mx.utils.ObjectUtil;
+			
+			[Bindable] private var color:Number;
+			[Bindable] private var colorHovered:Number;
+			[Bindable] private var colorSelected:Number;
 			
 			private function onClick(event:MouseEvent):void{
 				
 				var e:ItemClickEvent = new ItemClickEvent(ItemClickEvent.ITEM_CLICK, true);
 				
+				Session.gameColor = color;
+				Session.remainingTime = getRemainingTime();
 				e.item = data;
 				e.index = itemIndex;
 
 				dispatchEvent(e);
+			}
+
+			private function initGame():void{
+				
+				var game:Game = (data as Game);
+				if(data.status == Game.IN_CREATION){
+					color = 0x33AAFF;
+					colorHovered = 0x33AAFF;
+					colorSelected = 0x33AAFF;
+				}
+				else{
+					for each (var player:Player in Session.profil.players){
+						if(player.gameUID == data.gameUID){
+							
+							var now:Number = new Date().getTime();
+
+							if((game.beginTurnTimeMillis + game.nbMinByTurn*60*1000) < now){
+								// tous les joueurs n'ont pas joue leur tour, mais le tour est fini
+								// on peut donc jouer le nouveau tour
+								// on calcule combien de tours sont finis depuis
+								
+								game.currentTurn += (int)((now-game.beginTurnTimeMillis)/(game.nbMinByTurn*60*1000));
+							}	
+							
+							if(player.lastTurnPlayed < game.currentTurn){
+								//vert clair
+								color = 0x00FF33;
+								colorHovered = 0x00FF33;
+								colorSelected = 0x00FF33;
+								}
+							else{
+								// tour joue, mais tour toujours en cours
+								// vert fonce
+								color = 0x008b45;
+								colorHovered = 0x008b45;
+								colorSelected = 0x008b45;
+							}
+							
+							break;
+						}
+					}
+				}
+				
+			}
+			
+			private function getRemainingTime():String{
+				var now:Number = new Date().getTime();
+				var tempsEcoule:Number = now - (data as Game).beginTurnTimeMillis;
+				var tempsParTour:Number = (data as Game).nbMinByTurn*60*1000;
+				
+				// game.currentTurn a ete recalcule dans l'initGame()
+				// donc si personne n'a joue et que les tours sont passes, le nouveau beginTurnTimeMillis n'a pas encore ete calcule
+				// et il sera mis a + k*nbMinByTurn, k entier = nb de tour passes
+				// on enleve les tranches des k tours passes entre temps
+				while(tempsEcoule > tempsParTour)
+					tempsEcoule -= tempsParTour;
+					
+				return "Il vous reste : " + Utils.round((tempsParTour-tempsEcoule)/60000,0) + " min";
 			}
 		]]>
 	</fx:Script>
@@ -48,10 +117,10 @@
 		</mx:Transition>
 	</s:transitions>
 	
-	<s:Group id="groupDetails" height="20" width="240" width.hovered="270" width.selected="270">
+	<s:Group id="groupDetails" height="20" width="300" width.hovered="340" width.selected="340">
 		<s:Rect left="0" right="0" top="0" bottom="0" radiusX="5" radiusY="5">
 			<s:fill>
-				<s:SolidColor color="#dddddd" color.hovered="#aaaaff" color.selected="#9999ff" />
+				<s:SolidColor color="{color}" color.hovered="{colorHovered}" color.selected="{colorSelected}" />
 			</s:fill>
 		</s:Rect>
 		<s:Label id="labelName" 

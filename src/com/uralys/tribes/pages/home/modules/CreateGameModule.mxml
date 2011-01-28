@@ -44,7 +44,7 @@
 				  paddingLeft="40">
 			<mx:Spacer height="20"/>
 			<s:Label text="Choisir votre nom dans cette partie :"/>
-			<s:TextInput id="playerNameInput" text="Dede l Fourbe"/>
+			<s:TextInput id="playerNameInput" text="Dede le Fourbe"/>
 			<mx:Spacer height="20"/>
 			<s:Label text="Entrer un nom pour la partie:"/>
 			<s:TextInput id="gameNameInput" text="Partie de Dede"/>

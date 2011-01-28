@@ -66,8 +66,13 @@ package com.uralys.tribes.managers {
 			accountWrapper.login(email, password);
 		}
 		
-		public function refreshProfil():void{
-			playerWrapper.getProfil.addEventListener("result", receivedProfil);
+		
+		//laliste des games vient d'etre refreshed.
+		// on la stocke pourla passer en param dans le gotopage(Home) qd on a recu le profil refreshed
+		private var games:ArrayCollection;
+		public function refreshProfil(games:ArrayCollection):void{
+			this.games = games;
+			playerWrapper.getProfil.addEventListener("result", refreshedProfil);
 			playerWrapper.getProfil(Session.uralysProfile.uralysUID);
 		}
 		
@@ -135,6 +140,13 @@ package com.uralys.tribes.managers {
 				finalizeLogin();
 			}
 				
+		}
+
+		public function refreshedProfil(event:ResultEvent):void{
+			var profil:Profil = event.result as Profil;
+			
+			Session.profil = profil;
+			Pager.getInstance().goToPage(Home, Home.CURRENT_GAMES, this.games);
 		}
 
 		private function finalizeLogin():void{

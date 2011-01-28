@@ -10,6 +10,7 @@ package com.uralys.tribes.entities
 		private var _name:String;
 		private var _gameUID:String;
 		private var _gameName:String;
+		private var _lastTurnPlayed:int;
 		private var _cities:ArrayCollection;
 		private var _armies:ArrayCollection;
 		private var _merchants:ArrayCollection;
@@ -38,6 +39,16 @@ package com.uralys.tribes.entities
 		public function set gameUID(value:String):void
 		{
 			_gameUID = value;
+		}
+
+		public function get lastTurnPlayed():int
+		{
+			return _lastTurnPlayed;
+		}
+
+		public function set lastTurnPlayed(value:int):void
+		{
+			_lastTurnPlayed = value;
 		}
 
 		public function get moves():ArrayCollection

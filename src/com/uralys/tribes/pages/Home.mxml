@@ -97,7 +97,7 @@
 		</s:VGroup>
 	</s:HGroup>
 	
-	<s:HGroup width="100%" horizontalAlign="center" paddingTop="35">
+	<s:HGroup width="100%" horizontalAlign="center" paddingTop="50">
 		<mx:ViewStack id="viewstack" width="100%" >	
 			
 			<s:NavigatorContent id="emptyView"/>

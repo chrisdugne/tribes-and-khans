@@ -13,6 +13,7 @@
 			
 			import mx.effects.easing.Quadratic;
 			import mx.events.FlexEvent;
+			import mx.events.TweenEvent;
 			
 			import org.osmf.events.TimeEvent;
 			
@@ -28,6 +29,9 @@
 			private var limitLeft:int;
 			private var limitUp:int;
 			
+			[Bindable] private var coordinateX:int;
+			[Bindable] private var coordinateY:int;
+			
 			protected function mouseDown(event:MouseEvent):void{
 				isDragging = true;
 				draggingImageXFrom = event.localX;
@@ -42,6 +46,9 @@
 			private var timer:Timer;
 			private var autoMoveNotNeeded:Boolean;
 			protected function mouseMove(event:MouseEvent):void{
+				coordinateX = event.localX;
+				coordinateY = event.localY;
+
 				if(isDragging){
 					timer.stop();
 					timer.reset();
@@ -63,11 +70,9 @@
 				draggingStageXTo = event.stageX;
 				draggingStageYTo = event.stageY;
 				
-				autoMove.duration = 40*(Math.abs(draggingStageXTo - draggingStageXFrom) + Math.abs(draggingStageYTo - draggingStageYFrom));
-				autoMove.xTo = image.x + (draggingStageXTo - draggingStageXFrom)*6;
-				autoMove.yTo = image.y + (draggingStageYTo - draggingStageYFrom)*6;
-				
-				
+				autoMove.duration = 6*(Math.abs(draggingStageXTo - draggingStageXFrom) + Math.abs(draggingStageYTo - draggingStageYFrom));
+				autoMove.xTo = image.x + (draggingStageXTo - draggingStageXFrom)*3;
+				autoMove.yTo = image.y + (draggingStageYTo - draggingStageYFrom)*3;
 				
 				if(autoMove.xTo > 0)
 					autoMove.xTo = 0;
@@ -77,7 +82,7 @@
 					autoMove.xTo = limitLeft;
 				if(autoMove.yTo < limitUp)
 					autoMove.yTo = limitUp;
-				
+
 				autoMove.play();
 			}
 				
@@ -89,8 +94,8 @@
 				timer = new Timer(60,1);
 				timer.addEventListener(TimerEvent.TIMER_COMPLETE, moveStoppedDuringDragging);
 
-				limitLeft = 120-image.width;
-				limitUp = 120-image.height;
+				limitLeft = 500-image.width;
+				limitUp = 500-image.height;
 			}
 
 		]]>
@@ -103,14 +108,20 @@
 
 	</fx:Declarations>
 	
-	<s:Group width="120" height="120"
-			 x="20" y="20"
+	<s:HGroup width="100%" horizontalAlign="center" paddingTop="5">
+		<s:Label text="X : {coordinateX}"/>
+		<mx:Spacer width="200"/>
+		<s:Label text="Y : {coordinateY}"/>
+	</s:HGroup>
+	<s:HGroup width="100%" horizontalAlign="center" paddingTop="50">
+		<s:Group width="500" height="500"
 			 clipAndEnableScrolling="true">
-		<mx:Image id="image" 
+			<mx:Image id="image" 
 				  source="{ImageContainer.MAP}"
 				  mouseDown="mouseDown(event)"
 				  mouseMove="mouseMove(event)"
 				  mouseOut="stopDragging(event)"
 				  mouseUp="stopDragging(event)"/>
-	</s:Group>
+		</s:Group>
+	</s:HGroup>
 </s:Group>

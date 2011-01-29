@@ -33,7 +33,6 @@ public class ArmyDTO {
 	
 	@Persistent private int x;
 	@Persistent private int y;
-	@Persistent private int radius;
 
 	@Persistent private List<String> equipmentUIDs = new ArrayList<String>();
 	
@@ -81,12 +80,6 @@ public class ArmyDTO {
 	}
 	public void setY(int y) {
 		this.y = y;
-	}
-	public int getRadius() {
-		return radius;
-	}
-	public void setRadius(int radius) {
-		this.radius = radius;
 	}
 	
 	//-----------------------------------------------------------------------------------//

@@ -166,7 +166,6 @@ public class EntitiesConverter {
 		city.setIron(cityDTO.getIron());
 		city.setName(cityDTO.getName());
 		city.setPopulation(cityDTO.getPopulation());
-		city.setRadius(cityDTO.getRadius());
 		city.setWheat(cityDTO.getWheat());
 		city.setWood(cityDTO.getWood());
 		city.setX(cityDTO.getX());
@@ -194,7 +193,6 @@ public class EntitiesConverter {
 		Army army = new Army();
 		
 		army.setArmyUID(armyDTO.getArmyUID());
-		army.setRadius(armyDTO.getRadius());
 		army.setSize(armyDTO.getSize());
 		army.setSpeed(armyDTO.getSpeed());
 		army.setValue(armyDTO.getValue());
@@ -225,7 +223,6 @@ public class EntitiesConverter {
 		merchant.setGold(merchantDTO.getGold());
 		merchant.setIron(merchantDTO.getIron());
 		merchant.setMerchantUID(merchantDTO.getMerchantUID());
-		merchant.setRadius(merchantDTO.getRadius());
 		merchant.setSize(merchantDTO.getSize());
 		merchant.setSpeed(merchantDTO.getSpeed());
 		merchant.setWheat(merchantDTO.getWheat());

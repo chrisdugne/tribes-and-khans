@@ -224,10 +224,9 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			city.setIron(200);
 			city.setGold(100);
 
-			city.setX(Utils.random(900));
-			city.setY(Utils.random(900));
+			city.setX(Utils.random(2900));
+			city.setY(Utils.random(2900));
 			
-			city.setRadius(20);
 			pm.makePersistent(city);
 			
 			player.setLastTurnPlayed(0);

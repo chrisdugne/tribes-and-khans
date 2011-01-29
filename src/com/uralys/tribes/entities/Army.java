@@ -14,7 +14,6 @@ public class Army {
 	
 	private int x;
 	private int y;
-	private int radius;
 
 	private List<Equipment> equipments = new ArrayList<Equipment>();
 	
@@ -50,14 +49,6 @@ public class Army {
 
 	public void setY(int y) {
 		this.y = y;
-	}
-
-	public int getRadius() {
-		return radius;
-	}
-
-	public void setRadius(int radius) {
-		this.radius = radius;
 	}
 
 	public String getArmyUID() {

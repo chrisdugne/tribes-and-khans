@@ -31,7 +31,6 @@ public class MerchantDTO {
 
 	@Persistent private int x;
 	@Persistent private int y;
-	@Persistent private int radius;
 	
 	//-----------------------------------------------------------------------------------//
 
@@ -50,12 +49,6 @@ public class MerchantDTO {
 	}
 	public void setY(int y) {
 		this.y = y;
-	}
-	public int getRadius() {
-		return radius;
-	}
-	public void setRadius(int radius) {
-		this.radius = radius;
 	}
 	public String getMerchantUID() {
 		return merchantUID;

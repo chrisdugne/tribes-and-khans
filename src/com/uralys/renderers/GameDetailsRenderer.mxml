@@ -10,7 +10,6 @@
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.core.Pager;
 			import com.uralys.tribes.entities.Game;
-			import com.uralys.tribes.entities.Player;
 			import com.uralys.tribes.managers.GameManager;
 			import com.uralys.tribes.pages.Board;
 			
@@ -29,7 +28,7 @@
 			}
 		
 			private function playTurn():void{
-				Pager.getInstance().goToPage(Board);
+				Pager.getInstance().goToPage(Board, data);
 			}
 
 			

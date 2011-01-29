@@ -36,9 +36,11 @@
 			import flash.net.registerClassAlias;
 			import com.uralys.tribes.entities.Game;
 			import com.uralys.tribes.entities.Player;
+			import com.uralys.tribes.entities.City;
 			private function initBlazeDS():void{
 				registerClassAlias("com.uralys.tribes.entities.Game", Game);
 				registerClassAlias("com.uralys.tribes.entities.Player", Player);
+				registerClassAlias("com.uralys.tribes.entities.City", City);
 			}
 			
 			//-----------------------------------------------------------------------//
@@ -69,7 +71,11 @@
 		<!-- footer -->
 		<mx:HRule width="100%" chromeColor="#222299"/>
 		<s:HGroup width="100%" horizontalAlign="center">
-			<s:Label text="Uralys 2010 - Tribes And Khans - version {Session.VERSION}" 
+			<mx:Image source="../images/logos/uralysminilogo.png" 
+					  x="65" bottom="2"
+					  click="navigateToURL(new URLRequest('http://www.uralys.com'), '_new');"/>
+			<mx:Spacer width="50%"/>
+			<s:Label text=" Tribes And Khans 2011   -    version {Session.VERSION}" 
 					 color="#222299"/>
 		</s:HGroup>	
 	</s:VGroup>

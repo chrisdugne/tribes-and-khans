@@ -7,15 +7,18 @@
 	
 	<fx:Script>
 		<![CDATA[
+			import com.uralys.tribes.commons.Session;
+			import com.uralys.tribes.core.BoardClickListener;
+			import com.uralys.tribes.core.BoardDrawer;
 			import com.uralys.tribes.core.Pager;
-			
-			import flashx.textLayout.tlf_internal;
+			import com.uralys.tribes.entities.City;
+			import com.uralys.tribes.entities.Game;
+			import com.uralys.tribes.entities.Player;
 			
 			import mx.effects.easing.Quadratic;
-			import mx.events.FlexEvent;
-			import mx.events.TweenEvent;
 			
-			import org.osmf.events.TimeEvent;
+			// ------------------------------------------------------------------------// 
+			// 		map scrolling
 			
 			private var isDragging:Boolean = false;
 			private var draggingImageXFrom:int;
@@ -41,6 +44,8 @@
 				
 				autoMoveNotNeeded = true;
 				autoMove.stop();
+				
+				BoardClickListener.getInstance().clickOnBoard(event, player, board);
 			}
 			
 			private var timer:Timer;
@@ -90,12 +95,63 @@
 				autoMoveNotNeeded = true;
 			}
 
+			//---------------------------------------------------------------------------------------//
+			
+			private var game:Game;
+			private var player:Player;		
+
+			[Bindable] private var selectedCity:City;
+			
+			//-----------------------------------------------------------//
+
 			protected function init():void{
 				timer = new Timer(60,1);
 				timer.addEventListener(TimerEvent.TIMER_COMPLETE, moveStoppedDuringDragging);
 
 				limitLeft = 500-image.width;
 				limitUp = 500-image.height;
+				
+				initBoard();
+			}
+			
+			//-----------------------------------------------------------//
+			
+			// set params est appelee avant creationComplete (init())
+			// ici args contient 1 valeur.
+			// args[0] game
+			public function set params(args:Array):void{
+				game = args[0];
+				
+				for each (var playerOfProfil:Player in Session.profil.players){
+					if(playerOfProfil.gameUID == game.gameUID){
+						this.player = playerOfProfil;
+						break;
+					}
+				}
+
+			};
+
+			//-----------------------------------------------------------//
+			
+			private function initBoard():void{
+				BoardDrawer.getInstance().redrawAllEntities(game, board);
+				BoardClickListener.boardPage = this;
+			}
+			
+			//----------------------------------------------------------------------------------------//
+			
+			public function clickOnCity(city:City):void{
+				selectedCity = city;
+				goLeft.play();
+				appearCity.play();
+			}
+			
+			//-----------------------------------------------------------//
+			
+			private function backToMain():void{
+				hideCity.play();
+				
+				comeBack.play();
 			}
 
 		]]>
@@ -105,23 +161,73 @@
 		<mx:Move id="autoMove"
 				target="{image}"
 				easingFunction="{Quadratic.easeOut}"/>
+		
+		<mx:Move id="goLeft"
+				 xTo="-1500"
+				 target="{main}"
+				 duration="350"
+				 easingFunction="{Quadratic.easeIn}"/>
+		<mx:Move id="comeBack"
+				 xTo="0"
+				 target="{main}"
+				 easingFunction="{Quadratic.easeIn}"/>
+
+		<mx:Move id="appearCity"
+				 xTo="0"
+				 target="{cityGroup}"
+				 easingFunction="{Quadratic.easeIn}"/>
+		<mx:Move id="hideCity"
+				 xTo="1500"
+				 target="{cityGroup}"
+				 easingFunction="{Quadratic.easeIn}"/>
+
 
 	</fx:Declarations>
 	
-	<s:HGroup width="100%" horizontalAlign="center" paddingTop="5">
-		<s:Label text="X : {coordinateX}"/>
-		<mx:Spacer width="200"/>
-		<s:Label text="Y : {coordinateY}"/>
-	</s:HGroup>
-	<s:HGroup width="100%" horizontalAlign="center" paddingTop="50">
-		<s:Group width="500" height="500"
-			 clipAndEnableScrolling="true">
-			<mx:Image id="image" 
-				  source="{ImageContainer.MAP}"
-				  mouseDown="mouseDown(event)"
-				  mouseMove="mouseMove(event)"
-				  mouseOut="stopDragging(event)"
-				  mouseUp="stopDragging(event)"/>
+	<s:Group id="main" width="100%" height="100%">
+		<s:HGroup width="100%" horizontalAlign="center" paddingTop="5">
+			<s:Label text="X : {coordinateX}"/>
+			<mx:Spacer width="200"/>
+			<s:Label text="Y : {coordinateY}"/>
+		</s:HGroup>
+		<s:Group width="100%">
+			<s:HGroup width="100%" horizontalAlign="center" paddingTop="50">
+				<s:Group width="500" height="500"
+					 clipAndEnableScrolling="true">
+					<mx:Image id="image" 
+						  source="{ImageContainer.MAP}"
+						  mouseDown="mouseDown(event)"
+						  mouseMove="mouseMove(event)"
+						  mouseOut="stopDragging(event)"
+						  mouseUp="stopDragging(event)"/>
+				</s:Group>
+			</s:HGroup>
+			<s:HGroup width="100%" horizontalAlign="center" paddingTop="50"
+					  mouseEnabled="false"
+					  mouseEnabledWhereTransparent="false">
+				<s:Group width="500" height="500"
+						 clipAndEnableScrolling="true"
+						 mouseChildren="false"
+						 mouseEnabled="false"
+						 mouseEnabledWhereTransparent="false">
+						<s:Group id="board"
+								 x="{image.x}"
+								 y="{image.y}"/>
+				</s:Group>
+			</s:HGroup>
 		</s:Group>
-	</s:HGroup>
+	</s:Group>
+	
+	<s:Group id="cityGroup" width="600" height="100%"
+			 x="1500"
+			 includeInLayout="false">
+		<s:VGroup width="100%" horizontalAlign="center" paddingTop="50">
+			<s:Label text="{selectedCity.name}"/>
+			<s:HGroup>
+				<s:Label text="Wheat"/>
+				<s:TextInput text="{selectedCity.wheat}" id="wheatInput"/>
+			</s:HGroup>
+			<s:Button label="Ok" click="backToMain()"/>
+		</s:VGroup>
+	</s:Group>
 </s:Group>

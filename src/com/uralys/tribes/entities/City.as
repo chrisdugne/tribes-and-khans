@@ -1,6 +1,7 @@
 
 package com.uralys.tribes.entities
 {
+	import mx.collections.ArrayCollection;
 
 	[Bindable]
 	[RemoteClass(alias="com.uralys.tribes.entities.City")]
@@ -80,11 +81,7 @@ package com.uralys.tribes.entities
 		}
 	
 		public function get radius():int {
-			return _radius;
-		}
-	
-		public function set radius(o:int):void {
-			_radius = o;
+			return _population/50;
 		}
 	
 		public function get equipmentStock():ArrayCollection {
@@ -104,7 +101,6 @@ package com.uralys.tribes.entities
 		protected var _gold:int;
 		protected var _x:int;
 		protected var _y:int;
-		protected var _radius:int;
 		protected var _equipmentStock:ArrayCollection;
 
 

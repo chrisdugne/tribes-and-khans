@@ -285,7 +285,7 @@ TextInput {
 s|Scroller{
    verticalScrollBarStyleName: myVScrollBar;
 }
-*/
+
 mx|ToolTip {
    backgroundAlpha: 0.46;
    cornerRadius: 13;
@@ -293,7 +293,7 @@ mx|ToolTip {
    color: #ffffff;
    fontSize: 21;
 }
-/*
+
 controls|DragTile{
    verticalScrollBarStyleName: myVScrollBar;		     
    horizontalScrollBarStyleName: myVScrollBar;		     

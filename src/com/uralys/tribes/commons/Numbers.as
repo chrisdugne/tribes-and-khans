@@ -35,6 +35,8 @@ import mx.collections.ArrayCollection;
 	public static var YELLOW:Number = 0xFFFF66;
 
 	//==================================================================================================//
+
+	public static var CLICK_SCOPE:int = 100;
 	
 }
 }

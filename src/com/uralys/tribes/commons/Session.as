@@ -11,7 +11,7 @@ public class Session{
 
 	//=====================================================//
 
-	[Bindable] public static var VERSION:String = "1.0.7";
+	[Bindable] public static var VERSION:String = "1.0.8";
 	[Bindable] public static var LOGGED_IN:Boolean = false; 
 	[Bindable] public static var CONNECTED_TO_FACEBOOK:Boolean = false;
 
@@ -49,6 +49,17 @@ public class Session{
 	//temps quil reste avant la fin du tour
 	[Bindable] public static var remainingTime:String;
 	
+	//=====================================================//
+	// BoardDrawer
+	
+	// les cercles des entities sont dessinees sur la map
+	[Bindable] public static var DRAW_DETAILS:Boolean = true;
+
+	// les noms des entities sont ecrites sur la map
+	[Bindable] public static var DRAW_TEXTS:Boolean = true;
+
+	// les images des entities sont dessinees sur la map
+	[Bindable] public static var DRAW_IMAGES:Boolean = false;
 	
 }
 }

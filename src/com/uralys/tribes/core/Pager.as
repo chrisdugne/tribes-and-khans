@@ -26,7 +26,7 @@ public class Pager
 			return instance;
 		}
 
-		public function Pager(){trace("Pager initialized")}
+		public function Pager(){}
 
 		//=====================================================================================//
 		

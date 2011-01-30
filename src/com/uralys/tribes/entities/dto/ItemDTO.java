@@ -8,7 +8,7 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
-public class WeaponDTO {
+public class ItemDTO {
 	
 	//-----------------------------------------------------------------------------------//
 
@@ -19,8 +19,10 @@ public class WeaponDTO {
 
 	@Persistent
     @Extension(vendorName="datanucleus", key="gae.pk-name", value="true")
-	private String weaponUID;
+	private String itemUID;
 	
+	@Persistent private String name;
+	@Persistent private int peopleRequired;
 	@Persistent private int wood;
 	@Persistent private int iron;
 	@Persistent private int goldPrice;
@@ -34,11 +36,23 @@ public class WeaponDTO {
 	public void setKey(String key) {
 		this.key = key; 
 	}
-	public String getWeaponUID() {
-		return weaponUID;
+	public String getItemUID() {
+		return itemUID;
 	}
-	public void setWeaponUID(String weaponUID) {
-		this.weaponUID = weaponUID;
+	public void setItemUID(String itemUID) {
+		this.itemUID = itemUID;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public int getPeopleRequired() {
+		return peopleRequired;
+	}
+	public void setPeopleRequired(int peopleRequired) {
+		this.peopleRequired = peopleRequired;
 	}
 	public int getWood() {
 		return wood;

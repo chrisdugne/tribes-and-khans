@@ -4,7 +4,7 @@ package com.uralys.tribes.entities;
 public class Equipment {
 
 	private String equimentUID;
-	private String weaponUID;
+	private Item item;
 	private int size;
 
 	//-----------------------------------------------------------------------------------//
@@ -15,11 +15,11 @@ public class Equipment {
 	public void setEquimentUID(String equimentUID) {
 		this.equimentUID = equimentUID;
 	}
-	public String getWeaponUID() {
-		return weaponUID;
+	public Item getItem() {
+		return item;
 	}
-	public void setWeaponUID(String weaponUID) {
-		this.weaponUID = weaponUID;
+	public void setItem(Item item) {
+		this.item = item;
 	}
 	public int getSize() {
 		return size;

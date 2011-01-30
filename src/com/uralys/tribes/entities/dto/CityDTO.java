@@ -30,13 +30,18 @@ public class CityDTO {
 	@Persistent private int population;
 	
 	@Persistent private int wheat;
+	@Persistent private int peopleCreatingWheat;
 	@Persistent private int wood;
+	@Persistent private int peopleCreatingWood;
 	@Persistent private int iron;
+	@Persistent private int peopleCreatingIron;
+	
 	@Persistent private int gold;
 
 	@Persistent private int x;
 	@Persistent private int y;
 	
+	@Persistent private List<String> smithUIDs = new ArrayList<String>();
 	@Persistent private List<String> equipmentStockUIDs = new ArrayList<String>();
 	
 	//-----------------------------------------------------------------------------------//
@@ -103,9 +108,38 @@ public class CityDTO {
 	public void setGold(int gold) {
 		this.gold = gold;
 	}
+	public int getPeopleCreatingWheat() {
+		return peopleCreatingWheat;
+	}
+	public void setPeopleCreatingWheat(int peopleCreatingWheat) {
+		this.peopleCreatingWheat = peopleCreatingWheat;
+	}
+	public int getPeopleCreatingWood() {
+		return peopleCreatingWood;
+	}
+	public void setPeopleCreatingWood(int peopleCreatingWood) {
+		this.peopleCreatingWood = peopleCreatingWood;
+	}
+	public int getPeopleCreatingIron() {
+		return peopleCreatingIron;
+	}
+	public void setPeopleCreatingIron(int peopleCreatingIron) {
+		this.peopleCreatingIron = peopleCreatingIron; 
+	}
 	
 	//-----------------------------------------------------------------------------------//
 	
+	public List<SmithDTO> getSmiths() {
+		return UniversalDAO.getInstance().getListDTO(smithUIDs, SmithDTO.class);
+	}
+	public List<String> getSmithUIDs() {
+		return smithUIDs;
+	}
+	public void setSmithUIDs(List<String> smithUIDs) {
+		this.smithUIDs = smithUIDs;
+	}
+	
+	//-----------------------------------------------------------------------------------//
 	
 	public List<EquipmentDTO> getEquipmentStock() {
 		return UniversalDAO.getInstance().getListDTO(equipmentStockUIDs, EquipmentDTO.class);

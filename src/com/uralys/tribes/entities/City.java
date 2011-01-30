@@ -11,14 +11,19 @@ public class City {
 	private int population;
 	
 	private int wheat;
+	private int peopleCreatingWheat;
 	private int wood;
+	private int peopleCreatingWood;
 	private int iron;
+	private int peopleCreatingIron;
+	
 	private int gold;
 
 	private int x;
 	private int y;
-	
+
 	private List<Equipment> equipmentStock = new ArrayList<Equipment>();
+	private List<Smith> smiths = new ArrayList<Smith>();
 	
 	//-----------------------------------------------------------------------------------//
 	
@@ -94,12 +99,44 @@ public class City {
 		this.y = y;
 	}
 
+	public int getPeopleCreatingWheat() {
+		return peopleCreatingWheat;
+	}
+
+	public void setPeopleCreatingWheat(int peopleCreatingWheat) {
+		this.peopleCreatingWheat = peopleCreatingWheat;
+	}
+
+	public int getPeopleCreatingWood() {
+		return peopleCreatingWood;
+	}
+
+	public void setPeopleCreatingWood(int peopleCreatingWood) {
+		this.peopleCreatingWood = peopleCreatingWood;
+	}
+
+	public int getPeopleCreatingIron() {
+		return peopleCreatingIron;
+	}
+
+	public void setPeopleCreatingIron(int peopleCreatingIron) {
+		this.peopleCreatingIron = peopleCreatingIron;
+	}
+
 	public List<Equipment> getEquipmentStock() {
 		return equipmentStock;
 	}
 
 	public void setEquipmentStock(List<Equipment> equipmentStock) {
 		this.equipmentStock = equipmentStock;
+	}
+
+	public List<Smith> getSmiths() {
+		return smiths;
+	}
+
+	public void setSmiths(List<Smith> smiths) {
+		this.smiths = smiths;
 	}
 
 	//-----------------------------------------------------------------------------------//

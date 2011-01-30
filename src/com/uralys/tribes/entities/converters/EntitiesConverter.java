@@ -6,21 +6,23 @@ import java.util.List;
 import com.uralys.tribes.entities.Army;
 import com.uralys.tribes.entities.City;
 import com.uralys.tribes.entities.Equipment;
+import com.uralys.tribes.entities.Smith;
 import com.uralys.tribes.entities.Game;
 import com.uralys.tribes.entities.Merchant;
 import com.uralys.tribes.entities.Move;
 import com.uralys.tribes.entities.Player;
 import com.uralys.tribes.entities.Profil;
-import com.uralys.tribes.entities.Weapon;
+import com.uralys.tribes.entities.Item;
 import com.uralys.tribes.entities.dto.ArmyDTO;
 import com.uralys.tribes.entities.dto.CityDTO;
 import com.uralys.tribes.entities.dto.EquipmentDTO;
+import com.uralys.tribes.entities.dto.SmithDTO;
 import com.uralys.tribes.entities.dto.GameDTO;
 import com.uralys.tribes.entities.dto.MerchantDTO;
 import com.uralys.tribes.entities.dto.MoveDTO;
 import com.uralys.tribes.entities.dto.PlayerDTO;
 import com.uralys.tribes.entities.dto.ProfilDTO;
-import com.uralys.tribes.entities.dto.WeaponDTO;
+import com.uralys.tribes.entities.dto.ItemDTO;
 
 public class EntitiesConverter {
 	
@@ -152,8 +154,7 @@ public class EntitiesConverter {
 	}
 	
 
-	//-----------------------------------------------------------------------------------//
-	
+	//-----------------------------------------------------------------------------------//	
 	public static City convertCityDTO(CityDTO cityDTO) {
 		
 		if(cityDTO == null)
@@ -164,12 +165,17 @@ public class EntitiesConverter {
 		city.setCityUID(cityDTO.getCityUID());
 		city.setGold(cityDTO.getGold());
 		city.setIron(cityDTO.getIron());
+		city.setPeopleCreatingIron(cityDTO.getPeopleCreatingIron());
 		city.setName(cityDTO.getName());
 		city.setPopulation(cityDTO.getPopulation());
 		city.setWheat(cityDTO.getWheat());
+		city.setPeopleCreatingWheat(cityDTO.getPeopleCreatingWheat());
 		city.setWood(cityDTO.getWood());
+		city.setPeopleCreatingWood(cityDTO.getPeopleCreatingWood());
 		city.setX(cityDTO.getX());
 		city.setY(cityDTO.getY());
+		
+		//---------------------------------//
 		
 		List<Equipment> stock = new ArrayList<Equipment>();
 		
@@ -178,6 +184,18 @@ public class EntitiesConverter {
 		}
 		
 		city.setEquipmentStock(stock);
+
+		//---------------------------------//
+
+		List<Smith> smiths = new ArrayList<Smith>();
+		
+		for(SmithDTO smithDTO : cityDTO.getSmiths()){
+			smiths.add(convertSmithDTO(smithDTO));
+		}
+		
+		city.setSmiths(smiths);
+
+		//---------------------------------//
 		
 		return city;
 	}
@@ -236,20 +254,22 @@ public class EntitiesConverter {
 	
 	//-----------------------------------------------------------------------------------//
 	
-	public static Weapon convertArmyDTO(WeaponDTO weaponDTO) {
+	public static Item convertItemDTO(ItemDTO itemDTO) {
 		
-		if(weaponDTO == null)
+		if(itemDTO == null)
 			return null;
 		
-		Weapon weapon = new Weapon();
+		Item item = new Item();
 		
-		weapon.setGoldPrice(weaponDTO.getGoldPrice());
-		weapon.setIron(weaponDTO.getIron());
-		weapon.setValue(weaponDTO.getValue());
-		weapon.setWeaponUID(weaponDTO.getWeaponUID());
-		weapon.setWood(weaponDTO.getWood());
+		item.setName(itemDTO.getName());
+		item.setPeopleRequired(itemDTO.getPeopleRequired());
+		item.setGoldPrice(itemDTO.getGoldPrice());
+		item.setIron(itemDTO.getIron());
+		item.setValue(itemDTO.getValue());
+		item.setItemUID(itemDTO.getItemUID());
+		item.setWood(itemDTO.getWood());
 
-		return weapon;
+		return item;
 	}
 	
 	//-----------------------------------------------------------------------------------//
@@ -263,8 +283,26 @@ public class EntitiesConverter {
 
 		equipment.setEquimentUID(equipmentDTO.getEquimentUID());
 		equipment.setSize(equipmentDTO.getSize());
-		equipment.setWeaponUID(equipmentDTO.getWeaponUID());
+		
+		equipment.setItem(convertItemDTO(equipmentDTO.getItem()));
 		
 		return equipment;
+	}
+
+	//-----------------------------------------------------------------------------------//	
+	
+	public static Smith convertSmithDTO(SmithDTO smithDTO) {
+		
+		if(smithDTO == null)
+			return null;
+		
+		Smith smith = new Smith();
+		
+		smith.setSmithUID(smithDTO.getSmithUID());
+		smith.setPeople(smithDTO.getPeople());
+		
+		smith.setItem(convertItemDTO(smithDTO.getItem()));
+		
+		return smith;
 	}
 }

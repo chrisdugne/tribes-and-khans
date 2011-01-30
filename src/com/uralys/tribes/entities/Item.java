@@ -1,9 +1,11 @@
 package com.uralys.tribes.entities;
 
 
-public class Weapon {
+public class Item {
 
-	private String weaponUID;
+	private String itemUID;
+	private String name;
+	private int peopleRequired;
 	private int wood;
 	private int iron;
 	private int goldPrice;
@@ -11,11 +13,23 @@ public class Weapon {
 
 	//-----------------------------------------------------------------------------------//
 	
-	public String getWeaponUID() {
-		return weaponUID;
+	public String getItemUID() {
+		return itemUID;
 	}
-	public void setWeaponUID(String weaponUID) {
-		this.weaponUID = weaponUID;
+	public void setItemUID(String itemUID) {
+		this.itemUID = itemUID;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public int getPeopleRequired() {
+		return peopleRequired;
+	}
+	public void setPeopleRequired(int peopleRequired) {
+		this.peopleRequired = peopleRequired;
 	}
 	public int getWood() {
 		return wood;

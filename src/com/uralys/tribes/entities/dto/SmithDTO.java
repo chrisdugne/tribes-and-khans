@@ -10,7 +10,7 @@ import javax.jdo.annotations.PrimaryKey;
 import com.uralys.tribes.dao.impl.UniversalDAO;
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
-public class EquipmentDTO {
+public class SmithDTO {
 	
 	//-----------------------------------------------------------------------------------//
 
@@ -21,10 +21,10 @@ public class EquipmentDTO {
 
 	@Persistent
     @Extension(vendorName="datanucleus", key="gae.pk-name", value="true")
-	private String equimentUID;
+    private String smithUID;
 	
 	@Persistent private String itemUID;
-	@Persistent private int size;
+	@Persistent private int people;
 	
 	//-----------------------------------------------------------------------------------//
 
@@ -34,17 +34,17 @@ public class EquipmentDTO {
 	public void setKey(String key) {
 		this.key = key; 
 	}
-	public String getEquimentUID() {
-		return equimentUID;
+	public String getSmithUID() {
+		return smithUID;
 	}
-	public void setEquimentUID(String equimentUID) {
-		this.equimentUID = equimentUID;
+	public void setSmithUID(String forgeStockUID) {
+		this.smithUID = forgeStockUID;
 	}
-	public int getSize() {
-		return size;
+	public int getPeople() {
+		return people;
 	}
-	public void setSize(int size) {
-		this.size = size;
+	public void setPeople(int people) {
+		this.people = people;
 	}
 	
 	//-----------------------------------------------------------------------------------//
@@ -52,7 +52,7 @@ public class EquipmentDTO {
 	public ItemDTO getItem() {
 		return (ItemDTO) UniversalDAO.getInstance().getObjectDTO(itemUID, ItemDTO.class);
 	}
-
+	
 	public String getItemUID() {
 		return itemUID;
 	}

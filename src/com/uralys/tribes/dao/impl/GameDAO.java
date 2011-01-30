@@ -29,12 +29,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		//-----------------------------------------------------------------------//
 
 		/*public var periods:ArrayCollection = new ArrayCollection(
-				[ {periodLabel:"1 min", period:1},
-					{periodLabel:"2 min", period:2},
-					{periodLabel:"5 min", period:3},
-					{periodLabel:"10 min", period:4},
-					{periodLabel:"30 min", period:5},
-					{periodLabel:"1 h", period:6},
+				[   {periodLabel:"1 h", period:6},
 					{periodLabel:"2 h", period:7},
 					{periodLabel:"6 h", period:8},
 					{periodLabel:"12 h", period:9},
@@ -45,21 +40,6 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		*/
 		
 		switch (nbMinByTurn) {
-			case 1:
-				nbMinByTurn = 1;
-				break;
-			case 2:
-				nbMinByTurn = 2;
-				break;
-			case 3:
-				nbMinByTurn = 5;
-				break;
-			case 4:
-				nbMinByTurn = 10;
-				break;
-			case 5:
-				nbMinByTurn = 30;
-				break;
 			case 6:
 				nbMinByTurn = 60;
 				break;
@@ -212,9 +192,11 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			PlayerDTO player = pm.getObjectById(PlayerDTO.class, playerUID);
 			
 			CityDTO city = new CityDTO();
+
 			String cityUID = Utils.generateUID();
+
 			Key key = KeyFactory.createKey(CityDTO.class.getSimpleName(), cityUID);
-			
+
 			city.setKey(KeyFactory.keyToString(key));
 			city.setCityUID(cityUID);
 			city.setName("Ville de " + player.getName());
@@ -222,6 +204,9 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			city.setWheat(400);
 			city.setWood(200);
 			city.setIron(200);
+			city.setPeopleCreatingWheat(0);
+			city.setPeopleCreatingWood(0);
+			city.setPeopleCreatingIron(0);
 			city.setGold(100);
 
 			city.setX(Utils.random(2900));
@@ -229,8 +214,10 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			
 			pm.makePersistent(city);
 			
+			
 			player.setLastTurnPlayed(0);
 			player.getCityUIDs().add(cityUID);
+			
 		}
 		
 		//-----------------------------------------------------------------------------------//

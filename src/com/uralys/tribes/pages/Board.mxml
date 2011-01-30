@@ -16,6 +16,7 @@
 			import com.uralys.tribes.entities.Player;
 			
 			import mx.effects.easing.Quadratic;
+			import mx.utils.ObjectUtil;
 			
 			// ------------------------------------------------------------------------// 
 			// 		map scrolling
@@ -125,6 +126,7 @@
 				for each (var playerOfProfil:Player in Session.profil.players){
 					if(playerOfProfil.gameUID == game.gameUID){
 						this.player = playerOfProfil;
+						trace(ObjectUtil.toString(player));
 						break;
 					}
 				}
@@ -218,11 +220,14 @@
 		</s:Group>
 	</s:Group>
 	
-	<s:Group id="cityGroup" width="600" height="100%"
+	<!-- ====================================================================================== -->
+	<!-- city -->
+	
+	<s:Group id="cityGroup" width="{main.width}" height="{main.height}"
 			 x="1500"
 			 includeInLayout="false">
 		<s:VGroup width="100%" horizontalAlign="center" paddingTop="50">
-			<s:Label text="{selectedCity.name}"/>
+			<s:TextInput id="cityNameInput" text="{selectedCity.name}"/>
 			<s:HGroup>
 				<s:Label text="Wheat"/>
 				<s:TextInput text="{selectedCity.wheat}" id="wheatInput"/>
@@ -230,4 +235,6 @@
 			<s:Button label="Ok" click="backToMain()"/>
 		</s:VGroup>
 	</s:Group>
+
+	<!-- ====================================================================================== -->
 </s:Group>

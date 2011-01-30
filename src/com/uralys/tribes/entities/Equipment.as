@@ -16,12 +16,12 @@ package com.uralys.tribes.entities
 			_equimentUID = o;
 		}
 	
-		public function get weaponUID():String {
-			return _weaponUID;
+		public function get item():Item {
+			return _item;
 		}
 	
-		public function set weaponUID(o:String):void {
-			_weaponUID = o;
+		public function set item(o:Item):void {
+			_item = o;
 		}
 	
 		public function get size():int {
@@ -33,7 +33,7 @@ package com.uralys.tribes.entities
 		}
 	
 		protected var _equimentUID:String;
-		protected var _weaponUID:String;
+		protected var _item:Item;
 		protected var _size:int;
 
 

@@ -16,12 +16,7 @@
 			
 			[Bindable]
 			public var periods:ArrayCollection = new ArrayCollection(
-				[ {periodLabel:"1 min", period:1},
-					{periodLabel:"2 min", period:2},
-					{periodLabel:"5 min", period:3},
-					{periodLabel:"10 min", period:4},
-					{periodLabel:"30 min", period:5},
-					{periodLabel:"1 h", period:6},
+				[   {periodLabel:"1 h", period:6},
 					{periodLabel:"2 h", period:7},
 					{periodLabel:"6 h", period:8},
 					{periodLabel:"12 h", period:9},

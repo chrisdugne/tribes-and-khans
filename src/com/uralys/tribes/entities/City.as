@@ -15,6 +15,14 @@ package com.uralys.tribes.entities
 		public function set cityUID(o:String):void {
 			_cityUID = o;
 		}
+
+		public function get forgeUID():String {
+			return _forgeUID;
+		}
+	
+		public function set forgeUID(o:String):void {
+			_forgeUID = o;
+		}
 	
 		public function get name():String {
 			return _name;
@@ -56,6 +64,30 @@ package com.uralys.tribes.entities
 			_iron = o;
 		}
 	
+		public function get peopleCreatingWheat():int {
+			return _peopleCreatingWheat;
+		}
+	
+		public function set peopleCreatingWheat(o:int):void {
+			_peopleCreatingWheat = o;
+		}
+	
+		public function get peopleCreatingWood():int {
+			return _peopleCreatingWood;
+		}
+	
+		public function set peopleCreatingWood(o:int):void {
+			_peopleCreatingWood = o;
+		}
+	
+		public function get peopleCreatingIron():int {
+			return _peopleCreatingIron;
+		}
+	
+		public function set peopleCreatingIron(o:int):void {
+			_peopleCreatingIron = o;
+		}
+	
 		public function get gold():int {
 			return _gold;
 		}
@@ -92,16 +124,29 @@ package com.uralys.tribes.entities
 			_equipmentStock = o;
 		}
 	
+		public function get smiths():ArrayCollection {
+			return _smiths;
+		}
+	
+		public function set smiths(o:ArrayCollection):void {
+			_smiths = o;
+		}
+	
 		protected var _cityUID:String;
+		protected var _forgeUID:String;
 		protected var _name:String;
 		protected var _population:int;
 		protected var _wheat:int;
 		protected var _wood:int;
 		protected var _iron:int;
+		protected var _peopleCreatingWheat:int;
+		protected var _peopleCreatingWood:int;
+		protected var _peopleCreatingIron:int;
 		protected var _gold:int;
 		protected var _x:int;
 		protected var _y:int;
 		protected var _equipmentStock:ArrayCollection;
+		protected var _smiths:ArrayCollection;
 
 
 	}

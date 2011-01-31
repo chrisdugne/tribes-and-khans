@@ -8,12 +8,12 @@ package com.uralys.tribes.entities
 	{	
 
 
-		public function get weaponUID():String {
-			return _weaponUID;
+		public function get itemUID():String {
+			return _itemUID;
 		}
 	
-		public function set weaponUID(o:String):void {
-			_weaponUID = o;
+		public function set itemUID(o:String):void {
+			_itemUID = o;
 		}
 	
 		public function get wood():int {
@@ -64,7 +64,7 @@ package com.uralys.tribes.entities
 			_value = o;
 		}
 	
-		protected var _weaponUID:String;
+		protected var _itemUID:String;
 		protected var _name:String;
 		protected var _peopleRequired:int;
 		protected var _wood:int;

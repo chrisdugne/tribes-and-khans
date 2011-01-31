@@ -62,7 +62,8 @@
 		]]>
 	</fx:Script>
 	
-	<s:VGroup width="100%" 
+	<s:VGroup width="100%"
+			  paddingTop="90"
 			  horizontalAlign="center"
 			  creationComplete="initForm()">
 		<mx:Spacer width="30"/>

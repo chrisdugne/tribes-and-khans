@@ -2,8 +2,9 @@
 <s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
 		 xmlns:mx="library://ns.adobe.com/flex/mx" 
+		 xmlns:renderers="com.uralys.renderers.*"
 		 width="100%" height="100%"
-		 creationComplete="init()">
+		 creationComplete="init()" >
 	
 	<fx:Script>
 		<![CDATA[
@@ -14,6 +15,7 @@
 			import com.uralys.tribes.entities.City;
 			import com.uralys.tribes.entities.Game;
 			import com.uralys.tribes.entities.Player;
+			import com.uralys.tribes.managers.GameManager;
 			
 			import mx.effects.easing.Quadratic;
 			import mx.utils.ObjectUtil;
@@ -126,7 +128,7 @@
 				for each (var playerOfProfil:Player in Session.profil.players){
 					if(playerOfProfil.gameUID == game.gameUID){
 						this.player = playerOfProfil;
-						trace(ObjectUtil.toString(player));
+						this.selectedCity = player.cities.getItemAt(0) as City;
 						break;
 					}
 				}
@@ -138,6 +140,9 @@
 			private function initBoard():void{
 				BoardDrawer.getInstance().redrawAllEntities(game, board);
 				BoardClickListener.boardPage = this;
+				
+				image.x = 250 - selectedCity.x;
+				image.y = 250 - selectedCity.y;
 			}
 			
 			//----------------------------------------------------------------------------------------//
@@ -197,6 +202,9 @@
 				<s:Group width="500" height="500"
 					 clipAndEnableScrolling="true">
 					<mx:Image id="image" 
+						  useHandCursor="true"
+						  buttonMode="true"
+						  mouseChildren="false"
 						  source="{ImageContainer.MAP}"
 						  mouseDown="mouseDown(event)"
 						  mouseMove="mouseMove(event)"
@@ -223,18 +231,28 @@
 	<!-- ====================================================================================== -->
 	<!-- city -->
 	
-	<s:Group id="cityGroup" width="{main.width}" height="{main.height}"
-			 x="1500"
-			 includeInLayout="false">
-		<s:VGroup width="100%" horizontalAlign="center" paddingTop="50">
-			<s:TextInput id="cityNameInput" text="{selectedCity.name}"/>
-			<s:HGroup>
-				<s:Label text="Wheat"/>
-				<s:TextInput text="{selectedCity.wheat}" id="wheatInput"/>
-			</s:HGroup>
-			<s:Button label="Ok" click="backToMain()"/>
-		</s:VGroup>
-	</s:Group>
+	
+	<s:VGroup horizontalAlign="center" 
+			  paddingTop="50"
+			  id="cityGroup" 
+			  width="{main.width}" 
+			  height="{main.height}"
+			  x="1500"
+			  includeInLayout="false">
+		<renderers:CityForm 
+				id="cityForm"
+			    city="{selectedCity}"/>
+		<mx:Spacer height="15"/>
+		<s:Button label="Raise an army" click="{cityForm.viewstack.selectedIndex=2}"/>
 
+		<mx:Spacer height="50"/>
+		<s:HGroup>
+			<s:Button label="Annuler" click="backToMain()"/>
+			<s:Button label="Sauvegarder" click="backToMain()" visible="{selectedCity.unemployed >= 0}"/>
+		</s:HGroup>
+	</s:VGroup>
+		
 	<!-- ====================================================================================== -->
+
+	
 </s:Group>

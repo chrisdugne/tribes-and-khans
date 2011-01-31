@@ -11,7 +11,7 @@ public class Session{
 
 	//=====================================================//
 
-	[Bindable] public static var VERSION:String = "1.0.9";
+	[Bindable] public static var VERSION:String = "1.0.10";
 	[Bindable] public static var LOGGED_IN:Boolean = false; 
 	[Bindable] public static var CONNECTED_TO_FACEBOOK:Boolean = false;
 
@@ -36,9 +36,12 @@ public class Session{
 	// liste des currentgames
 	public static var GAMES_PLAYING:ArrayCollection = new ArrayCollection();
 
+	// liste de tous les items
+	public static var ITEMS:ArrayCollection = new ArrayCollection();
+
 	//=====================================================//
 	// Home : boolean pour charger la premiere liste des current games
-	public static var firstHomeLoadingDone:Boolean = false;
+	[Bindable] public static var firstHomeLoadingDone:Boolean = false;
 	
 	//=====================================================//
 	// GameDetailsRenderer

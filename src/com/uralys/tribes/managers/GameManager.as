@@ -1,6 +1,7 @@
 package com.uralys.tribes.managers {
 	
 	import com.uralys.tribes.commons.Names;
+	import com.uralys.tribes.commons.Numbers;
 	import com.uralys.tribes.commons.Session;
 	import com.uralys.tribes.core.Pager;
 	import com.uralys.tribes.entities.Game;
@@ -14,8 +15,6 @@ package com.uralys.tribes.managers {
 	import mx.rpc.events.FaultEvent;
 	import mx.rpc.events.ResultEvent;
 	import mx.rpc.remoting.mxml.RemoteObject;
-	import mx.utils.ObjectUtil;
-	
 
 	[Bindable]
 	public class GameManager{
@@ -76,11 +75,14 @@ package com.uralys.tribes.managers {
 			gameWrapper.launchGame.addEventListener("result", gameLaunched);
 			gameWrapper.launchGame(gameUID);
 		}
+
+		public function loadItems():void{
+			gameWrapper.loadItems.addEventListener("result", itemsLoaded);
+			gameWrapper.loadItems();
+		}
 		
 		//============================================================================================//
 		//  RESULTS FROM SERVER	
-		
-		
 		
 		
 		private function receivedCurrentGames(event:ResultEvent):void{
@@ -113,6 +115,11 @@ package com.uralys.tribes.managers {
 		private function gameLaunched(event:ResultEvent):void{
 			//refresh de la liste
 			getCurrentGames();
+		}
+
+		private function itemsLoaded(event:ResultEvent):void{
+			Session.ITEMS = event.result as ArrayCollection;
+			Numbers.loadItemData();
 		}
 			
 	}

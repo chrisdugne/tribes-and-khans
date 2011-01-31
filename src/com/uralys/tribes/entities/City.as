@@ -33,6 +33,7 @@ package com.uralys.tribes.entities
 		}
 	
 		public function get population():int {
+			refreshUnemployed();
 			return _population;
 		}
 	
@@ -70,6 +71,7 @@ package com.uralys.tribes.entities
 	
 		public function set peopleCreatingWheat(o:int):void {
 			_peopleCreatingWheat = o;
+			refreshUnemployed();
 		}
 	
 		public function get peopleCreatingWood():int {
@@ -78,6 +80,7 @@ package com.uralys.tribes.entities
 	
 		public function set peopleCreatingWood(o:int):void {
 			_peopleCreatingWood = o;
+			refreshUnemployed();
 		}
 	
 		public function get peopleCreatingIron():int {
@@ -86,6 +89,7 @@ package com.uralys.tribes.entities
 	
 		public function set peopleCreatingIron(o:int):void {
 			_peopleCreatingIron = o;
+			refreshUnemployed();
 		}
 	
 		public function get gold():int {
@@ -113,7 +117,7 @@ package com.uralys.tribes.entities
 		}
 	
 		public function get radius():int {
-			return _population/50;
+			return Math.sqrt(_population);
 		}
 	
 		public function get equipmentStock():ArrayCollection {
@@ -145,9 +149,163 @@ package com.uralys.tribes.entities
 		protected var _gold:int;
 		protected var _x:int;
 		protected var _y:int;
-		protected var _equipmentStock:ArrayCollection;
-		protected var _smiths:ArrayCollection;
+		protected var _equipmentStock:ArrayCollection = new ArrayCollection();
+		protected var _smiths:ArrayCollection = new ArrayCollection();
 
+		//---------------------------------------------------------------//
+		// only on flex side
+		
+		protected var _armyRaised:int;
+		protected var _unemployed:int;
+
+		public function get armyRaised():int{
+			return _armyRaised;
+		}
+
+		public function set armyRaised(o:int):void{
+			_armyRaised = o;
+			refreshUnemployed();
+		}
+
+		public function get unemployed():int{
+			return _unemployed;
+		}
+
+		public function set unemployed(o:int):void{
+			_unemployed = o;
+		}
+		
+		public function refreshUnemployed():void{
+			var nbSmiths:int = 0;
+			
+			for each(var smith:Smith in smiths){
+				nbSmiths += smith.people;
+			}
+			
+			unemployed = _population 
+							- peopleCreatingWheat 
+							- peopleCreatingWood 
+							- peopleCreatingIron 
+							- armyRaised
+							- nbSmiths;
+		}
+		
+		//---------------------------------------------------------------//
+		
+		protected var _wheatEarned:int;
+		protected var _wheatSpent:int;
+		protected var _woodEarned:int;
+		protected var _woodSpent:int;
+		protected var _ironEarned:int;
+		protected var _ironSpent:int;
+
+		public function get wheatEarned():int{
+			return _wheatEarned;
+		}
+		
+		public function set wheatEarned(o:int):void{
+			_wheatEarned = o;
+		}
+
+		public function get wheatSpent():int{
+			return _wheatSpent + population;
+		}
+		
+		public function set wheatSpent(o:int):void{
+			_wheatSpent = o;
+		}
+
+		public function get woodEarned():int{
+			return _woodEarned;
+		}
+		
+		public function set woodEarned(o:int):void{
+			_woodEarned = o;
+		}
+
+		public function get woodSpent():int{
+			return _woodSpent;
+		}
+		
+		public function set woodSpent(o:int):void{
+			_woodSpent = o;
+		}
+
+		public function get ironEarned():int{
+			return _ironEarned;
+		}
+		
+		public function set ironEarned(o:int):void{
+			_ironEarned = o;
+		}
+
+		public function get ironSpent():int{
+			return _ironSpent;
+		}
+		
+		public function set ironSpent(o:int):void{
+			_ironSpent = o;
+		}
+		
+		//---------------------------------------------------------------//
+		
+		public function getBowStock():int{
+			for each(var equipment:Equipment in equipmentStock){
+				if(equipment.item.name == "bow")
+					return equipment.size;
+			}
+			
+			return 0;
+		}
+		
+		public function getBowWorkers():int{
+			for each(var smith:Smith in smiths){
+				if(smith.item.name == "bow")
+					return smith.people;
+			}
+			
+			return 0;
+		}
+		
+		//---------------------------------------------------------------//
+		
+		public function getSwordStock():int{
+			for each(var equipment:Equipment in equipmentStock){
+				if(equipment.item.name == "sword")
+					return equipment.size;
+			}
+			
+			return 0;
+		}
+		
+		public function getSwordWorkers():int{
+			for each(var smith:Smith in smiths){
+				if(smith.item.name == "sword")
+					return smith.people;
+			}
+			
+			return 0;
+		}
+		
+		//---------------------------------------------------------------//
+		
+		public function getArmorStock():int{
+			for each(var equipment:Equipment in equipmentStock){
+				if(equipment.item.name == "armor")
+					return equipment.size;
+			}
+			
+			return 0;
+		}
+		
+		public function getArmorWorkers():int{
+			for each(var smith:Smith in smiths){
+				if(smith.item.name == "armor")
+					return smith.people;
+			}
+			
+			return 0;
+		}
 
 	}
 }

@@ -32,7 +32,6 @@
 
 			private function creationComplete():void{
 				if(!Session.firstHomeLoadingDone){
-					Session.firstHomeLoadingDone = true;
 					getMyGames();
 				}
 			}
@@ -82,13 +81,21 @@
 			//----------------------------------------------------------//
 			
 			private function setGames4GameSelectionModule():void{
+				
+				// applique uniquement au premier appel : lors de linit 
+				Session.firstHomeLoadingDone = true;
+				if(Session.ITEMS.length == 0)
+					GameManager.getInstance().loadItems();
+				
+				// le set classique
 				if(gameSelectionModule.child && games != null)
 					(gameSelectionModule.child as _IGameSelectionModule).setGames(games, 1);
+				
 			}
 			
 		]]>
 	</fx:Script>
-	<s:HGroup width="100%">
+	<s:HGroup width="100%" visible="{Session.firstHomeLoadingDone}">
 		<s:Button label="My current Games" click="{getMyGames()}"/>
 		<mx:Spacer width="100%"/>
 		<s:VGroup>

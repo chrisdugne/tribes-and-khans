@@ -3,6 +3,7 @@ package com.uralys.tribes.dao;
 import java.util.List;
 
 import com.uralys.tribes.entities.dto.GameDTO;
+import com.uralys.tribes.entities.dto.ItemDTO;
 
 public interface IGameDAO {
 
@@ -12,4 +13,6 @@ public interface IGameDAO {
 	public List<GameDTO> getGamesToJoin();
 	
 	public boolean launchGame(String gameUID);
+	
+	public List<ItemDTO> loadItems();
 }

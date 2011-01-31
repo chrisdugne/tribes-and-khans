@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.uralys.tribes.dao.impl.UniversalDAO;
 import com.uralys.tribes.entities.dto.ArmyDTO;
 import com.uralys.tribes.entities.dto.CityDTO;
@@ -30,7 +32,7 @@ public class DataviewerServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 	private String PASSWORD = "3bc7c708f8d865b506ffd1acde3b47f61af9445d";
-	private String VERSION = "1.0.9";
+	private String VERSION = "1.1.0";
 
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -150,7 +152,7 @@ public class DataviewerServlet extends HttpServlet {
 		out.println(dropdown);
 		out.println("<br>");
 		out.println("<input type=\"button\" value=\"Refresh\" onclick=\"window.location.reload();\">");
-		
+
 		
 		//-----------------------------------------------------------------------------------//
 		// - edit				
@@ -210,6 +212,73 @@ public class DataviewerServlet extends HttpServlet {
 			out.println("<input type=\"hidden\" value=\"save\" name=\"action\"/>");
 			out.println("</form>");
 		}
+
+		//-----------------------------------------------------------------------------------//
+		// - edit		
+		else if(req.getParameter("action") != null && req.getParameter("action").equals("create")){
+			
+			
+			Class selectedDTO = getDTOClass(req.getParameter("entity"));
+			
+			Object o = new Object();
+			try {
+				o = selectedDTO.newInstance();
+			} catch (InstantiationException e1) {
+				e1.printStackTrace();
+			} catch (IllegalAccessException e1) {
+				e1.printStackTrace();
+			}
+			
+			Field[] fields = o.getClass().getDeclaredFields();
+			
+			// [0] : key |  [1] : objectUID
+			String idName = fields[1].getName();
+			
+			StringBuffer editTable = new StringBuffer();
+			StringBuffer parametersToSave= new StringBuffer();
+			
+			editTable.append("<table>");
+			
+			for(Field field : fields){
+				
+				if(field.getName().startsWith("key") || field.getName().startsWith("jdo"))
+					continue;
+				
+				if(field.getType().getName().equals("com.google.appengine.api.datastore.Text"))
+					continue;
+				
+				if(field.getType().getName().equals("java.util.Date"))
+					continue;
+				
+				try {
+					field.setAccessible(true);
+					editTable.append("<tr>");
+					
+					parametersToSave.append(field.getName() + "="+field.getName()+".value,");
+					
+					if(field.getName().equals(idName))
+						editTable.append("<td><b>"+field.getName() + "</b> </td><td>" + field.get(o) + "</td>");
+					else if(field.getType().getName().equals("java.lang.Boolean"))
+						editTable.append("<td>"+field.getName() + "</td><td><select name="+field.getName()+"><option value=" + field.get(o) + ">"+ field.get(o) +"<option value=" + !(Boolean)field.get(o) + ">"+ !(Boolean)field.get(o) +"</td>");
+					else if(field.getType().getName().equals("java.util.List"))
+						editTable.append("<td>"+field.getName() + "</td><td><textarea style=\"width: 280px;\" rows=\""+((List)field.get(o)).size()+"\" name=\""+field.getName()+"\">" + field.get(o) + "</textarea></td>");
+					else
+						editTable.append("<td>"+field.getName() + "</td><td><input type=\"text\" name=\""+field.getName()+"\" value=\"" + field.get(o) + "\" /></td>");
+					editTable.append("</tr>");
+				} 
+				catch (IllegalArgumentException e) {} 
+				catch (IllegalAccessException e) {}
+			}
+			
+			out.println("<form METHOD=GET onSubmit=\"document.window.href='/dataviewer?action=save&entity="+req.getParameter("entity")+"&uid="+req.getParameter("uid")+"'\">");
+			out.println(editTable.toString());
+			out.println("<input type=\"button\" value=\"Save\" onClick=\"this.form.submit();\"/>");
+			out.println("<input type=\"hidden\" value=\""+req.getParameter("entity")+"\" name=\"entity\"/>");
+			out.println("<input type=\"hidden\" value=\""+req.getParameter("___uid")+"\" name=\"___uid\"/>");
+			out.println("<input type=\"hidden\" value=\""+req.getParameter("pwd")+"\" name=\"pwd\"/>");
+			out.println("<input type=\"hidden\" value=\"save\" name=\"action\"/>");
+			out.println("</form>");
+		}
 		
 		//-----------------------------------------------------------------------------------//
 		// - delete
@@ -225,21 +294,69 @@ public class DataviewerServlet extends HttpServlet {
 		// - save the edition
 		
 		else if(req.getParameter("action") != null && req.getParameter("action").equals("save")){
+			
+			boolean newInstanceIsCreated = req.getParameter("___uid").equals("null");
+			
+			String instanceUID = null;
+			Key key = null;
+			
 			Class selectedDTO = getDTOClass(req.getParameter("entity"));
-			Object instance = universalDao.getObjectDTO(req.getParameter("___uid"), selectedDTO);
+			Object instance = new Object();
+			
+			if(newInstanceIsCreated){
+				instanceUID = Utils.generateUID();
+				key = KeyFactory.createKey(selectedDTO.getSimpleName(), instanceUID);
+			
+				try {
+					instance = selectedDTO.newInstance();
+				} catch (InstantiationException e) {
+					e.printStackTrace(System.out);
+				} catch (IllegalAccessException e) {
+					e.printStackTrace(System.out);
+				}
+			}
+			else
+			 instance = universalDao.getObjectDTO(req.getParameter("___uid"), selectedDTO);
 
 			for(Field field : instance.getClass().getDeclaredFields()){
 
+				field.setAccessible(true);
+				
+				if(newInstanceIsCreated){
+					if(field.getName().endsWith("UID")){
+						try {
+							field.set(instance, instanceUID);
+						} catch (Exception e) {
+							e.printStackTrace(System.out);
+						}
+						
+						continue;
+					}
+					
+					if(field.getName().startsWith("key")){
+						try {
+							field.set(instance, KeyFactory.keyToString(key));
+						} catch (IllegalArgumentException e) {
+							e.printStackTrace(System.out);
+						} catch (IllegalAccessException e) {
+							e.printStackTrace(System.out);
+						}
+						
+						continue;
+					}
+						
+					
+				}
+				
 				if(field.getName().startsWith("key") || field.getName().startsWith("jdo"))
 					continue;
+
 				
 				try {
 					String value = req.getParameter(field.getName());
 
 					if(value == null)
 						continue;
-					
-					field.setAccessible(true);
 
 					if(value.equals("null") || value.equals("") )
 						value = null;
@@ -261,15 +378,21 @@ public class DataviewerServlet extends HttpServlet {
 						
 					
 				} catch (SecurityException e) {
-					e.printStackTrace();
+					e.printStackTrace(System.out);
 					break;
 				} catch (IllegalAccessException e) {
-					e.printStackTrace();
+					e.printStackTrace(System.out);
 					break;
 				}
 			}
+
+			if(newInstanceIsCreated)
+				universalDao.makePersistent(instance);
+			else
+				universalDao.update(instance, req.getParameter("___uid"));
 			
-			universalDao.update(instance, req.getParameter("___uid"));
+			
+			
 			out.println("<meta http-equiv=\"refresh\" content=\"0.1; URL=/dataviewer?pwd="+req.getParameter("pwd")+"&dto="+req.getParameter("entity")+"\">");	
 		}
 		
@@ -278,6 +401,7 @@ public class DataviewerServlet extends HttpServlet {
 		else if(req.getParameter("dto") != null && !req.getParameter("dto").equals("___")){
 
 			Class selectedDTO = getDTOClass(req.getParameter("dto"));
+			out.println("<input type=\"button\" value=\"Create new\" onclick=\"window.location = 'dataviewer?action=create&pwd="+req.getParameter("pwd")+"&entity="+req.getParameter("dto")+"'\">");
 			out.println("<h4>"+selectedDTO.getSimpleName()+"</h4>");
 			
 			int from = 1;

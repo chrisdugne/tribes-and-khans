@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.uralys.tribes.domain.IGameManager;
 import com.uralys.tribes.entities.Game;
+import com.uralys.tribes.entities.Item;
 import com.uralys.tribes.services.IGameService;
 
 public class GameService implements IGameService {
@@ -50,5 +51,9 @@ public class GameService implements IGameService {
 	
 	public boolean launchGame(String gameUID) {
 		return gameManager.launchGame(gameUID);
+	}
+	
+	public List<Item> loadItems() {
+		return gameManager.loadItems();
 	}
 }

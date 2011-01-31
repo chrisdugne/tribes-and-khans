@@ -2,6 +2,7 @@ package com.uralys.tribes.services;
 
 import java.util.List;
 import com.uralys.tribes.entities.Game;
+import com.uralys.tribes.entities.Item;
 
 public interface IGameService {
 
@@ -12,5 +13,7 @@ public interface IGameService {
 	public List<Game> getCurrentGames(String uralysUID);
 
 	public boolean launchGame(String gameUID);
+
+	public List<Item> loadItems();
 	
 }

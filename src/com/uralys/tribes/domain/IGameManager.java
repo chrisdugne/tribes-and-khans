@@ -3,6 +3,7 @@ package com.uralys.tribes.domain;
 import java.util.List;
 
 import com.uralys.tribes.entities.Game;
+import com.uralys.tribes.entities.Item;
 
 public interface IGameManager {
 
@@ -12,4 +13,6 @@ public interface IGameManager {
 	public List<Game> getGamesToJoin();
 	
 	public boolean launchGame(String gameUID);
+
+	public List<Item> loadItems();
 }

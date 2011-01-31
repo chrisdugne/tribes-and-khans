@@ -13,6 +13,7 @@ import com.uralys.tribes.dao.IGameDAO;
 import com.uralys.tribes.entities.Game;
 import com.uralys.tribes.entities.dto.CityDTO;
 import com.uralys.tribes.entities.dto.GameDTO;
+import com.uralys.tribes.entities.dto.ItemDTO;
 import com.uralys.tribes.entities.dto.PlayerDTO;
 import com.uralys.tribes.entities.dto.ProfilDTO;
 import com.uralys.utils.Utils;
@@ -209,11 +210,10 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			city.setPeopleCreatingIron(0);
 			city.setGold(100);
 
-			city.setX(Utils.random(2900));
-			city.setY(Utils.random(2900));
+			city.setX(Utils.random(2700));
+			city.setY(Utils.random(2700));
 			
 			pm.makePersistent(city);
-			
 			
 			player.setLastTurnPlayed(0);
 			player.getCityUIDs().add(cityUID);
@@ -226,4 +226,11 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		
 		return true;
 	}
+
+	//==================================================================================================//
+	
+	public List<ItemDTO> loadItems() {
+		return UniversalDAO.getInstance().getListDTO(ItemDTO.class, 1, 100);
+	}
+
 }

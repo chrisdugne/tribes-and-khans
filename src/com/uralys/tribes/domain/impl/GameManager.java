@@ -6,8 +6,10 @@ import java.util.List;
 import com.uralys.tribes.dao.IGameDAO;
 import com.uralys.tribes.domain.IGameManager;
 import com.uralys.tribes.entities.Game;
+import com.uralys.tribes.entities.Item;
 import com.uralys.tribes.entities.converters.EntitiesConverter;
 import com.uralys.tribes.entities.dto.GameDTO;
+import com.uralys.tribes.entities.dto.ItemDTO;
 
 public class GameManager implements IGameManager {
 	
@@ -57,5 +59,17 @@ public class GameManager implements IGameManager {
 
 	public boolean launchGame(String gameUID) {
 		return gameDao.launchGame(gameUID);
+	}
+	
+	//==================================================================================================//
+	
+	public List<Item> loadItems() {
+		List<Item> items = new ArrayList<Item>();
+		
+		for(ItemDTO itemDTO : gameDao.loadItems()){
+			items.add(EntitiesConverter.convertItemDTO(itemDTO));
+		}
+		
+		return items;
 	}
 }

@@ -60,6 +60,12 @@ public class UniversalDAO{
 		pm.close();
 	}
 
+	public void makePersistent(Object newDTO) {
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		pm.makePersistent(newDTO);
+		pm.close();
+	}
+
 	@SuppressWarnings("unchecked")
 	public <E> void update(Object updatedDTO, String uid) {
 		

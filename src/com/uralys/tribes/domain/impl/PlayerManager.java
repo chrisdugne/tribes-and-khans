@@ -22,7 +22,13 @@ public class PlayerManager implements IPlayerManager {
 	}
 	
 	public Profil getProfil(String uralysUID) {
-		return EntitiesConverter.convertProfilDTO(playerDao.getProfil(uralysUID));
+		try{
+			return EntitiesConverter.convertProfilDTO(playerDao.getProfil(uralysUID));
+		}
+		catch(Exception e){
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 }

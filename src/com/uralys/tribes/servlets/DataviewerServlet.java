@@ -301,6 +301,7 @@ public class DataviewerServlet extends HttpServlet {
 			Key key = null;
 			
 			Class selectedDTO = getDTOClass(req.getParameter("entity"));
+			
 			Object instance = new Object();
 			
 			if(newInstanceIsCreated){
@@ -323,7 +324,8 @@ public class DataviewerServlet extends HttpServlet {
 				field.setAccessible(true);
 				
 				if(newInstanceIsCreated){
-					if(field.getName().endsWith("UID")){
+					if(field.getName().endsWith("UID") 
+					&& field.getName().toLowerCase().startsWith(req.getParameter("entity").toLowerCase())){
 						try {
 							field.set(instance, instanceUID);
 						} catch (Exception e) {

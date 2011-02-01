@@ -1,6 +1,8 @@
 
 package com.uralys.tribes.entities
 {
+	import flash.sampler.NewObjectSample;
+	
 	import mx.collections.ArrayCollection;
 
 	[Bindable]
@@ -152,11 +154,28 @@ package com.uralys.tribes.entities
 		protected var _equipmentStock:ArrayCollection = new ArrayCollection();
 		protected var _smiths:ArrayCollection = new ArrayCollection();
 
-		//---------------------------------------------------------------//
-		// only on flex side
 		
-		protected var _armyRaised:int;
+		
+		//===============================================================================================//
+		// 	only on flex side
+		//===============================================================================================//
+		
+		public var armies:ArrayCollection = new ArrayCollection();
+		
+		//---------------------------------------------------------------//
+		
 		protected var _unemployed:int;
+		protected var _armiesTotalSize:int;
+		protected var _armyRaised:int;
+		protected var _armyReleased:int;
+
+		public function set armiesTotalSize(o:int):void{
+			_armiesTotalSize = o;
+		}
+
+		public function get armiesTotalSize():int{
+			return _armiesTotalSize;
+		}
 
 		public function get armyRaised():int{
 			return _armyRaised;
@@ -164,6 +183,15 @@ package com.uralys.tribes.entities
 
 		public function set armyRaised(o:int):void{
 			_armyRaised = o;
+			refreshUnemployed();
+		}
+
+		public function get armyReleased():int{
+			return _armyReleased;
+		}
+
+		public function set armyReleased(o:int):void{
+			_armyReleased = o;
 			refreshUnemployed();
 		}
 
@@ -187,6 +215,7 @@ package com.uralys.tribes.entities
 							- peopleCreatingWood 
 							- peopleCreatingIron 
 							- armyRaised
+							+ armyReleased
 							- nbSmiths;
 		}
 		
@@ -248,64 +277,121 @@ package com.uralys.tribes.entities
 		}
 		
 		//---------------------------------------------------------------//
+
+		private var _bowStock:int; // stock dans la ville au debut du tour
+		private var _bowsRestored:int; // bows restitues au stock àla fin du tour 
+		private var _bowsEquiped:int; // bows pris du stock pour les armees
+		private var _bowWorkers:int;
 		
-		public function getBowStock():int{
-			for each(var equipment:Equipment in equipmentStock){
-				if(equipment.item.name == "bow")
-					return equipment.size;
-			}
-			
-			return 0;
+		public function set bowStock(o:int):void{
+			_bowStock = o;
+		}
+
+		public function get bowStock():int{
+			return _bowStock;
+		}
+
+		public function set bowWorkers(o:int):void{
+			_bowWorkers = o;
+		}
+
+		public function get bowWorkers():int{
+			return _bowWorkers;
 		}
 		
-		public function getBowWorkers():int{
-			for each(var smith:Smith in smiths){
-				if(smith.item.name == "bow")
-					return smith.people;
-			}
-			
-			return 0;
+		public function set bowsRestored(o:int):void{
+			_bowsRestored = o;
+		}
+
+		public function get bowsRestored():int{
+			return _bowsRestored;
+		}
+
+		public function set bowsEquiped(o:int):void{
+			_bowsEquiped = o;
+		}
+
+		public function get bowsEquiped():int{
+			return _bowsEquiped;
 		}
 		
 		//---------------------------------------------------------------//
 		
-		public function getSwordStock():int{
-			for each(var equipment:Equipment in equipmentStock){
-				if(equipment.item.name == "sword")
-					return equipment.size;
-			}
-			
-			return 0;
+		private var _swordStock:int;
+		private var _swordsRestored:int; // bows restitues au stock à la fin du tour 
+		private var _swordsEquiped:int; // bows pris du stock pour les armees
+		private var _swordWorkers:int;
+		
+		public function set swordStock(o:int):void{
+			_swordStock = o;
+		}
+
+		public function get swordStock():int{
+			return _swordStock;
+		}
+
+		public function set swordWorkers(o:int):void{
+			_swordWorkers = o;
+		}
+
+		public function get swordWorkers():int{
+			return _swordWorkers;
 		}
 		
-		public function getSwordWorkers():int{
-			for each(var smith:Smith in smiths){
-				if(smith.item.name == "sword")
-					return smith.people;
-			}
-			
-			return 0;
+		public function set swordsRestored(o:int):void{
+			_swordsRestored = o;
 		}
 		
+		public function get swordsRestored():int{
+			return _swordsRestored;
+		}
+		
+		public function set swordsEquiped(o:int):void{
+			_swordsEquiped = o;
+		}
+		
+		public function get swordsEquiped():int{
+			return _swordsEquiped;
+		}
 		//---------------------------------------------------------------//
 		
-		public function getArmorStock():int{
-			for each(var equipment:Equipment in equipmentStock){
-				if(equipment.item.name == "armor")
-					return equipment.size;
-			}
-			
-			return 0;
+		private var _armorStock:int;
+		private var _armorsRestored:int; // bows restitues au stock à la fin du tour 
+		private var _armorsEquiped:int; // bows pris du stock pour les armees
+		private var _armorWorkers:int;
+		
+		public function set armorStock(o:int):void{
+			_armorStock = o;
+		}
+
+		public function get armorStock():int{
+			return _armorStock;
+		}
+
+		public function set armorWorkers(o:int):void{
+			_armorWorkers = o;
+		}
+
+		public function get armorWorkers():int{
+			return _armorWorkers;
 		}
 		
-		public function getArmorWorkers():int{
-			for each(var smith:Smith in smiths){
-				if(smith.item.name == "armor")
-					return smith.people;
-			}
-			
-			return 0;
+		public function set armorsRestored(o:int):void{
+			_armorsRestored = o;
 		}
+		
+		public function get armorsRestored():int{
+			return _armorsRestored;
+		}
+		
+		public function set armorsEquiped(o:int):void{
+			_armorsEquiped = o;
+		}
+		
+		public function get armorsEquiped():int{
+			return _armorsEquiped;
+		}
+		//---------------------------------------------------------------//
 
 	}
 }

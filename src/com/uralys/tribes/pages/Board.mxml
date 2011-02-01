@@ -12,7 +12,9 @@
 			import com.uralys.tribes.core.BoardClickListener;
 			import com.uralys.tribes.core.BoardDrawer;
 			import com.uralys.tribes.core.Pager;
+			import com.uralys.tribes.entities.Army;
 			import com.uralys.tribes.entities.City;
+			import com.uralys.tribes.entities.Equipment;
 			import com.uralys.tribes.entities.Game;
 			import com.uralys.tribes.entities.Player;
 			import com.uralys.tribes.managers.GameManager;
@@ -132,6 +134,30 @@
 						break;
 					}
 				}
+				
+				for each(var army:Army in player.armies){
+					for each(var city:City in player.cities){
+						if(army.x == city.x && army.y == city.y){
+							city.armies.addItem(army);
+							city.armiesTotalSize += army.size;
+							break;
+						}
+					}
+					
+					for each(var equipment:Equipment in army.equipments){
+						switch(equipment.item.name){
+							case "bow" :
+								army.bows += equipment.size;
+								break;
+							case "sword" :
+								army.swords += equipment.size;
+								break;
+							case "armor" :
+								army.armors += equipment.size;
+								break;
+						}
+					}
+				}
 
 			};
 
@@ -190,7 +216,7 @@
 
 
 	</fx:Declarations>
-	
+
 	<s:Group id="main" width="100%" height="100%">
 		<s:HGroup width="100%" horizontalAlign="center" paddingTop="5">
 			<s:Label text="X : {coordinateX}"/>
@@ -242,10 +268,7 @@
 		<renderers:CityForm 
 				id="cityForm"
 			    city="{selectedCity}"/>
-		<mx:Spacer height="15"/>
-		<s:Button label="Raise an army" click="{cityForm.viewstack.selectedIndex=2}"/>
-
-		<mx:Spacer height="50"/>
+		<mx:Spacer height="55"/>
 		<s:HGroup>
 			<s:Button label="Annuler" click="backToMain()"/>
 			<s:Button label="Sauvegarder" click="backToMain()" visible="{selectedCity.unemployed >= 0}"/>

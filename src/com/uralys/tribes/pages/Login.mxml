@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
-		 xmlns:mx="library://ns.adobe.com/flex/mx" width="100%" height="100%">
-	
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="100%" height="100%" xmlns:renderers="com.uralys.renderers.*">
+
 	<fx:Script>
 		<![CDATA[
 			import com.uralys.tribes.commons.Names;
@@ -61,6 +61,13 @@
 			}
 		]]>
 	</fx:Script>
+	
+	<!-- problem de load des skins....declaration des entites qui posent probleme plus loin ici, apres ca marche... -->
+	
+	<s:Scroller/>
+	<s:List visible="false"/>
+	
+	<!-- ========================================================================================================== -->
 	
 	<s:VGroup width="100%"
 			  paddingTop="90"

@@ -80,5 +80,38 @@ package com.uralys.tribes.entities
 		protected var _x:int;
 		protected var _y:int;
 		protected var _radius:int;
+		
+		//==========================================================================//
+
+		private var _bows:int;
+		private var _swords:int;
+		private var _armors:int;
+		
+		public function get bows():int{
+			return _bows;
+		}
+
+		public function set bows(o:int):void{
+			_bows = o;
+		}
+
+		public function get swords():int{
+			return _swords;
+		}
+
+		public function set swords(o:int):void{
+			_swords = o;
+		}
+
+		public function get armors():int{
+			return _armors;
+		}
+
+		public function set armors(o:int):void{
+			_armors = o;
+		}
+
+		//==========================================================================//
+
 	}
 }

@@ -1,35 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
 <s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
-		 xmlns:mx="library://ns.adobe.com/flex/mx">
+		 xmlns:mx="library://ns.adobe.com/flex/mx" 
+		 xmlns:forms="com.uralys.renderers.forms.*">
 	
 		<fx:Script>
 			<![CDATA[
 				import com.uralys.tribes.commons.Numbers;
 				import com.uralys.tribes.commons.Session;
+				import com.uralys.tribes.entities.Army;
 				import com.uralys.tribes.entities.City;
+				import com.uralys.tribes.entities.Equipment;
 				import com.uralys.tribes.entities.Item;
 				import com.uralys.tribes.entities.Smith;
 				
+				import mx.events.ItemClickEvent;
+				
+				//----------------------------------------------------------//
+				
+				protected function init():void{
+					armiesList.addEventListener(ItemClickEvent.ITEM_CLICK, onArmyClick);
+				}
+
+				//----------------------------------------------------------//
+				
 				public var _city:City;
+				[Bindable] private var army:Army;
+
+				//----------------------------------------------------------//
 
 				[Bindable] 
 				public function set city(o:City){
 					_city = o;
 					
-					// recupere les anciens choix sur les workers dans la forge  
-					previousBowWorkersNum = city.getBowWorkers();
-					previousSwordWorkersNum = city.getSwordWorkers();
-					previousArmorWorkersNum = city.getArmorWorkers();
 					
-					// calcul des depenses prevues avec ses choix
-					city.woodSpent += previousBowWorkersNum * Numbers.BOW_WOOD;
-					city.woodSpent += previousSwordWorkersNum * Numbers.SWORD_WOOD;
-					city.woodSpent += previousArmorWorkersNum * Numbers.ARMOR_WOOD;
-
-					city.ironSpent += previousBowWorkersNum * Numbers.BOW_IRON;
-					city.ironSpent += previousSwordWorkersNum * Numbers.BOW_IRON;
-					city.ironSpent += previousArmorWorkersNum * Numbers.BOW_IRON;
+					// recuperation des stocks de la forge
+					for each(var equipment:Equipment in city.equipmentStock){
+						switch(equipment.item.name){
+							case "bow" :
+								city.bowStock = equipment.size;
+								break;
+							case "sword" :
+								city.swordStock = equipment.size;
+								break;
+							case "armor" :
+								city.armorStock = equipment.size;
+								break;
+						}
+					}
+				
+					// recuperations des workers pour chaque item de la forge
+					for each(var smith:Smith in city.smiths){
+						switch(smith.item.name){
+							case "bow" :
+								city.bowWorkers = smith.people;
+								break;
+							case "sword" :
+								city.swordWorkers = smith.people;
+								break;
+							case "armor" :
+								city.armorWorkers = smith.people;
+								break;
+						}
+					}
+					
+					// calcul des depenses prevues avec les choix du tour precedent
+					city.woodSpent += city.bowWorkers * Numbers.BOW_WOOD;
+					city.woodSpent += city.swordWorkers * Numbers.SWORD_WOOD;
+					city.woodSpent += city.armorWorkers * Numbers.ARMOR_WOOD;
+					
+					city.ironSpent += city.bowWorkers * Numbers.BOW_IRON;
+					city.ironSpent += city.swordWorkers * Numbers.BOW_IRON;
+					city.ironSpent += city.armorWorkers * Numbers.BOW_IRON;
+					
+					city.wheatSpent += city.armiesTotalSize;
 					
 					city.refreshUnemployed();
 				}	
@@ -37,7 +81,7 @@
 				public function get city():City{
 					return _city;
 				}
-				
+
 				//-------------------------------------------------------------------------//
 
 				protected function wheatInputKeyUpHandler(event:KeyboardEvent):void	{
@@ -53,12 +97,6 @@
 				protected function ironInputKeyUpHandler(event:KeyboardEvent):void	{
 					city.peopleCreatingIron = parseInt(ironInput.text);
 					city.ironEarned = Numbers.IRON_EARNING_COEFF * city.peopleCreatingIron;
-				}
-
-				//-------------------------------------------------------------------------//
-
-				protected function armyInputKeyUpHandler(event:KeyboardEvent):void	{
-					city.armyRaised = parseInt(armyInput.text);
 				}
 
 				//-------------------------------------------------------------------------//
@@ -97,70 +135,281 @@
 					
 					city.woodSpent += smith.people * smith.item.wood;
 					city.ironSpent += smith.people * smith.item.iron;
-					city.refreshUnemployed();
+					city.refreshUnemployed(); 
 					
 				}
 
-				private var previousBowWorkersNum:int;
-				protected function bowWorkersInputKeyUpHandler(event:KeyboardEvent):void{
+				protected function bowWorkersInputKeyUpHandler(event:Event):void{
 					
 					// on enleve le precedent debit de ressources 
-					// peopleRequires c'est en fait le minPeopleRequired, et item.resource doit etre pour 1unite/1worker
-					city.woodSpent -= previousBowWorkersNum * Numbers.BOW_WOOD;
-					city.ironSpent -= previousBowWorkersNum * Numbers.BOW_IRON;
+					city.woodSpent -= city.bowWorkers * Numbers.BOW_WOOD;
+					city.ironSpent -= city.bowWorkers * Numbers.BOW_IRON;
 					
 					if(bowWorkersInput.text.length == 0)
-						bowWorkersInput.text = '0';
+						city.bowWorkers = 0;
+					else
+						city.bowWorkers = parseInt(bowWorkersInput.text);
+					
+					var woodAvailable:int = city.wood - city.woodSpent;
+					var ironAvailable:int = city.iron - city.ironSpent;
 					
 					// la depense en bois pour les arcs est plus grande que le stock de bois
-					if(Numbers.BOW_WOOD * parseInt(bowWorkersInput.text) > city.wood - city.woodSpent)
-						bowWorkersInput.text = city.wood/Numbers.BOW_WOOD + "";
+					if(Numbers.BOW_WOOD * city.bowWorkers > woodAvailable)
+						city.bowWorkers = Math.floor(woodAvailable/Numbers.BOW_WOOD);
 
 					// la depense en fer pour les arcs est plus grande que le stock de fer
-					if(Numbers.BOW_IRON * parseInt(bowWorkersInput.text) > city.iron)
-						bowWorkersInput.text = city.iron/Numbers.BOW_IRON + "";
+					if(Numbers.BOW_IRON * city.bowWorkers > ironAvailable)
+						city.bowWorkers = Math.floor(ironAvailable/Numbers.BOW_IRON);
 							
-					registerNewForgeWorkers("bow", parseInt(bowWorkersInput.text));
-					previousBowWorkersNum = parseInt(bowWorkersInput.text);
-						
+					registerNewForgeWorkers("bow", city.bowWorkers);
 				}
 				
 				
-				private var previousSwordWorkersNum:int;
-				protected function swordWorkersInputKeyUpHandler(event:KeyboardEvent):void{
+				protected function swordWorkersInputKeyUpHandler(event:Event):void{
+				
+					// on enleve le precedent debit de ressources 
+					city.woodSpent -= city.swordWorkers * Numbers.SWORD_WOOD;
+					city.ironSpent -= city.swordWorkers * Numbers.SWORD_IRON;
+					
 					if(swordWorkersInput.text.length == 0)
-						swordWorkersInput.text = '0';
+						city.swordWorkers = 0;
+					else
+						city.swordWorkers = parseInt(swordWorkersInput.text)
+							
+					var woodAvailable:int = city.wood - city.woodSpent;
+					var ironAvailable:int = city.iron - city.ironSpent;
 					
 					// la depense en bois pour les epees est plus grande que le stock de bois
-					if(Numbers.SWORD_WOOD * parseInt(swordWorkersInput.text) > city.wood)
-						swordWorkersInput.text = city.wood/Numbers.SWORD_WOOD + "";
+					if(Numbers.SWORD_WOOD * city.swordWorkers > woodAvailable)
+						city.swordWorkers = Math.floor(woodAvailable/Numbers.SWORD_WOOD);
 					
 					// la depense en fer pour les epees est plus grande que le stock de fer
-					if(Numbers.SWORD_IRON * parseInt(swordWorkersInput.text) > city.iron)
-						swordWorkersInput.text = city.iron/Numbers.SWORD_IRON + "";
-					
-					registerNewForgeWorkers("sword", parseInt(swordWorkersInput.text));
-					previousSwordWorkersNum = parseInt(swordWorkersInput.text);
+					if(Numbers.SWORD_IRON * city.swordWorkers > ironAvailable)
+						city.swordWorkers = Math.floor(ironAvailable/Numbers.SWORD_IRON);
+
+					registerNewForgeWorkers("sword", city.swordWorkers);
 				}
 				
-				private var previousArmorWorkersNum:int;
-				protected function armorWorkersInputKeyUpHandler(event:KeyboardEvent):void{
+				protected function armorWorkersInputKeyUpHandler(event:Event):void{
+					
+					// on enleve le precedent debit de ressources 
+					city.woodSpent -= city.armorWorkers * Numbers.ARMOR_WOOD;
+					city.ironSpent -= city.armorWorkers * Numbers.ARMOR_IRON;
+					
 					if(armorWorkersInput.text.length == 0)
-						armorWorkersInput.text = '0';
+						city.armorWorkers = 0;
+					else	
+						city.armorWorkers = parseInt(armorWorkersInput.text);
+					
+					var woodAvailable:int = city.wood - city.woodSpent;
+					var ironAvailable:int = city.iron - city.ironSpent;
 					
 					// la depense en bois pour les armures est plus grande que le stock de bois
-					if(Numbers.ARMOR_WOOD * parseInt(armorWorkersInput.text) > city.wood)
-						armorWorkersInput.text = city.wood/Numbers.ARMOR_WOOD + "";
+					if(Numbers.ARMOR_WOOD * city.armorWorkers > woodAvailable)
+						city.armorWorkers = Math.floor(woodAvailable/Numbers.ARMOR_WOOD) ;
 					
 					// la depense en fer pour les armures est plus grande que le stock de fer
-					if(Numbers.ARMOR_IRON * parseInt(armorWorkersInput.text) > city.iron)
-						armorWorkersInput.text = city.iron/Numbers.ARMOR_IRON + "";
+					if(Numbers.ARMOR_IRON * city.armorWorkers > ironAvailable)
+						city.armorWorkers = Math.floor(ironAvailable/Numbers.ARMOR_IRON);
 					
-					registerNewForgeWorkers("armor", parseInt(armorWorkersInput.text));
-					previousArmorWorkersNum = parseInt(armorWorkersInput.text);
+					registerNewForgeWorkers("armor", city.armorWorkers);
 				}
 				
 				//-------------------------------------------------------------------------//
+				// armies
+				
+				protected function bowArmyInputKeyUpHandler(event:Event):void{
+					
+					if(bowArmyInput.text.length == 0
+					|| army.size == 0)
+						bowArmyInput.text = '0';
+					
+					var previousNbBows:int = army.bows;
+					var newNbBows:int = parseInt(bowArmyInput.text);
+				
+					// la reserve en arcs n'est pas assez grande
+					if(city.bowStock < newNbBows)
+						newNbBows = city.bowStock;
+					
+					if(newNbBows > previousNbBows){
+						// on ajoute des arcs a l'armee
+						var nbBowsEquiped:int =  newNbBows - previousNbBows;
+						
+						if(city.bowsRestored > nbBowsEquiped){
+							city.bowsRestored -= nbBowsEquiped;
+						}
+						else{
+							city.bowsEquiped += nbBowsEquiped - city.bowsRestored;
+							city.bowsRestored = 0;
+						}
+					}
+					else{
+						// on enleve des arcs a l'armee
+						var nbBowsRestored:int = previousNbBows - newNbBows
+						
+						if(city.bowsEquiped > nbBowsRestored){
+							city.bowsEquiped -= nbBowsRestored;
+						}
+						else{
+							city.bowsRestored += nbBowsRestored - city.bowsEquiped;
+							city.bowsEquiped = 0;
+						}
+					}
+					
+					army.bows = newNbBows;
+					bowArmyInput.text = army.bows+""; // refresh
+				}
+				
+				protected function swordArmyInputKeyUpHandler(event:Event):void{
+					
+					if(swordArmyInput.text.length == 0
+						|| army.size == 0)
+						swordArmyInput.text = '0';
+					
+					var previousNbSwords:int = army.swords;
+					var newNbSwords:int = parseInt(swordArmyInput.text);
+					
+					// la reserve en epees n'est pas assez grande
+					if(city.swordStock < newNbSwords)
+						newNbSwords = city.swordStock;
+					
+					if(newNbSwords > previousNbSwords){
+						// on ajoute des epees a l'armee
+						var nbSwordsEquiped:int =  newNbSwords - previousNbSwords;
+						
+						if(city.swordsRestored > nbSwordsEquiped){
+							city.swordsRestored -= nbSwordsEquiped;
+						}
+						else{
+							city.swordsEquiped += nbSwordsEquiped - city.swordsRestored;
+							city.swordsRestored = 0;
+						}
+					}
+					else{
+						// on enleve des epees a l'armee
+						var nbSwordsRestored:int = previousNbSwords - newNbSwords
+						
+						if(city.swordsEquiped > nbSwordsRestored){
+							city.swordsEquiped -= nbSwordsRestored;
+						}
+						else{
+							city.swordsRestored += nbSwordsRestored - city.swordsEquiped;
+							city.swordsEquiped = 0;
+						}
+					}
+					
+					
+					army.swords = newNbSwords;	
+					swordArmyInput.text = army.swords+""; // refresh			
+				}
+				
+				protected function armorArmyInputKeyUpHandler(event:Event):void{
+					
+					if(armorArmyInput.text.length == 0
+						|| army.size == 0)
+						armorArmyInput.text = '0';
+					
+					var previousNbArmors:int = army.armors;
+					var newNbArmors:int = parseInt(armorArmyInput.text);
+					
+					// la reserve en armures n'est pas assez grande
+					if(city.armorStock < newNbArmors)
+						newNbArmors = city.armorStock;
+
+					if(newNbArmors > previousNbArmors){
+						// on ajoute des epees a l'armee
+						var nbArmorsEquiped:int =  newNbArmors - previousNbArmors;
+						
+						if(city.armorsRestored > nbArmorsEquiped){
+							city.armorsRestored -= nbArmorsEquiped;
+						}
+						else{
+							city.armorsEquiped += nbArmorsEquiped - city.armorsRestored;
+							city.armorsRestored = 0;
+						}
+					}
+					else{
+						// on enleve des epees a l'armee
+						var nbArmorsRestored:int = previousNbArmors - newNbArmors
+						
+						if(city.armorsEquiped > nbArmorsRestored){
+							city.armorsEquiped -= nbArmorsRestored;
+						}
+						else{
+							city.armorsRestored += nbArmorsRestored - city.armorsEquiped;
+							city.armorsEquiped = 0;
+						}
+					}
+					
+					army.armors = newNbArmors;
+					armorArmyInput.text = army.armors+""; // refresh								
+				}
+				
+				//-------------------------------------------------------------------------//
+				
+				protected function armyInputKeyUpHandler(event:Event):void	{
+					army.size = parseInt(armyInput.text);
+					var newArmiesInCityTotalSize:int = 0;
+					
+					for each(var armyInCity:Army in city.armies){
+						newArmiesInCityTotalSize += armyInCity.size;
+					}
+					
+					
+					if(newArmiesInCityTotalSize > city.armiesTotalSize)
+						city.armyRaised += newArmiesInCityTotalSize - city.armiesTotalSize;
+					else
+						city.armyReleased += city.armiesTotalSize - newArmiesInCityTotalSize;
+					
+					city.armiesTotalSize = newArmiesInCityTotalSize;
+				}
+
+				//-------------------------------------------------------------------------//
+				
+				
+				protected function onArmyClick(event:ItemClickEvent):void{
+					army = event.currentTarget.selectedItem as Army;
+				}
+				
+				protected function newArmy():void{
+					var newArmy:Army = new Army();
+					newArmy.x = city.x;
+					newArmy.y = city.y;
+					newArmy.armyUID = "new";
+					
+					city.armies.addItem(newArmy);
+				}
+
+				protected function deleteArmy():void{
+					
+					// une armee 'new' apioche dans la pop et la reserve, mais pas aux data elles-meme
+					if(army.armyUID != "new"){
+						city.population += army.size;
+						
+						for each(var equipment:Equipment in army.equipments){
+							switch(equipment.item.name){
+								case "bow" :
+									city.bowStock += equipment.size;
+									break;
+								case "sword" :
+									city.swordStock += equipment.size;
+									break;
+								case "armor" :
+									city.armorStock += equipment.size;
+									break;
+							}
+						}
+						
+						// todo: callAMF pour supprimer larmy et le link sur player
+					}
+					
+					city.armyReleased += army.size;
+					city.armiesTotalSize -= army.size;
+					
+					city.armies.removeItemAt(city.armies.getItemIndex(army));
+					army = null;
+				}
+				
 			]]>
 		</fx:Script>
 	
@@ -185,9 +434,13 @@
 			</s:HGroup>
 			
 			<mx:Spacer height="15"/>
-			<s:TabBar id="tabs" dataProvider="{viewstack}" skinClass="com.uralys.tribes.skins.TabBarSkin"/>
+			<s:TabBar id="tabs" dataProvider="{viewstack}" skinClass="spark.skins.spark.TabBarSkin"/>
 				
-			<mx:ViewStack id="viewstack" width="400">
+			<mx:ViewStack id="viewstack" width="650">
+				
+				<!-- =============================================================================================== -->
+				<!-- Resources Tab -->
+				
 				<s:NavigatorContent label="Resources">
 					<s:HGroup width="100%" horizontalAlign="center">
 						<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle">
@@ -205,6 +458,9 @@
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
 									<s:Label text="Depense"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="Prevision"/>
 								</mx:GridItem>
 							</mx:GridRow>
 							<mx:GridRow >
@@ -225,7 +481,10 @@
 									<s:Label text="+ {city.wheatEarned}" color="{Numbers.GREEN}"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
-									<s:Label text="- {city.wheatSpent}" color="{Numbers.RED}"/>
+									<s:Label text="- {city.wheatSpent}"  color="{city.wheatSpent > 0 ? Numbers.RED : Numbers.GREEN}"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="{city.wheatEarned - city.wheatSpent >= 0 ? '+' : '-'} {Math.abs(city.wheatEarned - city.wheatSpent)}" color="{city.wheatEarned - city.wheatSpent >= 0 ? Numbers.GREEN : Numbers.RED}"/>
 								</mx:GridItem>
 							</mx:GridRow>
 							<mx:GridRow >
@@ -246,7 +505,10 @@
 									<s:Label text="+ {city.woodEarned}" color="{Numbers.GREEN}"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
-									<s:Label text="- {city.woodSpent}" color="{Numbers.RED}"/>
+									<s:Label text="- {city.woodSpent}" color="{city.woodSpent > 0 ? Numbers.RED : Numbers.GREEN}"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="{city.woodEarned - city.woodSpent >= 0 ? '+' : '-'} {Math.abs(city.woodEarned - city.woodSpent)}" color="{city.woodEarned - city.woodSpent >= 0 ? Numbers.GREEN : Numbers.RED}"/>
 								</mx:GridItem>
 							</mx:GridRow>
 							<mx:GridRow >
@@ -267,7 +529,24 @@
 									<s:Label text="+ {city.ironEarned}" color="{Numbers.GREEN}"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
-									<s:Label text="- {city.ironSpent}" color="{Numbers.RED}"/>
+									<s:Label text="- {city.ironSpent}" color="{city.ironSpent > 0 ? Numbers.RED : Numbers.GREEN}"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="{city.ironEarned - city.ironSpent >= 0 ? '+' : '-'} {Math.abs(city.ironEarned - city.ironSpent)}" color="{city.ironEarned - city.ironSpent >= 0 ? Numbers.GREEN : Numbers.RED}"/>
+								</mx:GridItem>
+							</mx:GridRow>
+							<mx:GridRow>
+								<mx:GridItem colSpan="6">
+									<mx:HRule width="100%"/>
+								</mx:GridItem>
+							</mx:GridRow >
+							<mx:GridRow >
+								<mx:GridItem/>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="Total" />
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="{parseInt(wheatInput.text) + parseInt(woodInput.text) + parseInt(ironInput.text)}" />
 								</mx:GridItem>
 							</mx:GridRow>
 						</mx:Grid>
@@ -275,9 +554,11 @@
 				</s:NavigatorContent>
 				
 				
+				<!-- =============================================================================================== -->
+				<!-- Forge Tab -->
 				
 				<s:NavigatorContent label="Forge">
-					<s:HGroup width="100%" horizontalAlign="center">
+					<s:VGroup width="100%" horizontalAlign="center">
 						<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle">
 						  <mx:GridRow >
 							  <mx:GridItem >
@@ -297,9 +578,10 @@
 								  <s:Label text="Arcs" />
 							  </mx:GridItem>
 							  <mx:GridItem horizontalAlign="center">
-								  <s:TextInput text="{city.getBowWorkers()}" 
+								  <s:TextInput text="{city.bowWorkers}" 
 											   id="bowWorkersInput"
 											   keyUp="bowWorkersInputKeyUpHandler(event)"
+											   focusOut="bowWorkersInputKeyUpHandler(event)"
 											   restrict="0-9"
 											   width="100"/>
 							  </mx:GridItem>
@@ -315,23 +597,18 @@
 									<s:Label text="Epees" />
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
-									<s:TextInput text="{city.getSwordWorkers()}" 
+									<s:TextInput text="{city.swordWorkers}" 
 												 id="swordWorkersInput"
 												 keyUp="swordWorkersInputKeyUpHandler(event)"
+												 focusOut="swordWorkersInputKeyUpHandler(event)"
 												 restrict="0-9"
 												 width="100"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
-									<s:Label text="{Numbers.SWORD_WOOD}" styleName="numberLabel"/>
+									<s:Label text="{Numbers.SWORD_WOOD * parseInt(swordWorkersInput.text)}" styleName="numberLabel"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
-									<s:Label text="{Numbers.SWORD_IRON}" styleName="numberLabel"/>
-								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
-									<s:Label text="{Numbers.SWORD_PEOPLE_REQUIRED}" styleName="numberLabel"/>
-								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
-									<s:Label text="{Numbers.SWORD_PRICE}" styleName="numberLabel"/>
+									<s:Label text="{Numbers.SWORD_IRON * parseInt(swordWorkersInput.text)}" styleName="numberLabel"/>
 								</mx:GridItem>
 							</mx:GridRow>
 							<mx:GridRow >
@@ -339,47 +616,255 @@
 									<s:Label text="Armures" />
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
-									<s:TextInput text="{city.getArmorWorkers()}" 
+									<s:TextInput text="{city.armorWorkers}" 
 												 id="armorWorkersInput"
 												 keyUp="armorWorkersInputKeyUpHandler(event)"
+												 focusOut="armorWorkersInputKeyUpHandler(event)"
 												 restrict="0-9"
 												 width="100"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
-									<s:Label text="{Numbers.ARMOR_WOOD}" styleName="numberLabel"/>
+									<s:Label text="{Numbers.ARMOR_WOOD * parseInt(armorWorkersInput.text)}" styleName="numberLabel"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
-									<s:Label text="{Numbers.ARMOR_IRON}" styleName="numberLabel"/>
-								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
-									<s:Label text="{Numbers.ARMOR_PEOPLE_REQUIRED}" styleName="numberLabel"/>
-								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
-									<s:Label text="{Numbers.ARMOR_PRICE}" styleName="numberLabel"/>
+									<s:Label text="{Numbers.ARMOR_IRON * parseInt(armorWorkersInput.text)}" styleName="numberLabel"/>
 								</mx:GridItem>
 							</mx:GridRow>
+						<mx:GridRow>
+							<mx:GridItem colSpan="4">
+							  <mx:HRule width="100%"/>
+							</mx:GridItem>
+						</mx:GridRow >
+						<mx:GridRow >
+							<mx:GridItem horizontalAlign="center">
+								<s:Label text="Total" />
+							</mx:GridItem>
+							<mx:GridItem horizontalAlign="center">
+								<s:Label text="{parseInt(bowWorkersInput.text) + parseInt(swordWorkersInput.text) + parseInt(armorWorkersInput.text)}" />
+							</mx:GridItem>
+							<mx:GridItem horizontalAlign="center">
+								<s:Label text="{Numbers.SWORD_WOOD * parseInt(swordWorkersInput.text) 
+										 	   +Numbers.ARMOR_WOOD * parseInt(armorWorkersInput.text) 
+										 	   +Numbers.BOW_WOOD * parseInt(bowWorkersInput.text)}" 
+										 		styleName="numberLabel"/>
+							</mx:GridItem>
+							<mx:GridItem horizontalAlign="center">
+								<s:Label text="{Numbers.SWORD_IRON * parseInt(swordWorkersInput.text) 
+										 +Numbers.ARMOR_IRON * parseInt(armorWorkersInput.text) 
+										 +Numbers.BOW_IRON * parseInt(bowWorkersInput.text)}" 
+										 styleName="numberLabel"/>
+							</mx:GridItem>
+						</mx:GridRow>
 					  </mx:Grid>
-					</s:HGroup>
+					</s:VGroup>
 				</s:NavigatorContent>
 				
 				
 				
+				<!-- =============================================================================================== -->
+				<!-- Equipment Tab -->
 				
 				<s:NavigatorContent label="Equipment">
-					<s:HGroup width="100%" horizontalAlign="center">
+					<s:VGroup width="100%" horizontalAlign="center">
 						<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle">
 							<mx:GridRow >
 								<mx:GridItem >
-									<s:Label text="People for new army" />
+								</mx:GridItem >
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="Stock" />
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="Production" />
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="Armies" />
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="Prevision" />
+								</mx:GridItem>
+							</mx:GridRow>
+							<mx:GridRow >
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="Arcs" />
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="{city.bowStock}" styleName="numberLabel"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="+ {city.bowWorkers}" styleName="numberLabel"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="{(city.bowsRestored - city.bowsEquiped >= 0 ? '+' : '-')} {Math.abs(city.bowsRestored - city.bowsEquiped)}" 
+											 styleName="numberLabel" 
+											 color="{city.bowsRestored - city.bowsEquiped >= 0 ? Numbers.GREEN : Numbers.RED}"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="{(city.bowWorkers + city.bowsRestored - city.bowsEquiped >= 0 ? '+' : '-')} {Math.abs(city.bowWorkers + city.bowsRestored - city.bowsEquiped)}" 
+											 styleName="numberLabel" 
+											 color="{city.bowWorkers + city.bowsRestored - city.bowsEquiped >= 0 ? Numbers.GREEN : Numbers.RED}"/>
+								</mx:GridItem>
+							</mx:GridRow>
+							<mx:GridRow >
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="Epees" />
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="{city.swordStock}" styleName="numberLabel"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="+ {city.swordWorkers}" styleName="numberLabel"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="{(city.swordsRestored - city.swordsEquiped >= 0 ? '+' : '-')} {Math.abs(city.swordsRestored - city.swordsEquiped)}" 
+											 styleName="numberLabel" 
+											 color="{city.swordsRestored - city.swordsEquiped >= 0 ? Numbers.GREEN : Numbers.RED}"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="{(city.swordWorkers + city.swordsRestored - city.swordsEquiped >= 0 ? '+' : '-')} {Math.abs(city.swordWorkers + city.swordsRestored - city.swordsEquiped)}" 
+											 styleName="numberLabel" 
+											 color="{city.swordWorkers + city.swordsRestored - city.swordsEquiped >= 0 ? Numbers.GREEN : Numbers.RED}"/>
+								</mx:GridItem>
+							</mx:GridRow>
+							<mx:GridRow >
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="Armures" />
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="{city.armorStock}" styleName="numberLabel"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="+ {city.armorWorkers}" styleName="numberLabel"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="{(city.armorsRestored - city.armorsEquiped >= 0 ? '+' : '-')} {Math.abs(city.armorsRestored - city.armorsEquiped)}" 
+											 styleName="numberLabel" 
+											 color="{city.armorsRestored - city.armorsEquiped >= 0 ? Numbers.GREEN : Numbers.RED}"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="{(city.armorWorkers + city.armorsRestored - city.armorsEquiped >= 0 ? '+' : '-')} {Math.abs(city.armorWorkers + city.armorsRestored - city.armorsEquiped)}" 
+											 styleName="numberLabel" 
+											 color="{city.armorWorkers + city.armorsRestored - city.armorsEquiped >= 0 ? Numbers.GREEN : Numbers.RED}"/>
+								</mx:GridItem>
+							</mx:GridRow>
+						</mx:Grid>
+					</s:VGroup>
+				</s:NavigatorContent>
+				
+				<!-- =============================================================================================== -->
+				<!-- Armies Tab -->
+				
+				<s:NavigatorContent label="Armies in the city">
+					<s:HGroup width="100%" horizontalAlign="center">
+						<s:VGroup horizontalAlign="center">
+							<s:Button label="New Army" click="newArmy()"/>
+							<s:Scroller height="200">
+								<s:Group>
+									<s:List id="armiesList"
+											itemRenderer="com.uralys.renderers.ArmyListRenderer"
+											dataProvider="{city.armies}"
+											borderVisible="false"
+											width="275"
+											creationComplete="init()">
+										<s:layout>
+											<s:VerticalLayout gap="1" useVirtualLayout="true" />
+										</s:layout>
+									</s:List>
+								</s:Group>
+							</s:Scroller>
+						</s:VGroup>
+						<mx:Grid verticalGap="10" 
+								 horizontalGap="10" 
+								 horizontalAlign="center" 
+								 verticalAlign="middle"
+								 visible="{army != null}">
+							<mx:GridRow >
+								<mx:GridItem >
+									<s:Label text="People in this army" />
 								</mx:GridItem>
 								<mx:GridItem>
-									<s:TextInput text="0" 
+									<s:TextInput text="{army.size}" 
 												 id="armyInput"
 												 keyUp="armyInputKeyUpHandler(event)"
+												 focusOut="armyInputKeyUpHandler(event)"
 												 restrict="0-9"
 												 width="100"/>
 								</mx:GridItem>
 							</mx:GridRow>
+							<mx:GridRow>
+								<mx:GridItem colSpan="4">
+									<mx:HRule width="100%"/>
+								</mx:GridItem>
+							</mx:GridRow >
+							<mx:GridRow >
+								<mx:GridItem />
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="Equipement" />
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="Stock" />
+								</mx:GridItem>
+							</mx:GridRow>
+							<mx:GridRow >
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="Arcs" />
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:TextInput text="{army.bows}" 
+												 id="bowArmyInput"
+												 keyUp="bowArmyInputKeyUpHandler(event)"
+												 focusOut="bowArmyInputKeyUpHandler(event)"
+												 restrict="0-9"
+												 width="100"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="{city.bowStock}" />
+								</mx:GridItem>
+							</mx:GridRow>
+							<mx:GridRow >
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="Epees" />
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:TextInput text="{army.swords}" 
+												 id="swordArmyInput"
+												 keyUp="swordArmyInputKeyUpHandler(event)"
+												 focusOut="swordArmyInputKeyUpHandler(event)"
+												 restrict="0-9"
+												 width="100"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="{city.swordStock}" />
+								</mx:GridItem>
+							</mx:GridRow>
+							<mx:GridRow >
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="Armures" />
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:TextInput text="{army.armors}" 
+												 id="armorArmyInput"
+												 keyUp="armorArmyInputKeyUpHandler(event)"
+												 focusOut="armorArmyInputKeyUpHandler(event)"
+												 restrict="0-9"
+												 width="100"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="{city.armorStock}" />
+								</mx:GridItem>
+							</mx:GridRow>
+							<mx:GridRow>
+								<mx:GridItem colSpan="4">
+									<mx:HRule width="100%"/>
+								</mx:GridItem>
+							</mx:GridRow >
+							<mx:GridRow>
+								<mx:GridItem/>
+								<mx:GridItem/>
+								<mx:GridItem/>
+								<mx:GridItem>
+									<s:Button label="Delete" click="deleteArmy()"/>
+								</mx:GridItem>
+							</mx:GridRow >
 						</mx:Grid>
 					</s:HGroup>
 				</s:NavigatorContent>

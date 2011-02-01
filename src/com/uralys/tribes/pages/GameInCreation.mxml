@@ -31,6 +31,7 @@
 			}	
 		]]>
 	</fx:Script>
+	
 	<custom:GameSimpleInfoRenderer data="{game}"/>
 	<s:HGroup>
 		<s:Button label="Lancer la partie" click="launchGame()" enabled="{game.players.length > 1}"/>

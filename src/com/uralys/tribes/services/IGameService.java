@@ -1,8 +1,10 @@
 package com.uralys.tribes.services;
 
 import java.util.List;
+
 import com.uralys.tribes.entities.Game;
 import com.uralys.tribes.entities.Item;
+import com.uralys.tribes.entities.Player;
 
 public interface IGameService {
 
@@ -15,5 +17,7 @@ public interface IGameService {
 	public boolean launchGame(String gameUID);
 
 	public List<Item> loadItems();
+	
+	public boolean saveTurn(Player player);
 	
 }

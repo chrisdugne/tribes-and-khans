@@ -5,6 +5,7 @@ import java.util.List;
 import com.uralys.tribes.domain.IGameManager;
 import com.uralys.tribes.entities.Game;
 import com.uralys.tribes.entities.Item;
+import com.uralys.tribes.entities.Player;
 import com.uralys.tribes.services.IGameService;
 
 public class GameService implements IGameService {
@@ -29,6 +30,8 @@ public class GameService implements IGameService {
 		return getCurrentGames(uralysUID);
 	}
 
+	//-----------------------------------------------------------------------------------//
+
 	public List<Game> getGamesToJoin() {
 		try{
 			return gameManager.getGamesToJoin();
@@ -48,12 +51,28 @@ public class GameService implements IGameService {
 			return null;
 		}
 	}
+
+	//-----------------------------------------------------------------------------------//
 	
 	public boolean launchGame(String gameUID) {
 		return gameManager.launchGame(gameUID);
 	}
+
+	//-----------------------------------------------------------------------------------//
 	
 	public List<Item> loadItems() {
 		return gameManager.loadItems();
+	}
+	
+	//-----------------------------------------------------------------------------------//	
+	public boolean saveTurn(Player player){
+		try{
+			gameManager.saveTurn(player, false);
+			return true;
+		}
+		catch(Exception e){
+			e.printStackTrace();
+			return false;
+		}
 	}
 }

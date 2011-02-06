@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.uralys.tribes.entities.Game;
 import com.uralys.tribes.entities.Item;
+import com.uralys.tribes.entities.Player;
 
 public interface IGameManager {
 
@@ -15,4 +16,6 @@ public interface IGameManager {
 	public boolean launchGame(String gameUID);
 
 	public List<Item> loadItems();
+	
+	public void saveTurn(Player player, boolean fromForceTurn);
 }

@@ -10,15 +10,31 @@ import javax.jdo.Query;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.uralys.tribes.dao.IGameDAO;
+import com.uralys.tribes.entities.Army;
+import com.uralys.tribes.entities.City;
+import com.uralys.tribes.entities.Equipment;
 import com.uralys.tribes.entities.Game;
+import com.uralys.tribes.entities.Player;
+import com.uralys.tribes.entities.dto.ArmyDTO;
 import com.uralys.tribes.entities.dto.CityDTO;
+import com.uralys.tribes.entities.dto.EquipmentDTO;
 import com.uralys.tribes.entities.dto.GameDTO;
 import com.uralys.tribes.entities.dto.ItemDTO;
 import com.uralys.tribes.entities.dto.PlayerDTO;
 import com.uralys.tribes.entities.dto.ProfilDTO;
+import com.uralys.tribes.entities.dto.SmithDTO;
 import com.uralys.utils.Utils;
 
 public class GameDAO  extends MainDAO implements IGameDAO {
+	
+	//-----------------------------------------------------------------------//
+	// local
+
+	private static String ITEM_UID_BOW = "129694476134541891626653";
+	private static String ITEM_UID_SWORD = "12969447896146126305843";
+	private static String ITEM_UID_ARMOR = "129694480859891628060737";
+
+	//-----------------------------------------------------------------------//
 	
 	public void createGame(String uralysUID, String gameName, String playerName, int nbMinByTurn) {
 
@@ -97,6 +113,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		playerDTO.setGameUID(gameUID);
 		playerDTO.setGameName(gameName);
 		playerDTO.setName(playerName);
+		playerDTO.setLastTurnPlayed(0);
 		
 		persist(playerDTO);
 
@@ -213,6 +230,30 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			city.setX(Utils.random(2700));
 			city.setY(Utils.random(2700));
 			
+			//--------------------------------------//
+			// init Equipment
+			
+			String bowsStockUID = createEquipment(ITEM_UID_BOW, 0);
+			String swordsStockUID = createEquipment(ITEM_UID_SWORD, 0);
+			String armorsStockUID = createEquipment(ITEM_UID_ARMOR, 0);
+			
+			city.getEquipmentStockUIDs().add(bowsStockUID);
+			city.getEquipmentStockUIDs().add(swordsStockUID);
+			city.getEquipmentStockUIDs().add(armorsStockUID);
+			
+			//--------------------------------------//
+			// init Smith 
+			
+			String bowWorkersUID = createSmith(ITEM_UID_BOW);
+			String swordWorkersUID = createSmith(ITEM_UID_SWORD);
+			String armorWorkersUID = createSmith(ITEM_UID_ARMOR);
+			
+			city.getSmithUIDs().add(bowWorkersUID);
+			city.getSmithUIDs().add(swordWorkersUID);
+			city.getSmithUIDs().add(armorWorkersUID);
+
+			//--------------------------------------//
+			
 			pm.makePersistent(city);
 			
 			player.setLastTurnPlayed(0);
@@ -227,10 +268,242 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		return true;
 	}
 
+
 	//==================================================================================================//
 	
 	public List<ItemDTO> loadItems() {
 		return UniversalDAO.getInstance().getListDTO(ItemDTO.class, 1, 100);
 	}
 
+	//==================================================================================================//
+	
+	public void updateCityResources(City city){
+		
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		CityDTO cityDTO = pm.getObjectById(CityDTO.class, city.getCityUID());
+		
+		cityDTO.setWheat(city.getWheat());
+		cityDTO.setWood(city.getWood());
+		cityDTO.setIron(city.getIron());
+		
+		cityDTO.setPeopleCreatingWheat(city.getPeopleCreatingWheat());
+		cityDTO.setPeopleCreatingWood(city.getPeopleCreatingWood());
+		cityDTO.setPeopleCreatingIron(city.getPeopleCreatingIron());
+		
+		cityDTO.setPopulation(city.getPopulation());
+		
+		pm.close();
+	}
+	
+	
+	public void updateSmith(String smithUID, int people){
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		SmithDTO smithDTO = pm.getObjectById(SmithDTO.class, smithUID);
+		
+		smithDTO.setPeople(people);
+		pm.close();
+	}
+	
+	public void updateStock(String stockUID, int size){
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		EquipmentDTO equipmentDTO = pm.getObjectById(EquipmentDTO.class, stockUID);
+		
+		equipmentDTO.setSize(size);
+		pm.close();
+	}
+	
+	public void updatePlayer(Player player){
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		PlayerDTO playerDTO = pm.getObjectById(PlayerDTO.class, player.getPlayerUID());
+		
+		playerDTO.setLastTurnPlayed(player.getLastTurnPlayed());
+		pm.close();
+	}
+	
+	public void updateGame(Game game){
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		GameDTO gameDTO = pm.getObjectById(GameDTO.class, game.getGameUID());
+		
+		gameDTO.setCurrentTurn(game.getCurrentTurn());
+		gameDTO.setBeginTurnTimeMillis(game.getBeginTurnTimeMillis());
+		pm.close();
+	}
+	
+	public void checkEndTurn(String gameUID){
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		GameDTO gameDTO = pm.getObjectById(GameDTO.class, gameUID);
+		
+		boolean waitingForPlayers = false;
+		for(PlayerDTO player : gameDTO.getPlayers()){
+			if(player.getLastTurnPlayed() < gameDTO.getCurrentTurn()){
+				waitingForPlayers = true;
+				break;
+			}
+		}
+		
+		if(!waitingForPlayers){
+			gameDTO.setCurrentTurn(gameDTO.getCurrentTurn() + 1);
+			gameDTO.setBeginTurnTimeMillis(new Date().getTime());
+		}
+		
+		pm.close();
+	}
+	
+	//==================================================================================================//
+	
+	public String createArmy(Army army){
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		ArmyDTO armyDTO = new ArmyDTO(); 
+		
+		String armyUID = Utils.generateUID();
+		Key key = KeyFactory.createKey(ArmyDTO.class.getSimpleName(), armyUID);
+
+		armyDTO.setKey(KeyFactory.keyToString(key));
+		armyDTO.setArmyUID(armyUID);
+		armyDTO.setSize(army.getSize());
+		armyDTO.setSpeed(army.getSpeed());
+		armyDTO.setX(army.getX());
+		armyDTO.setY(army.getY());
+		
+		
+		//--------------------------------------//
+		// init Equipment
+		
+		for(Equipment equipment : army.getEquipments()){
+			if(equipment.getItem().getName().equals("bow")){
+				String bowsStockUID = createEquipment(ITEM_UID_BOW, equipment.getSize());
+				armyDTO.getEquipmentUIDs().add(bowsStockUID);
+			}
+			else if(equipment.getItem().getName().equals("sword")){
+				String swordsStockUID = createEquipment(ITEM_UID_SWORD, equipment.getSize());
+				armyDTO.getEquipmentUIDs().add(swordsStockUID);
+			}
+			else if(equipment.getItem().getName().equals("armor")){
+				String armorsStockUID = createEquipment(ITEM_UID_ARMOR, equipment.getSize());
+				armyDTO.getEquipmentUIDs().add(armorsStockUID);
+			}
+		}
+		
+		//--------------------------------------//
+		
+		pm.makePersistent(armyDTO);
+		pm.close();
+		
+		return armyUID;
+	}
+
+	
+	public List<String> linkNewArmiesAndGetPreviousArmyUIDs(String playerUID, List<String> newArmyUIDs){
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		PlayerDTO playerDTO = pm.getObjectById(PlayerDTO.class, playerUID);
+		
+		List<String> previousUIDList = new ArrayList<String>();
+		for(String armyUID : playerDTO.getArmyUIDs()){
+			previousUIDList.add(armyUID);
+		}
+		
+		playerDTO.getArmyUIDs().addAll(newArmyUIDs);
+		pm.close();
+		
+		return previousUIDList;
+	}
+
+	
+	public void updateArmy(Army army){
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		ArmyDTO armyDTO = pm.getObjectById(ArmyDTO.class, army.getArmyUID());
+		
+		armyDTO.setSize(army.getSize());
+		pm.close();
+		
+		for(Equipment equipment : army.getEquipments()){
+			updateStock(equipment.getEquimentUID(), equipment.getSize());
+		}
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	public void deleteArmies(List<String> toDeleteArmyUIDs){
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+
+		for(String armyUID : toDeleteArmyUIDs){
+			System.out.println("delete army : " + armyUID);
+			ArmyDTO armyDTO = pm.getObjectById(ArmyDTO.class, armyUID);
+			
+			Query query = pm.newQuery("select from " + EquipmentDTO.class.getName() + " where :uids.contains(key)");
+			List<EquipmentDTO> equipments = (List<EquipmentDTO>) query.execute(armyDTO.getEquipmentUIDs());
+
+			for(EquipmentDTO equipmentDTO : equipments){
+				System.out.println("delete equipmentDTO : " + equipmentDTO.getEquimentUID());
+				pm.deletePersistent(equipmentDTO);
+			}
+			
+			pm.deletePersistent(armyDTO);
+		}
+		
+		pm.close();
+	}
+	
+	//==================================================================================================//
+	// PRIVATE METHODS
+	
+	
+	private String createEquipment(String item, int size) {
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		
+		EquipmentDTO bowsStock = new EquipmentDTO();
+
+		String equipmentUID = Utils.generateUID();
+		
+		Key key = KeyFactory.createKey(EquipmentDTO.class.getSimpleName(), equipmentUID);
+
+		bowsStock.setKey(KeyFactory.keyToString(key));
+		bowsStock.setEquimentUID(equipmentUID);
+		bowsStock.setItemUID(item);
+		bowsStock.setSize(size);
+		
+		pm.makePersistent(bowsStock);
+		pm.close();
+		
+		return equipmentUID;
+	}
+	
+	
+	private String createSmith(String item) {
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		
+		SmithDTO smith = new SmithDTO();
+		
+		String smithUID = Utils.generateUID();
+		
+		Key key = KeyFactory.createKey(SmithDTO.class.getSimpleName(), smithUID);
+		
+		smith.setKey(KeyFactory.keyToString(key));
+		smith.setSmithUID(smithUID);
+		smith.setItemUID(item);
+		smith.setPeople(0);
+		
+		pm.makePersistent(smith);
+		pm.close();
+		
+		return smithUID;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }

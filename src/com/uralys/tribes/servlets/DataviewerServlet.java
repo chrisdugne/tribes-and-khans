@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -452,7 +453,10 @@ public class DataviewerServlet extends HttpServlet {
 						continue;
 					try {
 						field.setAccessible(true);
-						table += "<td> "+field.get(o)+" </td>";
+						if(field.getName().contains("Millis")) // Millis : disp date
+							table += "<td> "+new Date((Long)field.get(o))+" </td>";
+						else // all other fields
+							table += "<td> "+field.get(o)+" </td>";
 					} catch (IllegalArgumentException e) {
 						table += "<td> ___PROBLEM___ </td>";
 						e.printStackTrace();

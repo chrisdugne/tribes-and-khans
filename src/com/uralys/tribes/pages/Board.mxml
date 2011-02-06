@@ -17,6 +17,7 @@
 			import com.uralys.tribes.entities.Equipment;
 			import com.uralys.tribes.entities.Game;
 			import com.uralys.tribes.entities.Player;
+			import com.uralys.tribes.entities.Smith;
 			import com.uralys.tribes.managers.GameManager;
 			
 			import mx.effects.easing.Quadratic;
@@ -54,7 +55,7 @@
 			}
 			
 			private var timer:Timer;
-			private var autoMoveNotNeeded:Boolean;
+			private var autoMoveNotNeeded:Boolean = true;
 			protected function mouseMove(event:MouseEvent):void{
 				coordinateX = event.localX;
 				coordinateY = event.localY;
@@ -110,7 +111,7 @@
 			//-----------------------------------------------------------//
 
 			protected function init():void{
-				timer = new Timer(60,1);
+				timer = new Timer(41,1);
 				timer.addEventListener(TimerEvent.TIMER_COMPLETE, moveStoppedDuringDragging);
 
 				limitLeft = 500-image.width;
@@ -127,19 +128,26 @@
 			public function set params(args:Array):void{
 				game = args[0];
 				
+				
 				for each (var playerOfProfil:Player in Session.profil.players){
 					if(playerOfProfil.gameUID == game.gameUID){
 						this.player = playerOfProfil;
 						this.selectedCity = player.cities.getItemAt(0) as City;
+						Session.currentPlayer = player;
 						break;
 					}
+				}
+				
+				if(game.currentTurn == player.lastTurnPlayed){
+					player.lastTurnPlayed --;
+					trace("PLAYING A TURN ALREDAY PLAYED");
 				}
 				
 				for each(var army:Army in player.armies){
 					for each(var city:City in player.cities){
 						if(army.x == city.x && army.y == city.y){
 							city.armies.addItem(army);
-							city.armiesTotalSize += army.size;
+							city.armiesToFeed += army.size;
 							break;
 						}
 					}
@@ -186,6 +194,116 @@
 				
 				comeBack.play();
 			}
+			
+			private function leave():void{
+				GameManager.getInstance().getCurrentGames();
+			}
+			
+			private function saveTurn():void{
+				
+				Session.TURN_SAVING_DONE = false;
+				
+				//------------------------------------------------------------------//
+
+				for each(var city:City in player.cities){
+					
+					city.wheat += city.wheatEarned - city.wheatSpent;
+					city.wood += city.woodEarned - city.woodSpent;
+					city.iron += city.ironEarned - city.ironSpent;
+					
+					for each(var army:Army in city.armies){
+						if(army.armyUID == "new"){
+							var bows:Equipment = new Equipment();
+							var swords:Equipment = new Equipment();
+							var armors:Equipment = new Equipment();
+							
+							bows.size = army.bows;
+							swords.size = army.swords;
+							armors.size = army.armors;
+							
+							for each(var equipment:Equipment in city.equipmentStock){
+								switch(equipment.item.name){
+									case "bow" :
+										bows.item = equipment.item;
+										break;
+									case "sword" :
+										swords.item = equipment.item;
+										break;
+									case "armor" :
+										armors.item = equipment.item;
+										break;
+								}
+							}
+							
+							army.equipments.addItem(bows);
+							army.equipments.addItem(swords);
+							army.equipments.addItem(armors);
+							
+							
+							player.armies.addItem(army);
+						}
+						else{
+							for each(var equipment:Equipment in army.equipments){
+								switch(equipment.item.name){
+									case "bow" :
+										equipment.size = army.bows;
+										break;
+									case "sword" :
+										equipment.size = army.swords;
+										break;
+									case "armor" :
+										equipment.size = army.armors;
+										break;
+								}
+							}
+						}
+					}
+					
+					for each(var equipment:Equipment in city.equipmentStock){
+						switch(equipment.item.name){
+							case "bow" :
+								equipment.size = city.bowStock
+												+ city.bowsRestored
+												- city.bowsEquiped
+												+ city.bowWorkers * equipment.item.peopleRequired;
+								
+								break;
+							case "sword" :
+								equipment.size = city.swordStock
+												+ city.swordsRestored
+												- city.swordsEquiped
+												+ city.swordWorkers * equipment.item.peopleRequired;
+								break;
+							case "armor" :
+								equipment.size = city.armorStock
+											+ city.armorsRestored
+											- city.armorsEquiped
+											+ city.armorWorkers * equipment.item.peopleRequired;
+								break;
+						}
+					}
+
+					for each(var smith:Smith in city.smiths){
+						switch(smith.item.name){
+							case "bow" :
+								smith.people = city.bowWorkers;
+								break;
+							case "sword" :
+								smith.people = city.swordWorkers;
+								break;
+							case "armor" :
+								smith.people = city.armorWorkers;
+								break;
+						}
+					}
+				}
+
+				//------------------------------------------------------------------//
+				
+				player.lastTurnPlayed ++;
+				GameManager.getInstance().saveTurn(player);
+				Pager.getInstance().goToPage(Home, Home.CURRENT_GAMES, Session.GAMES_PLAYING);
+			}
 
 		]]>
 	</fx:Script>
@@ -217,7 +335,13 @@
 
 	</fx:Declarations>
 
+	
+	
 	<s:Group id="main" width="100%" height="100%">
+		<s:VGroup left="10" id="buttonsGroup" visible="{Session.TURN_SAVING_DONE}">
+			<s:Button label="Save Turn" left="10" right="5" click="saveTurn()"/>
+			<s:Button label="Leave this game" left="10" right="5" click="leave()"/>
+		</s:VGroup>
 		<s:HGroup width="100%" horizontalAlign="center" paddingTop="5">
 			<s:Label text="X : {coordinateX}"/>
 			<mx:Spacer width="200"/>
@@ -265,14 +389,20 @@
 			  height="{main.height}"
 			  x="1500"
 			  includeInLayout="false">
+		<s:HGroup>
+			<s:Button label="&lt;-- Ok" 
+					  click="backToMain()"
+					  visible="{selectedCity.unemployed >= 0}"
+					  includeInLayout="{selectedCity.unemployed >= 0}"/>
+			<s:Label text="Unemployed &lt; 0" 
+					  visible="{selectedCity.unemployed &lt; 0}"
+					  includeInLayout="{selectedCity.unemployed &lt; 0}"/>
+			<mx:Spacer width="450"/>
+		</s:HGroup>
 		<renderers:CityForm 
 				id="cityForm"
 			    city="{selectedCity}"/>
 		<mx:Spacer height="55"/>
-		<s:HGroup>
-			<s:Button label="Annuler" click="backToMain()"/>
-			<s:Button label="Sauvegarder" click="backToMain()" visible="{selectedCity.unemployed >= 0}"/>
-		</s:HGroup>
 	</s:VGroup>
 		
 	<!-- ====================================================================================== -->

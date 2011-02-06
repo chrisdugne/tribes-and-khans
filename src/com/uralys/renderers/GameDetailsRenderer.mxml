@@ -20,7 +20,6 @@
 			
 			private function launchGame():void{
 				GameManager.getInstance().launchGame(data.gameUID);
-				data.status = Game.RUNNING;
 			}
 			
 			private function joinGame():void{
@@ -90,8 +89,8 @@
 
 			<s:Button label="Jouer le tour"
 					  id="buttonPlay"
-					  visible="{data.status == Game.RUNNING}"
-					  includeInLayout="{buttonPlay.visible}"
+					  visible="{color == 0x00FF33}" 
+					  includeInLayout="{color == 0x00FF33}"
 					  click="playTurn()"/>
 			
 			<s:VGroup width="100%" 

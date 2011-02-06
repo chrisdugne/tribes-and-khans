@@ -37,11 +37,13 @@
 			import com.uralys.tribes.entities.Game;
 			import com.uralys.tribes.entities.Player;
 			import com.uralys.tribes.entities.City;
+			import com.uralys.tribes.entities.Army;
 			import com.uralys.tribes.entities.Equipment;
 			private function initBlazeDS():void{
 				registerClassAlias("com.uralys.tribes.entities.Game", Game);
 				registerClassAlias("com.uralys.tribes.entities.Player", Player);
 				registerClassAlias("com.uralys.tribes.entities.City", City);
+				registerClassAlias("com.uralys.tribes.entities.Army", Army);
 				registerClassAlias("com.uralys.tribes.entities.Equipment", Equipment);
 			}
 			

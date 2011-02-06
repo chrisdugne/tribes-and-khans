@@ -119,7 +119,7 @@ package com.uralys.tribes.entities
 		}
 	
 		public function get radius():int {
-			return Math.sqrt(_population);
+			return Math.sqrt(_population)/2;
 		}
 	
 		public function get equipmentStock():ArrayCollection {
@@ -161,20 +161,17 @@ package com.uralys.tribes.entities
 		//===============================================================================================//
 		
 		public var armies:ArrayCollection = new ArrayCollection();
-		
-		//---------------------------------------------------------------//
-		
 		protected var _unemployed:int;
-		protected var _armiesTotalSize:int;
+		protected var _armiesToFeed:int;
 		protected var _armyRaised:int;
 		protected var _armyReleased:int;
 
-		public function set armiesTotalSize(o:int):void{
-			_armiesTotalSize = o;
+		public function set armiesToFeed(o:int):void{
+			_armiesToFeed = o;
 		}
 
-		public function get armiesTotalSize():int{
-			return _armiesTotalSize;
+		public function get armiesToFeed():int{
+			return _armiesToFeed;
 		}
 
 		public function get armyRaised():int{

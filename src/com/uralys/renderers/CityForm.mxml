@@ -73,7 +73,13 @@
 					city.ironSpent += city.swordWorkers * Numbers.BOW_IRON;
 					city.ironSpent += city.armorWorkers * Numbers.BOW_IRON;
 					
-					city.wheatSpent += city.armiesTotalSize;
+					city.wheatSpent += city.armiesToFeed;
+					
+					// calcul des resources gagnees avec le precedent choix de peopleCreatingXXX
+					city.wheatEarned = Numbers.WHEAT_EARNING_COEFF * city.peopleCreatingWheat;
+					city.woodEarned = Numbers.WOOD_EARNING_COEFF * city.peopleCreatingWood;
+					city.ironEarned = Numbers.IRON_EARNING_COEFF * city.peopleCreatingIron;
+					
 					
 					city.refreshUnemployed();
 				}	
@@ -85,17 +91,30 @@
 				//-------------------------------------------------------------------------//
 
 				protected function wheatInputKeyUpHandler(event:KeyboardEvent):void	{
+					
 					city.peopleCreatingWheat = parseInt(wheatInput.text);
+					
+					if(city.population < city.peopleCreatingWheat)
+						city.peopleCreatingWheat = city.population;
+					
 					city.wheatEarned = Numbers.WHEAT_EARNING_COEFF * city.peopleCreatingWheat;
 				}
 
 				protected function woodInputKeyUpHandler(event:KeyboardEvent):void	{
 					city.peopleCreatingWood = parseInt(woodInput.text);
+					
+					if(city.population < city.peopleCreatingWood)
+						city.peopleCreatingWood = city.population;
+					
 					city.woodEarned = Numbers.WOOD_EARNING_COEFF * city.peopleCreatingWood;
 				}
 
 				protected function ironInputKeyUpHandler(event:KeyboardEvent):void	{
 					city.peopleCreatingIron = parseInt(ironInput.text);
+					
+					if(city.population < city.peopleCreatingIron)
+						city.peopleCreatingIron = city.population;
+					
 					city.ironEarned = Numbers.IRON_EARNING_COEFF * city.peopleCreatingIron;
 				}
 
@@ -221,19 +240,23 @@
 				protected function bowArmyInputKeyUpHandler(event:Event):void{
 					
 					if(bowArmyInput.text.length == 0
+					|| bowArmyInput.text.length > 6
 					|| army.size == 0)
 						bowArmyInput.text = '0';
 					
 					var previousNbBows:int = army.bows;
 					var newNbBows:int = parseInt(bowArmyInput.text);
-				
-					// la reserve en arcs n'est pas assez grande
-					if(city.bowStock < newNbBows)
-						newNbBows = city.bowStock;
 					
 					if(newNbBows > previousNbBows){
 						// on ajoute des arcs a l'armee
+						var nbBowsAvailable:int = city.bowStock + city.bowsRestored - city.bowsEquiped;
 						var nbBowsEquiped:int =  newNbBows - previousNbBows;
+						
+						// la reserve en arcs n'est pas assez grande
+						if(nbBowsAvailable < nbBowsEquiped){
+							newNbBows = nbBowsAvailable + previousNbBows;
+							nbBowsEquiped = nbBowsAvailable;
+						}
 						
 						if(city.bowsRestored > nbBowsEquiped){
 							city.bowsRestored -= nbBowsEquiped;
@@ -245,7 +268,7 @@
 					}
 					else{
 						// on enleve des arcs a l'armee
-						var nbBowsRestored:int = previousNbBows - newNbBows
+						var nbBowsRestored:int = previousNbBows - newNbBows;
 						
 						if(city.bowsEquiped > nbBowsRestored){
 							city.bowsEquiped -= nbBowsRestored;
@@ -263,19 +286,23 @@
 				protected function swordArmyInputKeyUpHandler(event:Event):void{
 					
 					if(swordArmyInput.text.length == 0
+						|| swordArmyInput.text.length > 6
 						|| army.size == 0)
 						swordArmyInput.text = '0';
 					
 					var previousNbSwords:int = army.swords;
 					var newNbSwords:int = parseInt(swordArmyInput.text);
 					
-					// la reserve en epees n'est pas assez grande
-					if(city.swordStock < newNbSwords)
-						newNbSwords = city.swordStock;
-					
 					if(newNbSwords > previousNbSwords){
 						// on ajoute des epees a l'armee
+						var nbSwordsAvailable:int = city.swordStock + city.swordsRestored - city.swordsEquiped ; 
 						var nbSwordsEquiped:int =  newNbSwords - previousNbSwords;
+						
+						// la reserve en epees n'est pas assez grande
+						if(nbSwordsAvailable < nbSwordsEquiped){
+							newNbSwords = nbSwordsAvailable + previousNbSwords;
+							nbSwordsEquiped = nbSwordsAvailable;
+						}
 						
 						if(city.swordsRestored > nbSwordsEquiped){
 							city.swordsRestored -= nbSwordsEquiped;
@@ -287,7 +314,7 @@
 					}
 					else{
 						// on enleve des epees a l'armee
-						var nbSwordsRestored:int = previousNbSwords - newNbSwords
+						var nbSwordsRestored:int = previousNbSwords - newNbSwords;
 						
 						if(city.swordsEquiped > nbSwordsRestored){
 							city.swordsEquiped -= nbSwordsRestored;
@@ -298,7 +325,6 @@
 						}
 					}
 					
-					
 					army.swords = newNbSwords;	
 					swordArmyInput.text = army.swords+""; // refresh			
 				}
@@ -306,19 +332,23 @@
 				protected function armorArmyInputKeyUpHandler(event:Event):void{
 					
 					if(armorArmyInput.text.length == 0
+						|| armorArmyInput.text.length > 6
 						|| army.size == 0)
 						armorArmyInput.text = '0';
 					
 					var previousNbArmors:int = army.armors;
 					var newNbArmors:int = parseInt(armorArmyInput.text);
 					
-					// la reserve en armures n'est pas assez grande
-					if(city.armorStock < newNbArmors)
-						newNbArmors = city.armorStock;
-
 					if(newNbArmors > previousNbArmors){
 						// on ajoute des epees a l'armee
+						var nbArmorsAvailable:int = city.armorStock + city.armorsRestored - city.armorsEquiped ; 
 						var nbArmorsEquiped:int =  newNbArmors - previousNbArmors;
+						
+						// la reserve en epees n'est pas assez grande
+						if(nbArmorsAvailable < nbArmorsEquiped){
+							newNbArmors = nbArmorsAvailable + previousNbArmors;
+							nbArmorsEquiped = nbArmorsAvailable;
+						}
 						
 						if(city.armorsRestored > nbArmorsEquiped){
 							city.armorsRestored -= nbArmorsEquiped;
@@ -330,7 +360,7 @@
 					}
 					else{
 						// on enleve des epees a l'armee
-						var nbArmorsRestored:int = previousNbArmors - newNbArmors
+						var nbArmorsRestored:int = previousNbArmors - newNbArmors;
 						
 						if(city.armorsEquiped > nbArmorsRestored){
 							city.armorsEquiped -= nbArmorsRestored;
@@ -348,20 +378,44 @@
 				//-------------------------------------------------------------------------//
 				
 				protected function armyInputKeyUpHandler(event:Event):void	{
-					army.size = parseInt(armyInput.text);
-					var newArmiesInCityTotalSize:int = 0;
 					
-					for each(var armyInCity:Army in city.armies){
-						newArmiesInCityTotalSize += armyInCity.size;
+					var previousArmySize:int = army.size;
+					var newArmySize:int = parseInt(armyInput.text);
+					
+					// armee : min 10, max : population
+					if(newArmySize < 10)
+						newArmySize = 10;
+					if(city.population < newArmySize)
+						newArmySize = city.population;
+					
+					if(newArmySize > previousArmySize){
+						// on ajoute des gens dans une armee
+						
+						var nbPeopleAdded:int =  newArmySize - previousArmySize;
+						
+						if(city.armyReleased > nbPeopleAdded){
+							city.armyReleased -= nbPeopleAdded;
+						}
+						else{
+							city.armyRaised += nbPeopleAdded - city.armyReleased;
+							city.armyReleased = 0;
+						}
+					}
+					else{
+						// on enleve des gens de l'armee
+						var nbPeopleRemoved:int = previousArmySize - newArmySize;
+						
+						if(city.armyRaised > nbPeopleRemoved){
+							city.armyRaised -= nbPeopleRemoved;
+						}
+						else{
+							city.armyReleased += nbPeopleRemoved - city.armyRaised;
+							city.armyRaised = 0;
+						}
 					}
 					
-					
-					if(newArmiesInCityTotalSize > city.armiesTotalSize)
-						city.armyRaised += newArmiesInCityTotalSize - city.armiesTotalSize;
-					else
-						city.armyReleased += city.armiesTotalSize - newArmiesInCityTotalSize;
-					
-					city.armiesTotalSize = newArmiesInCityTotalSize;
+					army.size = newArmySize;
+					armyInput.text = army.size+""; // refresh
 				}
 
 				//-------------------------------------------------------------------------//
@@ -372,42 +426,67 @@
 				}
 				
 				protected function newArmy():void{
+					
 					var newArmy:Army = new Army();
+					newArmy.size = 0; // "armyInputKeyUpHandler" va rajouter les 10 et les compter dans city.armyRaised
 					newArmy.x = city.x;
 					newArmy.y = city.y;
 					newArmy.armyUID = "new";
 					
 					city.armies.addItem(newArmy);
+					armiesList.selectedIndex = city.armies.length - 1;
+					
+					army = newArmy;
+					armyInputKeyUpHandler(null);
 				}
 
 				protected function deleteArmy():void{
 					
-					// une armee 'new' apioche dans la pop et la reserve, mais pas aux data elles-meme
 					if(army.armyUID != "new"){
+						// pour une armee deja existante : on reajuste la pop, ils peuvent travailler des ce tour
+						// faille : si on a enleve des unites avant elles sont dans armyReleased et ne seront pas utilisees ce tour
 						city.population += army.size;
+					}
+					else{
+						// pour une armee nouvelle, la pop n'a pas bouge, on reajuste armyRaised et armyReleased par contre
 						
-						for each(var equipment:Equipment in army.equipments){
-							switch(equipment.item.name){
-								case "bow" :
-									city.bowStock += equipment.size;
-									break;
-								case "sword" :
-									city.swordStock += equipment.size;
-									break;
-								case "armor" :
-									city.armorStock += equipment.size;
-									break;
-							}
+						if(city.armyRaised > army.size){
+							city.armyRaised -= army.size;
+						}
+						else{
+							city.armyReleased += army.size - city.armyRaised;
+							city.armyRaised = 0;
 						}
 						
-						// todo: callAMF pour supprimer larmy et le link sur player
 					}
 					
-					city.armyReleased += army.size;
-					city.armiesTotalSize -= army.size;
+					// on remet les armements dans les stocks de la ville
+					for each(var equipment:Equipment in army.equipments){
+						switch(equipment.item.name){
+							case "bow" :
+								city.bowStock += equipment.size;
+								break;
+							case "sword" :
+								city.swordStock += equipment.size;
+								break;
+							case "armor" :
+								city.armorStock += equipment.size;
+								break;
+						}
+					}
 					
+					// on enleve l'armee de la liste de la ville et du player
 					city.armies.removeItemAt(city.armies.getItemIndex(army));
-					army = null;
+					Session.currentPlayer.armies.removeItemAt(Session.currentPlayer.armies.getItemIndex(army));
+					
+					// on selectionne l'entree suivante dans la liste des armees
+					try{
+						armiesList.selectedIndex = 0;
+						army = city.armies.getItemAt(0) as Army;	
+					}
+					catch(e:Error){
+						army = null;
+					}
 				}
 				
 			]]>
@@ -422,6 +501,9 @@
 				<s:Label text="Population"/>
 				<mx:Spacer width="20"/>
 				<s:Label text="{city.population}" styleName="numberLabel"/>
+				<mx:Spacer width="6"/>
+				<s:Label text="(army : {city.armyReleased - city.armyRaised >= 0 ? '+' : '-'} {Math.abs(city.armyReleased - city.armyRaised)})"  
+						 color="{city.armyReleased - city.armyRaised >= 0 ? Numbers.GREEN : Numbers.RED} "/>
 				<mx:Spacer width="35"/>
 				<s:Label text="Unemployed"/>
 				<mx:Spacer width="20"/>
@@ -784,7 +866,7 @@
 								<mx:GridItem>
 									<s:TextInput text="{army.size}" 
 												 id="armyInput"
-												 keyUp="armyInputKeyUpHandler(event)"
+												 enter="armyInputKeyUpHandler(event)"
 												 focusOut="armyInputKeyUpHandler(event)"
 												 restrict="0-9"
 												 width="100"/>
@@ -801,7 +883,7 @@
 									<s:Label text="Equipement" />
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
-									<s:Label text="Stock" />
+									<s:Label text="Stock available" />
 								</mx:GridItem>
 							</mx:GridRow>
 							<mx:GridRow >
@@ -817,7 +899,7 @@
 												 width="100"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
-									<s:Label text="{city.bowStock}" />
+									<s:Label text="{city.bowStock + city.bowsRestored - city.bowsEquiped}" />
 								</mx:GridItem>
 							</mx:GridRow>
 							<mx:GridRow >
@@ -833,7 +915,7 @@
 												 width="100"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
-									<s:Label text="{city.swordStock}" />
+									<s:Label text="{city.swordStock + city.swordsRestored - city.swordsEquiped}" />
 								</mx:GridItem>
 							</mx:GridRow>
 							<mx:GridRow >
@@ -849,7 +931,7 @@
 												 width="100"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
-									<s:Label text="{city.armorStock}" />
+									<s:Label text="{city.armorStock + city.armorsRestored - city.armorsEquiped}" />
 								</mx:GridItem>
 							</mx:GridRow>
 							<mx:GridRow>

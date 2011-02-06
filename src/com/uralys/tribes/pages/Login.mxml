@@ -82,6 +82,7 @@
 				<mx:GridItem>
 					<s:TextInput id="emailInput"
 								 text="{savedEmail}"
+								 enter="login()"
 								 width="200"/>
 				</mx:GridItem>
 			</mx:GridRow>
@@ -93,6 +94,7 @@
 					<s:TextInput id="passwordInput" 	
 								 text="{savedPassword}"	
 								 displayAsPassword="true"
+								 enter="login()"
 								 width="200"/>
 				</mx:GridItem>
 			</mx:GridRow>

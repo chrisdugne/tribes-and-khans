@@ -4,6 +4,7 @@ package com.uralys.tribes.managers {
 	import com.uralys.tribes.commons.Numbers;
 	import com.uralys.tribes.commons.Session;
 	import com.uralys.tribes.core.Pager;
+	import com.uralys.tribes.entities.City;
 	import com.uralys.tribes.entities.Game;
 	import com.uralys.tribes.entities.Player;
 	import com.uralys.tribes.pages.GameInCreation;
@@ -80,6 +81,11 @@ package com.uralys.tribes.managers {
 			gameWrapper.loadItems.addEventListener("result", itemsLoaded);
 			gameWrapper.loadItems();
 		}
+
+		public function saveTurn(player:Player):void{
+			gameWrapper.saveTurn.addEventListener("result", turnSaved);
+			gameWrapper.saveTurn(player);
+		}
 		
 		//============================================================================================//
 		//  RESULTS FROM SERVER	
@@ -120,6 +126,10 @@ package com.uralys.tribes.managers {
 		private function itemsLoaded(event:ResultEvent):void{
 			Session.ITEMS = event.result as ArrayCollection;
 			Numbers.loadItemData();
+		}
+
+		private function turnSaved(event:ResultEvent):void{
+			Session.TURN_SAVING_DONE = true;
 		}
 			
 	}

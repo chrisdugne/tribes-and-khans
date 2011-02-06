@@ -51,16 +51,6 @@
 					for each (var player:Player in Session.profil.players){
 						if(player.gameUID == data.gameUID){
 							
-							var now:Number = new Date().getTime();
-
-							if((game.beginTurnTimeMillis + game.nbMinByTurn*60*1000) < now){
-								// tous les joueurs n'ont pas joue leur tour, mais le tour est fini
-								// on peut donc jouer le nouveau tour
-								// on calcule combien de tours sont finis depuis
-								
-								game.currentTurn += (int)((now-game.beginTurnTimeMillis)/(game.nbMinByTurn*60*1000));
-							}	
-							
 							if(player.lastTurnPlayed < game.currentTurn){
 								//vert clair
 								color = 0x00FF33;

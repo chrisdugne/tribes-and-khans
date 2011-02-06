@@ -71,7 +71,8 @@
 				 color="#FFFFFF" 
 				 right="20" 
 				 verticalCenter="2"
-				 text="Value : {data.value}"/>
+				 visible="{data.armyUID == 'new'}"
+				 text="New !"/>
 	</s:Group>
 	
 </s:ItemRenderer>

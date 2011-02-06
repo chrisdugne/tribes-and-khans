@@ -72,7 +72,7 @@ package com.uralys.tribes.entities
 			_equipments = o;
 		}
 		
-		protected var _equipments:ArrayCollection;
+		protected var _equipments:ArrayCollection = new ArrayCollection();
 		protected var _armyUID:String;
 		protected var _size:int;
 		protected var _speed:int;

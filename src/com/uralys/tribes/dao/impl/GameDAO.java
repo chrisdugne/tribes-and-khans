@@ -14,12 +14,14 @@ import com.uralys.tribes.entities.Army;
 import com.uralys.tribes.entities.City;
 import com.uralys.tribes.entities.Equipment;
 import com.uralys.tribes.entities.Game;
+import com.uralys.tribes.entities.Move;
 import com.uralys.tribes.entities.Player;
 import com.uralys.tribes.entities.dto.ArmyDTO;
 import com.uralys.tribes.entities.dto.CityDTO;
 import com.uralys.tribes.entities.dto.EquipmentDTO;
 import com.uralys.tribes.entities.dto.GameDTO;
 import com.uralys.tribes.entities.dto.ItemDTO;
+import com.uralys.tribes.entities.dto.MoveDTO;
 import com.uralys.tribes.entities.dto.PlayerDTO;
 import com.uralys.tribes.entities.dto.ProfilDTO;
 import com.uralys.tribes.entities.dto.SmithDTO;
@@ -227,8 +229,8 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			city.setPeopleCreatingIron(0);
 			city.setGold(100);
 
-			city.setX(Utils.random(2700));
-			city.setY(Utils.random(2700));
+			city.setX(Utils.random(2400) + 300);
+			city.setY(Utils.random(2400) + 300);
 			
 			//--------------------------------------//
 			// init Equipment
@@ -317,6 +319,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		PlayerDTO playerDTO = pm.getObjectById(PlayerDTO.class, player.getPlayerUID());
 		
 		playerDTO.setLastTurnPlayed(player.getLastTurnPlayed());
+		playerDTO.setLands(player.getLands());
 		pm.close();
 	}
 	
@@ -364,6 +367,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		armyDTO.setSpeed(army.getSpeed());
 		armyDTO.setX(army.getX());
 		armyDTO.setY(army.getY());
+		armyDTO.getMoveUIDs().add(army.getMoves().get(0).getMoveUID());
 		
 		
 		//--------------------------------------//
@@ -414,6 +418,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		ArmyDTO armyDTO = pm.getObjectById(ArmyDTO.class, army.getArmyUID());
 		
 		armyDTO.setSize(army.getSize());
+		armyDTO.getMoveUIDs().add(army.getMoves().get(0).getMoveUID());
 		pm.close();
 		
 		for(Equipment equipment : army.getEquipments()){
@@ -442,6 +447,23 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		}
 		
 		pm.close();
+	}
+
+	public String saveMove(Move move) {
+		MoveDTO moveDTO = new MoveDTO(); 
+		
+		String moveUID = Utils.generateUID();
+		Key key = KeyFactory.createKey(MoveDTO.class.getSimpleName(), moveUID);
+
+		moveDTO.setKey(KeyFactory.keyToString(key));
+		moveDTO.setMoveUID(moveUID);
+		moveDTO.setxFrom(move.getxFrom());
+		moveDTO.setxTo(move.getxTo());
+		moveDTO.setyFrom(move.getyFrom());
+		moveDTO.setyTo(move.getyTo());
+		
+		persist(moveDTO);
+		return moveUID;
 	}
 	
 	//==================================================================================================//
@@ -488,7 +510,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		
 		return smithUID;
 	}
-	
+
 	
 	
 	

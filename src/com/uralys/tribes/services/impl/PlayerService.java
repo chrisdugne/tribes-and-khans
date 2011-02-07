@@ -21,6 +21,12 @@ public class PlayerService implements IPlayerService {
 	}
 	
 	public Profil getProfil(String uralysUID) {
-		return playerManager.getProfil(uralysUID);
+		try{
+			return playerManager.getProfil(uralysUID);
+		}
+		catch(Exception e){
+			e.printStackTrace();
+			return null;
+		}
 	}
 }

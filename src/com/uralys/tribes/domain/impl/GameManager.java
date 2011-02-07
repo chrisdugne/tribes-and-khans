@@ -162,6 +162,12 @@ public class GameManager implements IGameManager {
 		int armyRaised = 0;
 		
 		for(Army army : player.getArmies()){
+			
+			if(army.getMoves().size() > 0){
+				String moveUID = gameDao.saveMove(army.getMoves().get(0));
+				army.getMoves().get(0).setMoveUID(moveUID);
+			}
+			
 			if(army.getArmyUID().equals("new")){
 				createdArmyUIDs.add(gameDao.createArmy(army));
 				armyRaised += army.getSize();
@@ -170,6 +176,7 @@ public class GameManager implements IGameManager {
 				gameDao.updateArmy(army);
 				editedArmyUIDs.add(army.getArmyUID());
 			}
+
 		}
 
 		List<String> existingArmyUIDs = gameDao.linkNewArmiesAndGetPreviousArmyUIDs(player.getPlayerUID(), createdArmyUIDs);

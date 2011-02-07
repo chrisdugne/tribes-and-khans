@@ -15,7 +15,7 @@ public class Player {
 	private List<City> cities = new ArrayList<City>();
 	private List<Army> armies = new ArrayList<Army>();
 	private List<Merchant> merchants = new ArrayList<Merchant>();
-	private List<Move> moves = new ArrayList<Move>();
+	private List<Integer> lands = new ArrayList<Integer>();
 	
 	//-----------------------------------------------------------------------------------//
 
@@ -43,12 +43,6 @@ public class Player {
 	public void setGameUID(String gameUID) {
 		this.gameUID = gameUID;
 	}
-	public List<Move> getMoves() {
-		return moves;
-	}
-	public void setMoves(List<Move> moves) {
-		this.moves = moves;
-	}
 	public List<City> getCities() {
 		return cities;
 	}
@@ -72,6 +66,12 @@ public class Player {
 	}
 	public void setLastTurnPlayed(Integer lastTurnPlayed) {
 		this.lastTurnPlayed = lastTurnPlayed;
+	}
+	public List<Integer> getLands() {
+		return lands;
+	}
+	public void setLands(List<Integer> lands) {
+		this.lands = lands;
 	}
 	
 	//-----------------------------------------------------------------------------------//

@@ -40,8 +40,6 @@ public class EntitiesConverter {
 		move.setxTo(moveDTO.getxTo());
 		move.setyFrom(moveDTO.getyFrom());
 		move.setyTo(moveDTO.getyTo());
-		move.setMovingUID(moveDTO.getMovingUID());
-		move.setType(moveDTO.getType());
 		
 		return move;
 	}
@@ -60,6 +58,7 @@ public class EntitiesConverter {
 		player.setGameName(playerDTO.getGameName());
 		player.setGameUID(playerDTO.getGameUID());
 		player.setLastTurnPlayed(playerDTO.getLastTurnPlayed());
+		player.setLands(playerDTO.getLands());
 		
 		//-----------------------------------------------------------------------------------//
 		List<City> cities = new ArrayList<City>();
@@ -70,14 +69,6 @@ public class EntitiesConverter {
 		
 		player.setCities(cities);
 		
-		//-----------------------------------------------------------------------------------//
-		List<Move> moves = new ArrayList<Move>();
-		
-		for(MoveDTO moveDTO : playerDTO.getMoves()){
-			moves.add(convertMoveDTO(moveDTO));
-		}
-		
-		player.setMoves(moves);
 		
 		//-----------------------------------------------------------------------------------//		
 		List<Army> armies = new ArrayList<Army>();
@@ -96,9 +87,11 @@ public class EntitiesConverter {
 		}
 		
 		player.setMerchants(merchants);
-		
-		//-----------------------------------------------------------------------------------//
+				//-----------------------------------------------------------------------------------//
+
 		return player;
+
+		//-----------------------------------------------------------------------------------//
 	}
 	
 	
@@ -216,6 +209,8 @@ public class EntitiesConverter {
 		army.setValue(armyDTO.getValue());
 		army.setX(armyDTO.getX());
 		army.setY(armyDTO.getY());
+
+		//-----------------------------------------------------------------------------------//
 		
 		List<Equipment> equipments = new ArrayList<Equipment>();
 		
@@ -224,6 +219,16 @@ public class EntitiesConverter {
 		}
 		
 		army.setEquipments(equipments);
+
+		//-----------------------------------------------------------------------------------//
+
+		List<Move> moves = new ArrayList<Move>();
+		
+		for(MoveDTO moveDTO : armyDTO.getMoves()){
+			moves.add(convertMoveDTO(moveDTO));
+		}
+		
+		army.setMoves(moves);
 		
 		return army;
 	}

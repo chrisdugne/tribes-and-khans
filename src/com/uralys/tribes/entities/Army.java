@@ -15,6 +15,7 @@ public class Army {
 	private int x;
 	private int y;
 
+	private List<Move> moves = new ArrayList<Move>();
 	private List<Equipment> equipments = new ArrayList<Equipment>();
 	
 	//-----------------------------------------------------------------------------------//
@@ -67,10 +68,18 @@ public class Army {
 		this.value = value;
 	}
 
+	public List<Move> getMoves() {
+		return moves;
+	}
+
+	public void setMoves(List<Move> moves) {
+		this.moves = moves;
+	}
+	
 	public List<Equipment> getEquipments() {
 		return equipments;
 	}
-
+	
 	public void setEquipments(List<Equipment> equipments) {
 		this.equipments = equipments;
 	}

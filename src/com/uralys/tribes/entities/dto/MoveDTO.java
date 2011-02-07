@@ -25,10 +25,6 @@ public class MoveDTO {
 	@Persistent private int yFrom;
 	@Persistent private int yTo;
 
-	@Persistent private int type; // 1:Army | 2:Merchants
-	@Persistent private int movingUID; // the uid of the entity moving (1 or 2)
-
-	
 	//-----------------------------------------------------------------------------------//
 
 	public String getKey() {
@@ -42,18 +38,6 @@ public class MoveDTO {
 	}
 	public void setMoveUID(String moveUID) {
 		this.moveUID = moveUID;
-	}
-	public int getType() {
-		return type;
-	}
-	public void setType(int type) {
-		this.type = type;
-	}
-	public int getMovingUID() {
-		return movingUID;
-	}
-	public void setMovingUID(int movingUID) {
-		this.movingUID = movingUID;
 	}
 	public int getxFrom() {
 		return xFrom;

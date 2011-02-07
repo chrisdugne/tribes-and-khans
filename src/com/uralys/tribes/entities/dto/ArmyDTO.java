@@ -35,6 +35,7 @@ public class ArmyDTO {
 	@Persistent private int y;
 
 	@Persistent private List<String> equipmentUIDs = new ArrayList<String>();
+	@Persistent private List<String> moveUIDs = new ArrayList<String>();
 	
 	//-----------------------------------------------------------------------------------//
 
@@ -92,6 +93,16 @@ public class ArmyDTO {
 	}
 	public void setEquipmentUIDs(List<String> equipmentUIDs) {
 		this.equipmentUIDs = equipmentUIDs;
+	}	
+	
+	public List<MoveDTO> getMoves() {
+		return UniversalDAO.getInstance().getListDTO(moveUIDs, MoveDTO.class);
+	}
+	public List<String> getMoveUIDs() {
+		return moveUIDs;
+	}
+	public void setMoveUIDs(List<String> moves) {
+		this.moveUIDs = moves;
 	}
 	
 	//-----------------------------------------------------------------------------------//

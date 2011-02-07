@@ -5,6 +5,7 @@ import java.util.List;
 import com.uralys.tribes.entities.Army;
 import com.uralys.tribes.entities.City;
 import com.uralys.tribes.entities.Game;
+import com.uralys.tribes.entities.Move;
 import com.uralys.tribes.entities.Player;
 import com.uralys.tribes.entities.dto.GameDTO;
 import com.uralys.tribes.entities.dto.ItemDTO;
@@ -27,6 +28,7 @@ public interface IGameDAO {
 	public List<String> linkNewArmiesAndGetPreviousArmyUIDs(String playerUID, List<String> newArmyUIDs);
 	public String createArmy(Army army);
 	public void updateArmy(Army army);
+	public String saveMove(Move move);
 	public void updatePlayer(Player player);
 	public void updateGame(Game game);
 	public void deleteArmies(List<String> toDeleteArmyUIDs);

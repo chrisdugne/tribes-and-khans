@@ -34,7 +34,7 @@ public class PlayerDTO {
 	@Persistent private List<String> cityUIDs = new ArrayList<String>();
 	@Persistent private List<String> armyUIDs = new ArrayList<String>();
 	@Persistent private List<String> merchantUIDs = new ArrayList<String>();
-	@Persistent private List<String> moveUIDs = new ArrayList<String>();
+	@Persistent private List<Integer> lands = new ArrayList<Integer>();
 	
 	//-----------------------------------------------------------------------------------//
 
@@ -68,12 +68,6 @@ public class PlayerDTO {
 	public void setGameName(String gameName) {
 		this.gameName = gameName;
 	}
-	public List<String> getMoveUIDs() {
-		return moveUIDs;
-	}
-	public void setMoveUIDs(List<String> moves) {
-		this.moveUIDs = moves;
-	}
 	public List<String> getCityUIDs() {
 		return cityUIDs;
 	}
@@ -98,12 +92,14 @@ public class PlayerDTO {
 	public void setLastTurnPlayed(Integer lastTurnPlayed) {
 		this.lastTurnPlayed = lastTurnPlayed;
 	}
+	public List<Integer> getLands() {
+		return lands;
+	}
+	public void setLands(List<Integer> lands) {
+		this.lands = lands;
+	}
 	
 	//-----------------------------------------------------------------------------------//
-
-	public List<MoveDTO> getMoves() {
-		return UniversalDAO.getInstance().getListDTO(moveUIDs, MoveDTO.class);		
-	}
 	
 	public List<CityDTO> getCities() {
 		return UniversalDAO.getInstance().getListDTO(cityUIDs, CityDTO.class);		

@@ -14,7 +14,7 @@ package com.uralys.tribes.entities
 		private var _cities:ArrayCollection;
 		private var _armies:ArrayCollection;
 		private var _merchants:ArrayCollection;
-		private var _moves:ArrayCollection;
+		private var _lands:ArrayCollection = new ArrayCollection();
 		
 		public function Player(){}
 
@@ -49,16 +49,6 @@ package com.uralys.tribes.entities
 		public function set lastTurnPlayed(value:int):void
 		{
 			_lastTurnPlayed = value;
-		}
-
-		public function get moves():ArrayCollection
-		{
-			return _moves;
-		}
-
-		public function set moves(value:ArrayCollection):void
-		{
-			_moves = value;
 		}
 
 		public function get name():String
@@ -108,6 +98,16 @@ package com.uralys.tribes.entities
 		public function set merchants(value:ArrayCollection):void
 		{
 			_merchants = value;
+		}
+		
+		public function get lands():ArrayCollection
+		{
+			return _lands;
+		}
+		
+		public function set lands(value:ArrayCollection):void
+		{
+			_lands = value;
 		}
 }
 }

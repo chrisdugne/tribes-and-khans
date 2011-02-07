@@ -50,7 +50,7 @@
 		</mx:Transition>
 	</s:transitions>
 	
-	<s:Group id="groupDetails" height="20" width="240" width.hovered="270" width.selected="270">
+	<s:Group id="groupDetails" height="20" width="180" width.hovered="210" width.selected="210">
 		<s:Rect left="0" right="0" top="0" bottom="0" radiusX="5" radiusY="5">
 			<s:fill>
 				<s:SolidColor color="{color}" color.hovered="{colorHovered}" color.selected="{colorSelected}" />
@@ -58,15 +58,9 @@
 		</s:Rect>
 		<s:Label id="labelName" 
 				 color="#FFFFFF" 
-				 left="20" 
+				 left="10" 
 				 verticalCenter="2"
-				 text="Size : {data.size}"/>
-		<s:Label id="labelStatus" 
-				 color="#FFFFFF" 
-				 right="20" 
-				 verticalCenter="2"
-				 visible="{data.armyUID == 'new'}"
-				 text="New !"/>
+				 text="{data.name}"/>
 	</s:Group>
 	
 </s:ItemRenderer>

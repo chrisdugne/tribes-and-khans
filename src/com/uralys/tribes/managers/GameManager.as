@@ -4,6 +4,7 @@ package com.uralys.tribes.managers {
 	import com.uralys.tribes.commons.Numbers;
 	import com.uralys.tribes.commons.Session;
 	import com.uralys.tribes.core.Pager;
+	import com.uralys.tribes.entities.Army;
 	import com.uralys.tribes.entities.City;
 	import com.uralys.tribes.entities.Game;
 	import com.uralys.tribes.entities.Player;
@@ -16,6 +17,7 @@ package com.uralys.tribes.managers {
 	import mx.rpc.events.FaultEvent;
 	import mx.rpc.events.ResultEvent;
 	import mx.rpc.remoting.mxml.RemoteObject;
+	import mx.utils.ObjectUtil;
 
 	[Bindable]
 	public class GameManager{
@@ -83,6 +85,13 @@ package com.uralys.tribes.managers {
 		}
 
 		public function saveTurn(player:Player):void{
+			
+			trace("saveTurn, nbArmies : " + player.armies.length);
+			for each(var army:Army in player.armies){
+				trace(army.moves.length + " moves");
+				trace(ObjectUtil.toString(army.moves));
+			}
+			
 			gameWrapper.saveTurn.addEventListener("result", turnSaved);
 			gameWrapper.saveTurn(player);
 		}

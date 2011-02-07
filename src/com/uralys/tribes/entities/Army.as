@@ -2,6 +2,10 @@
 package com.uralys.tribes.entities
 {
 	import mx.collections.ArrayCollection;
+	
+	import spark.primitives.Ellipse;
+	import spark.primitives.Line;
+	import spark.primitives.Rect;
 
 	[Bindable]
 	[RemoteClass(alias="com.uralys.tribes.entities.Army")]
@@ -57,7 +61,7 @@ package com.uralys.tribes.entities
 		}
 	
 		public function get radius():int {
-			return _radius;
+			return Math.sqrt(_size)/4 + 2; // min 2 pixels
 		}
 	
 		public function set radius(o:int):void {
@@ -72,7 +76,16 @@ package com.uralys.tribes.entities
 			_equipments = o;
 		}
 		
+		public function get moves():ArrayCollection {
+			return _moves;
+		}
+		
+		public function set moves(o:ArrayCollection):void {
+			_moves = o;
+		}
+		
 		protected var _equipments:ArrayCollection = new ArrayCollection();
+		protected var _moves:ArrayCollection = new ArrayCollection();
 		protected var _armyUID:String;
 		protected var _size:int;
 		protected var _speed:int;
@@ -113,5 +126,13 @@ package com.uralys.tribes.entities
 
 		//==========================================================================//
 
+		public var ellipseTo:Ellipse;
+		public var lineTo:Line = new Line();
+		public var ellipseToIsDrawn:Boolean = false;
+		public var lineToIsDrawn:Boolean = false;
+		
+		public var landExpected:int = -1;
+		public var tmpLandSquare:Rect;
+		
 	}
 }

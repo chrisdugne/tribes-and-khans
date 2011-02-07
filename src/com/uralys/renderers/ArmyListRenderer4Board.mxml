@@ -50,7 +50,7 @@
 		</mx:Transition>
 	</s:transitions>
 	
-	<s:Group id="groupDetails" height="20" width="240" width.hovered="270" width.selected="270">
+	<s:Group id="groupDetails" height="20" width="140" width.hovered="160" width.selected="160">
 		<s:Rect left="0" right="0" top="0" bottom="0" radiusX="5" radiusY="5">
 			<s:fill>
 				<s:SolidColor color="{color}" color.hovered="{colorHovered}" color.selected="{colorSelected}" />

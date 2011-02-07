@@ -66,4 +66,5 @@ package com.uralys.tribes.entities
 		{
 			_yFrom = value;
 		}
+	}
 }

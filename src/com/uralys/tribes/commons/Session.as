@@ -12,7 +12,7 @@ package com.uralys.tribes.commons
 		
 		//=====================================================//
 		
-		[Bindable] public static var VERSION:String = "1.0.12";
+		[Bindable] public static var VERSION:String = "1.0.13";
 		[Bindable] public static var LOGGED_IN:Boolean = false; 
 		[Bindable] public static var CONNECTED_TO_FACEBOOK:Boolean = false;
 		
@@ -50,6 +50,9 @@ package com.uralys.tribes.commons
 		
 		// pour que le tour soit bien sauvegarde avant de faire le refresh games+profil
 		[Bindable] public static var TURN_SAVING_DONE:Boolean = true;
+
+		// pour savoir si on click pour un deplacement de troupes
+		[Bindable] public static var CURRENT_SELECTION_IS_ARMY:Boolean = false;
 		
 		//=====================================================//
 		// GameDetailsRenderer

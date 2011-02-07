@@ -47,6 +47,12 @@ import mx.collections.ArrayCollection;
 	public static var IRON_EARNING_COEFF:Number = 2;
 	
 	//==================================================================================================//
+	// contrees
+
+	[Bindable] public static var LAND_WIDTH:int = 100;
+	[Bindable] public static var LAND_HEIGHT:int = 100;
+
+	//==================================================================================================//
 	// Item data
 	
 	[Bindable] public static var BOW_WOOD:int;

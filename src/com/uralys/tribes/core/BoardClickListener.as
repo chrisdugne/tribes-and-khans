@@ -1,14 +1,16 @@
 package com.uralys.tribes.core
 {
+	import com.uralys.tribes.commons.Numbers;
+	import com.uralys.tribes.commons.Session;
+	import com.uralys.tribes.entities.Army;
 	import com.uralys.tribes.entities.City;
 	import com.uralys.tribes.entities.Player;
-
-	import com.uralys.tribes.commons.Numbers;
 	import com.uralys.tribes.pages.Board;
-
 	import com.uralys.utils.Map;
 	
 	import flash.events.MouseEvent;
+	import flash.ui.Mouse;
+	
 	import spark.components.Group;
 	
 
@@ -36,13 +38,29 @@ package com.uralys.tribes.core
 
 		//=====================================================================================//
 		
-		public function clickOnBoard(event:MouseEvent, player:Player, board:Group):void{
+		public function clickOnBoard(event:MouseEvent):void{
 			var clickX:int = event.localX;
 			var clickY:int = event.localY;
 			
-			for each(var city:City in player.cities){
+			for each(var city:City in Session.currentPlayer.cities){
 				if(Math.sqrt(Math.pow(clickX - city.x,2) + Math.pow(clickY - city.y,2)) <= city.radius) {
-					boardPage.clickOnCity(city);
+					trace("plop " + city.armies.length);
+					if(city.armies.length > 0)
+						boardPage.appearSelectionChoice(city);
+					else
+						boardPage.clickOnCity(city);
+				}
+			}
+
+			for each(var army:Army in Session.currentPlayer.armies){
+				// click on army
+				if(Math.sqrt(Math.pow(clickX - army.x,2) + Math.pow(clickY - army.y,2)) <= army.radius) {
+					boardPage.clickOnArmy(army);
+				}
+				
+				// click on army move
+				else if(army.moves.length>0 && Math.sqrt(Math.pow(clickX - army.moves.getItemAt(0).xTo,2) + Math.pow(clickY - army.moves.getItemAt(0).yTo,2)) <= army.radius) {
+					boardPage.clickOnArmy(army);
 				}
 			}
 		}

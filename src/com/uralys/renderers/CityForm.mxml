@@ -8,6 +8,7 @@
 			<![CDATA[
 				import com.uralys.tribes.commons.Numbers;
 				import com.uralys.tribes.commons.Session;
+				import com.uralys.tribes.core.BoardDrawer;
 				import com.uralys.tribes.entities.Army;
 				import com.uralys.tribes.entities.City;
 				import com.uralys.tribes.entities.Equipment;
@@ -415,6 +416,12 @@
 					}
 					
 					army.size = newArmySize;
+					
+					if(army.ellipseTo){
+						army.ellipseTo.width = army.radius*2;
+						army.ellipseTo.height = army.radius*2;
+					}
+						
 					armyInput.text = army.size+""; // refresh
 				}
 
@@ -426,14 +433,17 @@
 				}
 				
 				protected function newArmy():void{
-					
+					trace("new Army");
 					var newArmy:Army = new Army();
 					newArmy.size = 0; // "armyInputKeyUpHandler" va rajouter les 10 et les compter dans city.armyRaised
 					newArmy.x = city.x;
 					newArmy.y = city.y;
+					newArmy.speed = 200;
 					newArmy.armyUID = "new";
 					
 					city.armies.addItem(newArmy);
+					Session.currentPlayer.armies.addItem(newArmy);
+					
 					armiesList.selectedIndex = city.armies.length - 1;
 					
 					army = newArmy;
@@ -479,6 +489,9 @@
 					city.armies.removeItemAt(city.armies.getItemIndex(army));
 					Session.currentPlayer.armies.removeItemAt(Session.currentPlayer.armies.getItemIndex(army));
 					
+					// on enleve les drawings du board
+					BoardDrawer.getInstance().removeArmyFromBoard(army);
+					
 					// on selectionne l'entree suivante dans la liste des armees
 					try{
 						armiesList.selectedIndex = 0;
@@ -487,6 +500,7 @@
 					catch(e:Error){
 						army = null;
 					}
+					
 				}
 				
 			]]>
@@ -629,6 +643,12 @@
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
 									<s:Label text="{parseInt(wheatInput.text) + parseInt(woodInput.text) + parseInt(ironInput.text)}" />
+								</mx:GridItem>
+								<mx:GridItem colSpan="3" 
+											 horizontalAlign="center"
+											 color="{Numbers.RED}"
+											 visible="{city.wheat + city.wheatEarned - city.wheatSpent &lt; 0}">
+									<s:Label text="Famine prevue ! recoltez plus de ble !" />
 								</mx:GridItem>
 							</mx:GridRow>
 						</mx:Grid>

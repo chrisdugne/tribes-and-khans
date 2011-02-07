@@ -20,7 +20,6 @@
 			import mx.core.FlexGlobals;
 			
 			private function init():void{
-				
 				if(url == "http://localhost:8888/webresources/flex/TribesAndKhansClient.swf")
 					Session.isLocal = true;
 				

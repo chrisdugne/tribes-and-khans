@@ -144,15 +144,34 @@
 				if(autoMoveNotNeeded){
 					if(Session.CURRENT_SELECTION_IS_ARMY){
 						BoardDrawer.getInstance().removeArmySelection();
-						trace("register a move");
 						selectedArmy.moves = new ArrayCollection();
 						selectedArmy.moves.addItem(new com.uralys.tribes.entities.Move());
-						trace(selectedArmy.moves.length);
+						
+						var clickX:int = event.localX;
+						var clickY:int = event.localY;
+						var cityEntered:City = null;
+						
+						for each(var city:City in Session.currentPlayer.cities){
+							if(Math.sqrt(Math.pow(clickX - city.x,2) + Math.pow(clickY - city.y,2)) <= city.radius) {
+								cityEntered = city;
+								break;
+							}
+						}
 						
 						selectedArmy.moves.getItemAt(0).xFrom = selectedArmy.x;
 						selectedArmy.moves.getItemAt(0).yFrom = selectedArmy.y;
-						selectedArmy.moves.getItemAt(0).xTo = selectedArmy.lineTo.xTo;
-						selectedArmy.moves.getItemAt(0).yTo = selectedArmy.lineTo.yTo;
+						if(cityEntered){
+							selectedArmy.moves.getItemAt(0).xTo = cityEntered.x;
+							selectedArmy.moves.getItemAt(0).yTo = cityEntered.y;
+							selectedArmy.lineTo.xTo = cityEntered.x;
+							selectedArmy.lineTo.yTo = cityEntered.y;
+							selectedArmy.ellipseTo.x = cityEntered.x - selectedArmy.ellipseTo.width/2;
+							selectedArmy.ellipseTo.y = cityEntered.y - selectedArmy.ellipseTo.height/2;
+						}
+						else{
+							selectedArmy.moves.getItemAt(0).xTo = selectedArmy.lineTo.xTo;
+							selectedArmy.moves.getItemAt(0).yTo = selectedArmy.lineTo.yTo;
+						}
 					}
 					else
 						BoardClickListener.getInstance().clickOnBoard(event);
@@ -265,6 +284,15 @@
 				}
 				
 				for each(var army:Army in Session.currentPlayer.armies){
+					
+					army.moves = new ArrayCollection();
+					army.moves.addItem(new com.uralys.tribes.entities.Move());
+				
+					army.moves.getItemAt(0).xFrom = army.x;
+					army.moves.getItemAt(0).yFrom = army.y;
+					army.moves.getItemAt(0).xTo = army.x;
+					army.moves.getItemAt(0).yTo = army.y;
+					
 					for each(var city:City in Session.currentPlayer.cities){
 						if(army.x == city.x && army.y == city.y){
 							city.armies.addItem(army);
@@ -482,7 +510,6 @@
 							for(var j:int=cityLandYmin; j <= cityLandYmax; j++){
 								var landNumber:int = image.width/Numbers.LAND_WIDTH * j + i;
 								lands.addItem(landNumber);
-								trace(landNumber);
 							}
 						}
 					}

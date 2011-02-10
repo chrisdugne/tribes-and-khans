@@ -11,6 +11,7 @@ package com.uralys.tribes.entities
 		private var _gameUID:String;
 		private var _gameName:String;
 		private var _lastTurnPlayed:int;
+		private var _gold:int;
 		private var _cities:ArrayCollection;
 		private var _armies:ArrayCollection;
 		private var _merchants:ArrayCollection;
@@ -108,6 +109,14 @@ package com.uralys.tribes.entities
 		public function set lands(value:ArrayCollection):void
 		{
 			_lands = value;
+		}
+		
+		public function get gold():int {
+			return _gold;
+		}
+		
+		public function set gold(o:int):void {
+			_gold = o;
 		}
 }
 }

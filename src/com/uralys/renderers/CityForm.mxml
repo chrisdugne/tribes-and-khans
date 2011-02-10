@@ -526,7 +526,7 @@
 			<s:HGroup horizontalAlign="center" verticalAlign="middle">
 				<s:Label text="Gold"/>
 				<mx:Spacer width="30"/>
-				<s:Label text="{city.gold}" styleName="numberLabel"/>
+				<s:Label text="{Session.currentPlayer.gold}" styleName="numberLabel"/>
 			</s:HGroup>
 			
 			<mx:Spacer height="15"/>

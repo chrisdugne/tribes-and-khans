@@ -94,14 +94,6 @@ package com.uralys.tribes.entities
 			refreshUnemployed();
 		}
 	
-		public function get gold():int {
-			return _gold;
-		}
-	
-		public function set gold(o:int):void {
-			_gold = o;
-		}
-	
 		public function get x():int {
 			return _x;
 		}
@@ -148,7 +140,6 @@ package com.uralys.tribes.entities
 		protected var _peopleCreatingWheat:int;
 		protected var _peopleCreatingWood:int;
 		protected var _peopleCreatingIron:int;
-		protected var _gold:int;
 		protected var _x:int;
 		protected var _y:int;
 		protected var _equipmentStock:ArrayCollection = new ArrayCollection();

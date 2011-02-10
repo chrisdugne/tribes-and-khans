@@ -216,7 +216,7 @@ public class GameManager implements IGameManager {
 
 	private void calculateTurnsNotPlayed(List<Game> games) {
 		System.out.println("==============================================================");
-		System.out.println("calculateTurnsNotPlayed");
+		System.out.println("calculateTurnsNotPlayed (games.size : "+games.size()+")");
 		for(Game game : games){
 			
 			if(game.getCurrentTurn() == 0)

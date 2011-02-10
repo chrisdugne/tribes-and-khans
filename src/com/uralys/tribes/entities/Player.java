@@ -15,7 +15,10 @@ public class Player {
 	private List<City> cities = new ArrayList<City>();
 	private List<Army> armies = new ArrayList<Army>();
 	private List<Merchant> merchants = new ArrayList<Merchant>();
+	private List<String> allies = new ArrayList<String>();
 	private List<Integer> lands = new ArrayList<Integer>();
+
+	private int gold;
 	
 	//-----------------------------------------------------------------------------------//
 
@@ -72,6 +75,18 @@ public class Player {
 	}
 	public void setLands(List<Integer> lands) {
 		this.lands = lands;
+	}
+	public List<String> getAllies() {
+		return allies;
+	}
+	public void setAllies(List<String> allies) {
+		this.allies = allies;
+	}
+	public int getGold() {
+		return gold;
+	}
+	public void setGold(int gold) {
+		this.gold = gold;
 	}
 	
 	//-----------------------------------------------------------------------------------//

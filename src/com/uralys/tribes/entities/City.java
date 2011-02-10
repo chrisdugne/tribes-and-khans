@@ -16,8 +16,6 @@ public class City {
 	private int peopleCreatingWood;
 	private int iron;
 	private int peopleCreatingIron;
-	
-	private int gold;
 
 	private int x;
 	private int y;
@@ -73,14 +71,6 @@ public class City {
 
 	public void setIron(int iron) {
 		this.iron = iron;
-	}
-
-	public int getGold() {
-		return gold;
-	}
-
-	public void setGold(int gold) {
-		this.gold = gold;
 	}
 
 	public int getX() {

@@ -34,7 +34,10 @@ public class PlayerDTO {
 	@Persistent private List<String> cityUIDs = new ArrayList<String>();
 	@Persistent private List<String> armyUIDs = new ArrayList<String>();
 	@Persistent private List<String> merchantUIDs = new ArrayList<String>();
+	@Persistent private List<String> allyUIDs = new ArrayList<String>();
 	@Persistent private List<Integer> lands = new ArrayList<Integer>();
+
+	@Persistent private Integer gold;
 	
 	//-----------------------------------------------------------------------------------//
 
@@ -86,6 +89,12 @@ public class PlayerDTO {
 	public void setMerchantUIDs(List<String> merchantUIDs) {
 		this.merchantUIDs = merchantUIDs;
 	}
+	public List<String> getAllyUIDs() {
+		return allyUIDs;
+	}
+	public void setAllyUIDs(List<String> allyUIDs) {
+		this.allyUIDs = allyUIDs;
+	}
 	public Integer getLastTurnPlayed() {
 		return lastTurnPlayed;
 	}
@@ -97,6 +106,12 @@ public class PlayerDTO {
 	}
 	public void setLands(List<Integer> lands) {
 		this.lands = lands;
+	}
+	public Integer getGold() {
+		return gold;
+	}
+	public void setGold(Integer gold) {
+		this.gold = gold;
 	}
 	
 	//-----------------------------------------------------------------------------------//

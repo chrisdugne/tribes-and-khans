@@ -59,6 +59,8 @@ public class EntitiesConverter {
 		player.setGameUID(playerDTO.getGameUID());
 		player.setLastTurnPlayed(playerDTO.getLastTurnPlayed());
 		player.setLands(playerDTO.getLands());
+		player.setAllies(playerDTO.getAllyUIDs());
+		player.setGold(playerDTO.getGold());
 		
 		//-----------------------------------------------------------------------------------//
 		List<City> cities = new ArrayList<City>();
@@ -156,7 +158,6 @@ public class EntitiesConverter {
 		City city = new City();
 
 		city.setCityUID(cityDTO.getCityUID());
-		city.setGold(cityDTO.getGold());
 		city.setIron(cityDTO.getIron());
 		city.setPeopleCreatingIron(cityDTO.getPeopleCreatingIron());
 		city.setName(cityDTO.getName());

@@ -529,6 +529,8 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 
 	
 	//======================================================================================================//
+	
+	
 
 	private Map<String, Integer> debugMoveIds = new HashMap<String, Integer>();
 	
@@ -540,11 +542,17 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		
 		List<MoveDTO> allMoves = new ArrayList<MoveDTO>();
+		List<String> dummyMoves = new ArrayList<String>();
 		List<Meeting> meetings = new ArrayList<Meeting>();
+		List<String> armiesToDelete = new ArrayList<String>();
 		
 		Map<MoveDTO, ArmyDTO> moveArmyMap = new HashMap<MoveDTO, ArmyDTO>();
 		Map<ArmyDTO, MoveDTO> armyMoveMap = new HashMap<ArmyDTO, MoveDTO>();
 		Map<MoveDTO, PlayerDTO> movePlayerMap = new HashMap<MoveDTO, PlayerDTO>();
+		Map<String, PlayerDTO> cityPlayerMap = new HashMap<String, PlayerDTO>();
+		Map<String, Integer> cityXMap = new HashMap<String, Integer>();
+		Map<String, Integer> cityYMap = new HashMap<String, Integer>();
+		Map<ArmyDTO, CityDTO> armyCityMap = new HashMap<ArmyDTO, CityDTO>();
 		Map<PlayerDTO, ArrayList<Integer>> landsMap = new HashMap<PlayerDTO, ArrayList<Integer>>();
 		
 		if(debug)System.out.println("-----------");
@@ -555,44 +563,52 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			landsMap.put(player, new ArrayList<Integer>());
 
 			Query query = pm.newQuery("select from " + ArmyDTO.class.getName() + " where :uids.contains(key)");
-			List<ArmyDTO> armies = (List<ArmyDTO>) query.execute(player.getArmyUIDs());
+			
+			List<ArmyDTO> armies;
+			if(player.getArmyUIDs().size() > 0){
+				armies = (List<ArmyDTO>) query.execute(player.getArmyUIDs());
+			}
+			else
+				armies = new ArrayList<ArmyDTO>();
 
 
 			if(debug)System.out.println("nbArmies " + armies.size());
 			for(ArmyDTO army : armies){
 				if(army.getMoves().size()>0){
 					MoveDTO move = army.getMoves().get(0);
-					
 
 					// si le mouvement est immobile, on fabrique un mouvement le long du diametre du cercle representant l'entite deplacee 
 					// pour simuler le croisement de cette entite.
 					// approximation a recalculer avec cosPi/4
-					double size = Math.sqrt(army.getSize())/5;
+					double size = rayon(army.getSize());
 					
 					if(move.getxFrom() == move.getxTo() && move.getyFrom() == move.getyTo()){
+						
+						if(debug)System.out.println("armee fixe : creation du mouvement sur le diametre");
 						move.setxFrom((int)(move.getxFrom() - size));
-						move.setxTo((int)(move.getxFrom() + size));
+						move.setxTo((int)(move.getxTo() + size));
 						move.setyFrom((int)(move.getyFrom() - size));
-						move.setyTo((int)(move.getyFrom() + size));
+						move.setyTo((int)(move.getyTo() + size));
+						dummyMoves.add(move.getMoveUID());
 					}
 					else{
 						// on rajoute en gros le rayon en plus a chaque bout du move
 						if(move.getxFrom() < move.getxTo()){
 							move.setxFrom((int)(move.getxFrom() - size));
-							move.setxTo((int)(move.getxFrom() + size));
+							move.setxTo((int)(move.getxTo() + size));
 						}
 						else{
 							move.setxFrom((int)(move.getxFrom() + size));
-							move.setxTo((int)(move.getxFrom() - size));
+							move.setxTo((int)(move.getxTo() - size));
 						}
 
 						if(move.getyFrom() < move.getyTo()){
 							move.setyFrom((int)(move.getyFrom() - size));
-							move.setyTo((int)(move.getyFrom() + size));
+							move.setyTo((int)(move.getyTo() + size));
 						}
 						else{
 							move.setyFrom((int)(move.getyFrom() + size));
-							move.setyTo((int)(move.getyFrom() - size));
+							move.setyTo((int)(move.getyTo() - size));
 						}
 					}
 					
@@ -604,6 +620,46 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 					armyMoveMap.put(army, move);
 					movePlayerMap.put(move, player);
 				}
+			}
+			
+			query = pm.newQuery("select from " + CityDTO.class.getName() + " where :uids.contains(key)");
+			
+			List<CityDTO> cities;
+			if(player.getCityUIDs().size() > 0){
+				cities = (List<CityDTO>) query.execute(player.getCityUIDs());
+			}
+			else
+				cities = new ArrayList<CityDTO>();
+
+
+			if(debug)System.out.println("nbcities " + cities.size());
+			for(CityDTO city : cities){
+				MoveDTO move = new MoveDTO();
+				ArmyDTO army = new ArmyDTO();
+				
+				move.setMoveUID("_" + city.getCityUID());
+				army.setArmyUID("_" + city.getCityUID());
+				army.setSize(city.getPopulation());
+				army.setSpeed(200); // il ne faut pas que ce soit = 0 pour le calcul de temps1/temps2
+				
+				double size = rayon(city.getPopulation());
+				
+				move.setxFrom((int)(city.getX() - size));
+				move.setxTo((int)(city.getX() + size));
+				move.setyFrom((int)(city.getY() - size));
+				move.setyTo((int)(city.getY() + size));
+				
+				debugMoveIds.put(move.getMoveUID(), debugMoveId);
+				if(debug)System.out.println("register a move from " + move.getxFrom() + "," + move.getyFrom() + " | to " + move.getxTo() + "," + move.getyTo() + " | " + move.getMoveUID() + " | num : " + debugMoveId++);
+				allMoves.add(move);
+				moveArmyMap.put(move, army);
+				armyMoveMap.put(army, move);
+				movePlayerMap.put(move, player);
+				
+				cityPlayerMap.put(city.getCityUID(), player);
+				cityXMap.put(city.getCityUID(), city.getX());
+				cityYMap.put(city.getCityUID(), city.getY());
+				armyCityMap.put(army, city);
 			}
 		}
 		
@@ -624,6 +680,9 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		
 
 		for(MoveDTO move : allMoves){
+			
+			if(dummyMoves.contains(move.getMoveUID())) // on ne deplace pas les unites pour lesquelles on a genere le move sur leur diametre
+				continue;
 			
 			boolean freeWay = true;
 			for(Meeting meeting : meetings){
@@ -677,12 +736,16 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 					if(player1.getPlayerUID().equals(ally.getPlayerUID()) // une de tes armees
 					|| player1.getAllyUIDs().contains(ally.getPlayerUID())){ // une armee de tes potes
 
-						conflit.allies.add(moveArmyMap.get(meeting2.move1));
-						conflit.ennemies.add(moveArmyMap.get(meeting2.move2));
+						if(!conflit.allies.contains(moveArmyMap.get(meeting2.move1)))
+							conflit.allies.add(moveArmyMap.get(meeting2.move1));
+						if(!conflit.ennemies.contains(moveArmyMap.get(meeting2.move2)))
+							conflit.ennemies.add(moveArmyMap.get(meeting2.move2));
 					}
 					else{
-						conflit.ennemies.add(moveArmyMap.get(meeting2.move1));						
-						conflit.allies.add(moveArmyMap.get(meeting2.move2));
+						if(!conflit.ennemies.contains(moveArmyMap.get(meeting2.move1)))
+							conflit.ennemies.add(moveArmyMap.get(meeting2.move1));						
+						if(!conflit.allies.contains(moveArmyMap.get(meeting2.move2)))
+							conflit.allies.add(moveArmyMap.get(meeting2.move2));
 					}
 						
 					meeting2.status = 1;
@@ -694,28 +757,137 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		}
 
 		
-		if(debug)System.out.println("-----------");
-		if(debug)System.out.println("les conflits sont ranges !");
-		if(debug)System.out.println("-----------");
-		
-		for(Conflit conflit : conflits){
-			if(debug)System.out.println("conflit en [" + conflit.x + "," + conflit.y +"]");
-			
-			if(debug)System.out.println("Equipe 1");
-			for(ArmyDTO army : conflit.allies){
-				if(debug)System.out.println(army.getArmyUID());
-			}
-			
-			if(debug)System.out.println("Equipe 2");
-			for(ArmyDTO army : conflit.ennemies){
-				if(debug)System.out.println(army.getArmyUID());
-			}
-		}
-
 		if(debug)System.out.println("---------------------------------------------------------------------");
 		if(debug)System.out.println("resolution des combats");
 		
 
+		for(Conflit conflit : conflits){
+			if(debug)System.out.println("resolution du conflit en [" + conflit.x + "," + conflit.y +"]");
+			
+			int valueAlly = 0;
+			int valueEnnemy = 0;
+			
+			
+			if(debug)System.out.println("Equipe 1");
+			for(ArmyDTO army : conflit.allies){
+				if(debug)System.out.println(army.getArmyUID());
+				
+				int size = army.getSize();
+				valueAlly += size;
+				
+				for(EquipmentDTO equipment : army.getEquipments()){
+					int equipmentSize = equipment.getSize() > size ? size : equipment.getSize();
+					ItemDTO item = equipment.getItem();
+					
+					valueAlly += equipmentSize * item.getValue();
+					if(debug)System.out.println(equipmentSize + " " + item.getName());
+				}
+			}
+			
+			
+			if(debug)System.out.println("Equipe 2");
+			for(ArmyDTO army : conflit.ennemies){
+				if(debug)System.out.println(army.getArmyUID());
+
+				int size = army.getSize();
+				valueEnnemy += size;
+				
+				for(EquipmentDTO equipment : army.getEquipments()){
+					int equipmentSize = equipment.getSize() > size ? size : equipment.getSize();
+					ItemDTO item = equipment.getItem();
+					
+					valueEnnemy += equipmentSize * item.getValue();
+					if(debug)System.out.println(equipmentSize + " " + item.getName());
+				}
+			}
+			
+			if(debug)System.out.println("valueAlly : " + valueAlly);
+			if(debug)System.out.println("valueEnnemy : " + valueEnnemy);
+			
+			String cityTaken = null;
+			
+			if(valueAlly > valueEnnemy){
+				if(debug)System.out.println("Ally wins");
+				
+				
+				for(ArmyDTO ennemy : conflit.ennemies){
+					if(!ennemy.getArmyUID().startsWith("_")){
+						armiesToDelete.add(ennemy.getArmyUID());
+					}
+					else{
+						// army representing a city : no need to delete						
+						cityTaken = ennemy.getArmyUID().substring(1);
+						armyCityMap.get(ennemy).setPopulation(armyCityMap.get(ennemy).getPopulation()/4);
+					}
+				}
+
+				for(ArmyDTO ally : conflit.allies){
+					if(ally.getArmyUID().startsWith("_")){
+						armyCityMap.get(ally).setPopulation((int)(armyCityMap.get(ally).getPopulation() - ((double)valueEnnemy/valueAlly)*armyCityMap.get(ally).getPopulation()));
+					}
+					else{
+						ally.setSize((int)(ally.getSize() - ((double)valueEnnemy/valueAlly)*ally.getSize()));
+					}
+					
+					if(cityTaken != null){ // on place les armees sur les coordonnees de la ville, le conflit n'etant pas pile poil au centre
+						ally.setX(cityXMap.get(cityTaken));
+						ally.setY(cityYMap.get(cityTaken));
+					}
+				}
+				
+				if(cityTaken != null){
+					
+					PlayerDTO oldPlayer = cityPlayerMap.get(cityTaken);
+					PlayerDTO newPlayer = movePlayerMap.get(armyMoveMap.get(conflit.allies.get(0)));
+					
+					oldPlayer.getCityUIDs().remove(cityTaken);
+					newPlayer.getCityUIDs().add(cityTaken);
+				}
+			}
+			else{
+				if(debug)System.out.println("Ennemy wins");
+				
+				for(ArmyDTO ally : conflit.allies){
+					if(!ally.getArmyUID().startsWith("_")){
+						armiesToDelete.add(ally.getArmyUID());
+					}
+					else{
+						// army representing a city : no need to delete						
+						cityTaken = ally.getArmyUID().substring(1);
+						armyCityMap.get(ally).setPopulation(armyCityMap.get(ally).getPopulation()/4);
+					}
+				}
+				
+
+				for(ArmyDTO ennemy : conflit.ennemies){
+					
+					if(ennemy.getArmyUID().startsWith("_")){						
+						armyCityMap.get(ennemy).setPopulation((int)(armyCityMap.get(ennemy).getPopulation() - ((double)valueAlly/valueEnnemy)*armyCityMap.get(ennemy).getPopulation()));
+					}
+					else{
+						ennemy.setSize((int)(ennemy.getSize() - ((double)valueAlly/valueEnnemy)*ennemy.getSize()));
+					}
+					
+					if(cityTaken != null){ // on place les armees sur les coordonnees de la ville, le conflit n'etant pas pile poil au centre
+						ennemy.setX(cityXMap.get(cityTaken));
+						ennemy.setY(cityYMap.get(cityTaken));
+					}
+				}
+				
+				if(cityTaken != null){
+					
+					PlayerDTO oldPlayer = cityPlayerMap.get(cityTaken);
+					PlayerDTO newPlayer = movePlayerMap.get(armyMoveMap.get(conflit.ennemies.get(0)));
+					
+					oldPlayer.getCityUIDs().remove(cityTaken);
+					newPlayer.getCityUIDs().add(cityTaken);
+					
+				}
+			}
+			
+		}
+		
+		
 		if(debug)System.out.println("-----------");
 		if(debug)System.out.println("attribution des nouvelles contrees");
 
@@ -753,17 +925,37 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		// delete the moves
 		for(ArmyDTO army : armyMoveMap.keySet()){
 			
+			if(army.getArmyUID().startsWith("_")) // army representing a city : no move to delete
+				continue;
+
 			Query query = pm.newQuery("select from " + MoveDTO.class.getName() + " where :uids.contains(key)");
 			List<MoveDTO> moves = (List<MoveDTO>) query.execute(army.getMoveUIDs());
 
 			MoveDTO moveToDelete = moves.get(0);
 			army.getMoveUIDs().remove(moveToDelete.getMoveUID());
 			pm.deletePersistent(moveToDelete);
+			
+			if(armiesToDelete.contains(army.getArmyUID())){
+				query = pm.newQuery("select from " + EquipmentDTO.class.getName() + " where :uids.contains(key)");
+				List<EquipmentDTO> equipments = (List<EquipmentDTO>) query.execute(army.getEquipmentUIDs());
+	
+				for(EquipmentDTO equipmentDTO : equipments){
+					if(debug)System.out.println("delete equipmentDTO : " + equipmentDTO.getEquimentUID());
+					pm.deletePersistent(equipmentDTO);
+				}
+	
+				PlayerDTO player = movePlayerMap.get(armyMoveMap.get(army));
+				if(debug)System.out.println("unlink army to player : " + player.getPlayerUID());
+				player.getArmyUIDs().remove(army.getArmyUID());
+				if(debug)System.out.println("delete army : " + army.getArmyUID());
+				pm.deletePersistent(army);
+			}
 		}
 		
 		pm.close();
 		
 	}
+
 
 	private void triDesMoves(List<MoveDTO> allMoves, Map<MoveDTO, ArmyDTO> moveArmyMap, Map<MoveDTO, PlayerDTO> movePlayerMap, List<Meeting> meetings) {
 		if(debug)System.out.println("---------------------------------------------------------");
@@ -789,7 +981,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 							continue;
 
 				if(debug)System.out.println("--------------------------------------------------");
-				if(debug)System.out.println("recherche demeeting point");
+				if(debug)System.out.println("recherche de meeting point");
 				
 				int[] newMeetingPoint = checkMeeting(move_i, 
 													 moveArmyMap.get(move_i).getSpeed(), 
@@ -818,8 +1010,8 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 							if(!existsMeeting(meetings, move_j, move_i)){
 
 								if(debug)System.out.println("Le meeting [" + debugMoveIds.get(move_i.getMoveUID()) + "," + debugMoveIds.get(move_j.getMoveUID()) + "] n'existe pas encore");
-								removeFromMeeting(meetings, move_j);
-								removeFromMeeting(meetings, move_j);
+								removeFromMeeting(meetings, move_j, newMeetingPoint);
+								removeFromMeeting(meetings, move_j, newMeetingPoint);
 								meetings.add(new Meeting(move_i, move_j, newMeetingPoint));
 								
 								if(debug)System.out.println("-----------------");
@@ -832,6 +1024,8 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 									if(debug)System.out.println("[" + debugMoveIds.get(meeting.move1.getMoveUID()) + "," + debugMoveIds.get(meeting.move2.getMoveUID()) + "] | d1 : " + meeting.distance1 + ", d2 : " +  meeting.distance2);
 								}
 							}
+							else
+								if(debug)System.out.println("Le meeting [" + debugMoveIds.get(move_i.getMoveUID()) + "," + debugMoveIds.get(move_j.getMoveUID()) + "] est deja enregistre");
 							
 						}
 						else
@@ -870,7 +1064,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	/*
 	 * remove a meeting, and return the other move to be recorded as 'toRecalculate'
 	 */
-	private void removeFromMeeting(List<Meeting> meetings, MoveDTO move) {
+	private void removeFromMeeting(List<Meeting> meetings, MoveDTO move, int[] newMeetingPoint) {
 		if(debug)System.out.println("try remove to remove a meeting containing " + debugMoveIds.get(move.getMoveUID()));
 		Meeting meetingToRemove = null;
 		
@@ -882,10 +1076,19 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		}
 
 		if(meetingToRemove != null){
-			if(debug)System.out.println("removing");
-			if(debug)System.out.println("m1 : " + debugMoveIds.get(meetingToRemove.move1.getMoveUID()) + " | d : " + meetingToRemove.distance1);
-			if(debug)System.out.println("m2 : " + debugMoveIds.get(meetingToRemove.move2.getMoveUID()) + " | d : " + meetingToRemove.distance2);
-			meetings.remove(meetingToRemove);
+			if(debug)System.out.println("check if the meeting happens in the same place as the registered one");
+			if(Math.abs(newMeetingPoint[0] - meetingToRemove.meetingX) < 10
+			&&
+			  Math.abs(newMeetingPoint[1] - meetingToRemove.meetingY) < 10){
+				if(debug)System.out.println("keep the previous meeting !!");				
+			}
+			else{
+				if(debug)System.out.println("removing");
+				if(debug)System.out.println("m1 : " + debugMoveIds.get(meetingToRemove.move1.getMoveUID()) + " | d : " + meetingToRemove.distance1);
+				if(debug)System.out.println("m2 : " + debugMoveIds.get(meetingToRemove.move2.getMoveUID()) + " | d : " + meetingToRemove.distance2);
+				meetings.remove(meetingToRemove);				
+			}
+			
 		}
 		else
 			if(debug)System.out.println("no meeting found");
@@ -915,19 +1118,63 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	 * return x,y,distancePlayerMove,distanceOpponentMove
 	 */
 	private int[] checkMeeting(MoveDTO playerMove, int playerMoveSpeed, int playerMoveSize, MoveDTO opponentMove, int opponentMoveSpeed, int opponentMoveSize) {
-		
+
+		//-----------------------------------------------------------------------------------------------//
+
 		int[] croisement = new int[4];
 		croisement[0] = -1; // x
 		croisement[1] = -1; // y
+
+		//-----------------------------------------------------------------------------------------------//
+		
+		int playerLeft = playerMove.getxFrom() < playerMove.getxTo() ? playerMove.getxFrom() : playerMove.getxTo();
+		int playerRight = playerMove.getxFrom() > playerMove.getxTo() ? playerMove.getxFrom() : playerMove.getxTo();
+		int opponentLeft = opponentMove.getxFrom() < opponentMove.getxTo() ? opponentMove.getxFrom() : opponentMove.getxTo();
+		int opponentRight = opponentMove.getxFrom() > opponentMove.getxTo() ? opponentMove.getxFrom() : opponentMove.getxTo();
+		int playerTop = playerMove.getyFrom() < playerMove.getyTo() ? playerMove.getyFrom() : playerMove.getyTo();
+		int playerBottom = playerMove.getyFrom() > playerMove.getyTo() ? playerMove.getyFrom() : playerMove.getyTo();
+		int opponentTop = opponentMove.getyFrom() < opponentMove.getyTo() ? opponentMove.getyFrom() : opponentMove.getyTo();
+		int opponentBottom = opponentMove.getyFrom() > opponentMove.getyTo() ? opponentMove.getyFrom() : opponentMove.getyTo();
+
+		if(debug)System.out.println("-----------");
+		if(debug)System.out.println("playerLeft : " + playerLeft);
+		if(debug)System.out.println("playerRight : " + playerRight);
+		if(debug)System.out.println("opponentLeft : " + opponentLeft);
+		if(debug)System.out.println("opponentRight : " + opponentRight);
+		if(debug)System.out.println("playerTop : " + playerTop);
+		if(debug)System.out.println("playerBottom : " + playerBottom);
+		if(debug)System.out.println("opponentTop : " + opponentTop);
+		if(debug)System.out.println("opponentBottom : " + opponentBottom);
+		if(debug)System.out.println("-----------");
+
+		//-----------------------------------------------------------------------------------------------//
+		
+		double d1 = Math.sqrt(Math.pow(playerRight - playerLeft, 2) + Math.pow(playerBottom - playerTop, 2));
+		double d2 = Math.sqrt(Math.pow(opponentRight - opponentLeft, 2) + Math.pow(opponentBottom - opponentTop, 2));
+		if(debug)System.out.println("d1+d2 : " + (d1+d2));
+		if(debug)System.out.println("-----------");
+		
+		//-----------------------------------------------------------------------------------------------//
+		// premier check : proximite des moves
+
+		if(debug)System.out.println("premier check : proximite des moves");
+		
+		if(Math.abs(opponentRight - playerLeft) > d1+d2 || Math.abs(opponentLeft - playerRight) > d1+d2)
+			return croisement;
+		if(Math.abs(opponentBottom - playerTop) > d1+d2 || Math.abs(opponentTop - playerBottom) > d1+d2)
+			return croisement;
+
+		if(debug)System.out.println("moves suffisament proches pour tester le croisement");
+		
+		//-----------------------------------------------------------------------------------------------//
+		// test du croisement
+		
+		if(debug)System.out.println("Test de croisement");
 		
 		int x = meetingX(playerMove.getxFrom(), playerMove.getxTo(), playerMove.getyFrom(), playerMove.getyTo(), opponentMove.getxFrom(), opponentMove.getxTo(), opponentMove.getyFrom(), opponentMove.getyTo());
 		boolean meeting = x >= 0;
 		
 		// verif du croisement selon les x
-		int playerLeft = playerMove.getxFrom() < playerMove.getxTo() ? playerMove.getxFrom() : playerMove.getxTo();
-		int playerRight = playerMove.getxFrom() > playerMove.getxTo() ? playerMove.getxFrom() : playerMove.getxTo();
-		int opponentLeft = opponentMove.getxFrom() < opponentMove.getxTo() ? opponentMove.getxFrom() : opponentMove.getxTo();
-		int opponentRight = opponentMove.getxFrom() > opponentMove.getxTo() ? opponentMove.getxFrom() : opponentMove.getxTo();
 		
 		if(x < playerLeft - playerMoveSize)
 			meeting = false;
@@ -938,8 +1185,46 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		else if(x > opponentRight + opponentMoveSize)
 			meeting = false;
 
-		if(!meeting) // pas de croisement selon les x
-			return checkMeetingSiLesMovesSontParalleles(playerMove, playerMoveSpeed, playerMoveSize, opponentMove, opponentMoveSpeed, opponentMoveSize);
+		if(!meeting){
+			boolean parallel = false;
+			if(debug)System.out.println("Pas de croisement");
+			
+			if(x>=0){
+				// pas de croisement selon les x
+				// verification de la distance du point xMeeting
+				// s'il est suffisament loin : test des mouvements presque paralleles !
+				if(debug)System.out.println("On regarde si les mouvements sont presque paralleles");
+				
+				int topLeft = playerLeft < opponentLeft ? playerLeft : opponentLeft;
+				int topRight = playerRight > opponentRight ? playerRight : opponentRight;
+				
+				if(x < topLeft){
+					if(debug)System.out.println("xMeeting est sur la gauche");
+					if(x < topLeft - 150){
+						if(debug)System.out.println("xMeeting depasse le coeff ! test parralleles");
+						parallel = true;
+					}
+				}
+				else if(x > topRight){
+					if(debug)System.out.println("xMeeting est sur la droite");
+					if(x > topRight + 150){
+						if(debug)System.out.println("xMeeting depasse le coeff ! test parralleles");
+						parallel = true;
+					}
+				}
+				else
+					if(debug)System.out.println("xMeeting n'est ni a droite ni a gauche : impossible car sinon croisement");
+			}
+			else{
+				if(debug)System.out.println("Pente identique ! les mouvements sont paralleles.");								
+				parallel = true;
+			}
+			
+			if(parallel)
+				return checkMeetingSiLesMovesSontParalleles(playerMove, playerMoveSpeed, playerMoveSize, opponentMove, opponentMoveSpeed, opponentMoveSize);
+			else
+				return croisement;
+		}
 		
 		
 		// verif du croisement selon les y
@@ -955,10 +1240,6 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		int y = yFx(x, moveSelectedToCalculatY.getxFrom(), moveSelectedToCalculatY.getxTo(), moveSelectedToCalculatY.getyFrom(), moveSelectedToCalculatY.getyTo());
 		
 
-		int playerTop = playerMove.getyFrom() < playerMove.getyTo() ? playerMove.getyFrom() : playerMove.getyTo();
-		int playerBottom = playerMove.getyFrom() > playerMove.getyTo() ? playerMove.getyFrom() : playerMove.getyTo();
-		int opponentTop = opponentMove.getyFrom() < opponentMove.getyTo() ? opponentMove.getyFrom() : opponentMove.getyTo();
-		int opponentBottom= opponentMove.getyFrom() > opponentMove.getyTo() ? opponentMove.getyFrom() : opponentMove.getyTo();
 		
 		
 		if(y < playerTop - playerMoveSize)
@@ -999,8 +1280,13 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			||
 			(temps1 > temps2 && temps1/temps2 < 2)
 			||
-			(temps2 > temps1 && temps2/temps1 < 2)){
-			if(debug)System.out.println("CONFLIIIITTT !");
+			(temps2 > temps1 && temps2/temps1 < 2)
+			||
+			distance1 <= 4*rayon(playerMoveSize) // coeff 4 pour etre large pour les mouvements 'unites fixes'
+			||
+			distance2 <= 4*rayon(opponentMoveSize)){
+			
+			if(debug)System.out.println("CONFLIT !");
 			croisement[0] = x;
 			croisement[1] = y;
 			croisement[2] = (int)distance1;
@@ -1014,15 +1300,16 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	
 
 	public static void main(String[] args){
-		int x1From = 1388;
-		int x1To = 1253;
-		int y1From = 455;
-		int y1To = 339;
-		int x2From = 2076;
-		int x2To = 1935;
-		int y2From = 2508;
-		int y2To = 2432;
-		if(debug)System.out.println(meetingX(x1From, x1To, y1From, y1To, x2From, x2To, y2From, y2To));
+
+		//armyCityMap.get(ennemy).setPopulation((int)(armyCityMap.get(ennemy).getPopulation() - ((double)valueAlly*100/valueEnnemy)*armyCityMap.get(ennemy).getPopulation()));
+
+		int i = 1856;
+		i = (int)(i - ((double)111/1856)*i);
+		//-----------------------------------------------------------------------------------//		System.out.println(i);
+		
+		System.out.println(2*rayon(48));
+		
+		
 	}
 	
 	private int[] checkMeetingSiLesMovesSontParalleles(MoveDTO playerMove, int playerMoveSpeed, int playerMoveSize, MoveDTO opponentMove, int opponentMoveSpeed, int opponentMoveSize) {
@@ -1056,8 +1343,6 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		
 		boolean x1FromEstAuMilieuDuMove2 = false;
 		boolean x1ToEstAuMilieuDuMove2 = false;
-		boolean x2FromEstAuMilieuDuMove1 = false;
-		boolean x2ToEstAuMilieuDuMove1 = false;
 		
 		if(x2To > x1From && x1From > x2From
 		|| x2From > x1From && x1From > x2To)
@@ -1067,21 +1352,11 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		|| x2From > x1To && x1To > x2To)
 			x1ToEstAuMilieuDuMove2 = true;
 
-		if(x1To > x2From && x2From > x1From
-				|| x1From > x2From && x2From > x1To)
-			x2FromEstAuMilieuDuMove1 = true;
-		
-		if(x1To > x2To && x2To > x1From
-				|| x1From > x2To && x2To > x1To)
-			x2ToEstAuMilieuDuMove1 = true;
-		
 
 		// 4 - calcul du point de croisement selon les cas
 		
 		if(!x1FromEstAuMilieuDuMove2 
-		&& x1ToEstAuMilieuDuMove2
-		&& x2FromEstAuMilieuDuMove1
-		&& x2ToEstAuMilieuDuMove1){
+		&& !x1ToEstAuMilieuDuMove2){
 			if(debug)System.out.println("les moves sont independants");
 			return croisement;
 		}
@@ -1090,7 +1365,49 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			if(x1FromEstAuMilieuDuMove2){
 				// move 1 au milieu de move 2 : croisement a larrivee de move 1 : en x1To
 				// il faut calculer la distance y1To et yFx(x1To, move2) et verifier si elle est < somme rayons des armees (les 2 movesize/2)
+				if(debug)System.out.println("move1 au milieu de move2");
 				
+				int y2Meeting = yFx(x1To, x2From, x2To, y2From, y2To);
+				
+				return calculDuCroisementParallele(x1To, y1To, y2Meeting, x1From, y1From, x2From, y2From, playerMoveSize, opponentMoveSize, pentesPlutotVerticales);
+			}
+			else{
+				if(x1To > x1From && x2To > x2From){
+					if(debug)System.out.println("mouvements 'paralleles' dans le meme sens, decales et vers la droite");
+				}
+				else if(x1To < x1From && x2To < x2From){
+					if(debug)System.out.println("mouvements 'paralleles' dans le meme sens, decales et vers la gauche");
+				}
+				else{
+					if(debug)System.out.println("mouvements 'paralleles' dans un sens oppose !");
+					if(debug)System.out.println("calcul du croisement");
+					
+					int xMeeting = (x1To + x2To)/2;
+
+					int y1Meeting = yFx(xMeeting, x1From, x1To, y1From, y1To);
+					int y2Meeting = yFx(xMeeting, x2From, x2To, y2From, y2To);
+
+					return calculDuCroisementParallele(x1To, y1Meeting, y2Meeting, x1From, y1From, x2From, y2From, playerMoveSize, opponentMoveSize, pentesPlutotVerticales);
+				}
+			}
+		}
+		else if(x1FromEstAuMilieuDuMove2){
+			if(x1To > x1From && x2To > x2From){
+				if(debug)System.out.println("mouvements 'paralleles' dans le meme sens, decales et vers la droite");
+			}
+			else if(x1To < x1From && x2To < x2From){
+				if(debug)System.out.println("mouvements 'paralleles' dans le meme sens, decales et vers la gauche");
+			}
+			else{
+				if(debug)System.out.println("mouvements 'paralleles' dans un sens oppose !");
+				if(debug)System.out.println("calcul du croisement");
+				
+				int xMeeting = (x1From + x2From)/2;
+
+				int y1Meeting = yFx(xMeeting, x1From, x1To, y1From, y1To);
+				int y2Meeting = yFx(xMeeting, x2From, x2To, y2From, y2To);
+
+				return calculDuCroisementParallele(xMeeting, y1Meeting, y2Meeting, x1From, y1From, x2From, y2From, playerMoveSize, opponentMoveSize, pentesPlutotVerticales);
 			}
 		}
 		
@@ -1100,7 +1417,58 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	
 
 	
-	
+	private int[] calculDuCroisementParallele(int xMeeting, int y1Meeting, int y2Meeting, int x1From, int y1From, int x2From, int y2From, int playerMoveSize, int opponentMoveSize, boolean pentesPlutotVerticales) {
+		
+		if(debug)System.out.println("----------");
+		if(debug)System.out.println("calculDuCroisementParallele");
+		int distanceAuCroisement = Math.abs(y1Meeting - y2Meeting);
+		
+		int[] croisement = new int[4];
+		croisement[0] = -1; // x
+		croisement[1] = -1; // y
+		
+		if(debug)System.out.println("xMeeting : " + xMeeting);
+		if(debug)System.out.println("y1Meeting : " + y1Meeting);
+		if(debug)System.out.println("y2Meeting : " + y2Meeting);
+		if(debug)System.out.println("distanceAuCroisement : " + distanceAuCroisement);
+		if(debug)System.out.println("rayon(playerMoveSize) : " + rayon(playerMoveSize));
+		if(debug)System.out.println("rayon(opponentMoveSize) : " + rayon(opponentMoveSize));
+		
+		if(distanceAuCroisement < rayon(playerMoveSize) + rayon(opponentMoveSize) + 2){ // petite marge de 2 pixels en hauteur, a voir (sinon faire =< au lieu de < )
+			if(debug)System.out.println("croisement !");
+			
+			double distance1 = Math.sqrt(Math.pow((xMeeting - x1From), 2) + Math.pow((y1Meeting - y1From), 2));
+			double distance2 = Math.sqrt(Math.pow((xMeeting - x2From), 2) + Math.pow((y2Meeting - y2From), 2));
+
+			if(debug)System.out.println("distance1 : " + distance1);
+			if(debug)System.out.println("distance2 : " + distance2);
+			if(debug)System.out.println("CONFLIT PARALLELE !");
+			
+			int yMeeting = (y1Meeting + y2Meeting)/2;
+			if(debug)System.out.println("yMeeting : " + yMeeting);
+			
+			// on change de nouveau les x/y si on a change le sens du repere avant
+			croisement[0] = pentesPlutotVerticales ? yMeeting 		: xMeeting;
+			croisement[1] = pentesPlutotVerticales ? xMeeting 		: yMeeting;
+			croisement[2] = pentesPlutotVerticales ? (int)distance2 : (int)distance1;
+			croisement[3] = pentesPlutotVerticales ? (int)distance1 : (int)distance2;
+			if(debug)System.out.println("----------");
+			
+		}
+		else{
+			if(debug)System.out.println("pas de croisement");
+		}
+		
+		return croisement;
+	}
+
+	/*
+	 * rayon d'une armee
+	 */
+	private static int rayon(int size) {
+		return (int) (Math.sqrt(size)/4 + 2); // min 2 pixels
+	}
+
 	private static int meetingX(int x1From, int x1To, int y1From, int y1To, int x2From, int x2To, int y2From, int y2To){
 		
 //		if(debug)System.out.println("----------");

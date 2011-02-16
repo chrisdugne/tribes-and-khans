@@ -368,7 +368,7 @@ public class GameManager implements IGameManager {
 
 	private int calculatePopulation(int population, boolean starvation, int armyRaised) {
 		
-		int naturalEvolutionPercentage = Utils.random(10) + 10;
+		int naturalEvolutionPercentage = Utils.random(5) + 5;
 		int armyPercentage = 100*armyRaised/population;
 		
 		System.out.println("naturalEvolutionPercentage : " + naturalEvolutionPercentage);

@@ -15,6 +15,7 @@
 				import com.uralys.tribes.entities.Item;
 				import com.uralys.tribes.entities.Smith;
 				
+				import mx.collections.ArrayCollection;
 				import mx.events.ItemClickEvent;
 				
 				//----------------------------------------------------------//
@@ -423,6 +424,9 @@
 					}
 						
 					armyInput.text = army.size+""; // refresh
+					
+					// on refresh le drawing au board
+					BoardDrawer.getInstance().refreshArmyOnBoard(army);
 				}
 
 				//-------------------------------------------------------------------------//
@@ -440,6 +444,14 @@
 					newArmy.y = city.y;
 					newArmy.speed = 200;
 					newArmy.armyUID = "new";
+					
+					newArmy.moves = new ArrayCollection();
+					newArmy.moves.addItem(new com.uralys.tribes.entities.Move());
+					
+					newArmy.moves.getItemAt(0).xFrom = newArmy.x;
+					newArmy.moves.getItemAt(0).yFrom = newArmy.y;
+					newArmy.moves.getItemAt(0).xTo = newArmy.x;
+					newArmy.moves.getItemAt(0).yTo = newArmy.y;
 					
 					city.armies.addItem(newArmy);
 					Session.currentPlayer.armies.addItem(newArmy);

@@ -133,6 +133,7 @@ package com.uralys.tribes.entities
 		
 		public var landExpected:int = -1;
 		public var tmpLandSquare:Rect;
+		public var armyCircle:Ellipse;
 		
 	}
 }

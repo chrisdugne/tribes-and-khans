@@ -137,6 +137,7 @@ package com.uralys.tribes.core
 						armyCircle.y = army.y - armyCircle.height/2;
 						
 						armyCircle.fill = new SolidColor(isOpponent ? Numbers.RED : Numbers.WHITE);
+						army.armyCircle = armyCircle;
 						
 						board.addElement(armyCircle);
 					}
@@ -194,8 +195,30 @@ package com.uralys.tribes.core
 				board.removeElement(army.lineTo);	
 				board.removeElement(army.ellipseTo);	
 				board.removeElement(army.tmpLandSquare);
+				board.removeElement(army.armyCircle);
 				board.redrawRequested = true;
+
 			}catch(e:Error){}
+		}
+
+		public function refreshArmyOnBoard(army:Army):void{
+			
+			try{
+				board.removeElement(army.armyCircle);
+			}catch(e:Error){}
+			
+			// army
+			var armyCircle:Ellipse;
+			armyCircle = new Ellipse();
+			armyCircle.width = army.radius*2;
+			armyCircle.height = army.radius*2;
+			armyCircle.x = army.x - armyCircle.width/2;
+			armyCircle.y = army.y - armyCircle.height/2;
+			
+			armyCircle.fill = new SolidColor(Numbers.WHITE);
+			army.armyCircle = armyCircle;
+			
+			board.addElement(armyCircle);
 		}
 		
 		

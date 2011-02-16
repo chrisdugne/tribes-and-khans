@@ -13,6 +13,8 @@
 	
 	<fx:Script>
 		<![CDATA[
+			import com.uralys.tribes.commons.Numbers;
+			
 			import mx.events.ItemClickEvent;
 			
 			[Bindable] private var color:Number = 0x1111ee;
@@ -53,7 +55,9 @@
 	<s:Group id="groupDetails" height="20" width="180" width.hovered="210" width.selected="210">
 		<s:Rect left="0" right="0" top="0" bottom="0" radiusX="5" radiusY="5">
 			<s:fill>
-				<s:SolidColor color="{color}" color.hovered="{colorHovered}" color.selected="{colorSelected}" />
+				<s:SolidColor color="{data.wheat + data.wheatEarned - data.wheatSpent &lt; 0 ? Numbers.RED : color}" 
+							  color.hovered="{data.wheat + data.wheatEarned - data.wheatSpent &lt; 0 ? Numbers.RED : colorHovered}" 
+							  color.selected="{data.wheat + data.wheatEarned - data.wheatSpent &lt; 0 ? Numbers.RED : colorSelected}" />
 			</s:fill>
 		</s:Rect>
 		<s:Label id="labelName" 
@@ -61,6 +65,12 @@
 				 left="10" 
 				 verticalCenter="2"
 				 text="{data.name}"/>
+		<s:Label id="labelFamine" 
+				 color="#FFFFFF" 
+				 right="5" 
+				 verticalCenter="2"
+				 text="Famine !"
+				 visible="{data.wheat + data.wheatEarned - data.wheatSpent &lt; 0}"/>
 	</s:Group>
 	
 </s:ItemRenderer>

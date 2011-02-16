@@ -25,6 +25,7 @@
 			import com.uralys.tribes.managers.GameManager;
 			
 			import mx.collections.ArrayCollection;
+			import mx.core.FlexGlobals;
 			import mx.effects.easing.Quadratic;
 			import mx.events.ItemClickEvent;
 			import mx.graphics.GradientEntry;
@@ -151,11 +152,16 @@
 						var clickY:int = event.localY;
 						var cityEntered:City = null;
 						
-						for each(var city:City in Session.currentPlayer.cities){
-							if(Math.sqrt(Math.pow(clickX - city.x,2) + Math.pow(clickY - city.y,2)) <= city.radius) {
-								cityEntered = city;
-								break;
+						for each(var player:Player in game.players){
+							for each(var city:City in player.cities){
+								if(Math.sqrt(Math.pow(clickX - city.x,2) + Math.pow(clickY - city.y,2)) <= city.radius) {
+									cityEntered = city;
+									break;
+								}
 							}
+							
+							if(cityEntered)
+								break;
 						}
 						
 						selectedArmy.moves.getItemAt(0).xFrom = selectedArmy.x;
@@ -167,6 +173,7 @@
 							selectedArmy.lineTo.yTo = cityEntered.y;
 							selectedArmy.ellipseTo.x = cityEntered.x - selectedArmy.ellipseTo.width/2;
 							selectedArmy.ellipseTo.y = cityEntered.y - selectedArmy.ellipseTo.height/2;
+							trace("cityEntered : " + selectedArmy.moves.getItemAt(0).xTo + "," + selectedArmy.moves.getItemAt(0).yTo);
 						}
 						else{
 							selectedArmy.moves.getItemAt(0).xTo = selectedArmy.lineTo.xTo;
@@ -334,9 +341,15 @@
 				BoardDrawer.getInstance().redrawAllEntities();
 				BoardClickListener.boardPage = this;
 				
-				image.x = 250 - selectedCity.x;
-				image.y = 250 - selectedCity.y;
+				if(selectedCity != null){
+					image.x = 250 - selectedCity.x;
+					image.y = 250 - selectedCity.y;
+				}
+				else{
+					FlexGlobals.topLevelApplication.message('GAME OVER', 7);
+				}
 			}
+			
 			
 			//----------------------------------------------------------------------------------------//
 			
@@ -483,6 +496,8 @@
 						}
 					}
 					
+					// on ne passe pas les info graphiques par BlazesDS : inutile et surtout ca casse tout (objets enormes passes en AMF, ce qui casse le transfert)
+					army.armyCircle = null;
 					army.ellipseTo = null;
 					army.lineTo = null;
 					army.tmpLandSquare = null;

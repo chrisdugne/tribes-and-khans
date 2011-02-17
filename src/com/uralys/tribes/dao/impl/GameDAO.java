@@ -34,9 +34,17 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	//-----------------------------------------------------------------------//
 	// local
 
-	private static String ITEM_UID_BOW = "12974260733340336278727";
-	private static String ITEM_UID_SWORD = "129742608837521210944772";
-	private static String ITEM_UID_ARMOR = "129742610263041471525653";
+//	private static String ITEM_UID_BOW = "12974260733340336278727";
+//	private static String ITEM_UID_SWORD = "129742608837521210944772";
+//	private static String ITEM_UID_ARMOR = "129742610263041471525653";
+//	private static boolean debug = true;
+
+	//-----------------------------------------------------------------------//
+	// prod
+	
+	private static String ITEM_UID_BOW = "129788477896702024115844";
+	private static String ITEM_UID_SWORD = "129788479280211748841386";
+	private static String ITEM_UID_ARMOR = "129788480608331160020597";
 	private static boolean debug = true;
 
 	//-----------------------------------------------------------------------//
@@ -288,6 +296,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		CityDTO cityDTO = pm.getObjectById(CityDTO.class, city.getCityUID());
 		
+		cityDTO.setName(city.getName());
 		cityDTO.setWheat(city.getWheat());
 		cityDTO.setWood(city.getWood());
 		cityDTO.setIron(city.getIron());
@@ -634,6 +643,8 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 
 			if(debug)System.out.println("nbcities " + cities.size());
 			for(CityDTO city : cities){
+				if(debug)System.out.println("city.x : " + city.getX());
+				if(debug)System.out.println("city.y : " + city.getY());
 				MoveDTO move = new MoveDTO();
 				ArmyDTO army = new ArmyDTO();
 				
@@ -650,7 +661,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 				move.setyTo((int)(city.getY() + size));
 				
 				debugMoveIds.put(move.getMoveUID(), debugMoveId);
-				if(debug)System.out.println("register a move from " + move.getxFrom() + "," + move.getyFrom() + " | to " + move.getxTo() + "," + move.getyTo() + " | " + move.getMoveUID() + " | num : " + debugMoveId++);
+				if(debug)System.out.println("register a dummy-city-move from " + move.getxFrom() + "," + move.getyFrom() + " | to " + move.getxTo() + "," + move.getyTo() + " | " + move.getMoveUID() + " | num : " + debugMoveId++);
 				allMoves.add(move);
 				moveArmyMap.put(move, army);
 				armyMoveMap.put(army, move);
@@ -683,6 +694,27 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			
 			if(dummyMoves.contains(move.getMoveUID())) // on ne deplace pas les unites pour lesquelles on a genere le move sur leur diametre
 				continue;
+			
+			// on enleve le rayon qui a ete rajoute pour les calculs a chaque bout du move
+			double size = rayon(moveArmyMap.get(move).getSize());
+			if(move.getxFrom() < move.getxTo()){
+				move.setxFrom((int)(move.getxFrom() + size));
+				move.setxTo((int)(move.getxTo() - size));
+			}
+			else{
+				move.setxFrom((int)(move.getxFrom() - size));
+				move.setxTo((int)(move.getxTo() + size));
+			}
+
+			if(move.getyFrom() < move.getyTo()){
+				move.setyFrom((int)(move.getyFrom() + size));
+				move.setyTo((int)(move.getyTo() - size));
+			}
+			else{
+				move.setyFrom((int)(move.getyFrom() - size));
+				move.setyTo((int)(move.getyTo() + size));
+			}
+			
 			
 			boolean freeWay = true;
 			for(Meeting meeting : meetings){

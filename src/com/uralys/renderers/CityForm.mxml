@@ -89,7 +89,13 @@
 				public function get city():City{
 					return _city;
 				}
+				
+				//-------------------------------------------------------------------------//
 
+				protected function cityNameInputHandler(event:KeyboardEvent):void	{
+					city.name = cityNameInput.text;
+				}
+				
 				//-------------------------------------------------------------------------//
 
 				protected function wheatInputKeyUpHandler(event:KeyboardEvent):void	{
@@ -166,10 +172,14 @@
 					city.woodSpent -= city.bowWorkers * Numbers.BOW_WOOD;
 					city.ironSpent -= city.bowWorkers * Numbers.BOW_IRON;
 					
+					trace("bowWorkersInput.text.length : " + bowWorkersInput.text.length);
+					
 					if(bowWorkersInput.text.length == 0)
 						city.bowWorkers = 0;
 					else
 						city.bowWorkers = parseInt(bowWorkersInput.text);
+					
+					trace("city.bowWorkers : " + city.bowWorkers);
 					
 					var woodAvailable:int = city.wood - city.woodSpent;
 					var ironAvailable:int = city.iron - city.ironSpent;
@@ -437,7 +447,6 @@
 				}
 				
 				protected function newArmy():void{
-					trace("new Army");
 					var newArmy:Army = new Army();
 					newArmy.size = 0; // "armyInputKeyUpHandler" va rajouter les 10 et les compter dans city.armyRaised
 					newArmy.x = city.x;
@@ -521,7 +530,7 @@
 
 		<s:VGroup width="100%" horizontalAlign="center">
 			
-			<s:TextInput id="cityNameInput" text="{city.name}"/>
+			<s:TextInput id="cityNameInput" text="{city.name}" keyUp="cityNameInputHandler(event)"/>
 			<mx:Spacer height="10"/>
 			<s:HGroup horizontalAlign="center" verticalAlign="middle">
 				<s:Label text="Population"/>
@@ -536,9 +545,24 @@
 				<s:Label text="{city.unemployed}" styleName="numberLabel" color="{city.unemployed >= 0 ? 0x1111ee : 0xCC0000}"/>
 			</s:HGroup>
 			<s:HGroup horizontalAlign="center" verticalAlign="middle">
-				<s:Label text="Gold"/>
-				<mx:Spacer width="30"/>
+				<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+				<mx:Spacer width="10"/>
 				<s:Label text="{Session.currentPlayer.gold}" styleName="numberLabel"/>
+
+				<mx:Spacer width="15"/>
+				<mx:Image toolTip="Wheat" source="{ImageContainer.WHEAT}"/>
+				<mx:Spacer width="10"/>
+				<s:Label text="{city.wheat}" styleName="numberLabel"/>
+				
+				<mx:Spacer width="15"/>
+				<mx:Image toolTip="Wood" source="{ImageContainer.WOOD}"/>
+				<mx:Spacer width="10"/>
+				<s:Label text="{city.wood}" styleName="numberLabel"/>
+				
+				<mx:Spacer width="15"/>
+				<mx:Image toolTip="Iron" source="{ImageContainer.IRON}"/>
+				<mx:Spacer width="10"/>
+				<s:Label text="{city.iron}" styleName="numberLabel"/>
 			</s:HGroup>
 			
 			<mx:Spacer height="15"/>
@@ -556,9 +580,6 @@
 								<mx:GridItem >
 								</mx:GridItem >
 								<mx:GridItem horizontalAlign="center">
-									<s:Label text="Stock" />
-								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
 									<s:Label text="Workers" />
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
@@ -573,10 +594,7 @@
 							</mx:GridRow>
 							<mx:GridRow >
 								<mx:GridItem horizontalAlign="center">
-									<s:Label text="Wheat" />
-								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
-									<s:Label text="{city.wheat}" styleName="numberLabel"/>
+								<mx:Image toolTip="Wheat" source="{ImageContainer.WHEAT}"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
 									<s:TextInput text="{city.peopleCreatingWheat}" 
@@ -592,15 +610,12 @@
 									<s:Label text="- {city.wheatSpent}"  color="{city.wheatSpent > 0 ? Numbers.RED : Numbers.GREEN}"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
-									<s:Label text="{city.wheatEarned - city.wheatSpent >= 0 ? '+' : '-'} {Math.abs(city.wheatEarned - city.wheatSpent)}" color="{city.wheatEarned - city.wheatSpent >= 0 ? Numbers.GREEN : Numbers.RED}"/>
+									<s:Label text="{city.wheat + city.wheatEarned - city.wheatSpent >= 0 ? '+' : '-'} {Math.abs(city.wheat + city.wheatEarned - city.wheatSpent)}" color="{city.wheat + city.wheatEarned - city.wheatSpent >= 0 ? Numbers.GREEN : Numbers.RED}"/>
 								</mx:GridItem>
 							</mx:GridRow>
 							<mx:GridRow >
 								<mx:GridItem horizontalAlign="center">
-									<s:Label text="Wood" />
-								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
-									<s:Label text="{city.wood}" styleName="numberLabel"/>
+								<mx:Image toolTip="Wood" source="{ImageContainer.WOOD}"/>
 								</mx:GridItem>
 								<mx:GridItem>
 									<s:TextInput text="{city.peopleCreatingWood}" 
@@ -616,15 +631,12 @@
 									<s:Label text="- {city.woodSpent}" color="{city.woodSpent > 0 ? Numbers.RED : Numbers.GREEN}"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
-									<s:Label text="{city.woodEarned - city.woodSpent >= 0 ? '+' : '-'} {Math.abs(city.woodEarned - city.woodSpent)}" color="{city.woodEarned - city.woodSpent >= 0 ? Numbers.GREEN : Numbers.RED}"/>
+									<s:Label text="{city.wood + city.woodEarned - city.woodSpent >= 0 ? '+' : '-'} {Math.abs(city.wood + city.woodEarned - city.woodSpent)}" color="{city.wood + city.woodEarned - city.woodSpent >= 0 ? Numbers.GREEN : Numbers.RED}"/>
 								</mx:GridItem>
 							</mx:GridRow>
 							<mx:GridRow >
 								<mx:GridItem horizontalAlign="center">
-									<s:Label text="Iron" />
-								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
-									<s:Label text="{city.iron}" styleName="numberLabel" />
+									<mx:Image toolTip="Iron" source="{ImageContainer.IRON}"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
 									<s:TextInput text="{city.peopleCreatingIron}" 
@@ -640,7 +652,7 @@
 									<s:Label text="- {city.ironSpent}" color="{city.ironSpent > 0 ? Numbers.RED : Numbers.GREEN}"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
-									<s:Label text="{city.ironEarned - city.ironSpent >= 0 ? '+' : '-'} {Math.abs(city.ironEarned - city.ironSpent)}" color="{city.ironEarned - city.ironSpent >= 0 ? Numbers.GREEN : Numbers.RED}"/>
+									<s:Label text="{city.iron + city.ironEarned - city.ironSpent >= 0 ? '+' : '-'} {Math.abs(city.iron + city.ironEarned - city.ironSpent)}" color="{city.iron + city.ironEarned - city.ironSpent >= 0 ? Numbers.GREEN : Numbers.RED}"/>
 								</mx:GridItem>
 							</mx:GridRow>
 							<mx:GridRow>
@@ -878,6 +890,7 @@
 											dataProvider="{city.armies}"
 											borderVisible="false"
 											width="275"
+											contentBackgroundAlpha="0"
 											creationComplete="init()">
 										<s:layout>
 											<s:VerticalLayout gap="1" useVirtualLayout="true" />

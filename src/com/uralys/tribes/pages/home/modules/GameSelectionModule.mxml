@@ -60,6 +60,7 @@
 							itemRenderer="com.uralys.renderers.GameSimpleInfoRenderer"
 							dataProvider="{games}"
 							borderVisible="false"
+							contentBackgroundAlpha="0"
 							width="345">
 						<s:layout>
 							<s:VerticalLayout gap="1" useVirtualLayout="true" />

@@ -3,6 +3,9 @@
 				xmlns:s="library://ns.adobe.com/flex/spark" 
 				xmlns:mx="library://ns.adobe.com/flex/mx" 
 				autoDrawBackground="true"
+				useHandCursor="true"
+				buttonMode="true"
+				contentBackgroundAlpha="0"
 				click="onClick(event)">
 	
 	<s:states>

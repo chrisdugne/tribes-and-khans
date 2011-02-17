@@ -388,6 +388,10 @@
 			}
 			
 			//-----------------------------------------------------------//
+
+			private function messageUnemployed():void{
+				FlexGlobals.topLevelApplication.message("Vous utilisez plus de travailleurs que vous n'avez de population !", 5);
+			}
 			
 			private function backToMain():void{
 				hideCity.play();
@@ -597,6 +601,7 @@
 							dataProvider="{Session.currentPlayer.cities}"
 							borderVisible="false"
 							width="275"
+							contentBackgroundAlpha="0"
 							creationComplete="init()">
 						<s:layout>
 							<s:VerticalLayout gap="1" useVirtualLayout="true" />
@@ -612,6 +617,7 @@
 							dataProvider="{Session.currentPlayer.armies}"
 							borderVisible="false"
 							width="275"
+							contentBackgroundAlpha="0"
 							creationComplete="init()">
 						<s:layout>
 							<s:VerticalLayout gap="1" useVirtualLayout="true" />
@@ -697,12 +703,7 @@
 			  includeInLayout="false">
 		<s:HGroup>
 			<s:Button label="&lt;-- Ok" 
-					  click="backToMain()"
-					  visible="{selectedCity.unemployed >= 0}"
-					  includeInLayout="{selectedCity.unemployed >= 0}"/>
-			<s:Label text="Unemployed &lt; 0" 
-					  visible="{selectedCity.unemployed &lt; 0}"
-					  includeInLayout="{selectedCity.unemployed &lt; 0}"/>
+					  click="{selectedCity.unemployed >= 0 ? backToMain() : messageUnemployed()}"/>
 			<mx:Spacer width="450"/>
 		</s:HGroup>
 		<renderers:CityForm 

@@ -34,18 +34,18 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	//-----------------------------------------------------------------------//
 	// local
 
-//	private static String ITEM_UID_BOW = "12974260733340336278727";
-//	private static String ITEM_UID_SWORD = "129742608837521210944772";
-//	private static String ITEM_UID_ARMOR = "129742610263041471525653";
-//	private static boolean debug = true;
+	private static String ITEM_UID_BOW = "12974260733340336278727";
+	private static String ITEM_UID_SWORD = "129742608837521210944772";
+	private static String ITEM_UID_ARMOR = "129742610263041471525653";
+	private static boolean debug = true;
 
 	//-----------------------------------------------------------------------//
 	// prod
 	
-	private static String ITEM_UID_BOW = "129788477896702024115844";
-	private static String ITEM_UID_SWORD = "129788479280211748841386";
-	private static String ITEM_UID_ARMOR = "129788480608331160020597";
-	private static boolean debug = true;
+//	private static String ITEM_UID_BOW = "129788477896702024115844";
+//	private static String ITEM_UID_SWORD = "129788479280211748841386";
+//	private static String ITEM_UID_ARMOR = "129788480608331160020597";
+//	private static boolean debug = true;
 
 	//-----------------------------------------------------------------------//
 	
@@ -928,6 +928,8 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			for(int landExpected : landsMap.get(player)){
 				if(debug)System.out.println("player " + player.getName() + " wants land " + landExpected);
 
+				
+				// check si un autre joueur peut avoir la case aussi (peut arriver si non conflit sur une meme case)
 				boolean landIsFree = true;
 				for(PlayerDTO opponent : landsMap.keySet()){
 					if(opponent.getPlayerUID().equals(player.getPlayerUID()))
@@ -944,9 +946,41 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 				if(landIsFree){
 					if(debug)System.out.println("land is free");
 					player.getLands().add(landExpected);
+					
+					for(PlayerDTO otherPlayer : players){
+						if(otherPlayer.getPlayerUID().equals(player.getPlayerUID()))
+							continue;
+						
+						int indexToRemove = -1;
+						for(int landOfOtherPlayer : otherPlayer.getLands()){
+							if(landOfOtherPlayer == landExpected){
+								indexToRemove = otherPlayer.getLands().indexOf(landOfOtherPlayer);
+								if(debug)System.out.println("found another player having this land");
+							}
+						}
+						
+						if(indexToRemove > 0){
+							otherPlayer.getLands().remove(indexToRemove);
+							if(debug)System.out.println("the land was removed");
+							break;
+						}
+					}
 				}
 			}
 			
+		}
+		
+		// on verifie qu un autre joueur n'a pas pique la case d'ou on vient ! dans ce cas on a perdu sa case et on ne pique pas la nouvelle du coup
+		if(debug)System.out.println("verification des nouvelles contrees");
+		for(PlayerDTO player : landsMap.keySet()){
+			for(int landExpected : landsMap.get(player)){
+				if(!testLand(landExpected, player)){
+					if(debug)System.out.println("lien au royaume casse !");
+					player.getLands().remove(player.getLands().indexOf(landExpected));
+					break;
+				}
+			}
+
 			if(debug)System.out.println("updating gold");
 			player.setGold(player.getGold() + player.getLands().size()*10);
 		}
@@ -1584,26 +1618,17 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			
 		int landExpected = landY*30+landX;
 		if(debug)System.out.println("landExpected : " + landExpected);
-			
-		boolean landIsAccessible = false;
+		
+
 		boolean landIsExpectedYet = false;
-			
+		boolean landIsAccessible = false;
+		
 		// cest deja une contree enregistree
 		if(player.getLands().contains(landExpected))
 			landIsExpectedYet = true;
-			
-		// si les tests precedents sont ok, on regarde si la contree touche le royaume
-		if(!landIsExpectedYet){
-			for(int land : player.getLands()){
-				if(land == landExpected+1
-				|| land == landExpected-1
-				|| land == landExpected-30
-				|| land == landExpected+30){
-					landIsAccessible = true;
-					break;
-				}
-			}
-		}
+		
+		if(!landIsExpectedYet)
+			landIsAccessible = testLand(landExpected, player);
 			
 		if(landIsAccessible){
 			if(debug)System.out.println(landExpected + " is Accessible : added to player lands");
@@ -1615,6 +1640,25 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	
 	
 	
+	private boolean testLand(int landExpected, PlayerDTO player) {
+		boolean landIsAccessible = false;
+			
+		// si les tests precedents sont ok, on regarde si la contree touche le royaume
+		for(int land : player.getLands()){
+			if(land == landExpected+1
+			|| land == landExpected-1
+			|| land == landExpected-30
+			|| land == landExpected+30){
+				landIsAccessible = true;
+				break;
+			}
+		}
+		
+		return landIsAccessible;
+	}
+
+
+
 	private class Conflit{
 		int x;
 		int y;

@@ -15,6 +15,7 @@ package com.uralys.tribes.entities
 		private var _cities:ArrayCollection;
 		private var _armies:ArrayCollection;
 		private var _merchants:ArrayCollection;
+		private var _allies:ArrayCollection;
 		private var _lands:ArrayCollection = new ArrayCollection();
 		
 		public function Player(){}
@@ -89,6 +90,16 @@ package com.uralys.tribes.entities
 		public function set armies(value:ArrayCollection):void
 		{
 			_armies = value;
+		}
+		
+		public function get allies():ArrayCollection
+		{
+			return _allies;
+		}
+		
+		public function set allies(value:ArrayCollection):void
+		{
+			_allies = value;
 		}
 		
 		public function get merchants():ArrayCollection

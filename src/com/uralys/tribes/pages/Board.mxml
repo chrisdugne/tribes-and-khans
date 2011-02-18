@@ -414,8 +414,7 @@
 					city.wheat += city.wheatEarned - city.wheatSpent;
 					city.wood += city.woodEarned - city.woodSpent;
 					city.iron += city.ironEarned - city.ironSpent;
-					
-					
+					city.population += city.armyReleased - city.armyRaised;
 					
 					for each(var equipment:Equipment in city.equipmentStock){
 						switch(equipment.item.name){

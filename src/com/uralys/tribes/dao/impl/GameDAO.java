@@ -35,9 +35,9 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	//-----------------------------------------------------------------------//
 	// local
 
-	private static String ITEM_UID_BOW = "129829670216812009983384";
-	private static String ITEM_UID_SWORD = "12982967149683102686951";
-	private static String ITEM_UID_ARMOR = "12982967311144319693644";
+	private static String ITEM_UID_BOW = "_bow";
+	private static String ITEM_UID_SWORD = "_sword";
+	private static String ITEM_UID_ARMOR = "_armor";
 	private static boolean debug = true;
 
 	//-----------------------------------------------------------------------//

@@ -241,6 +241,7 @@ public class DataviewerServlet extends HttpServlet {
 			StringBuffer parametersToSave= new StringBuffer();
 			
 			editTable.append("<table>");
+			editTable.append("<td>specify uid ? </td><td><input type=\"text\" name=\"UIDSpecified\" value=\"null\" /></td>");
 			
 			for(Field field : fields){
 				
@@ -308,7 +309,11 @@ public class DataviewerServlet extends HttpServlet {
 			Object instance = new Object();
 			
 			if(newInstanceIsCreated){
-				instanceUID = Utils.generateUID();
+				if(!req.getParameter("UIDSpecified").equals("null"))
+					instanceUID = req.getParameter("UIDSpecified");
+				else
+					instanceUID = Utils.generateUID();
+				
 				key = KeyFactory.createKey(selectedDTO.getSimpleName(), instanceUID);
 			
 				try {

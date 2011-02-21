@@ -6,6 +6,7 @@ import java.util.List;
 import com.uralys.tribes.entities.Army;
 import com.uralys.tribes.entities.City;
 import com.uralys.tribes.entities.Equipment;
+import com.uralys.tribes.entities.Report;
 import com.uralys.tribes.entities.Smith;
 import com.uralys.tribes.entities.Game;
 import com.uralys.tribes.entities.Merchant;
@@ -16,6 +17,7 @@ import com.uralys.tribes.entities.Item;
 import com.uralys.tribes.entities.dto.ArmyDTO;
 import com.uralys.tribes.entities.dto.CityDTO;
 import com.uralys.tribes.entities.dto.EquipmentDTO;
+import com.uralys.tribes.entities.dto.ReportDTO;
 import com.uralys.tribes.entities.dto.SmithDTO;
 import com.uralys.tribes.entities.dto.GameDTO;
 import com.uralys.tribes.entities.dto.MerchantDTO;
@@ -70,6 +72,15 @@ public class EntitiesConverter {
 		}
 		
 		player.setCities(cities);
+
+		//-----------------------------------------------------------------------------------//		
+		List<Report> reports = new ArrayList<Report>();
+		
+		for(ReportDTO reportDTO : playerDTO.getReports()){
+			reports.add(convertReportDTO(reportDTO));
+		}
+		
+		player.setReports(reports);
 		
 		
 		//-----------------------------------------------------------------------------------//		
@@ -310,5 +321,22 @@ public class EntitiesConverter {
 		smith.setItem(convertItemDTO(smithDTO.getItem()));
 		
 		return smith;
+	}	
+	
+	//-----------------------------------------------------------------------------------//
+	
+	public static Report convertReportDTO(ReportDTO reportDTO) {
+
+		if(reportDTO == null)
+			return null;
+		
+		Report report = new Report();
+
+		report.setReportUID(reportDTO.getReportUID());
+		report.setReport(reportDTO.getReport());
+		report.setStatus(reportDTO.getStatus());
+		
+		return report;
 	}
+
 }

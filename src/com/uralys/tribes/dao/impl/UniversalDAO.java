@@ -30,6 +30,8 @@ public class UniversalDAO{
 		return pm.getObjectById(objectClass, uid);
 	}
 
+	//-----------------------------------------------------------------------------------//
+
 	@SuppressWarnings("unchecked")
 	public <E> List<E> getListDTO(Class<E> objectClass, int from, int to) {
 		
@@ -39,6 +41,8 @@ public class UniversalDAO{
 		
 		return (List<E>) query.execute();
 	}
+
+	//-----------------------------------------------------------------------------------//
 
 	@SuppressWarnings("unchecked")
 	public <E> List<E> getListDTO(List<String> uids, Class<E> objectClass) {
@@ -52,6 +56,20 @@ public class UniversalDAO{
 		return (List<E>) query.execute(uids);
 	}
 
+	//-----------------------------------------------------------------------------------//
+
+//	@SuppressWarnings("unchecked")
+//	public <E> List<E> getListDTO(String uid, String keyName, Class<E> objectClass) {
+//		
+//		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+//		Query query = pm.newQuery("select from " + objectClass.getName() + " where :uid == "+keyName);
+//
+//		System.out.println(query.toString());
+//		return (List<E>) query.execute(uid);
+//	}
+
+	//-----------------------------------------------------------------------------------//
+	
 	public <E> void delete(Class<E> objectClass, String uid) {
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		E o = pm.getObjectById(objectClass, uid);
@@ -60,11 +78,15 @@ public class UniversalDAO{
 		pm.close();
 	}
 
+	//-----------------------------------------------------------------------------------//
+
 	public void makePersistent(Object newDTO) {
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		pm.makePersistent(newDTO);
 		pm.close();
 	}
+
+	//-----------------------------------------------------------------------------------//
 
 	@SuppressWarnings("unchecked")
 	public <E> void update(Object updatedDTO, String uid) {
@@ -115,6 +137,4 @@ public class UniversalDAO{
 		}
 	}
 
-	//-----------------------------------------------------------------------------------//
-	
 }

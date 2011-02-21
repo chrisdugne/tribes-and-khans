@@ -18,6 +18,7 @@ import com.uralys.tribes.dao.impl.UniversalDAO;
 import com.uralys.tribes.entities.dto.ArmyDTO;
 import com.uralys.tribes.entities.dto.CityDTO;
 import com.uralys.tribes.entities.dto.EquipmentDTO;
+import com.uralys.tribes.entities.dto.ReportDTO;
 import com.uralys.tribes.entities.dto.SmithDTO;
 import com.uralys.tribes.entities.dto.GameDTO;
 import com.uralys.tribes.entities.dto.MerchantDTO;
@@ -144,6 +145,7 @@ public class DataviewerServlet extends HttpServlet {
 				" <OPTION VALUE=\"item\">ItemDTO" +
 				" <OPTION VALUE=\"equipment\">EquipmentDTO" +
 				" <OPTION VALUE=\"move\">MoveDTO" +
+				" <OPTION VALUE=\"report\">ReportDTO" +
 				" <OPTION VALUE=\"serverdata\">ServerDataDTO" +
 				
 				//-----------------------------------------------------------------------------------//
@@ -527,6 +529,8 @@ public class DataviewerServlet extends HttpServlet {
 			return ItemDTO.class;
 		else if(dto.equals("move"))
 			return MoveDTO.class;
+		else if(dto.equals("report"))
+			return ReportDTO.class;
 		else if(dto.equals("serverdata"))
 			return ServerDataDTO.class;
 		

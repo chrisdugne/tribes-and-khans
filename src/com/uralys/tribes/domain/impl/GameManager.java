@@ -201,7 +201,7 @@ public class GameManager implements IGameManager {
 		//----------------------------------------------------------------//
 		// Player
 		
-		gameDao.updatePlayer(player); // lastTurnPLayed
+		gameDao.updatePlayer(player); // lastTurnPLayed, remove last Reports
 		
 		//----------------------------------------------------------------//
 		// verifying if new turn is ready
@@ -209,10 +209,8 @@ public class GameManager implements IGameManager {
 		gameDao.checkEndTurn(player.getGameUID());
 	}
 	
-	
-
 	//==================================================================================================//
-	
+
 
 	private void calculateTurnsNotPlayed(List<Game> games) {
 		System.out.println("==============================================================");

@@ -26,6 +26,7 @@ import com.uralys.tribes.entities.dto.ItemDTO;
 import com.uralys.tribes.entities.dto.MoveDTO;
 import com.uralys.tribes.entities.dto.PlayerDTO;
 import com.uralys.tribes.entities.dto.ProfilDTO;
+import com.uralys.tribes.entities.dto.ReportDTO;
 import com.uralys.tribes.entities.dto.SmithDTO;
 import com.uralys.utils.Utils;
 
@@ -34,9 +35,9 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	//-----------------------------------------------------------------------//
 	// local
 
-	private static String ITEM_UID_BOW = "12974260733340336278727";
-	private static String ITEM_UID_SWORD = "129742608837521210944772";
-	private static String ITEM_UID_ARMOR = "129742610263041471525653";
+	private static String ITEM_UID_BOW = "129829670216812009983384";
+	private static String ITEM_UID_SWORD = "12982967149683102686951";
+	private static String ITEM_UID_ARMOR = "12982967311144319693644";
 	private static boolean debug = true;
 
 	//-----------------------------------------------------------------------//
@@ -128,6 +129,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		playerDTO.setName(playerName);
 		playerDTO.setLastTurnPlayed(0);
 		playerDTO.setGold(100);
+		playerDTO.setReportUIDs(new ArrayList<String>());
 		
 		persist(playerDTO);
 
@@ -331,8 +333,17 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		PlayerDTO playerDTO = pm.getObjectById(PlayerDTO.class, player.getPlayerUID());
 		
+		
 		playerDTO.setLastTurnPlayed(player.getLastTurnPlayed());
 		playerDTO.setLands(player.getLands());
+		playerDTO.setReportUIDs(new ArrayList<String>());
+		
+		try{
+			ReportDTO reportDTO = pm.getObjectById(ReportDTO.class, playerDTO.getReportUIDs().get(0));
+			pm.deletePersistent(reportDTO);
+		}
+		catch(Exception e){/* pas de rapport*/}
+
 		pm.close();
 	}
 	
@@ -557,12 +568,15 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		
 		Map<MoveDTO, ArmyDTO> moveArmyMap = new HashMap<MoveDTO, ArmyDTO>();
 		Map<ArmyDTO, MoveDTO> armyMoveMap = new HashMap<ArmyDTO, MoveDTO>();
+		Map<ArmyDTO, String> armyInfoMoveMap = new HashMap<ArmyDTO, String>();
 		Map<MoveDTO, PlayerDTO> movePlayerMap = new HashMap<MoveDTO, PlayerDTO>();
 		Map<String, PlayerDTO> cityPlayerMap = new HashMap<String, PlayerDTO>();
 		Map<String, Integer> cityXMap = new HashMap<String, Integer>();
 		Map<String, Integer> cityYMap = new HashMap<String, Integer>();
 		Map<ArmyDTO, CityDTO> armyCityMap = new HashMap<ArmyDTO, CityDTO>();
 		Map<PlayerDTO, ArrayList<Integer>> landsMap = new HashMap<PlayerDTO, ArrayList<Integer>>();
+		Map<PlayerDTO, String> reports = new HashMap<PlayerDTO, String>();
+		Map<PlayerDTO, Conflit> playerConflitMap = new HashMap<PlayerDTO, Conflit>();
 		
 		if(debug)System.out.println("-----------");
 		if(debug)System.out.println("rangement dans les maps/listes");
@@ -715,6 +729,8 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 				move.setyTo((int)(move.getyTo() + size));
 			}
 			
+			String moveOriginalInfo = " : mouvement prevu de [" + move.getxFrom() + "," + move.getyFrom()  + "] à [" + move.getxTo() + "," + move.getyTo()  + "]";
+			armyInfoMoveMap.put(moveArmyMap.get(move), moveOriginalInfo);
 			
 			boolean freeWay = true;
 			for(Meeting meeting : meetings){
@@ -754,6 +770,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			conflit.ennemies.add(moveArmyMap.get(meeting1.move2));
 			
 			PlayerDTO ally = movePlayerMap.get(meeting1.move1);
+			playerConflitMap.put(ally, conflit);
 			
 			for(Meeting meeting2 : meetings){
 				if(meeting1.equals(meeting2))
@@ -764,6 +781,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 				&& meeting2.status == 0){
 					
 					PlayerDTO player1 = movePlayerMap.get(meeting2.move1);
+					playerConflitMap.put(player1, conflit);
 					
 					if(player1.getPlayerUID().equals(ally.getPlayerUID()) // une de tes armees
 					|| player1.getAllyUIDs().contains(ally.getPlayerUID())){ // une armee de tes potes
@@ -795,50 +813,69 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 
 		for(Conflit conflit : conflits){
 			if(debug)System.out.println("resolution du conflit en [" + conflit.x + "," + conflit.y +"]");
+			StringBuffer newReport = new StringBuffer();
+			newReport.append("\nConflit en [  " + conflit.x + "  ,  " + conflit.y +"  ]\n");
 			
 			int valueAlly = 0;
 			int valueEnnemy = 0;
 			
 			
 			if(debug)System.out.println("Equipe 1");
+			newReport.append("\n\nEquipe 1");
 			for(ArmyDTO army : conflit.allies){
 				if(debug)System.out.println(army.getArmyUID());
+				newReport.append("\narmy " + armyInfoMoveMap.get(army));
+
+				int valueArmy = 0;
 				
 				int size = army.getSize();
-				valueAlly += size;
+				valueArmy += size;
 				
 				for(EquipmentDTO equipment : army.getEquipments()){
 					int equipmentSize = equipment.getSize() > size ? size : equipment.getSize();
 					ItemDTO item = equipment.getItem();
 					
-					valueAlly += equipmentSize * item.getValue();
+					valueArmy += equipmentSize * item.getValue();
 					if(debug)System.out.println(equipmentSize + " " + item.getName());
 				}
+				
+				newReport.append(" | size : " + size + " | value : " + valueArmy);
+				valueAlly += valueArmy;
 			}
 			
 			
 			if(debug)System.out.println("Equipe 2");
+			newReport.append("\n\nEquipe 2");
 			for(ArmyDTO army : conflit.ennemies){
 				if(debug)System.out.println(army.getArmyUID());
+				newReport.append("\narmy " + armyInfoMoveMap.get(army));
 
+				int valueArmy = 0;
+				
 				int size = army.getSize();
-				valueEnnemy += size;
+				valueArmy += size;
 				
 				for(EquipmentDTO equipment : army.getEquipments()){
 					int equipmentSize = equipment.getSize() > size ? size : equipment.getSize();
 					ItemDTO item = equipment.getItem();
 					
-					valueEnnemy += equipmentSize * item.getValue();
+					valueArmy += equipmentSize * item.getValue();
 					if(debug)System.out.println(equipmentSize + " " + item.getName());
 				}
+				newReport.append("  |  size :  " + size + "  |  value :  " + valueArmy);
+				valueEnnemy += valueArmy;
 			}
 			
 			if(debug)System.out.println("valueAlly : " + valueAlly);
 			if(debug)System.out.println("valueEnnemy : " + valueEnnemy);
+
+			newReport.append("\n\nEquipe 1 value : " + valueAlly);
+			newReport.append("\nEquipe 2 value : " + valueEnnemy);
 			
 			String cityTaken = null;
 			
 			if(valueAlly > valueEnnemy){
+				int sizeRemaining = 0;
 				if(debug)System.out.println("Ally wins");
 				
 				
@@ -847,7 +884,8 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 						armiesToDelete.add(ennemy.getArmyUID());
 					}
 					else{
-						// army representing a city : no need to delete						
+						// army representing a city : no need to delete
+						newReport.append("La ville a été prise !");
 						cityTaken = ennemy.getArmyUID().substring(1);
 						armyCityMap.get(ennemy).setPopulation(armyCityMap.get(ennemy).getPopulation()/4);
 					}
@@ -859,6 +897,10 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 					}
 					else{
 						ally.setSize((int)(ally.getSize() - ((double)valueEnnemy/valueAlly)*ally.getSize()));
+						sizeRemaining += ally.getSize();
+						
+						if(ally.getSize() == 0)
+							armiesToDelete.add(ally.getArmyUID());
 					}
 					
 					if(cityTaken != null){ // on place les armees sur les coordonnees de la ville, le conflit n'etant pas pile poil au centre
@@ -866,6 +908,12 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 						ally.setY(cityYMap.get(cityTaken));
 					}
 				}
+				
+				if(sizeRemaining == 0){
+					newReport.append("\n\nDraw !");
+				}
+				else
+					newReport.append("\n\nEquipe 1 won !");
 				
 				if(cityTaken != null){
 					
@@ -878,16 +926,19 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			}
 			else{
 				if(debug)System.out.println("Ennemy wins");
+				int sizeRemaining = 0;
 				
 				for(ArmyDTO ally : conflit.allies){
 					if(!ally.getArmyUID().startsWith("_")){
 						armiesToDelete.add(ally.getArmyUID());
 					}
 					else{
-						// army representing a city : no need to delete						
+						// army representing a city : no need to delete		
+						newReport.append("La ville a été prise !");				
 						cityTaken = ally.getArmyUID().substring(1);
 						armyCityMap.get(ally).setPopulation(armyCityMap.get(ally).getPopulation()/4);
 					}
+					
 				}
 				
 
@@ -898,6 +949,10 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 					}
 					else{
 						ennemy.setSize((int)(ennemy.getSize() - ((double)valueAlly/valueEnnemy)*ennemy.getSize()));
+						sizeRemaining += ennemy.getSize();
+						
+						if(ennemy.getSize() == 0)
+							armiesToDelete.add(ennemy.getArmyUID());
 					}
 					
 					if(cityTaken != null){ // on place les armees sur les coordonnees de la ville, le conflit n'etant pas pile poil au centre
@@ -905,6 +960,12 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 						ennemy.setY(cityYMap.get(cityTaken));
 					}
 				}
+
+				if(sizeRemaining == 0){
+					newReport.append("\n\nDraw !");
+				}
+				else
+					newReport.append("\n\nEquipe 2 won !");
 				
 				if(cityTaken != null){
 					
@@ -917,6 +978,13 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 				}
 			}
 			
+			for(ArmyDTO ally : conflit.allies){
+				reports.put(movePlayerMap.get(armyMoveMap.get(ally)), newReport.toString());
+			}
+
+			for(ArmyDTO ennemy : conflit.ennemies){
+				reports.put(movePlayerMap.get(armyMoveMap.get(ennemy)), newReport.toString());
+			}
 		}
 		
 		
@@ -962,6 +1030,19 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 						if(indexToRemove > 0){
 							otherPlayer.getLands().remove(indexToRemove);
 							if(debug)System.out.println("the land was removed");
+
+							//------------//
+							// reporting
+							
+							String report = reports.get(otherPlayer);
+							if(report == null)
+								report = "";
+							
+							report += "\n contrée perdue";
+							reports.put(player, report);
+							
+							//------------//
+							
 							break;
 						}
 					}
@@ -973,20 +1054,33 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		// on verifie qu un autre joueur n'a pas pique la case d'ou on vient ! dans ce cas on a perdu sa case et on ne pique pas la nouvelle du coup
 		if(debug)System.out.println("verification des nouvelles contrees");
 		for(PlayerDTO player : landsMap.keySet()){
+			int landsWon = 0;
 			for(int landExpected : landsMap.get(player)){
 				if(!testLand(landExpected, player)){
 					if(debug)System.out.println("lien au royaume casse !");
 					player.getLands().remove(player.getLands().indexOf(landExpected));
 					break;
 				}
+				else{
+					landsWon ++;
+				}
 			}
 
+			if(landsWon > 0){
+				String report = reports.get(player);
+				if(report == null)
+					report = "Pas de conflits";
+				
+				report += "\n" + landsWon + " contrées conquises";
+				reports.put(player, report);
+			}
+			
 			if(debug)System.out.println("updating gold");
 			player.setGold(player.getGold() + player.getLands().size()*10);
 		}
 		
-		if(debug)System.out.println("-----------");
-		if(debug)System.out.println("suppression des moves");
+		if(debug)System.out.println("-----------------------------------------------");
+		if(debug)System.out.println("suppression des moves et des armees detruites");
 		
 		// delete the moves
 		for(ArmyDTO army : armyMoveMap.keySet()){
@@ -1017,6 +1111,29 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 				pm.deletePersistent(army);
 			}
 		}
+		
+		if(debug)System.out.println("-----------");
+		if(debug)System.out.println("enregistrement des rapports");
+		
+		for(PlayerDTO player : reports.keySet()){
+			ReportDTO reportDTO = new ReportDTO();
+			String report = reports.get(player);
+			
+			String reportUID = Utils.generateUID();
+			Key key = KeyFactory.createKey(ReportDTO.class.getSimpleName(), reportUID);
+
+			reportDTO.setKey(KeyFactory.keyToString(key));
+			reportDTO.setReportUID(reportUID);
+			reportDTO.setReport(report);
+			reportDTO.setStatus(0);
+			
+			player.getReportUIDs().add(reportUID);
+			
+			pm.makePersistent(reportDTO);
+		}
+		
+		
+		if(debug)System.out.println("-----------");
 		
 		pm.close();
 		

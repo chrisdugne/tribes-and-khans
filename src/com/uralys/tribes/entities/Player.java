@@ -17,6 +17,7 @@ public class Player {
 	private List<Merchant> merchants = new ArrayList<Merchant>();
 	private List<String> allies = new ArrayList<String>();
 	private List<Integer> lands = new ArrayList<Integer>();
+	private List<Report> reports = new ArrayList<Report>();
 
 	private int gold;
 	
@@ -88,6 +89,13 @@ public class Player {
 	public void setGold(int gold) {
 		this.gold = gold;
 	}
+	public List<Report> getReports() {
+		return reports;
+	}
+	public void setReports(List<Report> reports) {
+		this.reports = reports;
+	}
+	
 	
 	//-----------------------------------------------------------------------------------//
 	

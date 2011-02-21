@@ -23,8 +23,10 @@
 			import com.uralys.tribes.entities.Player;
 			import com.uralys.tribes.entities.Smith;
 			import com.uralys.tribes.managers.GameManager;
+			import com.uralys.tribes.windows.ReportsWindow;
 			
 			import mx.collections.ArrayCollection;
+			import mx.containers.TitleWindow;
 			import mx.core.FlexGlobals;
 			import mx.effects.easing.Quadratic;
 			import mx.events.ItemClickEvent;
@@ -35,6 +37,7 @@
 			import mx.graphics.SolidColor;
 			import mx.graphics.SolidColorStroke;
 			import mx.managers.CursorManager;
+			import mx.managers.PopUpManager;
 			import mx.utils.ObjectUtil;
 			
 			import spark.components.supportClasses.ItemRenderer;
@@ -286,6 +289,9 @@
 					if(playerOfProfil.gameUID == game.gameUID){
 						Session.currentPlayer = playerOfProfil;
 						this.selectedCity = Session.currentPlayer.cities.getItemAt(0) as City;
+						
+						FlexGlobals.topLevelApplication.showReports(Session.currentPlayer.reports.getItemAt(0).report);
+
 						break;
 					}
 				}

@@ -1,8 +1,6 @@
 
 package com.uralys.tribes.entities
 {
-	import flash.sampler.NewObjectSample;
-	
 	import mx.collections.ArrayCollection;
 
 	[Bindable]

@@ -8,6 +8,8 @@
 	<fx:Declarations>
 		<s:Move id="hidedisplaymessage" target="{displayMessage}" yTo="-50"/>
 		<s:Move id="showdisplaymessage" target="{displayMessage}" yTo="0"/>
+		<s:Move id="hidereports" target="{reportsWindow}" yTo="-400"/>
+		<s:Move id="showreports" target="{reportsWindow}" yTo="120"/>
 	</fx:Declarations>
 	
 	<fx:Script>
@@ -53,6 +55,13 @@
 				displayMessage.time = time;
 				displayMessage.showMessage();
 			}
+
+			public function showReports(report:String):void {
+				reportsWindow.area.text = report;
+				showreports.play();
+			}
+
+			//-----------------------------------------------------------------------//
 			
 		]]>
 	</fx:Script>
@@ -94,6 +103,7 @@
 	<!-- windows -->
 	
 	<windows:SimpleMessageCanvas id="displayMessage" x="{(Session.APPLICATION_WIDTH - 600) / 2}" y="-50"/>
+	<windows:ReportsWindow id="reportsWindow" x="{(Session.APPLICATION_WIDTH - 450) / 2}" y="-400"/>
 	
 	<!-- ========================================================================== -->
 	

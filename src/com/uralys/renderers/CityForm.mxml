@@ -394,9 +394,9 @@
 					var previousArmySize:int = army.size;
 					var newArmySize:int = parseInt(armyInput.text);
 					
-					// armee : min 10, max : population
-					if(newArmySize < 10)
-						newArmySize = 10;
+					// armee : min 50, max : population
+					if(newArmySize < 50)
+						newArmySize = 50;
 					if(city.population < newArmySize)
 						newArmySize = city.population;
 					

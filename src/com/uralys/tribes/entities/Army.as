@@ -43,6 +43,39 @@ package com.uralys.tribes.entities
 		public function set value(o:int):void {
 			_value = o;
 		}
+		
+		public function get wheat():int {
+			return _wheat;
+		}
+		
+		public function set wheat(o:int):void {
+			_wheat = o;
+		}
+		
+		public function get wood():int {
+			return _wood;
+		}
+		
+		public function set wood(o:int):void {
+			_wood = o;
+		}
+		
+		public function get iron():int {
+			return _iron;
+		}
+		
+		public function set iron(o:int):void {
+			_iron = o;
+		}
+		
+		public function get gold():int {
+			return _gold;
+		}
+		
+		public function set gold(o:int):void {
+			_gold = o;
+		}
+		
 	
 		public function get x():int {
 			return _x;
@@ -90,6 +123,10 @@ package com.uralys.tribes.entities
 		protected var _size:int;
 		protected var _speed:int;
 		protected var _value:int;
+		protected var _wheat:int;
+		protected var _wood:int;
+		protected var _iron:int;
+		protected var _gold:int;
 		protected var _x:int;
 		protected var _y:int;
 		protected var _radius:int;
@@ -126,8 +163,21 @@ package com.uralys.tribes.entities
 
 		//==========================================================================//
 
+		public function mayBuildAcity():Boolean{
+			trace('mayBuildAcity ? ' + type);
+			return type == 2 
+				&& size >= 100
+				&& wheat >= 50
+				&& wood >= 3000
+				&& iron >= 1000
+				&& gold >= 100;
+		}
+		
+		//==========================================================================//
+
+		public var type:int; // 1 armee,  2 marchand
 		public var ellipseTo:Ellipse;
-		public var lineTo:Line = new Line();
+		public var lineTo:Line;
 		public var ellipseToIsDrawn:Boolean = false;
 		public var lineToIsDrawn:Boolean = false;
 		

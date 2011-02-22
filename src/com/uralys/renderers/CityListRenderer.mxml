@@ -67,12 +67,14 @@
 				 left="10" 
 				 verticalCenter="2"
 				 text="{data.name}"/>
+		<!--
 		<s:Label id="labelFamine" 
 				 color="#FFFFFF" 
 				 right="5" 
 				 verticalCenter="2"
 				 text="Famine !"
 				 visible="{data.wheat + data.wheatEarned - data.wheatSpent &lt; 0}"/>
+		-->
 	</s:Group>
 	
 </s:ItemRenderer>

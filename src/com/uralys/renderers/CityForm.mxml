@@ -20,14 +20,19 @@
 				
 				//----------------------------------------------------------//
 				
-				protected function init():void{
+				protected function initArmiesList():void{
 					armiesList.addEventListener(ItemClickEvent.ITEM_CLICK, onArmyClick);
+				}
+
+				protected function initMerchantsList():void{
+					merchantsList.addEventListener(ItemClickEvent.ITEM_CLICK, onMerchantClick);
 				}
 
 				//----------------------------------------------------------//
 				
 				public var _city:City;
 				[Bindable] private var army:Army;
+				[Bindable] private var merchant:Army;
 
 				//----------------------------------------------------------//
 
@@ -247,6 +252,138 @@
 				}
 				
 				//-------------------------------------------------------------------------//
+				// merchants
+
+				
+				protected function wheatMerchantInputKeyUpHandler(event:Event):void{
+					
+					if(wheatMerchantInput.text.length == 0
+						|| wheatMerchantInput.text.length > 6
+						|| merchant.size == 0)
+						wheatMerchantInput.text = '0';
+					
+					var previousNbWheat:int = merchant.wheat;
+					var newNbWheat:int = parseInt(wheatMerchantInput.text);
+					
+					if(newNbWheat > previousNbWheat){
+						// on ajoute du ble a la caravane
+						
+						if(city.wheat < newNbWheat - previousNbWheat){
+							// la reserve en ble n'est pas assez grande
+							newNbWheat = city.wheat + previousNbWheat;
+							city.wheat = 0;
+						}
+						else{	
+							// on pioche dans la reserve de ble
+							city.wheat -= newNbWheat - previousNbWheat;
+						}
+					}
+					else{
+						// on enleve du ble de la caravane
+						city.wheat += previousNbWheat - newNbWheat;
+					}
+					
+					merchant.wheat = newNbWheat;
+					wheatMerchantInput.text = merchant.wheat+""; // refresh
+				}
+				
+				protected function woodMerchantInputKeyUpHandler(event:Event):void{
+					
+					if(woodMerchantInput.text.length == 0
+						|| woodMerchantInput.text.length > 6
+						|| merchant.size == 0)
+						woodMerchantInput.text = '0';
+					
+					var previousNbWood:int = merchant.wood;
+					var newNbWood:int = parseInt(woodMerchantInput.text);
+					
+					if(newNbWood > previousNbWood){
+						// on ajoute du bois a la caravane
+						
+						if(city.wood < newNbWood - previousNbWood){
+							// la reserve en bois n'est pas assez grande
+							newNbWood = city.wood + previousNbWood;
+							city.wood = 0;
+						}
+						else{	
+							// on pioche dans la reserve de bois
+							city.wood -= newNbWood - previousNbWood;
+						}
+					}
+					else{
+						// on enleve du bois de la caravane
+						city.wood += previousNbWood - newNbWood;
+					}
+					
+					merchant.wood = newNbWood;
+					woodMerchantInput.text = merchant.wood+""; // refresh
+				}
+				
+				protected function ironMerchantInputKeyUpHandler(event:Event):void{
+					
+					if(ironMerchantInput.text.length == 0
+						|| ironMerchantInput.text.length > 6
+						|| merchant.size == 0)
+						ironMerchantInput.text = '0';
+					
+					var previousNbIron:int = merchant.iron;
+					var newNbIron:int = parseInt(ironMerchantInput.text);
+					
+					if(newNbIron > previousNbIron){
+						// on ajoute du fer a la caravane
+						
+						if(city.iron < newNbIron - previousNbIron){
+							// la reserve en fer n'est pas assez grande
+							newNbIron = city.iron + previousNbIron;
+							city.iron = 0;
+						}
+						else{	
+							// on pioche dans la reserve de fer
+							city.iron -= newNbIron - previousNbIron;
+						}
+					}
+					else{
+						// on enleve du fer de la caravane
+						city.iron += previousNbIron - newNbIron;
+					}
+					
+					merchant.iron = newNbIron;
+					ironMerchantInput.text = merchant.iron+""; // refresh
+				}
+				
+				protected function goldMerchantInputKeyUpHandler(event:Event):void{
+					
+					if(goldMerchantInput.text.length == 0
+						|| goldMerchantInput.text.length > 6
+						|| merchant.size == 0)
+						goldMerchantInput.text = '0';
+					
+					var previousNbGold:int = merchant.gold;
+					var newNbGold:int = parseInt(goldMerchantInput.text);
+					
+					if(newNbGold > previousNbGold){
+						// on ajoute du fer a la caravane
+						
+						if(city.gold < newNbGold - previousNbGold){
+							// la reserve en fer n'est pas assez grande
+							newNbGold = city.gold + previousNbGold;
+							city.gold = 0;
+						}
+						else{	
+							// on pioche dans la reserve de fer
+							city.gold -= newNbGold - previousNbGold;
+						}
+					}
+					else{
+						// on enleve du fer de la caravane
+						city.gold += previousNbGold - newNbGold;
+					}
+					
+					merchant.gold = newNbGold;
+					goldMerchantInput.text = merchant.gold+""; // refresh
+				}
+				
+				//-------------------------------------------------------------------------//
 				// armies
 				
 				protected function bowArmyInputKeyUpHandler(event:Event):void{
@@ -438,12 +575,68 @@
 					// on refresh le drawing au board
 					BoardDrawer.getInstance().refreshArmyOnBoard(army);
 				}
+				
+				//-------------------------------------------------------------------------//
+				
+				protected function merchantInputKeyUpHandler(event:Event):void	{
+					
+					var previousMerchantSize:int = merchant.size;
+					var newMerchantSize:int = parseInt(merchantInput.text);
+					
+					// caravan : min 50, max : population
+					if(newMerchantSize < 50)
+						newMerchantSize = 50;
+					if(city.population < newMerchantSize)
+						newMerchantSize = city.population;
+					
+					if(newMerchantSize > previousMerchantSize){
+						// on ajoute des gens dans une caravane
+						
+						var nbPeopleAdded:int =  newMerchantSize - previousMerchantSize;
+						
+						if(city.armyReleased > nbPeopleAdded){
+							city.armyReleased -= nbPeopleAdded;
+						}
+						else{
+							city.armyRaised += nbPeopleAdded - city.armyReleased;
+							city.armyReleased = 0;
+						}
+					}
+					else{
+						// on enleve des gens de la caravane
+						var nbPeopleRemoved:int = previousMerchantSize - newMerchantSize;
+						
+						if(city.armyRaised > nbPeopleRemoved){
+							city.armyRaised -= nbPeopleRemoved;
+						}
+						else{
+							city.armyReleased += nbPeopleRemoved - city.armyRaised;
+							city.armyRaised = 0;
+						}
+					}
+					
+					merchant.size = newMerchantSize;
+					
+					if(merchant.ellipseTo){
+						merchant.ellipseTo.width = merchant.radius*2;
+						merchant.ellipseTo.height = merchant.radius*2;
+					}
+						
+					merchantInput.text = merchant.size+""; // refresh
+					
+					// on refresh le drawing au board
+					BoardDrawer.getInstance().refreshArmyOnBoard(merchant);
+				}
 
 				//-------------------------------------------------------------------------//
 				
 				
 				protected function onArmyClick(event:ItemClickEvent):void{
 					army = event.currentTarget.selectedItem as Army;
+				}
+				
+				protected function onMerchantClick(event:ItemClickEvent):void{
+					merchant = event.currentTarget.selectedItem as Army;
 				}
 				
 				protected function newArmy():void{
@@ -453,6 +646,7 @@
 					newArmy.y = city.y;
 					newArmy.speed = 200;
 					newArmy.armyUID = "new";
+					newArmy.type = 1;
 					
 					newArmy.moves = new ArrayCollection();
 					newArmy.moves.addItem(new com.uralys.tribes.entities.Move());
@@ -472,6 +666,11 @@
 				}
 
 				protected function deleteArmy():void{
+					
+					
+					// on enleve les drawings du board (hack : je redessine la ville par dessus, armyCircle ne veut pas seffacer...: pose probleme affichage si la ville est trop petite)
+					BoardDrawer.getInstance().removeArmyFromBoard(army);
+					BoardDrawer.getInstance().drawCity(city, false);
 					
 					if(army.armyUID != "new"){
 						// pour une armee deja existante : on reajuste la pop, ils peuvent travailler des ce tour
@@ -509,9 +708,7 @@
 					// on enleve l'armee de la liste de la ville et du player
 					city.armies.removeItemAt(city.armies.getItemIndex(army));
 					Session.currentPlayer.armies.removeItemAt(Session.currentPlayer.armies.getItemIndex(army));
-					
-					// on enleve les drawings du board
-					BoardDrawer.getInstance().removeArmyFromBoard(army);
+
 					
 					// on selectionne l'entree suivante dans la liste des armees
 					try{
@@ -520,6 +717,79 @@
 					}
 					catch(e:Error){
 						army = null;
+					}
+					
+				}
+				
+				
+				protected function newMerchants():void{
+					var newMerchant:Army = new Army();
+					newMerchant.size = 0; // "merchantInputKeyUpHandler" va rajouter les 50
+					newMerchant.x = city.x;
+					newMerchant.y = city.y;
+					newMerchant.speed = 340;
+					newMerchant.armyUID = "new";
+					newMerchant.type = 2;
+					
+					newMerchant.moves = new ArrayCollection();
+					newMerchant.moves.addItem(new com.uralys.tribes.entities.Move());
+					
+					newMerchant.moves.getItemAt(0).xFrom = newMerchant.x;
+					newMerchant.moves.getItemAt(0).yFrom = newMerchant.y;
+					newMerchant.moves.getItemAt(0).xTo = newMerchant.x;
+					newMerchant.moves.getItemAt(0).yTo = newMerchant.y;
+					
+					city.merchants.addItem(newMerchant);
+					Session.currentPlayer.merchants.addItem(newMerchant);
+					
+					merchantsList.selectedIndex = city.merchants.length - 1;
+					
+					merchant = newMerchant;
+					merchantInputKeyUpHandler(null);
+				}
+
+				protected function deleteMerchant():void{
+					
+					// on enleve les drawings du board (hack : je redessine la ville par dessus, armyCircle ne veut pas seffacer...: pose probleme affichage si la ville est trop petite)
+					BoardDrawer.getInstance().removeArmyFromBoard(merchant);
+					BoardDrawer.getInstance().drawCity(city, false);
+					
+					if(merchant.armyUID != "new"){
+						// pour une caravane deja existante : on reajuste la pop, ils peuvent travailler des ce tour
+						// faille : si on a enleve des unites avant elles sont dans armyReleased et ne seront pas utilisees ce tour
+						city.population += merchant.size;
+					}
+					else{
+						// pour une caravane nouvelle, la pop n'a pas bouge, on reajuste armyRaised et armyReleased par contre
+						
+						if(city.armyRaised > merchant.size){
+							city.armyRaised -= merchant.size;
+						}
+						else{
+							city.armyReleased += merchant.size - city.armyRaised;
+							city.armyRaised = 0;
+						}
+						
+					}
+					
+					// on remet les provisions transportees dans les stocks de la ville
+					city.wheat += merchant.wheat;
+					city.wood += merchant.wood;
+					city.iron += merchant.iron;
+					city.gold += merchant.gold;
+					
+					// on enleve la caravane de la liste de la ville et du player
+					city.merchants.removeItemAt(city.merchants.getItemIndex(merchant));
+					Session.currentPlayer.merchants.removeItemAt(Session.currentPlayer.merchants.getItemIndex(merchant));
+					
+					
+					// on selectionne l'entree suivante dans la liste des armees
+					try{
+						merchantsList.selectedIndex = 0;
+						merchant = city.merchants.getItemAt(0) as Army;	
+					}
+					catch(e:Error){
+						merchant = null;
 					}
 					
 				}
@@ -537,7 +807,7 @@
 				<mx:Spacer width="20"/>
 				<s:Label text="{city.population}" styleName="numberLabel"/>
 				<mx:Spacer width="6"/>
-				<s:Label text="(army : {city.armyReleased - city.armyRaised >= 0 ? '+' : '-'} {Math.abs(city.armyReleased - city.armyRaised)})"  
+				<s:Label text="({city.armyReleased - city.armyRaised >= 0 ? '+' : '-'} {Math.abs(city.armyReleased - city.armyRaised)})"  
 						 color="{city.armyReleased - city.armyRaised >= 0 ? Numbers.GREEN : Numbers.RED} "/>
 				<mx:Spacer width="35"/>
 				<s:Label text="Unemployed"/>
@@ -547,7 +817,7 @@
 			<s:HGroup horizontalAlign="center" verticalAlign="middle">
 				<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
 				<mx:Spacer width="10"/>
-				<s:Label text="{Session.currentPlayer.gold}" styleName="numberLabel"/>
+				<s:Label text="{city.gold}" styleName="numberLabel"/>
 
 				<mx:Spacer width="15"/>
 				<mx:Image toolTip="Wheat" source="{ImageContainer.WHEAT}"/>
@@ -877,9 +1147,145 @@
 				</s:NavigatorContent>
 				
 				<!-- =============================================================================================== -->
+				<!-- Merchants Tab -->
+				
+				<s:NavigatorContent label="Marchands">
+					<s:HGroup width="100%" horizontalAlign="center">
+						<s:VGroup horizontalAlign="center">
+							<s:Button label="New Merchants" click="newMerchants()"/>
+							<s:Scroller height="200">
+								<s:Group>
+									<s:List id="merchantsList"
+											itemRenderer="com.uralys.renderers.MerchantListRenderer"
+											dataProvider="{city.merchants}"
+											borderVisible="false"
+											width="275"
+											contentBackgroundAlpha="0"
+											creationComplete="initMerchantsList()">
+										<s:layout>
+											<s:VerticalLayout gap="1" useVirtualLayout="true" />
+										</s:layout>
+									</s:List>
+								</s:Group>
+							</s:Scroller>
+						</s:VGroup>
+						<mx:Grid verticalGap="10" 
+								 horizontalGap="10" 
+								 horizontalAlign="center" 
+								 verticalAlign="middle"
+								 visible="{merchant != null}">
+							<mx:GridRow >
+								<mx:GridItem >
+									<s:Label text="People in this caravan" />
+								</mx:GridItem>
+								<mx:GridItem>
+									<s:TextInput text="{merchant.size}" 
+												 id="merchantInput"
+												 enter="merchantInputKeyUpHandler(event)"
+												 focusOut="merchantInputKeyUpHandler(event)"
+												 restrict="0-9"
+												 width="100"/>
+								</mx:GridItem>
+							</mx:GridRow>
+							<mx:GridRow>
+								<mx:GridItem colSpan="4">
+									<mx:HRule width="100%"/>
+								</mx:GridItem>
+							</mx:GridRow >
+							<mx:GridRow >
+								<mx:GridItem />
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="Transport" />
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="Stock available" />
+								</mx:GridItem>
+							</mx:GridRow>
+							<mx:GridRow >
+								<mx:GridItem horizontalAlign="center">
+									<mx:Image toolTip="Wheat" source="{ImageContainer.WHEAT}"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:TextInput text="{merchant.wheat}" 
+												 id="wheatMerchantInput"
+												 keyUp="wheatMerchantInputKeyUpHandler(event)"
+												 focusOut="wheatMerchantInputKeyUpHandler(event)"
+												 restrict="0-9"
+												 width="100"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="{city.wheat}" />
+								</mx:GridItem>
+							</mx:GridRow>
+							<mx:GridRow >
+								<mx:GridItem horizontalAlign="center">
+									<mx:Image toolTip="Wood" source="{ImageContainer.WOOD}"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:TextInput text="{merchant.wood}" 
+												 id="woodMerchantInput"
+												 keyUp="woodMerchantInputKeyUpHandler(event)"
+												 focusOut="woodMerchantInputKeyUpHandler(event)"
+												 restrict="0-9"
+												 width="100"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="{city.wood}" />
+								</mx:GridItem>
+							</mx:GridRow>
+							<mx:GridRow >
+								<mx:GridItem horizontalAlign="center">
+									<mx:Image toolTip="Iron" source="{ImageContainer.IRON}"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:TextInput text="{merchant.iron}" 
+												 id="ironMerchantInput"
+												 keyUp="ironMerchantInputKeyUpHandler(event)"
+												 focusOut="ironMerchantInputKeyUpHandler(event)"
+												 restrict="0-9"
+												 width="100"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="{city.iron}" />
+								</mx:GridItem>
+							</mx:GridRow>
+							<mx:GridRow >
+								<mx:GridItem horizontalAlign="center">
+									<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:TextInput text="{merchant.gold}" 
+												 id="goldMerchantInput"
+												 keyUp="goldMerchantInputKeyUpHandler(event)"
+												 focusOut="goldMerchantInputKeyUpHandler(event)"
+												 restrict="0-9"
+												 width="100"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="{city.gold}" />
+								</mx:GridItem>
+							</mx:GridRow>
+							<mx:GridRow>
+								<mx:GridItem colSpan="4">
+									<mx:HRule width="100%"/>
+								</mx:GridItem>
+							</mx:GridRow >
+							<mx:GridRow>
+								<mx:GridItem/>
+								<mx:GridItem/>
+								<mx:GridItem/>
+								<mx:GridItem>
+									<s:Button label="Delete" click="deleteMerchant()"/>
+								</mx:GridItem>
+							</mx:GridRow >
+						</mx:Grid>
+					</s:HGroup>
+				</s:NavigatorContent>
+				
+				<!-- =============================================================================================== -->
 				<!-- Armies Tab -->
 				
-				<s:NavigatorContent label="Armies in the city">
+				<s:NavigatorContent label="Armees">
 					<s:HGroup width="100%" horizontalAlign="center">
 						<s:VGroup horizontalAlign="center">
 							<s:Button label="New Army" click="newArmy()"/>
@@ -891,7 +1297,7 @@
 											borderVisible="false"
 											width="275"
 											contentBackgroundAlpha="0"
-											creationComplete="init()">
+											creationComplete="initArmiesList()">
 										<s:layout>
 											<s:VerticalLayout gap="1" useVirtualLayout="true" />
 										</s:layout>

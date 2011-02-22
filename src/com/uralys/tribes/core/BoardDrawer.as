@@ -84,39 +84,7 @@ package com.uralys.tribes.core
 				// cities
 				
 				for each (var city:City in player.cities){
-					
-					//------------------------------------------------------------//
-					
-					if(Session.DRAW_DETAILS){
-						
-						var cityCircle:Ellipse;
-						cityCircle = new Ellipse();
-						cityCircle.width = city.radius*2;
-						cityCircle.height = city.radius*2;
-						cityCircle.x = city.x - cityCircle.width/2;
-						cityCircle.y = city.y - cityCircle.height/2;
-						
-						cityCircle.fill = new SolidColor(isOpponent ? Numbers.YELLOW : Numbers.BLUE);
-						
-						board.addElement(cityCircle);
-					}
-
-					//------------------------------------------------------------//
-
-					if(Session.DRAW_TEXTS){
-						var name:Label = new Label();
-						name.text = city.name;
-						name.x = city.x - city.radius - 20; 
-						name.y = city.y - city.radius - 20; 
-						
-						board.addElement(name);
-					}
-
-					//------------------------------------------------------------//
-					
-					if(Session.DRAW_IMAGES){
-						
-					}
+					drawCity(city, isOpponent);
 				}
 
 				//-----------------------------------------------------------------------------------------//
@@ -145,12 +113,43 @@ package com.uralys.tribes.core
 					//------------------------------------------------------------//
 
 					if(Session.DRAW_TEXTS){
-						var name:Label = new Label();
-						name.text = city.name;
-						name.x = city.x - city.radius - 20; 
-						name.y = city.y - city.radius - 20; 
+
+					}
+
+					//------------------------------------------------------------//
+					
+					if(Session.DRAW_IMAGES){
 						
-						board.addElement(name);
+					}
+				}
+
+				//-----------------------------------------------------------------------------------------//
+				// merchants
+
+				for each (var merchant:Army in player.merchants){
+					
+					//------------------------------------------------------------//
+					
+					if(Session.DRAW_DETAILS){
+						
+						// army
+						var merchantCircle:Ellipse;
+						merchantCircle = new Ellipse();
+						merchantCircle.width = merchant.radius*2;
+						merchantCircle.height = merchant.radius*2;
+						merchantCircle.x = merchant.x - merchantCircle.width/2;
+						merchantCircle.y = merchant.y - merchantCircle.height/2;
+						
+						merchantCircle.fill = new SolidColor(isOpponent ? Numbers.BLACK : Numbers.YELLOW);
+						merchant.armyCircle = merchantCircle;
+						
+						board.addElement(merchantCircle);
+					}
+
+					//------------------------------------------------------------//
+
+					if(Session.DRAW_TEXTS){
+
 					}
 
 					//------------------------------------------------------------//
@@ -190,19 +189,56 @@ package com.uralys.tribes.core
 
 		//==================================================================================================//
 
-		public function removeArmyFromBoard(army:Army):void{
-			try{
-				board.removeElement(army.lineTo);	
-				board.removeElement(army.ellipseTo);	
-				board.removeElement(army.tmpLandSquare);
-				board.removeElement(army.armyCircle);
-				board.redrawRequested = true;
-
-			}catch(e:Error){}
+		public function drawCity(city:City, isOpponent:Boolean):void{
+		
+			if(Session.DRAW_DETAILS){
+				var cityCircle:Ellipse;
+				cityCircle = new Ellipse();
+				cityCircle.width = city.radius*2;
+				cityCircle.height = city.radius*2;
+				cityCircle.x = city.x - cityCircle.width/2;
+				cityCircle.y = city.y - cityCircle.height/2;
+				
+				cityCircle.fill = new SolidColor(isOpponent ? Numbers.YELLOW : Numbers.BLUE);
+				
+				board.addElement(cityCircle);
+			}
+			
+			//------------------------------------------------------------//
+			
+			if(Session.DRAW_TEXTS){
+				var name:Label = new Label();
+				name.text = city.name;
+				name.x = city.x - city.radius - 20; 
+				name.y = city.y - city.radius - 20; 
+				
+				board.addElement(name);
+			}
+			
+			//------------------------------------------------------------//
+			
+			if(Session.DRAW_IMAGES){
+				
+			}
 		}
 
+		//==================================================================================================//
+
+		public function removeArmyFromBoard(army:Army):void{
+			try{
+				trace("wew");
+				if(army.armyCircle)board.removeElement(army.armyCircle);
+				if(army.lineTo)board.removeElement(army.lineTo);	
+				if(army.ellipseTo)board.removeElement(army.ellipseTo);	
+				if(army.tmpLandSquare)board.removeElement(army.tmpLandSquare);
+				board.redrawRequested = true;
+
+			}catch(e:Error){trace(e.message);}
+
+		}
+
+		// type 1 : armee, type 2 : merchant
 		public function refreshArmyOnBoard(army:Army):void{
-			
 			try{
 				board.removeElement(army.armyCircle);
 			}catch(e:Error){}
@@ -215,7 +251,7 @@ package com.uralys.tribes.core
 			armyCircle.x = army.x - armyCircle.width/2;
 			armyCircle.y = army.y - armyCircle.height/2;
 			
-			armyCircle.fill = new SolidColor(Numbers.WHITE);
+			armyCircle.fill = new SolidColor(army.type == 1 ? Numbers.WHITE : Numbers.YELLOW);
 			army.armyCircle = armyCircle;
 			
 			board.addElement(armyCircle);
@@ -227,8 +263,7 @@ package com.uralys.tribes.core
 		var selectedArmyCircle:Ellipse = new Ellipse();
 		public function drawArmySelection(army:Army):void{
 			
-			if(Session.CURRENT_SELECTION_IS_ARMY)
-				return;
+			removeArmySelection();
 			
 			Session.CURRENT_SELECTION_IS_ARMY = true;
 			
@@ -238,7 +273,7 @@ package com.uralys.tribes.core
 			selectedArmyCircle.x = army.x - selectedArmyCircle.width/2;
 			selectedArmyCircle.y = army.y - selectedArmyCircle.height/2;
 			
-			selectedArmyCircle.stroke = new SolidColorStroke(Numbers.WHITE);
+			selectedArmyCircle.stroke = new SolidColorStroke(army.type == 1 ? Numbers.WHITE : Numbers.YELLOW);
 			
 			board.addElement(selectedArmyCircle);
 		}
@@ -255,6 +290,9 @@ package com.uralys.tribes.core
 
 		// verifie si la case est accessible pour etre rajoutee aux contrees
 		public function testLand(armyMoved:Army):void{
+			
+			if(armyMoved.type == 2)
+				return;
 			
 			var boardX:int = armyMoved.lineTo.xTo;
 			var boardY:int = armyMoved.lineTo.yTo;

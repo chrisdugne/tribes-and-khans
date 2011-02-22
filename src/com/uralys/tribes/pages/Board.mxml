@@ -76,6 +76,8 @@
 				
 				selectionChoiceGroup.visible = false;
 				selectionChoiceGroup.includeInLayout = false;
+				merchantChoiceGroup.visible = false;
+				merchantChoiceGroup.includeInLayout = false;
 				
 			}
 			
@@ -89,42 +91,42 @@
 				if(Session.CURRENT_SELECTION_IS_ARMY){
 					Mouse.hide();
 
-					if(!selectedArmy.ellipseToIsDrawn){
-						selectedArmy.ellipseTo = new Ellipse();
-						selectedArmy.ellipseTo.width = selectedArmy.radius*2;
-						selectedArmy.ellipseTo.height = selectedArmy.radius*2;
-						selectedArmy.ellipseTo.fill = new SolidColor(Numbers.WHITE, 0.5);
+					if(!selectedUnit.ellipseToIsDrawn){
+						selectedUnit.ellipseTo = new Ellipse();
+						selectedUnit.ellipseTo.width = selectedUnit.radius*2;
+						selectedUnit.ellipseTo.height = selectedUnit.radius*2;
+						selectedUnit.ellipseTo.fill = new SolidColor(selectedUnit.type == 1 ? Numbers.WHITE : Numbers.YELLOW, 0.5);
 						
-						board.addElement(selectedArmy.ellipseTo);
-						selectedArmy.ellipseToIsDrawn = true;
+						board.addElement(selectedUnit.ellipseTo);
+						selectedUnit.ellipseToIsDrawn = true;
 					}
 
-					if(!selectedArmy.lineToIsDrawn){
-						selectedArmy.lineTo = new Line();
-						selectedArmy.lineTo.xFrom = selectedArmy.x;
-						selectedArmy.lineTo.yFrom = selectedArmy.y;
-						selectedArmy.lineTo.stroke = radialGrad;
+					if(!selectedUnit.lineToIsDrawn){
+						selectedUnit.lineTo = new Line();
+						selectedUnit.lineTo.xFrom = selectedUnit.x;
+						selectedUnit.lineTo.yFrom = selectedUnit.y;
+						selectedUnit.lineTo.stroke = radialGrad;
 						
-						board.addElement(selectedArmy.lineTo);
-						selectedArmy.lineToIsDrawn = true;
+						board.addElement(selectedUnit.lineTo);
+						selectedUnit.lineToIsDrawn = true;
 					}
 					
-					selectedArmy.ellipseTo.x = coordinateX - selectedArmy.ellipseTo.width/2;
-					selectedArmy.ellipseTo.y = coordinateY - selectedArmy.ellipseTo.height/2;
-					selectedArmy.lineTo.xTo = coordinateX;
-					selectedArmy.lineTo.yTo = coordinateY;
+					selectedUnit.ellipseTo.x = coordinateX - selectedUnit.ellipseTo.width/2;
+					selectedUnit.ellipseTo.y = coordinateY - selectedUnit.ellipseTo.height/2;
+					selectedUnit.lineTo.xTo = coordinateX;
+					selectedUnit.lineTo.yTo = coordinateY;
 					
-					var hyp:Number = Math.sqrt(Math.pow(selectedArmy.lineTo.xFrom - coordinateX,2) + Math.pow(selectedArmy.lineTo.yFrom - coordinateY,2));
+					var hyp:Number = Math.sqrt(Math.pow(selectedUnit.lineTo.xFrom - coordinateX,2) + Math.pow(selectedUnit.lineTo.yFrom - coordinateY,2));
 					
-					if(hyp > selectedArmy.speed){
+					if(hyp > selectedUnit.speed){
 						Mouse.show();
-						selectedArmy.lineTo.xTo = selectedArmy.lineTo.xFrom - (selectedArmy.speed * (selectedArmy.lineTo.xFrom - coordinateX)/hyp);
-						selectedArmy.lineTo.yTo = selectedArmy.lineTo.yFrom - (selectedArmy.speed * (selectedArmy.lineTo.yFrom - coordinateY)/hyp);
-						selectedArmy.ellipseTo.x = selectedArmy.lineTo.xTo - selectedArmy.ellipseTo.width/2;
-						selectedArmy.ellipseTo.y = selectedArmy.lineTo.yTo - selectedArmy.ellipseTo.height/2;
+						selectedUnit.lineTo.xTo = selectedUnit.lineTo.xFrom - (selectedUnit.speed * (selectedUnit.lineTo.xFrom - coordinateX)/hyp);
+						selectedUnit.lineTo.yTo = selectedUnit.lineTo.yFrom - (selectedUnit.speed * (selectedUnit.lineTo.yFrom - coordinateY)/hyp);
+						selectedUnit.ellipseTo.x = selectedUnit.lineTo.xTo - selectedUnit.ellipseTo.width/2;
+						selectedUnit.ellipseTo.y = selectedUnit.lineTo.yTo - selectedUnit.ellipseTo.height/2;
 					}
 					
-					BoardDrawer.getInstance().testLand(selectedArmy);
+					BoardDrawer.getInstance().testLand(selectedUnit);
 					
 				}
 				else if(isDragging){
@@ -148,8 +150,8 @@
 				if(autoMoveNotNeeded){
 					if(Session.CURRENT_SELECTION_IS_ARMY){
 						BoardDrawer.getInstance().removeArmySelection();
-						selectedArmy.moves = new ArrayCollection();
-						selectedArmy.moves.addItem(new com.uralys.tribes.entities.Move());
+						selectedUnit.moves = new ArrayCollection();
+						selectedUnit.moves.addItem(new com.uralys.tribes.entities.Move());
 						
 						var clickX:int = event.localX;
 						var clickY:int = event.localY;
@@ -167,20 +169,19 @@
 								break;
 						}
 						
-						selectedArmy.moves.getItemAt(0).xFrom = selectedArmy.x;
-						selectedArmy.moves.getItemAt(0).yFrom = selectedArmy.y;
+						selectedUnit.moves.getItemAt(0).xFrom = selectedUnit.x;
+						selectedUnit.moves.getItemAt(0).yFrom = selectedUnit.y;
 						if(cityEntered){
-							selectedArmy.moves.getItemAt(0).xTo = cityEntered.x;
-							selectedArmy.moves.getItemAt(0).yTo = cityEntered.y;
-							selectedArmy.lineTo.xTo = cityEntered.x;
-							selectedArmy.lineTo.yTo = cityEntered.y;
-							selectedArmy.ellipseTo.x = cityEntered.x - selectedArmy.ellipseTo.width/2;
-							selectedArmy.ellipseTo.y = cityEntered.y - selectedArmy.ellipseTo.height/2;
-							trace("cityEntered : " + selectedArmy.moves.getItemAt(0).xTo + "," + selectedArmy.moves.getItemAt(0).yTo);
+							selectedUnit.moves.getItemAt(0).xTo = cityEntered.x;
+							selectedUnit.moves.getItemAt(0).yTo = cityEntered.y;
+							selectedUnit.lineTo.xTo = cityEntered.x;
+							selectedUnit.lineTo.yTo = cityEntered.y;
+							selectedUnit.ellipseTo.x = cityEntered.x - selectedUnit.ellipseTo.width/2;
+							selectedUnit.ellipseTo.y = cityEntered.y - selectedUnit.ellipseTo.height/2;
 						}
 						else{
-							selectedArmy.moves.getItemAt(0).xTo = selectedArmy.lineTo.xTo;
-							selectedArmy.moves.getItemAt(0).yTo = selectedArmy.lineTo.yTo;
+							selectedUnit.moves.getItemAt(0).xTo = selectedUnit.lineTo.xTo;
+							selectedUnit.moves.getItemAt(0).yTo = selectedUnit.lineTo.yTo;
 						}
 					}
 					else
@@ -221,12 +222,34 @@
 			private var game:Game;
 
 			[Bindable] private var selectedCity:City;
-			[Bindable] private var selectedArmy:Army;
+			[Bindable] private var selectedUnit:Army;
 			
 			private var moveGradient:Array;
 			private var radialGrad:RadialGradientStroke;
 
 			//-----------------------------------------------------------//
+			
+			protected function initArmiesList():void{
+				armiesList.addEventListener(ItemClickEvent.ITEM_CLICK, onArmyClick);
+			}
+			
+			protected function initMerchantsList():void{
+				merchantsList.addEventListener(ItemClickEvent.ITEM_CLICK, onArmyClick);
+			}
+			
+			protected function initCitiesList():void{
+				citiesList.addEventListener(ItemClickEvent.ITEM_CLICK, onCityClick);
+			}
+			
+			protected function initSelectionChoiceArmyList():void{
+				selectionChoiceArmyList.addEventListener(ItemClickEvent.ITEM_CLICK, onArmyClick);
+			}
+			
+			protected function initSelectionChoiceMerchantList():void{
+				selectionChoiceMerchantList.addEventListener(ItemClickEvent.ITEM_CLICK, onArmyClick);
+			}
+
+			//----------------------------------------------------------//
 
 			private var initDone:Boolean = false;
 			protected function init():void{
@@ -239,9 +262,6 @@
 				timer = new Timer(41,1);
 				timer.addEventListener(TimerEvent.TIMER_COMPLETE, moveStoppedDuringDragging);
 
-				citiesList.addEventListener(ItemClickEvent.ITEM_CLICK, onCityClick);
-				armiesList.addEventListener(ItemClickEvent.ITEM_CLICK, onArmyClick);
-				selectionChoiceArmyList.addEventListener(ItemClickEvent.ITEM_CLICK, onArmyClick);
 				
 				limitLeft = 500-image.width;
 				limitUp = 500-image.height;
@@ -272,10 +292,13 @@
 				
 				selectionChoiceGroup.includeInLayout = false;
 				selectionChoiceGroup.visible = false;
+				merchantChoiceGroup.includeInLayout = false;
+				merchantChoiceGroup.visible = false;
 				
-				selectedArmy = event.currentTarget.selectedItem;
+				selectedUnit = event.currentTarget.selectedItem;
 				BoardDrawer.getInstance().drawArmySelection(event.currentTarget.selectedItem);
 			}
+			
 
 			//-----------------------------------------------------------//
 			
@@ -284,13 +307,15 @@
 			// args[0] game
 			public function set params(args:Array):void{
 				game = args[0];
-				
 				for each (var playerOfProfil:Player in Session.profil.players){
 					if(playerOfProfil.gameUID == game.gameUID){
 						Session.currentPlayer = playerOfProfil;
 						this.selectedCity = Session.currentPlayer.cities.getItemAt(0) as City;
 						
-						FlexGlobals.topLevelApplication.showReports(Session.currentPlayer.reports.getItemAt(0).report);
+						try{
+							FlexGlobals.topLevelApplication.showReports(Session.currentPlayer.reports.getItemAt(0).report);	
+						}
+						catch(error:Error){}
 
 						break;
 					}
@@ -305,6 +330,8 @@
 					army.moves.getItemAt(0).yFrom = army.y;
 					army.moves.getItemAt(0).xTo = army.x;
 					army.moves.getItemAt(0).yTo = army.y;
+					
+					army.type = 1;
 					
 					for each(var city:City in Session.currentPlayer.cities){
 						if(army.x == city.x && army.y == city.y){
@@ -329,7 +356,27 @@
 					}
 				}
 
-			};
+				for each(var merchant:Army in Session.currentPlayer.merchants){
+					
+					merchant.moves = new ArrayCollection();
+					merchant.moves.addItem(new com.uralys.tribes.entities.Move());
+				
+					merchant.moves.getItemAt(0).xFrom = merchant.x;
+					merchant.moves.getItemAt(0).yFrom = merchant.y;
+					merchant.moves.getItemAt(0).xTo = merchant.x;
+					merchant.moves.getItemAt(0).yTo = merchant.y;
+					merchant.type = 2;
+					
+					for each(var city:City in Session.currentPlayer.cities){
+						if(merchant.x == city.x && merchant.y == city.y){
+							city.merchants.addItem(merchant);
+							city.armiesToFeed += merchant.size;
+							break;
+						}
+					}
+				}
+
+			}
 
 			//-----------------------------------------------------------//
 			
@@ -371,28 +418,59 @@
 				selectionChoiceGroup.includeInLayout = false;
 				selectionChoiceGroup.visible = false;
 				
-				selectedArmy = army;
+				selectedUnit = army;
 				BoardDrawer.getInstance().drawArmySelection(army);
 			}
 			
+			public function appearMerchantChoice(merchant:Army):void{
+				clickOnArmy(merchant);
+				
+				merchantChoiceGroup.x = image.x + merchant.x+7;
+				merchantChoiceGroup.y = image.y + merchant.y+7;
+				
+				merchantChoiceGroup.includeInLayout = true;
+				merchantChoiceGroup.visible = true;
+			}
+
 			public function appearSelectionChoice(city:City):void{
-				trace("appearSelectionChoice");
 				selectedCity = city;
 				
-				selectionChoiceArmyList.dataProvider = city.armies;
-				selectionChoiceGroup.includeInLayout = true;
-				selectionChoiceGroup.visible = true;
 				selectionChoiceGroup.x = image.x + city.x+20;
 				selectionChoiceGroup.y = image.y + city.y+20;
 				
+				selectionChoiceGroup.includeInLayout = true;
+				selectionChoiceGroup.visible = true;
 			}
 			
 			private function enterCity(event:MouseEvent):void{
-				trace("enterCity");
 				goLeft.play();
 				appearCity.play();
 			}
 			
+			private function buildCity():void{
+				
+				var city:City = new City();
+				city.cityUID = "new";
+				city.name = "Ville en construction";
+				city.gold = selectedUnit.gold;
+				city.wheat = selectedUnit.wheat;
+				city.wood = selectedUnit.wood - 3000;
+				city.iron = selectedUnit.iron - 1000;
+				city.population = selectedUnit.size;
+				
+				city.x = selectedUnit.x;
+				city.y = selectedUnit.y;
+				
+				Session.currentPlayer.merchants.removeItemAt(Session.currentPlayer.merchants.getItemIndex(selectedUnit));
+				BoardDrawer.getInstance().removeArmyFromBoard(selectedUnit);
+				BoardDrawer.getInstance().drawCity(city, false);
+				
+				Session.currentPlayer.cities.addItem(city);
+				
+				merchantChoiceGroup.visible = false;
+				merchantChoiceGroup.includeInLayout = false;
+			}
+
 			//-----------------------------------------------------------//
 
 			private function messageUnemployed():void{
@@ -511,6 +589,16 @@
 					army.lineTo = null;
 					army.tmpLandSquare = null;
 				}
+				
+				for each(var merchant:Army in Session.currentPlayer.merchants){
+					
+					// on ne passe pas les info graphiques par BlazesDS : inutile et surtout ca casse tout (objets enormes passes en AMF, ce qui casse le transfert)
+					merchant.armyCircle = null;
+					merchant.ellipseTo = null;
+					merchant.lineTo = null;
+					merchant.tmpLandSquare = null;
+				}
+				
 				//------------------------------------------------------------------//
 				
 				Session.currentPlayer.lastTurnPlayed ++;
@@ -607,23 +695,7 @@
 							borderVisible="false"
 							width="275"
 							contentBackgroundAlpha="0"
-							creationComplete="init()">
-						<s:layout>
-							<s:VerticalLayout gap="1" useVirtualLayout="true" />
-						</s:layout>
-					</s:List>
-				</s:Group>
-			</s:Scroller>
-			<s:Label text="Armees"/>
-			<s:Scroller height="200">
-				<s:Group>
-					<s:List id="armiesList"
-							itemRenderer="com.uralys.renderers.ArmyListRenderer4Board"
-							dataProvider="{Session.currentPlayer.armies}"
-							borderVisible="false"
-							width="275"
-							contentBackgroundAlpha="0"
-							creationComplete="init()">
+							creationComplete="initCitiesList()">
 						<s:layout>
 							<s:VerticalLayout gap="1" useVirtualLayout="true" />
 						</s:layout>
@@ -631,6 +703,57 @@
 				</s:Group>
 			</s:Scroller>
 		</s:VGroup>
+		
+		<!-- =============================================================================================== -->
+		<!-- Units Tab -->
+
+		<s:TabBar id="tabs" dataProvider="{viewstack}" skinClass="spark.skins.spark.TabBarSkin"
+				  top="70" right="35"/>
+		
+		<mx:ViewStack id="viewstack" width="200" top="100" right="35">
+			
+			<s:NavigatorContent label="Armees">
+				<s:VGroup horizontalAlign="right">
+					<s:Scroller height="200">
+						<s:Group>
+							<s:List id="armiesList"
+									itemRenderer="com.uralys.renderers.ArmyListRenderer4Board"
+									dataProvider="{Session.currentPlayer.armies}"
+									borderVisible="false"
+									width="275"
+									contentBackgroundAlpha="0"
+									creationComplete="initArmiesList()">
+								<s:layout>
+									<s:VerticalLayout gap="1" useVirtualLayout="true" />
+								</s:layout>
+							</s:List>
+						</s:Group>
+					</s:Scroller>
+				</s:VGroup>
+			</s:NavigatorContent>
+			<s:NavigatorContent label="Marchands">
+				<s:VGroup horizontalAlign="right">
+					<s:Scroller height="200">
+						<s:Group>
+							<s:List id="merchantsList"
+									itemRenderer="com.uralys.renderers.MerchantListRenderer4Board"
+									dataProvider="{Session.currentPlayer.merchants}"
+									borderVisible="false"
+									width="275"
+									contentBackgroundAlpha="0"
+									creationComplete="initMerchantsList()">
+								<s:layout>
+									<s:VerticalLayout gap="1" useVirtualLayout="true" />
+								</s:layout>
+							</s:List>
+						</s:Group>
+					</s:Scroller>
+				</s:VGroup>
+			</s:NavigatorContent>
+		</mx:ViewStack>
+
+		<!-- =============================================================================================== -->
+		
 		<s:HGroup width="100%" horizontalAlign="center" paddingTop="5">
 			<s:Label text="X : {coordinateX}"/>
 			<mx:Spacer width="200"/>
@@ -672,23 +795,65 @@
 				<s:Group width="500" height="500"
 						 clipAndEnableScrolling="true">
 					
+					<s:VGroup id="merchantChoiceGroup" 
+							  includeInLayout="false">
+						<s:Button label="Build a city here" click="buildCity()"/>
+					</s:VGroup>
+						
 					<s:VGroup id="selectionChoiceGroup" 
 							  includeInLayout="false">
 						<s:Button label="Enter city" click="enterCity(event)"/>
-						<s:Scroller height="200">
-							<s:Group>
-								<s:List id="selectionChoiceArmyList"
-										contentBackgroundAlpha="0"
-										itemRenderer="com.uralys.renderers.ArmyListRenderer4Board"
-										borderVisible="false"
-										width="275"
-										creationComplete="init()">
-									<s:layout>
-										<s:VerticalLayout gap="1" useVirtualLayout="true" />
-									</s:layout>
-								</s:List>
-							</s:Group>
-						</s:Scroller>
+						
+						<!-- =============================================================================================== -->
+						<!-- Units Tab -->
+						
+						<s:TabBar id="tabsSelectionGroup" dataProvider="{viewstackSelectionGroup}" skinClass="spark.skins.spark.TabBarSkin"
+								  top="70" right="35"/>
+						
+						<mx:ViewStack id="viewstackSelectionGroup" width="170" top="100" right="35">
+							
+							<s:NavigatorContent label="Armees">
+								<s:VGroup horizontalAlign="right">
+									<s:Scroller maxHeight="200">
+										<s:Group>
+											<s:List id="selectionChoiceArmyList"
+													itemRenderer="com.uralys.renderers.ArmyListRenderer4Board"
+													dataProvider="{selectedCity.armies}"
+													borderVisible="false"
+													width="275"
+													contentBackgroundAlpha="0"
+													creationComplete="initSelectionChoiceArmyList()">
+												<s:layout>
+													<s:VerticalLayout gap="1" useVirtualLayout="true" />
+												</s:layout>
+											</s:List>
+										</s:Group>
+									</s:Scroller>
+								</s:VGroup>
+							</s:NavigatorContent>
+							<s:NavigatorContent label="Marchands">
+								<s:VGroup horizontalAlign="right">
+									<s:Scroller maxHeight="200">
+										<s:Group>
+											<s:List id="selectionChoiceMerchantList"
+													itemRenderer="com.uralys.renderers.MerchantListRenderer4Board"
+													dataProvider="{selectedCity.merchants}"
+													borderVisible="false"
+													width="275"
+													contentBackgroundAlpha="0"
+													creationComplete="initSelectionChoiceMerchantList()">
+												<s:layout>
+													<s:VerticalLayout gap="1" useVirtualLayout="true" />
+												</s:layout>
+											</s:List>
+										</s:Group>
+									</s:Scroller>
+								</s:VGroup>
+							</s:NavigatorContent>
+						</mx:ViewStack>
+						
+						<!-- =============================================================================================== -->
+						
 					</s:VGroup>
 				</s:Group>
 			</s:HGroup>

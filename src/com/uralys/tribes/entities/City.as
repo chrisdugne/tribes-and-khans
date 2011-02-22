@@ -64,6 +64,14 @@ package com.uralys.tribes.entities
 		public function set iron(o:int):void {
 			_iron = o;
 		}
+
+		public function get gold():int {
+			return _gold;
+		}
+	
+		public function set gold(o:int):void {
+			_gold = o;
+		}
 	
 		public function get peopleCreatingWheat():int {
 			return _peopleCreatingWheat;
@@ -135,6 +143,7 @@ package com.uralys.tribes.entities
 		protected var _wheat:int;
 		protected var _wood:int;
 		protected var _iron:int;
+		protected var _gold:int;
 		protected var _peopleCreatingWheat:int;
 		protected var _peopleCreatingWood:int;
 		protected var _peopleCreatingIron:int;
@@ -149,6 +158,7 @@ package com.uralys.tribes.entities
 		// 	only on flex side
 		//===============================================================================================//
 		
+		public var merchants:ArrayCollection = new ArrayCollection();
 		public var armies:ArrayCollection = new ArrayCollection();
 		protected var _unemployed:int;
 		protected var _armiesToFeed:int;

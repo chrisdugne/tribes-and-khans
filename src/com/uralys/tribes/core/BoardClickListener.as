@@ -44,11 +44,15 @@ package com.uralys.tribes.core
 			
 			for each(var city:City in Session.currentPlayer.cities){
 				if(Math.sqrt(Math.pow(clickX - city.x,2) + Math.pow(clickY - city.y,2)) <= city.radius) {
-					trace("plop " + city.armies.length);
-					if(city.armies.length > 0)
+					if(city.cityUID == "new")
+						return;
+					
+					if(city.merchants.length + city.armies.length > 0)
 						boardPage.appearSelectionChoice(city);
 					else
 						boardPage.clickOnCity(city);
+					
+					return;
 				}
 			}
 
@@ -56,12 +60,32 @@ package com.uralys.tribes.core
 				// click on army
 				if(Math.sqrt(Math.pow(clickX - army.x,2) + Math.pow(clickY - army.y,2)) <= army.radius) {
 					boardPage.clickOnArmy(army);
+					return;
 				}
 				
 				// click on army move
 				else if(army.moves.length>0 && Math.sqrt(Math.pow(clickX - army.moves.getItemAt(0).xTo,2) + Math.pow(clickY - army.moves.getItemAt(0).yTo,2)) <= army.radius) {
 					boardPage.clickOnArmy(army);
+					return;
 				}
+			}
+
+			for each(var merchant:Army in Session.currentPlayer.merchants){
+				// click on caravan
+				if(Math.sqrt(Math.pow(clickX - merchant.x,2) + Math.pow(clickY - merchant.y,2)) <= merchant.radius) {
+					if(merchant.mayBuildAcity())
+						boardPage.appearMerchantChoice(merchant);
+					else
+						boardPage.clickOnArmy(merchant);
+					return;
+				}
+				
+				// click on army move
+				else if(merchant.moves.length>0 && Math.sqrt(Math.pow(clickX - merchant.moves.getItemAt(0).xTo,2) + Math.pow(clickY - merchant.moves.getItemAt(0).yTo,2)) <= merchant.radius) {
+					boardPage.clickOnArmy(merchant);
+					return;
+				}
+				
 			}
 		}
 

@@ -128,7 +128,6 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		playerDTO.setGameName(gameName);
 		playerDTO.setName(playerName);
 		playerDTO.setLastTurnPlayed(0);
-		playerDTO.setGold(100);
 		playerDTO.setReportUIDs(new ArrayList<String>());
 		
 		persist(playerDTO);
@@ -175,7 +174,6 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		playerDTO.setGameUID(gameUID);
 		playerDTO.setGameName(game.getName());
 		playerDTO.setName(playerName);
-		playerDTO.setGold(100);
 		
 		persist(playerDTO);
 		
@@ -224,57 +222,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		
 		//-----------------------------------------------------------------------------------//
 		for (String playerUID : game.getPlayerUIDs()){
-			PlayerDTO player = pm.getObjectById(PlayerDTO.class, playerUID);
-			
-			CityDTO city = new CityDTO();
-
-			String cityUID = Utils.generateUID();
-
-			Key key = KeyFactory.createKey(CityDTO.class.getSimpleName(), cityUID);
-
-			city.setKey(KeyFactory.keyToString(key));
-			city.setCityUID(cityUID);
-			city.setName("Ville de " + player.getName());
-			city.setPopulation(1000);
-			city.setWheat(400);
-			city.setWood(200);
-			city.setIron(200);
-			city.setPeopleCreatingWheat(0);
-			city.setPeopleCreatingWood(0);
-			city.setPeopleCreatingIron(0);
-
-			city.setX(Utils.random(2400) + 300);
-			city.setY(Utils.random(2400) + 300);
-			
-			//--------------------------------------//
-			// init Equipment
-			
-			String bowsStockUID = createEquipment(ITEM_UID_BOW, 0);
-			String swordsStockUID = createEquipment(ITEM_UID_SWORD, 0);
-			String armorsStockUID = createEquipment(ITEM_UID_ARMOR, 0);
-			
-			city.getEquipmentStockUIDs().add(bowsStockUID);
-			city.getEquipmentStockUIDs().add(swordsStockUID);
-			city.getEquipmentStockUIDs().add(armorsStockUID);
-			
-			//--------------------------------------//
-			// init Smith 
-			
-			String bowWorkersUID = createSmith(ITEM_UID_BOW);
-			String swordWorkersUID = createSmith(ITEM_UID_SWORD);
-			String armorWorkersUID = createSmith(ITEM_UID_ARMOR);
-			
-			city.getSmithUIDs().add(bowWorkersUID);
-			city.getSmithUIDs().add(swordWorkersUID);
-			city.getSmithUIDs().add(armorWorkersUID);
-
-			//--------------------------------------//
-			
-			pm.makePersistent(city);
-			
-			player.setLastTurnPlayed(0);
-			player.getCityUIDs().add(cityUID);
-			
+			createCity(null, playerUID, pm);
 		}
 		
 		//-----------------------------------------------------------------------------------//
@@ -284,6 +232,62 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		return true;
 	}
 
+
+	private void createCity(City cityFromFlex, String playerUID, PersistenceManager pm) {
+		PlayerDTO player = pm.getObjectById(PlayerDTO.class, playerUID);
+		
+		CityDTO city = new CityDTO();
+
+		String cityUID = Utils.generateUID();
+
+		Key key = KeyFactory.createKey(CityDTO.class.getSimpleName(), cityUID);
+
+		city.setKey(KeyFactory.keyToString(key));
+		city.setCityUID(cityUID);
+		city.setName(cityFromFlex == null ? "Ville de " + player.getName() : "Nouvelle Ville");
+		city.setPopulation(cityFromFlex == null ? 1000 : cityFromFlex.getPopulation());
+		city.setWheat(cityFromFlex == null ? 400 : cityFromFlex.getWheat());
+		city.setWood(cityFromFlex == null ? 200 : cityFromFlex.getWood());
+		city.setIron(cityFromFlex == null ? 200 : cityFromFlex.getIron());
+		city.setGold(cityFromFlex == null ? 100 : cityFromFlex.getGold());
+		city.setPeopleCreatingWheat(0);
+		city.setPeopleCreatingWood(0);
+		city.setPeopleCreatingIron(0);
+
+		city.setX(cityFromFlex == null ? Utils.random(2400) + 300 : cityFromFlex.getX());
+		city.setY(cityFromFlex == null ? Utils.random(2400) + 300 : cityFromFlex.getY());
+		
+		//--------------------------------------//
+		// init Equipment
+		
+		String bowsStockUID = createEquipment(ITEM_UID_BOW, 0);
+		String swordsStockUID = createEquipment(ITEM_UID_SWORD, 0);
+		String armorsStockUID = createEquipment(ITEM_UID_ARMOR, 0);
+		
+		city.getEquipmentStockUIDs().add(bowsStockUID);
+		city.getEquipmentStockUIDs().add(swordsStockUID);
+		city.getEquipmentStockUIDs().add(armorsStockUID);
+		
+		//--------------------------------------//
+		// init Smith 
+		
+		String bowWorkersUID = createSmith(ITEM_UID_BOW);
+		String swordWorkersUID = createSmith(ITEM_UID_SWORD);
+		String armorWorkersUID = createSmith(ITEM_UID_ARMOR);
+		
+		city.getSmithUIDs().add(bowWorkersUID);
+		city.getSmithUIDs().add(swordWorkersUID);
+		city.getSmithUIDs().add(armorWorkersUID);
+
+		//--------------------------------------//
+		
+		pm.makePersistent(city);
+		
+		if(cityFromFlex == null)
+			player.setLastTurnPlayed(0);
+		
+		player.getCityUIDs().add(cityUID);
+	}
 
 	//==================================================================================================//
 	
@@ -385,6 +389,11 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	
 	//==================================================================================================//
 
+	public void createCity(City city, String playerUID){
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		createCity(city, playerUID, pm);
+		pm.close();
+	}
 
 	public String createArmy(Army army){
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
@@ -399,6 +408,10 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		armyDTO.setSpeed(army.getSpeed());
 		armyDTO.setX(army.getX());
 		armyDTO.setY(army.getY());
+		armyDTO.setWheat(army.getWheat());
+		armyDTO.setWood(army.getWood());
+		armyDTO.setIron(army.getIron());
+		armyDTO.setGold(army.getGold());
 		if(army.getMoves().size() > 0)
 			armyDTO.getMoveUIDs().add(army.getMoves().get(0).getMoveUID());
 		
@@ -429,7 +442,6 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		return armyUID;
 	}
 
-	
 	public List<String> linkNewArmiesAndGetPreviousArmyUIDs(String playerUID, List<String> newArmyUIDs){
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		PlayerDTO playerDTO = pm.getObjectById(PlayerDTO.class, playerUID);
@@ -445,6 +457,21 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		return previousUIDList;
 	}
 
+	public List<String> linkNewMerchantsAndGetPreviousMerchantUIDs(String playerUID, List<String> newMerchantUIDs){
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		PlayerDTO playerDTO = pm.getObjectById(PlayerDTO.class, playerUID);
+		
+		List<String> previousUIDList = new ArrayList<String>();
+		for(String merchantUID : playerDTO.getMerchantUIDs()){
+			previousUIDList.add(merchantUID);
+		}
+		
+		playerDTO.getMerchantUIDs().addAll(newMerchantUIDs);
+		pm.close();
+		
+		return previousUIDList;
+	}
+
 	
 	public void updateArmy(Army army){
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
@@ -455,29 +482,43 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		if(army.getMoves().size() > 0)
 			armyDTO.getMoveUIDs().add(army.getMoves().get(0).getMoveUID());
 		
+		armyDTO.setWheat(army.getWheat());
+		armyDTO.setWood(army.getWood());
+		armyDTO.setIron(army.getIron());
+		armyDTO.setGold(army.getGold());
+
 		pm.close();
 		
 		for(Equipment equipment : army.getEquipments()){
 			updateStock(equipment.getEquimentUID(), equipment.getSize());
 		}
+		
 	}
 	
 	
 	@SuppressWarnings("unchecked")
-	public void deleteArmies(List<String> toDeleteArmyUIDs){
+	public void deleteArmies(List<String> toDeleteArmyUIDs, String playerUID){
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		PlayerDTO playerDTO = pm.getObjectById(PlayerDTO.class, playerUID);
+
+		playerDTO.getArmyUIDs().removeAll(toDeleteArmyUIDs);
+		playerDTO.getMerchantUIDs().removeAll(toDeleteArmyUIDs);
 
 		for(String armyUID : toDeleteArmyUIDs){
 			if(debug)System.out.println("delete army : " + armyUID);
 			ArmyDTO armyDTO = pm.getObjectById(ArmyDTO.class, armyUID);
 			
-			Query query = pm.newQuery("select from " + EquipmentDTO.class.getName() + " where :uids.contains(key)");
-			List<EquipmentDTO> equipments = (List<EquipmentDTO>) query.execute(armyDTO.getEquipmentUIDs());
-
-			for(EquipmentDTO equipmentDTO : equipments){
-				if(debug)System.out.println("delete equipmentDTO : " + equipmentDTO.getEquimentUID());
-				pm.deletePersistent(equipmentDTO);
+			// pas le cas pour les marchants
+			if(armyDTO.getEquipmentUIDs().size() > 0){
+				Query query = pm.newQuery("select from " + EquipmentDTO.class.getName() + " where :uids.contains(key)");
+				List<EquipmentDTO> equipments = (List<EquipmentDTO>) query.execute(armyDTO.getEquipmentUIDs());
+				
+				for(EquipmentDTO equipmentDTO : equipments){
+					if(debug)System.out.println("delete equipmentDTO : " + equipmentDTO.getEquimentUID());
+					pm.deletePersistent(equipmentDTO);
+				}
 			}
+
 			
 			pm.deletePersistent(armyDTO);
 		}
@@ -571,6 +612,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		Map<ArmyDTO, String> armyInfoMoveMap = new HashMap<ArmyDTO, String>();
 		Map<MoveDTO, PlayerDTO> movePlayerMap = new HashMap<MoveDTO, PlayerDTO>();
 		Map<String, PlayerDTO> cityPlayerMap = new HashMap<String, PlayerDTO>();
+		Map<PlayerDTO, CityDTO> playerCapitalMap = new HashMap<PlayerDTO, CityDTO>();
 		Map<String, Integer> cityXMap = new HashMap<String, Integer>();
 		Map<String, Integer> cityYMap = new HashMap<String, Integer>();
 		Map<ArmyDTO, CityDTO> armyCityMap = new HashMap<ArmyDTO, CityDTO>();
@@ -585,17 +627,25 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			if(debug)System.out.println("player " + player.getName());
 			landsMap.put(player, new ArrayList<Integer>());
 
-			Query query = pm.newQuery("select from " + ArmyDTO.class.getName() + " where :uids.contains(key)");
+			//-----------------------------------------//
+
+			ArrayList<String> allUnitUIDs = new ArrayList<String>();
 			
+			allUnitUIDs.addAll(player.getArmyUIDs());
+			allUnitUIDs.addAll(player.getMerchantUIDs());
+			
+			Query query = pm.newQuery("select from " + ArmyDTO.class.getName() + " where :uids.contains(key)");
 			List<ArmyDTO> armies;
 			if(player.getArmyUIDs().size() > 0){
-				armies = (List<ArmyDTO>) query.execute(player.getArmyUIDs());
+				armies = (List<ArmyDTO>) query.execute(allUnitUIDs);
 			}
 			else
 				armies = new ArrayList<ArmyDTO>();
 
+			//-----------------------------------------//
 
-			if(debug)System.out.println("nbArmies " + armies.size());
+
+			if(debug)System.out.println("nbUnits " + armies.size());
 			for(ArmyDTO army : armies){
 				if(army.getMoves().size()>0){
 					MoveDTO move = army.getMoves().get(0);
@@ -654,7 +704,8 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			else
 				cities = new ArrayList<CityDTO>();
 
-
+			playerCapitalMap.put(player, cities.get(0));
+			
 			if(debug)System.out.println("nbcities " + cities.size());
 			for(CityDTO city : cities){
 				if(debug)System.out.println("city.x : " + city.getX());
@@ -747,6 +798,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			
 			if(freeWay){
 				if(debug)System.out.println("way safe for the move : proceeding to the land calculus");
+				
 				int newLand = testNewLand(moveArmyMap.get(move), movePlayerMap.get(move));
 				if(newLand>0)
 					landsMap.get(movePlayerMap.get(move)).add(newLand);
@@ -1076,7 +1128,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			}
 			
 			if(debug)System.out.println("updating gold");
-			player.setGold(player.getGold() + player.getLands().size()*10);
+			playerCapitalMap.get(player).setGold(playerCapitalMap.get(player).getGold() + player.getLands().size()*10);
 		}
 		
 		if(debug)System.out.println("-----------------------------------------------");
@@ -1718,9 +1770,14 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	}
 	
 	private int testNewLand(ArmyDTO army, PlayerDTO player) {
+		
+		if(player.getMerchantUIDs().contains(army.getArmyUID())){
+			if(debug)System.out.println("testNewLand : no need for a merchant caravan");
+			return -1;
+		}
+		
 		if(debug)System.out.println("----------");
 		if(debug)System.out.println("testNewLand");
-		if(debug)System.out.println("----------");
 		// verifie si la case est accessible pour etre rajoutee aux contrees
 			
 		int boardX = army.getX();

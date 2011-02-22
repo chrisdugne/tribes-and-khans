@@ -25,12 +25,15 @@ public interface IGameDAO {
 	public void updateSmith(String smithUID, int people);
 	public void updateStock(String equipmentUID, int size);
 
+
 	public List<String> linkNewArmiesAndGetPreviousArmyUIDs(String playerUID, List<String> newArmyUIDs);
+	public List<String> linkNewMerchantsAndGetPreviousMerchantUIDs(String playerUID, List<String> newMerchantUIDs);
 	public String createArmy(Army army);
+	public void createCity(City city, String playerUID);
 	public void updateArmy(Army army);
 	public String saveMove(Move move);
 	public void updatePlayer(Player player);
 	public void updateGame(Game game);
-	public void deleteArmies(List<String> toDeleteArmyUIDs);
+	public void deleteArmies(List<String> toDeleteArmyUIDs, String playerUID);
 	public void checkEndTurn(String gameUID);
 }

@@ -14,12 +14,11 @@ public class Player {
 	
 	private List<City> cities = new ArrayList<City>();
 	private List<Army> armies = new ArrayList<Army>();
-	private List<Merchant> merchants = new ArrayList<Merchant>();
+	private List<Army> merchants = new ArrayList<Army>();
 	private List<String> allies = new ArrayList<String>();
 	private List<Integer> lands = new ArrayList<Integer>();
 	private List<Report> reports = new ArrayList<Report>();
 
-	private int gold;
 	
 	//-----------------------------------------------------------------------------------//
 
@@ -59,10 +58,10 @@ public class Player {
 	public void setArmies(List<Army> armies) {
 		this.armies = armies;
 	}
-	public List<Merchant> getMerchants() {
+	public List<Army> getMerchants() {
 		return merchants;
 	}
-	public void setMerchants(List<Merchant> merchants) {
+	public void setMerchants(List<Army> merchants) {
 		this.merchants = merchants;
 	}
 	public Integer getLastTurnPlayed() {
@@ -82,12 +81,6 @@ public class Player {
 	}
 	public void setAllies(List<String> allies) {
 		this.allies = allies;
-	}
-	public int getGold() {
-		return gold;
-	}
-	public void setGold(int gold) {
-		this.gold = gold;
 	}
 	public List<Report> getReports() {
 		return reports;

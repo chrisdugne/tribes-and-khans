@@ -38,7 +38,6 @@ public class PlayerDTO {
 	@Persistent private List<String> reportUIDs = new ArrayList<String>();
 	@Persistent private List<Integer> lands = new ArrayList<Integer>();
 
-	@Persistent private Integer gold;
 	
 	//-----------------------------------------------------------------------------------//
 
@@ -114,12 +113,6 @@ public class PlayerDTO {
 	public void setLands(List<Integer> lands) {
 		this.lands = lands;
 	}
-	public Integer getGold() {
-		return gold;
-	}
-	public void setGold(Integer gold) {
-		this.gold = gold;
-	}
 	
 	//-----------------------------------------------------------------------------------//
 	
@@ -131,8 +124,8 @@ public class PlayerDTO {
 		return UniversalDAO.getInstance().getListDTO(armyUIDs, ArmyDTO.class);		
 	}
 	
-	public List<MerchantDTO> getMerchants() {
-		return UniversalDAO.getInstance().getListDTO(merchantUIDs, MerchantDTO.class);		
+	public List<ArmyDTO> getMerchants() {
+		return UniversalDAO.getInstance().getListDTO(merchantUIDs, ArmyDTO.class);		
 	}
 
 	public List<ReportDTO> getReports() {

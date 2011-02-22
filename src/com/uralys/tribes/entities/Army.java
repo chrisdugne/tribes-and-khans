@@ -14,6 +14,11 @@ public class Army {
 	
 	private int x;
 	private int y;
+	
+	private int wheat;
+	private int wood;
+	private int iron;
+	private int gold;
 
 	private List<Move> moves = new ArrayList<Move>();
 	private List<Equipment> equipments = new ArrayList<Equipment>();
@@ -82,6 +87,38 @@ public class Army {
 	
 	public void setEquipments(List<Equipment> equipments) {
 		this.equipments = equipments;
+	}
+
+	public int getWheat() {
+		return wheat;
+	}
+
+	public void setWheat(int wheat) {
+		this.wheat = wheat;
+	}
+
+	public int getWood() {
+		return wood;
+	}
+
+	public void setWood(int wood) {
+		this.wood = wood;
+	}
+
+	public int getIron() {
+		return iron;
+	}
+
+	public void setIron(int iron) {
+		this.iron = iron;
+	}
+
+	public int getGold() {
+		return gold;
+	}
+
+	public void setGold(int gold) {
+		this.gold = gold;
 	}
 
 	//-----------------------------------------------------------------------------------//

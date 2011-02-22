@@ -96,61 +96,66 @@ public class GameManager implements IGameManager {
 
 		System.out.println("-------------------------------------------------");
 		System.out.println("Save turn pour joueur : " + player.getName());
+
 		//----------------------------------------------------------------//
 		// Cities
 
 		for(City city : player.getCities()){
 
-			System.out.println("city : " + city.getName());
-			
-			//----------------------------------------//
-			// Resources
-			// wheat : si < 0 : gens meurent de faim : calcul de pop en consequence
-			
-			boolean starvation = false;
-			
-			if(city.getWheat() < 0){
-				starvation = true;
-				city.setWheat(0);
+			if(city.getCityUID().equals("new")){
+				System.out.println("Create a new city");
+				gameDao.createCity(city, player.getPlayerUID());
 			}
-
-			if(!fromForceTurn){ // else la pop a deja ete calculee
+			else{
+				System.out.println("saving city : " + city.getName());
+				
 				//----------------------------------------//
-				// Population
+				// Resources
+				// wheat : si < 0 : gens meurent de faim : calcul de pop en consequence
 				
-				int armyRaised = 0;
+				boolean starvation = false;
 				
-				// calcul de armyRaised
-				for(Army army : player.getArmies()){
-					if(army.getArmyUID().equals("new") && army.getX() == city.getX() && army.getY() == city.getY())
-						armyRaised += army.getSize();
+				if(city.getWheat() < 0){
+					starvation = true;
+					city.setWheat(0);
+				}
+
+				if(!fromForceTurn){ // else la pop a deja ete calculee
+					//----------------------------------------//
+					// Population
+					
+					int armyRaised = 0;
+					
+					// calcul de armyRaised
+					for(Army army : player.getArmies()){
+						if(army.getArmyUID().equals("new") && army.getX() == city.getX() && army.getY() == city.getY())
+							armyRaised += army.getSize();
+					}
+					
+					
+					System.out.println("update population (armyRaised : " + armyRaised + ")");
+					city.setPopulation(calculatePopulation(city.getPopulation(), starvation, armyRaised));
 				}
 				
+				System.out.println("updateCityResources");
+				gameDao.updateCityResources(city);
+
+				//----------------------------------------//
+				// Forge
 				
-				System.out.println("update population (armyRaised : " + armyRaised + ")");
-				city.setPopulation(calculatePopulation(city.getPopulation(), starvation, armyRaised));
-			}
-			
-			System.out.println("updateCityResources");
-			gameDao.updateCityResources(city);
+				for(Smith smith : city.getSmiths()){
+					System.out.println("update smith " + smith.getItem().getName());
+					gameDao.updateSmith(smith.getSmithUID(), smith.getPeople());				
+				}
 
-			//----------------------------------------//
-			// Forge
-			
-			for(Smith smith : city.getSmiths()){
-				System.out.println("update smith " + smith.getItem().getName());
-				gameDao.updateSmith(smith.getSmithUID(), smith.getPeople());				
+				//----------------------------------------//
+				// Equipment stock
+				
+				for(Equipment stock : city.getEquipmentStock()){
+					System.out.println("update stock " + stock.getItem().getName());
+					gameDao.updateStock(stock.getEquimentUID(), stock.getSize());	
+				}
 			}
-
-			//----------------------------------------//
-			// Equipment stock
-			
-			for(Equipment stock : city.getEquipmentStock()){
-				System.out.println("update stock " + stock.getItem().getName());
-				gameDao.updateStock(stock.getEquimentUID(), stock.getSize());	
-			}
-			
-
 		}
 		
 		//----------------------------------------------------------------//
@@ -159,7 +164,7 @@ public class GameManager implements IGameManager {
 		List<String> createdArmyUIDs = new ArrayList<String>();
 		List<String> editedArmyUIDs = new ArrayList<String>();
 		List<String> toDeleteArmyUIDs = new ArrayList<String>();
-		int armyRaised = 0;
+//		int armyRaised = 0;
 		
 		for(Army army : player.getArmies()){
 			
@@ -170,7 +175,7 @@ public class GameManager implements IGameManager {
 			
 			if(army.getArmyUID().equals("new")){
 				createdArmyUIDs.add(gameDao.createArmy(army));
-				armyRaised += army.getSize();
+//				armyRaised += army.getSize();
 			}
 			else{
 				gameDao.updateArmy(army);
@@ -196,7 +201,52 @@ public class GameManager implements IGameManager {
 				toDeleteArmyUIDs.add(existingArmyUID);
 		}
 		
-		gameDao.deleteArmies(toDeleteArmyUIDs);
+		
+		//----------------------------------------------------------------//
+		// Merchants
+		
+		List<String> createdMerchantUIDs = new ArrayList<String>();
+		List<String> editedMerchantUIDs = new ArrayList<String>();
+		
+		for(Army merchant : player.getMerchants()){
+			
+			if(merchant.getMoves().size() > 0){
+				String moveUID = gameDao.saveMove(merchant.getMoves().get(0));
+				merchant.getMoves().get(0).setMoveUID(moveUID);
+			}
+			
+			if(merchant.getArmyUID().equals("new")){
+				createdMerchantUIDs.add(gameDao.createArmy(merchant));
+//				armyRaised += merchant.getSize();
+			}
+			else{
+				gameDao.updateArmy(merchant);
+				editedMerchantUIDs.add(merchant.getArmyUID());
+			}
+			
+		}
+		
+		List<String> existingMerchantUIDs = gameDao.linkNewMerchantsAndGetPreviousMerchantUIDs(player.getPlayerUID(), createdMerchantUIDs);
+		
+		for(String existingMerchantUID : existingMerchantUIDs){
+			System.out.println("existingMerchantUID : " + existingMerchantUID);
+			boolean found = false;
+			
+			for(String editedMerchantUID : editedMerchantUIDs){
+				if(editedMerchantUID.equals(existingMerchantUID)){
+					found = true;
+					break;
+				}
+			}
+			
+			if(!found)
+				toDeleteArmyUIDs.add(existingMerchantUID);
+		}
+		
+		//----------------------------------------------------------------//
+		// delete armies ans merchants to be deleted
+
+		gameDao.deleteArmies(toDeleteArmyUIDs, player.getPlayerUID());
 
 		//----------------------------------------------------------------//
 		// Player

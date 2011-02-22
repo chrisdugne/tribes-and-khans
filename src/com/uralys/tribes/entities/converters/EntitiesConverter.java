@@ -6,25 +6,23 @@ import java.util.List;
 import com.uralys.tribes.entities.Army;
 import com.uralys.tribes.entities.City;
 import com.uralys.tribes.entities.Equipment;
-import com.uralys.tribes.entities.Report;
-import com.uralys.tribes.entities.Smith;
 import com.uralys.tribes.entities.Game;
-import com.uralys.tribes.entities.Merchant;
+import com.uralys.tribes.entities.Item;
 import com.uralys.tribes.entities.Move;
 import com.uralys.tribes.entities.Player;
 import com.uralys.tribes.entities.Profil;
-import com.uralys.tribes.entities.Item;
+import com.uralys.tribes.entities.Report;
+import com.uralys.tribes.entities.Smith;
 import com.uralys.tribes.entities.dto.ArmyDTO;
 import com.uralys.tribes.entities.dto.CityDTO;
 import com.uralys.tribes.entities.dto.EquipmentDTO;
-import com.uralys.tribes.entities.dto.ReportDTO;
-import com.uralys.tribes.entities.dto.SmithDTO;
 import com.uralys.tribes.entities.dto.GameDTO;
-import com.uralys.tribes.entities.dto.MerchantDTO;
+import com.uralys.tribes.entities.dto.ItemDTO;
 import com.uralys.tribes.entities.dto.MoveDTO;
 import com.uralys.tribes.entities.dto.PlayerDTO;
 import com.uralys.tribes.entities.dto.ProfilDTO;
-import com.uralys.tribes.entities.dto.ItemDTO;
+import com.uralys.tribes.entities.dto.ReportDTO;
+import com.uralys.tribes.entities.dto.SmithDTO;
 
 public class EntitiesConverter {
 	
@@ -62,7 +60,6 @@ public class EntitiesConverter {
 		player.setLastTurnPlayed(playerDTO.getLastTurnPlayed());
 		player.setLands(playerDTO.getLands());
 		player.setAllies(playerDTO.getAllyUIDs());
-		player.setGold(playerDTO.getGold());
 		
 		//-----------------------------------------------------------------------------------//
 		List<City> cities = new ArrayList<City>();
@@ -93,10 +90,10 @@ public class EntitiesConverter {
 		player.setArmies(armies);
 		
 		//-----------------------------------------------------------------------------------//		
-		List<Merchant> merchants = new ArrayList<Merchant>();
+		List<Army> merchants = new ArrayList<Army>();
 		
-		for(MerchantDTO merchantDTO : playerDTO.getMerchants()){
-			merchants.add(convertMerchantDTO(merchantDTO));
+		for(ArmyDTO merchantDTO : playerDTO.getMerchants()){
+			merchants.add(convertArmyDTO(merchantDTO));
 		}
 		
 		player.setMerchants(merchants);
@@ -179,6 +176,7 @@ public class EntitiesConverter {
 		city.setPeopleCreatingWood(cityDTO.getPeopleCreatingWood());
 		city.setX(cityDTO.getX());
 		city.setY(cityDTO.getY());
+		city.setGold(cityDTO.getGold());
 		
 		//---------------------------------//
 		
@@ -221,6 +219,10 @@ public class EntitiesConverter {
 		army.setValue(armyDTO.getValue());
 		army.setX(armyDTO.getX());
 		army.setY(armyDTO.getY());
+		army.setGold(armyDTO.getGold());
+		army.setIron(armyDTO.getIron());
+		army.setWheat(armyDTO.getWheat());
+		army.setWood(armyDTO.getWood());
 
 		//-----------------------------------------------------------------------------------//
 		
@@ -243,29 +245,6 @@ public class EntitiesConverter {
 		army.setMoves(moves);
 		
 		return army;
-	}
-	
-	
-	//-----------------------------------------------------------------------------------//
-	
-	public static Merchant convertMerchantDTO(MerchantDTO merchantDTO) {
-		
-		if(merchantDTO == null)
-			return null;
-		
-		Merchant merchant = new Merchant();
-		
-		merchant.setGold(merchantDTO.getGold());
-		merchant.setIron(merchantDTO.getIron());
-		merchant.setMerchantUID(merchantDTO.getMerchantUID());
-		merchant.setSize(merchantDTO.getSize());
-		merchant.setSpeed(merchantDTO.getSpeed());
-		merchant.setWheat(merchantDTO.getWheat());
-		merchant.setWood(merchantDTO.getWood());
-		merchant.setX(merchantDTO.getX());
-		merchant.setY(merchantDTO.getY());
-
-		return merchant;
 	}
 	
 	

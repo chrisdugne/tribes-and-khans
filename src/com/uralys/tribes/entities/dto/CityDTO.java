@@ -35,6 +35,7 @@ public class CityDTO {
 	@Persistent private int peopleCreatingWood;
 	@Persistent private int iron;
 	@Persistent private int peopleCreatingIron;
+	@Persistent private Integer gold;
 
 	@Persistent private int x;
 	@Persistent private int y;
@@ -117,6 +118,12 @@ public class CityDTO {
 	}
 	public void setPeopleCreatingIron(int peopleCreatingIron) {
 		this.peopleCreatingIron = peopleCreatingIron; 
+	}
+	public Integer getGold() {
+		return gold;
+	}
+	public void setGold(Integer gold) {
+		this.gold = gold;
 	}
 	
 	//-----------------------------------------------------------------------------------//

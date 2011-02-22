@@ -31,6 +31,11 @@ public class ArmyDTO {
 
 	@Persistent private int value;
 	
+	@Persistent private int wheat;
+	@Persistent private int wood;
+	@Persistent private int iron;
+	@Persistent private int gold;
+	
 	@Persistent private int x;
 	@Persistent private int y;
 
@@ -81,6 +86,30 @@ public class ArmyDTO {
 	}
 	public void setY(int y) {
 		this.y = y;
+	}
+	public int getWheat() {
+		return wheat;
+	}
+	public void setWheat(int wheat) {
+		this.wheat = wheat;
+	}
+	public int getWood() {
+		return wood;
+	}
+	public void setWood(int wood) {
+		this.wood = wood;
+	}
+	public int getIron() {
+		return iron;
+	}
+	public void setIron(int iron) {
+		this.iron = iron;
+	}
+	public int getGold() {
+		return gold;
+	}
+	public void setGold(int gold) {
+		this.gold = gold;
 	}
 	
 	//-----------------------------------------------------------------------------------//

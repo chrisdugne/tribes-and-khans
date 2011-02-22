@@ -19,6 +19,7 @@ public class City {
 
 	private int x;
 	private int y;
+	private int gold;
 
 	private List<Equipment> equipmentStock = new ArrayList<Equipment>();
 	private List<Smith> smiths = new ArrayList<Smith>();
@@ -129,6 +130,12 @@ public class City {
 		this.smiths = smiths;
 	}
 
+	public int getGold() {
+		return gold;
+	}
+	public void setGold(int gold) {
+		this.gold = gold;
+	}
 	//-----------------------------------------------------------------------------------//
 	
 }

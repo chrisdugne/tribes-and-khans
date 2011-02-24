@@ -159,7 +159,7 @@
 						
 						for each(var player:Player in game.players){
 							for each(var city:City in player.cities){
-								if(Math.sqrt(Math.pow(clickX - city.x,2) + Math.pow(clickY - city.y,2)) <= city.radius) {
+								if(Math.sqrt(Math.pow(selectedUnit.ellipseTo.x - city.x,2) + Math.pow(selectedUnit.ellipseTo.y - city.y,2)) <= city.radius) {
 									cityEntered = city;
 									break;
 								}
@@ -320,7 +320,7 @@
 						break;
 					}
 				}
-				
+
 				for each(var army:Army in Session.currentPlayer.armies){
 					
 					army.moves = new ArrayCollection();

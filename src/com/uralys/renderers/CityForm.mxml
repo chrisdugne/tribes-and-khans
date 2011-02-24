@@ -57,16 +57,61 @@
 					}
 				
 					// recuperations des workers pour chaque item de la forge
+					// et verification si on peut laisser autant de smith (si les stocks sont suffisants)
 					for each(var smith:Smith in city.smiths){
+						
 						switch(smith.item.name){
 							case "bow" :
-								city.bowWorkers = smith.people;
+								city.bowWorkers = -1;
+
+								// la depense en bois pour les arcs est plus grande que le stock de bois
+								if(Numbers.BOW_WOOD * smith.people > city.wood)
+									city.bowWorkers = Math.floor(city.wood/Numbers.BOW_WOOD);
+								
+								// la depense en fer pour les arcs est plus grande que le stock de fer
+								if(Numbers.BOW_IRON * smith.people > city.iron)
+									city.bowWorkers = Math.floor(city.iron/Numbers.BOW_IRON);
+								
+								
+								if(city.bowWorkers == -1) // stock suffisant
+									city.bowWorkers = smith.people;
+								else
+									registerNewForgeWorkers("bow", city.bowWorkers);
+	
 								break;
 							case "sword" :
-								city.swordWorkers = smith.people;
+								city.swordWorkers = -1;
+								
+								// la depense en bois pour les epees est plus grande que le stock de bois
+								if(Numbers.SWORD_WOOD * smith.people > city.wood)
+									city.swordWorkers = Math.floor(city.wood/Numbers.SWORD_WOOD);
+								
+								// la depense en fer pour les epees est plus grande que le stock de fer
+								if(Numbers.SWORD_IRON * smith.people > city.iron)
+									city.swordWorkers = Math.floor(city.iron/Numbers.SWORD_IRON);
+								
+								if(city.swordWorkers == -1) // stock suffisant
+									city.swordWorkers = smith.people;
+								else
+									registerNewForgeWorkers("sword", city.swordWorkers);
+								
 								break;
 							case "armor" :
-								city.armorWorkers = smith.people;
+								city.armorWorkers = -1;
+								
+								// la depense en bois pour les armoures est plus grande que le stock de bois
+								if(Numbers.ARMOR_WOOD * smith.people > city.wood)
+									city.armorWorkers = Math.floor(city.wood/Numbers.ARMOR_WOOD);
+								
+								// la depense en fer pour les armoures est plus grande que le stock de fer
+								if(Numbers.ARMOR_IRON * smith.people > city.iron)
+									city.armorWorkers = Math.floor(city.iron/Numbers.ARMOR_IRON);
+								
+								if(city.armorWorkers == -1) // stock suffisant
+									city.armorWorkers = smith.people;
+								else
+									registerNewForgeWorkers("armor", city.armorWorkers);
+								
 								break;
 						}
 					}
@@ -113,6 +158,11 @@
 					city.wheatEarned = Numbers.WHEAT_EARNING_COEFF * city.peopleCreatingWheat;
 				}
 
+				protected function  addAllUnemployedToWheat():void	{
+					city.peopleCreatingWheat += city.unemployed;
+					city.wheatEarned = Numbers.WHEAT_EARNING_COEFF * city.peopleCreatingWheat;
+				}
+
 				protected function woodInputKeyUpHandler(event:KeyboardEvent):void	{
 					city.peopleCreatingWood = parseInt(woodInput.text);
 					
@@ -121,7 +171,12 @@
 					
 					city.woodEarned = Numbers.WOOD_EARNING_COEFF * city.peopleCreatingWood;
 				}
-
+				
+				protected function  addAllUnemployedToWood():void	{
+					city.peopleCreatingWood += city.unemployed;
+					city.woodEarned = Numbers.WOOD_EARNING_COEFF * city.peopleCreatingWood;
+				}
+				
 				protected function ironInputKeyUpHandler(event:KeyboardEvent):void	{
 					city.peopleCreatingIron = parseInt(ironInput.text);
 					
@@ -130,7 +185,11 @@
 					
 					city.ironEarned = Numbers.IRON_EARNING_COEFF * city.peopleCreatingIron;
 				}
-
+				
+				protected function  addAllUnemployedToIron():void	{
+					city.peopleCreatingIron += city.unemployed;
+					city.ironEarned = Numbers.IRON_EARNING_COEFF * city.peopleCreatingIron;
+				}
 				//-------------------------------------------------------------------------//
 				
 				protected function registerNewForgeWorkers(itemName:String, newNbWorkers:int):void	{
@@ -177,14 +236,14 @@
 					city.woodSpent -= city.bowWorkers * Numbers.BOW_WOOD;
 					city.ironSpent -= city.bowWorkers * Numbers.BOW_IRON;
 					
-					trace("bowWorkersInput.text.length : " + bowWorkersInput.text.length);
+					//trace("bowWorkersInput.text.length : " + bowWorkersInput.text.length);
 					
 					if(bowWorkersInput.text.length == 0)
 						city.bowWorkers = 0;
 					else
 						city.bowWorkers = parseInt(bowWorkersInput.text);
 					
-					trace("city.bowWorkers : " + city.bowWorkers);
+					//trace("city.bowWorkers : " + city.bowWorkers);
 					
 					var woodAvailable:int = city.wood - city.woodSpent;
 					var ironAvailable:int = city.iron - city.ironSpent;
@@ -864,7 +923,7 @@
 							</mx:GridRow>
 							<mx:GridRow >
 								<mx:GridItem horizontalAlign="center">
-								<mx:Image toolTip="Wheat" source="{ImageContainer.WHEAT}"/>
+								<mx:Image toolTip="Wheat" source="{ImageContainer.WHEAT}" click="addAllUnemployedToWheat()"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
 									<s:TextInput text="{city.peopleCreatingWheat}" 
@@ -885,7 +944,7 @@
 							</mx:GridRow>
 							<mx:GridRow >
 								<mx:GridItem horizontalAlign="center">
-								<mx:Image toolTip="Wood" source="{ImageContainer.WOOD}"/>
+								<mx:Image toolTip="Wood" source="{ImageContainer.WOOD}" click="addAllUnemployedToWood()"/>
 								</mx:GridItem>
 								<mx:GridItem>
 									<s:TextInput text="{city.peopleCreatingWood}" 
@@ -906,7 +965,7 @@
 							</mx:GridRow>
 							<mx:GridRow >
 								<mx:GridItem horizontalAlign="center">
-									<mx:Image toolTip="Iron" source="{ImageContainer.IRON}"/>
+									<mx:Image toolTip="Iron" source="{ImageContainer.IRON}" click="addAllUnemployedToIron()"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
 									<s:TextInput text="{city.peopleCreatingIron}" 
@@ -1150,136 +1209,162 @@
 				<!-- Merchants Tab -->
 				
 				<s:NavigatorContent label="Marchands">
-					<s:HGroup width="100%" horizontalAlign="center">
-						<s:VGroup horizontalAlign="center">
-							<s:Button label="New Merchants" click="newMerchants()"/>
-							<s:Scroller height="200">
-								<s:Group>
-									<s:List id="merchantsList"
-											itemRenderer="com.uralys.renderers.MerchantListRenderer"
-											dataProvider="{city.merchants}"
-											borderVisible="false"
-											width="275"
-											contentBackgroundAlpha="0"
-											creationComplete="initMerchantsList()">
-										<s:layout>
-											<s:VerticalLayout gap="1" useVirtualLayout="true" />
-										</s:layout>
-									</s:List>
-								</s:Group>
-							</s:Scroller>
-						</s:VGroup>
-						<mx:Grid verticalGap="10" 
-								 horizontalGap="10" 
-								 horizontalAlign="center" 
-								 verticalAlign="middle"
-								 visible="{merchant != null}">
-							<mx:GridRow >
-								<mx:GridItem >
-									<s:Label text="People in this caravan" />
-								</mx:GridItem>
-								<mx:GridItem>
-									<s:TextInput text="{merchant.size}" 
-												 id="merchantInput"
-												 enter="merchantInputKeyUpHandler(event)"
-												 focusOut="merchantInputKeyUpHandler(event)"
-												 restrict="0-9"
-												 width="100"/>
-								</mx:GridItem>
-							</mx:GridRow>
-							<mx:GridRow>
-								<mx:GridItem colSpan="4">
-									<mx:HRule width="100%"/>
-								</mx:GridItem>
-							</mx:GridRow >
-							<mx:GridRow >
-								<mx:GridItem />
-								<mx:GridItem horizontalAlign="center">
-									<s:Label text="Transport" />
-								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
-									<s:Label text="Stock available" />
-								</mx:GridItem>
-							</mx:GridRow>
-							<mx:GridRow >
-								<mx:GridItem horizontalAlign="center">
-									<mx:Image toolTip="Wheat" source="{ImageContainer.WHEAT}"/>
-								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
-									<s:TextInput text="{merchant.wheat}" 
-												 id="wheatMerchantInput"
-												 keyUp="wheatMerchantInputKeyUpHandler(event)"
-												 focusOut="wheatMerchantInputKeyUpHandler(event)"
-												 restrict="0-9"
-												 width="100"/>
-								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
-									<s:Label text="{city.wheat}" />
-								</mx:GridItem>
-							</mx:GridRow>
-							<mx:GridRow >
-								<mx:GridItem horizontalAlign="center">
-									<mx:Image toolTip="Wood" source="{ImageContainer.WOOD}"/>
-								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
-									<s:TextInput text="{merchant.wood}" 
-												 id="woodMerchantInput"
-												 keyUp="woodMerchantInputKeyUpHandler(event)"
-												 focusOut="woodMerchantInputKeyUpHandler(event)"
-												 restrict="0-9"
-												 width="100"/>
-								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
-									<s:Label text="{city.wood}" />
-								</mx:GridItem>
-							</mx:GridRow>
-							<mx:GridRow >
-								<mx:GridItem horizontalAlign="center">
-									<mx:Image toolTip="Iron" source="{ImageContainer.IRON}"/>
-								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
-									<s:TextInput text="{merchant.iron}" 
-												 id="ironMerchantInput"
-												 keyUp="ironMerchantInputKeyUpHandler(event)"
-												 focusOut="ironMerchantInputKeyUpHandler(event)"
-												 restrict="0-9"
-												 width="100"/>
-								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
-									<s:Label text="{city.iron}" />
-								</mx:GridItem>
-							</mx:GridRow>
-							<mx:GridRow >
-								<mx:GridItem horizontalAlign="center">
-									<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
-								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
-									<s:TextInput text="{merchant.gold}" 
-												 id="goldMerchantInput"
-												 keyUp="goldMerchantInputKeyUpHandler(event)"
-												 focusOut="goldMerchantInputKeyUpHandler(event)"
-												 restrict="0-9"
-												 width="100"/>
-								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
-									<s:Label text="{city.gold}" />
-								</mx:GridItem>
-							</mx:GridRow>
-							<mx:GridRow>
-								<mx:GridItem colSpan="4">
-									<mx:HRule width="100%"/>
-								</mx:GridItem>
-							</mx:GridRow >
-							<mx:GridRow>
-								<mx:GridItem/>
-								<mx:GridItem/>
-								<mx:GridItem/>
-								<mx:GridItem>
-									<s:Button label="Delete" click="deleteMerchant()"/>
-								</mx:GridItem>
-							</mx:GridRow >
-						</mx:Grid>
-					</s:HGroup>
+					<s:VGroup height="100%">
+						<s:HGroup width="100%" horizontalAlign="center">
+							<s:VGroup horizontalAlign="center" height="100%">
+								<s:Button label="New Merchants" click="newMerchants()"/>
+								<s:Scroller maxHeight="200">
+									<s:Group>
+										<s:List id="merchantsList"
+												itemRenderer="com.uralys.renderers.MerchantListRenderer"
+												dataProvider="{city.merchants}"
+												borderVisible="false"
+												width="275"
+												contentBackgroundAlpha="0"
+												creationComplete="initMerchantsList()">
+											<s:layout>
+												<s:VerticalLayout gap="1" useVirtualLayout="true" />
+											</s:layout>
+										</s:List>
+									</s:Group>
+								</s:Scroller>
+							</s:VGroup>
+							<mx:Grid verticalGap="10" 
+									 horizontalGap="10" 
+									 horizontalAlign="center" 
+									 verticalAlign="middle"
+									 visible="{merchant != null}">
+								<mx:GridRow >
+									<mx:GridItem >
+										<s:Label text="People in this caravan" />
+									</mx:GridItem>
+									<mx:GridItem>
+										<s:TextInput text="{merchant.size}" 
+													 id="merchantInput"
+													 enter="merchantInputKeyUpHandler(event)"
+													 focusOut="merchantInputKeyUpHandler(event)"
+													 restrict="0-9"
+													 width="100"/>
+									</mx:GridItem>
+								</mx:GridRow>
+								<mx:GridRow>
+									<mx:GridItem colSpan="4">
+										<mx:HRule width="100%"/>
+									</mx:GridItem>
+								</mx:GridRow >
+								<mx:GridRow >
+									<mx:GridItem />
+									<mx:GridItem horizontalAlign="center">
+										<s:Label text="Transport" />
+									</mx:GridItem>
+									<mx:GridItem horizontalAlign="center">
+										<s:Label text="Stock available" />
+									</mx:GridItem>
+								</mx:GridRow>
+								<mx:GridRow >
+									<mx:GridItem horizontalAlign="center">
+										<mx:Image toolTip="Wheat" source="{ImageContainer.WHEAT}"/>
+									</mx:GridItem>
+									<mx:GridItem horizontalAlign="center">
+										<s:TextInput text="{merchant.wheat}" 
+													 id="wheatMerchantInput"
+													 keyUp="wheatMerchantInputKeyUpHandler(event)"
+													 focusOut="wheatMerchantInputKeyUpHandler(event)"
+													 restrict="0-9"
+													 width="100"/>
+									</mx:GridItem>
+									<mx:GridItem horizontalAlign="center">
+										<s:Label text="{city.wheat}" />
+									</mx:GridItem>
+								</mx:GridRow>
+								<mx:GridRow >
+									<mx:GridItem horizontalAlign="center">
+										<mx:Image toolTip="Wood" source="{ImageContainer.WOOD}"/>
+									</mx:GridItem>
+									<mx:GridItem horizontalAlign="center">
+										<s:TextInput text="{merchant.wood}" 
+													 id="woodMerchantInput"
+													 keyUp="woodMerchantInputKeyUpHandler(event)"
+													 focusOut="woodMerchantInputKeyUpHandler(event)"
+													 restrict="0-9"
+													 width="100"/>
+									</mx:GridItem>
+									<mx:GridItem horizontalAlign="center">
+										<s:Label text="{city.wood}" />
+									</mx:GridItem>
+								</mx:GridRow>
+								<mx:GridRow >
+									<mx:GridItem horizontalAlign="center">
+										<mx:Image toolTip="Iron" source="{ImageContainer.IRON}"/>
+									</mx:GridItem>
+									<mx:GridItem horizontalAlign="center">
+										<s:TextInput text="{merchant.iron}" 
+													 id="ironMerchantInput"
+													 keyUp="ironMerchantInputKeyUpHandler(event)"
+													 focusOut="ironMerchantInputKeyUpHandler(event)"
+													 restrict="0-9"
+													 width="100"/>
+									</mx:GridItem>
+									<mx:GridItem horizontalAlign="center">
+										<s:Label text="{city.iron}" />
+									</mx:GridItem>
+								</mx:GridRow>
+								<mx:GridRow >
+									<mx:GridItem horizontalAlign="center">
+										<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+									</mx:GridItem>
+									<mx:GridItem horizontalAlign="center">
+										<s:TextInput text="{merchant.gold}" 
+													 id="goldMerchantInput"
+													 keyUp="goldMerchantInputKeyUpHandler(event)"
+													 focusOut="goldMerchantInputKeyUpHandler(event)"
+													 restrict="0-9"
+													 width="100"/>
+									</mx:GridItem>
+									<mx:GridItem horizontalAlign="center">
+										<s:Label text="{city.gold}" />
+									</mx:GridItem>
+								</mx:GridRow>
+								<mx:GridRow>
+									<mx:GridItem colSpan="4">
+										<mx:HRule width="100%"/>
+									</mx:GridItem>
+								</mx:GridRow >
+								<mx:GridRow>
+									<mx:GridItem colSpan="3"/>
+									<mx:GridItem>
+										<s:Button label="Delete" click="deleteMerchant()"/>
+									</mx:GridItem>
+								</mx:GridRow >
+							</mx:Grid>
+						</s:HGroup>
+						<mx:Spacer height="100%"/>
+						<s:HGroup>
+							<s:Label text="Pour construire 1 ville il faut minimum 100 marchands + "/>
+							<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+							<mx:Spacer width="2"/>
+							<s:Label text="100" 
+									 color="#000000" />
+							
+							<mx:Spacer width="3"/>
+							<mx:Image toolTip="Wheat" source="{ImageContainer.WHEAT}"/>
+							<mx:Spacer width="2"/>
+							<s:Label text="50" 
+									 color="#000000" />
+							
+							<mx:Spacer width="3"/>
+							<mx:Image toolTip="Wood" source="{ImageContainer.WOOD}"/>
+							<mx:Spacer width="2"/>
+							<s:Label text="3000" 
+									 color="#000000" />
+							
+							<mx:Spacer width="3"/>
+							<mx:Image toolTip="Iron" source="{ImageContainer.IRON}"/>
+							<mx:Spacer width="2"/>
+							<s:Label text="1000" 
+									 color="#000000" />
+						</s:HGroup>
+					</s:VGroup>
 				</s:NavigatorContent>
 				
 				<!-- =============================================================================================== -->

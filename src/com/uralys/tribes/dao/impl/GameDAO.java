@@ -946,6 +946,17 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 				for(ArmyDTO ally : conflit.allies){
 					if(ally.getArmyUID().startsWith("_")){
 						armyCityMap.get(ally).setPopulation((int)(armyCityMap.get(ally).getPopulation() - ((double)valueEnnemy/valueAlly)*armyCityMap.get(ally).getPopulation()));
+						
+						// ville attaquee : tous les gens restant font du ble
+						for(SmithDTO smith : armyCityMap.get(ally).getSmiths()){
+							smith.setPeople(0);
+						}
+						
+						armyCityMap.get(ally).setPeopleCreatingWheat(armyCityMap.get(ally).getPopulation());
+						armyCityMap.get(ally).setPeopleCreatingWood(0);
+						armyCityMap.get(ally).setPeopleCreatingIron(0);
+						//---//
+						
 					}
 					else{
 						ally.setSize((int)(ally.getSize() - ((double)valueEnnemy/valueAlly)*ally.getSize()));
@@ -998,6 +1009,16 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 					
 					if(ennemy.getArmyUID().startsWith("_")){						
 						armyCityMap.get(ennemy).setPopulation((int)(armyCityMap.get(ennemy).getPopulation() - ((double)valueAlly/valueEnnemy)*armyCityMap.get(ennemy).getPopulation()));
+
+						// ville attaquee : tous les gens restant font du ble
+						for(SmithDTO smith : armyCityMap.get(ennemy).getSmiths()){
+							smith.setPeople(0);
+						}
+						
+						armyCityMap.get(ennemy).setPeopleCreatingWheat(armyCityMap.get(ennemy).getPopulation());
+						armyCityMap.get(ennemy).setPeopleCreatingWood(0);
+						armyCityMap.get(ennemy).setPeopleCreatingIron(0);
+						//---//
 					}
 					else{
 						ennemy.setSize((int)(ennemy.getSize() - ((double)valueAlly/valueEnnemy)*ennemy.getSize()));
@@ -1026,7 +1047,6 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 					
 					oldPlayer.getCityUIDs().remove(cityTaken);
 					newPlayer.getCityUIDs().add(cityTaken);
-					
 				}
 			}
 			

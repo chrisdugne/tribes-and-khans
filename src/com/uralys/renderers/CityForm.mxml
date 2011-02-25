@@ -257,8 +257,22 @@
 				
 				
 				protected function  addAllUnemployedToBow():void	{
-//					city.bowWorkers += city.unemployed;
-//					registerNewForgeWorkers("bow", city.bowWorkers);
+
+					city.bowWorkers += city.unemployed;
+					
+					var woodAvailable:int = city.wood - city.woodSpent;
+					var ironAvailable:int = city.iron - city.ironSpent;
+					
+					// la depense en bois pour les arcs est plus grande que le stock de bois
+					if(Numbers.BOW_WOOD * city.bowWorkers > woodAvailable)
+						city.bowWorkers = Math.floor(woodAvailable/Numbers.BOW_WOOD);
+					
+					// la depense en fer pour les arcs est plus grande que le stock de fer
+					if(Numbers.BOW_IRON * city.bowWorkers > ironAvailable)
+						city.bowWorkers = Math.floor(ironAvailable/Numbers.BOW_IRON);
+					
+					registerNewForgeWorkers("bow", city.bowWorkers);
+					
 				}
 				
 				protected function swordWorkersInputKeyUpHandler(event:Event):void{
@@ -287,8 +301,20 @@
 				}
 				
 				protected function  addAllUnemployedToSword():void	{
-//					city.swordWorkers += city.unemployed;
-//					registerNewForgeWorkers("sword", city.swordWorkers);
+					city.swordWorkers += city.unemployed;
+					
+					var woodAvailable:int = city.wood - city.woodSpent;
+					var ironAvailable:int = city.iron - city.ironSpent;
+					
+					// la depense en bois pour les epees est plus grande que le stock de bois
+					if(Numbers.SWORD_WOOD * city.swordWorkers > woodAvailable)
+						city.swordWorkers = Math.floor(woodAvailable/Numbers.SWORD_WOOD);
+					
+					// la depense en fer pour les epees est plus grande que le stock de fer
+					if(Numbers.SWORD_IRON * city.swordWorkers > ironAvailable)
+						city.swordWorkers = Math.floor(ironAvailable/Numbers.SWORD_IRON);
+					
+					registerNewForgeWorkers("sword", city.swordWorkers);
 				}
 				
 				protected function armorWorkersInputKeyUpHandler(event:Event):void{
@@ -317,8 +343,20 @@
 				}
 				
 				protected function  addAllUnemployedToArmor():void	{
-//					city.armorWorkers += city.unemployed;
-//					registerNewForgeWorkers("armor", city.armorWorkers);
+					city.armorWorkers += city.unemployed;
+					
+					var woodAvailable:int = city.wood - city.woodSpent;
+					var ironAvailable:int = city.iron - city.ironSpent;
+					
+					// la depense en bois pour les armures est plus grande que le stock de bois
+					if(Numbers.ARMOR_WOOD * city.armorWorkers > woodAvailable)
+						city.armorWorkers = Math.floor(woodAvailable/Numbers.ARMOR_WOOD) ;
+					
+					// la depense en fer pour les armures est plus grande que le stock de fer
+					if(Numbers.ARMOR_IRON * city.armorWorkers > ironAvailable)
+						city.armorWorkers = Math.floor(ironAvailable/Numbers.ARMOR_IRON);
+					
+					registerNewForgeWorkers("armor", city.armorWorkers);
 				}
 				
 				//-------------------------------------------------------------------------//
@@ -906,6 +944,20 @@
 				<mx:Spacer width="10"/>
 				<s:Label text="{city.iron}" styleName="numberLabel"/>
 			</s:HGroup>
+			<s:HGroup horizontalAlign="center" verticalAlign="middle">
+				<mx:Spacer width="30"/>
+				<!--<s:Label text="{city.gold}" styleName="numberLabel"/>-->
+				<mx:Spacer width="20"/>
+
+				<mx:Spacer width="55"/>
+				<s:Label text="({(city.wheat + city.wheatEarned - city.wheatSpent)})" color="{city.wheat + city.wheatEarned - city.wheatSpent >= 0 ? Numbers.GREEN : Numbers.RED}"/>
+				
+				<mx:Spacer width="55"/>
+				<s:Label text="({(city.wood + city.woodEarned - city.woodSpent)})" color="{city.wood + city.woodEarned - city.woodSpent >= 0 ? Numbers.GREEN : Numbers.RED}"/>
+				
+				<mx:Spacer width="55"/>
+				<s:Label text="({(city.iron + city.ironEarned - city.ironSpent)})" color="{city.iron + city.ironEarned - city.ironSpent >= 0 ? Numbers.GREEN : Numbers.RED}"/>
+			</s:HGroup>
 			
 			<mx:Spacer height="15"/>
 			<s:TabBar id="tabs" dataProvider="{viewstack}" skinClass="spark.skins.spark.TabBarSkin"/>
@@ -929,9 +981,11 @@
 								<mx:GridItem horizontalAlign="center">
 									<s:Label text="Depense"/>
 								</mx:GridItem>
+								<!--
 								<mx:GridItem horizontalAlign="center">
 									<s:Label text="Prevision"/>
 								</mx:GridItem>
+								-->
 							</mx:GridRow>
 							<mx:GridRow >
 								<mx:GridItem horizontalAlign="center">
@@ -950,9 +1004,11 @@
 								<mx:GridItem horizontalAlign="center">
 									<s:Label text="- {city.wheatSpent}"  color="{city.wheatSpent > 0 ? Numbers.RED : Numbers.GREEN}"/>
 								</mx:GridItem>
+								<!--
 								<mx:GridItem horizontalAlign="center">
 									<s:Label text="{(city.wheat + city.wheatEarned - city.wheatSpent)}" color="{city.wheat + city.wheatEarned - city.wheatSpent >= 0 ? Numbers.GREEN : Numbers.RED}"/>
 								</mx:GridItem>
+								-->
 							</mx:GridRow>
 							<mx:GridRow >
 								<mx:GridItem horizontalAlign="center">
@@ -971,9 +1027,11 @@
 								<mx:GridItem horizontalAlign="center">
 									<s:Label text="- {city.woodSpent}" color="{city.woodSpent > 0 ? Numbers.RED : Numbers.GREEN}"/>
 								</mx:GridItem>
+								<!--
 								<mx:GridItem horizontalAlign="center">
 									<s:Label text="{(city.wood + city.woodEarned - city.woodSpent)}" color="{city.wood + city.woodEarned - city.woodSpent >= 0 ? Numbers.GREEN : Numbers.RED}"/>
 								</mx:GridItem>
+								-->
 							</mx:GridRow>
 							<mx:GridRow >
 								<mx:GridItem horizontalAlign="center">
@@ -992,12 +1050,14 @@
 								<mx:GridItem horizontalAlign="center">
 									<s:Label text="- {city.ironSpent}" color="{city.ironSpent > 0 ? Numbers.RED : Numbers.GREEN}"/>
 								</mx:GridItem>
+								<!--
 								<mx:GridItem horizontalAlign="center">
 									<s:Label text="{(city.iron + city.ironEarned - city.ironSpent)}" color="{city.iron + city.ironEarned - city.ironSpent >= 0 ? Numbers.GREEN : Numbers.RED}"/>
 								</mx:GridItem>
+								-->
 							</mx:GridRow>
 							<mx:GridRow>
-								<mx:GridItem colSpan="6">
+								<mx:GridItem colSpan="4">
 									<mx:HRule width="100%"/>
 								</mx:GridItem>
 							</mx:GridRow >
@@ -1009,11 +1069,14 @@
 								<mx:GridItem horizontalAlign="center">
 									<s:Label text="{parseInt(wheatInput.text) + parseInt(woodInput.text) + parseInt(ironInput.text)}" />
 								</mx:GridItem>
-								<mx:GridItem colSpan="3" 
-											 horizontalAlign="center"
-											 color="{Numbers.RED}"
-											 visible="{city.wheat + city.wheatEarned - city.wheatSpent &lt; 0}">
-									<s:Label text="Famine prevue ! recoltez plus de ble !" />
+							</mx:GridRow>
+							<mx:GridRow>
+								<mx:GridItem horizontalAlign="center"
+											 colSpan="5"
+											 color="{Numbers.RED}">
+									<s:Label text="Famine prevue ! recoltez plus de ble !"
+											 visible="{city.wheat + city.wheatEarned - city.wheatSpent &lt; 0}"
+											 includeInLayout="{city.wheat + city.wheatEarned - city.wheatSpent &lt; 0}"/>
 								</mx:GridItem>
 							</mx:GridRow>
 						</mx:Grid>
@@ -1028,8 +1091,8 @@
 					<s:VGroup width="100%" horizontalAlign="center">
 						<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle">
 						  <mx:GridRow >
-							  <mx:GridItem >
-							  </mx:GridItem >
+							  <mx:GridItem/>
+							  <mx:GridItem/>
 							  <mx:GridItem horizontalAlign="center">
 								  <s:Label text="Workers" />
 							  </mx:GridItem>
@@ -1043,6 +1106,23 @@
 						  <mx:GridRow >
 							  <mx:GridItem horizontalAlign="center">
 								  <mx:Image toolTip="Arcs" source="{ImageContainer.BOW}" click="addAllUnemployedToBow()"/>
+							  </mx:GridItem>
+							  <mx:GridItem horizontalAlign="center">
+								  <s:HGroup horizontalAlign="center" verticalAlign="middle">
+									  <s:Label text=" Cout : "/>
+									  <mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+									  <mx:Spacer width="3"/>
+									  <s:Label text="1"/>
+									  <mx:Spacer width="4"/>
+									  <mx:Image toolTip="Wood" source="{ImageContainer.WOOD}"/>
+									  <mx:Spacer width="2"/>
+									  <s:Label text="4"/>
+									  <mx:Spacer width="4"/>
+									  <mx:Image toolTip="Iron" source="{ImageContainer.IRON}"/>
+									  <mx:Spacer width="2"/>
+									  <s:Label text="0"/>
+									  <s:Label text="  Value : +1/h  "/>
+								  </s:HGroup>
 							  </mx:GridItem>
 							  <mx:GridItem horizontalAlign="center">
 								  <s:TextInput text="{city.bowWorkers}" 
@@ -1064,6 +1144,23 @@
 									<mx:Image toolTip="Epees" source="{ImageContainer.SWORD}" click="addAllUnemployedToSword()"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
+									<s:HGroup horizontalAlign="center" verticalAlign="middle">
+										<s:Label text="  Cout : "/>
+										<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+										<mx:Spacer width="3"/>
+										<s:Label text="2"/>
+										<mx:Spacer width="4"/>
+										<mx:Image toolTip="Wood" source="{ImageContainer.WOOD}"/>
+										<mx:Spacer width="2"/>
+										<s:Label text="0"/>
+										<mx:Spacer width="4"/>
+										<mx:Image toolTip="Iron" source="{ImageContainer.IRON}"/>
+										<mx:Spacer width="2"/>
+										<s:Label text="3"/>
+										<s:Label text="  Value : +2/h  "/>
+									</s:HGroup>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
 									<s:TextInput text="{city.swordWorkers}" 
 												 id="swordWorkersInput"
 												 keyUp="swordWorkersInputKeyUpHandler(event)"
@@ -1081,6 +1178,23 @@
 							<mx:GridRow >
 								<mx:GridItem horizontalAlign="center">
 									<mx:Image toolTip="Armures" source="{ImageContainer.ARMOR}" click="addAllUnemployedToArmor()"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:HGroup horizontalAlign="center" verticalAlign="middle">
+										<s:Label text="  Cout : "/>
+										<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+										<mx:Spacer width="3"/>
+										<s:Label text="3"/>
+										<mx:Spacer width="4"/>
+										<mx:Image toolTip="Wood" source="{ImageContainer.WOOD}"/>
+										<mx:Spacer width="2"/>
+										<s:Label text="0"/>
+										<mx:Spacer width="4"/>
+										<mx:Image toolTip="Iron" source="{ImageContainer.IRON}"/>
+										<mx:Spacer width="2"/>
+										<s:Label text="5"/>
+										<s:Label text="  Value : +3/h  "/>
+									</s:HGroup>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
 									<s:TextInput text="{city.armorWorkers}" 
@@ -1103,6 +1217,7 @@
 							</mx:GridItem>
 						</mx:GridRow >
 						<mx:GridRow >
+							<mx:GridItem/>
 							<mx:GridItem horizontalAlign="center">
 								<s:Label text="Total" />
 							</mx:GridItem>

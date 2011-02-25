@@ -75,9 +75,7 @@
 								
 								if(city.bowWorkers == -1) // stock suffisant
 									city.bowWorkers = smith.people;
-								else
-									registerNewForgeWorkers("bow", city.bowWorkers);
-	
+									
 								break;
 							case "sword" :
 								city.swordWorkers = -1;
@@ -92,8 +90,6 @@
 								
 								if(city.swordWorkers == -1) // stock suffisant
 									city.swordWorkers = smith.people;
-								else
-									registerNewForgeWorkers("sword", city.swordWorkers);
 								
 								break;
 							case "armor" :
@@ -109,8 +105,6 @@
 								
 								if(city.armorWorkers == -1) // stock suffisant
 									city.armorWorkers = smith.people;
-								else
-									registerNewForgeWorkers("armor", city.armorWorkers);
 								
 								break;
 						}
@@ -126,6 +120,8 @@
 					city.ironSpent += city.armorWorkers * Numbers.BOW_IRON;
 					
 					city.wheatSpent += city.armiesToFeed;
+					
+					city.refreshUnemployed();
 					
 					// calcul des resources gagnees avec le precedent choix de peopleCreatingXXX
 					city.wheatEarned = Numbers.WHEAT_EARNING_COEFF * city.peopleCreatingWheat;
@@ -260,6 +256,11 @@
 				}
 				
 				
+				protected function  addAllUnemployedToBow():void	{
+//					city.bowWorkers += city.unemployed;
+//					registerNewForgeWorkers("bow", city.bowWorkers);
+				}
+				
 				protected function swordWorkersInputKeyUpHandler(event:Event):void{
 				
 					// on enleve le precedent debit de ressources 
@@ -285,6 +286,11 @@
 					registerNewForgeWorkers("sword", city.swordWorkers);
 				}
 				
+				protected function  addAllUnemployedToSword():void	{
+//					city.swordWorkers += city.unemployed;
+//					registerNewForgeWorkers("sword", city.swordWorkers);
+				}
+				
 				protected function armorWorkersInputKeyUpHandler(event:Event):void{
 					
 					// on enleve le precedent debit de ressources 
@@ -308,6 +314,11 @@
 						city.armorWorkers = Math.floor(ironAvailable/Numbers.ARMOR_IRON);
 					
 					registerNewForgeWorkers("armor", city.armorWorkers);
+				}
+				
+				protected function  addAllUnemployedToArmor():void	{
+//					city.armorWorkers += city.unemployed;
+//					registerNewForgeWorkers("armor", city.armorWorkers);
 				}
 				
 				//-------------------------------------------------------------------------//
@@ -490,6 +501,8 @@
 					army.bows = newNbBows;
 					bowArmyInput.text = army.bows+""; // refresh
 				}
+				
+				
 				
 				protected function swordArmyInputKeyUpHandler(event:Event):void{
 					
@@ -906,8 +919,7 @@
 					<s:HGroup width="100%" horizontalAlign="center">
 						<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle">
 							<mx:GridRow >
-								<mx:GridItem >
-								</mx:GridItem >
+								<mx:GridItem/>
 								<mx:GridItem horizontalAlign="center">
 									<s:Label text="Workers" />
 								</mx:GridItem>
@@ -923,7 +935,7 @@
 							</mx:GridRow>
 							<mx:GridRow >
 								<mx:GridItem horizontalAlign="center">
-								<mx:Image toolTip="Wheat" source="{ImageContainer.WHEAT}" click="addAllUnemployedToWheat()"/>
+									<mx:Image toolTip="Wheat" source="{ImageContainer.WHEAT}" click="addAllUnemployedToWheat()"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
 									<s:TextInput text="{city.peopleCreatingWheat}" 
@@ -939,12 +951,12 @@
 									<s:Label text="- {city.wheatSpent}"  color="{city.wheatSpent > 0 ? Numbers.RED : Numbers.GREEN}"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
-									<s:Label text="{city.wheat + city.wheatEarned - city.wheatSpent >= 0 ? '+' : '-'} {Math.abs(city.wheat + city.wheatEarned - city.wheatSpent)}" color="{city.wheat + city.wheatEarned - city.wheatSpent >= 0 ? Numbers.GREEN : Numbers.RED}"/>
+									<s:Label text="{(city.wheat + city.wheatEarned - city.wheatSpent)}" color="{city.wheat + city.wheatEarned - city.wheatSpent >= 0 ? Numbers.GREEN : Numbers.RED}"/>
 								</mx:GridItem>
 							</mx:GridRow>
 							<mx:GridRow >
 								<mx:GridItem horizontalAlign="center">
-								<mx:Image toolTip="Wood" source="{ImageContainer.WOOD}" click="addAllUnemployedToWood()"/>
+									<mx:Image toolTip="Wood" source="{ImageContainer.WOOD}" click="addAllUnemployedToWood()"/>
 								</mx:GridItem>
 								<mx:GridItem>
 									<s:TextInput text="{city.peopleCreatingWood}" 
@@ -960,7 +972,7 @@
 									<s:Label text="- {city.woodSpent}" color="{city.woodSpent > 0 ? Numbers.RED : Numbers.GREEN}"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
-									<s:Label text="{city.wood + city.woodEarned - city.woodSpent >= 0 ? '+' : '-'} {Math.abs(city.wood + city.woodEarned - city.woodSpent)}" color="{city.wood + city.woodEarned - city.woodSpent >= 0 ? Numbers.GREEN : Numbers.RED}"/>
+									<s:Label text="{(city.wood + city.woodEarned - city.woodSpent)}" color="{city.wood + city.woodEarned - city.woodSpent >= 0 ? Numbers.GREEN : Numbers.RED}"/>
 								</mx:GridItem>
 							</mx:GridRow>
 							<mx:GridRow >
@@ -981,7 +993,7 @@
 									<s:Label text="- {city.ironSpent}" color="{city.ironSpent > 0 ? Numbers.RED : Numbers.GREEN}"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
-									<s:Label text="{city.iron + city.ironEarned - city.ironSpent >= 0 ? '+' : '-'} {Math.abs(city.iron + city.ironEarned - city.ironSpent)}" color="{city.iron + city.ironEarned - city.ironSpent >= 0 ? Numbers.GREEN : Numbers.RED}"/>
+									<s:Label text="{(city.iron + city.ironEarned - city.ironSpent)}" color="{city.iron + city.ironEarned - city.ironSpent >= 0 ? Numbers.GREEN : Numbers.RED}"/>
 								</mx:GridItem>
 							</mx:GridRow>
 							<mx:GridRow>
@@ -1030,7 +1042,7 @@
 						  </mx:GridRow>
 						  <mx:GridRow >
 							  <mx:GridItem horizontalAlign="center">
-								  <s:Label text="Arcs" />
+								  <mx:Image toolTip="Arcs" source="{ImageContainer.BOW}" click="addAllUnemployedToBow()"/>
 							  </mx:GridItem>
 							  <mx:GridItem horizontalAlign="center">
 								  <s:TextInput text="{city.bowWorkers}" 
@@ -1049,7 +1061,7 @@
 						  </mx:GridRow>
 							<mx:GridRow >
 								<mx:GridItem horizontalAlign="center">
-									<s:Label text="Epees" />
+									<mx:Image toolTip="Epees" source="{ImageContainer.SWORD}" click="addAllUnemployedToSword()"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
 									<s:TextInput text="{city.swordWorkers}" 
@@ -1068,7 +1080,7 @@
 							</mx:GridRow>
 							<mx:GridRow >
 								<mx:GridItem horizontalAlign="center">
-									<s:Label text="Armures" />
+									<mx:Image toolTip="Armures" source="{ImageContainer.ARMOR}" click="addAllUnemployedToArmor()"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
 									<s:TextInput text="{city.armorWorkers}" 
@@ -1140,7 +1152,7 @@
 							</mx:GridRow>
 							<mx:GridRow >
 								<mx:GridItem horizontalAlign="center">
-									<s:Label text="Arcs" />
+									<mx:Image toolTip="Arcs" source="{ImageContainer.BOW}"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
 									<s:Label text="{city.bowStock}" styleName="numberLabel"/>
@@ -1154,14 +1166,14 @@
 											 color="{city.bowsRestored - city.bowsEquiped >= 0 ? Numbers.GREEN : Numbers.RED}"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
-									<s:Label text="{(city.bowWorkers + city.bowsRestored - city.bowsEquiped >= 0 ? '+' : '-')} {Math.abs(city.bowWorkers + city.bowsRestored - city.bowsEquiped)}" 
+									<s:Label text="{(city.bowStock + city.bowWorkers + city.bowsRestored - city.bowsEquiped)}" 
 											 styleName="numberLabel" 
-											 color="{city.bowWorkers + city.bowsRestored - city.bowsEquiped >= 0 ? Numbers.GREEN : Numbers.RED}"/>
+											 color="{city.bowStock + city.bowWorkers + city.bowsRestored - city.bowsEquiped >= 0 ? Numbers.GREEN : Numbers.RED}"/>
 								</mx:GridItem>
 							</mx:GridRow>
 							<mx:GridRow >
 								<mx:GridItem horizontalAlign="center">
-									<s:Label text="Epees" />
+									<mx:Image toolTip="Epees" source="{ImageContainer.SWORD}"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
 									<s:Label text="{city.swordStock}" styleName="numberLabel"/>
@@ -1175,14 +1187,14 @@
 											 color="{city.swordsRestored - city.swordsEquiped >= 0 ? Numbers.GREEN : Numbers.RED}"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
-									<s:Label text="{(city.swordWorkers + city.swordsRestored - city.swordsEquiped >= 0 ? '+' : '-')} {Math.abs(city.swordWorkers + city.swordsRestored - city.swordsEquiped)}" 
+									<s:Label text="{(city.swordStock + city.swordWorkers + city.swordsRestored - city.swordsEquiped)}" 
 											 styleName="numberLabel" 
-											 color="{city.swordWorkers + city.swordsRestored - city.swordsEquiped >= 0 ? Numbers.GREEN : Numbers.RED}"/>
+											 color="{city.swordStock + city.swordWorkers + city.swordsRestored - city.swordsEquiped >= 0 ? Numbers.GREEN : Numbers.RED}"/>
 								</mx:GridItem>
 							</mx:GridRow>
 							<mx:GridRow >
 								<mx:GridItem horizontalAlign="center">
-									<s:Label text="Armures" />
+									<mx:Image toolTip="Armures" source="{ImageContainer.ARMOR}"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
 									<s:Label text="{city.armorStock}" styleName="numberLabel"/>
@@ -1196,9 +1208,9 @@
 											 color="{city.armorsRestored - city.armorsEquiped >= 0 ? Numbers.GREEN : Numbers.RED}"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
-									<s:Label text="{(city.armorWorkers + city.armorsRestored - city.armorsEquiped >= 0 ? '+' : '-')} {Math.abs(city.armorWorkers + city.armorsRestored - city.armorsEquiped)}" 
+									<s:Label text="{(city.armorStock + city.armorWorkers + city.armorsRestored - city.armorsEquiped)}" 
 											 styleName="numberLabel" 
-											 color="{city.armorWorkers + city.armorsRestored - city.armorsEquiped >= 0 ? Numbers.GREEN : Numbers.RED}"/>
+											 color="{city.armorStock + city.armorWorkers + city.armorsRestored - city.armorsEquiped >= 0 ? Numbers.GREEN : Numbers.RED}"/>
 								</mx:GridItem>
 							</mx:GridRow>
 						</mx:Grid>
@@ -1424,7 +1436,7 @@
 							</mx:GridRow>
 							<mx:GridRow >
 								<mx:GridItem horizontalAlign="center">
-									<s:Label text="Arcs" />
+									<mx:Image toolTip="Arcs" source="{ImageContainer.BOW}"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
 									<s:TextInput text="{army.bows}" 
@@ -1440,7 +1452,7 @@
 							</mx:GridRow>
 							<mx:GridRow >
 								<mx:GridItem horizontalAlign="center">
-									<s:Label text="Epees" />
+									<mx:Image toolTip="Epees" source="{ImageContainer.SWORD}"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
 									<s:TextInput text="{army.swords}" 
@@ -1456,7 +1468,7 @@
 							</mx:GridRow>
 							<mx:GridRow >
 								<mx:GridItem horizontalAlign="center">
-									<s:Label text="Armures" />
+									<mx:Image toolTip="Armures" source="{ImageContainer.ARMOR}"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
 									<s:TextInput text="{army.armors}" 

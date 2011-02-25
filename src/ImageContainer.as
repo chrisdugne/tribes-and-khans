@@ -22,5 +22,14 @@ public final class ImageContainer
 
 	//   ======================================================================//
 
+	[Embed(source="resources/embed/icons/epee.png")]
+	[Bindable] public static var SWORD:Class;
+
+	[Embed(source="resources/embed/icons/armure.png")]
+	[Bindable] public static var ARMOR:Class;
+
+	[Embed(source="resources/embed/icons/arc.png")]
+	[Bindable] public static var BOW:Class;
+
 }
 }

@@ -631,12 +631,32 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 
 			ArrayList<String> allUnitUIDs = new ArrayList<String>();
 			
+			if(debug)System.out.println("armies");
+			
+			for(String army : player.getArmyUIDs()){
+				if(debug)System.out.println(army);
+			}
+			
+			if(debug)System.out.println("merchants");
+
+			for(String army : player.getMerchantUIDs()){
+				if(debug)System.out.println(army);
+			}
+			
+			
 			allUnitUIDs.addAll(player.getArmyUIDs());
 			allUnitUIDs.addAll(player.getMerchantUIDs());
 			
+
+			if(debug)System.out.println("allUnits");
+
+			for(String army : allUnitUIDs){
+				if(debug)System.out.println(army);
+			}
+			
 			Query query = pm.newQuery("select from " + ArmyDTO.class.getName() + " where :uids.contains(key)");
 			List<ArmyDTO> armies;
-			if(player.getArmyUIDs().size() > 0){
+			if(allUnitUIDs.size() > 0){
 				armies = (List<ArmyDTO>) query.execute(allUnitUIDs);
 			}
 			else

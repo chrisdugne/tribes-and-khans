@@ -97,7 +97,7 @@
 						selectedUnit.ellipseTo.height = selectedUnit.radius*2;
 						selectedUnit.ellipseTo.fill = new SolidColor(selectedUnit.type == 1 ? Numbers.WHITE : Numbers.YELLOW, 0.5);
 						
-						board.addElement(selectedUnit.ellipseTo);
+						boardEntities.addElement(selectedUnit.ellipseTo);
 						selectedUnit.ellipseToIsDrawn = true;
 					}
 
@@ -107,7 +107,7 @@
 						selectedUnit.lineTo.yFrom = selectedUnit.y;
 						selectedUnit.lineTo.stroke = radialGrad;
 						
-						board.addElement(selectedUnit.lineTo);
+						boardEntities.addElement(selectedUnit.lineTo);
 						selectedUnit.lineToIsDrawn = true;
 					}
 					
@@ -239,6 +239,10 @@
 			
 			protected function initCitiesList():void{
 				citiesList.addEventListener(ItemClickEvent.ITEM_CLICK, onCityClick);
+			}
+			
+			protected function initOtherCitiesList():void{
+				otherCitiesList.addEventListener(ItemClickEvent.ITEM_CLICK, onCityClick);
 			}
 			
 			protected function initSelectionChoiceArmyList():void{
@@ -376,6 +380,14 @@
 					}
 				}
 
+				for each(var player:Player in game.players){
+					if(player.playerUID != Session.currentPlayer.playerUID){
+						for each(var city:City in player.cities){
+							Session.allOtherCities.addItem(city);
+						}
+					}
+				}
+				
 			}
 
 			//-----------------------------------------------------------//
@@ -389,7 +401,7 @@
 				
 				//------------------------------------------------------------//
 
-				BoardDrawer.getInstance().setBoard(board);
+				BoardDrawer.getInstance().setBoards(boardEntities, boardImages, boardTexts);
 				BoardDrawer.getInstance().setGame(game);
 				BoardDrawer.getInstance().redrawAllEntities();
 				BoardClickListener.boardPage = this;
@@ -686,7 +698,7 @@
 			<s:Button label="Leave this game" left="10" right="5" click="leave()"/>
 		</s:VGroup>
 		<s:VGroup horizontalAlign="left" top="70" left="35">
-			<s:Label text="Villes"/>
+			<s:Label text="Mes Villes"/>
 			<s:Scroller height="200">
 				<s:Group>
 					<s:List id="citiesList"
@@ -696,6 +708,22 @@
 							width="275"
 							contentBackgroundAlpha="0"
 							creationComplete="initCitiesList()">
+						<s:layout>
+							<s:VerticalLayout gap="1" useVirtualLayout="true" />
+						</s:layout>
+					</s:List>
+				</s:Group>
+			</s:Scroller>
+			<s:Label text="Autres Villes"/>
+			<s:Scroller height="200">
+				<s:Group>
+					<s:List id="otherCitiesList"
+							itemRenderer="com.uralys.renderers.OtherCityListRenderer"
+							dataProvider="{Session.allOtherCities}"
+							borderVisible="false"
+							width="275"
+							contentBackgroundAlpha="0"
+							creationComplete="initOtherCitiesList()">
 						<s:layout>
 							<s:VerticalLayout gap="1" useVirtualLayout="true" />
 						</s:layout>
@@ -759,6 +787,11 @@
 			<mx:Spacer width="200"/>
 			<s:Label text="Y : {coordinateY}"/>
 		</s:HGroup>
+		<s:HGroup width="100%" horizontalAlign="center" paddingTop="50" bottom="2">
+			<s:CheckBox id="checkBoxDetails" label="Details" selected="true" skinClass="spark.skins.spark.CheckBoxSkin"/>
+			<s:CheckBox id="checkBoxImages" label="Images" selected="true" skinClass="spark.skins.spark.CheckBoxSkin"/>
+			<s:CheckBox id="checkBoxTexts" label="Textes" selected="true" skinClass="spark.skins.spark.CheckBoxSkin"/>
+		</s:HGroup>
 		<s:Group width="100%">
 			<s:HGroup width="100%" horizontalAlign="center" paddingTop="50">
 				<s:Group width="500" height="500"
@@ -778,15 +811,44 @@
 			</s:HGroup>
 			<s:HGroup width="100%" horizontalAlign="center" paddingTop="50"
 					  mouseEnabled="false"
-					  mouseEnabledWhereTransparent="false">
+					  mouseEnabledWhereTransparent="false"
+					  visible="{checkBoxDetails.selected}">
 				<s:Group width="500" height="500"
 						 clipAndEnableScrolling="true"
 						 mouseChildren="false"
 						 mouseEnabled="false"
 						 mouseEnabledWhereTransparent="false">
-						<s:Group id="board"
+						<s:Group id="boardEntities"
 								 x="{image.x}"
 								 y="{image.y}"/>
+				</s:Group>
+			</s:HGroup>
+			<s:HGroup width="100%" horizontalAlign="center" paddingTop="50"
+					  mouseEnabled="false"
+					  mouseEnabledWhereTransparent="false"
+					  visible="{checkBoxImages.selected}">
+				<s:Group width="500" height="500"
+						 clipAndEnableScrolling="true"
+						 mouseChildren="false"
+						 mouseEnabled="false"
+						 mouseEnabledWhereTransparent="false">
+					<s:Group id="boardImages"
+							 x="{image.x}"
+							 y="{image.y}"/>
+				</s:Group>
+			</s:HGroup>
+			<s:HGroup width="100%" horizontalAlign="center" paddingTop="50"
+					  mouseEnabled="false"
+					  mouseEnabledWhereTransparent="false">
+				<s:Group width="500" height="500"
+						 clipAndEnableScrolling="true"
+						 mouseChildren="false"
+						 mouseEnabled="false"
+						 mouseEnabledWhereTransparent="false"
+						 visible="{checkBoxTexts.selected}">
+					<s:Group id="boardTexts"
+							 x="{image.x}"
+							 y="{image.y}"/>
 				</s:Group>
 			</s:HGroup>
 			<s:HGroup width="100%" horizontalAlign="center" paddingTop="50"

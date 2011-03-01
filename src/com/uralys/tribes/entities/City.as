@@ -117,7 +117,7 @@ package com.uralys.tribes.entities
 		}
 	
 		public function get radius():int {
-			return Math.sqrt(_population)/2;
+			return Math.sqrt(_population);
 		}
 	
 		public function get equipmentStock():ArrayCollection {

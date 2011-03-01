@@ -7,9 +7,12 @@ package com.uralys.tribes.core
 	import com.uralys.tribes.entities.Game;
 	import com.uralys.tribes.entities.Player;
 	import com.uralys.tribes.pages.Board;
+	import com.uralys.utils.Utils;
 	
 	import flash.display.Sprite;
 	
+	import mx.collections.ArrayCollection;
+	import mx.controls.Image;
 	import mx.core.UIComponent;
 	import mx.graphics.GradientEntry;
 	import mx.graphics.RadialGradientStroke;
@@ -54,8 +57,10 @@ package com.uralys.tribes.core
 			radialGrad.interpolationMethod
 		}
 
-		public function setBoard(board:Group):void{
-			this.board = board;
+		public function setBoards(boardEntities:Group, boardImages:Group, boardTexts:Group):void{
+			this.boardEntities = boardEntities;
+			this.boardImages = boardImages;
+			this.boardTexts = boardTexts;
 		}
 
 		public function setGame(game:Game):void{
@@ -64,7 +69,9 @@ package com.uralys.tribes.core
 
 		//=====================================================================================//
 		
-		private var board:Group;
+		private var boardEntities:Group;
+		private var boardImages:Group;
+		private var boardTexts:Group;
 		private var game:Game;
 		
 		//=====================================================================================//
@@ -72,7 +79,9 @@ package com.uralys.tribes.core
 		public function redrawAllEntities():void{
 			
 			try{
-				board.removeAllElements();
+				boardEntities.removeAllElements();
+				boardImages.removeAllElements();
+				boardTexts.removeAllElements();
 			}catch(e:Error){}
 			
 			for each (var player:Player in game.players){
@@ -107,7 +116,7 @@ package com.uralys.tribes.core
 						armyCircle.fill = new SolidColor(isOpponent ? Numbers.RED : Numbers.WHITE);
 						army.armyCircle = armyCircle;
 						
-						board.addElement(armyCircle);
+						boardEntities.addElement(armyCircle);
 					}
 
 					//------------------------------------------------------------//
@@ -143,7 +152,7 @@ package com.uralys.tribes.core
 						merchantCircle.fill = new SolidColor(isOpponent ? Numbers.BLACK : Numbers.YELLOW);
 						merchant.armyCircle = merchantCircle;
 						
-						board.addElement(merchantCircle);
+						boardEntities.addElement(merchantCircle);
 					}
 
 					//------------------------------------------------------------//
@@ -182,7 +191,7 @@ package com.uralys.tribes.core
 					landSquare.fill = new SolidColor(isOpponent ? Numbers.YELLOW : Numbers.BLUE);
 					landSquare.alpha = 0.2;
 					
-					board.addElement(landSquare);
+					boardEntities.addElement(landSquare);
 				}
 			}
 		}
@@ -201,7 +210,7 @@ package com.uralys.tribes.core
 				
 				cityCircle.fill = new SolidColor(isOpponent ? Numbers.YELLOW : Numbers.BLUE);
 				
-				board.addElement(cityCircle);
+				boardEntities.addElement(cityCircle);
 			}
 			
 			//------------------------------------------------------------//
@@ -212,13 +221,38 @@ package com.uralys.tribes.core
 				name.x = city.x - city.radius - 20; 
 				name.y = city.y - city.radius - 20; 
 				
-				board.addElement(name);
+				boardTexts.addElement(name);
 			}
 			
 			//------------------------------------------------------------//
 			
 			if(Session.DRAW_IMAGES){
+				var angle:int = 0;
+				var distanceAuCentre:int = 0;
+				var insideCircle:Boolean = true;
 				
+				var images:ArrayCollection = new ArrayCollection();
+				
+				while(insideCircle){
+					var image:Image = new Image();
+					image.source = "../images/house.png";
+					
+					image.x = (city.x - image.width - 10) + (Math.cos(angle)*(distanceAuCentre/2));
+					image.y = (city.y - image.height - 10) + (Math.sin(angle)*(distanceAuCentre/2));
+					
+					if(distanceAuCentre > city.radius*2)
+						insideCircle = false;
+					else{
+						images.addItem(image);
+						distanceAuCentre = angle/360 * 40 + 30;
+						angle += distanceAuCentre > 50 ? (distanceAuCentre > 100 ? 10 : 20) : 40;
+					}
+				}
+				
+				while(images.length > 0){
+					var num:int = Utils.random(images.length) - 1;
+					boardImages.addElement(images.removeItemAt(num) as Image);
+				}
 			}
 		}
 
@@ -226,12 +260,11 @@ package com.uralys.tribes.core
 
 		public function removeArmyFromBoard(army:Army):void{
 			try{
-				trace("wew");
-				if(army.armyCircle)board.removeElement(army.armyCircle);
-				if(army.lineTo)board.removeElement(army.lineTo);	
-				if(army.ellipseTo)board.removeElement(army.ellipseTo);	
-				if(army.tmpLandSquare)board.removeElement(army.tmpLandSquare);
-				board.redrawRequested = true;
+				if(army.armyCircle)boardEntities.removeElement(army.armyCircle);
+				if(army.lineTo)boardEntities.removeElement(army.lineTo);	
+				if(army.ellipseTo)boardEntities.removeElement(army.ellipseTo);	
+				if(army.tmpLandSquare)boardEntities.removeElement(army.tmpLandSquare);
+				boardEntities.redrawRequested = true;
 
 			}catch(e:Error){trace(e.message);}
 
@@ -240,7 +273,7 @@ package com.uralys.tribes.core
 		// type 1 : armee, type 2 : merchant
 		public function refreshArmyOnBoard(army:Army):void{
 			try{
-				board.removeElement(army.armyCircle);
+				boardEntities.removeElement(army.armyCircle);
 			}catch(e:Error){}
 			
 			// army
@@ -254,7 +287,7 @@ package com.uralys.tribes.core
 			armyCircle.fill = new SolidColor(army.type == 1 ? Numbers.WHITE : Numbers.YELLOW);
 			army.armyCircle = armyCircle;
 			
-			board.addElement(armyCircle);
+			boardEntities.addElement(armyCircle);
 		}
 		
 		
@@ -275,13 +308,13 @@ package com.uralys.tribes.core
 			
 			selectedArmyCircle.stroke = new SolidColorStroke(army.type == 1 ? Numbers.WHITE : Numbers.YELLOW);
 			
-			board.addElement(selectedArmyCircle);
+			boardEntities.addElement(selectedArmyCircle);
 		}
 
 		public function removeArmySelection():void{
 			try{
 				Session.CURRENT_SELECTION_IS_ARMY = false;
-				board.removeElement(selectedArmyCircle);
+				boardEntities.removeElement(selectedArmyCircle);
 			}
 			catch(e:Error){}
 		}
@@ -298,7 +331,7 @@ package com.uralys.tribes.core
 			var boardY:int = armyMoved.lineTo.yTo;
 
 			try{
-				board.removeElement(armyMoved.tmpLandSquare);	
+				boardEntities.removeElement(armyMoved.tmpLandSquare);	
 			}catch(error:Error){}
 			
 			var landX:int = Math.floor(boardX/Numbers.LAND_WIDTH);	
@@ -345,7 +378,7 @@ package com.uralys.tribes.core
 				armyMoved.tmpLandSquare.fill = new SolidColor(Numbers.BLUE);
 				armyMoved.tmpLandSquare.alpha = 0.12;
 				
-				board.addElement(armyMoved.tmpLandSquare);
+				boardEntities.addElement(armyMoved.tmpLandSquare);
 			}
 			else
 				armyMoved.landExpected = -1;

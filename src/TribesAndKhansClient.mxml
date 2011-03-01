@@ -95,7 +95,11 @@
 			<mx:Image source="../images/logos/uralysminilogo.png" 
 					  x="65" bottom="2"
 					  click="navigateToURL(new URLRequest('http://www.uralys.com'), '_new');"/>
-			<mx:Spacer width="50%"/>
+			<mx:Spacer width="10%"/>
+			<s:Label text=" Aller sur le Forum"
+					 click="navigateToURL(new URLRequest('http://www.uralys.com/forumTAK'), '_new');"
+					 color="#222299"/>
+			<mx:Spacer width="20%"/>
 			<s:Label text=" Tribes And Khans 2011   -    version {Session.VERSION}" 
 					 color="#222299"/>
 		</s:HGroup>	

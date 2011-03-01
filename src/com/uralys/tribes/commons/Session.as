@@ -12,7 +12,7 @@ package com.uralys.tribes.commons
 		
 		//=====================================================//
 		
-		[Bindable] public static var VERSION:String = "1.0.25";
+		[Bindable] public static var VERSION:String = "1.0.26";
 		[Bindable] public static var LOGGED_IN:Boolean = false; 
 		[Bindable] public static var CONNECTED_TO_FACEBOOK:Boolean = false;
 		
@@ -33,6 +33,7 @@ package com.uralys.tribes.commons
 		[Bindable] public static var uralysProfile:UralysProfile;
 		[Bindable] public static var profil:Profil;
 		[Bindable] public static var currentPlayer:Player;
+		[Bindable] public static var allOtherCities:ArrayCollection = new ArrayCollection();
 		
 		//=====================================================//
 		// liste des currentgames
@@ -73,7 +74,7 @@ package com.uralys.tribes.commons
 		[Bindable] public static var DRAW_TEXTS:Boolean = true;
 		
 		// les images des entities sont dessinees sur la map
-		[Bindable] public static var DRAW_IMAGES:Boolean = false;
+		[Bindable] public static var DRAW_IMAGES:Boolean = true;
 		
 	}
 }

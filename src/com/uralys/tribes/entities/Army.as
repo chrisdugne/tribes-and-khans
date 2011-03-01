@@ -94,7 +94,7 @@ package com.uralys.tribes.entities
 		}
 	
 		public function get radius():int {
-			return Math.sqrt(_size)/4 + 2; // min 2 pixels
+			return Math.sqrt(_size)/2 + 2; // min 2 pixels
 		}
 	
 		public function set radius(o:int):void {

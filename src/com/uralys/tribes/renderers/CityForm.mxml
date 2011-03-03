@@ -1,0 +1,2270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" 
+		 xmlns:forms="com.uralys.renderers.forms.*">
+	
+		<fx:Script>
+			<![CDATA[
+				import com.uralys.tribes.commons.Numbers;
+				import com.uralys.tribes.commons.Session;
+				import com.uralys.tribes.core.BoardDrawer;
+				import com.uralys.tribes.entities.Army;
+				import com.uralys.tribes.entities.City;
+				import com.uralys.tribes.entities.Equipment;
+				import com.uralys.tribes.entities.Item;
+				import com.uralys.tribes.entities.Smith;
+				import com.uralys.tribes.tooltips.ForgeToolTip;
+				
+				import mx.collections.ArrayCollection;
+				import mx.events.ItemClickEvent;
+				import mx.events.ToolTipEvent;
+				
+				//----------------------------------------------------------//
+				
+				protected function initArmiesList():void{
+					armiesList.addEventListener(ItemClickEvent.ITEM_CLICK, onArmyClick);
+				}
+
+				protected function initMerchantsList():void{
+					merchantsList.addEventListener(ItemClickEvent.ITEM_CLICK, onMerchantClick);
+				}
+
+				//----------------------------------------------------------//
+				
+				public var _city:City;
+				[Bindable] private var army:Army;
+				[Bindable] private var merchant:Army;
+
+				//----------------------------------------------------------//
+
+				[Bindable] 
+				public function set city(o:City){
+					_city = o;
+					
+					
+					// recuperation des stocks de la forge
+					for each(var equipment:Equipment in city.equipmentStock){
+						switch(equipment.item.name){
+							case "bow" :
+								city.bowStock = equipment.size;
+								break;
+							case "sword" :
+								city.swordStock = equipment.size;
+								break;
+							case "armor" :
+								city.armorStock = equipment.size;
+								break;
+						}
+					}
+				
+					// recuperations des workers pour chaque item de la forge
+					// et verification si on peut laisser autant de smith (si les stocks sont suffisants)
+					for each(var smith:Smith in city.smiths){
+						
+						switch(smith.item.name){
+							case "bow" :
+								city.bowWorkers = -1;
+
+								// la depense en bois pour les arcs est plus grande que le stock de bois
+								if(Numbers.BOW_WOOD * smith.people > city.wood)
+									city.bowWorkers = Math.floor(city.wood/Numbers.BOW_WOOD);
+								
+								// la depense en fer pour les arcs est plus grande que le stock de fer
+								if(Numbers.BOW_IRON * smith.people > city.iron)
+									city.bowWorkers = Math.floor(city.iron/Numbers.BOW_IRON);
+								
+								
+								if(city.bowWorkers == -1) // stock suffisant
+									city.bowWorkers = smith.people;
+									
+								break;
+							case "sword" :
+								city.swordWorkers = -1;
+								
+								// la depense en bois pour les epees est plus grande que le stock de bois
+								if(Numbers.SWORD_WOOD * smith.people > city.wood)
+									city.swordWorkers = Math.floor(city.wood/Numbers.SWORD_WOOD);
+								
+								// la depense en fer pour les epees est plus grande que le stock de fer
+								if(Numbers.SWORD_IRON * smith.people > city.iron)
+									city.swordWorkers = Math.floor(city.iron/Numbers.SWORD_IRON);
+								
+								if(city.swordWorkers == -1) // stock suffisant
+									city.swordWorkers = smith.people;
+								
+								break;
+							case "armor" :
+								city.armorWorkers = -1;
+								
+								// la depense en bois pour les armoures est plus grande que le stock de bois
+								if(Numbers.ARMOR_WOOD * smith.people > city.wood)
+									city.armorWorkers = Math.floor(city.wood/Numbers.ARMOR_WOOD);
+								
+								// la depense en fer pour les armoures est plus grande que le stock de fer
+								if(Numbers.ARMOR_IRON * smith.people > city.iron)
+									city.armorWorkers = Math.floor(city.iron/Numbers.ARMOR_IRON);
+								
+								if(city.armorWorkers == -1) // stock suffisant
+									city.armorWorkers = smith.people;
+								
+								break;
+						}
+					}
+					
+					// calcul des depenses prevues avec les choix du tour precedent
+					city.woodSpent += city.bowWorkers * Numbers.BOW_WOOD;
+					city.woodSpent += city.swordWorkers * Numbers.SWORD_WOOD;
+					city.woodSpent += city.armorWorkers * Numbers.ARMOR_WOOD;
+					
+					city.ironSpent += city.bowWorkers * Numbers.BOW_IRON;
+					city.ironSpent += city.swordWorkers * Numbers.BOW_IRON;
+					city.ironSpent += city.armorWorkers * Numbers.BOW_IRON;
+					
+					city.wheatSpent += city.armiesToFeed;
+					
+					city.refreshUnemployed();
+					
+					// calcul des resources gagnees avec le precedent choix de peopleCreatingXXX
+					city.wheatEarned = Numbers.WHEAT_EARNING_COEFF * city.peopleCreatingWheat;
+					city.woodEarned = Numbers.WOOD_EARNING_COEFF * city.peopleCreatingWood;
+					city.ironEarned = Numbers.IRON_EARNING_COEFF * city.peopleCreatingIron;
+					
+					
+					city.refreshUnemployed();
+				}	
+
+				public function get city():City{
+					return _city;
+				}
+				
+				//-------------------------------------------------------------------------//
+
+				protected function cityNameInputHandler(event:KeyboardEvent):void	{
+					city.name = cityNameInput.text;
+					BoardDrawer.getInstance().redrawTexts();
+				}
+				
+				//-------------------------------------------------------------------------//
+
+				protected function wheatInputKeyUpHandler(event:KeyboardEvent):void	{
+					
+					city.peopleCreatingWheat = parseInt(wheatInput.text);
+					
+					if(city.population < city.peopleCreatingWheat)
+						city.peopleCreatingWheat = city.population;
+					
+					city.wheatEarned = Numbers.WHEAT_EARNING_COEFF * city.peopleCreatingWheat;
+				}
+
+				protected function  addAllUnemployedToWheat():void	{
+					city.peopleCreatingWheat += city.unemployed;
+					city.wheatEarned = Numbers.WHEAT_EARNING_COEFF * city.peopleCreatingWheat;
+				}
+
+				//-------------------------------------------------------------------------//
+
+				protected function woodInputKeyUpHandler(event:KeyboardEvent):void	{
+					city.peopleCreatingWood = parseInt(woodInput.text);
+					
+					if(city.population < city.peopleCreatingWood)
+						city.peopleCreatingWood = city.population;
+					
+					city.woodEarned = Numbers.WOOD_EARNING_COEFF * city.peopleCreatingWood;
+				}
+				
+				protected function  addAllUnemployedToWood():void	{
+					city.peopleCreatingWood += city.unemployed;
+					city.woodEarned = Numbers.WOOD_EARNING_COEFF * city.peopleCreatingWood;
+				}
+				
+				//-------------------------------------------------------------------------//
+
+				protected function ironInputKeyUpHandler(event:KeyboardEvent):void	{
+					city.peopleCreatingIron = parseInt(ironInput.text);
+					
+					if(city.population < city.peopleCreatingIron)
+						city.peopleCreatingIron = city.population;
+					
+					city.ironEarned = Numbers.IRON_EARNING_COEFF * city.peopleCreatingIron;
+				}
+				
+				protected function  addAllUnemployedToIron():void	{
+					city.peopleCreatingIron += city.unemployed;
+					city.ironEarned = Numbers.IRON_EARNING_COEFF * city.peopleCreatingIron;
+				}
+				
+
+				//-------------------------------------------------------------------------//
+				// Market - Achat
+				
+				
+				protected function wheatMarketBuyInputKeyUpHandler(event:KeyboardEvent):void	{
+					
+					city.goldSpent -= city.wheatBought * Numbers.WHEAT_PRICE_BUY;
+					city.wheatBought = parseInt(wheatMarketBuyInput.text);
+					
+					if((city.gold-city.goldSpent)/Numbers.WHEAT_PRICE_BUY < city.wheatBought)
+						city.wheatBought = (city.gold-city.goldSpent)/Numbers.WHEAT_PRICE_BUY;
+					
+					city.goldSpent += city.wheatBought * Numbers.WHEAT_PRICE_BUY;
+				}
+				
+				protected function spendAllMoneyForWheat():void	{
+					var newWheatBought:int = (city.gold-city.goldSpent)/Numbers.WHEAT_PRICE_BUY;
+					city.wheatBought += newWheatBought;
+					city.goldSpent += newWheatBought*Numbers.WHEAT_PRICE_BUY;
+				}
+				
+				
+				
+				protected function woodMarketBuyInputKeyUpHandler(event:KeyboardEvent):void	{
+					
+					city.goldSpent -= city.woodBought * Numbers.WOOD_PRICE_BUY;
+					city.woodBought = parseInt(woodMarketBuyInput.text);
+					
+					if((city.gold-city.goldSpent)/Numbers.WOOD_PRICE_BUY < city.woodBought)
+						city.woodBought = (city.gold-city.goldSpent)/Numbers.WOOD_PRICE_BUY;
+					
+					city.goldSpent += city.woodBought * Numbers.WOOD_PRICE_BUY;
+				}
+				
+				protected function spendAllMoneyForWood():void	{
+					var newWoodBought:int = (city.gold-city.goldSpent)/Numbers.WOOD_PRICE_BUY;
+					city.woodBought += newWoodBought;
+					city.goldSpent += newWoodBought*Numbers.WOOD_PRICE_BUY;
+				}
+				
+				
+				
+				protected function ironMarketBuyInputKeyUpHandler(event:KeyboardEvent):void	{
+					
+					city.goldSpent -= city.ironBought * Numbers.IRON_PRICE_BUY;
+					city.ironBought = parseInt(ironMarketBuyInput.text);
+					
+					if((city.gold-city.goldSpent)/Numbers.IRON_PRICE_BUY < city.ironBought)
+						city.ironBought = (city.gold-city.goldSpent)/Numbers.IRON_PRICE_BUY;
+					
+					city.goldSpent += city.ironBought * Numbers.IRON_PRICE_BUY;
+				}
+				
+				protected function spendAllMoneyForIron():void	{
+					var newIronBought:int = (city.gold-city.goldSpent)/Numbers.IRON_PRICE_BUY;
+					city.ironBought += newIronBought;
+					city.goldSpent += newIronBought*Numbers.IRON_PRICE_BUY;
+				}
+				
+				
+				
+				protected function bowsMarketBuyInputKeyUpHandler(event:KeyboardEvent):void	{
+					
+					city.goldSpent -= city.bowsBought * Numbers.BOW_PRICE_BUY;
+					city.bowsBought = parseInt(bowsMarketBuyInput.text);
+					
+					if((city.gold-city.goldSpent)/Numbers.BOW_PRICE_BUY < city.bowsBought)
+						city.bowsBought = (city.gold-city.goldSpent)/Numbers.BOW_PRICE_BUY;
+					
+					city.goldSpent += city.bowsBought * Numbers.BOW_PRICE_BUY;
+				}
+				
+				protected function spendAllMoneyForBows():void	{
+					var newBowsBought:int = (city.gold-city.goldSpent)/Numbers.BOW_PRICE_BUY;
+					city.bowsBought += newBowsBought;
+					city.goldSpent += newBowsBought*Numbers.BOW_PRICE_BUY;
+				}
+				
+				
+				protected function swordsMarketBuyInputKeyUpHandler(event:KeyboardEvent):void	{
+					
+					city.goldSpent -= city.swordsBought * Numbers.SWORD_PRICE_BUY;
+					city.swordsBought = parseInt(swordsMarketBuyInput.text);
+					
+					if((city.gold-city.goldSpent)/Numbers.SWORD_PRICE_BUY < city.swordsBought)
+						city.swordsBought = (city.gold-city.goldSpent)/Numbers.SWORD_PRICE_BUY;
+					
+					city.goldSpent += city.swordsBought * Numbers.SWORD_PRICE_BUY;
+				}
+				
+				protected function spendAllMoneyForSwords():void	{
+					var newSwordsBought:int = (city.gold-city.goldSpent)/Numbers.SWORD_PRICE_BUY;
+					city.swordsBought += newSwordsBought;
+					city.goldSpent += newSwordsBought*Numbers.SWORD_PRICE_BUY;
+				}
+				
+				
+				protected function armorsMarketBuyInputKeyUpHandler(event:KeyboardEvent):void	{
+					
+					city.goldSpent -= city.armorsBought * Numbers.ARMOR_PRICE_BUY;
+					city.armorsBought = parseInt(armorsMarketBuyInput.text);
+					
+					if((city.gold-city.goldSpent)/Numbers.ARMOR_PRICE_BUY < city.armorsBought)
+						city.armorsBought = (city.gold-city.goldSpent)/Numbers.ARMOR_PRICE_BUY;
+					
+					city.goldSpent += city.armorsBought * Numbers.ARMOR_PRICE_BUY;
+				}
+				
+				protected function spendAllMoneyForArmors():void{
+					var newArmorsBought:int = (city.gold-city.goldSpent)/Numbers.ARMOR_PRICE_BUY;
+					city.armorsBought += newArmorsBought;
+					city.goldSpent += newArmorsBought*Numbers.ARMOR_PRICE_BUY;
+				}
+				
+				
+				protected function buy():void{
+					city.gold -= city.goldSpent;
+					
+					city.wheat += city.wheatBought;
+					city.wood += city.woodBought;
+					city.iron += city.ironBought;
+					city.bowStock += city.bowsBought;
+					city.swordStock += city.swordsBought;
+					city.armorStock += city.armorsBought;
+					
+					city.goldSpent = 0;
+					city.wheatBought = 0;
+					city.woodBought = 0;
+					city.ironBought = 0;
+					city.bowsBought = 0;
+					city.swordsBought = 0;
+					city.armorsBought = 0;
+				}
+				
+				//-------------------------------------------------------------------------//
+				// Market - Vente
+				
+				
+				protected function wheatMarketSellInputKeyUpHandler(event:KeyboardEvent):void	{
+					
+					city.goldEarned -= city.wheatSold * Numbers.WHEAT_PRICE_SELL;
+					city.wheatSold = parseInt(wheatMarketSellInput.text);
+					
+					if((city.wheat-city.wheatSold) < 0)
+						city.wheatSold = city.wheat;
+					
+					city.goldEarned += city.wheatSold * Numbers.WHEAT_PRICE_SELL;
+				}
+				
+				protected function sellAllWheat():void	{
+					city.wheatSold = city.wheat;
+					city.goldEarned += city.wheatSold*Numbers.WHEAT_PRICE_SELL;
+				}
+
+				
+				protected function woodMarketSellInputKeyUpHandler(event:KeyboardEvent):void	{
+					
+					city.goldEarned -= city.woodSold * Numbers.WOOD_PRICE_SELL;
+					city.woodSold = parseInt(woodMarketSellInput.text);
+					
+					if((city.wood-city.woodSold) < 0)
+						city.woodSold = city.wood;
+					
+					city.goldEarned += city.woodSold * Numbers.WOOD_PRICE_SELL;
+				}
+				
+				protected function sellAllWood():void	{
+					city.woodSold = city.wood;
+					city.goldEarned += city.woodSold*Numbers.WOOD_PRICE_SELL;
+				}
+				
+				protected function ironMarketSellInputKeyUpHandler(event:KeyboardEvent):void	{
+					
+					city.goldEarned -= city.ironSold * Numbers.IRON_PRICE_SELL;
+					city.ironSold = parseInt(ironMarketSellInput.text);
+					
+					if((city.iron-city.ironSold) < 0)
+						city.ironSold = city.iron;
+					
+					city.goldEarned += city.ironSold * Numbers.IRON_PRICE_SELL;
+				}
+				
+				protected function sellAllIron():void	{
+					city.ironSold = city.iron;
+					city.goldEarned += city.ironSold*Numbers.IRON_PRICE_SELL;
+				}
+				
+				
+				protected function bowsMarketSellInputKeyUpHandler(event:KeyboardEvent):void	{
+					
+					city.goldEarned -= city.bowsSold * Numbers.BOW_PRICE_SELL;
+					city.bowsSold = parseInt(bowsMarketSellInput.text);
+					
+					if((city.bowStock-city.bowsSold) < 0)
+						city.bowsSold = city.bowStock;
+					
+					city.goldEarned += city.bowsSold * Numbers.BOW_PRICE_SELL;
+				}
+				
+				protected function sellAllBows():void	{
+					city.bowsSold = city.bowStock;
+					city.goldEarned += city.bowsSold*Numbers.BOW_PRICE_SELL;
+				}
+				
+				
+				protected function swordsMarketSellInputKeyUpHandler(event:KeyboardEvent):void	{
+					
+					city.goldEarned -= city.swordsSold * Numbers.SWORD_PRICE_SELL;
+					city.swordsSold = parseInt(swordsMarketSellInput.text);
+					
+					if((city.swordStock-city.swordsSold) < 0)
+						city.swordsSold = city.swordStock;
+					
+					city.goldEarned += city.swordsSold * Numbers.SWORD_PRICE_SELL;
+				}
+				
+				protected function sellAllSwords():void	{
+					city.swordsSold = city.swordStock;
+					city.goldEarned += city.swordsSold*Numbers.SWORD_PRICE_SELL;
+				}
+
+				
+				protected function armorsMarketSellInputKeyUpHandler(event:KeyboardEvent):void	{
+					
+					city.goldEarned -= city.armorsSold * Numbers.ARMOR_PRICE_SELL;
+					city.armorsSold = parseInt(armorsMarketSellInput.text);
+					
+					if((city.armorStock-city.armorsSold) < 0)
+						city.armorsSold = city.armorStock;
+					
+					city.goldEarned += city.armorsSold * Numbers.ARMOR_PRICE_SELL;
+				}
+				
+				protected function sellAllArmors():void	{
+					city.armorsSold = city.armorStock;
+					city.goldEarned += city.armorsSold*Numbers.ARMOR_PRICE_SELL;
+				}
+				
+				
+				protected function sell():void{
+					city.gold += city.goldEarned;
+					
+					city.wheat -= city.wheatSold;
+					city.wood -= city.woodSold;
+					city.iron -= city.ironSold;
+					city.bowStock -= city.bowsSold;
+					city.swordStock -= city.swordsSold;
+					city.armorStock -= city.armorsSold;
+					
+					city.goldEarned = 0;
+					city.wheatSold = 0;
+					city.woodSold = 0;
+					city.ironSold = 0;
+					city.bowsSold = 0;
+					city.swordsSold = 0;
+					city.armorsSold = 0;
+				}
+				
+				//-------------------------------------------------------------------------//
+				// Forge
+				
+				protected function registerNewForgeWorkers(itemName:String, newNbWorkers:int):void	{
+					
+					for each(var smith:Smith in city.smiths){
+						if(smith.item.name == itemName){
+							// ici, on a trouve des workers pour la ressource
+								
+							// on met a jour le nbWorkers
+							smith.people = newNbWorkers;
+
+							// on calcule le nouveau cout
+							city.woodSpent += smith.people * smith.item.wood;
+							city.ironSpent += smith.people * smith.item.iron;
+							
+							city.refreshUnemployed();
+							return;
+						}
+					}
+					
+					// arriving here : no smith found : new one.
+					var smith:Smith = new Smith();
+					smith.smithUID = "new";
+					smith.people = newNbWorkers;
+					
+					for each(var item:Item in Session.ITEMS){
+						if(item.name == itemName){
+							smith.item = item;
+							break;
+						}
+					}
+					
+					city.smiths.addItem(smith);
+					
+					city.woodSpent += smith.people * smith.item.wood;
+					city.ironSpent += smith.people * smith.item.iron;
+					city.refreshUnemployed(); 
+					
+				}
+
+				protected function bowWorkersInputKeyUpHandler(event:Event):void{
+					
+					// on enleve le precedent debit de ressources 
+					city.woodSpent -= city.bowWorkers * Numbers.BOW_WOOD;
+					city.ironSpent -= city.bowWorkers * Numbers.BOW_IRON;
+					
+					//trace("bowWorkersInput.text.length : " + bowWorkersInput.text.length);
+					
+					if(bowWorkersInput.text.length == 0)
+						city.bowWorkers = 0;
+					else
+						city.bowWorkers = parseInt(bowWorkersInput.text);
+					
+					//trace("city.bowWorkers : " + city.bowWorkers);
+					
+					var woodAvailable:int = city.wood - city.woodSpent;
+					var ironAvailable:int = city.iron - city.ironSpent;
+					
+					// la depense en bois pour les arcs est plus grande que le stock de bois
+					if(Numbers.BOW_WOOD * city.bowWorkers > woodAvailable)
+						city.bowWorkers = Math.floor(woodAvailable/Numbers.BOW_WOOD);
+
+					// la depense en fer pour les arcs est plus grande que le stock de fer
+					if(Numbers.BOW_IRON * city.bowWorkers > ironAvailable)
+						city.bowWorkers = Math.floor(ironAvailable/Numbers.BOW_IRON);
+							
+					registerNewForgeWorkers("bow", city.bowWorkers);
+				}
+				
+				
+				protected function  addAllUnemployedToBow():void	{
+					
+					// on enleve le precedent debit de ressources 
+					city.woodSpent -= city.bowWorkers * Numbers.BOW_WOOD;
+					city.ironSpent -= city.bowWorkers * Numbers.BOW_IRON;
+					
+					city.bowWorkers += city.unemployed;
+
+					var woodAvailable:int = city.wood - city.woodSpent;
+					var ironAvailable:int = city.iron - city.ironSpent;
+					
+					// la depense en bois pour les arcs est plus grande que le stock de bois
+					if(Numbers.BOW_WOOD * city.bowWorkers > woodAvailable)
+						city.bowWorkers = Math.floor(woodAvailable/Numbers.BOW_WOOD);
+					
+					// la depense en fer pour les arcs est plus grande que le stock de fer
+					if(Numbers.BOW_IRON * city.bowWorkers > ironAvailable)
+						city.bowWorkers = Math.floor(ironAvailable/Numbers.BOW_IRON);
+					
+					
+					registerNewForgeWorkers("bow", city.bowWorkers);
+					
+				}
+				
+				protected function swordWorkersInputKeyUpHandler(event:Event):void{
+				
+					// on enleve le precedent debit de ressources 
+					city.woodSpent -= city.swordWorkers * Numbers.SWORD_WOOD;
+					city.ironSpent -= city.swordWorkers * Numbers.SWORD_IRON;
+					
+					if(swordWorkersInput.text.length == 0)
+						city.swordWorkers = 0;
+					else
+						city.swordWorkers = parseInt(swordWorkersInput.text)
+							
+					var woodAvailable:int = city.wood - city.woodSpent;
+					var ironAvailable:int = city.iron - city.ironSpent;
+					
+					// la depense en bois pour les epees est plus grande que le stock de bois
+					if(Numbers.SWORD_WOOD * city.swordWorkers > woodAvailable)
+						city.swordWorkers = Math.floor(woodAvailable/Numbers.SWORD_WOOD);
+					
+					// la depense en fer pour les epees est plus grande que le stock de fer
+					if(Numbers.SWORD_IRON * city.swordWorkers > ironAvailable)
+						city.swordWorkers = Math.floor(ironAvailable/Numbers.SWORD_IRON);
+
+					registerNewForgeWorkers("sword", city.swordWorkers);
+				}
+				
+				protected function  addAllUnemployedToSword():void	{
+					
+					// on enleve le precedent debit de ressources 
+					city.woodSpent -= city.swordWorkers * Numbers.SWORD_WOOD;
+					city.ironSpent -= city.swordWorkers * Numbers.SWORD_IRON;
+					
+					city.swordWorkers += city.unemployed;
+										
+					var woodAvailable:int = city.wood - city.woodSpent;
+					var ironAvailable:int = city.iron - city.ironSpent;
+					
+					
+					// la depense en bois pour les epees est plus grande que le stock de bois
+					if(Numbers.SWORD_WOOD * city.swordWorkers > woodAvailable)
+						city.swordWorkers = Math.floor(woodAvailable/Numbers.SWORD_WOOD);
+					
+					// la depense en fer pour les epees est plus grande que le stock de fer
+					if(Numbers.SWORD_IRON * city.swordWorkers > ironAvailable)
+						city.swordWorkers = Math.floor(ironAvailable/Numbers.SWORD_IRON);
+					
+					registerNewForgeWorkers("sword", city.swordWorkers);
+				}
+				
+				protected function armorWorkersInputKeyUpHandler(event:Event):void{
+					
+					// on enleve le precedent debit de ressources 
+					city.woodSpent -= city.armorWorkers * Numbers.ARMOR_WOOD;
+					city.ironSpent -= city.armorWorkers * Numbers.ARMOR_IRON;
+					
+					if(armorWorkersInput.text.length == 0)
+						city.armorWorkers = 0;
+					else	
+						city.armorWorkers = parseInt(armorWorkersInput.text);
+					
+					var woodAvailable:int = city.wood - city.woodSpent;
+					var ironAvailable:int = city.iron - city.ironSpent;
+					
+					// la depense en bois pour les armures est plus grande que le stock de bois
+					if(Numbers.ARMOR_WOOD * city.armorWorkers > woodAvailable)
+						city.armorWorkers = Math.floor(woodAvailable/Numbers.ARMOR_WOOD) ;
+					
+					// la depense en fer pour les armures est plus grande que le stock de fer
+					if(Numbers.ARMOR_IRON * city.armorWorkers > ironAvailable)
+						city.armorWorkers = Math.floor(ironAvailable/Numbers.ARMOR_IRON);
+					
+					registerNewForgeWorkers("armor", city.armorWorkers);
+				}
+				
+				protected function  addAllUnemployedToArmor():void	{
+					
+					// on enleve le precedent debit de ressources 
+					city.woodSpent -= city.armorWorkers * Numbers.ARMOR_WOOD;
+					city.ironSpent -= city.armorWorkers * Numbers.ARMOR_IRON;
+					
+					city.armorWorkers += city.unemployed;
+					
+					var woodAvailable:int = city.wood - city.woodSpent;
+					var ironAvailable:int = city.iron - city.ironSpent;
+					
+					
+					// la depense en bois pour les armures est plus grande que le stock de bois
+					if(Numbers.ARMOR_WOOD * city.armorWorkers > woodAvailable)
+						city.armorWorkers = Math.floor(woodAvailable/Numbers.ARMOR_WOOD) ;
+					
+					// la depense en fer pour les armures est plus grande que le stock de fer
+					if(Numbers.ARMOR_IRON * city.armorWorkers > ironAvailable)
+						city.armorWorkers = Math.floor(ironAvailable/Numbers.ARMOR_IRON);
+					
+					registerNewForgeWorkers("armor", city.armorWorkers);
+				}
+				
+				//---------------------------------//
+				// toolTip creation pour la forge
+				
+				private function onCreateToolTip(e:ToolTipEvent, itemName:String, woodCost:int, ironCost:int):void {
+					var toolTip:ForgeToolTip = new ForgeToolTip();
+					toolTip.itemName = itemName;
+					toolTip.woodCost = woodCost;
+					toolTip.ironCost = ironCost;
+					
+					e.toolTip = toolTip;
+				}
+				
+				
+				//-------------------------------------------------------------------------//
+				// merchants
+
+				
+				protected function wheatMerchantInputKeyUpHandler(event:Event):void{
+					
+					if(wheatMerchantInput.text.length == 0
+						|| wheatMerchantInput.text.length > 6
+						|| merchant.size == 0)
+						wheatMerchantInput.text = '0';
+					
+					var previousNbWheat:int = merchant.wheat;
+					var newNbWheat:int = parseInt(wheatMerchantInput.text);
+					
+					if(newNbWheat > previousNbWheat){
+						// on ajoute du ble a la caravane
+						
+						if(city.wheat < newNbWheat - previousNbWheat){
+							// la reserve en ble n'est pas assez grande
+							newNbWheat = city.wheat + previousNbWheat;
+							city.wheat = 0;
+						}
+						else{	
+							// on pioche dans la reserve de ble
+							city.wheat -= newNbWheat - previousNbWheat;
+						}
+					}
+					else{
+						// on enleve du ble de la caravane
+						city.wheat += previousNbWheat - newNbWheat;
+					}
+					
+					merchant.wheat = newNbWheat;
+					wheatMerchantInput.text = merchant.wheat+""; // refresh
+				}
+				
+				protected function addAllWheatToMerchant():void{
+					merchant.wheat += city.wheat;
+					city.wheat = 0;
+				}
+				
+				
+				protected function woodMerchantInputKeyUpHandler(event:Event):void{
+					
+					if(woodMerchantInput.text.length == 0
+						|| woodMerchantInput.text.length > 6
+						|| merchant.size == 0)
+						woodMerchantInput.text = '0';
+					
+					var previousNbWood:int = merchant.wood;
+					var newNbWood:int = parseInt(woodMerchantInput.text);
+					
+					if(newNbWood > previousNbWood){
+						// on ajoute du bois a la caravane
+						
+						if(city.wood < newNbWood - previousNbWood){
+							// la reserve en bois n'est pas assez grande
+							newNbWood = city.wood + previousNbWood;
+							city.wood = 0;
+						}
+						else{	
+							// on pioche dans la reserve de bois
+							city.wood -= newNbWood - previousNbWood;
+						}
+					}
+					else{
+						// on enleve du bois de la caravane
+						city.wood += previousNbWood - newNbWood;
+					}
+					
+					merchant.wood = newNbWood;
+					woodMerchantInput.text = merchant.wood+""; // refresh
+				}
+				
+				protected function addAllWoodToMerchant():void{
+					merchant.wood += city.wood;
+					city.wood = 0;
+				}
+				
+				protected function ironMerchantInputKeyUpHandler(event:Event):void{
+					
+					if(ironMerchantInput.text.length == 0
+						|| ironMerchantInput.text.length > 6
+						|| merchant.size == 0)
+						ironMerchantInput.text = '0';
+					
+					var previousNbIron:int = merchant.iron;
+					var newNbIron:int = parseInt(ironMerchantInput.text);
+					
+					if(newNbIron > previousNbIron){
+						// on ajoute du fer a la caravane
+						
+						if(city.iron < newNbIron - previousNbIron){
+							// la reserve en fer n'est pas assez grande
+							newNbIron = city.iron + previousNbIron;
+							city.iron = 0;
+						}
+						else{	
+							// on pioche dans la reserve de fer
+							city.iron -= newNbIron - previousNbIron;
+						}
+					}
+					else{
+						// on enleve du fer de la caravane
+						city.iron += previousNbIron - newNbIron;
+					}
+					
+					merchant.iron = newNbIron;
+					ironMerchantInput.text = merchant.iron+""; // refresh
+				}
+				
+				protected function addAllIronToMerchant():void{
+					merchant.iron += city.iron;
+					city.iron = 0;
+				}
+				
+				protected function goldMerchantInputKeyUpHandler(event:Event):void{
+					
+					if(goldMerchantInput.text.length == 0
+						|| goldMerchantInput.text.length > 6
+						|| merchant.size == 0)
+						goldMerchantInput.text = '0';
+					
+					var previousNbGold:int = merchant.gold;
+					var newNbGold:int = parseInt(goldMerchantInput.text);
+					
+					if(newNbGold > previousNbGold){
+						// on ajoute du fer a la caravane
+						
+						if(city.gold < newNbGold - previousNbGold){
+							// la reserve en fer n'est pas assez grande
+							newNbGold = city.gold + previousNbGold;
+							city.gold = 0;
+						}
+						else{	
+							// on pioche dans la reserve de fer
+							city.gold -= newNbGold - previousNbGold;
+						}
+					}
+					else{
+						// on enleve du fer de la caravane
+						city.gold += previousNbGold - newNbGold;
+					}
+					
+					merchant.gold = newNbGold;
+					goldMerchantInput.text = merchant.gold+""; // refresh
+				}
+				
+				protected function addAllGoldToMerchant():void{
+					merchant.gold += city.gold;
+					city.gold = 0;
+				}
+				
+				//-------------------------------------------------------------------------//
+				// armies
+				
+				protected function bowArmyInputKeyUpHandler(event:Event):void{
+					
+					if(bowArmyInput.text.length == 0
+					|| bowArmyInput.text.length > 6
+					|| army.size == 0)
+						bowArmyInput.text = '0';
+					
+					var previousNbBows:int = army.bows;
+					var newNbBows:int = parseInt(bowArmyInput.text);
+					
+					if(newNbBows > previousNbBows){
+						// on ajoute des arcs a l'armee
+						var nbBowsAvailable:int = city.bowStock + city.bowsRestored - city.bowsEquiped;
+						var nbBowsEquiped:int =  newNbBows - previousNbBows;
+						
+						// la reserve en arcs n'est pas assez grande
+						if(nbBowsAvailable < nbBowsEquiped){
+							newNbBows = nbBowsAvailable + previousNbBows;
+							nbBowsEquiped = nbBowsAvailable;
+						}
+						
+						if(city.bowsRestored > nbBowsEquiped){
+							city.bowsRestored -= nbBowsEquiped;
+						}
+						else{
+							city.bowsEquiped += nbBowsEquiped - city.bowsRestored;
+							city.bowsRestored = 0;
+						}
+					}
+					else{
+						// on enleve des arcs a l'armee
+						var nbBowsRestored:int = previousNbBows - newNbBows;
+						
+						if(city.bowsEquiped > nbBowsRestored){
+							city.bowsEquiped -= nbBowsRestored;
+						}
+						else{
+							city.bowsRestored += nbBowsRestored - city.bowsEquiped;
+							city.bowsEquiped = 0;
+						}
+					}
+					
+					army.bows = newNbBows;
+					bowArmyInput.text = army.bows+""; // refresh
+				}
+				
+				protected function addAllBowsToArmy():void{
+					bowArmyInput.text = city.bowStock+'';
+					bowArmyInputKeyUpHandler(null);
+				}
+				
+				protected function swordArmyInputKeyUpHandler(event:Event):void{
+					
+					if(swordArmyInput.text.length == 0
+						|| swordArmyInput.text.length > 6
+						|| army.size == 0)
+						swordArmyInput.text = '0';
+					
+					var previousNbSwords:int = army.swords;
+					var newNbSwords:int = parseInt(swordArmyInput.text);
+					
+					if(newNbSwords > previousNbSwords){
+						// on ajoute des epees a l'armee
+						var nbSwordsAvailable:int = city.swordStock + city.swordsRestored - city.swordsEquiped ; 
+						var nbSwordsEquiped:int =  newNbSwords - previousNbSwords;
+						
+						// la reserve en epees n'est pas assez grande
+						if(nbSwordsAvailable < nbSwordsEquiped){
+							newNbSwords = nbSwordsAvailable + previousNbSwords;
+							nbSwordsEquiped = nbSwordsAvailable;
+						}
+						
+						if(city.swordsRestored > nbSwordsEquiped){
+							city.swordsRestored -= nbSwordsEquiped;
+						}
+						else{
+							city.swordsEquiped += nbSwordsEquiped - city.swordsRestored;
+							city.swordsRestored = 0;
+						}
+					}
+					else{
+						// on enleve des epees a l'armee
+						var nbSwordsRestored:int = previousNbSwords - newNbSwords;
+						
+						if(city.swordsEquiped > nbSwordsRestored){
+							city.swordsEquiped -= nbSwordsRestored;
+						}
+						else{
+							city.swordsRestored += nbSwordsRestored - city.swordsEquiped;
+							city.swordsEquiped = 0;
+						}
+					}
+					
+					army.swords = newNbSwords;	
+					swordArmyInput.text = army.swords+""; // refresh			
+				}
+				
+				protected function addAllSwordsToArmy():void{
+					swordArmyInput.text = city.swordStock+'';
+					swordArmyInputKeyUpHandler(null);
+				}
+				
+				protected function armorArmyInputKeyUpHandler(event:Event):void{
+					
+					if(armorArmyInput.text.length == 0
+						|| armorArmyInput.text.length > 6
+						|| army.size == 0)
+						armorArmyInput.text = '0';
+					
+					var previousNbArmors:int = army.armors;
+					var newNbArmors:int = parseInt(armorArmyInput.text);
+					
+					if(newNbArmors > previousNbArmors){
+						// on ajoute des epees a l'armee
+						var nbArmorsAvailable:int = city.armorStock + city.armorsRestored - city.armorsEquiped ; 
+						var nbArmorsEquiped:int =  newNbArmors - previousNbArmors;
+						
+						// la reserve en epees n'est pas assez grande
+						if(nbArmorsAvailable < nbArmorsEquiped){
+							newNbArmors = nbArmorsAvailable + previousNbArmors;
+							nbArmorsEquiped = nbArmorsAvailable;
+						}
+						
+						if(city.armorsRestored > nbArmorsEquiped){
+							city.armorsRestored -= nbArmorsEquiped;
+						}
+						else{
+							city.armorsEquiped += nbArmorsEquiped - city.armorsRestored;
+							city.armorsRestored = 0;
+						}
+					}
+					else{
+						// on enleve des armures a l'armee
+						var nbArmorsRestored:int = previousNbArmors - newNbArmors;
+						
+						if(city.armorsEquiped > nbArmorsRestored){
+							city.armorsEquiped -= nbArmorsRestored;
+						}
+						else{
+							city.armorsRestored += nbArmorsRestored - city.armorsEquiped;
+							city.armorsEquiped = 0;
+						}
+					}
+					
+					army.armors = newNbArmors;
+					armorArmyInput.text = army.armors+""; // refresh								
+				}
+				
+				protected function addAllArmorsToArmy():void{
+					armorArmyInput.text = city.armorStock+'';
+					armorArmyInputKeyUpHandler(null);
+				}
+				
+				//-------------------------------------------------------------------------//
+				
+				protected function armyInputKeyUpHandler(event:Event):void	{
+					
+					var previousArmySize:int = army.size;
+					var newArmySize:int = parseInt(armyInput.text);
+					
+					// armee : min 50, max : population
+					if(newArmySize < 50)
+						newArmySize = 50;
+					if(city.population < newArmySize)
+						newArmySize = city.population;
+					
+					if(newArmySize > previousArmySize){
+						// on ajoute des gens dans une armee
+						
+						var nbPeopleAdded:int =  newArmySize - previousArmySize;
+						
+						if(city.armyReleased > nbPeopleAdded){
+							city.armyReleased -= nbPeopleAdded;
+						}
+						else{
+							city.armyRaised += nbPeopleAdded - city.armyReleased;
+							city.armyReleased = 0;
+						}
+					}
+					else{
+						// on enleve des gens de l'armee
+						var nbPeopleRemoved:int = previousArmySize - newArmySize;
+						
+						if(city.armyRaised > nbPeopleRemoved){
+							city.armyRaised -= nbPeopleRemoved;
+						}
+						else{
+							city.armyReleased += nbPeopleRemoved - city.armyRaised;
+							city.armyRaised = 0;
+						}
+					}
+					
+					army.size = newArmySize;
+					
+					if(army.ellipseTo){
+						army.ellipseTo.width = army.radius*2;
+						army.ellipseTo.height = army.radius*2;
+					}
+						
+					armyInput.text = army.size+""; // refresh
+					
+					// on refresh le drawing au board
+					BoardDrawer.getInstance().refreshArmyOnBoard(army);
+				}
+				
+				//-------------------------------------------------------------------------//
+				
+				protected function merchantInputKeyUpHandler(event:Event):void	{
+					
+					var previousMerchantSize:int = merchant.size;
+					var newMerchantSize:int = parseInt(merchantInput.text);
+					
+					// caravan : min 50, max : population
+					if(newMerchantSize < 50)
+						newMerchantSize = 50;
+					if(city.population < newMerchantSize)
+						newMerchantSize = city.population;
+					
+					if(newMerchantSize > previousMerchantSize){
+						// on ajoute des gens dans une caravane
+						
+						var nbPeopleAdded:int =  newMerchantSize - previousMerchantSize;
+						
+						if(city.armyReleased > nbPeopleAdded){
+							city.armyReleased -= nbPeopleAdded;
+						}
+						else{
+							city.armyRaised += nbPeopleAdded - city.armyReleased;
+							city.armyReleased = 0;
+						}
+					}
+					else{
+						// on enleve des gens de la caravane
+						var nbPeopleRemoved:int = previousMerchantSize - newMerchantSize;
+						
+						if(city.armyRaised > nbPeopleRemoved){
+							city.armyRaised -= nbPeopleRemoved;
+						}
+						else{
+							city.armyReleased += nbPeopleRemoved - city.armyRaised;
+							city.armyRaised = 0;
+						}
+					}
+					
+					merchant.size = newMerchantSize;
+					
+					if(merchant.ellipseTo){
+						merchant.ellipseTo.width = merchant.radius*2;
+						merchant.ellipseTo.height = merchant.radius*2;
+					}
+						
+					merchantInput.text = merchant.size+""; // refresh
+					
+					// on refresh le drawing au board
+					BoardDrawer.getInstance().refreshArmyOnBoard(merchant);
+				}
+
+				//-------------------------------------------------------------------------//
+				// Armies - Merchants
+				
+				protected function onArmyClick(event:ItemClickEvent):void{
+					army = event.currentTarget.selectedItem as Army;
+				}
+				
+				protected function onMerchantClick(event:ItemClickEvent):void{
+					merchant = event.currentTarget.selectedItem as Army;
+				}
+				
+				protected function newArmy():void{
+					var newArmy:Army = new Army();
+					newArmy.size = 0; // "armyInputKeyUpHandler" va rajouter les 10 et les compter dans city.armyRaised
+					newArmy.x = city.x;
+					newArmy.y = city.y;
+					newArmy.speed = 200;
+					newArmy.armyUID = "new";
+					newArmy.type = 1;
+					
+					newArmy.moves = new ArrayCollection();
+					newArmy.moves.addItem(new com.uralys.tribes.entities.Move());
+					
+					newArmy.moves.getItemAt(0).xFrom = newArmy.x;
+					newArmy.moves.getItemAt(0).yFrom = newArmy.y;
+					newArmy.moves.getItemAt(0).xTo = newArmy.x;
+					newArmy.moves.getItemAt(0).yTo = newArmy.y;
+					
+					city.armies.addItem(newArmy);
+					Session.currentPlayer.armies.addItem(newArmy);
+					
+					armiesList.selectedIndex = city.armies.length - 1;
+					
+					army = newArmy;
+					armyInputKeyUpHandler(null);
+				}
+
+				protected function deleteArmy():void{
+					
+					
+					// on enleve les drawings du board (hack : je redessine la ville par dessus, armyCircle ne veut pas seffacer...: pose probleme affichage si la ville est trop petite)
+					BoardDrawer.getInstance().removeArmyFromBoard(army);
+					BoardDrawer.getInstance().drawCity(city, false);
+					
+					if(army.armyUID != "new"){
+						// pour une armee deja existante : on reajuste la pop, ils peuvent travailler des ce tour
+						// faille : si on a enleve des unites avant elles sont dans armyReleased et ne seront pas utilisees ce tour
+						city.population += army.size;
+					}
+					else{
+						// pour une armee nouvelle, la pop n'a pas bouge, on reajuste armyRaised et armyReleased par contre
+						
+						if(city.armyRaised > army.size){
+							city.armyRaised -= army.size;
+						}
+						else{
+							city.armyReleased += army.size - city.armyRaised;
+							city.armyRaised = 0;
+						}
+						
+					}
+					
+					// on remet les armements dans les stocks de la ville
+					// on enleve des arcs a l'armee
+					var nbBowsRestored:int = army.bows;
+					
+					if(city.bowsEquiped > nbBowsRestored){
+						city.bowsEquiped -= nbBowsRestored;
+					}
+					else{
+						city.bowsRestored += nbBowsRestored - city.bowsEquiped;
+						city.bowsEquiped = 0;
+					}
+					
+					// on enleve des epees a l'armee
+					var nbSwordsRestored:int = army.swords;
+					
+					if(city.swordsEquiped > nbSwordsRestored){
+						city.swordsEquiped -= nbSwordsRestored;
+					}
+					else{
+						city.swordsRestored += nbSwordsRestored - city.swordsEquiped;
+						city.swordsEquiped = 0;
+					}
+					
+					// on enleve des armures a l'armee
+					var nbArmorsRestored:int = army.armors;
+					
+					if(city.armorsEquiped > nbArmorsRestored){
+						city.armorsEquiped -= nbArmorsRestored;
+					}
+					else{
+						city.armorsRestored += nbArmorsRestored - city.armorsEquiped;
+						city.armorsEquiped = 0;
+					}
+					
+					
+					// on enleve l'armee de la liste de la ville et du player
+					city.armies.removeItemAt(city.armies.getItemIndex(army));
+					Session.currentPlayer.armies.removeItemAt(Session.currentPlayer.armies.getItemIndex(army));
+
+					
+					// on selectionne l'entree suivante dans la liste des armees
+					try{
+						armiesList.selectedIndex = 0;
+						army = city.armies.getItemAt(0) as Army;	
+					}
+					catch(e:Error){
+						army = null;
+					}
+					
+				}
+				
+				
+				protected function newMerchants():void{
+					var newMerchant:Army = new Army();
+					newMerchant.size = 0; // "merchantInputKeyUpHandler" va rajouter les 50
+					newMerchant.x = city.x;
+					newMerchant.y = city.y;
+					newMerchant.speed = 340;
+					newMerchant.armyUID = "new";
+					newMerchant.type = 2;
+					
+					newMerchant.moves = new ArrayCollection();
+					newMerchant.moves.addItem(new com.uralys.tribes.entities.Move());
+					
+					newMerchant.moves.getItemAt(0).xFrom = newMerchant.x;
+					newMerchant.moves.getItemAt(0).yFrom = newMerchant.y;
+					newMerchant.moves.getItemAt(0).xTo = newMerchant.x;
+					newMerchant.moves.getItemAt(0).yTo = newMerchant.y;
+					
+					city.merchants.addItem(newMerchant);
+					Session.currentPlayer.merchants.addItem(newMerchant);
+					
+					merchantsList.selectedIndex = city.merchants.length - 1;
+					
+					merchant = newMerchant;
+					merchantInputKeyUpHandler(null);
+				}
+
+				protected function deleteMerchant():void{
+					
+					// on enleve les drawings du board (hack : je redessine la ville par dessus, armyCircle ne veut pas seffacer...: pose probleme affichage si la ville est trop petite)
+					BoardDrawer.getInstance().removeArmyFromBoard(merchant);
+					BoardDrawer.getInstance().drawCity(city, false);
+					
+					if(merchant.armyUID != "new"){
+						// pour une caravane deja existante : on reajuste la pop, ils peuvent travailler des ce tour
+						// faille : si on a enleve des unites avant elles sont dans armyReleased et ne seront pas utilisees ce tour
+						city.population += merchant.size;
+					}
+					else{
+						// pour une caravane nouvelle, la pop n'a pas bouge, on reajuste armyRaised et armyReleased par contre
+						
+						if(city.armyRaised > merchant.size){
+							city.armyRaised -= merchant.size;
+						}
+						else{
+							city.armyReleased += merchant.size - city.armyRaised;
+							city.armyRaised = 0;
+						}
+						
+					}
+					
+					// on remet les provisions transportees dans les stocks de la ville
+					city.wheat += merchant.wheat;
+					city.wood += merchant.wood;
+					city.iron += merchant.iron;
+					city.gold += merchant.gold;
+					
+					// on enleve la caravane de la liste de la ville et du player
+					city.merchants.removeItemAt(city.merchants.getItemIndex(merchant));
+					Session.currentPlayer.merchants.removeItemAt(Session.currentPlayer.merchants.getItemIndex(merchant));
+					
+					
+					// on selectionne l'entree suivante dans la liste des armees
+					try{
+						merchantsList.selectedIndex = 0;
+						merchant = city.merchants.getItemAt(0) as Army;	
+					}
+					catch(e:Error){
+						merchant = null;
+					}
+					
+				}
+				
+			]]>
+		</fx:Script>
+	
+
+		<s:VGroup width="100%" horizontalAlign="center">
+			
+			<s:TextInput id="cityNameInput" text="{city.name}" keyUp="cityNameInputHandler(event)"/>
+			<mx:Spacer height="10"/>
+			<s:HGroup horizontalAlign="center" verticalAlign="middle">
+				<s:Label text="Population"/>
+				<mx:Spacer width="20"/>
+				<s:Label text="{city.population}" styleName="numberLabel"/>
+				<mx:Spacer width="6"/>
+				<s:Label text="({city.armyReleased - city.armyRaised >= 0 ? '+' : '-'} {Math.abs(city.armyReleased - city.armyRaised)})"  
+						 color="{city.armyReleased - city.armyRaised >= 0 ? Numbers.GREEN : Numbers.RED} "/>
+				
+				<mx:Image width="30" height="30" toolTip="Armées/Marchands créés ce tour" source="../images/question-mark.png"/>
+				
+				<mx:Spacer width="35"/>
+				<s:Label text="Unemployed"/>
+				<mx:Spacer width="20"/>
+				<s:Label text="{city.unemployed}" styleName="numberLabel" color="{city.unemployed >= 0 ? 0x1111ee : 0xCC0000}"/>
+			</s:HGroup>
+			<s:HGroup horizontalAlign="center" verticalAlign="middle">
+				<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+				<mx:Spacer width="10"/>
+				<s:Label text="{city.gold}" styleName="numberLabel"/>
+
+				<mx:Spacer width="15"/>
+				<mx:Image toolTip="Wheat" source="{ImageContainer.WHEAT}"/>
+				<mx:Spacer width="10"/>
+				<s:Label text="{city.wheat}" styleName="numberLabel"/>
+				
+				<mx:Spacer width="15"/>
+				<mx:Image toolTip="Wood" source="{ImageContainer.WOOD}"/>
+				<mx:Spacer width="10"/>
+				<s:Label text="{city.wood}" styleName="numberLabel"/>
+				
+				<mx:Spacer width="15"/>
+				<mx:Image toolTip="Iron" source="{ImageContainer.IRON}"/>
+				<mx:Spacer width="10"/>
+				<s:Label text="{city.iron}" styleName="numberLabel"/>
+			</s:HGroup>
+			<s:HGroup verticalAlign="middle">
+				<mx:Spacer width="240"/>
+				<s:Label text="({(city.wheat + city.wheatEarned - city.wheatSpent)})" color="{city.wheat + city.wheatEarned - city.wheatSpent >= 0 ? Numbers.GREEN : Numbers.RED}"/>
+				
+				<mx:Spacer width="75"/>
+				<s:Label text="({(city.wood + city.woodEarned - city.woodSpent)})" color="{city.wood + city.woodEarned - city.woodSpent >= 0 ? Numbers.GREEN : Numbers.RED}"/>
+				
+				<mx:Spacer width="75"/>
+				<s:Label text="({(city.iron + city.ironEarned - city.ironSpent)})" color="{city.iron + city.ironEarned - city.ironSpent >= 0 ? Numbers.GREEN : Numbers.RED}"/>
+			</s:HGroup>
+			
+			<mx:Spacer height="15"/>
+			<s:TabBar id="tabs" dataProvider="{viewstack}" skinClass="spark.skins.spark.TabBarSkin"/>
+				
+			<mx:ViewStack id="viewstack" width="650">
+				
+				<!-- =============================================================================================== -->
+				<!-- Resources Tab -->
+				
+				<s:NavigatorContent label="Resources">
+					<s:HGroup width="100%" horizontalAlign="center">
+						<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle">
+							<mx:GridRow >
+								<mx:GridItem/>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="Workers" />
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="Recolte"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="Depense"/>
+								</mx:GridItem>
+								<!--
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="Prevision"/>
+								</mx:GridItem>
+								-->
+							</mx:GridRow>
+							<mx:GridRow >
+								<mx:GridItem horizontalAlign="center">
+									<mx:Image toolTip="Wheat" source="{ImageContainer.WHEAT}" click="addAllUnemployedToWheat()"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:TextInput text="{city.peopleCreatingWheat}" 
+												 id="wheatInput"
+												 keyUp="wheatInputKeyUpHandler(event)"
+												 restrict="0-9"
+												 width="100"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="+ {city.wheatEarned}" color="{Numbers.GREEN}"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="- {city.wheatSpent}"  color="{city.wheatSpent > 0 ? Numbers.RED : Numbers.GREEN}"/>
+								</mx:GridItem>
+								<!--
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="{(city.wheat + city.wheatEarned - city.wheatSpent)}" color="{city.wheat + city.wheatEarned - city.wheatSpent >= 0 ? Numbers.GREEN : Numbers.RED}"/>
+								</mx:GridItem>
+								-->
+							</mx:GridRow>
+							<mx:GridRow >
+								<mx:GridItem horizontalAlign="center">
+									<mx:Image toolTip="Wood" source="{ImageContainer.WOOD}" click="addAllUnemployedToWood()"/>
+								</mx:GridItem>
+								<mx:GridItem>
+									<s:TextInput text="{city.peopleCreatingWood}" 
+												 id="woodInput" 
+												 keyUp="woodInputKeyUpHandler(event)"
+												 restrict="0-9"
+												 width="100"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="+ {city.woodEarned}" color="{Numbers.GREEN}"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="- {city.woodSpent}" color="{city.woodSpent > 0 ? Numbers.RED : Numbers.GREEN}"/>
+								</mx:GridItem>
+								<!--
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="{(city.wood + city.woodEarned - city.woodSpent)}" color="{city.wood + city.woodEarned - city.woodSpent >= 0 ? Numbers.GREEN : Numbers.RED}"/>
+								</mx:GridItem>
+								-->
+							</mx:GridRow>
+							<mx:GridRow >
+								<mx:GridItem horizontalAlign="center">
+									<mx:Image toolTip="Iron" source="{ImageContainer.IRON}" click="addAllUnemployedToIron()"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:TextInput text="{city.peopleCreatingIron}" 
+												 id="ironInput" 
+												 keyUp="ironInputKeyUpHandler(event)"
+												 restrict="0-9"
+												 width="100"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="+ {city.ironEarned}" color="{Numbers.GREEN}"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="- {city.ironSpent}" color="{city.ironSpent > 0 ? Numbers.RED : Numbers.GREEN}"/>
+								</mx:GridItem>
+								<!--
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="{(city.iron + city.ironEarned - city.ironSpent)}" color="{city.iron + city.ironEarned - city.ironSpent >= 0 ? Numbers.GREEN : Numbers.RED}"/>
+								</mx:GridItem>
+								-->
+							</mx:GridRow>
+							<mx:GridRow>
+								<mx:GridItem colSpan="4">
+									<mx:HRule width="100%"/>
+								</mx:GridItem>
+							</mx:GridRow >
+							<mx:GridRow >
+								<mx:GridItem/>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="Total" />
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="{parseInt(wheatInput.text) + parseInt(woodInput.text) + parseInt(ironInput.text)}" />
+								</mx:GridItem>
+							</mx:GridRow>
+							<mx:GridRow>
+								<mx:GridItem horizontalAlign="center"
+											 colSpan="5"
+											 color="{Numbers.RED}">
+									<s:Label text="Famine prevue ! recoltez plus de ble !"
+											 visible="{city.wheat + city.wheatEarned - city.wheatSpent &lt; 0}"
+											 includeInLayout="{city.wheat + city.wheatEarned - city.wheatSpent &lt; 0}"/>
+								</mx:GridItem>
+							</mx:GridRow>
+						</mx:Grid>
+					</s:HGroup>
+				</s:NavigatorContent>
+				
+				<!-- =============================================================================================== -->
+				<!-- Marche -->
+				
+				<s:NavigatorContent label="Marché">
+					<s:HGroup width="100%" height="100%" horizontalAlign="center">
+						<s:TabBar id="tabsMarket" dataProvider="{viewstackMarket}" skinClass="spark.skins.spark.TabBarSkin"/>
+						
+						<mx:ViewStack id="viewstackMarket" width="650" height="100%">
+							
+							<!-- =============================================================================================== -->
+							<!-- Achat -->
+							
+							<s:NavigatorContent label="Achat" width="650">
+								<s:Button label="Effectuer l'achat" left="-130" bottom="0" click="buy()"/>
+								<s:VGroup>
+									<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle"
+											 width="450">
+										<mx:GridRow >
+											<mx:GridItem/>
+											<mx:GridItem horizontalAlign="center" minWidth="80">
+												<s:Label text="Cout unitaire" />
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" minWidth="80">
+												<s:Label text="Quantité"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" minWidth="80">
+												<s:Label text="Prix à payer"/>
+											</mx:GridItem>
+										</mx:GridRow>
+									</mx:Grid>
+									<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle"
+											 maxHeight="180" width="450">
+										<mx:GridRow >
+											<mx:GridItem horizontalAlign="center">
+												<mx:Image toolTip="Wheat" source="{ImageContainer.WHEAT}" click="spendAllMoneyForWheat()"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{Numbers.WHEAT_PRICE_BUY}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:TextInput text="{city.wheatBought}" 
+															 id="wheatMarketBuyInput"
+															 keyUp="wheatMarketBuyInputKeyUpHandler(event)"
+															 restrict="0-9"
+															 width="100"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{city.wheatBought*Numbers.WHEAT_PRICE_BUY}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+										</mx:GridRow>
+										<mx:GridRow >
+											<mx:GridItem horizontalAlign="center">
+												<mx:Image toolTip="Wood" source="{ImageContainer.WOOD}" click="spendAllMoneyForWood()"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{Numbers.WOOD_PRICE_BUY}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:TextInput text="{city.woodBought}" 
+															 id="woodMarketBuyInput"
+															 keyUp="woodMarketBuyInputKeyUpHandler(event)"
+															 restrict="0-9"
+															 width="100"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{city.woodBought*Numbers.WOOD_PRICE_BUY}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+										</mx:GridRow>
+										<mx:GridRow >
+											<mx:GridItem horizontalAlign="center">
+												<mx:Image toolTip="Iron" source="{ImageContainer.IRON}" click="spendAllMoneyForIron()"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{Numbers.IRON_PRICE_BUY}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:TextInput text="{city.ironBought}" 
+															 id="ironMarketBuyInput"
+															 keyUp="ironMarketBuyInputKeyUpHandler(event)"
+															 restrict="0-9"
+															 width="100"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{city.ironBought*Numbers.IRON_PRICE_BUY}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+										</mx:GridRow>
+										<mx:GridRow>
+											<mx:GridItem horizontalAlign="center">
+												<mx:Image toolTip="Bows" source="{ImageContainer.BOW}" click="spendAllMoneyForBows()"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{Numbers.BOW_PRICE_BUY}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:TextInput text="{city.bowsBought}" 
+															 id="bowsMarketBuyInput"
+															 keyUp="bowsMarketBuyInputKeyUpHandler(event)"
+															 restrict="0-9"
+															 width="100"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{city.bowsBought*Numbers.BOW_PRICE_BUY}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+										</mx:GridRow>
+										<mx:GridRow>
+											<mx:GridItem horizontalAlign="center">
+												<mx:Image toolTip="Swords" source="{ImageContainer.SWORD}" click="spendAllMoneyForSwords()"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{Numbers.SWORD_PRICE_BUY}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:TextInput text="{city.swordsBought}" 
+															 id="swordsMarketBuyInput"
+															 keyUp="swordsMarketBuyInputKeyUpHandler(event)"
+															 restrict="0-9"
+															 width="100"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{city.swordsBought*Numbers.SWORD_PRICE_BUY}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+										</mx:GridRow>
+										<mx:GridRow>
+											<mx:GridItem horizontalAlign="center">
+												<mx:Image toolTip="Armors" source="{ImageContainer.ARMOR}" click="spendAllMoneyForArmors()"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{Numbers.ARMOR_PRICE_BUY}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:TextInput text="{city.armorsBought}" 
+															 id="armorsMarketBuyInput"
+															 keyUp="armorsMarketBuyInputKeyUpHandler(event)"
+															 restrict="0-9"
+															 width="100"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{city.armorsBought*Numbers.ARMOR_PRICE_BUY}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+										</mx:GridRow>
+									</mx:Grid>
+									<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle"
+											 width="450">
+										<mx:GridRow>
+											<mx:GridItem colSpan="4">
+												<mx:HRule width="100%"/>
+											</mx:GridItem>
+										</mx:GridRow >
+										<mx:GridRow >
+											<mx:GridItem/>
+											<mx:GridItem/>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="Dépense Totale :" minWidth="150"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{city.goldSpent}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+											<mx:GridItem/>
+										</mx:GridRow>
+									</mx:Grid>
+								</s:VGroup>
+							</s:NavigatorContent>
+							
+							<!-- =============================================================================================== -->
+							<!-- Vente -->
+							
+							<s:NavigatorContent label="Vente" width="650">
+								<s:Button label="Effectuer la vente" left="-130" bottom="0" click="sell()"/>
+								<s:VGroup>
+									<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle"
+											 width="450">
+										<mx:GridRow >
+											<mx:GridItem/>
+											<mx:GridItem horizontalAlign="center" minWidth="80">
+												<s:Label text="Prix unitaire" />
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" minWidth="80">
+												<s:Label text="Quantité"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" minWidth="80">
+												<s:Label text="Gain"/>
+											</mx:GridItem>
+										</mx:GridRow>
+									</mx:Grid>
+									<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle"
+											 maxHeight="180" width="450">
+										<mx:GridRow >
+											<mx:GridItem horizontalAlign="center">
+												<mx:Image toolTip="Wheat" source="{ImageContainer.WHEAT}" click="sellAllWheat()"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{Numbers.WHEAT_PRICE_SELL}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:TextInput text="{city.wheatSold}" 
+															 id="wheatMarketSellInput"
+															 keyUp="wheatMarketSellInputKeyUpHandler(event)"
+															 restrict="0-9"
+															 width="100"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{city.wheatSold*Numbers.WHEAT_PRICE_SELL}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+										</mx:GridRow>
+										<mx:GridRow >
+											<mx:GridItem horizontalAlign="center">
+												<mx:Image toolTip="Wood" source="{ImageContainer.WOOD}" click="sellAllWood()"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{Numbers.WOOD_PRICE_SELL}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:TextInput text="{city.woodSold}" 
+															 id="woodMarketSellInput"
+															 keyUp="woodMarketSellInputKeyUpHandler(event)"
+															 restrict="0-9"
+															 width="100"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{city.woodSold*Numbers.WOOD_PRICE_SELL}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+										</mx:GridRow>
+										<mx:GridRow >
+											<mx:GridItem horizontalAlign="center">
+												<mx:Image toolTip="Iron" source="{ImageContainer.IRON}" click="sellAllIron()"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{Numbers.IRON_PRICE_SELL}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:TextInput text="{city.ironSold}" 
+															 id="ironMarketSellInput"
+															 keyUp="ironMarketSellInputKeyUpHandler(event)"
+															 restrict="0-9"
+															 width="100"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{city.ironSold*Numbers.IRON_PRICE_SELL}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+										</mx:GridRow>
+										<mx:GridRow>
+											<mx:GridItem horizontalAlign="center">
+												<mx:Image toolTip="Bows" source="{ImageContainer.BOW}" click="sellAllBows()"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{Numbers.BOW_PRICE_SELL}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:TextInput text="{city.bowsSold}" 
+															 id="bowsMarketSellInput"
+															 keyUp="bowsMarketSellInputKeyUpHandler(event)"
+															 restrict="0-9"
+															 width="100"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{city.bowsSold*Numbers.BOW_PRICE_SELL}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+										</mx:GridRow>
+										<mx:GridRow>
+											<mx:GridItem horizontalAlign="center">
+												<mx:Image toolTip="Swords" source="{ImageContainer.SWORD}" click="sellAllSwords()"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{Numbers.SWORD_PRICE_SELL}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:TextInput text="{city.swordsSold}" 
+															 id="swordsMarketSellInput"
+															 keyUp="swordsMarketSellInputKeyUpHandler(event)"
+															 restrict="0-9"
+															 width="100"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{city.swordsSold*Numbers.SWORD_PRICE_SELL}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+										</mx:GridRow>
+										<mx:GridRow>
+											<mx:GridItem horizontalAlign="center">
+												<mx:Image toolTip="Armors" source="{ImageContainer.ARMOR}" click="sellAllArmors()"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{Numbers.ARMOR_PRICE_SELL}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:TextInput text="{city.armorsSold}" 
+															 id="armorsMarketSellInput"
+															 keyUp="armorsMarketSellInputKeyUpHandler(event)"
+															 restrict="0-9"
+															 width="100"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{city.armorsSold*Numbers.ARMOR_PRICE_SELL}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+										</mx:GridRow>
+									</mx:Grid>
+									<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle"
+											 width="450">
+										<mx:GridRow>
+											<mx:GridItem colSpan="4">
+												<mx:HRule width="100%"/>
+											</mx:GridItem>
+										</mx:GridRow >
+										<mx:GridRow >
+											<mx:GridItem/>
+											<mx:GridItem/>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="Gain Total :" minWidth="150"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{city.goldEarned}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+											<mx:GridItem/>
+										</mx:GridRow>
+									</mx:Grid>
+								</s:VGroup>
+							</s:NavigatorContent>
+						</mx:ViewStack>
+
+					</s:HGroup>
+				</s:NavigatorContent>
+				
+				
+				<!-- =============================================================================================== -->
+				<!-- Forge Tab -->
+				
+				<s:NavigatorContent label="Forge">
+					<s:VGroup width="100%" horizontalAlign="center">
+						<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle">
+						  <mx:GridRow >
+							  <mx:GridItem/>
+							  <mx:GridItem horizontalAlign="center">
+								  <s:Label text="Workers" />
+							  </mx:GridItem>
+							  <mx:GridItem horizontalAlign="center">
+								  <s:Label text="Wood Spent" />
+							  </mx:GridItem>
+							  <mx:GridItem horizontalAlign="center">
+								  <s:Label text="Iron Spent" />
+							  </mx:GridItem>
+						  </mx:GridRow>
+						  <mx:GridRow >
+							  <mx:GridItem horizontalAlign="center">
+								  <mx:Image toolTip=" "
+											toolTipCreate="{onCreateToolTip(event, 'Arcs', Numbers.BOW_WOOD, Numbers.BOW_IRON)}"
+											source="{ImageContainer.BOW}" click="addAllUnemployedToBow()"/>
+							  </mx:GridItem>
+							  <mx:GridItem horizontalAlign="center">
+								  <s:TextInput text="{city.bowWorkers}" 
+											   id="bowWorkersInput"
+											   keyUp="bowWorkersInputKeyUpHandler(event)"
+											   focusOut="bowWorkersInputKeyUpHandler(event)"
+											   restrict="0-9"
+											   width="100"/>
+							  </mx:GridItem>
+							  <mx:GridItem horizontalAlign="center">
+								  <s:Label text="{Numbers.BOW_WOOD * parseInt(bowWorkersInput.text)}" styleName="numberLabel"/>
+							  </mx:GridItem>
+							  <mx:GridItem horizontalAlign="center">
+								  <s:Label text="{Numbers.BOW_IRON * parseInt(bowWorkersInput.text)}" styleName="numberLabel"/>
+							  </mx:GridItem>
+						  </mx:GridRow>
+							<mx:GridRow >
+								<mx:GridItem horizontalAlign="center">
+									<mx:Image toolTip=" "
+											  toolTipCreate="{onCreateToolTip(event, 'Epees', Numbers.SWORD_WOOD, Numbers.SWORD_IRON)}"
+											  source="{ImageContainer.SWORD}" click="addAllUnemployedToSword()"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:TextInput text="{city.swordWorkers}" 
+												 id="swordWorkersInput"
+												 keyUp="swordWorkersInputKeyUpHandler(event)"
+												 focusOut="swordWorkersInputKeyUpHandler(event)"
+												 restrict="0-9"
+												 width="100"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="{Numbers.SWORD_WOOD * parseInt(swordWorkersInput.text)}" styleName="numberLabel"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="{Numbers.SWORD_IRON * parseInt(swordWorkersInput.text)}" styleName="numberLabel"/>
+								</mx:GridItem>
+							</mx:GridRow>
+							<mx:GridRow >
+								<mx:GridItem horizontalAlign="center">
+									<mx:Image toolTip=" "
+											  toolTipCreate="{onCreateToolTip(event, 'Armures', Numbers.ARMOR_WOOD, Numbers.ARMOR_IRON)}"
+											  source="{ImageContainer.ARMOR}" click="addAllUnemployedToArmor()"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:TextInput text="{city.armorWorkers}" 
+												 id="armorWorkersInput"
+												 keyUp="armorWorkersInputKeyUpHandler(event)"
+												 focusOut="armorWorkersInputKeyUpHandler(event)"
+												 restrict="0-9"
+												 width="100"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="{Numbers.ARMOR_WOOD * parseInt(armorWorkersInput.text)}" styleName="numberLabel"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="{Numbers.ARMOR_IRON * parseInt(armorWorkersInput.text)}" styleName="numberLabel"/>
+								</mx:GridItem>
+							</mx:GridRow>
+						<mx:GridRow>
+							<mx:GridItem colSpan="4">
+							  <mx:HRule width="100%"/>
+							</mx:GridItem>
+						</mx:GridRow >
+						<mx:GridRow >
+							<mx:GridItem horizontalAlign="center">
+								<s:Label text="Total" />
+							</mx:GridItem>
+							<mx:GridItem horizontalAlign="center">
+								<s:Label text="{parseInt(bowWorkersInput.text) + parseInt(swordWorkersInput.text) + parseInt(armorWorkersInput.text)}" />
+							</mx:GridItem>
+							<mx:GridItem horizontalAlign="center">
+								<s:Label text="{Numbers.SWORD_WOOD * parseInt(swordWorkersInput.text) 
+										 	   +Numbers.ARMOR_WOOD * parseInt(armorWorkersInput.text) 
+										 	   +Numbers.BOW_WOOD * parseInt(bowWorkersInput.text)}" 
+										 		styleName="numberLabel"/>
+							</mx:GridItem>
+							<mx:GridItem horizontalAlign="center">
+								<s:Label text="{Numbers.SWORD_IRON * parseInt(swordWorkersInput.text) 
+										 +Numbers.ARMOR_IRON * parseInt(armorWorkersInput.text) 
+										 +Numbers.BOW_IRON * parseInt(bowWorkersInput.text)}" 
+										 styleName="numberLabel"/>
+							</mx:GridItem>
+						</mx:GridRow>
+					  </mx:Grid>
+					</s:VGroup>
+				</s:NavigatorContent>
+				
+				
+				
+				<!-- =============================================================================================== -->
+				<!-- Equipment Tab -->
+				
+				<s:NavigatorContent label="Equipment">
+					<s:VGroup width="100%" horizontalAlign="center">
+						<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle">
+							<mx:GridRow >
+								<mx:GridItem >
+								</mx:GridItem >
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="Stock" />
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="Production" />
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="Armies" />
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="Prevision" />
+								</mx:GridItem>
+							</mx:GridRow>
+							<mx:GridRow >
+								<mx:GridItem horizontalAlign="center">
+									<mx:Image toolTip="Arcs" source="{ImageContainer.BOW}"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="{city.bowStock}" styleName="numberLabel"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="+ {city.bowWorkers}" styleName="numberLabel"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="{(city.bowsRestored - city.bowsEquiped >= 0 ? '+' : '-')} {Math.abs(city.bowsRestored - city.bowsEquiped)}" 
+											 styleName="numberLabel" 
+											 color="{city.bowsRestored - city.bowsEquiped >= 0 ? Numbers.GREEN : Numbers.RED}"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="{(city.bowStock + city.bowWorkers + city.bowsRestored - city.bowsEquiped)}" 
+											 styleName="numberLabel" 
+											 color="{city.bowStock + city.bowWorkers + city.bowsRestored - city.bowsEquiped >= 0 ? Numbers.GREEN : Numbers.RED}"/>
+								</mx:GridItem>
+							</mx:GridRow>
+							<mx:GridRow >
+								<mx:GridItem horizontalAlign="center">
+									<mx:Image toolTip="Epees" source="{ImageContainer.SWORD}"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="{city.swordStock}" styleName="numberLabel"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="+ {city.swordWorkers}" styleName="numberLabel"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="{(city.swordsRestored - city.swordsEquiped >= 0 ? '+' : '-')} {Math.abs(city.swordsRestored - city.swordsEquiped)}" 
+											 styleName="numberLabel" 
+											 color="{city.swordsRestored - city.swordsEquiped >= 0 ? Numbers.GREEN : Numbers.RED}"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="{(city.swordStock + city.swordWorkers + city.swordsRestored - city.swordsEquiped)}" 
+											 styleName="numberLabel" 
+											 color="{city.swordStock + city.swordWorkers + city.swordsRestored - city.swordsEquiped >= 0 ? Numbers.GREEN : Numbers.RED}"/>
+								</mx:GridItem>
+							</mx:GridRow>
+							<mx:GridRow >
+								<mx:GridItem horizontalAlign="center">
+									<mx:Image toolTip="Armures" source="{ImageContainer.ARMOR}"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="{city.armorStock}" styleName="numberLabel"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="+ {city.armorWorkers}" styleName="numberLabel"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="{(city.armorsRestored - city.armorsEquiped >= 0 ? '+' : '-')} {Math.abs(city.armorsRestored - city.armorsEquiped)}" 
+											 styleName="numberLabel" 
+											 color="{city.armorsRestored - city.armorsEquiped >= 0 ? Numbers.GREEN : Numbers.RED}"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="{(city.armorStock + city.armorWorkers + city.armorsRestored - city.armorsEquiped)}" 
+											 styleName="numberLabel" 
+											 color="{city.armorStock + city.armorWorkers + city.armorsRestored - city.armorsEquiped >= 0 ? Numbers.GREEN : Numbers.RED}"/>
+								</mx:GridItem>
+							</mx:GridRow>
+						</mx:Grid>
+					</s:VGroup>
+				</s:NavigatorContent>
+				
+				<!-- =============================================================================================== -->
+				<!-- Merchants Tab -->
+				
+				<s:NavigatorContent label="Marchands">
+					<s:VGroup height="100%">
+						<s:HGroup width="100%" horizontalAlign="center">
+							<s:VGroup horizontalAlign="center" height="100%">
+								<s:Button label="New Merchants" click="newMerchants()"/>
+								<s:Scroller maxHeight="200">
+									<s:Group>
+										<s:List id="merchantsList"
+												itemRenderer="com.uralys.tribes.renderers.MerchantListRenderer4Board"
+												dataProvider="{city.merchants}"
+												borderVisible="false"
+												width="275"
+												contentBackgroundAlpha="0"
+												creationComplete="initMerchantsList()">
+											<s:layout>
+												<s:VerticalLayout gap="1" useVirtualLayout="true" />
+											</s:layout>
+										</s:List>
+									</s:Group>
+								</s:Scroller>
+							</s:VGroup>
+							<mx:Grid verticalGap="10" 
+									 horizontalGap="10" 
+									 horizontalAlign="center" 
+									 verticalAlign="middle"
+									 visible="{merchant != null}">
+								<mx:GridRow >
+									<mx:GridItem >
+										<s:Label text="People in this caravan" />
+									</mx:GridItem>
+									<mx:GridItem>
+										<s:TextInput text="{merchant.size}" 
+													 id="merchantInput"
+													 enter="merchantInputKeyUpHandler(event)"
+													 focusOut="merchantInputKeyUpHandler(event)"
+													 restrict="0-9"
+													 width="100"/>
+									</mx:GridItem>
+								</mx:GridRow>
+								<mx:GridRow>
+									<mx:GridItem colSpan="4">
+										<mx:HRule width="100%"/>
+									</mx:GridItem>
+								</mx:GridRow >
+								<mx:GridRow >
+									<mx:GridItem />
+									<mx:GridItem horizontalAlign="center">
+										<s:Label text="Transport" />
+									</mx:GridItem>
+									<mx:GridItem horizontalAlign="center">
+										<s:Label text="Stock available" />
+									</mx:GridItem>
+								</mx:GridRow>
+								<mx:GridRow >
+									<mx:GridItem horizontalAlign="center">
+										<mx:Image toolTip="Wheat" source="{ImageContainer.WHEAT}" click="addAllWheatToMerchant()"/>
+									</mx:GridItem>
+									<mx:GridItem horizontalAlign="center">
+										<s:TextInput text="{merchant.wheat}" 
+													 id="wheatMerchantInput"
+													 keyUp="wheatMerchantInputKeyUpHandler(event)"
+													 focusOut="wheatMerchantInputKeyUpHandler(event)"
+													 restrict="0-9"
+													 width="100"/>
+									</mx:GridItem>
+									<mx:GridItem horizontalAlign="center">
+										<s:Label text="{city.wheat}" />
+									</mx:GridItem>
+								</mx:GridRow>
+								<mx:GridRow >
+									<mx:GridItem horizontalAlign="center">
+										<mx:Image toolTip="Wood" source="{ImageContainer.WOOD}" click="addAllWoodToMerchant()"/>
+									</mx:GridItem>
+									<mx:GridItem horizontalAlign="center">
+										<s:TextInput text="{merchant.wood}" 
+													 id="woodMerchantInput"
+													 keyUp="woodMerchantInputKeyUpHandler(event)"
+													 focusOut="woodMerchantInputKeyUpHandler(event)"
+													 restrict="0-9"
+													 width="100"/>
+									</mx:GridItem>
+									<mx:GridItem horizontalAlign="center">
+										<s:Label text="{city.wood}" />
+									</mx:GridItem>
+								</mx:GridRow>
+								<mx:GridRow >
+									<mx:GridItem horizontalAlign="center">
+										<mx:Image toolTip="Iron" source="{ImageContainer.IRON}" click="addAllIronToMerchant()"/>
+									</mx:GridItem>
+									<mx:GridItem horizontalAlign="center">
+										<s:TextInput text="{merchant.iron}" 
+													 id="ironMerchantInput"
+													 keyUp="ironMerchantInputKeyUpHandler(event)"
+													 focusOut="ironMerchantInputKeyUpHandler(event)"
+													 restrict="0-9"
+													 width="100"/>
+									</mx:GridItem>
+									<mx:GridItem horizontalAlign="center">
+										<s:Label text="{city.iron}" />
+									</mx:GridItem>
+								</mx:GridRow>
+								<mx:GridRow >
+									<mx:GridItem horizontalAlign="center">
+										<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}" click="addAllGoldToMerchant()"/>
+									</mx:GridItem>
+									<mx:GridItem horizontalAlign="center">
+										<s:TextInput text="{merchant.gold}" 
+													 id="goldMerchantInput"
+													 keyUp="goldMerchantInputKeyUpHandler(event)"
+													 focusOut="goldMerchantInputKeyUpHandler(event)"
+													 restrict="0-9"
+													 width="100"/>
+									</mx:GridItem>
+									<mx:GridItem horizontalAlign="center">
+										<s:Label text="{city.gold}" />
+									</mx:GridItem>
+								</mx:GridRow>
+								<mx:GridRow>
+									<mx:GridItem colSpan="4">
+										<mx:HRule width="100%"/>
+									</mx:GridItem>
+								</mx:GridRow >
+								<mx:GridRow>
+									<mx:GridItem colSpan="3"/>
+									<mx:GridItem>
+										<s:Button label="Delete" click="deleteMerchant()"/>
+									</mx:GridItem>
+								</mx:GridRow >
+							</mx:Grid>
+						</s:HGroup>
+						<mx:Spacer height="-20"/>
+						<s:HGroup>
+							<s:Label text="Pour construire 1 ville il faut minimum 100 marchands + "/>
+							<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+							<mx:Spacer width="2"/>
+							<s:Label text="100" 
+									 color="#000000" />
+							
+							<mx:Spacer width="3"/>
+							<mx:Image toolTip="Wheat" source="{ImageContainer.WHEAT}"/>
+							<mx:Spacer width="2"/>
+							<s:Label text="50" 
+									 color="#000000" />
+							
+							<mx:Spacer width="3"/>
+							<mx:Image toolTip="Wood" source="{ImageContainer.WOOD}"/>
+							<mx:Spacer width="2"/>
+							<s:Label text="3000" 
+									 color="#000000" />
+							
+							<mx:Spacer width="3"/>
+							<mx:Image toolTip="Iron" source="{ImageContainer.IRON}"/>
+							<mx:Spacer width="2"/>
+							<s:Label text="1000" 
+									 color="#000000" />
+						</s:HGroup>
+					</s:VGroup>
+				</s:NavigatorContent>
+				
+				<!-- =============================================================================================== -->
+				<!-- Armies Tab -->
+				
+				<s:NavigatorContent label="Armees">
+					<s:HGroup width="100%" horizontalAlign="center">
+						<s:VGroup horizontalAlign="center">
+							<s:Button label="New Army" click="newArmy()"/>
+							<s:Scroller height="200">
+								<s:Group>
+									<s:List id="armiesList"
+											itemRenderer="com.uralys.tribes.renderers.ArmyListRenderer"
+											dataProvider="{city.armies}"
+											borderVisible="false"
+											width="275"
+											contentBackgroundAlpha="0"
+											creationComplete="initArmiesList()">
+										<s:layout>
+											<s:VerticalLayout gap="1" useVirtualLayout="true" />
+										</s:layout>
+									</s:List>
+								</s:Group>
+							</s:Scroller>
+						</s:VGroup>
+						<mx:Grid verticalGap="10" 
+								 horizontalGap="10" 
+								 horizontalAlign="center" 
+								 verticalAlign="middle"
+								 visible="{army != null}">
+							<mx:GridRow >
+								<mx:GridItem >
+									<s:Label text="People in this army" />
+								</mx:GridItem>
+								<mx:GridItem>
+									<s:TextInput text="{army.size}" 
+												 id="armyInput"
+												 enter="armyInputKeyUpHandler(event)"
+												 focusOut="armyInputKeyUpHandler(event)"
+												 restrict="0-9"
+												 width="100"/>
+								</mx:GridItem>
+							</mx:GridRow>
+							<mx:GridRow>
+								<mx:GridItem colSpan="4">
+									<mx:HRule width="100%"/>
+								</mx:GridItem>
+							</mx:GridRow >
+							<mx:GridRow >
+								<mx:GridItem />
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="Equipement" />
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="Stock available" />
+								</mx:GridItem>
+							</mx:GridRow>
+							<mx:GridRow >
+								<mx:GridItem horizontalAlign="center">
+									<mx:Image toolTip="Arcs" source="{ImageContainer.BOW}" click="addAllBowsToArmy()"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:TextInput text="{army.bows}" 
+												 id="bowArmyInput"
+												 keyUp="bowArmyInputKeyUpHandler(event)"
+												 focusOut="bowArmyInputKeyUpHandler(event)"
+												 restrict="0-9"
+												 width="100"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="{city.bowStock + city.bowsRestored - city.bowsEquiped}" />
+								</mx:GridItem>
+							</mx:GridRow>
+							<mx:GridRow >
+								<mx:GridItem horizontalAlign="center">
+									<mx:Image toolTip="Epees" source="{ImageContainer.SWORD}" click="addAllSwordsToArmy()"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:TextInput text="{army.swords}" 
+												 id="swordArmyInput"
+												 keyUp="swordArmyInputKeyUpHandler(event)"
+												 focusOut="swordArmyInputKeyUpHandler(event)"
+												 restrict="0-9"
+												 width="100"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="{city.swordStock + city.swordsRestored - city.swordsEquiped}" />
+								</mx:GridItem>
+							</mx:GridRow>
+							<mx:GridRow >
+								<mx:GridItem horizontalAlign="center">
+									<mx:Image toolTip="Armures" source="{ImageContainer.ARMOR}" click="addAllArmorsToArmy()"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:TextInput text="{army.armors}" 
+												 id="armorArmyInput"
+												 keyUp="armorArmyInputKeyUpHandler(event)"
+												 focusOut="armorArmyInputKeyUpHandler(event)"
+												 restrict="0-9"
+												 width="100"/>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center">
+									<s:Label text="{city.armorStock + city.armorsRestored - city.armorsEquiped}" />
+								</mx:GridItem>
+							</mx:GridRow>
+							<mx:GridRow>
+								<mx:GridItem colSpan="4">
+									<mx:HRule width="100%"/>
+								</mx:GridItem>
+							</mx:GridRow >
+							<mx:GridRow>
+								<mx:GridItem/>
+								<mx:GridItem/>
+								<mx:GridItem/>
+								<mx:GridItem>
+									<s:Button label="Delete" click="deleteArmy()"/>
+								</mx:GridItem>
+							</mx:GridRow >
+						</mx:Grid>
+					</s:HGroup>
+				</s:NavigatorContent>
+			</mx:ViewStack>
+
+		</s:VGroup>
+</s:Group>

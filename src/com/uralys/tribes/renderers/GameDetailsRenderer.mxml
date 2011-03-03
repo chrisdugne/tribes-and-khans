@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:ItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+				xmlns:s="library://ns.adobe.com/flex/spark" 
+				xmlns:mx="library://ns.adobe.com/flex/mx" 
+				autoDrawBackground="true"
+				width="100%"
+				height="100%">
+	<fx:Script>
+		<![CDATA[
+			import com.uralys.tribes.commons.Session;
+			import com.uralys.tribes.core.Pager;
+			import com.uralys.tribes.entities.Game;
+			import com.uralys.tribes.managers.GameManager;
+			import com.uralys.tribes.pages.Board;
+			
+			import mx.utils.ObjectUtil;
+			
+			[Bindable] public var joinable:Boolean;
+			[Bindable] public var color:Number;
+			
+			private function launchGame():void{
+				buttonLaunch.visible = false;
+				GameManager.getInstance().launchGame(data.gameUID);
+			}
+			
+			private function joinGame():void{
+				buttonJoin.visible = false;
+				GameManager.getInstance().join(data.gameUID, playerNameInput.text);
+			}
+		
+			private function playTurn():void{
+				buttonPlay.visible = false;
+				Pager.getInstance().goToPage(Board, data);
+			}
+
+			
+		]]>
+	</fx:Script>
+	
+	<s:Group id="groupDetails"
+			 width="100%"
+			 height="100%">
+		<s:Rect left="0" right="0" top="0" bottom="0" radiusX="5" radiusY="5">
+			<s:fill>
+				<s:SolidColor color="{color}"/>
+			</s:fill>
+		</s:Rect>
+		<s:VGroup width="100%" 
+				  paddingTop="10"
+				  paddingRight="10"
+				  paddingLeft="10"
+				  paddingBottom="10"
+				  horizontalAlign="center">
+			
+			<!-- ====== Info ====== -->
+			<s:HGroup width="100%"  horizontalAlign="center">
+				<s:Label id="labelGameName" text="{data.name}"/>
+			</s:HGroup>
+			<s:Label text="{data.players.length} joueurs :"/>
+			<s:List id="playerList" 
+					borderVisible="false" 
+					width="210" 
+					itemRenderer="com.uralys.tribes.renderers.PlayerListRenderer"
+					dataProvider="{data.players}"/>
+			<s:HGroup>
+				<s:Label text="Minutes max par tour : "/>
+				<s:Label text="{data.nbMinByTurn}"/>
+			</s:HGroup>	
+			
+			<s:Label text="{data.status == Game.IN_CREATION ? '' : 'Tour en cours : ' + data.currentTurn}"/>
+			<mx:Spacer height="10"/>
+			<s:Label text="{data.status == Game.IN_CREATION ? 'Elle n\'est pas encore lancee' : 'Fin du tour : ' + data.getPeriod()}"/>
+			
+			<s:Label text="(Pas assez de joueurs)" 
+					 visible="{data.players.length==1}" 
+					 includeInLayout="{data.players.length==1}"/>
+			
+			<s:Label text="(En attente des autres joueurs)" 
+					 visible="{color == 0x008b45}" 
+					 includeInLayout="{color == 0x008b45}"/>
+			
+			<s:Label text="{Session.remainingTime}" 
+					 visible="{color == 0x00FF33}" 
+					 includeInLayout="{color == 0x00FF33}"/>
+			
+			<!-- ====== Actions ====== -->
+			<s:Button label="Lancer la partie"
+					  id="buttonLaunch"
+					  visible="{data.status == Game.IN_CREATION &amp;&amp; data.players.length>1 &amp;&amp; data.creatorUralysUID == Session.profil.uralysUID}"
+					  includeInLayout="{buttonLaunch.visible}"
+					  click="launchGame()"/>
+
+			<s:Button label="Jouer le tour"
+					  id="buttonPlay"
+					  visible="{color == 0x00FF33}" 
+					  includeInLayout="{color == 0x00FF33}"
+					  click="playTurn()"/>
+			
+			<s:VGroup width="100%" 
+					  horizontalAlign="center"
+					  visible="{joinable}"
+					  includeInLayout="{joinable}">
+				<mx:Spacer height="20"/>
+				<s:Label text="Choisir votre nom dans cette partie :"/>
+				<s:TextInput id="playerNameInput" text="Dede le Fourbe"/>
+				<s:Button label="Join"
+						  id="buttonJoin"
+						  click="{joinGame()}"/>
+			</s:VGroup>
+		</s:VGroup>
+	</s:Group>
+	
+</s:ItemRenderer>

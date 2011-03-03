@@ -306,6 +306,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		cityDTO.setWheat(city.getWheat());
 		cityDTO.setWood(city.getWood());
 		cityDTO.setIron(city.getIron());
+		cityDTO.setGold(city.getGold());
 		
 		cityDTO.setPeopleCreatingWheat(city.getPeopleCreatingWheat());
 		cityDTO.setPeopleCreatingWood(city.getPeopleCreatingWood());
@@ -716,6 +717,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			}
 			
 			query = pm.newQuery("select from " + CityDTO.class.getName() + " where :uids.contains(key)");
+			query.setOrdering("key");
 			
 			List<CityDTO> cities;
 			if(player.getCityUIDs().size() > 0){

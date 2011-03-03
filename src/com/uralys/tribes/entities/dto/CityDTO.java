@@ -40,6 +40,8 @@ public class CityDTO {
 	@Persistent private int x;
 	@Persistent private int y;
 	
+	@Persistent private Integer creationTurn;
+	
 	@Persistent private List<String> smithUIDs = new ArrayList<String>();
 	@Persistent private List<String> equipmentStockUIDs = new ArrayList<String>();
 	
@@ -124,6 +126,12 @@ public class CityDTO {
 	}
 	public void setGold(Integer gold) {
 		this.gold = gold;
+	}
+	public Integer getCreationTurn() {
+		return creationTurn;
+	}
+	public void setCreationTurn(Integer creationTurn) {
+		this.creationTurn = creationTurn;
 	}
 	
 	//-----------------------------------------------------------------------------------//

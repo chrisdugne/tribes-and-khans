@@ -416,9 +416,22 @@ public class GameManager implements IGameManager {
 
 	private int calculatePopulation(int population, boolean starvation, int armyRaised) {
 		
-		int naturalEvolutionPercentage = Utils.random(5) + 5;
-		int armyPercentage = 100*armyRaised/population;
+		int maxPercentage = (12000 - population)/1000;
 		
+		int naturalEvolutionPercentage = Utils.random(maxPercentage)+1;
+		int armyPercentage = 100*armyRaised/population;
+
+		if(population < 200)
+			naturalEvolutionPercentage *= 5;
+		else if(population < 500)
+			naturalEvolutionPercentage *= 4;
+		else if(population < 1000)
+			naturalEvolutionPercentage *= 3;
+		else if(population < 2000)
+			naturalEvolutionPercentage *= 2;
+		
+		
+		System.out.println("maxPercentage : " + maxPercentage);
 		System.out.println("naturalEvolutionPercentage : " + naturalEvolutionPercentage);
 		System.out.println("armyPercentage : " + armyPercentage);
 		
@@ -433,6 +446,10 @@ public class GameManager implements IGameManager {
 
 		
 		int populationEvolution =  population*evolutionPercentage/100;
+		
+		if(population > 10000)
+			populationEvolution /= 10;
+		
 		System.out.println("populationEvolution : " + populationEvolution);
 		
 		return population + populationEvolution;

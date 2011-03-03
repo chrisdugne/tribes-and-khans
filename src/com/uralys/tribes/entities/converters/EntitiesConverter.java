@@ -65,6 +65,7 @@ public class EntitiesConverter {
 		List<City> cities = new ArrayList<City>();
 		
 		for(CityDTO cityDTO : playerDTO.getCities()){
+			System.out.println("city : " + cityDTO.getCityUID());
 			cities.add(convertCityDTO(cityDTO));
 		}
 		
@@ -177,6 +178,7 @@ public class EntitiesConverter {
 		city.setX(cityDTO.getX());
 		city.setY(cityDTO.getY());
 		city.setGold(cityDTO.getGold());
+		city.setCreationTurn(cityDTO.getCreationTurn());
 		
 		//---------------------------------//
 		

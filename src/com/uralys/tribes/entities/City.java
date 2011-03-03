@@ -21,6 +21,8 @@ public class City {
 	private int y;
 	private int gold;
 
+	private int creationTurn;
+
 	private List<Equipment> equipmentStock = new ArrayList<Equipment>();
 	private List<Smith> smiths = new ArrayList<Smith>();
 	
@@ -136,6 +138,15 @@ public class City {
 	public void setGold(int gold) {
 		this.gold = gold;
 	}
+
+	public int getCreationTurn() {
+		return creationTurn;
+	}
+
+	public void setCreationTurn(int creationTurn) {
+		this.creationTurn = creationTurn;
+	}
+	
 	//-----------------------------------------------------------------------------------//
 	
 }

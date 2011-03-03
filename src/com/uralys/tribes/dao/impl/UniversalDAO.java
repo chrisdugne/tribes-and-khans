@@ -52,6 +52,7 @@ public class UniversalDAO{
 		
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		Query query = pm.newQuery("select from " + objectClass.getName() + " where :uids.contains(key)");
+		query.setOrdering("key");
 		
 		return (List<E>) query.execute(uids);
 	}

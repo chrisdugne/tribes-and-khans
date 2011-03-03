@@ -2,7 +2,7 @@
 <s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
 		 xmlns:mx="library://ns.adobe.com/flex/mx" 
-		 xmlns:renderers="com.uralys.renderers.*"
+		 xmlns:renderers="com.uralys.tribes.renderers.*"
 		 width="100%" height="100%"
 		 creationComplete="init()" >
 	
@@ -502,6 +502,8 @@
 				city.x = selectedUnit.x;
 				city.y = selectedUnit.y;
 				
+				city.creationTurn = game.currentTurn;
+				
 				Session.currentPlayer.merchants.removeItemAt(Session.currentPlayer.merchants.getItemIndex(selectedUnit));
 				BoardDrawer.getInstance().removeArmyFromBoard(selectedUnit);
 				BoardDrawer.getInstance().drawCity(city, false);
@@ -734,7 +736,7 @@
 			<s:Scroller height="200">
 				<s:Group>
 					<s:List id="citiesList"
-							itemRenderer="com.uralys.renderers.CityListRenderer"
+							itemRenderer="com.uralys.tribes.renderers.CityListRenderer"
 							dataProvider="{Session.currentPlayer.cities}"
 							borderVisible="false"
 							width="275"
@@ -750,7 +752,7 @@
 			<s:Scroller height="200">
 				<s:Group>
 					<s:List id="otherCitiesList"
-							itemRenderer="com.uralys.renderers.OtherCityListRenderer"
+							itemRenderer="com.uralys.tribes.renderers.OtherCityListRenderer"
 							dataProvider="{Session.allOtherCities}"
 							borderVisible="false"
 							width="275"
@@ -777,7 +779,7 @@
 					<s:Scroller height="200">
 						<s:Group>
 							<s:List id="armiesList"
-									itemRenderer="com.uralys.renderers.ArmyListRenderer4Board"
+									itemRenderer="com.uralys.tribes.renderers.ArmyListRenderer4Board"
 									dataProvider="{Session.currentPlayer.armies}"
 									borderVisible="false"
 									width="275"
@@ -796,7 +798,7 @@
 					<s:Scroller height="200">
 						<s:Group>
 							<s:List id="merchantsList"
-									itemRenderer="com.uralys.renderers.MerchantListRenderer4Board"
+									itemRenderer="com.uralys.tribes.renderers.MerchantListRenderer4Board"
 									dataProvider="{Session.currentPlayer.merchants}"
 									borderVisible="false"
 									width="275"
@@ -941,7 +943,7 @@
 									<s:Scroller maxHeight="200">
 										<s:Group>
 											<s:List id="selectionChoiceArmyList"
-													itemRenderer="com.uralys.renderers.ArmyListRenderer4Board"
+													itemRenderer="com.uralys.tribes.renderers.ArmyListRenderer4Board"
 													dataProvider="{selectedCity.armies}"
 													borderVisible="false"
 													width="275"
@@ -960,7 +962,7 @@
 									<s:Scroller maxHeight="200">
 										<s:Group>
 											<s:List id="selectionChoiceMerchantList"
-													itemRenderer="com.uralys.renderers.MerchantListRenderer4Board"
+													itemRenderer="com.uralys.tribes.renderers.MerchantListRenderer4Board"
 													dataProvider="{selectedCity.merchants}"
 													borderVisible="false"
 													width="275"

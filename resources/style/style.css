@@ -25,6 +25,11 @@ TextArea {
    color: #1111ee;
 }
 
+.whiteNumberLabel {
+   fontSize: 28;
+   color: #ffffff;
+}
+
 .littleYellowStyle {
    fontSize: 18;
    color: #ffff66;

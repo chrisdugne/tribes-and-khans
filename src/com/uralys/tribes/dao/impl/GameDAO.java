@@ -257,6 +257,8 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		city.setX(cityFromFlex == null ? Utils.random(2400) + 300 : cityFromFlex.getX());
 		city.setY(cityFromFlex == null ? Utils.random(2400) + 300 : cityFromFlex.getY());
 		
+		city.setCreationTurn(cityFromFlex == null ? 0 : cityFromFlex.getCreationTurn());
+		
 		//--------------------------------------//
 		// init Equipment
 		

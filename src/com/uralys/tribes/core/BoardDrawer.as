@@ -7,12 +7,15 @@ package com.uralys.tribes.core
 	import com.uralys.tribes.entities.Game;
 	import com.uralys.tribes.entities.Player;
 	import com.uralys.tribes.pages.Board;
+	import com.uralys.utils.Map;
 	import com.uralys.utils.Utils;
 	
 	import flash.display.Sprite;
 	
 	import mx.collections.ArrayCollection;
+	import mx.collections.SortField;
 	import mx.controls.Image;
+	import mx.core.IVisualElement;
 	import mx.core.UIComponent;
 	import mx.graphics.GradientEntry;
 	import mx.graphics.RadialGradientStroke;
@@ -57,10 +60,11 @@ package com.uralys.tribes.core
 			radialGrad.interpolationMethod
 		}
 
-		public function setBoards(boardEntities:Group, boardImages:Group, boardTexts:Group):void{
+		public function setBoards(boardEntities:Group, boardImages:Group, boardTexts:Group, minimap:Group):void{
 			this.boardEntities = boardEntities;
 			this.boardImages = boardImages;
 			this.boardTexts = boardTexts;
+			this.minimap = minimap;
 		}
 
 		public function setGame(game:Game):void{
@@ -72,6 +76,7 @@ package com.uralys.tribes.core
 		private var boardEntities:Group;
 		private var boardImages:Group;
 		private var boardTexts:Group;
+		private var minimap:Group;
 		private var game:Game;
 		
 		//=====================================================================================//
@@ -99,107 +104,71 @@ package com.uralys.tribes.core
 				//-----------------------------------------------------------------------------------------//
 				// armies
 
-				for each (var army:Army in player.armies){
-					
-					//------------------------------------------------------------//
-					
-					if(Session.DRAW_DETAILS){
-						
-						// army
-						var armyCircle:Ellipse;
-						armyCircle = new Ellipse();
-						armyCircle.width = army.radius*2;
-						armyCircle.height = army.radius*2;
-						armyCircle.x = army.x - armyCircle.width/2;
-						armyCircle.y = army.y - armyCircle.height/2;
-						
-						armyCircle.fill = new SolidColor(isOpponent ? Numbers.RED : Numbers.WHITE);
-						army.armyCircle = armyCircle;
-						
-						boardEntities.addElement(armyCircle);
-					}
-
-					//------------------------------------------------------------//
-
-					if(Session.DRAW_TEXTS){
-
-					}
-
-					//------------------------------------------------------------//
-					
-					if(Session.DRAW_IMAGES){
-						
-					}
+				for each (var army:Army in player.armies){					
+					drawArmy(army, isOpponent);
 				}
 
 				//-----------------------------------------------------------------------------------------//
 				// merchants
 
 				for each (var merchant:Army in player.merchants){
-					
-					//------------------------------------------------------------//
-					
-					if(Session.DRAW_DETAILS){
-						
-						// army
-						var merchantCircle:Ellipse;
-						merchantCircle = new Ellipse();
-						merchantCircle.width = merchant.radius*2;
-						merchantCircle.height = merchant.radius*2;
-						merchantCircle.x = merchant.x - merchantCircle.width/2;
-						merchantCircle.y = merchant.y - merchantCircle.height/2;
-						
-						merchantCircle.fill = new SolidColor(isOpponent ? Numbers.BLACK : Numbers.YELLOW);
-						merchant.armyCircle = merchantCircle;
-						
-						boardEntities.addElement(merchantCircle);
-					}
-
-					//------------------------------------------------------------//
-
-					if(Session.DRAW_TEXTS){
-
-					}
-
-					//------------------------------------------------------------//
-					
-					if(Session.DRAW_IMAGES){
-						
-					}
+					drawMerchant(merchant, isOpponent);
 				}
 				
 				//-----------------------------------------------------------------------------------------//
 				// lands
 				
 				for each (var land:int in player.lands){
-					
-					var i:int = land;
-					var j:int = 0;
-					
-					while(land > 30){
-						land -= 30;
-						j++;
-					}
-					
-					i = land;
-					
-					var landSquare:Rect = new Rect();
-					landSquare.width = Numbers.LAND_WIDTH;
-					landSquare.height = Numbers.LAND_HEIGHT;
-					landSquare.x = i*Numbers.LAND_WIDTH;
-					landSquare.y = j*Numbers.LAND_HEIGHT;
-					landSquare.fill = new SolidColor(isOpponent ? Numbers.YELLOW : Numbers.BLUE);
-					landSquare.alpha = 0.2;
-					
-					boardEntities.addElement(landSquare);
+					drawLand(land, isOpponent);					
 				}
 			}
 		}
 
-		//==================================================================================================//
-
-		public function drawCity(city:City, isOpponent:Boolean):void{
+		//=====================================================================================//
 		
+		public function redrawTexts():void{
+			
+			try{
+				boardTexts.removeAllElements();
+			}catch(e:Error){}
+			
+			for each (var player:Player in game.players){
+				
+				var isOpponent:Boolean = Session.currentPlayer.playerUID != player.playerUID;
+				if(!isOpponent)
+					player = Session.currentPlayer; // toutes les modifs sont a jour dans Session.currentPlayer, et non dans 'game'
+				
+				//-----------------------------------------------------------------------------------------//
+				// cities
+				
+				for each (var city:City in player.cities){
+					drawCityText(city, isOpponent);
+				}
+				
+				//-----------------------------------------------------------------------------------------//
+				// armies
+				
+				for each (var army:Army in player.armies){					
+					//drawArmyText(army, isOpponent);
+				}
+				
+				//-----------------------------------------------------------------------------------------//
+				// merchants
+				
+				for each (var merchant:Army in player.merchants){
+					//drawMerchantText(merchant, isOpponent);
+				}
+				
+			}
+		}
+	
+		//==================================================================================================//
+		
+		public function drawCity(city:City, isOpponent:Boolean):void{
+			
+			if(isOpponent && city.creationTurn == game.currentTurn)
+				return;
+			
 			if(Session.DRAW_DETAILS){
 				var cityCircle:Ellipse;
 				cityCircle = new Ellipse();
@@ -213,15 +182,22 @@ package com.uralys.tribes.core
 				boardEntities.addElement(cityCircle);
 			}
 			
+			var cityMiniCircle:Rect;
+			cityMiniCircle = new Rect();
+			cityMiniCircle.width = city.radius*2/10;
+			cityMiniCircle.height = city.radius*2/10;
+			cityMiniCircle.x = (city.x - cityCircle.width/2)/15;
+			cityMiniCircle.y = (city.y - cityCircle.height/2)/15;
+			
+			
+			cityMiniCircle.fill = new SolidColor(isOpponent ? Numbers.RED : Numbers.BLUE);
+			
+			minimap.addElement(cityMiniCircle);
+			
 			//------------------------------------------------------------//
 			
 			if(Session.DRAW_TEXTS){
-				var name:Label = new Label();
-				name.text = city.name;
-				name.x = city.x - city.radius - 20; 
-				name.y = city.y - city.radius - 20; 
-				
-				boardTexts.addElement(name);
+				drawCityText(city, isOpponent);
 			}
 			
 			//------------------------------------------------------------//
@@ -231,7 +207,7 @@ package com.uralys.tribes.core
 				var distanceAuCentre:int = 0;
 				var insideCircle:Boolean = true;
 				
-				var images:ArrayCollection = new ArrayCollection();
+				var images:Map = new Map();
 				
 				while(insideCircle){
 					var image:Image = new Image();
@@ -243,17 +219,144 @@ package com.uralys.tribes.core
 					if(distanceAuCentre > city.radius*2)
 						insideCircle = false;
 					else{
-						images.addItem(image);
+						images.put(image.y, image);
 						distanceAuCentre = angle/360 * 40 + 30;
 						angle += distanceAuCentre > 50 ? (distanceAuCentre > 100 ? 10 : 20) : 40;
 					}
 				}
 				
-				while(images.length > 0){
-					var num:int = Utils.random(images.length) - 1;
-					boardImages.addElement(images.removeItemAt(num) as Image);
+				images.sortKeys(new SortField(null, true));
+				
+				for each(var image:Image in images.values()){
+					//var num:int = Utils.random(images.length) - 1;
+					//boardImages.addElement(images.removeItemAt(num) as Image);
+					boardImages.addElement(image);
 				}
 			}
+		}
+
+		private function drawCityText(city:City, isOpponent:Boolean):void{
+			var name:Label = new Label();
+			name.text = city.name;
+			name.x = city.x - city.radius - 20; 
+			name.y = city.y - city.radius - 20; 
+			
+			boardTexts.addElement(name);
+		}
+
+		//==================================================================================================//
+
+		public function drawArmy(army:Army, isOpponent:Boolean):void{
+			
+			if(Session.DRAW_DETAILS){
+				
+				// army
+				var armyCircle:Ellipse;
+				armyCircle = new Ellipse();
+				armyCircle.width = army.radius*2;
+				armyCircle.height = army.radius*2;
+				armyCircle.x = army.x - armyCircle.width/2;
+				armyCircle.y = army.y - armyCircle.height/2;
+				
+				armyCircle.fill = new SolidColor(isOpponent ? Numbers.RED : Numbers.WHITE);
+				army.armyCircle = armyCircle;
+				
+				boardEntities.addElement(armyCircle);
+			}
+			
+			var armyMiniCircle:Ellipse;
+			armyMiniCircle = new Ellipse();
+			armyMiniCircle.width = army.radius*2/4;
+			armyMiniCircle.height = army.radius*2/4;
+			armyMiniCircle.x = (army.x - armyCircle.width/2)/15;
+			armyMiniCircle.y = (army.y - armyCircle.height/2)/15;
+			
+			
+			armyMiniCircle.fill = new SolidColor(isOpponent ? Numbers.RED : Numbers.BLUE);
+			
+			minimap.addElement(armyMiniCircle);
+			
+			//------------------------------------------------------------//
+			
+			if(Session.DRAW_TEXTS){
+				
+			}
+			
+			//------------------------------------------------------------//
+			
+			if(Session.DRAW_IMAGES){
+				
+			}
+		}
+
+		//==================================================================================================//
+
+		public function drawMerchant(merchant:Army, isOpponent:Boolean):void{
+			
+			if(Session.DRAW_DETAILS){
+				
+				// army
+				var merchantCircle:Ellipse;
+				merchantCircle = new Ellipse();
+				merchantCircle.width = merchant.radius*2;
+				merchantCircle.height = merchant.radius*2;
+				merchantCircle.x = merchant.x - merchantCircle.width/2;
+				merchantCircle.y = merchant.y - merchantCircle.height/2;
+				
+				merchantCircle.fill = new SolidColor(isOpponent ? Numbers.BLACK : Numbers.YELLOW);
+				merchant.armyCircle = merchantCircle;
+				
+				boardEntities.addElement(merchantCircle);
+			}
+			
+			var merchantMiniCircle:Ellipse;
+			merchantMiniCircle = new Ellipse();
+			merchantMiniCircle.width = merchant.radius*2/4;
+			merchantMiniCircle.height = merchant.radius*2/4;
+			merchantMiniCircle.x = (merchant.x - merchantCircle.width/2)/15;
+			merchantMiniCircle.y = (merchant.y - merchantCircle.height/2)/15;
+			
+			
+			merchantMiniCircle.fill = new SolidColor(isOpponent ? Numbers.RED : Numbers.BLUE);
+			
+			minimap.addElement(merchantMiniCircle);
+		
+			//------------------------------------------------------------//
+			
+			if(Session.DRAW_TEXTS){
+				
+			}
+			
+			//------------------------------------------------------------//
+			
+			if(Session.DRAW_IMAGES){
+				
+			}
+		}
+
+		//==================================================================================================//
+
+		public function drawLand(land:int, isOpponent:Boolean):void{
+			
+			var i:int = land;
+			var j:int = 0;
+			
+			while(land > 30){
+				land -= 30;
+				j++;
+			}
+			
+			i = land;
+			
+			var landSquare:Rect = new Rect();
+			landSquare.width = Numbers.LAND_WIDTH;
+			landSquare.height = Numbers.LAND_HEIGHT;
+			landSquare.x = i*Numbers.LAND_WIDTH;
+			landSquare.y = j*Numbers.LAND_HEIGHT;
+			landSquare.fill = new SolidColor(isOpponent ? Numbers.YELLOW : Numbers.BLUE);
+			landSquare.alpha = 0.2;
+			
+			boardEntities.addElement(landSquare);
 		}
 
 		//==================================================================================================//

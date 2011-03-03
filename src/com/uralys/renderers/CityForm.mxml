@@ -140,6 +140,7 @@
 
 				protected function cityNameInputHandler(event:KeyboardEvent):void	{
 					city.name = cityNameInput.text;
+					BoardDrawer.getInstance().redrawTexts();
 				}
 				
 				//-------------------------------------------------------------------------//
@@ -159,6 +160,8 @@
 					city.wheatEarned = Numbers.WHEAT_EARNING_COEFF * city.peopleCreatingWheat;
 				}
 
+				//-------------------------------------------------------------------------//
+
 				protected function woodInputKeyUpHandler(event:KeyboardEvent):void	{
 					city.peopleCreatingWood = parseInt(woodInput.text);
 					
@@ -173,6 +176,8 @@
 					city.woodEarned = Numbers.WOOD_EARNING_COEFF * city.peopleCreatingWood;
 				}
 				
+				//-------------------------------------------------------------------------//
+
 				protected function ironInputKeyUpHandler(event:KeyboardEvent):void	{
 					city.peopleCreatingIron = parseInt(ironInput.text);
 					
@@ -186,7 +191,268 @@
 					city.peopleCreatingIron += city.unemployed;
 					city.ironEarned = Numbers.IRON_EARNING_COEFF * city.peopleCreatingIron;
 				}
+				
+
 				//-------------------------------------------------------------------------//
+				// Market - Achat
+				
+				
+				protected function wheatMarketBuyInputKeyUpHandler(event:KeyboardEvent):void	{
+					
+					city.goldSpent -= city.wheatBought * Numbers.WHEAT_PRICE_BUY;
+					city.wheatBought = parseInt(wheatMarketBuyInput.text);
+					
+					if((city.gold-city.goldSpent)/Numbers.WHEAT_PRICE_BUY < city.wheatBought)
+						city.wheatBought = (city.gold-city.goldSpent)/Numbers.WHEAT_PRICE_BUY;
+					
+					city.goldSpent += city.wheatBought * Numbers.WHEAT_PRICE_BUY;
+				}
+				
+				protected function spendAllMoneyForWheat():void	{
+					var newWheatBought:int = (city.gold-city.goldSpent)/Numbers.WHEAT_PRICE_BUY;
+					city.wheatBought += newWheatBought;
+					city.goldSpent += newWheatBought*Numbers.WHEAT_PRICE_BUY;
+				}
+				
+				
+				
+				protected function woodMarketBuyInputKeyUpHandler(event:KeyboardEvent):void	{
+					
+					city.goldSpent -= city.woodBought * Numbers.WOOD_PRICE_BUY;
+					city.woodBought = parseInt(woodMarketBuyInput.text);
+					
+					if((city.gold-city.goldSpent)/Numbers.WOOD_PRICE_BUY < city.woodBought)
+						city.woodBought = (city.gold-city.goldSpent)/Numbers.WOOD_PRICE_BUY;
+					
+					city.goldSpent += city.woodBought * Numbers.WOOD_PRICE_BUY;
+				}
+				
+				protected function spendAllMoneyForWood():void	{
+					var newWoodBought:int = (city.gold-city.goldSpent)/Numbers.WOOD_PRICE_BUY;
+					city.woodBought += newWoodBought;
+					city.goldSpent += newWoodBought*Numbers.WOOD_PRICE_BUY;
+				}
+				
+				
+				
+				protected function ironMarketBuyInputKeyUpHandler(event:KeyboardEvent):void	{
+					
+					city.goldSpent -= city.ironBought * Numbers.IRON_PRICE_BUY;
+					city.ironBought = parseInt(ironMarketBuyInput.text);
+					
+					if((city.gold-city.goldSpent)/Numbers.IRON_PRICE_BUY < city.ironBought)
+						city.ironBought = (city.gold-city.goldSpent)/Numbers.IRON_PRICE_BUY;
+					
+					city.goldSpent += city.ironBought * Numbers.IRON_PRICE_BUY;
+				}
+				
+				protected function spendAllMoneyForIron():void	{
+					var newIronBought:int = (city.gold-city.goldSpent)/Numbers.IRON_PRICE_BUY;
+					city.ironBought += newIronBought;
+					city.goldSpent += newIronBought*Numbers.IRON_PRICE_BUY;
+				}
+				
+				
+				
+				protected function bowsMarketBuyInputKeyUpHandler(event:KeyboardEvent):void	{
+					
+					city.goldSpent -= city.bowsBought * Numbers.BOW_PRICE_BUY;
+					city.bowsBought = parseInt(bowsMarketBuyInput.text);
+					
+					if((city.gold-city.goldSpent)/Numbers.BOW_PRICE_BUY < city.bowsBought)
+						city.bowsBought = (city.gold-city.goldSpent)/Numbers.BOW_PRICE_BUY;
+					
+					city.goldSpent += city.bowsBought * Numbers.BOW_PRICE_BUY;
+				}
+				
+				protected function spendAllMoneyForBows():void	{
+					var newBowsBought:int = (city.gold-city.goldSpent)/Numbers.BOW_PRICE_BUY;
+					city.bowsBought += newBowsBought;
+					city.goldSpent += newBowsBought*Numbers.BOW_PRICE_BUY;
+				}
+				
+				
+				protected function swordsMarketBuyInputKeyUpHandler(event:KeyboardEvent):void	{
+					
+					city.goldSpent -= city.swordsBought * Numbers.SWORD_PRICE_BUY;
+					city.swordsBought = parseInt(swordsMarketBuyInput.text);
+					
+					if((city.gold-city.goldSpent)/Numbers.SWORD_PRICE_BUY < city.swordsBought)
+						city.swordsBought = (city.gold-city.goldSpent)/Numbers.SWORD_PRICE_BUY;
+					
+					city.goldSpent += city.swordsBought * Numbers.SWORD_PRICE_BUY;
+				}
+				
+				protected function spendAllMoneyForSwords():void	{
+					var newSwordsBought:int = (city.gold-city.goldSpent)/Numbers.SWORD_PRICE_BUY;
+					city.swordsBought += newSwordsBought;
+					city.goldSpent += newSwordsBought*Numbers.SWORD_PRICE_BUY;
+				}
+				
+				
+				protected function armorsMarketBuyInputKeyUpHandler(event:KeyboardEvent):void	{
+					
+					city.goldSpent -= city.armorsBought * Numbers.ARMOR_PRICE_BUY;
+					city.armorsBought = parseInt(armorsMarketBuyInput.text);
+					
+					if((city.gold-city.goldSpent)/Numbers.ARMOR_PRICE_BUY < city.armorsBought)
+						city.armorsBought = (city.gold-city.goldSpent)/Numbers.ARMOR_PRICE_BUY;
+					
+					city.goldSpent += city.armorsBought * Numbers.ARMOR_PRICE_BUY;
+				}
+				
+				protected function spendAllMoneyForArmors():void{
+					var newArmorsBought:int = (city.gold-city.goldSpent)/Numbers.ARMOR_PRICE_BUY;
+					city.armorsBought += newArmorsBought;
+					city.goldSpent += newArmorsBought*Numbers.ARMOR_PRICE_BUY;
+				}
+				
+				
+				protected function buy():void{
+					city.gold -= city.goldSpent;
+					
+					city.wheat += city.wheatBought;
+					city.wood += city.woodBought;
+					city.iron += city.ironBought;
+					city.bowStock += city.bowsBought;
+					city.swordStock += city.swordsBought;
+					city.armorStock += city.armorsBought;
+					
+					city.goldSpent = 0;
+					city.wheatBought = 0;
+					city.woodBought = 0;
+					city.ironBought = 0;
+					city.bowsBought = 0;
+					city.swordsBought = 0;
+					city.armorsBought = 0;
+				}
+				
+				//-------------------------------------------------------------------------//
+				// Market - Vente
+				
+				
+				protected function wheatMarketSellInputKeyUpHandler(event:KeyboardEvent):void	{
+					
+					city.goldEarned -= city.wheatSold * Numbers.WHEAT_PRICE_SELL;
+					city.wheatSold = parseInt(wheatMarketSellInput.text);
+					
+					if((city.wheat-city.wheatSold) < 0)
+						city.wheatSold = city.wheat;
+					
+					city.goldEarned += city.wheatSold * Numbers.WHEAT_PRICE_SELL;
+				}
+				
+				protected function sellAllWheat():void	{
+					city.wheatSold = city.wheat;
+					city.goldEarned += city.wheatSold*Numbers.WHEAT_PRICE_SELL;
+				}
+
+				
+				protected function woodMarketSellInputKeyUpHandler(event:KeyboardEvent):void	{
+					
+					city.goldEarned -= city.woodSold * Numbers.WOOD_PRICE_SELL;
+					city.woodSold = parseInt(woodMarketSellInput.text);
+					
+					if((city.wood-city.woodSold) < 0)
+						city.woodSold = city.wood;
+					
+					city.goldEarned += city.woodSold * Numbers.WOOD_PRICE_SELL;
+				}
+				
+				protected function sellAllWood():void	{
+					city.woodSold = city.wood;
+					city.goldEarned += city.woodSold*Numbers.WOOD_PRICE_SELL;
+				}
+				
+				protected function ironMarketSellInputKeyUpHandler(event:KeyboardEvent):void	{
+					
+					city.goldEarned -= city.ironSold * Numbers.IRON_PRICE_SELL;
+					city.ironSold = parseInt(ironMarketSellInput.text);
+					
+					if((city.iron-city.ironSold) < 0)
+						city.ironSold = city.iron;
+					
+					city.goldEarned += city.ironSold * Numbers.IRON_PRICE_SELL;
+				}
+				
+				protected function sellAllIron():void	{
+					city.ironSold = city.iron;
+					city.goldEarned += city.ironSold*Numbers.IRON_PRICE_SELL;
+				}
+				
+				
+				protected function bowsMarketSellInputKeyUpHandler(event:KeyboardEvent):void	{
+					
+					city.goldEarned -= city.bowsSold * Numbers.BOW_PRICE_SELL;
+					city.bowsSold = parseInt(bowsMarketSellInput.text);
+					
+					if((city.bowStock-city.bowsSold) < 0)
+						city.bowsSold = city.bowStock;
+					
+					city.goldEarned += city.bowsSold * Numbers.BOW_PRICE_SELL;
+				}
+				
+				protected function sellAllBows():void	{
+					city.bowsSold = city.bowStock;
+					city.goldEarned += city.bowsSold*Numbers.BOW_PRICE_SELL;
+				}
+				
+				
+				protected function swordsMarketSellInputKeyUpHandler(event:KeyboardEvent):void	{
+					
+					city.goldEarned -= city.swordsSold * Numbers.SWORD_PRICE_SELL;
+					city.swordsSold = parseInt(swordsMarketSellInput.text);
+					
+					if((city.swordStock-city.swordsSold) < 0)
+						city.swordsSold = city.swordStock;
+					
+					city.goldEarned += city.swordsSold * Numbers.SWORD_PRICE_SELL;
+				}
+				
+				protected function sellAllSwords():void	{
+					city.swordsSold = city.swordStock;
+					city.goldEarned += city.swordsSold*Numbers.SWORD_PRICE_SELL;
+				}
+
+				
+				protected function armorsMarketSellInputKeyUpHandler(event:KeyboardEvent):void	{
+					
+					city.goldEarned -= city.armorsSold * Numbers.ARMOR_PRICE_SELL;
+					city.armorsSold = parseInt(armorsMarketSellInput.text);
+					
+					if((city.armorStock-city.armorsSold) < 0)
+						city.armorsSold = city.armorStock;
+					
+					city.goldEarned += city.armorsSold * Numbers.ARMOR_PRICE_SELL;
+				}
+				
+				protected function sellAllArmors():void	{
+					city.armorsSold = city.armorStock;
+					city.goldEarned += city.armorsSold*Numbers.ARMOR_PRICE_SELL;
+				}
+				
+				
+				protected function sell():void{
+					city.gold += city.goldEarned;
+					
+					city.wheat -= city.wheatSold;
+					city.wood -= city.woodSold;
+					city.iron -= city.ironSold;
+					city.bowStock -= city.bowsSold;
+					city.swordStock -= city.swordsSold;
+					city.armorStock -= city.armorsSold;
+					
+					city.goldEarned = 0;
+					city.wheatSold = 0;
+					city.woodSold = 0;
+					city.ironSold = 0;
+					city.bowsSold = 0;
+					city.swordsSold = 0;
+					city.armorsSold = 0;
+				}
+				
+				//-------------------------------------------------------------------------//
+				// Forge
 				
 				protected function registerNewForgeWorkers(itemName:String, newNbWorkers:int):void	{
 					
@@ -395,6 +661,12 @@
 					wheatMerchantInput.text = merchant.wheat+""; // refresh
 				}
 				
+				protected function addAllWheatToMerchant():void{
+					merchant.wheat += city.wheat;
+					city.wheat = 0;
+				}
+				
+				
 				protected function woodMerchantInputKeyUpHandler(event:Event):void{
 					
 					if(woodMerchantInput.text.length == 0
@@ -425,6 +697,11 @@
 					
 					merchant.wood = newNbWood;
 					woodMerchantInput.text = merchant.wood+""; // refresh
+				}
+				
+				protected function addAllWoodToMerchant():void{
+					merchant.wood += city.wood;
+					city.wood = 0;
 				}
 				
 				protected function ironMerchantInputKeyUpHandler(event:Event):void{
@@ -459,6 +736,11 @@
 					ironMerchantInput.text = merchant.iron+""; // refresh
 				}
 				
+				protected function addAllIronToMerchant():void{
+					merchant.iron += city.iron;
+					city.iron = 0;
+				}
+				
 				protected function goldMerchantInputKeyUpHandler(event:Event):void{
 					
 					if(goldMerchantInput.text.length == 0
@@ -489,6 +771,11 @@
 					
 					merchant.gold = newNbGold;
 					goldMerchantInput.text = merchant.gold+""; // refresh
+				}
+				
+				protected function addAllGoldToMerchant():void{
+					merchant.gold += city.gold;
+					city.gold = 0;
 				}
 				
 				//-------------------------------------------------------------------------//
@@ -540,7 +827,10 @@
 					bowArmyInput.text = army.bows+""; // refresh
 				}
 				
-				
+				protected function addAllBowsToArmy():void{
+					bowArmyInput.text = city.bowStock+'';
+					bowArmyInputKeyUpHandler(null);
+				}
 				
 				protected function swordArmyInputKeyUpHandler(event:Event):void{
 					
@@ -588,6 +878,11 @@
 					swordArmyInput.text = army.swords+""; // refresh			
 				}
 				
+				protected function addAllSwordsToArmy():void{
+					swordArmyInput.text = city.swordStock+'';
+					swordArmyInputKeyUpHandler(null);
+				}
+				
 				protected function armorArmyInputKeyUpHandler(event:Event):void{
 					
 					if(armorArmyInput.text.length == 0
@@ -618,7 +913,7 @@
 						}
 					}
 					else{
-						// on enleve des epees a l'armee
+						// on enleve des armures a l'armee
 						var nbArmorsRestored:int = previousNbArmors - newNbArmors;
 						
 						if(city.armorsEquiped > nbArmorsRestored){
@@ -632,6 +927,11 @@
 					
 					army.armors = newNbArmors;
 					armorArmyInput.text = army.armors+""; // refresh								
+				}
+				
+				protected function addAllArmorsToArmy():void{
+					armorArmyInput.text = city.armorStock+'';
+					armorArmyInputKeyUpHandler(null);
 				}
 				
 				//-------------------------------------------------------------------------//
@@ -801,19 +1101,39 @@
 					}
 					
 					// on remet les armements dans les stocks de la ville
-					for each(var equipment:Equipment in army.equipments){
-						switch(equipment.item.name){
-							case "bow" :
-								city.bowStock += equipment.size;
-								break;
-							case "sword" :
-								city.swordStock += equipment.size;
-								break;
-							case "armor" :
-								city.armorStock += equipment.size;
-								break;
-						}
+					// on enleve des arcs a l'armee
+					var nbBowsRestored:int = army.bows;
+					
+					if(city.bowsEquiped > nbBowsRestored){
+						city.bowsEquiped -= nbBowsRestored;
 					}
+					else{
+						city.bowsRestored += nbBowsRestored - city.bowsEquiped;
+						city.bowsEquiped = 0;
+					}
+					
+					// on enleve des epees a l'armee
+					var nbSwordsRestored:int = army.swords;
+					
+					if(city.swordsEquiped > nbSwordsRestored){
+						city.swordsEquiped -= nbSwordsRestored;
+					}
+					else{
+						city.swordsRestored += nbSwordsRestored - city.swordsEquiped;
+						city.swordsEquiped = 0;
+					}
+					
+					// on enleve des armures a l'armee
+					var nbArmorsRestored:int = army.armors;
+					
+					if(city.armorsEquiped > nbArmorsRestored){
+						city.armorsEquiped -= nbArmorsRestored;
+					}
+					else{
+						city.armorsRestored += nbArmorsRestored - city.armorsEquiped;
+						city.armorsEquiped = 0;
+					}
+					
 					
 					// on enleve l'armee de la liste de la ville et du player
 					city.armies.removeItemAt(city.armies.getItemIndex(army));
@@ -947,18 +1267,14 @@
 				<mx:Spacer width="10"/>
 				<s:Label text="{city.iron}" styleName="numberLabel"/>
 			</s:HGroup>
-			<s:HGroup horizontalAlign="center" verticalAlign="middle">
-				<mx:Spacer width="30"/>
-				<!--<s:Label text="{city.gold}" styleName="numberLabel"/>-->
-				<mx:Spacer width="20"/>
-
-				<mx:Spacer width="55"/>
+			<s:HGroup verticalAlign="middle">
+				<mx:Spacer width="240"/>
 				<s:Label text="({(city.wheat + city.wheatEarned - city.wheatSpent)})" color="{city.wheat + city.wheatEarned - city.wheatSpent >= 0 ? Numbers.GREEN : Numbers.RED}"/>
 				
-				<mx:Spacer width="55"/>
+				<mx:Spacer width="75"/>
 				<s:Label text="({(city.wood + city.woodEarned - city.woodSpent)})" color="{city.wood + city.woodEarned - city.woodSpent >= 0 ? Numbers.GREEN : Numbers.RED}"/>
 				
-				<mx:Spacer width="55"/>
+				<mx:Spacer width="75"/>
 				<s:Label text="({(city.iron + city.ironEarned - city.ironSpent)})" color="{city.iron + city.ironEarned - city.ironSpent >= 0 ? Numbers.GREEN : Numbers.RED}"/>
 			</s:HGroup>
 			
@@ -1083,6 +1399,353 @@
 								</mx:GridItem>
 							</mx:GridRow>
 						</mx:Grid>
+					</s:HGroup>
+				</s:NavigatorContent>
+				
+				<!-- =============================================================================================== -->
+				<!-- Marche -->
+				
+				<s:NavigatorContent label="Marché">
+					<s:HGroup width="100%" height="100%" horizontalAlign="center">
+						<s:TabBar id="tabsMarket" dataProvider="{viewstackMarket}" skinClass="spark.skins.spark.TabBarSkin"/>
+						
+						<mx:ViewStack id="viewstackMarket" width="650" height="100%">
+							
+							<!-- =============================================================================================== -->
+							<!-- Achat -->
+							
+							<s:NavigatorContent label="Achat" width="650">
+								<s:Button label="Effectuer l'achat" left="-130" bottom="0" click="buy()"/>
+								<s:VGroup>
+									<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle"
+											 width="450">
+										<mx:GridRow >
+											<mx:GridItem/>
+											<mx:GridItem horizontalAlign="center" minWidth="80">
+												<s:Label text="Cout unitaire" />
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" minWidth="80">
+												<s:Label text="Quantité"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" minWidth="80">
+												<s:Label text="Prix à payer"/>
+											</mx:GridItem>
+										</mx:GridRow>
+									</mx:Grid>
+									<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle"
+											 maxHeight="180" width="450">
+										<mx:GridRow >
+											<mx:GridItem horizontalAlign="center">
+												<mx:Image toolTip="Wheat" source="{ImageContainer.WHEAT}" click="spendAllMoneyForWheat()"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{Numbers.WHEAT_PRICE_BUY}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:TextInput text="{city.wheatBought}" 
+															 id="wheatMarketBuyInput"
+															 keyUp="wheatMarketBuyInputKeyUpHandler(event)"
+															 restrict="0-9"
+															 width="100"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{city.wheatBought*Numbers.WHEAT_PRICE_BUY}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+										</mx:GridRow>
+										<mx:GridRow >
+											<mx:GridItem horizontalAlign="center">
+												<mx:Image toolTip="Wood" source="{ImageContainer.WOOD}" click="spendAllMoneyForWood()"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{Numbers.WOOD_PRICE_BUY}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:TextInput text="{city.woodBought}" 
+															 id="woodMarketBuyInput"
+															 keyUp="woodMarketBuyInputKeyUpHandler(event)"
+															 restrict="0-9"
+															 width="100"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{city.woodBought*Numbers.WOOD_PRICE_BUY}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+										</mx:GridRow>
+										<mx:GridRow >
+											<mx:GridItem horizontalAlign="center">
+												<mx:Image toolTip="Iron" source="{ImageContainer.IRON}" click="spendAllMoneyForIron()"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{Numbers.IRON_PRICE_BUY}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:TextInput text="{city.ironBought}" 
+															 id="ironMarketBuyInput"
+															 keyUp="ironMarketBuyInputKeyUpHandler(event)"
+															 restrict="0-9"
+															 width="100"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{city.ironBought*Numbers.IRON_PRICE_BUY}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+										</mx:GridRow>
+										<mx:GridRow>
+											<mx:GridItem horizontalAlign="center">
+												<mx:Image toolTip="Bows" source="{ImageContainer.BOW}" click="spendAllMoneyForBows()"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{Numbers.BOW_PRICE_BUY}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:TextInput text="{city.bowsBought}" 
+															 id="bowsMarketBuyInput"
+															 keyUp="bowsMarketBuyInputKeyUpHandler(event)"
+															 restrict="0-9"
+															 width="100"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{city.bowsBought*Numbers.BOW_PRICE_BUY}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+										</mx:GridRow>
+										<mx:GridRow>
+											<mx:GridItem horizontalAlign="center">
+												<mx:Image toolTip="Swords" source="{ImageContainer.SWORD}" click="spendAllMoneyForSwords()"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{Numbers.SWORD_PRICE_BUY}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:TextInput text="{city.swordsBought}" 
+															 id="swordsMarketBuyInput"
+															 keyUp="swordsMarketBuyInputKeyUpHandler(event)"
+															 restrict="0-9"
+															 width="100"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{city.swordsBought*Numbers.SWORD_PRICE_BUY}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+										</mx:GridRow>
+										<mx:GridRow>
+											<mx:GridItem horizontalAlign="center">
+												<mx:Image toolTip="Armors" source="{ImageContainer.ARMOR}" click="spendAllMoneyForArmors()"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{Numbers.ARMOR_PRICE_BUY}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:TextInput text="{city.armorsBought}" 
+															 id="armorsMarketBuyInput"
+															 keyUp="armorsMarketBuyInputKeyUpHandler(event)"
+															 restrict="0-9"
+															 width="100"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{city.armorsBought*Numbers.ARMOR_PRICE_BUY}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+										</mx:GridRow>
+									</mx:Grid>
+									<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle"
+											 width="450">
+										<mx:GridRow>
+											<mx:GridItem colSpan="4">
+												<mx:HRule width="100%"/>
+											</mx:GridItem>
+										</mx:GridRow >
+										<mx:GridRow >
+											<mx:GridItem/>
+											<mx:GridItem/>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="Dépense Totale :" minWidth="150"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{city.goldSpent}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+											<mx:GridItem/>
+										</mx:GridRow>
+									</mx:Grid>
+								</s:VGroup>
+							</s:NavigatorContent>
+							
+							<!-- =============================================================================================== -->
+							<!-- Vente -->
+							
+							<s:NavigatorContent label="Vente" width="650">
+								<s:Button label="Effectuer la vente" left="-130" bottom="0" click="sell()"/>
+								<s:VGroup>
+									<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle"
+											 width="450">
+										<mx:GridRow >
+											<mx:GridItem/>
+											<mx:GridItem horizontalAlign="center" minWidth="80">
+												<s:Label text="Prix unitaire" />
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" minWidth="80">
+												<s:Label text="Quantité"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" minWidth="80">
+												<s:Label text="Gain"/>
+											</mx:GridItem>
+										</mx:GridRow>
+									</mx:Grid>
+									<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle"
+											 maxHeight="180" width="450">
+										<mx:GridRow >
+											<mx:GridItem horizontalAlign="center">
+												<mx:Image toolTip="Wheat" source="{ImageContainer.WHEAT}" click="sellAllWheat()"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{Numbers.WHEAT_PRICE_SELL}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:TextInput text="{city.wheatSold}" 
+															 id="wheatMarketSellInput"
+															 keyUp="wheatMarketSellInputKeyUpHandler(event)"
+															 restrict="0-9"
+															 width="100"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{city.wheatSold*Numbers.WHEAT_PRICE_SELL}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+										</mx:GridRow>
+										<mx:GridRow >
+											<mx:GridItem horizontalAlign="center">
+												<mx:Image toolTip="Wood" source="{ImageContainer.WOOD}" click="sellAllWood()"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{Numbers.WOOD_PRICE_SELL}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:TextInput text="{city.woodSold}" 
+															 id="woodMarketSellInput"
+															 keyUp="woodMarketSellInputKeyUpHandler(event)"
+															 restrict="0-9"
+															 width="100"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{city.woodSold*Numbers.WOOD_PRICE_SELL}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+										</mx:GridRow>
+										<mx:GridRow >
+											<mx:GridItem horizontalAlign="center">
+												<mx:Image toolTip="Iron" source="{ImageContainer.IRON}" click="sellAllIron()"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{Numbers.IRON_PRICE_SELL}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:TextInput text="{city.ironSold}" 
+															 id="ironMarketSellInput"
+															 keyUp="ironMarketSellInputKeyUpHandler(event)"
+															 restrict="0-9"
+															 width="100"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{city.ironSold*Numbers.IRON_PRICE_SELL}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+										</mx:GridRow>
+										<mx:GridRow>
+											<mx:GridItem horizontalAlign="center">
+												<mx:Image toolTip="Bows" source="{ImageContainer.BOW}" click="sellAllBows()"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{Numbers.BOW_PRICE_SELL}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:TextInput text="{city.bowsSold}" 
+															 id="bowsMarketSellInput"
+															 keyUp="bowsMarketSellInputKeyUpHandler(event)"
+															 restrict="0-9"
+															 width="100"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{city.bowsSold*Numbers.BOW_PRICE_SELL}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+										</mx:GridRow>
+										<mx:GridRow>
+											<mx:GridItem horizontalAlign="center">
+												<mx:Image toolTip="Swords" source="{ImageContainer.SWORD}" click="sellAllSwords()"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{Numbers.SWORD_PRICE_SELL}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:TextInput text="{city.swordsSold}" 
+															 id="swordsMarketSellInput"
+															 keyUp="swordsMarketSellInputKeyUpHandler(event)"
+															 restrict="0-9"
+															 width="100"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{city.swordsSold*Numbers.SWORD_PRICE_SELL}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+										</mx:GridRow>
+										<mx:GridRow>
+											<mx:GridItem horizontalAlign="center">
+												<mx:Image toolTip="Armors" source="{ImageContainer.ARMOR}" click="sellAllArmors()"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{Numbers.ARMOR_PRICE_SELL}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:TextInput text="{city.armorsSold}" 
+															 id="armorsMarketSellInput"
+															 keyUp="armorsMarketSellInputKeyUpHandler(event)"
+															 restrict="0-9"
+															 width="100"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{city.armorsSold*Numbers.ARMOR_PRICE_SELL}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+										</mx:GridRow>
+									</mx:Grid>
+									<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle"
+											 width="450">
+										<mx:GridRow>
+											<mx:GridItem colSpan="4">
+												<mx:HRule width="100%"/>
+											</mx:GridItem>
+										</mx:GridRow >
+										<mx:GridRow >
+											<mx:GridItem/>
+											<mx:GridItem/>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="Gain Total :" minWidth="150"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{city.goldEarned}"/>
+												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+											<mx:GridItem/>
+										</mx:GridRow>
+									</mx:Grid>
+								</s:VGroup>
+							</s:NavigatorContent>
+						</mx:ViewStack>
+
 					</s:HGroup>
 				</s:NavigatorContent>
 				
@@ -1346,7 +2009,7 @@
 								<s:Scroller maxHeight="200">
 									<s:Group>
 										<s:List id="merchantsList"
-												itemRenderer="com.uralys.renderers.MerchantListRenderer"
+												itemRenderer="com.uralys.renderers.MerchantListRenderer4Board"
 												dataProvider="{city.merchants}"
 												borderVisible="false"
 												width="275"
@@ -1393,7 +2056,7 @@
 								</mx:GridRow>
 								<mx:GridRow >
 									<mx:GridItem horizontalAlign="center">
-										<mx:Image toolTip="Wheat" source="{ImageContainer.WHEAT}"/>
+										<mx:Image toolTip="Wheat" source="{ImageContainer.WHEAT}" click="addAllWheatToMerchant()"/>
 									</mx:GridItem>
 									<mx:GridItem horizontalAlign="center">
 										<s:TextInput text="{merchant.wheat}" 
@@ -1409,7 +2072,7 @@
 								</mx:GridRow>
 								<mx:GridRow >
 									<mx:GridItem horizontalAlign="center">
-										<mx:Image toolTip="Wood" source="{ImageContainer.WOOD}"/>
+										<mx:Image toolTip="Wood" source="{ImageContainer.WOOD}" click="addAllWoodToMerchant()"/>
 									</mx:GridItem>
 									<mx:GridItem horizontalAlign="center">
 										<s:TextInput text="{merchant.wood}" 
@@ -1425,7 +2088,7 @@
 								</mx:GridRow>
 								<mx:GridRow >
 									<mx:GridItem horizontalAlign="center">
-										<mx:Image toolTip="Iron" source="{ImageContainer.IRON}"/>
+										<mx:Image toolTip="Iron" source="{ImageContainer.IRON}" click="addAllIronToMerchant()"/>
 									</mx:GridItem>
 									<mx:GridItem horizontalAlign="center">
 										<s:TextInput text="{merchant.iron}" 
@@ -1441,7 +2104,7 @@
 								</mx:GridRow>
 								<mx:GridRow >
 									<mx:GridItem horizontalAlign="center">
-										<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+										<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}" click="addAllGoldToMerchant()"/>
 									</mx:GridItem>
 									<mx:GridItem horizontalAlign="center">
 										<s:TextInput text="{merchant.gold}" 
@@ -1554,7 +2217,7 @@
 							</mx:GridRow>
 							<mx:GridRow >
 								<mx:GridItem horizontalAlign="center">
-									<mx:Image toolTip="Arcs" source="{ImageContainer.BOW}"/>
+									<mx:Image toolTip="Arcs" source="{ImageContainer.BOW}" click="addAllBowsToArmy()"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
 									<s:TextInput text="{army.bows}" 
@@ -1570,7 +2233,7 @@
 							</mx:GridRow>
 							<mx:GridRow >
 								<mx:GridItem horizontalAlign="center">
-									<mx:Image toolTip="Epees" source="{ImageContainer.SWORD}"/>
+									<mx:Image toolTip="Epees" source="{ImageContainer.SWORD}" click="addAllSwordsToArmy()"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
 									<s:TextInput text="{army.swords}" 
@@ -1586,7 +2249,7 @@
 							</mx:GridRow>
 							<mx:GridRow >
 								<mx:GridItem horizontalAlign="center">
-									<mx:Image toolTip="Armures" source="{ImageContainer.ARMOR}"/>
+									<mx:Image toolTip="Armures" source="{ImageContainer.ARMOR}" click="addAllArmorsToArmy()"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
 									<s:TextInput text="{army.armors}" 

@@ -45,6 +45,20 @@ import mx.collections.ArrayCollection;
 	public static var WHEAT_EARNING_COEFF:Number = 5;
 	public static var WOOD_EARNING_COEFF:Number = 3;
 	public static var IRON_EARNING_COEFF:Number = 2;
+
+	[Bindable] public static var WHEAT_PRICE_BUY:Number = 1;
+	[Bindable] public static var WOOD_PRICE_BUY:Number = 2;
+	[Bindable] public static var IRON_PRICE_BUY:Number = 3;
+	[Bindable] public static var BOW_PRICE_BUY:Number = 4;
+	[Bindable] public static var SWORD_PRICE_BUY:Number = 8;
+	[Bindable] public static var ARMOR_PRICE_BUY:Number = 15;
+
+	[Bindable] public static var WHEAT_PRICE_SELL:Number = 1;
+	[Bindable] public static var WOOD_PRICE_SELL:Number = 2;
+	[Bindable] public static var IRON_PRICE_SELL:Number = 3;
+	[Bindable] public static var BOW_PRICE_SELL:Number = 3;
+	[Bindable] public static var SWORD_PRICE_SELL:Number = 7;
+	[Bindable] public static var ARMOR_PRICE_SELL:Number = 13;
 	
 	//==================================================================================================//
 	// contrees

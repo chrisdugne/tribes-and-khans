@@ -43,179 +43,7 @@
 			import spark.components.supportClasses.ItemRenderer;
 			import spark.primitives.Ellipse;
 			import spark.primitives.Line;
-			
-			// ------------------------------------------------------------------------// 
-			// 		map scrolling
-			
-			private var isDragging:Boolean = false;
-			private var draggingImageXFrom:int;
-			private var draggingImageYFrom:int;
-			private var draggingImageXTo:int;
-			private var draggingImageYTo:int;
-			private var draggingStageXFrom:int;
-			private var draggingStageYFrom:int;
-			private var draggingStageXTo:int;
-			private var draggingStageYTo:int;
-			private var limitLeft:int;
-			private var limitUp:int;
-			
-			[Bindable] private var coordinateX:int;
-			[Bindable] private var coordinateY:int;
-			
 
-			protected function mouseDown(event:MouseEvent):void{
-				
-				isDragging = true;
-				draggingImageXFrom = event.localX;
-				draggingImageYFrom = event.localY;
-				draggingStageXFrom = event.stageX;
-				draggingStageYFrom = event.stageY;
-				
-				autoMoveNotNeeded = true;
-				autoMove.stop();
-				
-				selectionChoiceGroup.visible = false;
-				selectionChoiceGroup.includeInLayout = false;
-				merchantChoiceGroup.visible = false;
-				merchantChoiceGroup.includeInLayout = false;
-				
-			}
-			
-			private var timer:Timer;
-			private var autoMoveNotNeeded:Boolean = true;
-			protected function mouseMove(event:MouseEvent):void{
-				
-				coordinateX = event.localX;
-				coordinateY = event.localY;
-
-				if(Session.CURRENT_SELECTION_IS_ARMY){
-					Mouse.hide();
-
-					if(!selectedUnit.ellipseToIsDrawn){
-						selectedUnit.ellipseTo = new Ellipse();
-						selectedUnit.ellipseTo.width = selectedUnit.radius*2;
-						selectedUnit.ellipseTo.height = selectedUnit.radius*2;
-						selectedUnit.ellipseTo.fill = new SolidColor(selectedUnit.type == 1 ? Numbers.WHITE : Numbers.YELLOW, 0.5);
-						
-						boardEntities.addElement(selectedUnit.ellipseTo);
-						selectedUnit.ellipseToIsDrawn = true;
-					}
-
-					if(!selectedUnit.lineToIsDrawn){
-						selectedUnit.lineTo = new Line();
-						selectedUnit.lineTo.xFrom = selectedUnit.x;
-						selectedUnit.lineTo.yFrom = selectedUnit.y;
-						selectedUnit.lineTo.stroke = radialGrad;
-						
-						boardEntities.addElement(selectedUnit.lineTo);
-						selectedUnit.lineToIsDrawn = true;
-					}
-					
-					selectedUnit.ellipseTo.x = coordinateX - selectedUnit.ellipseTo.width/2;
-					selectedUnit.ellipseTo.y = coordinateY - selectedUnit.ellipseTo.height/2;
-					selectedUnit.lineTo.xTo = coordinateX;
-					selectedUnit.lineTo.yTo = coordinateY;
-					
-					var hyp:Number = Math.sqrt(Math.pow(selectedUnit.lineTo.xFrom - coordinateX,2) + Math.pow(selectedUnit.lineTo.yFrom - coordinateY,2));
-					
-					if(hyp > selectedUnit.speed){
-						Mouse.show();
-						selectedUnit.lineTo.xTo = selectedUnit.lineTo.xFrom - (selectedUnit.speed * (selectedUnit.lineTo.xFrom - coordinateX)/hyp);
-						selectedUnit.lineTo.yTo = selectedUnit.lineTo.yFrom - (selectedUnit.speed * (selectedUnit.lineTo.yFrom - coordinateY)/hyp);
-						selectedUnit.ellipseTo.x = selectedUnit.lineTo.xTo - selectedUnit.ellipseTo.width/2;
-						selectedUnit.ellipseTo.y = selectedUnit.lineTo.yTo - selectedUnit.ellipseTo.height/2;
-					}
-					
-					BoardDrawer.getInstance().testLand(selectedUnit);
-					
-				}
-				else if(isDragging){
-					
-					timer.stop();
-					timer.reset();
-					timer.start();
-					autoMoveNotNeeded = false;
-					// on decale l'image du nombre de pixels du dernier mouvement
-					// donc elle suit bien la souris et event.localXY a bien lieu au meme endroit sur l'image apres chaque mouseMove
-					image.x += (event.localX - draggingImageXFrom);
-					image.y += (event.localY - draggingImageYFrom);
-				}
-			}
-			
-			protected function mouseUp(event:MouseEvent):void{
-
-				isDragging = false;
-				Mouse.show();
-				
-				if(autoMoveNotNeeded){
-					if(Session.CURRENT_SELECTION_IS_ARMY){
-						BoardDrawer.getInstance().removeArmySelection();
-						selectedUnit.moves = new ArrayCollection();
-						selectedUnit.moves.addItem(new com.uralys.tribes.entities.Move());
-						
-						var clickX:int = event.localX;
-						var clickY:int = event.localY;
-						var cityEntered:City = null;
-						
-						for each(var player:Player in game.players){
-							for each(var city:City in player.cities){
-								if(Math.sqrt(Math.pow(selectedUnit.ellipseTo.x - city.x,2) + Math.pow(selectedUnit.ellipseTo.y - city.y,2)) <= city.radius) {
-									cityEntered = city;
-									break;
-								}
-							}
-							
-							if(cityEntered)
-								break;
-						}
-						
-						selectedUnit.moves.getItemAt(0).xFrom = selectedUnit.x;
-						selectedUnit.moves.getItemAt(0).yFrom = selectedUnit.y;
-						if(cityEntered){
-							selectedUnit.moves.getItemAt(0).xTo = cityEntered.x;
-							selectedUnit.moves.getItemAt(0).yTo = cityEntered.y;
-							selectedUnit.lineTo.xTo = cityEntered.x;
-							selectedUnit.lineTo.yTo = cityEntered.y;
-							selectedUnit.ellipseTo.x = cityEntered.x - selectedUnit.ellipseTo.width/2;
-							selectedUnit.ellipseTo.y = cityEntered.y - selectedUnit.ellipseTo.height/2;
-						}
-						else{
-							selectedUnit.moves.getItemAt(0).xTo = selectedUnit.lineTo.xTo;
-							selectedUnit.moves.getItemAt(0).yTo = selectedUnit.lineTo.yTo;
-						}
-					}
-					else
-						BoardClickListener.getInstance().clickOnBoard(event);
-
-					return;
-				}
-
-				//--------------------------//
-				// stop dragging : automove
-				
-				
-				draggingStageXTo = event.stageX;
-				draggingStageYTo = event.stageY;
-				
-				autoMove.duration = 6*(Math.abs(draggingStageXTo - draggingStageXFrom) + Math.abs(draggingStageYTo - draggingStageYFrom));
-				autoMove.xTo = image.x + (draggingStageXTo - draggingStageXFrom)*3;
-				autoMove.yTo = image.y + (draggingStageYTo - draggingStageYFrom)*3;
-				
-				if(autoMove.xTo > 0)
-					autoMove.xTo = 0;
-				if(autoMove.yTo > 0)
-					autoMove.yTo = 0;
-				if(autoMove.xTo < limitLeft)
-					autoMove.xTo = limitLeft;
-				if(autoMove.yTo < limitUp)
-					autoMove.yTo = limitUp;
-
-				autoMove.play();
-			}
-				
-			private function moveStoppedDuringDragging(event:TimerEvent):void{
-				autoMoveNotNeeded = true;
-			}
 
 			//---------------------------------------------------------------------------------------//
 			
@@ -226,32 +54,6 @@
 			
 			private var moveGradient:Array;
 			private var radialGrad:RadialGradientStroke;
-
-			//-----------------------------------------------------------//
-			
-			protected function initArmiesList():void{
-				armiesList.addEventListener(ItemClickEvent.ITEM_CLICK, onArmyClick);
-			}
-			
-			protected function initMerchantsList():void{
-				merchantsList.addEventListener(ItemClickEvent.ITEM_CLICK, onArmyClick);
-			}
-			
-			protected function initCitiesList():void{
-				citiesList.addEventListener(ItemClickEvent.ITEM_CLICK, onCityClick);
-			}
-			
-			protected function initOtherCitiesList():void{
-				otherCitiesList.addEventListener(ItemClickEvent.ITEM_CLICK, onCityClick);
-			}
-			
-			protected function initSelectionChoiceArmyList():void{
-				selectionChoiceArmyList.addEventListener(ItemClickEvent.ITEM_CLICK, onArmyClick);
-			}
-			
-			protected function initSelectionChoiceMerchantList():void{
-				selectionChoiceMerchantList.addEventListener(ItemClickEvent.ITEM_CLICK, onArmyClick);
-			}
 
 			//----------------------------------------------------------//
 
@@ -380,17 +182,244 @@
 					}
 				}
 
+				Session.allOtherCities = new ArrayCollection();
 				for each(var player:Player in game.players){
 					if(player.playerUID != Session.currentPlayer.playerUID){
 						for each(var city:City in player.cities){
-							Session.allOtherCities.addItem(city);
+							if(city.creationTurn < game.currentTurn)
+								Session.allOtherCities.addItem(city);
 						}
 					}
 				}
 				
 			}
-
+			
 			//-----------------------------------------------------------//
+			
+			protected function initArmiesList():void{
+				armiesList.addEventListener(ItemClickEvent.ITEM_CLICK, onArmyClick);
+			}
+			
+			protected function initMerchantsList():void{
+				merchantsList.addEventListener(ItemClickEvent.ITEM_CLICK, onArmyClick);
+			}
+			
+			protected function initCitiesList():void{
+				citiesList.addEventListener(ItemClickEvent.ITEM_CLICK, onCityClick);
+			}
+			
+			protected function initOtherCitiesList():void{
+				otherCitiesList.addEventListener(ItemClickEvent.ITEM_CLICK, onCityClick);
+			}
+			
+			protected function initSelectionChoiceArmyList():void{
+				selectionChoiceArmyList.addEventListener(ItemClickEvent.ITEM_CLICK, onArmyClick);
+			}
+			
+			protected function initSelectionChoiceMerchantList():void{
+				selectionChoiceMerchantList.addEventListener(ItemClickEvent.ITEM_CLICK, onArmyClick);
+			}
+
+			
+			// ------------------------------------------------------------------------// 
+			// 		map scrolling
+			
+			private var isDragging:Boolean = false;
+			private var draggingImageXFrom:int;
+			private var draggingImageYFrom:int;
+			private var draggingImageXTo:int;
+			private var draggingImageYTo:int;
+			private var draggingStageXFrom:int;
+			private var draggingStageYFrom:int;
+			private var draggingStageXTo:int;
+			private var draggingStageYTo:int;
+			private var limitLeft:int;
+			private var limitUp:int;
+			
+			[Bindable] private var coordinateX:int;
+			[Bindable] private var coordinateY:int;
+			
+			
+			protected function mouseDown(event:MouseEvent):void{
+				
+				isDragging = true;
+				draggingImageXFrom = event.localX;
+				draggingImageYFrom = event.localY;
+				draggingStageXFrom = event.stageX;
+				draggingStageYFrom = event.stageY;
+				
+				autoMoveNotNeeded = true;
+				autoMove.stop();
+				
+				selectionChoiceGroup.visible = false;
+				selectionChoiceGroup.includeInLayout = false;
+				merchantChoiceGroup.visible = false;
+				merchantChoiceGroup.includeInLayout = false;
+				
+			}
+			
+			private var timer:Timer;
+			private var autoMoveNotNeeded:Boolean = true;
+			protected function mouseMove(event:MouseEvent):void{
+				
+				coordinateX = event.localX;
+				coordinateY = event.localY;
+				
+				if(Session.CURRENT_SELECTION_IS_ARMY){
+					Mouse.hide();
+					
+					if(!selectedUnit.ellipseToIsDrawn){
+						selectedUnit.ellipseTo = new Ellipse();
+						selectedUnit.ellipseTo.width = selectedUnit.radius*2;
+						selectedUnit.ellipseTo.height = selectedUnit.radius*2;
+						selectedUnit.ellipseTo.fill = new SolidColor(selectedUnit.type == 1 ? Numbers.WHITE : Numbers.YELLOW, 0.5);
+						
+						boardEntities.addElement(selectedUnit.ellipseTo);
+						selectedUnit.ellipseToIsDrawn = true;
+					}
+					
+					if(!selectedUnit.lineToIsDrawn){
+						selectedUnit.lineTo = new Line();
+						selectedUnit.lineTo.xFrom = selectedUnit.x;
+						selectedUnit.lineTo.yFrom = selectedUnit.y;
+						selectedUnit.lineTo.stroke = radialGrad;
+						
+						boardEntities.addElement(selectedUnit.lineTo);
+						selectedUnit.lineToIsDrawn = true;
+					}
+					
+					selectedUnit.ellipseTo.x = coordinateX - selectedUnit.ellipseTo.width/2;
+					selectedUnit.ellipseTo.y = coordinateY - selectedUnit.ellipseTo.height/2;
+					selectedUnit.lineTo.xTo = coordinateX;
+					selectedUnit.lineTo.yTo = coordinateY;
+					
+					var hyp:Number = Math.sqrt(Math.pow(selectedUnit.lineTo.xFrom - coordinateX,2) + Math.pow(selectedUnit.lineTo.yFrom - coordinateY,2));
+					
+					if(hyp > selectedUnit.speed){
+						Mouse.show();
+						selectedUnit.lineTo.xTo = selectedUnit.lineTo.xFrom - (selectedUnit.speed * (selectedUnit.lineTo.xFrom - coordinateX)/hyp);
+						selectedUnit.lineTo.yTo = selectedUnit.lineTo.yFrom - (selectedUnit.speed * (selectedUnit.lineTo.yFrom - coordinateY)/hyp);
+						selectedUnit.ellipseTo.x = selectedUnit.lineTo.xTo - selectedUnit.ellipseTo.width/2;
+						selectedUnit.ellipseTo.y = selectedUnit.lineTo.yTo - selectedUnit.ellipseTo.height/2;
+					}
+					
+					BoardDrawer.getInstance().testLand(selectedUnit);
+					
+				}
+				else if(isDragging){
+					
+					timer.stop();
+					timer.reset();
+					timer.start();
+					autoMoveNotNeeded = false;
+					// on decale l'image du nombre de pixels du dernier mouvement
+					// donc elle suit bien la souris et event.localXY a bien lieu au meme endroit sur l'image apres chaque mouseMove
+					image.x += (event.localX - draggingImageXFrom);
+					image.y += (event.localY - draggingImageYFrom);
+				}
+			}
+			
+			protected function mouseUp(event:MouseEvent):void{
+				
+				isDragging = false;
+				Mouse.show();
+				
+				if(autoMoveNotNeeded){
+					if(Session.CURRENT_SELECTION_IS_ARMY){
+						BoardDrawer.getInstance().removeArmySelection();
+						selectedUnit.moves = new ArrayCollection();
+						selectedUnit.moves.addItem(new com.uralys.tribes.entities.Move());
+						
+						var clickX:int = event.localX;
+						var clickY:int = event.localY;
+						var cityEntered:City = null;
+						
+						for each(var player:Player in game.players){
+							for each(var city:City in player.cities){
+								if(Math.sqrt(Math.pow(selectedUnit.ellipseTo.x - city.x,2) + Math.pow(selectedUnit.ellipseTo.y - city.y,2)) <= city.radius) {
+									cityEntered = city;
+									break;
+								}
+							}
+							
+							if(cityEntered)
+								break;
+						}
+						
+						selectedUnit.moves.getItemAt(0).xFrom = selectedUnit.x;
+						selectedUnit.moves.getItemAt(0).yFrom = selectedUnit.y;
+						if(cityEntered){
+							selectedUnit.moves.getItemAt(0).xTo = cityEntered.x;
+							selectedUnit.moves.getItemAt(0).yTo = cityEntered.y;
+							selectedUnit.lineTo.xTo = cityEntered.x;
+							selectedUnit.lineTo.yTo = cityEntered.y;
+							selectedUnit.ellipseTo.x = cityEntered.x - selectedUnit.ellipseTo.width/2;
+							selectedUnit.ellipseTo.y = cityEntered.y - selectedUnit.ellipseTo.height/2;
+						}
+						else{
+							selectedUnit.moves.getItemAt(0).xTo = selectedUnit.lineTo.xTo;
+							selectedUnit.moves.getItemAt(0).yTo = selectedUnit.lineTo.yTo;
+						}
+					}
+					else
+						BoardClickListener.getInstance().clickOnBoard(event);
+					
+					return;
+				}
+				
+				//--------------------------//
+				// stop dragging : automove
+				
+				
+				draggingStageXTo = event.stageX;
+				draggingStageYTo = event.stageY;
+				
+				autoMove.duration = 6*(Math.abs(draggingStageXTo - draggingStageXFrom) + Math.abs(draggingStageYTo - draggingStageYFrom));
+				autoMove.xTo = image.x + (draggingStageXTo - draggingStageXFrom)*3;
+				autoMove.yTo = image.y + (draggingStageYTo - draggingStageYFrom)*3;
+				
+				if(autoMove.xTo > 0)
+					autoMove.xTo = 0;
+				if(autoMove.yTo > 0)
+					autoMove.yTo = 0;
+				if(autoMove.xTo < limitLeft)
+					autoMove.xTo = limitLeft;
+				if(autoMove.yTo < limitUp)
+					autoMove.yTo = limitUp;
+				
+				autoMove.play();
+			}
+			
+			private function moveStoppedDuringDragging(event:TimerEvent):void{
+				autoMoveNotNeeded = true;
+			}
+			
+			// ------------------------------------------------------------------------// 
+			// 	minimap scrolling
+			
+			protected function mouseUpMiniMap(event:MouseEvent):void{
+				isDragging = false;
+			}
+
+			protected function mouseDownMiniMap(event:MouseEvent):void{
+				image.x = 250 - event.localX*15;
+				image.y = 250 - event.localY*15;
+				
+				isDragging = true;
+				
+				autoMoveNotNeeded = true;
+				autoMove.stop();
+			}
+
+			protected function mouseMoveMiniMap(event:MouseEvent):void{
+				if(isDragging){
+					image.x = 250 - event.localX*15;
+					image.y = 250 - event.localY*15;
+				}
+			}
+				
+			//==============================================================================================================//
+			// 	Game management
 			
 			private function initBoard():void{
 				
@@ -401,7 +430,7 @@
 				
 				//------------------------------------------------------------//
 
-				BoardDrawer.getInstance().setBoards(boardEntities, boardImages, boardTexts);
+				BoardDrawer.getInstance().setBoards(boardEntities, boardImages, boardTexts, minimap);
 				BoardDrawer.getInstance().setGame(game);
 				BoardDrawer.getInstance().redrawAllEntities();
 				BoardClickListener.boardPage = this;
@@ -624,6 +653,9 @@
 				for each (var player:Player in game.players){
 					var lands:ArrayCollection = new ArrayCollection();
 					for each (var city:City in player.cities){
+						
+						if(city.creationTurn == game.currentTurn)
+							continue;
 					
 						var cityLandXmin:int = Math.floor((city.x - city.radius)/Numbers.LAND_WIDTH);	
 						var cityLandXmax:int = Math.floor((city.x + city.radius)/Numbers.LAND_WIDTH);	
@@ -787,10 +819,40 @@
 			<mx:Spacer width="200"/>
 			<s:Label text="Y : {coordinateY}"/>
 		</s:HGroup>
-		<s:HGroup width="100%" horizontalAlign="center" paddingTop="50" bottom="2">
+		<s:HGroup width="100%" horizontalAlign="center" paddingTop="50" bottom="-3">
 			<s:CheckBox id="checkBoxDetails" label="Details" selected="true" skinClass="spark.skins.spark.CheckBoxSkin"/>
+			<mx:Spacer width="45"/>			
 			<s:CheckBox id="checkBoxImages" label="Images" selected="true" skinClass="spark.skins.spark.CheckBoxSkin"/>
+			<mx:Spacer width="45"/>			
 			<s:CheckBox id="checkBoxTexts" label="Textes" selected="true" skinClass="spark.skins.spark.CheckBoxSkin"/>
+		</s:HGroup>
+		<s:HGroup width="200" height="200" horizontalAlign="center"
+				  bottom="20"
+				  right="150">
+			<s:Group width="200" height="200"
+					 id="minimap"
+					 clipAndEnableScrolling="true"
+					 mouseDown="mouseDownMiniMap(event)"
+					 mouseMove="mouseMoveMiniMap(event)"
+					 mouseOut="mouseUpMiniMap(event)"
+					 mouseUp="mouseUpMiniMap(event)">
+				<s:Rect left="0" right="0" top="0" bottom="0" radiusX="5" radiusY="5">
+					<s:stroke>
+						<s:SolidColorStroke color="0x000000" weight="1" scaleMode="normal"/>
+					</s:stroke>			
+					<s:fill>
+						<s:SolidColor color="{0x000000}" alpha="0.8"/>
+					</s:fill>
+				</s:Rect>
+				<s:Rect x="{-image.x/15}" y="{-image.y/15}" width="33" height="33">
+					<s:stroke>
+						<s:SolidColorStroke color="0xffffff" weight="1" scaleMode="normal"/>
+					</s:stroke>		
+					<s:fill>
+						<s:SolidColor color="{0xffffff}" alpha="0.2"/>
+					</s:fill>			
+				</s:Rect>
+			</s:Group>
 		</s:HGroup>
 		<s:Group width="100%">
 			<s:HGroup width="100%" horizontalAlign="center" paddingTop="50">

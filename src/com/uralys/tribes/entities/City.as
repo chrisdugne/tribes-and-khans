@@ -116,6 +116,14 @@ package com.uralys.tribes.entities
 			_y = o;
 		}
 	
+		public function get creationTurn():int {
+			return _creationTurn;
+		}
+	
+		public function set creationTurn(o:int):void {
+			_creationTurn = o;
+		}
+	
 		public function get radius():int {
 			return Math.sqrt(_population);
 		}
@@ -149,6 +157,7 @@ package com.uralys.tribes.entities
 		protected var _peopleCreatingIron:int;
 		protected var _x:int;
 		protected var _y:int;
+		protected var _creationTurn:int;
 		protected var _equipmentStock:ArrayCollection = new ArrayCollection();
 		protected var _smiths:ArrayCollection = new ArrayCollection();
 
@@ -217,6 +226,7 @@ package com.uralys.tribes.entities
 		
 		//---------------------------------------------------------------//
 		
+		// resources management
 		protected var _wheatEarned:int;
 		protected var _wheatSpent:int;
 		protected var _woodEarned:int;
@@ -224,12 +234,44 @@ package com.uralys.tribes.entities
 		protected var _ironEarned:int;
 		protected var _ironSpent:int;
 
+		// market management
+		protected var _wheatBought:int;
+		protected var _woodBought:int;
+		protected var _ironBought:int;
+		protected var _bowsBought:int;
+		protected var _swordsBought:int;
+		protected var _armorsBought:int;
+		protected var _wheatSold:int;
+		protected var _woodSold:int;
+		protected var _ironSold:int;
+		protected var _bowsSold:int;
+		protected var _swordsSold:int;
+		protected var _armorsSold:int;
+		protected var _goldEarned:int;
+		protected var _goldSpent:int;
+
 		public function get wheatEarned():int{
 			return _wheatEarned;
 		}
 		
 		public function set wheatEarned(o:int):void{
 			_wheatEarned = o;
+		}
+
+		public function get wheatBought():int{
+			return _wheatBought;
+		}
+		
+		public function set wheatBought(o:int):void{
+			_wheatBought = o;
+		}
+
+		public function get wheatSold():int{
+			return _wheatSold;
+		}
+		
+		public function set wheatSold(o:int):void{
+			_wheatSold = o;
 		}
 
 		public function get wheatSpent():int{
@@ -247,6 +289,23 @@ package com.uralys.tribes.entities
 		public function set woodEarned(o:int):void{
 			_woodEarned = o;
 		}
+		
+		public function get woodBought():int{
+			return _woodBought;
+		}
+		
+		public function set woodBought(o:int):void{
+			_woodBought = o;
+		}
+		
+		public function get woodSold():int{
+			return _woodSold;
+		}
+		
+		public function set woodSold(o:int):void{
+			_woodSold = o;
+		}
+
 
 		public function get woodSpent():int{
 			return _woodSpent;
@@ -263,6 +322,22 @@ package com.uralys.tribes.entities
 		public function set ironEarned(o:int):void{
 			_ironEarned = o;
 		}
+		
+		public function get ironBought():int{
+			return _ironBought;
+		}
+		
+		public function set ironBought(o:int):void{
+			_ironBought = o;
+		}
+		
+		public function get ironSold():int{
+			return _ironSold;
+		}
+		
+		public function set ironSold(o:int):void{
+			_ironSold = o;
+		}
 
 		public function get ironSpent():int{
 			return _ironSpent;
@@ -271,7 +346,71 @@ package com.uralys.tribes.entities
 		public function set ironSpent(o:int):void{
 			_ironSpent = o;
 		}
+	
+		public function get goldEarned():int{
+			return _goldEarned;
+		}
 		
+		public function set goldEarned(o:int):void{
+			_goldEarned = o;
+		}
+		
+		public function get goldSpent():int{
+			return _goldSpent;
+		}
+		
+		public function set goldSpent(o:int):void{
+			_goldSpent = o;
+		}
+		
+		public function get bowsBought():int{
+			return _bowsBought;
+		}
+		
+		public function set bowsBought(o:int):void{
+			_bowsBought = o;
+		}
+		
+		public function get swordsBought():int{
+			return _swordsBought;
+		}
+		
+		public function set swordsBought(o:int):void{
+			_swordsBought = o;
+		}
+		
+		public function get armorsBought():int{
+			return _armorsBought;
+		}
+		
+		public function set armorsBought(o:int):void{
+			_armorsBought = o;
+		}
+		
+		public function get bowsSold():int{
+			return _bowsSold;
+		}
+		
+		public function set bowsSold(o:int):void{
+			_bowsSold = o;
+		}
+		
+		public function get swordsSold():int{
+			return _swordsSold;
+		}
+		
+		public function set swordsSold(o:int):void{
+			_swordsSold = o;
+		}
+		
+		public function get armorsSold():int{
+			return _armorsSold;
+		}
+		
+		public function set armorsSold(o:int):void{
+			_armorsSold = o;
+		}
+
 		//---------------------------------------------------------------//
 
 		private var _bowStock:int; // stock dans la ville au debut du tour

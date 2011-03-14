@@ -15,6 +15,7 @@
 				import com.uralys.tribes.entities.Item;
 				import com.uralys.tribes.entities.Smith;
 				import com.uralys.tribes.tooltips.ForgeToolTip;
+				import com.uralys.tribes.tooltips.MerchantToolTip;
 				
 				import mx.collections.ArrayCollection;
 				import mx.events.ItemClickEvent;
@@ -647,11 +648,20 @@
 				//---------------------------------//
 				// toolTip creation pour la forge
 				
-				private function onCreateToolTip(e:ToolTipEvent, itemName:String, woodCost:int, ironCost:int):void {
+				private function onCreateForgeToolTip(e:ToolTipEvent, itemName:String, woodCost:int, ironCost:int):void {
 					var toolTip:ForgeToolTip = new ForgeToolTip();
 					toolTip.itemName = itemName;
 					toolTip.woodCost = woodCost;
 					toolTip.ironCost = ironCost;
+					
+					e.toolTip = toolTip;
+				}
+				
+				//---------------------------------//
+				// toolTip creation pour les marchands
+				
+				private function onCreateMerchantToolTip(e:ToolTipEvent):void {
+					var toolTip:MerchantToolTip = new MerchantToolTip();
 					
 					e.toolTip = toolTip;
 				}
@@ -1067,7 +1077,7 @@
 					merchantInput.text = merchant.size+""; // refresh
 					
 					// on refresh le drawing au board
-					BoardDrawer.getInstance().refreshArmyOnBoard(merchant);
+					BoardDrawer.getInstance().refreshMerchantOnBoard(merchant);
 				}
 
 				//-------------------------------------------------------------------------//
@@ -1280,11 +1290,7 @@
 				<s:Label text="{city.unemployed}" styleName="numberLabel" color="{city.unemployed >= 0 ? 0x1111ee : 0xCC0000}"/>
 			</s:HGroup>
 			<s:HGroup horizontalAlign="center" verticalAlign="middle">
-				<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
-				<mx:Spacer width="10"/>
-				<s:Label text="{city.gold}" styleName="numberLabel"/>
-
-				<mx:Spacer width="15"/>
+				
 				<mx:Image toolTip="Wheat" source="{ImageContainer.WHEAT}"/>
 				<mx:Spacer width="10"/>
 				<s:Label text="{city.wheat}" styleName="numberLabel"/>
@@ -1298,6 +1304,12 @@
 				<mx:Image toolTip="Iron" source="{ImageContainer.IRON}"/>
 				<mx:Spacer width="10"/>
 				<s:Label text="{city.iron}" styleName="numberLabel"/>
+
+				<mx:Spacer width="15"/>
+				<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+				<mx:Spacer width="10"/>
+				<s:Label text="{city.gold}" styleName="numberLabel"/>
+				
 			</s:HGroup>
 			<s:HGroup verticalAlign="middle">
 				<mx:Spacer width="240"/>
@@ -1803,7 +1815,7 @@
 						  <mx:GridRow >
 							  <mx:GridItem horizontalAlign="center">
 								  <mx:Image toolTip=" "
-											toolTipCreate="{onCreateToolTip(event, 'Arcs', Numbers.BOW_WOOD, Numbers.BOW_IRON)}"
+											toolTipCreate="{onCreateForgeToolTip(event, 'Arcs', Numbers.BOW_WOOD, Numbers.BOW_IRON)}"
 											source="{ImageContainer.BOW}" click="addAllUnemployedToBow()"/>
 							  </mx:GridItem>
 							  <mx:GridItem horizontalAlign="center">
@@ -1824,7 +1836,7 @@
 							<mx:GridRow >
 								<mx:GridItem horizontalAlign="center">
 									<mx:Image toolTip=" "
-											  toolTipCreate="{onCreateToolTip(event, 'Epees', Numbers.SWORD_WOOD, Numbers.SWORD_IRON)}"
+											  toolTipCreate="{onCreateForgeToolTip(event, 'Epees', Numbers.SWORD_WOOD, Numbers.SWORD_IRON)}"
 											  source="{ImageContainer.SWORD}" click="addAllUnemployedToSword()"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
@@ -1845,7 +1857,7 @@
 							<mx:GridRow >
 								<mx:GridItem horizontalAlign="center">
 									<mx:Image toolTip=" "
-											  toolTipCreate="{onCreateToolTip(event, 'Armures', Numbers.ARMOR_WOOD, Numbers.ARMOR_IRON)}"
+											  toolTipCreate="{onCreateForgeToolTip(event, 'Armures', Numbers.ARMOR_WOOD, Numbers.ARMOR_IRON)}"
 											  source="{ImageContainer.ARMOR}" click="addAllUnemployedToArmor()"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
@@ -1990,7 +2002,13 @@
 					<s:VGroup height="100%">
 						<s:HGroup width="100%" horizontalAlign="center">
 							<s:VGroup horizontalAlign="center" height="100%">
-								<s:Button label="New Merchants" click="newMerchants()"/>
+								<s:HGroup>
+									<mx:Image width="30" height="30" 
+											  toolTip=" "
+											  toolTipCreate="{onCreateMerchantToolTip(event)}"
+											  source="../images/question-mark.png"/>
+									<s:Button label="New Merchants" click="newMerchants()"/>
+								</s:HGroup>
 								<s:Scroller maxHeight="200">
 									<s:Group>
 										<s:List id="merchantsList"
@@ -2024,6 +2042,9 @@
 													 restrict="0-9"
 													 width="100"/>
 									</mx:GridItem>
+									<mx:GridItem>
+										<s:Button label="Delete" click="deleteMerchant()"/>
+									</mx:GridItem>
 								</mx:GridRow>
 								<mx:GridRow>
 									<mx:GridItem colSpan="4">
@@ -2041,7 +2062,7 @@
 								</mx:GridRow>
 								<mx:GridRow >
 									<mx:GridItem horizontalAlign="center">
-										<mx:Image toolTip="Wheat" source="{ImageContainer.WHEAT}" click="addAllWheatToMerchant()"/>
+										<mx:Image toolTip="Wheat" source="{ImageContainer.WHEAT}" click="addAllWheatToMerchant()" width="25" height="25"/>
 									</mx:GridItem>
 									<mx:GridItem horizontalAlign="center">
 										<s:TextInput text="{merchant.wheat}" 
@@ -2057,7 +2078,7 @@
 								</mx:GridRow>
 								<mx:GridRow >
 									<mx:GridItem horizontalAlign="center">
-										<mx:Image toolTip="Wood" source="{ImageContainer.WOOD}" click="addAllWoodToMerchant()"/>
+										<mx:Image toolTip="Wood" source="{ImageContainer.WOOD}" click="addAllWoodToMerchant()" width="25" height="25"/>
 									</mx:GridItem>
 									<mx:GridItem horizontalAlign="center">
 										<s:TextInput text="{merchant.wood}" 
@@ -2073,7 +2094,7 @@
 								</mx:GridRow>
 								<mx:GridRow >
 									<mx:GridItem horizontalAlign="center">
-										<mx:Image toolTip="Iron" source="{ImageContainer.IRON}" click="addAllIronToMerchant()"/>
+										<mx:Image toolTip="Iron" source="{ImageContainer.IRON}" click="addAllIronToMerchant()" width="25" height="25"/>
 									</mx:GridItem>
 									<mx:GridItem horizontalAlign="center">
 										<s:TextInput text="{merchant.iron}" 
@@ -2089,7 +2110,7 @@
 								</mx:GridRow>
 								<mx:GridRow >
 									<mx:GridItem horizontalAlign="center">
-										<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}" click="addAllGoldToMerchant()"/>
+										<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}" click="addAllGoldToMerchant()" width="25" height="25"/>
 									</mx:GridItem>
 									<mx:GridItem horizontalAlign="center">
 										<s:TextInput text="{merchant.gold}" 
@@ -2108,39 +2129,7 @@
 										<mx:HRule width="100%"/>
 									</mx:GridItem>
 								</mx:GridRow >
-								<mx:GridRow>
-									<mx:GridItem colSpan="3"/>
-									<mx:GridItem>
-										<s:Button label="Delete" click="deleteMerchant()"/>
-									</mx:GridItem>
-								</mx:GridRow >
 							</mx:Grid>
-						</s:HGroup>
-						<mx:Spacer height="-20"/>
-						<s:HGroup>
-							<s:Label text="Pour construire 1 ville il faut minimum 100 marchands + "/>
-							<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
-							<mx:Spacer width="2"/>
-							<s:Label text="100" 
-									 color="#000000" />
-							
-							<mx:Spacer width="3"/>
-							<mx:Image toolTip="Wheat" source="{ImageContainer.WHEAT}"/>
-							<mx:Spacer width="2"/>
-							<s:Label text="50" 
-									 color="#000000" />
-							
-							<mx:Spacer width="3"/>
-							<mx:Image toolTip="Wood" source="{ImageContainer.WOOD}"/>
-							<mx:Spacer width="2"/>
-							<s:Label text="3000" 
-									 color="#000000" />
-							
-							<mx:Spacer width="3"/>
-							<mx:Image toolTip="Iron" source="{ImageContainer.IRON}"/>
-							<mx:Spacer width="2"/>
-							<s:Label text="1000" 
-									 color="#000000" />
 						</s:HGroup>
 					</s:VGroup>
 				</s:NavigatorContent>
@@ -2184,6 +2173,9 @@
 												 focusOut="armyInputKeyUpHandler(event)"
 												 restrict="0-9"
 												 width="100"/>
+								</mx:GridItem>
+								<mx:GridItem>
+									<s:Button label="Delete" click="deleteArmy()"/>
 								</mx:GridItem>
 							</mx:GridRow>
 							<mx:GridRow>
@@ -2251,14 +2243,6 @@
 							<mx:GridRow>
 								<mx:GridItem colSpan="4">
 									<mx:HRule width="100%"/>
-								</mx:GridItem>
-							</mx:GridRow >
-							<mx:GridRow>
-								<mx:GridItem/>
-								<mx:GridItem/>
-								<mx:GridItem/>
-								<mx:GridItem>
-									<s:Button label="Delete" click="deleteArmy()"/>
 								</mx:GridItem>
 							</mx:GridRow >
 						</mx:Grid>

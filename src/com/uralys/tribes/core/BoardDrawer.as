@@ -358,7 +358,35 @@ package com.uralys.tribes.core
 			//------------------------------------------------------------//
 			
 			if(Session.DRAW_IMAGES){
+				var angle:int = 0;
+				var distanceAuCentre:int = 0;
+				var insideCircle:Boolean = true;
 				
+				var images:Map = new Map();
+				
+				while(insideCircle){
+					var image:Image = new Image();
+					image.source = "../images/merchant.png";
+					
+					image.x = (merchant.x - image.width - 15) + (Math.cos(angle)*(distanceAuCentre/2));
+					image.y = (merchant.y - image.height - 17) + (Math.sin(angle)*(distanceAuCentre/2));
+					
+					if(distanceAuCentre > merchant.radius*2)
+						insideCircle = false;
+					else{
+						images.put(image.y, image);
+						distanceAuCentre = angle/360 * 20;
+						angle += distanceAuCentre > 50 ? (distanceAuCentre > 100 ? 10 : 20) : 40;
+					}
+				}
+				
+				images.sortKeys(new SortField(null, true));
+				
+				for each(var image:Image in images.values()){
+					//var num:int = Utils.random(images.length) - 1;
+					//boardImages.addElement(images.removeItemAt(num) as Image);
+					boardImages.addElement(image);
+				}
 			}
 		}
 
@@ -401,25 +429,20 @@ package com.uralys.tribes.core
 
 		}
 
-		// type 1 : armee, type 2 : merchant
 		public function refreshArmyOnBoard(army:Army):void{
 			try{
 				boardEntities.removeElement(army.armyCircle);
 			}catch(e:Error){}
 			
 			drawArmy(army, false);
-//			// army
-//			var armyCircle:Ellipse;
-//			armyCircle = new Ellipse();
-//			armyCircle.width = army.radius*2;
-//			armyCircle.height = army.radius*2;
-//			armyCircle.x = army.x - armyCircle.width/2;
-//			armyCircle.y = army.y - armyCircle.height/2;
-//			
-//			armyCircle.fill = new SolidColor(army.type == 1 ? Numbers.WHITE : Numbers.YELLOW);
-//			army.armyCircle = armyCircle;
-//			
-//			boardEntities.addElement(armyCircle);
+		}
+
+		public function refreshMerchantOnBoard(merchant:Army):void{
+			try{
+				boardEntities.removeElement(merchant.armyCircle);
+			}catch(e:Error){}
+			
+			drawMerchant(merchant, false);
 		}
 		
 		

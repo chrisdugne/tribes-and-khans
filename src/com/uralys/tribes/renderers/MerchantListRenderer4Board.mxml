@@ -62,26 +62,26 @@
 		<s:VGroup horizontalAlign="center" verticalAlign="middle">
 			<s:HGroup horizontalAlign="center" verticalAlign="middle">
 				
-				<mx:Image toolTip="Wheat" source="{ImageContainer.WHEAT}"/>
+				<mx:Image toolTip="Wheat" source="{ImageContainer.WHEAT}" width="25" height="25"/>
 				<mx:Spacer width="2"/>
 				<s:Label text="{data.wheat}" 
 						 color="#FFFFFF" />
 				
 				<mx:Spacer width="3"/>
-				<mx:Image toolTip="Wood" source="{ImageContainer.WOOD}"/>
+				<mx:Image toolTip="Wood" source="{ImageContainer.WOOD}" width="25" height="25"/>
 				<mx:Spacer width="2"/>
 				<s:Label text="{data.wood}" 
 						 color="#FFFFFF" />
 				
 			</s:HGroup>
 			<s:HGroup horizontalAlign="center" verticalAlign="middle">
-				<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+				<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}" width="25" height="25"/>
 				<mx:Spacer width="2"/>
 				<s:Label text="{data.gold}" 
 						 color="#FFFFFF" />
 				
 				<mx:Spacer width="3"/>
-				<mx:Image toolTip="Iron" source="{ImageContainer.IRON}"/>
+				<mx:Image toolTip="Iron" source="{ImageContainer.IRON}" width="25" height="25"/>
 				<mx:Spacer width="2"/>
 				<s:Label text="{data.iron}" 
 						 color="#FFFFFF" />

@@ -432,7 +432,7 @@
 				
 				//------------------------------------------------------------//
 
-				BoardDrawer.getInstance().setBoards(boardEntities, boardImages, boardTexts, minimap);
+				BoardDrawer.getInstance().setBoards(forest, boardEntities, boardImages, boardTexts, minimap);
 				BoardDrawer.getInstance().setGame(game);
 				BoardDrawer.getInstance().redrawAllEntities();
 				BoardClickListener.boardPage = this;
@@ -864,6 +864,7 @@
 						 id="boardImage"
 					 clipAndEnableScrolling="true">
 					<mx:Image id="image" 
+						  alpha="0"						  
 						  useHandCursor="true"
 						  buttonMode="true"
 						  mouseChildren="false"
@@ -873,6 +874,19 @@
 						  mouseOut="mouseUp(event)"
 						  mouseUp="mouseUp(event)"/>
 					
+				</s:Group>
+			</s:HGroup>
+			<s:HGroup width="100%" horizontalAlign="center" paddingTop="50"
+					  mouseEnabled="false"
+					  mouseEnabledWhereTransparent="false">
+				<s:Group width="500" height="500"
+						 clipAndEnableScrolling="true"
+						 mouseChildren="false"
+						 mouseEnabled="false"
+						 mouseEnabledWhereTransparent="false">
+						<s:Group id="forest"
+								 x="{image.x}"
+								 y="{image.y}"/>
 				</s:Group>
 			</s:HGroup>
 			<s:HGroup width="100%" horizontalAlign="center" paddingTop="50"

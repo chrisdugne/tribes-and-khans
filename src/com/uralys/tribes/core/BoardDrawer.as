@@ -53,14 +53,15 @@ package com.uralys.tribes.core
 		public function BoardDrawer(){
 			moveGradient = [];
 			moveGradient.push(new GradientEntry(0xFFFFFF));
-			moveGradient.push(new GradientEntry(0x00cccc));
+			moveGradient.push(new GradientEntry(0x11dd11));
 			moveGradient.push(new GradientEntry(0x000000));
 			radialGrad = new RadialGradientStroke();
 			radialGrad.entries = moveGradient;
 			radialGrad.interpolationMethod
 		}
 
-		public function setBoards(boardEntities:Group, boardImages:Group, boardTexts:Group, minimap:Group):void{
+		public function setBoards(forest:Group, boardEntities:Group, boardImages:Group, boardTexts:Group, minimap:Group):void{
+			this.forest = forest;
 			this.boardEntities = boardEntities;
 			this.boardImages = boardImages;
 			this.boardTexts = boardTexts;
@@ -73,6 +74,7 @@ package com.uralys.tribes.core
 
 		//=====================================================================================//
 		
+		private var forest:Group;
 		private var boardEntities:Group;
 		private var boardImages:Group;
 		private var boardTexts:Group;
@@ -88,6 +90,8 @@ package com.uralys.tribes.core
 				boardImages.removeAllElements();
 				boardTexts.removeAllElements();
 			}catch(e:Error){}
+			
+			drawForest();
 			
 			for each (var player:Player in game.players){
 				
@@ -126,6 +130,38 @@ package com.uralys.tribes.core
 
 		//=====================================================================================//
 		
+		public function drawForest():void{
+			var x:int = -100;
+			var y:int = -100;
+			
+			while(y < 2800){
+				while(x < 2800){
+					var image:Image = new Image();
+					switch(Utils.random(2)){
+						case 1:
+							image.source = ImageContainer.FORET1;
+							break;
+						case 2:
+							image.source = ImageContainer.FORET2;
+							break;
+						
+					}
+					
+					image.x = x;
+					image.y = y;
+					
+					forest.addElement(image);
+					
+					x += 120 + Utils.random(100);
+				}
+				
+				x=-100;
+				y += 60 + Utils.random(100);
+			}
+		}
+
+		//=====================================================================================//
+
 		public function redrawTexts():void{
 			
 			try{
@@ -211,7 +247,19 @@ package com.uralys.tribes.core
 				
 				while(insideCircle){
 					var image:Image = new Image();
-					image.source = "../images/house.png";
+					
+					switch(Utils.random(3)){
+						case 1:
+							image.source = ImageContainer.HOUSE1;
+							break;
+						case 2:
+							image.source = ImageContainer.HOUSE2;
+							break;
+						case 3:
+							image.source = ImageContainer.HOUSE3;
+							break;
+						
+					}
 					
 					image.x = (city.x - image.width - 10) + (Math.cos(angle)*(distanceAuCentre/2));
 					image.y = (city.y - image.height - 10) + (Math.sin(angle)*(distanceAuCentre/2));
@@ -293,7 +341,15 @@ package com.uralys.tribes.core
 				
 				while(insideCircle){
 					var image:Image = new Image();
-					image.source = "../images/warrior.png";
+					
+					switch(Utils.random(2)){
+						case 1:
+							image.source = ImageContainer.WARRIOR1;
+							break;
+						case 2:
+							image.source = ImageContainer.WARRIOR2;
+							break;
+					}
 					
 					image.x = (army.x - image.width - 15) + (Math.cos(angle)*(distanceAuCentre/2));
 					image.y = (army.y - image.height - 17) + (Math.sin(angle)*(distanceAuCentre/2));
@@ -366,7 +422,15 @@ package com.uralys.tribes.core
 				
 				while(insideCircle){
 					var image:Image = new Image();
-					image.source = "../images/merchant.png";
+					
+					switch(Utils.random(2)){
+						case 1:
+							image.source = ImageContainer.MERCHANT1;
+							break;
+						case 2:
+							image.source = ImageContainer.MERCHANT2;
+							break;
+					}				
 					
 					image.x = (merchant.x - image.width - 15) + (Math.cos(angle)*(distanceAuCentre/2));
 					image.y = (merchant.y - image.height - 17) + (Math.sin(angle)*(distanceAuCentre/2));

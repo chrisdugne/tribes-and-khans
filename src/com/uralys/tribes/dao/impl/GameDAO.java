@@ -692,23 +692,23 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 					}
 					else{
 						// on rajoute en gros le rayon en plus a chaque bout du move
-						if(move.getxFrom() < move.getxTo()){
-							move.setxFrom((int)(move.getxFrom() - size));
-							move.setxTo((int)(move.getxTo() + size));
-						}
-						else{
-							move.setxFrom((int)(move.getxFrom() + size));
-							move.setxTo((int)(move.getxTo() - size));
-						}
-
-						if(move.getyFrom() < move.getyTo()){
-							move.setyFrom((int)(move.getyFrom() - size));
-							move.setyTo((int)(move.getyTo() + size));
-						}
-						else{
-							move.setyFrom((int)(move.getyFrom() + size));
-							move.setyTo((int)(move.getyTo() - size));
-						}
+//						if(move.getxFrom() < move.getxTo()){
+//							move.setxFrom((int)(move.getxFrom() - size));
+//							move.setxTo((int)(move.getxTo() + size));
+//						}
+//						else{
+//							move.setxFrom((int)(move.getxFrom() + size));
+//							move.setxTo((int)(move.getxTo() - size));
+//						}
+//
+//						if(move.getyFrom() < move.getyTo()){
+//							move.setyFrom((int)(move.getyFrom() - size));
+//							move.setyTo((int)(move.getyTo() + size));
+//						}
+//						else{
+//							move.setyFrom((int)(move.getyFrom() + size));
+//							move.setyTo((int)(move.getyTo() - size));
+//						}
 					}
 					
 					
@@ -788,24 +788,24 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 				continue;
 			
 			// on enleve le rayon qui a ete rajoute pour les calculs a chaque bout du move
-			double size = rayon(moveArmyMap.get(move).getSize());
-			if(move.getxFrom() < move.getxTo()){
-				move.setxFrom((int)(move.getxFrom() + size));
-				move.setxTo((int)(move.getxTo() - size));
-			}
-			else{
-				move.setxFrom((int)(move.getxFrom() - size));
-				move.setxTo((int)(move.getxTo() + size));
-			}
-
-			if(move.getyFrom() < move.getyTo()){
-				move.setyFrom((int)(move.getyFrom() + size));
-				move.setyTo((int)(move.getyTo() - size));
-			}
-			else{
-				move.setyFrom((int)(move.getyFrom() - size));
-				move.setyTo((int)(move.getyTo() + size));
-			}
+//			double size = rayon(moveArmyMap.get(move).getSize());
+//			if(move.getxFrom() < move.getxTo()){
+//				move.setxFrom((int)(move.getxFrom() + size));
+//				move.setxTo((int)(move.getxTo() - size));
+//			}
+//			else{
+//				move.setxFrom((int)(move.getxFrom() - size));
+//				move.setxTo((int)(move.getxTo() + size));
+//			}
+//
+//			if(move.getyFrom() < move.getyTo()){
+//				move.setyFrom((int)(move.getyFrom() + size));
+//				move.setyTo((int)(move.getyTo() - size));
+//			}
+//			else{
+//				move.setyFrom((int)(move.getyFrom() - size));
+//				move.setyTo((int)(move.getyTo() + size));
+//			}
 			
 			String moveOriginalInfo = " : mouvement prevu de [" + move.getxFrom() + "," + move.getyFrom()  + "] ˆ [" + move.getxTo() + "," + move.getyTo()  + "]";
 			armyInfoMoveMap.put(moveArmyMap.get(move), moveOriginalInfo);

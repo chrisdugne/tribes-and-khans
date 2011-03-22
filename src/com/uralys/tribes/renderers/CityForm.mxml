@@ -119,8 +119,8 @@
 					city.woodSpent += city.armorWorkers * Numbers.ARMOR_WOOD;
 					
 					city.ironSpent += city.bowWorkers * Numbers.BOW_IRON;
-					city.ironSpent += city.swordWorkers * Numbers.BOW_IRON;
-					city.ironSpent += city.armorWorkers * Numbers.BOW_IRON;
+					city.ironSpent += city.swordWorkers * Numbers.SWORD_IRON;
+					city.ironSpent += city.armorWorkers * Numbers.ARMOR_IRON;
 					
 					city.wheatSpent += city.armiesToFeed;
 					
@@ -579,12 +579,11 @@
 					// on enleve le precedent debit de ressources 
 					city.woodSpent -= city.swordWorkers * Numbers.SWORD_WOOD;
 					city.ironSpent -= city.swordWorkers * Numbers.SWORD_IRON;
-					
+
 					city.swordWorkers += city.unemployed;
-										
+					
 					var woodAvailable:int = city.wood - city.woodSpent;
 					var ironAvailable:int = city.iron - city.ironSpent;
-					
 					
 					// la depense en bois pour les epees est plus grande que le stock de bois
 					if(Numbers.SWORD_WOOD * city.swordWorkers > woodAvailable)
@@ -593,7 +592,7 @@
 					// la depense en fer pour les epees est plus grande que le stock de fer
 					if(Numbers.SWORD_IRON * city.swordWorkers > ironAvailable)
 						city.swordWorkers = Math.floor(ironAvailable/Numbers.SWORD_IRON);
-					
+
 					registerNewForgeWorkers("sword", city.swordWorkers);
 				}
 				
@@ -1311,14 +1310,14 @@
 				<s:Label text="{city.gold}" styleName="numberLabel"/>
 				
 			</s:HGroup>
-			<s:HGroup verticalAlign="middle">
-				<mx:Spacer width="240"/>
+			<s:HGroup verticalAlign="top">
+				<mx:Spacer width="-25"/>
 				<s:Label text="({(city.wheat + city.wheatEarned - city.wheatSpent)})" color="{city.wheat + city.wheatEarned - city.wheatSpent >= 0 ? Numbers.GREEN : Numbers.RED}"/>
 				
-				<mx:Spacer width="75"/>
+				<mx:Spacer width="87"/>
 				<s:Label text="({(city.wood + city.woodEarned - city.woodSpent)})" color="{city.wood + city.woodEarned - city.woodSpent >= 0 ? Numbers.GREEN : Numbers.RED}"/>
 				
-				<mx:Spacer width="75"/>
+				<mx:Spacer width="87"/>
 				<s:Label text="({(city.iron + city.ironEarned - city.ironSpent)})" color="{city.iron + city.ironEarned - city.ironSpent >= 0 ? Numbers.GREEN : Numbers.RED}"/>
 			</s:HGroup>
 			
@@ -2144,7 +2143,7 @@
 							<s:Scroller height="200">
 								<s:Group>
 									<s:List id="armiesList"
-											itemRenderer="com.uralys.tribes.renderers.ArmyListRenderer"
+											itemRenderer="com.uralys.tribes.renderers.ArmyListRenderer4Board"
 											dataProvider="{city.armies}"
 											borderVisible="false"
 											width="275"

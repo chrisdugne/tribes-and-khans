@@ -1,6 +1,8 @@
 
 package com.uralys.tribes.entities
 {
+	import com.uralys.tribes.commons.Numbers;
+	
 	import mx.collections.ArrayCollection;
 	
 	import spark.primitives.Ellipse;
@@ -166,11 +168,10 @@ package com.uralys.tribes.entities
 		public function mayBuildAcity():Boolean{
 			trace('mayBuildAcity ? ' + type);
 			return type == 2 
-				&& size >= 100
-				&& wheat >= 50
-				&& wood >= 3000
-				&& iron >= 1000
-				&& gold >= 100;
+				&& wheat >= Numbers.CITY_WHEAT_BASE_PRICE + size
+				&& wood >= Numbers.CITY_WOOD_BASE_PRICE + size * 10
+				&& iron >= Numbers.CITY_IRON_BASE_PRICE + size * 10
+				&& gold >= Numbers.CITY_GOLD_BASE_PRICE;
 		}
 		
 		//==========================================================================//

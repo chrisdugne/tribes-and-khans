@@ -85,13 +85,6 @@ package com.uralys.tribes.managers {
 		}
 
 		public function saveTurn(player:Player):void{
-			
-			trace("saveTurn, nbArmies : " + player.armies.length);
-			for each(var army:Army in player.armies){
-				trace(army.moves.length + " moves");
-				trace(ObjectUtil.toString(army.moves));
-			}
-			
 			gameWrapper.saveTurn.addEventListener("result", turnSaved);
 			gameWrapper.saveTurn(player);
 		}

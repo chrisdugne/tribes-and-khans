@@ -268,11 +268,11 @@ package com.uralys.tribes.core
 						insideCircle = false;
 					else{
 						images.put(image.y, image);
-						distanceAuCentre = angle/360 * 40 + 30;
+						distanceAuCentre = angle/360 * 25;
 						angle += distanceAuCentre > 50 ? (distanceAuCentre > 100 ? 10 : 20) : 40;
 					}
 				}
-				
+
 				images.sortKeys(new SortField(null, true));
 				
 				for each(var image:Image in images.values()){

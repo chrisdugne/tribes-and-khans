@@ -28,6 +28,8 @@
 			//--------------------------------------------------------------//
 			
 			private function createGame():void{
+				createButton.visible = false;
+				loadingLabel.visible = true;
 				GameManager.getInstance().createGame(gameNameInput.text, playerNameInput.text, periodChoice.selectedItem.period);
 			}
 		]]>
@@ -45,14 +47,15 @@
 			<s:TextInput id="gameNameInput" text="Partie de Dede"/>
 			<mx:Spacer height="20"/>
 			<s:HGroup>
-				<s:Label text="Heure de changement de tour automatique :"/>
+				<s:Label text="Temps du tour maximum :"/>
 				<s:DropDownList id="periodChoice" 
 								dataProvider="{periods}"
 								labelField="periodLabel"
 								selectedIndex="0"/>
 			</s:HGroup>
 			<mx:Spacer height="20"/>
-			<s:Button label="Create" click="{createGame()}"/>
+			<s:Button id="createButton" label="Create" click="{createGame()}"/>
+			<s:Label id="loadingLabel" visible="false" text="Loading..."/>
 		</s:VGroup>
 	</s:HGroup>
 </mx:Module>

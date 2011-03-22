@@ -51,7 +51,7 @@
 		<s:VGroup horizontalAlign="center">
 			<s:HGroup>
 				<s:Label text="{games.length > 0 ? (typeOfGameSelection == 1 ? 'Liste des parties en cours' : 'Joindre une partie') : (typeOfGameSelection == 1 ? '(Pas de partie en cours)' : '(Pas de partie à joindre)')}"/>
-				<s:Button label="Refresh" click="{typeOfGameSelection == 1 ? GameManager.getInstance().getCurrentGames() : GameManager.getInstance().getGamesToJoin()}"/>
+				<s:Button id="refreshButton" label="Refresh" click="{refreshButton.visible=false; typeOfGameSelection == 1 ? GameManager.getInstance().getCurrentGames() : GameManager.getInstance().getGamesToJoin()}"/>
 			</s:HGroup> 
 			
 			<s:Scroller height="450">

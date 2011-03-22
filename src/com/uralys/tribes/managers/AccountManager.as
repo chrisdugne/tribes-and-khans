@@ -68,7 +68,7 @@ package com.uralys.tribes.managers {
 		
 		
 		// la liste des games vient d'etre refreshed.
-		// on la stocke pourla passer en param dans le gotopage(Home) qd on a recu le profil refreshed
+		// on la stocke pour la passer en param dans le gotopage(Home) qd on a recu le profil refreshed
 		private var games:ArrayCollection;
 		public function refreshProfil(games:ArrayCollection):void{
 			this.games = games;

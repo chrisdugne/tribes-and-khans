@@ -52,23 +52,41 @@
 		</mx:Transition>
 	</s:transitions>
 	
-	<s:Group id="groupDetails" height="20" width="160" width.hovered="180" width.selected="180">
+	<s:Group id="groupDetails" height="60" width="160" width.hovered="180" width.selected="180">
 		<s:Rect left="0" right="0" top="0" bottom="0" radiusX="5" radiusY="5">
 			<s:fill>
 				<s:SolidColor color="{color}" color.hovered="{colorHovered}" color.selected="{colorSelected}" />
 			</s:fill>
 		</s:Rect>
-		<s:Label id="labelName" 
-				 color="#FFFFFF" 
-				 left="20" 
-				 verticalCenter="2"
-				 text="Size : {data.size}"/>
-		<s:Label id="labelStatus" 
-				 color="#FFFFFF" 
-				 right="20" 
-				 verticalCenter="2"
-				 visible="{data.armyUID == 'new'}"
-				 text="New !"/>
+		<s:HGroup width="100%">
+			<mx:Image source="{ImageContainer.WARRIOR1}"/>
+			<s:Label color="#FFFFFF" 
+					 left="20" 
+					 verticalCenter="2"
+					 text="{data.size}"/>
+			<mx:Spacer width="100%"/>
+			<s:Label color="#FFFFFF" 
+					 left="20" 
+					 verticalCenter="2"
+					 text="{data.size 
+					 		+ (data.bows > data.size ? data.size : data.bows) 
+					 		+ (data.swords > data.size ? data.size : data.swords) *2 
+					 		+ (data.armors > data.size ? data.size : data.armors) *3} pts"/>
+		</s:HGroup>
+		<s:HGroup y="30">
+			<mx:Image source="{ImageContainer.BOW}" width="25"/>
+			<s:Label color="#FFFFFF" 
+					 verticalCenter="2"
+					 text="{data.bows}"/>
+			<mx:Image source="{ImageContainer.SWORD}" width="25"/>
+			<s:Label color="#FFFFFF" 
+					 verticalCenter="2"
+					 text="{data.swords}"/>
+			<mx:Image source="{ImageContainer.ARMOR}" width="25"/>
+			<s:Label color="#FFFFFF" 
+					 verticalCenter="2"
+					 text="{data.armors}"/>
+		</s:HGroup>
 	</s:Group>
 	
 </s:ItemRenderer>

@@ -497,8 +497,8 @@
 				city.name = "Ville en construction";
 				city.gold = selectedUnit.gold;
 				city.wheat = selectedUnit.wheat;
-				city.wood = selectedUnit.wood - 3000;
-				city.iron = selectedUnit.iron - 1000;
+				city.wood = selectedUnit.wood - (Numbers.CITY_WOOD_BASE_PRICE + selectedUnit.size * 10);
+				city.iron = selectedUnit.iron - (Numbers.CITY_IRON_BASE_PRICE + selectedUnit.size * 10);
 				city.population = selectedUnit.size;
 				
 				city.x = selectedUnit.x;
@@ -772,38 +772,40 @@
 		<!-- Units Tab -->
 
 		<s:TabBar id="tabs" dataProvider="{viewstack}" skinClass="spark.skins.spark.TabBarSkin"
-				  top="70" right="35"/>
+				  top="70" right="135"/>
 		
-		<mx:ViewStack id="viewstack" width="200" top="100" right="35">
+		<mx:ViewStack id="viewstack" width="200" top="100" right="95">
 			
 			<s:NavigatorContent label="Armees">
-				<s:VGroup horizontalAlign="right">
-					<s:Scroller height="200">
-						<s:Group>
-							<s:List id="armiesList"
-									itemRenderer="com.uralys.tribes.renderers.ArmyListRenderer4Board"
-									dataProvider="{Session.currentPlayer.armies}"
-									borderVisible="false"
-									width="275"
-									contentBackgroundAlpha="0"
-									creationComplete="initArmiesList()">
-								<s:layout>
-									<s:VerticalLayout gap="1" useVirtualLayout="true" />
-								</s:layout>
-							</s:List>
-						</s:Group>
-					</s:Scroller>
-				</s:VGroup>
+				<s:HGroup width="100%" horizontalAlign="center">
+					<s:VGroup horizontalAlign="right">
+						<s:Scroller height="200" width="260">
+							<s:Group>
+								<s:List id="armiesList"
+										itemRenderer="com.uralys.tribes.renderers.ArmyListRenderer4Board"
+										dataProvider="{Session.currentPlayer.armies}"
+										borderVisible="false"
+										width="240"
+										contentBackgroundAlpha="0"
+										creationComplete="initArmiesList()">
+									<s:layout>
+										<s:VerticalLayout gap="1" useVirtualLayout="true" />
+									</s:layout>
+								</s:List>
+							</s:Group>
+						</s:Scroller>
+					</s:VGroup>
+				</s:HGroup>
 			</s:NavigatorContent>
 			<s:NavigatorContent label="Marchands">
 				<s:VGroup horizontalAlign="right">
-					<s:Scroller height="200">
+					<s:Scroller height="200" width="260">
 						<s:Group>
 							<s:List id="merchantsList"
 									itemRenderer="com.uralys.tribes.renderers.MerchantListRenderer4Board"
 									dataProvider="{Session.currentPlayer.merchants}"
 									borderVisible="false"
-									width="275"
+									width="240"
 									contentBackgroundAlpha="0"
 									creationComplete="initMerchantsList()">
 								<s:layout>
@@ -931,6 +933,10 @@
 							 y="{image.y}"/>
 				</s:Group>
 			</s:HGroup>
+			
+			<!-- =============================================================================================== -->
+			<!-- on board menus-->
+			
 			<s:HGroup width="100%" horizontalAlign="center" paddingTop="50"
 					  mouseEnabled="false"
 					  mouseEnabledWhereTransparent="false">

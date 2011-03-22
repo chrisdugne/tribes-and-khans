@@ -60,6 +60,11 @@ import mx.collections.ArrayCollection;
 	[Bindable] public static var SWORD_PRICE_SELL:Number = 7;
 	[Bindable] public static var ARMOR_PRICE_SELL:Number = 13;
 	
+	[Bindable] public static var CITY_WHEAT_BASE_PRICE:Number = 1000;
+	[Bindable] public static var CITY_IRON_BASE_PRICE:Number = 10000;
+	[Bindable] public static var CITY_WOOD_BASE_PRICE:Number = 10000;
+	[Bindable] public static var CITY_GOLD_BASE_PRICE:Number = 500;
+
 	//==================================================================================================//
 	// contrees
 

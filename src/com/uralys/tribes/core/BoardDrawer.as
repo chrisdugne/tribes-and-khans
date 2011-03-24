@@ -497,7 +497,7 @@ package com.uralys.tribes.core
 						image.source = type == 1 ? ImageContainer.WARRIOR1 : ImageContainer.MERCHANT1;
 						break;
 					case 2:
-						image.source = type == 2 ? ImageContainer.WARRIOR2 : ImageContainer.MERCHANT2;
+						image.source = type == 1 ? ImageContainer.WARRIOR2 : ImageContainer.MERCHANT2;
 						break;
 				}
 				

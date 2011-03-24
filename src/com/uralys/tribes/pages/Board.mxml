@@ -876,7 +876,7 @@
 						  source="{ImageContainer.MAP}"
 						  mouseDown="mouseDown(event)"
 						  mouseMove="mouseMove(event)"
-						  mouseOut="mouseUp(event)"
+						  mouseOut="if(isDragging)mouseUp(event)"
 						  mouseUp="mouseUp(event)"/>
 					
 				</s:Group>

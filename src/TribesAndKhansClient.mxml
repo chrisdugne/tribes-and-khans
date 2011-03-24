@@ -69,7 +69,8 @@
 
 			public function createConflicts():void {
 				conflictsWindow.initWindow();
-				showconflicts.play();
+				if(Session.currentPlayer.conflicts.length > 0)
+					showconflicts.play();
 			}
 
 			//-----------------------------------------------------------------------//

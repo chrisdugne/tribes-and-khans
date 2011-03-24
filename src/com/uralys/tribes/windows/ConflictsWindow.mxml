@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<s:Group	xmlns:fx="http://ns.adobe.com/mxml/2009"  
+			xmlns:mx="library://ns.adobe.com/flex/mx"  
+			xmlns:s="library://ns.adobe.com/flex/spark" 
+			height="380"
+			width="420">
+	
+	<fx:Script>
+		
+		<![CDATA[
+			import com.uralys.tribes.commons.Session;
+			import com.uralys.tribes.entities.Conflict;
+			import com.uralys.tribes.entities.MoveConflict;
+			import com.uralys.tribes.renderers.ConflictReport;
+			
+			import mx.core.FlexGlobals;
+			
+			public function initWindow():void{
+				for each(var conflict:Conflict in Session.currentPlayer.conflicts){
+					
+					var conflictReport:ConflictReport = new ConflictReport();
+					conflictReport.conflict = conflict;
+					conflictReport.createReport();
+					
+					conflictsGroup.addElement(conflictReport);
+				}
+			}
+		]]>
+	</fx:Script>
+	
+	<s:Rect left="0" right="0" top="0" bottom="0" radiusX="5" radiusY="5">
+		<s:stroke>
+			<s:SolidColorStroke color="0x000000" weight="1" scaleMode="normal"/>
+		</s:stroke>			
+		<s:fill>
+			<s:SolidColor color="{0x000000}" alpha="0.7"/>
+		</s:fill>
+	</s:Rect>
+	
+	<!--  ================================================================================================== -->
+	
+	<s:HGroup width="100%">
+		<mx:Spacer width="100%"/>
+		<s:Button label="Ok" click="{FlexGlobals.topLevelApplication.hideconflicts.play()}"/>
+	</s:HGroup>
+	<s:VGroup width="100%" horizontalAlign="center">
+		<s:Label text="Conflicts :" styleName="littleBlueStyle"/>
+		<s:Scroller height="350">
+			<s:VGroup id="conflictsGroup" horizontalAlign="center"/>
+		</s:Scroller>
+	</s:VGroup>
+</s:Group>

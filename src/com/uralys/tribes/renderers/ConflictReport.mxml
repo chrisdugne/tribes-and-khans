@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 height="260" width="370">
+	
+		<s:Rect left="0" right="0" top="0" bottom="0" radiusX="5" radiusY="5">
+			<s:fill>
+				<s:SolidColor color="#440011"/>
+			</s:fill>
+		</s:Rect>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.uralys.tribes.core.BoardDrawer;
+			import com.uralys.tribes.entities.Conflict;
+			import com.uralys.tribes.entities.MoveConflict;
+			
+			public var conflict:Conflict;
+			
+			[Bindable] public var allyBows:int
+			[Bindable] public var allySwords:int
+			[Bindable] public var allyArmors:int
+			[Bindable] public var allySize:int
+			[Bindable] public var allyValue:int 
+
+			[Bindable] public var ennemyBows:int
+			[Bindable] public var ennemySwords:int
+			[Bindable] public var ennemyArmors:int
+			[Bindable] public var ennemySize:int
+			[Bindable] public var ennemyValue:int 
+			
+			public function createReport():void{
+				
+				for each(var moveConflict:MoveConflict in conflict.moveAllies){
+					allyBows += moveConflict.armyBows;
+					allySwords += moveConflict.armySwords;
+					allyArmors += moveConflict.armyArmors;
+					allySize += moveConflict.armySize;
+					
+					allyValue += moveConflict.armySize;
+					allyValue += moveConflict.armyBows >  moveConflict.armySize ? moveConflict.armySize : moveConflict.armyBows;
+					allyValue += 2*(moveConflict.armySwords >  moveConflict.armySize ? moveConflict.armySize : moveConflict.armySwords);
+					allyValue += 3*(moveConflict.armyArmors >  moveConflict.armySize ? moveConflict.armySize : moveConflict.armyArmors);
+				}
+				
+				
+				for each(var moveConflict:MoveConflict in conflict.moveEnnemies){
+					ennemyBows += moveConflict.armyBows;
+					ennemySwords += moveConflict.armySwords;
+					ennemyArmors += moveConflict.armyArmors;
+					ennemySize += moveConflict.armySize;
+					
+					ennemyValue += moveConflict.armySize;
+					ennemyValue += moveConflict.armyBows >  moveConflict.armySize ? moveConflict.armySize : moveConflict.armyBows;
+					ennemyValue += 2*(moveConflict.armySwords >  moveConflict.armySize ? moveConflict.armySize : moveConflict.armySwords);
+					ennemyValue += 3*(moveConflict.armyArmors >  moveConflict.armySize ? moveConflict.armySize : moveConflict.armyArmors);
+				}
+			}
+		]]>
+	</fx:Script>
+	
+	
+	<s:VGroup width="100%" horizontalAlign="center">
+		<s:Label text="{allyValue > ennemyValue ? 'Victory !' : (ennemyValue > allyValue ? 'Defeat...' : 'Draw.')}" color="#FFFFFF" />
+		<s:Label text="Your army" color="#FFFFFF" />
+		<s:HGroup width="100%">
+			<mx:Image source="{ImageContainer.WARRIOR1}"/>
+			<s:Label color="#FFFFFF" 
+					 left="20" 
+					 verticalCenter="2"
+					 text="{allySize}"/>
+			<mx:Spacer width="100%"/>
+			<s:Label color="#FFFFFF" 
+					 left="20" 
+					 verticalCenter="2"
+					 text="{allyValue} pts"/>
+		</s:HGroup>
+		<s:HGroup y="30">
+			<mx:Image source="{ImageContainer.BOW}" width="25"/>
+			<s:Label color="#FFFFFF" 
+					 verticalCenter="2"
+					 text="{allyBows}"/>
+			<mx:Image source="{ImageContainer.SWORD}" width="25"/>
+			<s:Label color="#FFFFFF" 
+					 verticalCenter="2"
+					 text="{allySwords}"/>
+			<mx:Image source="{ImageContainer.ARMOR}" width="25"/>
+			<s:Label color="#FFFFFF" 
+					 verticalCenter="2"
+					 text="{allyArmors}"/>
+		</s:HGroup>
+		
+		<s:Label text="The ennemy" color="#FFFFFF" />
+		<s:HGroup width="100%">
+			<mx:Image source="{ImageContainer.WARRIOR1}"/>
+			<s:Label color="#FFFFFF" 
+					 left="20" 
+					 verticalCenter="2"
+					 text="{ennemySize}"/>
+			<mx:Spacer width="100%"/>
+			<s:Label color="#FFFFFF" 
+					 left="20" 
+					 verticalCenter="2"
+					 text="{ennemyValue} pts"/>
+		</s:HGroup>
+		<s:HGroup y="30">
+			<mx:Image source="{ImageContainer.BOW}" width="25"/>
+			<s:Label color="#FFFFFF" 
+					 verticalCenter="2"
+					 text="{ennemyBows}"/>
+			<mx:Image source="{ImageContainer.SWORD}" width="25"/>
+			<s:Label color="#FFFFFF" 
+					 verticalCenter="2"
+					 text="{ennemySwords}"/>
+			<mx:Image source="{ImageContainer.ARMOR}" width="25"/>
+			<s:Label color="#FFFFFF" 
+					 verticalCenter="2"
+					 text="{ennemyArmors}"/>
+		</s:HGroup>
+		<s:Button label="Show !" click="{BoardDrawer.getInstance().displayConflict(conflict)}"/>
+	</s:VGroup>
+</s:Group>

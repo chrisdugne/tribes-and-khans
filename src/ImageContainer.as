@@ -39,6 +39,21 @@ public final class ImageContainer
 	[Embed(source="resources/embed/foret2.png")]
 	[Bindable] public static var FORET2:Class;
 
+	[Embed(source="resources/embed/solville.png")]
+	[Bindable] public static var SOL_VILLE:Class;
+
+	[Embed(source="resources/embed/lac2.png")]
+	[Bindable] public static var LAC2:Class;
+
+	[Embed(source="resources/embed/lac1.png")]
+	[Bindable] public static var LAC1:Class;
+
+	[Embed(source="resources/embed/roche1.png")]
+	[Bindable] public static var ROCHE1:Class;
+
+	[Embed(source="resources/embed/roche2.png")]
+	[Bindable] public static var ROCHE2:Class;
+
 	//   ======================================================================//
 
 	[Embed(source="resources/embed/house1.png")]
@@ -70,6 +85,9 @@ public final class ImageContainer
 	
 	[Embed(source="resources/embed/question-mark.png")]
 	[Bindable] public static var QUESTION:Class;
+
+	[Embed(source="resources/embed/conflit.png")]
+	[Bindable] public static var CONFLIT:Class;
 	
 }
 }

@@ -48,12 +48,20 @@ package com.uralys.tribes.entities
 			_iron = o;
 		}
 	
-		public function get goldPrice():int {
-			return _goldPrice;
+		public function get goldPriceBase():Number {
+			return _goldPriceBase;
 		}
 	
-		public function set goldPrice(o:int):void {
-			_goldPrice = o;
+		public function set goldPriceBase(o:Number):void {
+			_goldPriceBase = o;
+		}
+	
+		public function get goldPriceCurrent():Number {
+			return _goldPriceCurrent;
+		}
+	
+		public function set goldPriceCurrent(o:Number):void {
+			_goldPriceCurrent = o;
 		}
 	
 		public function get value():int {
@@ -69,7 +77,8 @@ package com.uralys.tribes.entities
 		protected var _peopleRequired:int;
 		protected var _wood:int;
 		protected var _iron:int;
-		protected var _goldPrice:int;
+		protected var _goldPriceBase:Number;
+		protected var _goldPriceCurrent:Number;
 		protected var _value:int;
 
 	

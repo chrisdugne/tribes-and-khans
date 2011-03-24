@@ -17,6 +17,7 @@ package com.uralys.tribes.entities
 		private var _allies:ArrayCollection;
 		private var _lands:ArrayCollection = new ArrayCollection();
 		private var _reports:ArrayCollection = new ArrayCollection();
+		private var _conflicts:ArrayCollection = new ArrayCollection();
 		
 		public function Player(){}
 
@@ -130,6 +131,16 @@ package com.uralys.tribes.entities
 		public function set reports(value:ArrayCollection):void
 		{
 			_reports = value;
+		}
+		
+		public function get conflicts():ArrayCollection
+		{
+			return _conflicts;
+		}
+		
+		public function set conflicts(value:ArrayCollection):void
+		{
+			_conflicts = value;
 		}
 }
 }

@@ -46,19 +46,19 @@ import mx.collections.ArrayCollection;
 	public static var WOOD_EARNING_COEFF:Number = 3;
 	public static var IRON_EARNING_COEFF:Number = 2;
 
-	[Bindable] public static var WHEAT_PRICE_BUY:Number = 1;
-	[Bindable] public static var WOOD_PRICE_BUY:Number = 2;
-	[Bindable] public static var IRON_PRICE_BUY:Number = 3;
-	[Bindable] public static var BOW_PRICE_BUY:Number = 4;
-	[Bindable] public static var SWORD_PRICE_BUY:Number = 8;
-	[Bindable] public static var ARMOR_PRICE_BUY:Number = 15;
+	[Bindable] public static var WHEAT_PRICE_BUY:Number = 2;
+	[Bindable] public static var WOOD_PRICE_BUY:Number = 3.33;
+	[Bindable] public static var IRON_PRICE_BUY:Number = 5;
+	[Bindable] public static var BOW_PRICE_BUY:Number = 20;
+	[Bindable] public static var SWORD_PRICE_BUY:Number = 30;
+	[Bindable] public static var ARMOR_PRICE_BUY:Number = 50;
 
-	[Bindable] public static var WHEAT_PRICE_SELL:Number = 1;
-	[Bindable] public static var WOOD_PRICE_SELL:Number = 2;
-	[Bindable] public static var IRON_PRICE_SELL:Number = 3;
-	[Bindable] public static var BOW_PRICE_SELL:Number = 3;
-	[Bindable] public static var SWORD_PRICE_SELL:Number = 7;
-	[Bindable] public static var ARMOR_PRICE_SELL:Number = 13;
+	[Bindable] public static var WHEAT_PRICE_SELL:Number = 1.8;
+	[Bindable] public static var WOOD_PRICE_SELL:Number = 3;
+	[Bindable] public static var IRON_PRICE_SELL:Number = 4.5;
+	[Bindable] public static var BOW_PRICE_SELL:Number = 18;
+	[Bindable] public static var SWORD_PRICE_SELL:Number = 27;
+	[Bindable] public static var ARMOR_PRICE_SELL:Number = 45;
 	
 	[Bindable] public static var CITY_WHEAT_BASE_PRICE:Number = 1000;
 	[Bindable] public static var CITY_IRON_BASE_PRICE:Number = 10000;
@@ -76,19 +76,19 @@ import mx.collections.ArrayCollection;
 	
 	[Bindable] public static var BOW_WOOD:int;
 	[Bindable] public static var BOW_IRON:int;
-	[Bindable] public static var BOW_PRICE:int;
+	[Bindable] public static var BOW_PRICE:Number;
 	[Bindable] public static var BOW_VALUE:int;
 	[Bindable] public static var BOW_PEOPLE_REQUIRED:int;
 
 	[Bindable] public static var SWORD_WOOD:int;
 	[Bindable] public static var SWORD_IRON:int;
-	[Bindable] public static var SWORD_PRICE:int;
+	[Bindable] public static var SWORD_PRICE:Number;
 	[Bindable] public static var SWORD_VALUE:int;
 	[Bindable] public static var SWORD_PEOPLE_REQUIRED:int;
 
 	[Bindable] public static var ARMOR_WOOD:int;
 	[Bindable] public static var ARMOR_IRON:int;
-	[Bindable] public static var ARMOR_PRICE:int;
+	[Bindable] public static var ARMOR_PRICE:Number;
 	[Bindable] public static var ARMOR_VALUE:int;
 	[Bindable] public static var ARMOR_PEOPLE_REQUIRED:int;
 	
@@ -101,7 +101,7 @@ import mx.collections.ArrayCollection;
 				BOW_WOOD = item.wood;
 				BOW_IRON = item.iron;
 				BOW_PEOPLE_REQUIRED = item.peopleRequired;
-				BOW_PRICE= item.goldPrice;
+				BOW_PRICE= item.goldPriceCurrent;
 				BOW_VALUE= item.value;
 			}
 
@@ -109,7 +109,7 @@ import mx.collections.ArrayCollection;
 				SWORD_WOOD = item.wood;
 				SWORD_IRON = item.iron;
 				SWORD_PEOPLE_REQUIRED = item.peopleRequired;
-				SWORD_PRICE= item.goldPrice;
+				SWORD_PRICE= item.goldPriceCurrent;
 				SWORD_VALUE= item.value;
 			}
 
@@ -117,7 +117,7 @@ import mx.collections.ArrayCollection;
 				ARMOR_WOOD = item.wood;
 				ARMOR_IRON = item.iron;
 				ARMOR_PEOPLE_REQUIRED = item.peopleRequired;
-				ARMOR_PRICE= item.goldPrice;
+				ARMOR_PRICE= item.goldPriceCurrent;
 				ARMOR_VALUE= item.value;
 			}
 		}

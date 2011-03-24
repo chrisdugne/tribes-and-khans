@@ -17,6 +17,7 @@
 			import com.uralys.tribes.core.Pager;
 			import com.uralys.tribes.entities.Army;
 			import com.uralys.tribes.entities.City;
+			import com.uralys.tribes.entities.Conflict;
 			import com.uralys.tribes.entities.Equipment;
 			import com.uralys.tribes.entities.Game;
 			import com.uralys.tribes.entities.Move;
@@ -57,13 +58,8 @@
 
 			//----------------------------------------------------------//
 
-			private var initDone:Boolean = false;
 			protected function init():void{
-				
-				if(initDone) // appel a init plein de fois ???!!
-					return;
-				
-				initDone = true;
+				trace("init");
 
 				timer = new Timer(41,1);
 				timer.addEventListener(TimerEvent.TIMER_COMPLETE, moveStoppedDuringDragging);
@@ -118,10 +114,10 @@
 						Session.currentPlayer = playerOfProfil;
 						this.selectedCity = Session.currentPlayer.cities.getItemAt(0) as City;
 						
-						try{
-							FlexGlobals.topLevelApplication.showReports(Session.currentPlayer.reports.getItemAt(0).report);	
-						}
-						catch(error:Error){}
+//						try{
+//							FlexGlobals.topLevelApplication.showReports(Session.currentPlayer.reports.getItemAt(0).report);	
+//						}
+//						catch(error:Error){}
 
 						break;
 					}
@@ -432,10 +428,16 @@
 				
 				//------------------------------------------------------------//
 
-				BoardDrawer.getInstance().setBoards(forest, boardEntities, boardImages, boardTexts, minimap);
+				BoardDrawer.getInstance().setBoards(this);
 				BoardDrawer.getInstance().setGame(game);
 				BoardDrawer.getInstance().redrawAllEntities();
 				BoardClickListener.boardPage = this;
+				
+			
+				try{
+					FlexGlobals.topLevelApplication.createConflicts();	
+				}
+				catch(error:Error){}
 				
 				if(selectedCity != null){
 					image.x = 250 - selectedCity.x;
@@ -445,7 +447,7 @@
 					FlexGlobals.topLevelApplication.message('GAME OVER', 7);
 				}
 			}
-			
+	
 			
 			//----------------------------------------------------------------------------------------//
 			
@@ -820,6 +822,7 @@
 
 		<!-- =============================================================================================== -->
 		
+		<s:Button label="Conflits" click="{FlexGlobals.topLevelApplication.showconflicts.play()}" right="10"/>
 		<s:HGroup width="100%" horizontalAlign="center" paddingTop="5">
 			<s:Label text="X : {coordinateX}"/>
 			<mx:Spacer width="200"/>

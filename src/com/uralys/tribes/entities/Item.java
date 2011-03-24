@@ -8,7 +8,8 @@ public class Item {
 	private int peopleRequired;
 	private int wood;
 	private int iron;
-	private int goldPrice;
+	private Float goldPriceBase;
+	private Float goldPriceCurrent;
 	private int value;
 
 	//-----------------------------------------------------------------------------------//
@@ -43,11 +44,17 @@ public class Item {
 	public void setIron(int iron) {
 		this.iron = iron;
 	}
-	public int getGoldPrice() {
-		return goldPrice;
+	public Float getGoldPriceBase() {
+		return goldPriceBase;
 	}
-	public void setGoldPrice(int goldPrice) {
-		this.goldPrice = goldPrice;
+	public void setGoldPriceBase(Float goldPriceBase) {
+		this.goldPriceBase = goldPriceBase;
+	}
+	public Float getGoldPriceCurrent() {
+		return goldPriceCurrent;
+	}
+	public void setGoldPriceCurrent(Float goldPriceCurrent) {
+		this.goldPriceCurrent = goldPriceCurrent;
 	}
 	public int getValue() {
 		return value;

@@ -3,6 +3,7 @@ package com.uralys.tribes.domain.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
 
 import com.uralys.tribes.dao.IGameDAO;
 import com.uralys.tribes.domain.IGameManager;
@@ -20,6 +21,8 @@ import com.uralys.utils.Utils;
 
 public class GameManager implements IGameManager {
 	
+	private static final Logger log = Logger.getLogger(GameManager.class.getName());
+
 	//==================================================================================================//
 	// game COEFF
 	
@@ -94,8 +97,8 @@ public class GameManager implements IGameManager {
 	
 	public void saveTurn(Player player, boolean fromForceTurn){
 
-		System.out.println("-------------------------------------------------");
-		System.out.println("Save turn pour joueur : " + player.getName());
+		log.info("-------------------------------------------------");
+		log.info("Save turn pour joueur : " + player.getName());
 
 		//----------------------------------------------------------------//
 		// Cities
@@ -103,11 +106,11 @@ public class GameManager implements IGameManager {
 		for(City city : player.getCities()){
 
 			if(city.getCityUID().equals("new")){
-				System.out.println("Create a new city");
+				log.info("Create a new city");
 				gameDao.createCity(city, player.getPlayerUID());
 			}
 			else{
-				System.out.println("saving city : " + city.getName());
+				log.info("saving city : " + city.getName());
 				
 				//----------------------------------------//
 				// Resources
@@ -133,18 +136,18 @@ public class GameManager implements IGameManager {
 					}
 					
 					
-					System.out.println("update population (armyRaised : " + armyRaised + ")");
+					log.info("update population (armyRaised : " + armyRaised + ")");
 					city.setPopulation(calculatePopulation(city.getPopulation(), starvation, armyRaised));
 				}
 				
-				System.out.println("updateCityResources");
+				log.info("updateCityResources");
 				gameDao.updateCityResources(city);
 
 				//----------------------------------------//
 				// Forge
 				
 				for(Smith smith : city.getSmiths()){
-					System.out.println("update smith " + smith.getItem().getName());
+					log.info("update smith " + smith.getItem().getName());
 					gameDao.updateSmith(smith.getSmithUID(), smith.getPeople());				
 				}
 
@@ -152,7 +155,7 @@ public class GameManager implements IGameManager {
 				// Equipment stock
 				
 				for(Equipment stock : city.getEquipmentStock()){
-					System.out.println("update stock " + stock.getItem().getName());
+					log.info("update stock " + stock.getItem().getName());
 					gameDao.updateStock(stock.getEquimentUID(), stock.getSize());	
 				}
 			}
@@ -187,7 +190,7 @@ public class GameManager implements IGameManager {
 		List<String> existingArmyUIDs = gameDao.linkNewArmiesAndGetPreviousArmyUIDs(player.getPlayerUID(), createdArmyUIDs);
 
 		for(String existingArmyUID : existingArmyUIDs){
-			System.out.println("existingArmyUID : " + existingArmyUID);
+			log.info("existingArmyUID : " + existingArmyUID);
 			boolean found = false;
 			
 			for(String editedArmyUID : editedArmyUIDs){
@@ -229,7 +232,7 @@ public class GameManager implements IGameManager {
 		List<String> existingMerchantUIDs = gameDao.linkNewMerchantsAndGetPreviousMerchantUIDs(player.getPlayerUID(), createdMerchantUIDs);
 		
 		for(String existingMerchantUID : existingMerchantUIDs){
-			System.out.println("existingMerchantUID : " + existingMerchantUID);
+			log.info("existingMerchantUID : " + existingMerchantUID);
 			boolean found = false;
 			
 			for(String editedMerchantUID : editedMerchantUIDs){
@@ -263,15 +266,15 @@ public class GameManager implements IGameManager {
 
 
 	private void calculateTurnsNotPlayed(List<Game> games) {
-		System.out.println("==============================================================");
-		System.out.println("calculateTurnsNotPlayed (games.size : "+games.size()+")");
+		log.info("==============================================================");
+		log.info("calculateTurnsNotPlayed (games.size : "+games.size()+")");
 		for(Game game : games){
 			
 			if(game.getCurrentTurn() == 0)
 				break;
 
-			System.out.println("-----------------------------------");
-			System.out.println("game : " + game.getName());
+			log.info("-----------------------------------");
+			log.info("game : " + game.getName());
 			
 
 			for(Player player : game.getPlayers()){
@@ -285,14 +288,14 @@ public class GameManager implements IGameManager {
 				
 				int nbTurnPlayedWithoutEveryone = (int) (millisSinceLastTurnBegining/(game.getNbMinByTurn()*60*1000));
 
-				System.out.println("-----------------------------");
-				System.out.println("player : " + player.getName());
-				System.out.println("nbTurnPlayedByOthersWithoutPlayer : " + nbTurnPlayedByOthersWithoutPlayer);
-				System.out.println("nbTurnPlayedWithoutEveryone : " + nbTurnPlayedWithoutEveryone);
+				log.info("-----------------------------");
+				log.info("player : " + player.getName());
+				log.info("nbTurnPlayedByOthersWithoutPlayer : " + nbTurnPlayedByOthersWithoutPlayer);
+				log.info("nbTurnPlayedWithoutEveryone : " + nbTurnPlayedWithoutEveryone);
 				
 				if(nbTurnPlayedByOthersWithoutPlayer + nbTurnPlayedWithoutEveryone > 0){
-					System.out.println("----");
-					System.out.println("force play");
+					log.info("----");
+					log.info("force play");
 
 					game.setCurrentTurn(game.getCurrentTurn() + nbTurnPlayedWithoutEveryone);
 					game.setBeginTurnTimeMillis(game.getBeginTurnTimeMillis() + game.getNbMinByTurn()*60*1000*nbTurnPlayedWithoutEveryone);					
@@ -302,14 +305,14 @@ public class GameManager implements IGameManager {
 						forcePlayTurn(player);
 					}
 					
-					System.out.println("game.currentTurn set to : " + game.getCurrentTurn());
-					System.out.println("beginTurnTimeMillis : " + new Date(game.getBeginTurnTimeMillis()));
+					log.info("game.currentTurn set to : " + game.getCurrentTurn());
+					log.info("beginTurnTimeMillis : " + new Date(game.getBeginTurnTimeMillis()));
 					
 					gameDao.updateGame(game); // set currentTurn and beginTurnTimeMillis
 					
 					// on sauvegarde le dernier
-					System.out.println("----------");
-					System.out.println("saveTurn");
+					log.info("----------");
+					log.info("saveTurn");
 					saveTurn(player, true);
 				}
 			}
@@ -318,43 +321,43 @@ public class GameManager implements IGameManager {
 
 	private void forcePlayTurn(Player player) {
 
-		System.out.println("-------------------------------------------------");
-		System.out.println("Tour force pour joueur : " + player.getName());
+		log.info("-------------------------------------------------");
+		log.info("Tour force pour joueur : " + player.getName());
 		
 		player.setLastTurnPlayed(player.getLastTurnPlayed()+1);
 		
 		for(City city : player.getCities()){
-			System.out.println("-------------------------------------------------");
-			System.out.println("ville : " + city.getName());
-			System.out.println("---------------------");
-			System.out.println("Forge : ");
+			log.info("-------------------------------------------------");
+			log.info("ville : " + city.getName());
+			log.info("---------------------");
+			log.info("Forge : ");
 			
 			//----------------------------------------//
 			// Forge
 			
 			for(Smith smith : city.getSmiths()){
-				System.out.println(smith.getItem().getName() + " : " + smith.getPeople());
+				log.info(smith.getItem().getName() + " : " + smith.getPeople());
 				
 				int ironNeeded = smith.getPeople()*smith.getItem().getIron();
 				int woodNeeded = smith.getPeople()*smith.getItem().getWood();
 
-				System.out.println("ironNeeded : " + ironNeeded + ", iron in stock : " + city.getIron());
-				System.out.println("woodNeeded : " + woodNeeded + ", wood in stock : " + city.getWood());
+				log.info("ironNeeded : " + ironNeeded + ", iron in stock : " + city.getIron());
+				log.info("woodNeeded : " + woodNeeded + ", wood in stock : " + city.getWood());
 				
 				// penalite : si on a pas assez de stock quand on rate un tour, on ne construit rien du tout, on recolte a la place.
 				if(ironNeeded > city.getIron()){
-					System.out.println("stock de fer non suffisant : les workers passent sur la creation de fer");
+					log.info("stock de fer non suffisant : les workers passent sur la creation de fer");
 					city.setPeopleCreatingIron(city.getPeopleCreatingIron()+smith.getPeople());
 					smith.setPeople(0);
 				}
 				else if(woodNeeded > city.getWood()){
-					System.out.println("stock de bois non suffisant : les workers passent sur la creation de bois");
+					log.info("stock de bois non suffisant : les workers passent sur la creation de bois");
 					city.setPeopleCreatingWood(city.getPeopleCreatingWood()+smith.getPeople());
 					smith.setPeople(0);
 				}
 				// sinon ok, on construit les armes
 				else{
-					System.out.println("ressources suffisantes");
+					log.info("ressources suffisantes");
 					// consommation des ressources
 					city.setIron(city.getIron()-ironNeeded);
 					city.setWood(city.getWood()-woodNeeded);
@@ -363,7 +366,7 @@ public class GameManager implements IGameManager {
 					for(Equipment equipment : city.getEquipmentStock()){
 						if(equipment.getItem().getName().equals(smith.getItem().getName())){
 							equipment.setSize(equipment.getSize() + smith.getPeople());
-							System.out.println("stock de " + equipment.getItem().getName() + " final : " + equipment.getSize() + "(+ "+smith.getPeople()+")");
+							log.info("stock de " + equipment.getItem().getName() + " final : " + equipment.getSize() + "(+ "+smith.getPeople()+")");
 							break;
 						}
 					}
@@ -374,11 +377,11 @@ public class GameManager implements IGameManager {
 			// Resources
 			// wheat : si < 0 : gens meurent de faim : calcul de pop en consequence
 			
-			System.out.println("---------------------");
-			System.out.println("Resources : ");
-			System.out.println("wheat : + " + (city.getPeopleCreatingWheat()*WHEAT_EARNING_COEFF - city.getPopulation()));
-			System.out.println("wood : + " + (city.getPeopleCreatingWood()*WOOD_EARNING_COEFF));
-			System.out.println("iron : + " + (city.getPeopleCreatingIron()*IRON_EARNING_COEFF));
+			log.info("---------------------");
+			log.info("Resources : ");
+			log.info("wheat : + " + (city.getPeopleCreatingWheat()*WHEAT_EARNING_COEFF - city.getPopulation()));
+			log.info("wood : + " + (city.getPeopleCreatingWood()*WOOD_EARNING_COEFF));
+			log.info("iron : + " + (city.getPeopleCreatingIron()*IRON_EARNING_COEFF));
 			
 			city.setWheat(city.getWheat() + city.getPeopleCreatingWheat()*WHEAT_EARNING_COEFF - city.getPopulation());
 			city.setWood(city.getWood() + city.getPeopleCreatingWood()*WOOD_EARNING_COEFF);
@@ -387,7 +390,7 @@ public class GameManager implements IGameManager {
 			boolean starvation = false;
 			
 			if(city.getWheat() < 0){
-				System.out.println("Starvation !");
+				log.info("Starvation !");
 				starvation = true;
 				city.setWheat(0);
 				
@@ -431,18 +434,18 @@ public class GameManager implements IGameManager {
 			naturalEvolutionPercentage *= 2;
 		
 		
-		System.out.println("maxPercentage : " + maxPercentage);
-		System.out.println("naturalEvolutionPercentage : " + naturalEvolutionPercentage);
-		System.out.println("armyPercentage : " + armyPercentage);
+		log.info("maxPercentage : " + maxPercentage);
+		log.info("naturalEvolutionPercentage : " + naturalEvolutionPercentage);
+		log.info("armyPercentage : " + armyPercentage);
 		
 		int evolutionPercentage = naturalEvolutionPercentage - (int)Math.sqrt(armyPercentage);
 
-		System.out.println("evolutionPercentage : " + evolutionPercentage);
+		log.info("evolutionPercentage : " + evolutionPercentage);
 		
 		if(starvation)
 			evolutionPercentage -= 25;
 
-		System.out.println("final evolutionPercentage : " + evolutionPercentage);
+		log.info("final evolutionPercentage : " + evolutionPercentage);
 
 		
 		int populationEvolution =  population*evolutionPercentage/100;
@@ -450,7 +453,7 @@ public class GameManager implements IGameManager {
 		if(population > 10000)
 			populationEvolution /= 10;
 		
-		System.out.println("populationEvolution : " + populationEvolution);
+		log.info("populationEvolution : " + populationEvolution);
 		
 		return population + populationEvolution;
 	}

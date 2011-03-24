@@ -21,9 +21,11 @@ import com.uralys.tribes.entities.Move;
 import com.uralys.tribes.entities.Player;
 import com.uralys.tribes.entities.dto.ArmyDTO;
 import com.uralys.tribes.entities.dto.CityDTO;
+import com.uralys.tribes.entities.dto.ConflictDTO;
 import com.uralys.tribes.entities.dto.EquipmentDTO;
 import com.uralys.tribes.entities.dto.GameDTO;
 import com.uralys.tribes.entities.dto.ItemDTO;
+import com.uralys.tribes.entities.dto.MoveConflictDTO;
 import com.uralys.tribes.entities.dto.MoveDTO;
 import com.uralys.tribes.entities.dto.PlayerDTO;
 import com.uralys.tribes.entities.dto.ProfilDTO;
@@ -385,6 +387,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		}
 		
 		if(!waitingForPlayers){
+			removePreviousConflicts(players);
 			calculateMovesAndFights(players);
 			gameDTO.setCurrentTurn(gameDTO.getCurrentTurn() + 1);
 			gameDTO.setBeginTurnTimeMillis(new Date().getTime());
@@ -394,6 +397,39 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	}
 	
 	//==================================================================================================//
+
+	@SuppressWarnings("unchecked")
+	private void removePreviousConflicts(List<PlayerDTO> players) {
+		
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		
+		for(PlayerDTO player : players){
+
+			if(player.getConflictsUIDs().size() == 0)
+				continue;
+			
+			Query query = pm.newQuery("select from " + ConflictDTO.class.getName() + " where :uids.contains(key)");
+			List<ConflictDTO> conflicts = (List<ConflictDTO>) query.execute(player.getConflictsUIDs());
+			
+			for(ConflictDTO conflict : conflicts){
+				query = pm.newQuery("select from " + MoveConflictDTO.class.getName() + " where :uids.contains(key)");
+				List<MoveConflictDTO> moveAllies = (List<MoveConflictDTO>) query.execute(conflict.getMoveAlliesUIDs());
+				List<MoveConflictDTO> moveEnnemies = (List<MoveConflictDTO>) query.execute(conflict.getMoveEnnemiesUIDs());
+				
+				for(MoveConflictDTO moveConflict : moveAllies){
+					pm.deletePersistent(moveConflict);
+				}
+				
+				for(MoveConflictDTO moveConflict : moveEnnemies){
+					pm.deletePersistent(moveConflict);
+				}
+
+				pm.deletePersistent(conflict);
+			}
+		}
+		
+		pm.close();
+	}
 
 	public void createCity(City city, String playerUID){
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
@@ -632,6 +668,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		for(PlayerDTO player : players){
 			if(debug)log.info("player " + player.getName());
 			landsMap.put(player, new ArrayList<Integer>());
+			player.setConflictsUIDs(new ArrayList<String>());
 
 			//-----------------------------------------//
 
@@ -678,8 +715,8 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 
 					// si le mouvement est immobile, on fabrique un mouvement le long du diametre du cercle representant l'entite deplacee 
 					// pour simuler le croisement de cette entite.
-					// approximation a recalculer avec cosPi/4
-					double size = rayon(army.getSize());
+					// *racinecarre(2)sur2 = cospi/4 = sinpi/4
+					double size = rayon(army.getSize()) * Math.sqrt(2)/2;
 					
 					if(move.getxFrom() == move.getxTo() && move.getyFrom() == move.getyTo()){
 						
@@ -891,9 +928,145 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		
 
 		for(Conflit conflit : conflits){
+			
 			if(debug)log.info("resolution du conflit en [" + conflit.x + "," + conflit.y +"]");
 			StringBuffer newReport = new StringBuffer();
 			newReport.append("\nConflit en [  " + conflit.x + "  ,  " + conflit.y +"  ]\n");
+
+			//------------------------------------------------------------------------//
+			// creation des ConflictDTOs pour chaque joueur du conflit
+			if(debug)log.info("creation des ConflictDTOs pour chaque joueur du conflit");
+
+			Map<PlayerDTO, ConflictDTO> playerConflictsAllyMap = new HashMap<PlayerDTO, ConflictDTO>();
+			Map<PlayerDTO, ConflictDTO> playerConflictsEnnemyMap = new HashMap<PlayerDTO, ConflictDTO>();
+			
+			for(ArmyDTO army : conflit.allies){
+				
+				PlayerDTO playerOwningThisArmy = movePlayerMap.get(armyMoveMap.get(army));
+				ConflictDTO conflictDTO = playerConflictsAllyMap.get(playerOwningThisArmy);
+				
+				if(conflictDTO == null){
+					String conflictUID = Utils.generateUID();
+					Key key = KeyFactory.createKey(ConflictDTO.class.getSimpleName(), conflictUID);
+					conflictDTO = new ConflictDTO();
+
+					conflictDTO.setKey(KeyFactory.keyToString(key));
+					conflictDTO.setConflictUID(conflictUID);
+					conflictDTO.setX(conflit.x);
+					conflictDTO.setY(conflit.y);
+					conflictDTO.setStatus(0);
+					
+					playerOwningThisArmy.getConflictsUIDs().add(conflictUID);
+					playerConflictsAllyMap.put(playerOwningThisArmy, conflictDTO);
+				}
+			}
+
+			for(ArmyDTO army : conflit.ennemies){
+				
+				PlayerDTO playerOwningThisArmy = movePlayerMap.get(armyMoveMap.get(army));
+				ConflictDTO conflictDTO = playerConflictsEnnemyMap.get(playerOwningThisArmy);
+				
+				if(conflictDTO == null){
+					String conflictUID = Utils.generateUID();
+					Key key = KeyFactory.createKey(ConflictDTO.class.getSimpleName(), conflictUID);
+					conflictDTO = new ConflictDTO();
+					
+					conflictDTO.setKey(KeyFactory.keyToString(key));
+					conflictDTO.setConflictUID(conflictUID);
+					conflictDTO.setX(conflit.x);
+					conflictDTO.setY(conflit.y);
+					conflictDTO.setStatus(0);
+
+					playerOwningThisArmy.getConflictsUIDs().add(conflictUID);
+					playerConflictsEnnemyMap.put(playerOwningThisArmy, conflictDTO);
+				}
+			}
+			
+			//------------------------------------------------------------------------//
+			// affectation des MoveConflictDTOs ˆ chaque ConflictsDTO
+			if(debug)log.info("affectation des MoveConflictDTOs ˆ chaque ConflictsDTO");
+			
+			for(ArmyDTO army : conflit.allies){
+
+				String moveConflictUID = Utils.generateUID();
+				Key key = KeyFactory.createKey(MoveConflictDTO.class.getSimpleName(), moveConflictUID);
+				MoveConflictDTO moveConflictDTO = new MoveConflictDTO();
+
+				moveConflictDTO.setKey(KeyFactory.keyToString(key));
+				moveConflictDTO.setMoveConflictUID(moveConflictUID);
+				moveConflictDTO.setArmySize(army.getSize());
+				
+				moveConflictDTO.setxFrom(armyMoveMap.get(army).getxFrom());
+				moveConflictDTO.setyFrom(armyMoveMap.get(army).getyFrom());
+				
+				for(EquipmentDTO equipment : army.getEquipments()){
+					int equipmentSize = equipment.getSize() > army.getSize() ? army.getSize() : equipment.getSize();
+					ItemDTO item = equipment.getItem();
+					
+					if(item.getItemUID().equals("_bow"))
+						moveConflictDTO.setArmyBows(equipmentSize);
+					else if(item.getItemUID().equals("_sword"))
+						moveConflictDTO.setArmySwords(equipmentSize);
+					else if(item.getItemUID().equals("_armor"))
+						moveConflictDTO.setArmyArmors(equipmentSize);
+				}
+			
+				pm.makePersistent(moveConflictDTO);
+				
+				for(ConflictDTO conflict : playerConflictsAllyMap.values()){
+					conflict.getMoveAlliesUIDs().add(moveConflictUID);
+				}
+				for(ConflictDTO conflict : playerConflictsEnnemyMap.values()){
+					conflict.getMoveEnnemiesUIDs().add(moveConflictUID);
+				}
+			}
+			
+			for(ArmyDTO army : conflit.ennemies){
+				
+				String moveConflictUID = Utils.generateUID();
+				Key key = KeyFactory.createKey(MoveConflictDTO.class.getSimpleName(), moveConflictUID);
+				MoveConflictDTO moveConflictDTO = new MoveConflictDTO();
+				
+				moveConflictDTO.setKey(KeyFactory.keyToString(key));
+				moveConflictDTO.setMoveConflictUID(moveConflictUID);
+				moveConflictDTO.setArmySize(army.getSize());
+				
+				moveConflictDTO.setxFrom(armyMoveMap.get(army).getxFrom());
+				moveConflictDTO.setyFrom(armyMoveMap.get(army).getyFrom());
+				
+				for(EquipmentDTO equipment : army.getEquipments()){
+					int equipmentSize = equipment.getSize() > army.getSize() ? army.getSize() : equipment.getSize();
+					ItemDTO item = equipment.getItem();
+					
+					if(item.getItemUID().equals("_bow"))
+						moveConflictDTO.setArmyBows(equipmentSize);
+					else if(item.getItemUID().equals("_sword"))
+						moveConflictDTO.setArmySwords(equipmentSize);
+					else if(item.getItemUID().equals("_armor"))
+						moveConflictDTO.setArmyArmors(equipmentSize);
+				}
+				
+				pm.makePersistent(moveConflictDTO);
+				
+				for(ConflictDTO conflict : playerConflictsAllyMap.values()){
+					conflict.getMoveEnnemiesUIDs().add(moveConflictUID);
+				}
+				for(ConflictDTO conflict : playerConflictsEnnemyMap.values()){
+					conflict.getMoveAlliesUIDs().add(moveConflictUID);
+				}
+			}
+			
+			
+			// enregistrement des ConflictDTO
+			for(ConflictDTO conflict : playerConflictsAllyMap.values()){
+				pm.makePersistent(conflict);
+			}
+			for(ConflictDTO conflict : playerConflictsEnnemyMap.values()){
+				pm.makePersistent(conflict);
+			}
+				
+			//------------------------------------------------------------------------//
+			// calcul des degats
 			
 			int valueAlly = 0;
 			int valueEnnemy = 0;
@@ -902,6 +1075,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			if(debug)log.info("Equipe 1");
 			newReport.append("\n\nEquipe 1");
 			for(ArmyDTO army : conflit.allies){
+
 				if(debug)log.info(army.getArmyUID());
 				newReport.append("\narmy " + armyInfoMoveMap.get(army));
 
@@ -1214,22 +1388,22 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		if(debug)log.info("-----------");
 		if(debug)log.info("enregistrement des rapports");
 		
-		for(PlayerDTO player : reports.keySet()){
-			ReportDTO reportDTO = new ReportDTO();
-			String report = reports.get(player);
-			
-			String reportUID = Utils.generateUID();
-			Key key = KeyFactory.createKey(ReportDTO.class.getSimpleName(), reportUID);
-
-			reportDTO.setKey(KeyFactory.keyToString(key));
-			reportDTO.setReportUID(reportUID);
-			reportDTO.setReport(report);
-			reportDTO.setStatus(0);
-			
-			player.getReportUIDs().add(reportUID);
-			
-			pm.makePersistent(reportDTO);
-		}
+//		for(PlayerDTO player : reports.keySet()){
+//			ReportDTO reportDTO = new ReportDTO();
+//			String report = reports.get(player);
+//			
+//			String reportUID = Utils.generateUID();
+//			Key key = KeyFactory.createKey(ReportDTO.class.getSimpleName(), reportUID);
+//
+//			reportDTO.setKey(KeyFactory.keyToString(key));
+//			reportDTO.setReportUID(reportUID);
+//			reportDTO.setReport(report);
+//			reportDTO.setStatus(0);
+//			
+//			player.getReportUIDs().add(reportUID);
+//			
+//			pm.makePersistent(reportDTO);
+//		}
 		
 		
 		if(debug)log.info("-----------");
@@ -1456,15 +1630,29 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		int x = meetingX(playerMove.getxFrom(), playerMove.getxTo(), playerMove.getyFrom(), playerMove.getyTo(), opponentMove.getxFrom(), opponentMove.getxTo(), opponentMove.getyFrom(), opponentMove.getyTo());
 		boolean meeting = x >= 0;
 		
+		
+		
+		// verif du croisement selon les y
+		// pour cela, choix du move qui a la pente la moins verticale (y le plus fiable)
+		// donc on se fie au moins a la difference des xfrom xto, ce qui est une bonne estimation de pente pour nos petits vecteurs
+		MoveDTO moveSelectedToCalculatY;
+		if(Math.abs(playerMove.getxTo() - playerMove.getxFrom()) > Math.abs(opponentMove.getxTo() - opponentMove.getxFrom()))
+			moveSelectedToCalculatY = playerMove;
+		else
+			moveSelectedToCalculatY = opponentMove;
+			
+		
+		int y = yFx(x, moveSelectedToCalculatY.getxFrom(), moveSelectedToCalculatY.getxTo(), moveSelectedToCalculatY.getyFrom(), moveSelectedToCalculatY.getyTo());
+		
 		// verif du croisement selon les x
 		
-		if(x < playerLeft - playerMoveSize)
+		if(x < playerLeft - rayon(playerMoveSize))
 			meeting = false;
-		else if(x > playerRight + playerMoveSize)
+		else if(x > playerRight + rayon(playerMoveSize))
 			meeting = false;
-		else if(x < opponentLeft - opponentMoveSize)
+		else if(x < opponentLeft - rayon(opponentMoveSize))
 			meeting = false;
-		else if(x > opponentRight + opponentMoveSize)
+		else if(x > opponentRight + rayon(opponentMoveSize))
 			meeting = false;
 
 		if(!meeting){
@@ -1480,17 +1668,32 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 				int topLeft = playerLeft < opponentLeft ? playerLeft : opponentLeft;
 				int topRight = playerRight > opponentRight ? playerRight : opponentRight;
 				
+				
 				if(x < topLeft){
 					if(debug)log.info("xMeeting est sur la gauche");
-					if(x < topLeft - 150){
-						if(debug)log.info("xMeeting depasse le coeff ! test parralleles");
+					
+					int topLeftX = playerLeft < opponentLeft ? playerLeft : opponentLeft;
+					int topLeftY = topLeftX == playerLeft ? (playerMove.getxFrom() == playerLeft ? playerMove.getyFrom() : playerMove.getyTo())
+														  : (opponentMove.getxFrom() == opponentLeft ? opponentMove.getyFrom() : opponentMove.getyTo());
+					
+					double distanceToTopLeft = Math.sqrt(Math.pow((x - topLeftX), 2) + Math.pow((y - topLeftY), 2));
+
+					if(distanceToTopLeft > 100){
+						if(debug)log.info("xMeeting depasse le coeff ("+distanceToTopLeft+" > 100) ! test paralleles");
 						parallel = true;
 					}
 				}
 				else if(x > topRight){
 					if(debug)log.info("xMeeting est sur la droite");
-					if(x > topRight + 150){
-						if(debug)log.info("xMeeting depasse le coeff ! test parralleles");
+					
+					int topRightX = playerRight < opponentRight ? playerRight : opponentRight;
+					int topRightY = topRightX == playerRight ? (playerMove.getxFrom() == playerRight ? playerMove.getyFrom() : playerMove.getyTo())
+														     : (opponentMove.getxFrom() == opponentRight ? opponentMove.getyFrom() : opponentMove.getyTo());
+					
+					double distanceToTopRight = Math.sqrt(Math.pow((x - topRightX), 2) + Math.pow((y - topRightY), 2));
+
+					if(distanceToTopRight > 100){
+						if(debug)log.info("xMeeting depasse le coeff ("+distanceToTopRight+" > 100) ! test paralleles");
 						parallel = true;
 					}
 				}
@@ -1507,30 +1710,15 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			else
 				return croisement;
 		}
-		
-		
-		// verif du croisement selon les y
-		// pour cela, choix du move qui a la pente la moins verticale (y le plus fiable)
-		// donc on se fie au moins a la difference des xfrom xto, ce qui est une bonne estimation de pente pour nos petits vecteurs
-		MoveDTO moveSelectedToCalculatY;
-		if(Math.abs(playerMove.getxTo() - playerMove.getxFrom()) > Math.abs(opponentMove.getxTo() - opponentMove.getxFrom()))
-			moveSelectedToCalculatY = playerMove;
-		else
-			moveSelectedToCalculatY = opponentMove;
-			
-		
-		int y = yFx(x, moveSelectedToCalculatY.getxFrom(), moveSelectedToCalculatY.getxTo(), moveSelectedToCalculatY.getyFrom(), moveSelectedToCalculatY.getyTo());
-		
 
 		
-		
-		if(y < playerTop - playerMoveSize)
+		if(y < playerTop - rayon(playerMoveSize))
 			meeting = false;
-		else if(y > playerBottom + playerMoveSize)
+		else if(y > playerBottom + rayon(playerMoveSize))
 			meeting = false;
-		else if(y < opponentTop - opponentMoveSize)
+		else if(y < opponentTop - rayon(opponentMoveSize))
 			meeting = false;
-		else if(y > opponentBottom + opponentMoveSize)
+		else if(y > opponentBottom + rayon(opponentMoveSize))
 			meeting = false;
 
 		if(!meeting) // pas de croisement selon les y
@@ -1543,36 +1731,58 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		if(debug)log.info("croisement !");
 		if(debug)log.info("----------");
 		
-		double distance1 = Math.sqrt(Math.pow((x - playerMove.getxFrom()), 2) + Math.pow((y - playerMove.getyFrom()), 2));
-		double distance2 = Math.sqrt(Math.pow((x - opponentMove.getxFrom()), 2) + Math.pow((y - opponentMove.getyFrom()), 2));
+		double distanceAuPointDeCroisement1 = Math.sqrt(Math.pow((x - playerMove.getxFrom()), 2) + Math.pow((y - playerMove.getyFrom()), 2));
+		double distanceAuPointDeCroisement2 = Math.sqrt(Math.pow((x - opponentMove.getxFrom()), 2) + Math.pow((y - opponentMove.getyFrom()), 2));
 
-		if(debug)log.info("distance1 : " + distance1);
-		if(debug)log.info("distance2 : " + distance2);
+		double distanceTotaleAParcourir1 = Math.sqrt(Math.pow((playerMove.getxTo() - playerMove.getxFrom()), 2) + Math.pow((playerMove.getyTo() - playerMove.getyFrom()), 2));
+		double distanceTotaleAParcourir2 = Math.sqrt(Math.pow((opponentMove.getxTo() - opponentMove.getxFrom()), 2) + Math.pow((opponentMove.getyTo() - opponentMove.getyFrom()), 2));
+
+		if(debug)log.info("distanceAuPointDeCroisement1 : " + distanceAuPointDeCroisement1);
+		if(debug)log.info("distanceAuPointDeCroisement2 : " + distanceAuPointDeCroisement2);
+		if(debug)log.info("distanceTotaleAParcourir1 : " + distanceTotaleAParcourir1);
+		if(debug)log.info("distanceTotaleAParcourir2 : " + distanceTotaleAParcourir2);
 		if(debug)log.info("----------");
 		
-		double temps1 = distance1/playerMoveSpeed;
-		double temps2 = distance2/opponentMoveSpeed;
+		double temps1 = distanceAuPointDeCroisement1/playerMoveSpeed;
+		double temps2 = distanceAuPointDeCroisement2/opponentMoveSpeed;
 		if(debug)log.info("temps1 : " + temps1);
 		if(debug)log.info("temps2 : " + temps2);
 		if(debug)log.info("----------");
 		
-		if((temps1 == 0 && playerMove.getxFrom() == playerMove.getxTo() && playerMove.getyFrom() == playerMove.getyTo()) // pas de deplacement de player
-			||
-			(temps2 == 0 && playerMove.getxFrom() == playerMove.getxTo() && playerMove.getyFrom() == playerMove.getyTo()) // pas de deplacement de opponent
-			||
-			(temps1 > temps2 && temps1/temps2 < 2)
-			||
-			(temps2 > temps1 && temps2/temps1 < 2)
-			||
-			distance1 <= 4*rayon(playerMoveSize) // coeff 4 pour etre large pour les mouvements 'unites fixes'
-			||
-			distance2 <= 4*rayon(opponentMoveSize)){
+		boolean conflit = false;
+		if(temps1 == 0 && playerMove.getxFrom() == playerMove.getxTo() && playerMove.getyFrom() == playerMove.getyTo()){
+			// pas de deplacement de player
+			if(debug)log.info("CONFLIT 1 !");
+			conflit = true;
+		}
+		else if(temps2 == 0 && playerMove.getxFrom() == playerMove.getxTo() && playerMove.getyFrom() == playerMove.getyTo()){
+			// pas de deplacement de opponent
+			if(debug)log.info("CONFLIT 2 !");
+			conflit = true;
+		}
+		else if(temps1 > temps2 && temps1/temps2 < 2){
+			if(debug)log.info("CONFLIT 3 !");
+			conflit = true;
+		}
+		else if(temps2 > temps1 && temps2/temps1 < 2){
+			if(debug)log.info("CONFLIT 4 !");
+			conflit = true;
+		}
+		else if(distanceTotaleAParcourir1 <= 2.5*rayon(playerMoveSize)){ // coeff 2.5 pour etre large pour les mouvements 'unites fixes' (devrait etre = 2)
+			if(debug)log.info("CONFLIT 5 !");
+			conflit = true;
+		}
+		else if(distanceTotaleAParcourir2 <= 2.5*rayon(opponentMoveSize)){
+			if(debug)log.info("CONFLIT 6 !");
+			conflit = true;
+		}
 			
+		if(conflit){
 			if(debug)log.info("CONFLIT !");
 			croisement[0] = x;
 			croisement[1] = y;
-			croisement[2] = (int)distance1;
-			croisement[3] = (int)distance2;
+			croisement[2] = (int)distanceAuPointDeCroisement1;
+			croisement[3] = (int)distanceAuPointDeCroisement2;
 		}
 		else
 			if(debug)log.info("ouf ! de peu !");
@@ -1582,7 +1792,6 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	
 
 	public static void main(String[] args){
-
 		//armyCityMap.get(ennemy).setPopulation((int)(armyCityMap.get(ennemy).getPopulation() - ((double)valueAlly*100/valueEnnemy)*armyCityMap.get(ennemy).getPopulation()));
 	}
 	
@@ -1657,11 +1866,12 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 					if(debug)log.info("calcul du croisement");
 					
 					int xMeeting = (x1To + x2To)/2;
+					if(debug)log.info("xMeeting : " + xMeeting);
 
 					int y1Meeting = yFx(xMeeting, x1From, x1To, y1From, y1To);
 					int y2Meeting = yFx(xMeeting, x2From, x2To, y2From, y2To);
 
-					return calculDuCroisementParallele(x1To, y1Meeting, y2Meeting, x1From, y1From, x2From, y2From, playerMoveSize, opponentMoveSize, pentesPlutotVerticales);
+					return calculDuCroisementParallele(xMeeting, y1Meeting, y2Meeting, x1From, y1From, x2From, y2From, playerMoveSize, opponentMoveSize, pentesPlutotVerticales);
 				}
 			}
 		}

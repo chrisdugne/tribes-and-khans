@@ -25,7 +25,8 @@ public class ItemDTO {
 	@Persistent private int peopleRequired;
 	@Persistent private int wood;
 	@Persistent private int iron;
-	@Persistent private int goldPrice;
+	@Persistent private Float goldPriceBase;
+	@Persistent private Float goldPriceCurrent;
 	@Persistent private int value;
 	
 	//-----------------------------------------------------------------------------------//
@@ -66,17 +67,23 @@ public class ItemDTO {
 	public void setIron(int iron) {
 		this.iron = iron;
 	}
-	public int getGoldPrice() {
-		return goldPrice;
-	}
-	public void setGoldPrice(int goldPrice) {
-		this.goldPrice = goldPrice;
-	}
 	public int getValue() {
 		return value;
 	}
 	public void setValue(int value) {
 		this.value = value;
+	}
+	public Float getGoldPriceBase() {
+		return goldPriceBase;
+	}
+	public void setGoldPriceBase(Float goldPriceBase) {
+		this.goldPriceBase = goldPriceBase;
+	}
+	public Float getGoldPriceCurrent() {
+		return goldPriceCurrent;
+	}
+	public void setGoldPriceCurrent(Float goldPriceCurrent) {
+		this.goldPriceCurrent = goldPriceCurrent;
 	}
 	
 	//-----------------------------------------------------------------------------------//

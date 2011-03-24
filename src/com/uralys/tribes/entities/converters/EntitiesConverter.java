@@ -5,19 +5,23 @@ import java.util.List;
 
 import com.uralys.tribes.entities.Army;
 import com.uralys.tribes.entities.City;
+import com.uralys.tribes.entities.Conflict;
 import com.uralys.tribes.entities.Equipment;
 import com.uralys.tribes.entities.Game;
 import com.uralys.tribes.entities.Item;
 import com.uralys.tribes.entities.Move;
+import com.uralys.tribes.entities.MoveConflict;
 import com.uralys.tribes.entities.Player;
 import com.uralys.tribes.entities.Profil;
 import com.uralys.tribes.entities.Report;
 import com.uralys.tribes.entities.Smith;
 import com.uralys.tribes.entities.dto.ArmyDTO;
 import com.uralys.tribes.entities.dto.CityDTO;
+import com.uralys.tribes.entities.dto.ConflictDTO;
 import com.uralys.tribes.entities.dto.EquipmentDTO;
 import com.uralys.tribes.entities.dto.GameDTO;
 import com.uralys.tribes.entities.dto.ItemDTO;
+import com.uralys.tribes.entities.dto.MoveConflictDTO;
 import com.uralys.tribes.entities.dto.MoveDTO;
 import com.uralys.tribes.entities.dto.PlayerDTO;
 import com.uralys.tribes.entities.dto.ProfilDTO;
@@ -79,6 +83,15 @@ public class EntitiesConverter {
 		}
 		
 		player.setReports(reports);
+		
+		//-----------------------------------------------------------------------------------//		
+		List<Conflict> conflicts = new ArrayList<Conflict>();
+		
+		for(ConflictDTO conflictDTO : playerDTO.getConflicts()){
+			conflicts.add(convertConflictDTO(conflictDTO));
+		}
+		
+		player.setConflicts(conflicts);
 		
 		
 		//-----------------------------------------------------------------------------------//		
@@ -261,7 +274,8 @@ public class EntitiesConverter {
 		
 		item.setName(itemDTO.getName());
 		item.setPeopleRequired(itemDTO.getPeopleRequired());
-		item.setGoldPrice(itemDTO.getGoldPrice());
+		item.setGoldPriceBase(itemDTO.getGoldPriceBase());
+		item.setGoldPriceCurrent(itemDTO.getGoldPriceCurrent());
 		item.setIron(itemDTO.getIron());
 		item.setValue(itemDTO.getValue());
 		item.setItemUID(itemDTO.getItemUID());
@@ -320,4 +334,61 @@ public class EntitiesConverter {
 		return report;
 	}
 
+	//-----------------------------------------------------------------------------------//
+	
+	public static Conflict convertConflictDTO(ConflictDTO conflictDTO) {
+		
+		if(conflictDTO == null)
+			return null;
+		
+		Conflict conflict = new Conflict();
+
+		conflict.setConflictUID(conflictDTO.getConflictUID());
+		conflict.setReport(conflictDTO.getReport());
+		conflict.setStatus(conflictDTO.getStatus());
+		conflict.setX(conflictDTO.getX());
+		conflict.setY(conflictDTO.getY());
+		
+		//-----------------------------------------------------------------------------------//
+		
+		List<MoveConflict> moveAllies = new ArrayList<MoveConflict>();
+		
+		for(MoveConflictDTO moveConflictDTO : conflictDTO.getMoveAllies()){
+			moveAllies.add(convertMoveConflictDTO(moveConflictDTO));
+		}
+		
+		conflict.setMoveAllies(moveAllies);
+
+		//-----------------------------------------------------------------------------------//
+		
+		List<MoveConflict> moveEnnemies = new ArrayList<MoveConflict>();
+		
+		for(MoveConflictDTO moveConflictDTO : conflictDTO.getMoveEnnemies()){
+			moveEnnemies.add(convertMoveConflictDTO(moveConflictDTO));
+		}
+		
+		conflict.setMoveEnnemies(moveEnnemies);
+
+		//------------------------------------------------------------------------------------//
+		
+		return conflict;
+	}
+	//-----------------------------------------------------------------------------------//
+	
+	public static MoveConflict convertMoveConflictDTO(MoveConflictDTO moveConflictDTO) {
+		if(moveConflictDTO == null)
+			return null;
+		
+		MoveConflict moveConflict = new MoveConflict();
+
+		moveConflict.setArmyArmors(moveConflictDTO.getArmyArmors());
+		moveConflict.setArmyBows(moveConflictDTO.getArmyBows());
+		moveConflict.setArmySize(moveConflictDTO.getArmySize());
+		moveConflict.setArmySwords(moveConflictDTO.getArmySwords());
+		moveConflict.setxFrom(moveConflictDTO.getxFrom());
+		moveConflict.setyFrom(moveConflictDTO.getyFrom());
+		
+		return moveConflict;
+	}
+		
 }

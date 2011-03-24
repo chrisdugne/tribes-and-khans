@@ -18,6 +18,7 @@ public class Player {
 	private List<String> allies = new ArrayList<String>();
 	private List<Integer> lands = new ArrayList<Integer>();
 	private List<Report> reports = new ArrayList<Report>();
+	private List<Conflict> conflicts = new ArrayList<Conflict>();
 
 	
 	//-----------------------------------------------------------------------------------//
@@ -87,6 +88,12 @@ public class Player {
 	}
 	public void setReports(List<Report> reports) {
 		this.reports = reports;
+	}
+	public List<Conflict> getConflicts() {
+		return conflicts;
+	}
+	public void setConflicts(List<Conflict> conflicts) {
+		this.conflicts = conflicts;
 	}
 	
 	

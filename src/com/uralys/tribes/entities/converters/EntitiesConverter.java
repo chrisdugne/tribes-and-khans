@@ -13,7 +13,6 @@ import com.uralys.tribes.entities.Move;
 import com.uralys.tribes.entities.MoveConflict;
 import com.uralys.tribes.entities.Player;
 import com.uralys.tribes.entities.Profil;
-import com.uralys.tribes.entities.Report;
 import com.uralys.tribes.entities.Smith;
 import com.uralys.tribes.entities.dto.ArmyDTO;
 import com.uralys.tribes.entities.dto.CityDTO;
@@ -25,7 +24,6 @@ import com.uralys.tribes.entities.dto.MoveConflictDTO;
 import com.uralys.tribes.entities.dto.MoveDTO;
 import com.uralys.tribes.entities.dto.PlayerDTO;
 import com.uralys.tribes.entities.dto.ProfilDTO;
-import com.uralys.tribes.entities.dto.ReportDTO;
 import com.uralys.tribes.entities.dto.SmithDTO;
 
 public class EntitiesConverter {
@@ -75,15 +73,6 @@ public class EntitiesConverter {
 		
 		player.setCities(cities);
 
-		//-----------------------------------------------------------------------------------//		
-		List<Report> reports = new ArrayList<Report>();
-		
-		for(ReportDTO reportDTO : playerDTO.getReports()){
-			reports.add(convertReportDTO(reportDTO));
-		}
-		
-		player.setReports(reports);
-		
 		//-----------------------------------------------------------------------------------//		
 		List<Conflict> conflicts = new ArrayList<Conflict>();
 		
@@ -318,22 +307,6 @@ public class EntitiesConverter {
 		return smith;
 	}	
 	
-	//-----------------------------------------------------------------------------------//
-	
-	public static Report convertReportDTO(ReportDTO reportDTO) {
-
-		if(reportDTO == null)
-			return null;
-		
-		Report report = new Report();
-
-		report.setReportUID(reportDTO.getReportUID());
-		report.setReport(reportDTO.getReport());
-		report.setStatus(reportDTO.getStatus());
-		
-		return report;
-	}
-
 	//-----------------------------------------------------------------------------------//
 	
 	public static Conflict convertConflictDTO(ConflictDTO conflictDTO) {

@@ -35,5 +35,6 @@ public interface IGameDAO {
 	public void updatePlayer(Player player);
 	public void updateGame(Game game);
 	public void deleteArmies(List<String> toDeleteArmyUIDs, String playerUID);
+	public void deleteGame(String gameUID);
 	public void checkEndTurn(String gameUID);
 }

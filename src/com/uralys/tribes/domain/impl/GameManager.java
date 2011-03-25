@@ -276,6 +276,7 @@ public class GameManager implements IGameManager {
 			log.info("-----------------------------------");
 			log.info("game : " + game.getName());
 			
+			ArrayList<String> gamesToDelete = new ArrayList<String>();
 
 			for(Player player : game.getPlayers()){
 				
@@ -288,36 +289,50 @@ public class GameManager implements IGameManager {
 				
 				int nbTurnPlayedWithoutEveryone = (int) (millisSinceLastTurnBegining/(game.getNbMinByTurn()*60*1000));
 
-				log.info("-----------------------------");
-				log.info("player : " + player.getName());
-				log.info("nbTurnPlayedByOthersWithoutPlayer : " + nbTurnPlayedByOthersWithoutPlayer);
-				log.info("nbTurnPlayedWithoutEveryone : " + nbTurnPlayedWithoutEveryone);
-				
-				if(nbTurnPlayedByOthersWithoutPlayer + nbTurnPlayedWithoutEveryone > 0){
-					log.info("----");
-					log.info("force play");
-
-
-					game.setCurrentTurn(game.getCurrentTurn() + nbTurnPlayedWithoutEveryone);
-					game.setBeginTurnTimeMillis(game.getBeginTurnTimeMillis() + game.getNbMinByTurn()*60*1000*nbTurnPlayedWithoutEveryone);					
-					player.setLastTurnPlayed(game.getCurrentTurn()-1);
+				if(nbTurnPlayedWithoutEveryone > 30){
+					if(!gamesToDelete.contains(game.getGameUID()))
+						gamesToDelete.add(game.getGameUID());
+				}
+				else{
+					log.info("-----------------------------");
+					log.info("player : " + player.getName());
+					log.info("nbTurnPlayedByOthersWithoutPlayer : " + nbTurnPlayedByOthersWithoutPlayer);
+					log.info("nbTurnPlayedWithoutEveryone : " + nbTurnPlayedWithoutEveryone);
 					
-					for(int i = 0; i < nbTurnPlayedByOthersWithoutPlayer + nbTurnPlayedWithoutEveryone; i++){
-						forcePlayTurn(player);
+					if(nbTurnPlayedByOthersWithoutPlayer + nbTurnPlayedWithoutEveryone > 0){
+						log.info("----");
+						log.info("force play");
+
+
+						game.setCurrentTurn(game.getCurrentTurn() + nbTurnPlayedWithoutEveryone);
+						game.setBeginTurnTimeMillis(game.getBeginTurnTimeMillis() + game.getNbMinByTurn()*60*1000*nbTurnPlayedWithoutEveryone);					
+						player.setLastTurnPlayed(game.getCurrentTurn()-1);
+						
+						for(int i = 0; i < nbTurnPlayedByOthersWithoutPlayer + nbTurnPlayedWithoutEveryone; i++){
+							forcePlayTurn(player);
+						}
+						
+						log.info("game.currentTurn set to : " + game.getCurrentTurn());
+						log.info("beginTurnTimeMillis : " + new Date(game.getBeginTurnTimeMillis()));
+						
+						gameDao.updateGame(game); // set currentTurn and beginTurnTimeMillis
+						
+						// on sauvegarde le dernier
+						log.info("----------");
+						log.info("saveTurn");
+						saveTurn(player, true);
 					}
-					
-					log.info("game.currentTurn set to : " + game.getCurrentTurn());
-					log.info("beginTurnTimeMillis : " + new Date(game.getBeginTurnTimeMillis()));
-					
-					gameDao.updateGame(game); // set currentTurn and beginTurnTimeMillis
-					
-					// on sauvegarde le dernier
-					log.info("----------");
-					log.info("saveTurn");
-					saveTurn(player, true);
 				}
 			}
+			
+			for(String gameUID : gamesToDelete){
+				deleteGame(gameUID);
+			}
 		}
+	}
+
+	private void deleteGame(String gameUID) {
+		gameDao.deleteGame(gameUID);
 	}
 
 	private void forcePlayTurn(Player player) {

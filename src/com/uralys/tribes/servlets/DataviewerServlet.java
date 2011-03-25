@@ -25,7 +25,6 @@ import com.uralys.tribes.entities.dto.MoveConflictDTO;
 import com.uralys.tribes.entities.dto.MoveDTO;
 import com.uralys.tribes.entities.dto.PlayerDTO;
 import com.uralys.tribes.entities.dto.ProfilDTO;
-import com.uralys.tribes.entities.dto.ReportDTO;
 import com.uralys.tribes.entities.dto.ServerDataDTO;
 import com.uralys.tribes.entities.dto.SmithDTO;
 import com.uralys.utils.Utils;
@@ -145,7 +144,6 @@ public class DataviewerServlet extends HttpServlet {
 				" <OPTION VALUE=\"item\">ItemDTO" +
 				" <OPTION VALUE=\"equipment\">EquipmentDTO" +
 				" <OPTION VALUE=\"move\">MoveDTO" +
-				" <OPTION VALUE=\"report\">ReportDTO" +
 				" <OPTION VALUE=\"conflict\">ConflictDTO" +
 				" <OPTION VALUE=\"moveConflict\">MoveConflictDTO" +
 				" <OPTION VALUE=\"serverdata\">ServerDataDTO" +
@@ -534,8 +532,6 @@ public class DataviewerServlet extends HttpServlet {
 			return ItemDTO.class;
 		else if(dto.equals("move"))
 			return MoveDTO.class;
-		else if(dto.equals("report"))
-			return ReportDTO.class;
 		else if(dto.equals("conflict"))
 			return ConflictDTO.class;
 		else if(dto.equals("moveConflict"))

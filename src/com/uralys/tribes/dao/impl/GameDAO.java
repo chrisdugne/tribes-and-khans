@@ -29,7 +29,6 @@ import com.uralys.tribes.entities.dto.MoveConflictDTO;
 import com.uralys.tribes.entities.dto.MoveDTO;
 import com.uralys.tribes.entities.dto.PlayerDTO;
 import com.uralys.tribes.entities.dto.ProfilDTO;
-import com.uralys.tribes.entities.dto.ReportDTO;
 import com.uralys.tribes.entities.dto.SmithDTO;
 import com.uralys.utils.Utils;
 
@@ -133,7 +132,6 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		playerDTO.setGameName(gameName);
 		playerDTO.setName(playerName);
 		playerDTO.setLastTurnPlayed(0);
-		playerDTO.setReportUIDs(new ArrayList<String>());
 		
 		persist(playerDTO);
 
@@ -401,14 +399,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		
 		playerDTO.setLastTurnPlayed(player.getLastTurnPlayed());
 		playerDTO.setLands(player.getLands());
-		playerDTO.setReportUIDs(new ArrayList<String>());
 		
-		try{
-			ReportDTO reportDTO = pm.getObjectById(ReportDTO.class, playerDTO.getReportUIDs().get(0));
-			pm.deletePersistent(reportDTO);
-		}
-		catch(Exception e){/* pas de rapport*/}
-
 		pm.close();
 	}
 	
@@ -618,6 +609,142 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			pm.deletePersistent(armyDTO);
 		}
 		
+		pm.close();
+	}
+	
+
+	@SuppressWarnings("unchecked")
+	public void deleteGame(String gameUID){
+
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		GameDTO gameDTO = pm.getObjectById(GameDTO.class, gameUID);
+		
+		Query query = pm.newQuery("select from " + PlayerDTO.class.getName() + " where :uids.contains(key)");
+		List<PlayerDTO> players = (List<PlayerDTO>) query.execute(gameDTO.getPlayerUIDs());
+		
+		//-----------------//
+		// delete conflicts
+		
+		removePreviousConflicts(players);
+		
+		//-----------------//
+		
+		for(PlayerDTO player : players){
+			
+			//-----------------//
+			// delete cities
+
+			if(player.getCityUIDs().size() > 0){
+				query = pm.newQuery("select from " + CityDTO.class.getName() + " where :uids.contains(key)");
+				List<CityDTO> cities = (List<CityDTO>) query.execute(player.getCityUIDs());
+				
+				for(CityDTO city : cities){
+
+					//-----------------//
+					// delete smiths
+					
+					if(city.getSmithUIDs().size() > 0){
+						query = pm.newQuery("select from " + SmithDTO.class.getName() + " where :uids.contains(key)");
+						List<SmithDTO> smiths = (List<SmithDTO>) query.execute(city.getSmithUIDs());
+						
+						for(SmithDTO smith : smiths){
+							pm.deletePersistent(smith);
+						}
+					}
+						
+					//-----------------//
+					// delete equipments
+					
+					if(city.getEquipmentStockUIDs().size() > 0){
+						query = pm.newQuery("select from " + EquipmentDTO.class.getName() + " where :uids.contains(key)");
+						List<EquipmentDTO> equipments = (List<EquipmentDTO>) query.execute(city.getEquipmentStockUIDs());
+						
+						for(EquipmentDTO equipment : equipments){
+							pm.deletePersistent(equipment);
+						}
+					}
+						
+					pm.deletePersistent(city);
+				}
+			}
+			
+
+			//-----------------//
+			// delete armies
+
+			if(player.getArmyUIDs().size() > 0){
+				query = pm.newQuery("select from " + ArmyDTO.class.getName() + " where :uids.contains(key)");
+				List<ArmyDTO> armies = (List<ArmyDTO>) query.execute(player.getArmyUIDs());
+
+				for(ArmyDTO army : armies){
+
+					//-----------------//
+					// delete equipments
+
+					if(army.getEquipmentUIDs().size() > 0){
+						query = pm.newQuery("select from " + EquipmentDTO.class.getName() + " where :uids.contains(key)");
+						List<EquipmentDTO> equipments = (List<EquipmentDTO>) query.execute(army.getEquipmentUIDs());
+						
+						for(EquipmentDTO equipment : equipments){
+							pm.deletePersistent(equipment);
+						}
+					}
+					
+					
+					//-----------------//
+					// delete moves
+
+					if(army.getMoveUIDs().size() > 0){
+						query = pm.newQuery("select from " + MoveDTO.class.getName() + " where :uids.contains(key)");
+						List<MoveDTO> moves = (List<MoveDTO>) query.execute(army.getMoveUIDs());
+						
+						for(MoveDTO move : moves){
+							pm.deletePersistent(move);
+						}
+					}
+				}
+			}
+			
+			//-----------------//
+			// delete merchants
+
+			if(player.getMerchantUIDs().size() > 0){
+				query = pm.newQuery("select from " + ArmyDTO.class.getName() + " where :uids.contains(key)");
+				List<ArmyDTO> merchants = (List<ArmyDTO>) query.execute(player.getMerchantUIDs());
+				
+				for(ArmyDTO merchant : merchants){
+					
+					//-----------------//
+					// delete equipments
+					
+					if(merchant.getEquipmentUIDs().size() > 0){
+						query = pm.newQuery("select from " + EquipmentDTO.class.getName() + " where :uids.contains(key)");
+						List<EquipmentDTO> equipments = (List<EquipmentDTO>) query.execute(merchant.getEquipmentUIDs());
+						
+						for(EquipmentDTO equipment : equipments){
+							pm.deletePersistent(equipment);
+						}
+						
+					}
+						
+					//-----------------//
+					// delete moves
+					if(merchant.getMoveUIDs().size() > 0){
+						query = pm.newQuery("select from " + MoveDTO.class.getName() + " where :uids.contains(key)");
+						List<MoveDTO> moves = (List<MoveDTO>) query.execute(merchant.getMoveUIDs());
+						
+						for(MoveDTO move : moves){
+							pm.deletePersistent(move);
+						}
+					}
+
+				}
+			}
+			
+			pm.deletePersistent(player);
+		}
+
+		pm.deletePersistent(gameDTO);
 		pm.close();
 	}
 

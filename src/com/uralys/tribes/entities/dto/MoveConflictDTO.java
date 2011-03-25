@@ -27,6 +27,8 @@ public class MoveConflictDTO {
 	@Persistent private Integer armyArmors;
 	@Persistent private Integer xFrom;
 	@Persistent private Integer yFrom;
+	
+	@Persistent private Boolean armyStanding;
 
 	//-----------------------------------------------------------------------------------//
 
@@ -77,6 +79,12 @@ public class MoveConflictDTO {
 	}
 	public void setyFrom(Integer yFrom) {
 		this.yFrom = yFrom;
+	}
+	public Boolean getArmyStanding() {
+		return armyStanding;
+	}
+	public void setArmyStanding(Boolean armyStanding) {
+		this.armyStanding = armyStanding;
 	}
 	
 	//-----------------------------------------------------------------------------------//

@@ -387,6 +387,7 @@ public class EntitiesConverter {
 		moveConflict.setArmySwords(moveConflictDTO.getArmySwords());
 		moveConflict.setxFrom(moveConflictDTO.getxFrom());
 		moveConflict.setyFrom(moveConflictDTO.getyFrom());
+		moveConflict.setArmyStanding(moveConflictDTO.getArmyStanding());
 		
 		return moveConflict;
 	}

@@ -11,6 +11,8 @@ public class MoveConflict {
 	private Integer xFrom;
 	private Integer yFrom;
 
+	private Boolean armyStanding;
+
 	//-----------------------------------------------------------------------------------//
 
 	public Integer getArmySize() {
@@ -48,6 +50,12 @@ public class MoveConflict {
 	}
 	public void setyFrom(Integer yFrom) {
 		this.yFrom = yFrom;
+	}
+	public Boolean getArmyStanding() {
+		return armyStanding;
+	}
+	public void setArmyStanding(Boolean armyStanding) {
+		this.armyStanding = armyStanding;
 	}
 	
 	//-----------------------------------------------------------------------------------//

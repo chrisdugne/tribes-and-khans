@@ -226,8 +226,9 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		
 		
 		//-----------------------------------------------------------------------------------//
+		int numplayer=1;
 		for (String playerUID : game.getPlayerUIDs()){
-			createCity(null, playerUID, pm);
+			createCity(null, playerUID, pm, numplayer++);
 		}
 		
 		//-----------------------------------------------------------------------------------//
@@ -238,7 +239,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	}
 
 
-	private void createCity(City cityFromFlex, String playerUID, PersistenceManager pm) {
+	private void createCity(City cityFromFlex, String playerUID, PersistenceManager pm, int numplayer) {
 		PlayerDTO player = pm.getObjectById(PlayerDTO.class, playerUID);
 		
 		CityDTO city = new CityDTO();
@@ -259,8 +260,8 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		city.setPeopleCreatingWood(0);
 		city.setPeopleCreatingIron(0);
 
-		city.setX(cityFromFlex == null ? Utils.random(2400) + 300 : cityFromFlex.getX());
-		city.setY(cityFromFlex == null ? Utils.random(2400) + 300 : cityFromFlex.getY());
+		city.setX(cityFromFlex == null ? getInitialCityX(numplayer) : cityFromFlex.getX());
+		city.setY(cityFromFlex == null ? getInitialCityY(numplayer) : cityFromFlex.getY());
 		
 		city.setCreationTurn(cityFromFlex == null ? 0 : cityFromFlex.getCreationTurn());
 		
@@ -294,6 +295,58 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			player.setLastTurnPlayed(0);
 		
 		player.getCityUIDs().add(cityUID);
+	}
+
+	private int getInitialCityX(int numplayer) {
+		switch(numplayer){
+			case 1:
+				return 1500;
+			case 2:
+				return 1500;
+			case 3:
+				return 250;
+			case 4:
+				return 2750;
+			case 5:
+				return 250;
+			case 6:
+				return 2750;
+			case 7:
+				return 2750;
+			case 8:
+				return 250;
+			case 9:
+				return 1500;
+		
+			default :
+				return Utils.random(2400) + 300;
+		}
+	}
+
+	private int getInitialCityY(int numplayer) {
+		switch(numplayer){
+		case 1:
+			return 250;
+		case 2:
+			return 2750;
+		case 3:
+			return 1500;
+		case 4:
+			return 1500;
+		case 5:
+			return 250;
+		case 6:
+			return 250;
+		case 7:
+			return 2750;
+		case 8:
+			return 2750;
+		case 9:
+			return 1500;
+			
+		default :
+			return Utils.random(2400) + 300;
+		}
 	}
 
 	//==================================================================================================//
@@ -433,7 +486,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 
 	public void createCity(City city, String playerUID){
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
-		createCity(city, playerUID, pm);
+		createCity(city, playerUID, pm, -1);
 		pm.close();
 	}
 
@@ -727,27 +780,6 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 						move.setyTo((int)(move.getyTo() + size));
 						dummyMoves.add(move.getMoveUID());
 					}
-					else{
-						// on rajoute en gros le rayon en plus a chaque bout du move
-//						if(move.getxFrom() < move.getxTo()){
-//							move.setxFrom((int)(move.getxFrom() - size));
-//							move.setxTo((int)(move.getxTo() + size));
-//						}
-//						else{
-//							move.setxFrom((int)(move.getxFrom() + size));
-//							move.setxTo((int)(move.getxTo() - size));
-//						}
-//
-//						if(move.getyFrom() < move.getyTo()){
-//							move.setyFrom((int)(move.getyFrom() - size));
-//							move.setyTo((int)(move.getyTo() + size));
-//						}
-//						else{
-//							move.setyFrom((int)(move.getyFrom() + size));
-//							move.setyTo((int)(move.getyTo() - size));
-//						}
-					}
-					
 					
 					debugMoveIds.put(move.getMoveUID(), debugMoveId);
 					if(debug)log.info("register a move from " + move.getxFrom() + "," + move.getyFrom() + " | to " + move.getxTo() + "," + move.getyTo() + " | " + move.getMoveUID() + " | num : " + debugMoveId++);
@@ -823,26 +855,6 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			
 			if(dummyMoves.contains(move.getMoveUID())) // on ne deplace pas les unites pour lesquelles on a genere le move sur leur diametre
 				continue;
-			
-			// on enleve le rayon qui a ete rajoute pour les calculs a chaque bout du move
-//			double size = rayon(moveArmyMap.get(move).getSize());
-//			if(move.getxFrom() < move.getxTo()){
-//				move.setxFrom((int)(move.getxFrom() + size));
-//				move.setxTo((int)(move.getxTo() - size));
-//			}
-//			else{
-//				move.setxFrom((int)(move.getxFrom() - size));
-//				move.setxTo((int)(move.getxTo() + size));
-//			}
-//
-//			if(move.getyFrom() < move.getyTo()){
-//				move.setyFrom((int)(move.getyFrom() + size));
-//				move.setyTo((int)(move.getyTo() - size));
-//			}
-//			else{
-//				move.setyFrom((int)(move.getyFrom() - size));
-//				move.setyTo((int)(move.getyTo() + size));
-//			}
 			
 			String moveOriginalInfo = " : mouvement prevu de [" + move.getxFrom() + "," + move.getyFrom()  + "] ˆ [" + move.getxTo() + "," + move.getyTo()  + "]";
 			armyInfoMoveMap.put(moveArmyMap.get(move), moveOriginalInfo);
@@ -999,6 +1011,11 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 				moveConflictDTO.setxFrom(armyMoveMap.get(army).getxFrom());
 				moveConflictDTO.setyFrom(armyMoveMap.get(army).getyFrom());
 				
+				if(dummyMoves.contains(armyMoveMap.get(army).getMoveUID()))
+					moveConflictDTO.setArmyStanding(true);
+				else
+					moveConflictDTO.setArmyStanding(false);
+				
 				for(EquipmentDTO equipment : army.getEquipments()){
 					int equipmentSize = equipment.getSize() > army.getSize() ? army.getSize() : equipment.getSize();
 					ItemDTO item = equipment.getItem();
@@ -1033,6 +1050,11 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 				
 				moveConflictDTO.setxFrom(armyMoveMap.get(army).getxFrom());
 				moveConflictDTO.setyFrom(armyMoveMap.get(army).getyFrom());
+
+				if(dummyMoves.contains(armyMoveMap.get(army).getMoveUID()))
+					moveConflictDTO.setArmyStanding(true);
+				else
+					moveConflictDTO.setArmyStanding(false);
 				
 				for(EquipmentDTO equipment : army.getEquipments()){
 					int equipmentSize = equipment.getSize() > army.getSize() ? army.getSize() : equipment.getSize();
@@ -1950,7 +1972,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	 * rayon d'une armee
 	 */
 	private static int rayon(int size) {
-		return (int) (Math.sqrt(size)/4 + 2); // min 2 pixels
+		return (int) (Math.sqrt(size)/4 + 5); // marge 5 pixels
 	}
 
 	private static int meetingX(int x1From, int x1To, int y1From, int y1To, int x2From, int x2To, int y2From, int y2To){

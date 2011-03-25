@@ -297,9 +297,10 @@ public class GameManager implements IGameManager {
 					log.info("----");
 					log.info("force play");
 
+
 					game.setCurrentTurn(game.getCurrentTurn() + nbTurnPlayedWithoutEveryone);
 					game.setBeginTurnTimeMillis(game.getBeginTurnTimeMillis() + game.getNbMinByTurn()*60*1000*nbTurnPlayedWithoutEveryone);					
-					
+					player.setLastTurnPlayed(game.getCurrentTurn()-1);
 					
 					for(int i = 0; i < nbTurnPlayedByOthersWithoutPlayer + nbTurnPlayedWithoutEveryone; i++){
 						forcePlayTurn(player);
@@ -323,8 +324,6 @@ public class GameManager implements IGameManager {
 
 		log.info("-------------------------------------------------");
 		log.info("Tour force pour joueur : " + player.getName());
-		
-		player.setLastTurnPlayed(player.getLastTurnPlayed()+1);
 		
 		for(City city : player.getCities()){
 			log.info("-------------------------------------------------");

@@ -84,12 +84,13 @@ package com.uralys.tribes.core
 		public function redrawAllEntities():void{
 			
 			try{
+				board.mapTiles.removeAllElements();
 				board.boardEntities.removeAllElements();
 				board.boardImages.removeAllElements();
 				board.boardTexts.removeAllElements();
 			}catch(e:Error){}
 			
-			drawForest();
+			drawMap();
 			drawConflicts();
 			
 			for each (var player:Player in game.players){
@@ -138,62 +139,126 @@ package com.uralys.tribes.core
 				image.x = conflict.x-25;
 				image.y = conflict.y-25;
 				
-				board.forest.addElement(image);
+				board.mapTiles.addElement(image);
 			}
 				
 		}
 		
-		public function drawForest():void{
+		public function drawMap():void{
+			
+			//------------------------------------------------//
+			// init du tableau 29x29
+			
+			Session.map = [];
+			
+			for(var i:int=0; i < board.image.width/Numbers.LAND_WIDTH; i++){
+				Session.map[i] = [];
+				for(var j:int=0; j < board.image.height/Numbers.LAND_HEIGHT; j++){
+					Session.map[i][j] = Numbers.NOTHING;
+				}
+			}
 			
 			//------------------------------------------------//
 			// city floors
 			
-//			for each (var player:Player in game.players){
-//				for each (var city:City in player.cities){
-//					var image:Image = new Image();
-//					image.source = ImageContainer.SOL_VILLE;
-//					
-//					image.x = city.x - city.radius - 130;
-//					image.y = city.y - city.radius - 100;
-//					
-//					forest.addElement(image);
-//					
-//					trace("----");
-//					trace(image.x);
-//					trace(image.y);
-//					trace(image.width);
-//					trace(image.height);
-//					trace(image.source.width);
-//					trace(image.source.height);
-//				}
-//			}
-
+			for each (var player:Player in game.players){
+				for each (var city:City in player.cities){
+					
+					// de 0 a 29
+					var cityLandXmin:int = Math.floor((city.x - city.radius)/Numbers.LAND_WIDTH);	
+					var cityLandXmax:int = Math.floor((city.x + city.radius)/Numbers.LAND_WIDTH);	
+					var cityLandYmin:int = Math.floor((city.y - city.radius)/Numbers.LAND_HEIGHT);	
+					var cityLandYmax:int = Math.floor((city.y + city.radius)/Numbers.LAND_HEIGHT);
+					
+					
+					for(var i:int=cityLandXmin; i <= cityLandXmax; i++){
+						for(var j:int=cityLandYmin; j <= cityLandYmax; j++){
+							
+							var image:Image = new Image();
+							image.source = ImageContainer.SOL_VILLE;
+							
+							image.x = i * Numbers.LAND_WIDTH;
+							image.y = j * Numbers.LAND_HEIGHT;
+							
+							Session.map[i][j] = Numbers.PLAIN;
+							
+							board.mapTiles.addElement(image);
+						}
+					}
+				}
+			}
+			
 			//------------------------------------------------//
-			// city forests
+			// lacs (3x3 cases)
 			
-			var x:int = -100;
-			var y:int = -100;
+			var lacsX:Array = [8, 18, 8, 18];
+			var lacsY:Array = [8, 8, 18, 18];
 			
-			while(y < 2800){
-				while(x < 2800){
+			for(i = 0; i < lacsX.length; i++){
+				var image:Image = new Image();
+				
+				switch(Utils.random(2)){
+					case 1:
+						image.source = ImageContainer.LAC1;
+						break;
+					case 2:
+						image.source = ImageContainer.LAC2;
+						break;
 					
-					var forestNeeded:Boolean = true;
+				}
+				
+				image.x = lacsX[i] * Numbers.LAND_WIDTH;
+				image.y = lacsY[i] * Numbers.LAND_HEIGHT;
+				
+				// 3x3 cases en lac
+				for(var k:int = 0; k < 3; k++){
+					for(var l:int = 0; l < 3; l++){
+						Session.map[lacsX[i] + k][lacsY[i] + l] = Numbers.LAKE;
+					}
+				}
+				
+				board.mapTiles.addElement(image);
+			}
+			
+			//------------------------------------------------//
+			// rochers (2x2 cases)
+			
+			var rocsX:Array = [9, 19, 9, 19];
+			var rocsY:Array = [2, 2, 27, 27];
+			
+			for(i = 0; i < lacsX.length; i++){
+				var image:Image = new Image();
+				
+				switch(Utils.random(2)){
+					case 1:
+						image.source = ImageContainer.ROCHE1;
+						break;
+					case 2:
+						image.source = ImageContainer.ROCHE2;
+						break;
 					
-//					for each (var player:Player in game.players){
-//						for each (var city:City in player.cities){
-//							
-//							if(Math.abs(city.x - city.radius - x - 140) < 240 && Math.abs(city.y - city.radius - y - 150) < 160){
-//								forestNeeded = false;
-//								break;
-//							}
-//						}
-//						
-//						if(!forestNeeded)
-//							break;
-//					}
-					if(forestNeeded){
+				}
+				
+				image.x = rocsX[i] * Numbers.LAND_WIDTH;
+				image.y = rocsY[i] * Numbers.LAND_HEIGHT;
+				
+				// 3x3 cases en lac
+				for(var k:int = 0; k < 2; k++){
+					for(var l:int = 0; l < 2; l++){
+						Session.map[rocsX[i] + k][rocsY[i] + l] = Numbers.ROCK;
+					}
+				}
+				
+				board.mapTiles.addElement(image);
+			}
+			
+			//------------------------------------------------//
+			// forests
+			
+			for(var i:int=0; i < board.image.width/Numbers.LAND_WIDTH; i++){
+				for(var j:int=0; j < board.image.height/Numbers.LAND_HEIGHT; j++){
+					if(Session.map[i][j] == Numbers.NOTHING){
 						var image:Image = new Image();
-						
 						switch(Utils.random(2)){
 							case 1:
 								image.source = ImageContainer.FORET1;
@@ -204,56 +269,14 @@ package com.uralys.tribes.core
 							
 						}
 						
-//						var special:int = Utils.random(40);
-//						
-//						switch(special){
-//							case 1:
-//								switch(Utils.random(2)){
-//									case 1:
-//										image.source = ImageContainer.LAC1;
-//										break;
-//									case 2:
-//										image.source = ImageContainer.LAC2;
-//										break;
-//									
-//								}
-//								break;
-//							case 2:
-//								switch(Utils.random(2)){
-//									case 1:
-//										image.source = ImageContainer.ROCHE1;
-//										break;
-//									case 2:
-//										image.source = ImageContainer.ROCHE2;
-//										break;
-//									
-//								}
-//								break;
-//							default :
-//								switch(Utils.random(2)){
-//									case 1:
-//										image.source = ImageContainer.FORET1;
-//										break;
-//									case 2:
-//										image.source = ImageContainer.FORET2;
-//										break;
-//									
-//								}
-//						}
+						image.x = i * Numbers.LAND_WIDTH - 12;
+						image.y = j * Numbers.LAND_HEIGHT - 12;
 						
-						
-						image.x = x;
-						image.y = y;
-						
-						board.forest.addElement(image);
+						board.mapTiles.addElement(image);
 					}
-					
-					x += 100 + Utils.random(100);
 				}
-				
-				x=-100;
-				y += 70 + Utils.random(100);
 			}
+			
 		}
 
 		//=====================================================================================//
@@ -677,6 +700,7 @@ package com.uralys.tribes.core
 		
 		private var conflictInDisplay:Conflict;
 		private var moves:ArrayCollection;
+		private var imagesForTheReplay:ArrayCollection;
 		
 		public function displayConflict(conflict:Conflict):void{
 			
@@ -701,6 +725,7 @@ package com.uralys.tribes.core
 		protected function boardPlaced(event:EffectEvent):void{
 			
 			moves = new ArrayCollection();
+			imagesForTheReplay = new ArrayCollection();
 			
 			for each(var moveConflict:MoveConflict in conflictInDisplay.moveAllies){
 				moves.addItem(moveArmyOnConflict(moveConflict, conflictInDisplay.x, conflictInDisplay.y));
@@ -710,7 +735,16 @@ package com.uralys.tribes.core
 				moves.addItem(moveArmyOnConflict(moveConflict, conflictInDisplay.x, conflictInDisplay.y));
 			}
 			
-			moves.getItemAt(moves.length-1).addEventListener(EffectEvent.EFFECT_END, moveConflictDone);
+			// recupere le dernier move (on part de la fin et on chope le premier non null (null = armyStanding : pas de move))
+			var i:int = 1;
+			var lastMove:Move = null;
+			while(lastMove == null){
+				lastMove = moves.getItemAt(moves.length-i) as Move;
+				i++;
+			}
+			
+			//attend la fin du dernier move
+			lastMove.addEventListener(EffectEvent.EFFECT_END, moveConflictDone);
 		}
 
 		private function moveArmyOnConflict(moveConflict:MoveConflict, xTo:int, yTo:int):Move{
@@ -718,26 +752,32 @@ package com.uralys.tribes.core
 			var radius:int =  Math.sqrt(moveConflict.armySize)/2 + 2;
 			var images:Array = drawArmyImages(moveConflict.xFrom, moveConflict.yFrom, radius, 1);
 			
-			var mover:Move = new Move();
-			mover.targets = images;
-			mover.xFrom = moveConflict.xFrom;
-			mover.yFrom = moveConflict.yFrom;
-			mover.xTo = xTo-12;
-			mover.yTo = yTo-12;
-			mover.duration = 2000;
+			for(var i:int=0; i<images.length; i++){
+				imagesForTheReplay.addItem(images[i]);
+			}
 			
-			mover.play();
-			return mover;
+			if(!moveConflict.armyStanding){
+				var mover:Move = new Move();
+				mover.targets = images;
+				mover.xFrom = moveConflict.xFrom;
+				mover.yFrom = moveConflict.yFrom;
+				mover.xTo = xTo-12;
+				mover.yTo = yTo-12;
+				mover.duration = 2000;
+				
+				mover.play();
+				return mover;
+			}
+			else
+				return null;
 		}
 		
 		
 		protected function moveConflictDone(event:EffectEvent):void{
 			
-			for each(var move:Move in moves){
-				for each(var image:Image in move.targets){
-					image.visible = false;
-					image = null;
-				}
+			for each(var image:Image in imagesForTheReplay){
+				image.visible = false;
+				image = null;
 			}
 			
 			FlexGlobals.topLevelApplication.showconflicts.play();

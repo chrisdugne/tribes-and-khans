@@ -54,6 +54,14 @@ package com.uralys.tribes.entities
 		public function set yFrom(o:int):void {
 			_yFrom = o;
 		}
+
+		public function get armyStanding():Boolean {
+			return _armyStanding;
+		}
+		
+		public function set armyStanding(o:Boolean):void {
+			_armyStanding = o;
+		}
 		
 		protected var _armySize:int;
 		protected var _armyBows:int;
@@ -61,6 +69,7 @@ package com.uralys.tribes.entities
 		protected var _armyArmors:int;
 		protected var _xFrom:int;
 		protected var _yFrom:int;
+		protected var _armyStanding:Boolean;
 
 
 	}

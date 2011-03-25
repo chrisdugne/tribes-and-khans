@@ -59,7 +59,6 @@
 			//----------------------------------------------------------//
 
 			protected function init():void{
-				trace("init");
 
 				timer = new Timer(41,1);
 				timer.addEventListener(TimerEvent.TIMER_COMPLETE, moveStoppedDuringDragging);
@@ -114,11 +113,6 @@
 						Session.currentPlayer = playerOfProfil;
 						this.selectedCity = Session.currentPlayer.cities.getItemAt(0) as City;
 						
-//						try{
-//							FlexGlobals.topLevelApplication.showReports(Session.currentPlayer.reports.getItemAt(0).report);	
-//						}
-//						catch(error:Error){}
-
 						break;
 					}
 				}
@@ -648,6 +642,7 @@
 				
 				//------------------------------------------------------------------//
 				
+				FlexGlobals.topLevelApplication.conflictsWindow.conflictsGroup.removeAllElements();
 				Session.currentPlayer.lastTurnPlayed ++;
 				GameManager.getInstance().saveTurn(Session.currentPlayer);
 				Pager.getInstance().goToPage(Home, Home.CURRENT_GAMES, Session.GAMES_PLAYING);
@@ -663,6 +658,7 @@
 						if(city.creationTurn == game.currentTurn)
 							continue;
 					
+						// de 0 a 29
 						var cityLandXmin:int = Math.floor((city.x - city.radius)/Numbers.LAND_WIDTH);	
 						var cityLandXmax:int = Math.floor((city.x + city.radius)/Numbers.LAND_WIDTH);	
 						var cityLandYmin:int = Math.floor((city.y - city.radius)/Numbers.LAND_HEIGHT);	
@@ -889,7 +885,7 @@
 						 mouseChildren="false"
 						 mouseEnabled="false"
 						 mouseEnabledWhereTransparent="false">
-						<s:Group id="forest"
+						<s:Group id="mapTiles"
 								 x="{image.x}"
 								 y="{image.y}"/>
 				</s:Group>

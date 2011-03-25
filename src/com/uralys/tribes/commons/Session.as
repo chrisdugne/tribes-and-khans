@@ -12,7 +12,7 @@ package com.uralys.tribes.commons
 		
 		//=====================================================//
 		
-		[Bindable] public static var VERSION:String = "1.0.33";
+		[Bindable] public static var VERSION:String = "1.0.34";
 		[Bindable] public static var LOGGED_IN:Boolean = false; 
 		[Bindable] public static var CONNECTED_TO_FACEBOOK:Boolean = false;
 		
@@ -66,6 +66,9 @@ package com.uralys.tribes.commons
 		
 		//=====================================================//
 		// BoardDrawer
+
+		// Array[Array] stocke le type de chaque 'land' (foret, plaine, lac, rocher)
+		public static var map:Array;
 		
 		// les cercles des entities sont dessinees sur la map
 		[Bindable] public static var DRAW_DETAILS:Boolean = true;

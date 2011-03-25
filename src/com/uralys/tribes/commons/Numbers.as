@@ -70,6 +70,13 @@ import mx.collections.ArrayCollection;
 
 	[Bindable] public static var LAND_WIDTH:int = 100;
 	[Bindable] public static var LAND_HEIGHT:int = 100;
+	
+	[Bindable] public static var NOTHING:int = 0;
+	[Bindable] public static var FOREST:int = 1;
+	[Bindable] public static var PLAIN:int = 2;
+	[Bindable] public static var LAKE:int = 3;
+	[Bindable] public static var ROCK:int = 4;
+	
 
 	//==================================================================================================//
 	// Item data

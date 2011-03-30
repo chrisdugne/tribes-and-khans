@@ -42,7 +42,7 @@
 			 height="100%">
 		<s:Rect left="0" right="0" top="0" bottom="0" radiusX="5" radiusY="5">
 			<s:fill>
-				<s:SolidColor color="{color}"/>
+				<s:SolidColor color="{color}" alpha="0.6"/>
 			</s:fill>
 		</s:Rect>
 		<s:VGroup width="100%" 

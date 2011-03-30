@@ -69,6 +69,10 @@
 	
 	<!-- ========================================================================================================== -->
 	
+	<s:HGroup horizontalAlign="center" top="200" width="100%">
+		<mx:Image source="{ImageContainer.GROUPE_PERSO}"/>
+	</s:HGroup>
+	
 	<s:VGroup width="100%"
 			  paddingTop="90"
 			  horizontalAlign="center"

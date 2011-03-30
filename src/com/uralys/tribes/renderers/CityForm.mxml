@@ -1268,6 +1268,17 @@
 			]]>
 		</fx:Script>
 	
+		<fx:Declarations>
+			<s:Fade id="fader" duration="1000" alphaFrom="1" alphaTo="0"/>
+			<s:Fade id="shower" duration="1000" alphaFrom="0" alphaTo="1"/>
+		</fx:Declarations>
+	
+		<mx:Image source="{ImageContainer.FERMIER}" x="950" y="-100" visible="{viewstack.selectedIndex == 0}" hideEffect="fader" showEffect="shower"/>
+		<mx:Image source="{ImageContainer.MARCHANDE}" x="1000" y="-100" visible="{viewstack.selectedIndex == 1}" hideEffect="fader" showEffect="shower"/>
+		<mx:Image source="{ImageContainer.FORGERON}" x="950" y="-100" visible="{viewstack.selectedIndex == 2}" hideEffect="fader" showEffect="shower"/>
+		<mx:Image source="{ImageContainer.FORGERON}" x="950" y="-100" visible="{viewstack.selectedIndex == 3}" hideEffect="fader" showEffect="shower"/>
+		<mx:Image source="{ImageContainer.MARCHAND}" x="950" y="-100" visible="{viewstack.selectedIndex == 4}" hideEffect="fader" showEffect="shower"/>
+		<mx:Image source="{ImageContainer.GUERRIER}" x="950" y="-100" visible="{viewstack.selectedIndex == 5}" hideEffect="fader" showEffect="shower"/>
 
 		<s:VGroup width="100%" horizontalAlign="center">
 			
@@ -1443,6 +1454,7 @@
 							</mx:GridRow>
 						</mx:Grid>
 					</s:HGroup>
+					
 				</s:NavigatorContent>
 				
 				<!-- =============================================================================================== -->

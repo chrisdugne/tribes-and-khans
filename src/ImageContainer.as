@@ -1,5 +1,11 @@
 package
 {
+	import flash.display.Bitmap;
+	import flash.display.Loader;
+	import flash.net.URLRequest;
+	
+	import mx.collections.ArrayCollection;
+	import mx.controls.Image;
 	      	 
 public final class ImageContainer
 {
@@ -45,7 +51,7 @@ public final class ImageContainer
 	[Embed(source="resources/embed/lac2.png")]
 	[Bindable] public static var LAC2:Class;
 
-	[Embed(source="resources/embed/lac1.png")]
+	[Embed(source="resources/embed/lac1.png")] 
 	[Bindable] public static var LAC1:Class;
 
 	[Embed(source="resources/embed/roche1.png")]
@@ -88,6 +94,69 @@ public final class ImageContainer
 
 	[Embed(source="resources/embed/conflit.png")]
 	[Bindable] public static var CONFLIT:Class;
+
+	//   ======================================================================//
+
+	[Bindable] public static var GROUPE_PERSO:Bitmap;
+	[Bindable] public static var FERMIER:Bitmap;
+	[Bindable] public static var FORGERON:Bitmap;
+	[Bindable] public static var MARCHAND:Bitmap;
+	[Bindable] public static var MARCHANDE:Bitmap;
+	[Bindable] public static var GUERRIER:Bitmap;
+
+	//   ======================================================================//
+	
+	private static var loader:Loader;
+	private static var request:URLRequest;
+	private static var currentImage:int = 0;
+	
+	public static var images:ArrayCollection = new ArrayCollection(
+		["webresources/images/persos/persos.png",
+		 "webresources/images/persos/fermier.png",
+		 "webresources/images/persos/marchand.png",
+		 "webresources/images/persos/marchande.png",
+		 "webresources/images/persos/guerrier.png",
+		 "webresources/images/persos/forgeron.png"]);
+	
+	public static function loadImages():void{
+		loadNextImage();
+	}
+
+	private static function loadNextImage():void{
+		loader = new Loader();
+		request = new URLRequest(images.getItemAt(currentImage) as String);
+		loader.contentLoaderInfo.addEventListener(Event.COMPLETE, onComplete);
+		loader.load(request);
+		
+	}
+	
+	private static function onComplete(event:Event):void {
+		switch(currentImage){
+			case 0:
+				GROUPE_PERSO = event.currentTarget.content;
+				break;
+			case 1:
+				FERMIER = event.currentTarget.content;
+				break;
+			case 2:
+				MARCHAND = event.currentTarget.content;
+				break;
+			case 3:
+				MARCHANDE = event.currentTarget.content;
+				break;
+			case 4:
+				GUERRIER = event.currentTarget.content;
+				break;
+			case 5:
+				FORGERON = event.currentTarget.content;
+				break;
+		}
+		
+		currentImage++;
+		if(currentImage < 6)
+			loadNextImage();
+	}
+
 	
 }
 }

@@ -95,8 +95,13 @@
 			
 		]]>
 	</fx:Script>
+	
+	<s:HGroup horizontalAlign="center" right="-650" bottom="-45" width="100%">
+		<mx:Image source="{ImageContainer.GROUPE_PERSO}"/>
+	</s:HGroup>
+	
 	<s:HGroup width="100%" visible="{Session.firstHomeLoadingDone}">
-		<s:Button label="My current Games" click="{getMyGames()}"/>
+		<s:Button label="Parties en cours" click="{getMyGames()}"/>
 		<mx:Spacer width="100%"/>
 		<s:VGroup>
 			<s:Button label="Create a new Game" click="{viewstack.selectedIndex=CREATE_GAME}"/>
@@ -125,4 +130,5 @@
 		
 		</mx:ViewStack>
 	</s:HGroup>
+	
 </s:Group>

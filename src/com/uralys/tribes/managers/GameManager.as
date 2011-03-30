@@ -8,7 +8,6 @@ package com.uralys.tribes.managers {
 	import com.uralys.tribes.entities.City;
 	import com.uralys.tribes.entities.Game;
 	import com.uralys.tribes.entities.Player;
-	import com.uralys.tribes.pages.GameInCreation;
 	import com.uralys.tribes.pages.Home;
 	import com.uralys.tribes.pages.Map;
 	

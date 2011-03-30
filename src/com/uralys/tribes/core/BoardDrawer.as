@@ -269,8 +269,8 @@ package com.uralys.tribes.core
 							
 						}
 						
-						image.x = i * Numbers.LAND_WIDTH - 12;
-						image.y = j * Numbers.LAND_HEIGHT - 12;
+						image.x = i * Numbers.LAND_WIDTH - 35;
+						image.y = j * Numbers.LAND_HEIGHT - 35;
 						
 						board.mapTiles.addElement(image);
 					}

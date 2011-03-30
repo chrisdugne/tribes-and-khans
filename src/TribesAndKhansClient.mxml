@@ -32,6 +32,8 @@
 				initBlazeDS();
 				Pager.getInstance().window = window;
 				Pager.getInstance().goToPage(Login);
+				
+				ImageContainer.loadImages();
 			}
 
 			// parfois le mapping flex-java n'est pas fait au premier appel, mais au 2e seulement..

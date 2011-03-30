@@ -7,15 +7,19 @@
 		<![CDATA[
 			import com.uralys.tribes.commons.Names;
 			import com.uralys.tribes.commons.Session;
+			import com.uralys.tribes.commons.Translations;
 			import com.uralys.tribes.core.Pager;
 			import com.uralys.tribes.managers.AccountManager;
 			import com.uralys.utils.SHA1;
 			import com.uralys.utils.Utils;
 			
+			import mx.controls.SWFLoader;
 			import mx.core.FlexGlobals;
 			
 			[Bindable] private var savedEmail:String = '';
 			[Bindable] private var savedPassword:String = '';
+			
+			private var loadingFlash:SWFLoader;
 			
 			private function initForm():void{
 				var sharedObject:SharedObject = SharedObject.getLocal(Names.SHARED_OBJECT_NAME);
@@ -69,19 +73,24 @@
 	
 	<!-- ========================================================================================================== -->
 	
-	<s:HGroup horizontalAlign="center" top="200" width="100%">
+	<s:VGroup horizontalAlign="center" top="180" width="100%">
+		<mx:SWFLoader source="{ImageContainer.LOADING}" 
+					  visible="{Session.WAIT_FOR_CONNECTION}"
+					  width="50" height="50"/>
+		<mx:Spacer height="-50"/>
 		<mx:Image source="{ImageContainer.GROUPE_PERSO}"/>
-	</s:HGroup>
+	</s:VGroup>
+	
 	
 	<s:VGroup width="100%"
 			  paddingTop="90"
 			  horizontalAlign="center"
 			  creationComplete="initForm()">
 		<mx:Spacer width="30"/>
-		<mx:Grid >
-			<mx:GridRow >
-				<mx:GridItem >
-					<s:Label text="email" />
+		<mx:Grid>
+			<mx:GridRow>
+				<mx:GridItem>
+					<s:Label text="Email"/>
 				</mx:GridItem>
 				<mx:GridItem>
 					<s:TextInput id="emailInput"
@@ -90,9 +99,9 @@
 								 width="200"/>
 				</mx:GridItem>
 			</mx:GridRow>
-			<mx:GridRow >
-				<mx:GridItem >
-					<s:Label text="password" />
+			<mx:GridRow>
+				<mx:GridItem>
+					<s:Label text="{Translations.PASSWORD.getItemAt(Session.LANGUAGE)}"/>
 				</mx:GridItem>
 				<mx:GridItem>
 					<s:TextInput id="passwordInput" 	
@@ -105,9 +114,11 @@
 		</mx:Grid>
 		<s:HGroup visible="{!Session.WAIT_FOR_CONNECTION}">
 			<mx:Spacer width="5"/>
-			<s:Button label="Create my account" click="{createAccount()}"/>
+			<s:Button label="{Translations.CREATE_ACCOUNT.getItemAt(Session.LANGUAGE)}" 
+					  click="{createAccount()}"/>
 			<mx:Spacer width="50"/>
-			<s:Button label="Log me in" click="{login()}"/>
+			<s:Button label="{Translations.LOG_ME_IN.getItemAt(Session.LANGUAGE)}" 
+					  click="{login()}"/>
 		</s:HGroup>
 	</s:VGroup>
 </s:Group>

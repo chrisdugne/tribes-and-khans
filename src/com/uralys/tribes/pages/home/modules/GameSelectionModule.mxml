@@ -11,6 +11,7 @@
 	<fx:Script>
 		<![CDATA[
 			import com.uralys.tribes.commons.Session;
+			import com.uralys.tribes.commons.Translations;
 			import com.uralys.tribes.entities.Game;
 			import com.uralys.tribes.managers.GameManager;
 			
@@ -50,8 +51,14 @@
 			  horizontalAlign="center">
 		<s:VGroup horizontalAlign="center">
 			<s:HGroup>
-				<s:Label text="{games.length > 0 ? (typeOfGameSelection == 1 ? 'Liste des parties en cours' : 'Joindre une partie') : (typeOfGameSelection == 1 ? '(Pas de partie en cours)' : '(Pas de partie à joindre)')}"/>
-				<s:Button id="refreshButton" label="Refresh" click="{refreshButton.visible=false; typeOfGameSelection == 1 ? GameManager.getInstance().getCurrentGames() : GameManager.getInstance().getGamesToJoin()}"/>
+				<s:Label text="{games.length > 0 ? (typeOfGameSelection == 1 ? Translations.GAME_LIST.getItemAt(Session.LANGUAGE) : Translations.GAMES_TO_JOIN.getItemAt(Session.LANGUAGE)) : (typeOfGameSelection == 1 ? '(Pas de partie en cours)' : '(Pas de partie à joindre)')}"/>
+				<s:Button id="refreshButton" label="{Translations.REFRESH.getItemAt(Session.LANGUAGE)}" click="{loading.visible = true; refreshButton.visible=false; typeOfGameSelection == 1 ? GameManager.getInstance().getCurrentGames() : GameManager.getInstance().getGamesToJoin()}"/>
+				<mx:Spacer width="-80"/>
+				<mx:SWFLoader source="{ImageContainer.LOADING}"
+							  visible="false"
+							  id="loading"
+							  width="25"
+							  height="25"/>
 			</s:HGroup> 
 			
 			<s:Scroller height="450">

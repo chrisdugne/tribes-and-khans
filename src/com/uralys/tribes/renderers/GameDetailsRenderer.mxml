@@ -8,6 +8,7 @@
 	<fx:Script>
 		<![CDATA[
 			import com.uralys.tribes.commons.Session;
+			import com.uralys.tribes.commons.Translations;
 			import com.uralys.tribes.core.Pager;
 			import com.uralys.tribes.entities.Game;
 			import com.uralys.tribes.managers.GameManager;
@@ -56,20 +57,20 @@
 			<s:HGroup width="100%"  horizontalAlign="center">
 				<s:Label id="labelGameName" text="{data.name}"/>
 			</s:HGroup>
-			<s:Label text="{data.players.length} joueurs :"/>
+			<s:Label text="{data.players.length} {Translations.PLAYERS.getItemAt(Session.LANGUAGE)} :"/>
 			<s:List id="playerList" 
 					borderVisible="false" 
 					width="210" 
 					itemRenderer="com.uralys.tribes.renderers.PlayerListRenderer"
 					dataProvider="{data.players}"/>
 			<s:HGroup>
-				<s:Label text="Minutes max par tour : "/>
-				<s:Label text="{data.nbMinByTurn}"/>
+				<s:Label text="Temps max par tour : "/>
+				<s:Label text="{data.nbMinByTurn/60} H"/>
 			</s:HGroup>	
 			
-			<s:Label text="{data.status == Game.IN_CREATION ? '' : 'Tour en cours : ' + data.currentTurn}"/>
+			<s:Label text="{data.status == Game.IN_CREATION ? '' : Translations.TURN.getItemAt(Session.LANGUAGE) + data.currentTurn}"/>
 			<mx:Spacer height="10"/>
-			<s:Label text="{data.status == Game.IN_CREATION ? 'Elle n\'est pas encore lancee' : 'Fin du tour : ' + data.getPeriod()}"/>
+			<s:Label text="{data.status == Game.IN_CREATION ? Translations.NOT_LAUNCHED.getItemAt(Session.LANGUAGE) : 'Fin du tour : ' + data.getPeriod()}"/>
 			
 			<s:Label text="(Pas assez de joueurs)" 
 					 visible="{data.players.length==1}" 
@@ -80,8 +81,8 @@
 					 includeInLayout="{color == 0x008b45}"/>
 			
 			<s:Label text="{Session.remainingTime}" 
-					 visible="{color == 0x00FF33}" 
-					 includeInLayout="{color == 0x00FF33}"/>
+					 visible="{data.status != Game.IN_CREATION}" 
+					 includeInLayout="{data.status != Game.IN_CREATION}"/>
 			
 			<!-- ====== Actions ====== -->
 			<s:Button label="Lancer la partie"

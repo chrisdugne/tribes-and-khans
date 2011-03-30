@@ -9,6 +9,7 @@
 	<fx:Script>
 		<![CDATA[
 			import com.uralys.tribes.commons.Session;
+			import com.uralys.tribes.commons.Translations;
 			import com.uralys.tribes.core.Pager;
 			import com.uralys.tribes.managers.GameManager;
 			import com.uralys.tribes.pages.home.modules._IGameSelectionModule;
@@ -62,11 +63,17 @@
 			//----------------------------------------------------------//
 		
 			protected function getMyGames():void{
+				
+				leftLoading.visible = true;
+				
 				games = null;
 				GameManager.getInstance().getCurrentGames();
 			}
 			
 			private function getGamesToJoin():void{
+				
+				rightLoading.visible = true;
+				
 				games = null;
 				GameManager.getInstance().getGamesToJoin();
 			}
@@ -74,6 +81,9 @@
 			//----------------------------------------------------------//
 			
 			private function setGames4JoinGameModule():void{
+				
+				rightLoading.visible = false;
+				
 				if(joinGameModule.child && games != null)
 					(joinGameModule.child as _IGameSelectionModule).setGames(games, 2);
 			}
@@ -81,6 +91,8 @@
 			//----------------------------------------------------------//
 			
 			private function setGames4GameSelectionModule():void{
+				
+				leftLoading.visible = false;
 				
 				// applique uniquement au premier appel : lors de linit 
 				Session.firstHomeLoadingDone = true;
@@ -101,11 +113,23 @@
 	</s:HGroup>
 	
 	<s:HGroup width="100%" visible="{Session.firstHomeLoadingDone}">
-		<s:Button label="Parties en cours" click="{getMyGames()}"/>
+		<s:VGroup paddingLeft="5" horizontalAlign="center">
+			<s:Button label="{Translations.YOUR_GAMES.getItemAt(Session.LANGUAGE)}" click="{getMyGames()}"/>
+			<mx:SWFLoader source="{ImageContainer.LOADING}" 
+						  visible="false"
+						  id="leftLoading"
+						  width="25"
+						  height="25"/>
+		</s:VGroup>
 		<mx:Spacer width="100%"/>
-		<s:VGroup>
-			<s:Button label="Create a new Game" click="{viewstack.selectedIndex=CREATE_GAME}"/>
-			<s:Button label="Join a Game" click="{getGamesToJoin()}"/>
+		<s:VGroup paddingRight="5" horizontalAlign="center">
+			<s:Button label="{Translations.NEW_GAME.getItemAt(Session.LANGUAGE)}" click="{viewstack.selectedIndex=CREATE_GAME}"/>
+			<s:Button label="{Translations.JOIN_GAME.getItemAt(Session.LANGUAGE)}" click="{getGamesToJoin()}"/>
+			<mx:SWFLoader source="{ImageContainer.LOADING}"
+						  visible="false"
+						  id="rightLoading"
+						  width="25"
+						  height="25"/>
 		</s:VGroup>
 	</s:HGroup>
 	

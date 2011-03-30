@@ -142,5 +142,20 @@ package com.uralys.tribes.entities
 		{
 			_conflicts = value;
 		}
+
+		//-------------------------------------------------------//
+		// flex only
+		
+		private var _hasAlreadyPlayedHisTurn:Boolean;
+		
+		public function get hasAlreadyPlayedHisTurn():Boolean
+		{
+			return _hasAlreadyPlayedHisTurn;
+		}
+		
+		public function set hasAlreadyPlayedHisTurn(value:Boolean):void
+		{
+			_hasAlreadyPlayedHisTurn = value;
+		}
 }
 }

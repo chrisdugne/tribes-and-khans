@@ -18,6 +18,7 @@
 		<![CDATA[
 			import com.uralys.tribes.commons.Numbers;
 			import com.uralys.tribes.commons.Session;
+			import com.uralys.tribes.commons.Translations;
 			import com.uralys.tribes.entities.Game;
 			import com.uralys.tribes.entities.Player;
 			import com.uralys.utils.Utils;
@@ -44,6 +45,11 @@
 			private function initGame():void{
 				
 				var game:Game = (data as Game);
+				
+				for each (var player:Player in game.players){
+					player.hasAlreadyPlayedHisTurn = player.lastTurnPlayed == game.currentTurn;
+				}
+				
 				if(data.status == Game.IN_CREATION){
 					color = 0x33AAFF;
 					colorHovered = 0x33AAFF;
@@ -58,13 +64,15 @@
 								color = 0x00FF33;
 								colorHovered = 0x00FF33;
 								colorSelected = 0x00FF33;
-								}
+								player.hasAlreadyPlayedHisTurn = false;
+							}
 							else{
 								// tour joue, mais tour toujours en cours
 								// vert fonce
 								color = 0x008b45;
 								colorHovered = 0x008b45;
 								colorSelected = 0x008b45;
+								player.hasAlreadyPlayedHisTurn = true;
 							}
 							
 							break;
@@ -85,8 +93,11 @@
 				// on enleve les tranches des k tours passes entre temps
 				while(tempsEcoule > tempsParTour)
 					tempsEcoule -= tempsParTour;
-					
-				return "Il vous reste : " + Utils.round((tempsParTour-tempsEcoule)/60000,0) + " min";
+				
+				var heures:int = Math.floor((tempsParTour-tempsEcoule)/3600000);
+				var min:int = Utils.round((tempsParTour-tempsEcoule-(heures*3600000))/60000,0);
+
+				return "Il reste : " + (heures > 0 ? (heures + " h ") : '') + min + " min";
 			}
 		]]>
 	</fx:Script>
@@ -124,7 +135,7 @@
 				 color="#FFFFFF" 
 				 right="20" 
 				 verticalCenter="2"
-				 text="{data.status == Game.IN_CREATION ? 'En creation' : 'En cours'}"/>
+				 text="{data.status == Game.IN_CREATION ? Translations.CREATION.getItemAt(Session.LANGUAGE) : Translations.RUNNING.getItemAt(Session.LANGUAGE)}"/>
 	</s:Group>
 	
 </s:ItemRenderer>

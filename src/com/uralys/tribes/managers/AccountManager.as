@@ -76,6 +76,11 @@ package com.uralys.tribes.managers {
 			playerWrapper.getProfil(Session.uralysProfile.uralysUID);
 		}
 		
+		//--------------------------------------------------------------------------------------------//
+		
+		public function changeLanguage(uralysUID:String, language:int):void{
+			accountWrapper.changeLanguage(uralysUID, language);
+		}
 
 		//============================================================================================//
 		//  RESULTS FROM SERVER	

@@ -5,7 +5,9 @@
 				autoDrawBackground="true">
 	
 	<s:HGroup width="100%" horizontalAlign="center">
-		<s:Label text="{data.name}"/>
+		<s:Label text="{data.name}" color="{data.hasAlreadyPlayedHisTurn ? 0x007700 : 0x440000}"/>
+		<mx:Spacer width="100%"/>
+		<mx:Image source="{ImageContainer.CHECK}" visible="{data.hasAlreadyPlayedHisTurn}"/>
 	</s:HGroup>
 	
 </s:ItemRenderer>

@@ -11,6 +11,22 @@ public final class ImageContainer
 {
 	//   ======================================================================//
 	
+	[Embed(source="resources/embed/loading.swf")]
+	[Bindable] public static var LOADING:Class;
+	
+	//   ======================================================================//
+
+	[Embed(source="resources/embed/flags/fr.png")]
+	[Bindable] public static var FR_FLAG:Class;
+
+	[Embed(source="resources/embed/flags/en.png")]
+	[Bindable] public static var EN_FLAG:Class;
+
+	[Embed(source="resources/embed/flags/us.png")]
+	[Bindable] public static var US_FLAG:Class;
+	
+	//   ======================================================================//
+	
 	[Embed(source="resources/embed/map.jpg")]
 	[Bindable] public static var MAP:Class;
 
@@ -25,6 +41,14 @@ public final class ImageContainer
 
 	[Embed(source="resources/embed/icons/gold.png")]
 	[Bindable] public static var GOLD:Class;
+
+	//   ======================================================================//
+
+	[Embed(source="resources/embed/icons/cross.png")]
+	[Bindable] public static var CROSS:Class;
+
+	[Embed(source="resources/embed/icons/check.png")]
+	[Bindable] public static var CHECK:Class;
 
 	//   ======================================================================//
 

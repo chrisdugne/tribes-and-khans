@@ -16,8 +16,11 @@
 	
 	<fx:Script>
 		<![CDATA[
+			import com.uralys.tribes.commons.Names;
 			import com.uralys.tribes.commons.Session;
+			import com.uralys.tribes.commons.Translations;
 			import com.uralys.tribes.core.Pager;
+			import com.uralys.tribes.managers.AccountManager;
 			import com.uralys.tribes.pages.Login;
 			import com.uralys.tribes.pages.Map;
 			
@@ -34,6 +37,10 @@
 				Pager.getInstance().goToPage(Login);
 				
 				ImageContainer.loadImages();
+				
+				
+				var sharedObject:SharedObject = SharedObject.getLocal(Names.SHARED_OBJECT_NAME);
+				Session.LANGUAGE = sharedObject.data.lastLanguage;
 			}
 
 			// parfois le mapping flex-java n'est pas fait au premier appel, mais au 2e seulement..
@@ -74,7 +81,31 @@
 				if(Session.currentPlayer.conflicts.length > 0)
 					showconflicts.play();
 			}
+			
+			//==================================================================================================//
+			
+			private function french():void {
+				changeLanguage(0);
+			}
+			
+			private function english():void {
+				changeLanguage(1);
+			}
+			
+			private function us():void {
+				changeLanguage(2);				
+			}
 
+			private function changeLanguage(lang:int):void {
+				if(Session.LOGGED_IN)
+					AccountManager.getInstance().changeLanguage(Session.uralysProfile.uralysUID, lang);
+				
+				Session.LANGUAGE = lang;
+				var sharedObject:SharedObject = SharedObject.getLocal(Names.SHARED_OBJECT_NAME);
+				sharedObject.data.lastLanguage = lang;
+				
+			}
+			
 			//-----------------------------------------------------------------------//
 			
 		]]>
@@ -83,17 +114,17 @@
 	<s:HGroup width="100%" horizontalAlign="center">
 		<mx:Image source="../images/fond.jpg" width="100%" height="100%" alpha="0.45"/>
 	</s:HGroup>
-	<!--
-	<mx:Image source="../images/epee.png" left="0" top="28"/>
-	<mx:Image source="../images/bouclier.png" right="-10" bottom="50"/>
-	-->
 	
 	<s:VGroup width="100%" height="100%" paddingTop="3" paddingBottom="3">
 		
 		<!-- header -->
-		<s:HGroup width="100%">
+		<s:HGroup width="100%" paddingLeft="5" paddingRight="5">
+			<mx:Image id="frenchButton" source="{ImageContainer.FR_FLAG}" click="french()" visible="{Session.LANGUAGE != 0}" width="25"/>
+			<mx:Image id="englishButton" source="{ImageContainer.EN_FLAG}" click="english()" visible="{Session.LANGUAGE != 1}" width="25"/>
+			<mx:Image id="usButton" source="{ImageContainer.US_FLAG}" click="us()" visible="{Session.LANGUAGE != 2}" width="25"/>
+
 			<mx:Spacer width="100%"/>
-			<s:Label text="{Session.profil ? 'Logged as : '+ Session.uralysProfile.email : 'Please log in'}"
+			<s:Label text="{Session.profil ? Translations.LOG_AS.getItemAt(Session.LANGUAGE) + ' : '+ Session.uralysProfile.email : Translations.LOG_IN.getItemAt(Session.LANGUAGE)}"
 					 color="#222299"/>
 		</s:HGroup>	
 		<mx:HRule width="100%" chromeColor="#222299"/>
@@ -110,7 +141,7 @@
 					  x="65" bottom="2"
 					  click="navigateToURL(new URLRequest('http://www.uralys.com'), '_new');"/>
 			<mx:Spacer width="10%"/>
-			<s:Label text=" Aller sur le Forum"
+			<s:Label text="{Translations.GO_TO_FORUM.getItemAt(Session.LANGUAGE)}"
 					 click="navigateToURL(new URLRequest('http://www.uralys.com/forumTAK'), '_new');"
 					 color="#222299"/>
 			<mx:Spacer width="20%"/>

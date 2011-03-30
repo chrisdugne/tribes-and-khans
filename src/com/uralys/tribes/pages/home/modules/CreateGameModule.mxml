@@ -30,6 +30,7 @@
 			private function createGame():void{
 				createButton.visible = false;
 				loadingLabel.visible = true;
+				loading.visible = true;
 				GameManager.getInstance().createGame(gameNameInput.text, playerNameInput.text, periodChoice.selectedItem.period);
 			}
 		]]>
@@ -56,6 +57,11 @@
 			<mx:Spacer height="20"/>
 			<s:Button id="createButton" label="Create" click="{createGame()}"/>
 			<s:Label id="loadingLabel" visible="false" text="Loading..."/>
+			<mx:SWFLoader source="{ImageContainer.LOADING}"
+						  visible="false"
+						  id="loading"
+						  width="25"
+						  height="25"/>
 		</s:VGroup>
 	</s:HGroup>
 </mx:Module>

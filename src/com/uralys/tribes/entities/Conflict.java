@@ -3,10 +3,6 @@ package com.uralys.tribes.entities;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.jdo.annotations.IdentityType;
-import javax.jdo.annotations.PersistenceCapable;
-
-@PersistenceCapable(identityType = IdentityType.APPLICATION)
 public class Conflict {
 	
 	//-----------------------------------------------------------------------------------//

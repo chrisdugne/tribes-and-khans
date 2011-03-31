@@ -17,7 +17,7 @@ public class ServerDataDTO {
     
 	@Persistent
     @Extension(vendorName="datanucleus", key="gae.pk-name", value="true")
-	private String dataUID;
+	private String dataUID; 
 	
 	@Persistent	private Boolean dataviewerVisible;
 	@Persistent	private String dataviewerPassword;

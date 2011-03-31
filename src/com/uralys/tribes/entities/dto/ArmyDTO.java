@@ -14,7 +14,7 @@ import com.uralys.tribes.dao.impl.UniversalDAO;
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 public class ArmyDTO {
-	
+	 
 	//-----------------------------------------------------------------------------------//
 
 	@PrimaryKey

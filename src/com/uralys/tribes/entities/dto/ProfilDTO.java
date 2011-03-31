@@ -15,7 +15,7 @@ import com.uralys.tribes.dao.impl.UniversalDAO;
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 public class ProfilDTO {
 
-
+ 
     @PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
     @Extension(vendorName="datanucleus", key="gae.encoded-pk", value="true")	

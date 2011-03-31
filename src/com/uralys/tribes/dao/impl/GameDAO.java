@@ -40,7 +40,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	private static String ITEM_UID_BOW = "_bow";
 	private static String ITEM_UID_SWORD = "_sword";
 	private static String ITEM_UID_ARMOR = "_armor";
-	private static boolean debug = true;
+	private static boolean debug = true; 
 
 	private static final Logger log = Logger.getLogger(GameDAO.class.getName());
 	

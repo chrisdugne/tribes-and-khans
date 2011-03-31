@@ -271,7 +271,7 @@ public class GameManager implements IGameManager {
 		for(Game game : games){
 			
 			if(game.getCurrentTurn() == 0)
-				break;
+				continue;
 
 			log.info("-----------------------------------");
 			log.info("game : " + game.getName());

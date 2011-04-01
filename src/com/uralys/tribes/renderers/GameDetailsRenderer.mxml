@@ -64,7 +64,7 @@
 					itemRenderer="com.uralys.tribes.renderers.PlayerListRenderer"
 					dataProvider="{data.players}"/>
 			<s:HGroup>
-				<s:Label text="Temps max par tour : "/>
+				<s:Label text="{Translations.MAX_TURN_TIME.getItemAt(Session.LANGUAGE)} : "/>
 				<s:Label text="{data.nbMinByTurn/60} H"/>
 			</s:HGroup>	
 			
@@ -72,11 +72,11 @@
 			<mx:Spacer height="10"/>
 			<s:Label text="{data.status == Game.IN_CREATION ? Translations.NOT_LAUNCHED.getItemAt(Session.LANGUAGE) : 'Fin du tour : ' + data.getPeriod()}"/>
 			
-			<s:Label text="(Pas assez de joueurs)" 
+			<s:Label text="({Translations.NOT_ENOUGH_PLAYERS.getItemAt(Session.LANGUAGE)})" 
 					 visible="{data.players.length==1}" 
 					 includeInLayout="{data.players.length==1}"/>
 			
-			<s:Label text="(En attente des autres joueurs)" 
+			<s:Label text="({Translations.WAITING_FOR_PLAYERS.getItemAt(Session.LANGUAGE)})" 
 					 visible="{color == 0x008b45}" 
 					 includeInLayout="{color == 0x008b45}"/>
 			
@@ -85,13 +85,13 @@
 					 includeInLayout="{data.status != Game.IN_CREATION}"/>
 			
 			<!-- ====== Actions ====== -->
-			<s:Button label="Lancer la partie"
+			<s:Button label="{Translations.LAUNCH_GAME.getItemAt(Session.LANGUAGE)}"
 					  id="buttonLaunch"
 					  visible="{data.status == Game.IN_CREATION &amp;&amp; data.players.length>1 &amp;&amp; data.creatorUralysUID == Session.profil.uralysUID}"
 					  includeInLayout="{buttonLaunch.visible}"
 					  click="launchGame()"/>
 
-			<s:Button label="Jouer le tour"
+			<s:Button label="{Translations.PLAY_TURN.getItemAt(Session.LANGUAGE)}"
 					  id="buttonPlay"
 					  visible="{color == 0x00FF33}" 
 					  includeInLayout="{color == 0x00FF33}"
@@ -102,9 +102,9 @@
 					  visible="{joinable}"
 					  includeInLayout="{joinable}">
 				<mx:Spacer height="20"/>
-				<s:Label text="Choisir votre nom dans cette partie :"/>
+				<s:Label text="{Translations.CHOOSE_NAME.getItemAt(Session.LANGUAGE)} :"/>
 				<s:TextInput id="playerNameInput" text="Dede le Fourbe"/>
-				<s:Button label="Join"
+				<s:Button label="{Translations.JOIN.getItemAt(Session.LANGUAGE)}"
 						  id="buttonJoin"
 						  click="{joinGame()}"/>
 			</s:VGroup>

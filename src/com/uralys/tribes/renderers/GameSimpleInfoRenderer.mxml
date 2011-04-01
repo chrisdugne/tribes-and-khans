@@ -97,7 +97,7 @@
 				var heures:int = Math.floor((tempsParTour-tempsEcoule)/3600000);
 				var min:int = Utils.round((tempsParTour-tempsEcoule-(heures*3600000))/60000,0);
 
-				return "Il reste : " + (heures > 0 ? (heures + " h ") : '') + min + " min";
+				return Translations.TIME_REMAINING.getItemAt(Session.LANGUAGE) + " : " + (heures > 0 ? (heures + " h ") : '') + min + " min";
 			}
 		]]>
 	</fx:Script>

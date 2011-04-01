@@ -123,6 +123,117 @@ public class Translations{
 									"Not launched yet",
 									"Not launched yet"]);
 
+	[Bindable]
+	public static var MAX_TURN_TIME:ArrayCollection = new ArrayCollection(
+									["Temps max par tour",
+									"Max time for a turn",
+									"Max time for a turn"]);
+
+	[Bindable]
+	public static var LAUNCH_GAME:ArrayCollection = new ArrayCollection(
+									["Lancer la partie",
+									"Launch Game",
+									"Launch Game"]);
+
+	[Bindable]
+	public static var PLAY_TURN:ArrayCollection = new ArrayCollection(
+									["Jouer le tour",
+									"Play you turn",
+									"Play you turn"]);
+	
+	[Bindable]
+	public static var CHOOSE_NAME:ArrayCollection = new ArrayCollection(
+									["Choisir votre nom dans cette partie",
+									"Choose your name for this game",
+									"Choose your name for this game"]);
+
+	[Bindable]
+	public static var JOIN:ArrayCollection = new ArrayCollection(
+									["Rejoindre",
+									"Join",
+									"Join"]);
+	
+	[Bindable]
+	public static var WAITING_FOR_PLAYERS:ArrayCollection = new ArrayCollection(
+									["En attente des autres joueurs",
+									"Waiting for the other players",
+									"Waiting for the other players"]);
+	
+	[Bindable]
+	public static var NOT_ENOUGH_PLAYERS:ArrayCollection = new ArrayCollection(
+									["Pas assez de joueurs",
+									"Not enough players",
+									"Not enough players"]);
+
+	//-----------------------------------------------------------------------------------//
+	
+	[Bindable]
+	public static var TIME_REMAINING:ArrayCollection = new ArrayCollection(
+									["Il reste",
+									"Time remaining",
+									"Time remaining"]);
+	//-----------------------------------------------------------------------------------//
+	
+	[Bindable]
+	public static var ARMY_POPULATION:ArrayCollection = new ArrayCollection(
+									["Armées/Marchands créés ce tour",
+									"Armies/Merchants created this turn",
+									"Armies/Merchants created this turn"]);
+	
+	[Bindable]
+	public static var UNEMPLOYED:ArrayCollection = new ArrayCollection(
+									["Sans emploi",
+									"Unemployed",
+									"Unemployed"]);
+	
+	[Bindable]
+	public static var WHEAT:ArrayCollection = new ArrayCollection(
+									["Blé",
+									"Wheat",
+									"Wheat"]);
+
+	[Bindable]
+	public static var WOOD:ArrayCollection = new ArrayCollection(
+									["Bois",
+									"Wood",
+									"Wood"]);
+
+	[Bindable]
+	public static var IRON:ArrayCollection = new ArrayCollection(
+									["Fer",
+									"Iron",
+									"Iron"]);
+
+	[Bindable]
+	public static var GOLD:ArrayCollection = new ArrayCollection(
+									["Or",
+									"Gold",
+									"Gold"]);
+
+	[Bindable]
+	public static var WORKERS:ArrayCollection = new ArrayCollection(
+									["Récolteurs",
+									"Workers",
+									"Workers"]);
+
+	[Bindable]
+	public static var HARVEST:ArrayCollection = new ArrayCollection(
+									["Récolte",
+									"Harvest",
+									"Harvest"]);
+
+	[Bindable]
+	public static var SPENDING:ArrayCollection = new ArrayCollection(
+									["Dépense",
+									"Spending",
+									"Spending"]);
+
+	[Bindable]
+	public static var STARVATION:ArrayCollection = new ArrayCollection(
+									["Famine prévue ! récoltez plus de blé !",
+									"Starvation ! gather mor wheat !",
+									"Starvation ! gather mor wheat !"]);
+
 	//-----------------------------------------------------------------------------------//
 	
 	[Bindable]
@@ -130,6 +241,7 @@ public class Translations{
 									["Cliquez ici",
 									"Click here",
 									"Click here"]);
+	
 	[Bindable]
 	public static var OK:ArrayCollection = new ArrayCollection(
 									["Ok",

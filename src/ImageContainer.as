@@ -121,6 +121,8 @@ public final class ImageContainer
 
 	//   ======================================================================//
 
+	[Bindable] public static var LOGO:Bitmap;
+	[Bindable] public static var LOGO_BIS:Bitmap;
 	[Bindable] public static var GROUPE_PERSO:Bitmap;
 	[Bindable] public static var FERMIER:Bitmap;
 	[Bindable] public static var FORGERON:Bitmap;
@@ -135,7 +137,8 @@ public final class ImageContainer
 	private static var currentImage:int = 0;
 	
 	public static var images:ArrayCollection = new ArrayCollection(
-		["webresources/images/persos/persos.png",
+		["webresources/images/logo.png",
+		 "webresources/images/persos/persos.png",
 		 "webresources/images/persos/fermier.png",
 		 "webresources/images/persos/marchand.png",
 		 "webresources/images/persos/marchande.png",
@@ -157,27 +160,31 @@ public final class ImageContainer
 	private static function onComplete(event:Event):void {
 		switch(currentImage){
 			case 0:
-				GROUPE_PERSO = event.currentTarget.content;
+				LOGO = event.currentTarget.content;
+				LOGO_BIS = event.currentTarget.content;
 				break;
 			case 1:
-				FERMIER = event.currentTarget.content;
+				GROUPE_PERSO = event.currentTarget.content;
 				break;
 			case 2:
-				MARCHAND = event.currentTarget.content;
+				FERMIER = event.currentTarget.content;
 				break;
 			case 3:
-				MARCHANDE = event.currentTarget.content;
+				MARCHAND = event.currentTarget.content;
 				break;
 			case 4:
-				GUERRIER = event.currentTarget.content;
+				MARCHANDE = event.currentTarget.content;
 				break;
 			case 5:
+				GUERRIER = event.currentTarget.content;
+				break;
+			case 6:
 				FORGERON = event.currentTarget.content;
 				break;
 		}
 		
 		currentImage++;
-		if(currentImage < 6)
+		if(currentImage < 7)
 			loadNextImage();
 	}
 

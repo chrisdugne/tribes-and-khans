@@ -48,7 +48,8 @@
 	</fx:Script> 
 	
 	<s:HGroup width="100%" 
-			  horizontalAlign="center">
+			  horizontalAlign="left"
+			  height="50%">
 		<s:VGroup horizontalAlign="center">
 			<s:HGroup>
 				<s:Label text="{games.length > 0 ? (typeOfGameSelection == 1 ? Translations.GAME_LIST.getItemAt(Session.LANGUAGE) : Translations.GAMES_TO_JOIN.getItemAt(Session.LANGUAGE)) : (typeOfGameSelection == 1 ? '(Pas de partie en cours)' : '(Pas de partie à joindre)')}"/>
@@ -61,7 +62,7 @@
 							  height="25"/>
 			</s:HGroup> 
 			
-			<s:Scroller height="450">
+			<s:Scroller maxHeight="300">
 				<s:Group>
 					<s:List id="dataGroup"
 							itemRenderer="com.uralys.tribes.renderers.GameSimpleInfoRenderer"
@@ -77,9 +78,10 @@
 			</s:Scroller>
 		</s:VGroup>
 		<s:VGroup width="230" 
+				  paddingTop="30"
 				  horizontalAlign="center"
 				  visible="{selectedGame != null}">
-			<renderers:GameDetailsRenderer data="{selectedGame}" 
+			<renderers:GameDetailsRenderer game="{selectedGame}" 
 										id="gameDetails" 
 										joinable="{typeOfGameSelection == 2}"
 										color="{Session.gameColor}"/>

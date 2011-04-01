@@ -7,9 +7,10 @@
 	
 	<fx:Script>
 		<![CDATA[
-			//----------------------------------------------------------//
-
+			import com.uralys.tribes.commons.Session;
+			import com.uralys.tribes.commons.Translations;
 			import com.uralys.tribes.managers.GameManager;
+			
 			import mx.collections.ArrayCollection;
 			
 			//----------------------------------------------------------//
@@ -41,22 +42,22 @@
 		<s:VGroup horizontalAlign="center" 
 				  paddingLeft="40">
 			<mx:Spacer height="20"/>
-			<s:Label text="Choisir votre nom dans cette partie :"/>
-			<s:TextInput id="playerNameInput" text="Dede le Fourbe"/>
+			<s:Label text="{Translations.CHOOSE_YOUR_NAME.getItemAt(Session.LANGUAGE)} :"/>
+			<s:TextInput id="playerNameInput" text="XXXX"/>
 			<mx:Spacer height="20"/>
-			<s:Label text="Entrer un nom pour la partie:"/>
-			<s:TextInput id="gameNameInput" text="Partie de Dede"/>
+			<s:Label text="{Translations.CHOOSE_GAME_NAME.getItemAt(Session.LANGUAGE)} :"/>
+			<s:TextInput id="gameNameInput" text="XXXX"/>
 			<mx:Spacer height="20"/>
 			<s:HGroup>
-				<s:Label text="Temps du tour maximum :"/>
+				<s:Label text="{Translations.MAX_TURN_TIME.getItemAt(Session.LANGUAGE)} :"/>
 				<s:DropDownList id="periodChoice" 
 								dataProvider="{periods}"
 								labelField="periodLabel"
 								selectedIndex="0"/>
 			</s:HGroup>
 			<mx:Spacer height="20"/>
-			<s:Button id="createButton" label="Create" click="{createGame()}"/>
-			<s:Label id="loadingLabel" visible="false" text="Loading..."/>
+			<s:Button id="createButton" label="{Translations.CREATE.getItemAt(Session.LANGUAGE)}" click="{createGame()}"/>
+			<s:Label id="loadingLabel" visible="false" text="{Translations.LOADING.getItemAt(Session.LANGUAGE)}..."/>
 			<mx:SWFLoader source="{ImageContainer.LOADING}"
 						  visible="false"
 						  id="loading"

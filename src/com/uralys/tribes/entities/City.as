@@ -526,6 +526,7 @@ package com.uralys.tribes.entities
 		public function get armorsEquiped():int{
 			return _armorsEquiped;
 		}
+		
 		//---------------------------------------------------------------//
 
 	}

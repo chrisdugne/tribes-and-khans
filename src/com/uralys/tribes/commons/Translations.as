@@ -72,6 +72,20 @@ public class Translations{
 	//-----------------------------------------------------------------------------------//
 
 	[Bindable]
+	public static var CHOOSE_YOUR_NAME:ArrayCollection = new ArrayCollection(
+									["Choisir votre nom dans cette partie",
+									"Choose your name",
+									"Choose your name"]);
+
+	[Bindable]
+	public static var CHOOSE_GAME_NAME:ArrayCollection = new ArrayCollection(
+									["Entrer un nom de partie",
+									"Enter the game's name",
+									"Enter the game's name"]);
+	
+	//-----------------------------------------------------------------------------------//
+
+	[Bindable]
 	public static var GAME_LIST:ArrayCollection = new ArrayCollection(
 									["Liste des parties en cours",
 									"Game list",
@@ -136,6 +150,12 @@ public class Translations{
 									"Launch Game"]);
 
 	[Bindable]
+	public static var CREATE:ArrayCollection = new ArrayCollection(
+									["Créer",
+									"Create",
+									"Create"]);
+
+	[Bindable]
 	public static var PLAY_TURN:ArrayCollection = new ArrayCollection(
 									["Jouer le tour",
 									"Play you turn",
@@ -172,6 +192,33 @@ public class Translations{
 									["Il reste",
 									"Time remaining",
 									"Time remaining"]);
+	
+	[Bindable]
+	public static var SAVE_TURN:ArrayCollection = new ArrayCollection(
+									["Enregistrer le tour",
+									"Save turn",
+									"Save turn"]);
+	
+	[Bindable]
+	public static var LEAVE_THIS_GAME:ArrayCollection = new ArrayCollection(
+									["Quitter la partie",
+									"Leave this game",
+									"Leave this game"]);
+	
+	//-----------------------------------------------------------------------------------//
+
+	[Bindable]
+	public static var MY_CITIES:ArrayCollection = new ArrayCollection(
+									["Mes Villes",
+									"My cities",
+									"My cities"]);
+
+	[Bindable]
+	public static var OTHER_CITIES:ArrayCollection = new ArrayCollection(
+									["Autres Villes",
+									"Other cities",
+									"Other cities"]);
+	
 	//-----------------------------------------------------------------------------------//
 	
 	[Bindable]
@@ -199,10 +246,22 @@ public class Translations{
 									"Wood"]);
 
 	[Bindable]
+	public static var WOOD_SPENT:ArrayCollection = new ArrayCollection(
+									["Bois dépensé",
+									"Wood Spent",
+									"Wood Spent"]);
+
+	[Bindable]
 	public static var IRON:ArrayCollection = new ArrayCollection(
 									["Fer",
 									"Iron",
 									"Iron"]);
+
+	[Bindable]
+	public static var IRON_SPENT:ArrayCollection = new ArrayCollection(
+									["Fer dépensé",
+									"Iron Spent",
+									"Iron Spent"]);
 
 	[Bindable]
 	public static var GOLD:ArrayCollection = new ArrayCollection(
@@ -212,7 +271,7 @@ public class Translations{
 
 	[Bindable]
 	public static var WORKERS:ArrayCollection = new ArrayCollection(
-									["Récolteurs",
+									["Travailleurs",
 									"Workers",
 									"Workers"]);
 
@@ -234,6 +293,244 @@ public class Translations{
 									"Starvation ! gather mor wheat !",
 									"Starvation ! gather mor wheat !"]);
 
+	[Bindable]
+	public static var RESOURCES:ArrayCollection = new ArrayCollection(
+									["Ressources",
+									"Resources",
+									"Resources"]);
+
+	[Bindable]
+	public static var FORGE:ArrayCollection = new ArrayCollection(
+									["Forge",
+									"Forge",
+									"Forge"]);
+
+	[Bindable]
+	public static var EQUIPMENT:ArrayCollection = new ArrayCollection(
+									["Equipement",
+									"Equipment",
+									"Equipment"]);
+
+	[Bindable]
+	public static var MARKET:ArrayCollection = new ArrayCollection(
+									["Marché",
+									"Market",
+									"Market"]);
+
+	[Bindable]
+	public static var MERCHANTS:ArrayCollection = new ArrayCollection(
+									["Marchands",
+									"Merchants",
+									"Merchants"]);
+
+	[Bindable]
+	public static var NEW_MERCHANTS:ArrayCollection = new ArrayCollection(
+									["Créer une caravane",
+									"New caravan",
+									"New caravan"]);
+
+	[Bindable]
+	public static var NB_CARAVAN:ArrayCollection = new ArrayCollection(
+									["Nombre de marchands",
+									"Merchants in this caravan",
+									"Merchants in this caravan"]);
+
+	[Bindable]
+	public static var NB_ARMY:ArrayCollection = new ArrayCollection(
+									["Nombre de guerriers",
+									"Warriors in this army",
+									"Warriors in this army"]);
+
+	[Bindable]
+	public static var ARMIES:ArrayCollection = new ArrayCollection(
+									["Armées",
+									"Armies",
+									"Armies"]);
+
+	[Bindable]
+	public static var NEW_ARMY:ArrayCollection = new ArrayCollection(
+									["Créer une Armée",
+									"New Army",
+									"New Army"]);
+
+	[Bindable]
+	public static var CITIES:ArrayCollection = new ArrayCollection(
+									["Villes",
+									"Cities",
+									"Cities"]);
+
+	[Bindable]
+	public static var BUYING:ArrayCollection = new ArrayCollection(
+									["Achat",
+									"Buying",
+									"Buying"]);
+
+	[Bindable]
+	public static var UNIT_COST:ArrayCollection = new ArrayCollection(
+									["Coût unitaire",
+									"Unit cost",
+									"Unit cost"]);
+
+	[Bindable]
+	public static var BUY:ArrayCollection = new ArrayCollection(
+									["Effectuer l'achat",
+									"Buy",
+									"Buy"]);
+
+	[Bindable]
+	public static var SELL:ArrayCollection = new ArrayCollection(
+									["Effectuer la vente",
+									"Sell",
+									"Sell"]);
+
+	[Bindable]
+	public static var PROFIT:ArrayCollection = new ArrayCollection(
+									["Profit",
+									"Profit",
+									"Profit"]);
+
+	[Bindable]
+	public static var TOTAL_PROFIT:ArrayCollection = new ArrayCollection(
+									["Profit Total",
+									"Total Profit",
+									"Total Profit"]);
+
+	[Bindable]
+	public static var QUANTITY:ArrayCollection = new ArrayCollection(
+									["Quantité",
+									"Quantity",
+									"Quantity"]);
+
+	[Bindable]
+	public static var PRICE_TO_PAY:ArrayCollection = new ArrayCollection(
+									["Prix à payer",
+									"Price to pay",
+									"Price to pay"]);
+
+	[Bindable]
+	public static var TOTAL_SPENDING:ArrayCollection = new ArrayCollection(
+									["Dépense totale",
+									"Total spending",
+									"Total spending"]);
+
+	[Bindable]
+	public static var SELLING:ArrayCollection = new ArrayCollection(
+									["Vente",
+									"Selling",
+									"Selling"]);
+
+	[Bindable]
+	public static var NB_MERCHANTS:ArrayCollection = new ArrayCollection(
+									["Nb marchands",
+									"Nb merchants",
+									"Nb merchants"]);
+
+	[Bindable]
+	public static var CONFLICT:ArrayCollection = new ArrayCollection(
+									["Conflit",
+									"Conflict",
+									"Conflict"]);
+	
+	//-----------------------------------------------------------------------------------//
+
+	[Bindable]
+	public static var BOW:ArrayCollection = new ArrayCollection(
+									["Arc",
+									"Bow",
+									"Bow"]);
+
+	[Bindable]
+	public static var SWORD:ArrayCollection = new ArrayCollection(
+									["Epée",
+									"Sword",
+									"Sword"]);
+
+	[Bindable]
+	public static var ARMOR:ArrayCollection = new ArrayCollection(
+									["Armure",
+									"Armor",
+									"Armor"]);
+
+	//-----------------------------------------------------------------------------------//
+	
+	[Bindable]
+	public static var STOCK:ArrayCollection = new ArrayCollection(
+									["Stock",
+									"Stock",
+									"Stock"]);
+	
+	[Bindable]
+	public static var PRODUCTION:ArrayCollection = new ArrayCollection(
+									["Production",
+									"Production",
+									"Production"]);
+	
+	[Bindable]
+	public static var PREVISION:ArrayCollection = new ArrayCollection(
+									["Prévisions",
+									"Expectations",
+									"Expectations"]);
+	
+	[Bindable]
+	public static var CARRIAGE:ArrayCollection = new ArrayCollection(
+									["Transport",
+									"Carriage",
+									"Carriage"]);
+	
+	[Bindable]
+	public static var AVAILABLE_STOCK:ArrayCollection = new ArrayCollection(
+									["Stock disponible",
+									"Available stock",
+									"Available stock"]);
+	
+	//-----------------------------------------------------------------------------------//
+	
+	[Bindable]
+	public static var BUILD_HERE:ArrayCollection = new ArrayCollection(
+									["Construire une ville ici",
+									"Build a city here",
+									"Build a city here"]);
+	
+	[Bindable]
+	public static var ENTER_CITY:ArrayCollection = new ArrayCollection(
+									["Entrer dans la ville",
+									"Enter city",
+									"Enter city"]);
+	
+	//-----------------------------------------------------------------------------------//
+	
+	[Bindable]
+	public static var SIZE:ArrayCollection = new ArrayCollection(
+									["Taille",
+									"Size",
+									"Size"]);
+	
+	[Bindable]
+	public static var NEW:ArrayCollection = new ArrayCollection(
+									["Nouveau !",
+									"New",
+									"New"]);
+
+	//-----------------------------------------------------------------------------------//
+	
+	[Bindable]
+	public static var DETAILS:ArrayCollection = new ArrayCollection(
+									["Détails",
+									"Details",
+									"Details"]);
+
+	[Bindable]
+	public static var IMAGES:ArrayCollection = new ArrayCollection(
+									["Images",
+									"Images",
+									"Images"]);
+
+	[Bindable]
+	public static var TEXTS:ArrayCollection = new ArrayCollection(
+									["Textes",
+									"Texts",
+									"Texts"]);
+
 	//-----------------------------------------------------------------------------------//
 	
 	[Bindable]
@@ -247,6 +544,12 @@ public class Translations{
 									["Ok",
 									"Ok",
 									"Ok"]);
+	
+	[Bindable]
+	public static var DELETE:ArrayCollection = new ArrayCollection(
+									["Supprimer",
+									"Delete",
+									"Delete"]);
 	[Bindable]
 	public static var HELP:ArrayCollection = new ArrayCollection(
 									["Aide",
@@ -319,14 +622,6 @@ public class Translations{
 									"Creator",
 									"Creator"]);
 	
-	//-----------------------------------------------------------------------------------//
-	
-	[Bindable]
-	public static var BUY:ArrayCollection = new ArrayCollection(
-									["Acheter",
-									"Buy",
-									"Buy"]);
-	
 	
 	//-----------------------------------------------------------------------------------//
 
@@ -342,14 +637,19 @@ public class Translations{
 									"Continue"]);
 	[Bindable]
 	public static var VICTORY:ArrayCollection = new ArrayCollection(
-									["Victoire",
-									"Victory",
-									"Victory"]);
+									["Victoire !",
+									"Victory !",
+									"Victory !"]);
 	[Bindable]
 	public static var DEFEAT:ArrayCollection = new ArrayCollection(
 									["Défaite",
 									"Defeat",
 									"Defeat"]);
+	[Bindable]
+	public static var DRAW:ArrayCollection = new ArrayCollection(
+									["Egalité",
+									"Draw",
+									"Draw"]);
 	[Bindable]
 	public static var ATTACKED:ArrayCollection = new ArrayCollection(
 									["Vous avez été attaqué !",
@@ -378,6 +678,26 @@ public class Translations{
 									["Sélectionner",
 									"Select",
 									"Select"]);
+	[Bindable]
+	public static var LOADING:ArrayCollection = new ArrayCollection(
+									["Enregistrement",
+									"Loading",
+									"Loading"]);
+	[Bindable]
+	public static var REPLAY:ArrayCollection = new ArrayCollection(
+									["Voir le combat !",
+									"Show the battle !",
+									"Show the battle !"]);
+	[Bindable]
+	public static var THE_ENNEMY:ArrayCollection = new ArrayCollection(
+									["Armée Ennemie",
+									"The ennemy",
+									"The ennemy"]);
+	[Bindable]
+	public static var YOUR_ARMY:ArrayCollection = new ArrayCollection(
+									["Votre armée",
+									"Your army",
+									"Your army"]);
 
 	//-----------------------------------------------------------------------------------//
 	// TUTORIALS

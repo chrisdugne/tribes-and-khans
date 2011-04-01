@@ -12,6 +12,8 @@
 	
 	<fx:Script>
 		<![CDATA[
+			import com.uralys.tribes.commons.Session;
+			import com.uralys.tribes.commons.Translations;
 			import com.uralys.tribes.core.BoardDrawer;
 			import com.uralys.tribes.entities.Conflict;
 			import com.uralys.tribes.entities.MoveConflict;
@@ -62,8 +64,8 @@
 	
 	
 	<s:VGroup width="100%" horizontalAlign="center">
-		<s:Label text="{allyValue > ennemyValue ? 'Victory !' : (ennemyValue > allyValue ? 'Defeat...' : 'Draw.')}" color="#FFFFFF" />
-		<s:Label text="Your army" color="#FFFFFF" />
+		<s:Label text="{allyValue > ennemyValue ? Translations.VICTORY.getItemAt(Session.LANGUAGE) : (ennemyValue > allyValue ? Translations.DEFEAT.getItemAt(Session.LANGUAGE)+'...' : Translations.DRAW.getItemAt(Session.LANGUAGE))}" color="#FFFFFF" />
+		<s:Label text="{Translations.YOUR_ARMY.getItemAt(Session.LANGUAGE)}" color="#FFFFFF" />
 		<s:HGroup width="100%">
 			<mx:Image source="{ImageContainer.WARRIOR1}"/>
 			<s:Label color="#FFFFFF" 
@@ -91,7 +93,7 @@
 					 text="{allyArmors}"/>
 		</s:HGroup>
 		
-		<s:Label text="The ennemy" color="#FFFFFF" />
+		<s:Label text="{Translations.THE_ENNEMY.getItemAt(Session.LANGUAGE)}" color="#FFFFFF" />
 		<s:HGroup width="100%">
 			<mx:Image source="{ImageContainer.WARRIOR1}"/>
 			<s:Label color="#FFFFFF" 
@@ -118,6 +120,6 @@
 					 verticalCenter="2"
 					 text="{ennemyArmors}"/>
 		</s:HGroup>
-		<s:Button label="Show !" click="{BoardDrawer.getInstance().displayConflict(conflict)}"/>
+		<s:Button label="{Translations.REPLAY.getItemAt(Session.LANGUAGE)}" click="{BoardDrawer.getInstance().displayConflict(conflict)}"/>
 	</s:VGroup>
 </s:Group>

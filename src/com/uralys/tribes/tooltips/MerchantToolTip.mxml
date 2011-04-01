@@ -9,6 +9,8 @@
 			
 		<![CDATA[
 			import com.uralys.tribes.commons.Numbers;
+			import com.uralys.tribes.commons.Session;
+			import com.uralys.tribes.commons.Translations;
 			
 			public function get text():String { 
                  return null; 
@@ -35,19 +37,19 @@
 		<s:Label text="Ville" styleName="whiteNumberLabel"/>
 		<s:VGroup>
 			<s:HGroup>
-				<mx:Image toolTip="Wheat" source="{ImageContainer.WHEAT}"/>
-				<s:Label text="{Numbers.CITY_WHEAT_BASE_PRICE} + nb merchants" styleName="whiteNumberLabel"/>
+				<mx:Image toolTip="{Translations.WHEAT.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WHEAT}"/>
+				<s:Label text="{Numbers.CITY_WHEAT_BASE_PRICE} + {Translations.NB_MERCHANTS.getItemAt(Session.LANGUAGE)}" styleName="whiteNumberLabel"/>
 			</s:HGroup>
 			<s:HGroup>
-				<mx:Image toolTip="Wood" source="{ImageContainer.WOOD}"/>
-				<s:Label text="{Numbers.CITY_WOOD_BASE_PRICE} + nb merchants X 10" styleName="whiteNumberLabel"/>
+				<mx:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}"/>
+				<s:Label text="{Numbers.CITY_WOOD_BASE_PRICE} + {Translations.NB_MERCHANTS.getItemAt(Session.LANGUAGE)} X 10" styleName="whiteNumberLabel"/>
 			</s:HGroup>
 			<s:HGroup>
-				<mx:Image toolTip="Iron" source="{ImageContainer.IRON}"/>
-				<s:Label text="{Numbers.CITY_IRON_BASE_PRICE} + nb merchants X 10" styleName="whiteNumberLabel"/>
+				<mx:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}"/>
+				<s:Label text="{Numbers.CITY_IRON_BASE_PRICE} + {Translations.NB_MERCHANTS.getItemAt(Session.LANGUAGE)} X 10" styleName="whiteNumberLabel"/>
 			</s:HGroup>
 			<s:HGroup>
-				<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+				<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
 				<s:Label text="{Numbers.CITY_GOLD_BASE_PRICE}" styleName="whiteNumberLabel"/>
 			</s:HGroup>
 		</s:VGroup>

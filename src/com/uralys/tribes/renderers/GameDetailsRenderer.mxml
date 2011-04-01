@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<s:ItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
 				xmlns:s="library://ns.adobe.com/flex/spark" 
 				xmlns:mx="library://ns.adobe.com/flex/mx" 
-				autoDrawBackground="true"
 				width="100%"
 				height="100%">
 	<fx:Script>
@@ -18,20 +17,22 @@
 			
 			[Bindable] public var joinable:Boolean;
 			[Bindable] public var color:Number;
+
+			[Bindable] public var game:Game;
 			
 			private function launchGame():void{
 				buttonLaunch.visible = false;
-				GameManager.getInstance().launchGame(data.gameUID);
+				GameManager.getInstance().launchGame(game.gameUID);
 			}
 			
 			private function joinGame():void{
 				buttonJoin.visible = false;
-				GameManager.getInstance().join(data.gameUID, playerNameInput.text);
+				GameManager.getInstance().join(game.gameUID, playerNameInput.text);
 			}
 		
 			private function playTurn():void{
 				buttonPlay.visible = false;
-				Pager.getInstance().goToPage(Board, data);
+				Pager.getInstance().goToPage(Board, game);
 			}
 
 			
@@ -55,39 +56,39 @@
 			
 			<!-- ====== Info ====== -->
 			<s:HGroup width="100%"  horizontalAlign="center">
-				<s:Label id="labelGameName" text="{data.name}"/>
+				<s:Label id="labelGameName" text="{game.name}"/>
 			</s:HGroup>
-			<s:Label text="{data.players.length} {Translations.PLAYERS.getItemAt(Session.LANGUAGE)} :"/>
+			<s:Label text="{game.players.length} {Translations.PLAYERS.getItemAt(Session.LANGUAGE)} :"/>
 			<s:List id="playerList" 
 					borderVisible="false" 
 					width="210" 
 					itemRenderer="com.uralys.tribes.renderers.PlayerListRenderer"
-					dataProvider="{data.players}"/>
+					dataProvider="{game.players}"/>
 			<s:HGroup>
 				<s:Label text="{Translations.MAX_TURN_TIME.getItemAt(Session.LANGUAGE)} : "/>
-				<s:Label text="{data.nbMinByTurn/60} H"/>
+				<s:Label text="{game.nbMinByTurn/60} H"/>
 			</s:HGroup>	
 			
-			<s:Label text="{data.status == Game.IN_CREATION ? '' : Translations.TURN.getItemAt(Session.LANGUAGE) + data.currentTurn}"/>
+			<s:Label text="{game.status == Game.IN_CREATION ? '' : Translations.TURN.getItemAt(Session.LANGUAGE) + game.currentTurn}"/>
 			<mx:Spacer height="10"/>
-			<s:Label text="{data.status == Game.IN_CREATION ? Translations.NOT_LAUNCHED.getItemAt(Session.LANGUAGE) : 'Fin du tour : ' + data.getPeriod()}"/>
+			<s:Label text="{game.status == Game.IN_CREATION ? Translations.NOT_LAUNCHED.getItemAt(Session.LANGUAGE) : ''}"/>
 			
 			<s:Label text="({Translations.NOT_ENOUGH_PLAYERS.getItemAt(Session.LANGUAGE)})" 
-					 visible="{data.players.length==1}" 
-					 includeInLayout="{data.players.length==1}"/>
+					 visible="{game.players.length==1}" 
+					 includeInLayout="{game.players.length==1}"/>
 			
 			<s:Label text="({Translations.WAITING_FOR_PLAYERS.getItemAt(Session.LANGUAGE)})" 
 					 visible="{color == 0x008b45}" 
 					 includeInLayout="{color == 0x008b45}"/>
 			
 			<s:Label text="{Session.remainingTime}" 
-					 visible="{data.status != Game.IN_CREATION}" 
-					 includeInLayout="{data.status != Game.IN_CREATION}"/>
+					 visible="{game.status != Game.IN_CREATION}" 
+					 includeInLayout="{game.status != Game.IN_CREATION}"/>
 			
 			<!-- ====== Actions ====== -->
 			<s:Button label="{Translations.LAUNCH_GAME.getItemAt(Session.LANGUAGE)}"
 					  id="buttonLaunch"
-					  visible="{data.status == Game.IN_CREATION &amp;&amp; data.players.length>1 &amp;&amp; data.creatorUralysUID == Session.profil.uralysUID}"
+					  visible="{game.status == Game.IN_CREATION &amp;&amp; game.players.length>1 &amp;&amp; game.creatorUralysUID == Session.profil.uralysUID}"
 					  includeInLayout="{buttonLaunch.visible}"
 					  click="launchGame()"/>
 
@@ -111,4 +112,4 @@
 		</s:VGroup>
 	</s:Group>
 	
-</s:ItemRenderer>
+</s:Group>

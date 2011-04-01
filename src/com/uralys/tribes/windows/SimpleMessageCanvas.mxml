@@ -8,15 +8,6 @@
 				backgroundColor="0x000000"
 				alpha="0.9">
 	
-	<fx:Declarations>  
-		<analytics:FlexTracker
-			xmlns:analytics="com.google.analytics.components.*"
-			id="tracker"
-			account="UA-17389126-4"
-			mode="AS3"
-			visualDebug="false"/>
-	</fx:Declarations>
-	
 	<fx:Script>
 		
 		<![CDATA[
@@ -57,8 +48,7 @@
 
 	<s:Group width="100%" height="100%">
 		<s:Group horizontalCenter="0" verticalCenter="0">
-			<s:Label y="5" text="{message}" styleName="littleWhiteStyle"
-					 click="{tracker.trackPageview('/simpleMessageWindow-label');}"/>
+			<s:Label y="5" text="{message}" styleName="littleWhiteStyle"/>
 		</s:Group>
 	</s:Group>
 </mx:Canvas>

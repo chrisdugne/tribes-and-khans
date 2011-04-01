@@ -1274,12 +1274,11 @@
 			<s:Fade id="shower" duration="1000" alphaFrom="0" alphaTo="1"/>
 		</fx:Declarations>
 	
-		<mx:Image source="{ImageContainer.FERMIER}" x="950" y="-100" visible="{viewstack.selectedIndex == 0}" hideEffect="fader" showEffect="shower"/>
-		<mx:Image source="{ImageContainer.MARCHANDE}" x="1000" y="-100" visible="{viewstack.selectedIndex == 1}" hideEffect="fader" showEffect="shower"/>
-		<mx:Image source="{ImageContainer.FORGERON}" x="950" y="-100" visible="{viewstack.selectedIndex == 2}" hideEffect="fader" showEffect="shower"/>
-		<mx:Image source="{ImageContainer.FORGERON}" x="950" y="-100" visible="{viewstack.selectedIndex == 3}" hideEffect="fader" showEffect="shower"/>
-		<mx:Image source="{ImageContainer.MARCHAND}" x="950" y="-100" visible="{viewstack.selectedIndex == 4}" hideEffect="fader" showEffect="shower"/>
-		<mx:Image source="{ImageContainer.GUERRIER}" x="950" y="-100" visible="{viewstack.selectedIndex == 5}" hideEffect="fader" showEffect="shower"/>
+		<mx:Image source="{ImageContainer.FERMIER}" x="950" y="-70" visible="{viewstack.selectedIndex == 0}" hideEffect="fader" showEffect="shower"/>
+		<mx:Image source="{ImageContainer.MARCHANDE}" x="1000" y="-70" visible="{viewstack.selectedIndex == 1}" hideEffect="fader" showEffect="shower"/>
+		<mx:Image source="{ImageContainer.FORGERON}" x="950" y="-70" visible="{viewstack.selectedIndex == 2 || viewstack.selectedIndex == 3}" hideEffect="fader" showEffect="shower"/>
+		<mx:Image source="{ImageContainer.MARCHAND}" x="950" y="-70" visible="{viewstack.selectedIndex == 4}" hideEffect="fader" showEffect="shower"/>
+		<mx:Image source="{ImageContainer.GUERRIER}" x="950" y="-70" visible="{viewstack.selectedIndex == 5}" hideEffect="fader" showEffect="shower"/>
 
 		<s:VGroup width="100%" horizontalAlign="center">
 			
@@ -1341,7 +1340,7 @@
 				<!-- =============================================================================================== -->
 				<!-- Resources Tab -->
 				
-				<s:NavigatorContent label="Resources">
+				<s:NavigatorContent label="{Translations.RESOURCES.getItemAt(Session.LANGUAGE)}">
 					<s:HGroup width="100%" horizontalAlign="center">
 						<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle">
 							<mx:GridRow >
@@ -1441,7 +1440,7 @@
 				<!-- =============================================================================================== -->
 				<!-- Marche -->
 				
-				<s:NavigatorContent label="Marché">
+				<s:NavigatorContent label="{Translations.MARKET.getItemAt(Session.LANGUAGE)}">
 					<s:HGroup width="100%" height="100%" horizontalAlign="center">
 						<s:TabBar id="tabsMarket" dataProvider="{viewstackMarket}" skinClass="spark.skins.spark.TabBarSkin"/>
 						
@@ -1450,21 +1449,21 @@
 							<!-- =============================================================================================== -->
 							<!-- Achat -->
 							
-							<s:NavigatorContent label="Achat" width="650">
-								<s:Button label="Effectuer l'achat" left="-130" bottom="0" click="buy()"/>
+							<s:NavigatorContent label="{Translations.BUYING.getItemAt(Session.LANGUAGE)}" width="650">
+								<s:Button label="{Translations.BUY.getItemAt(Session.LANGUAGE)}" left="-130" bottom="0" click="buy()"/>
 								<s:VGroup>
 									<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle"
 											 width="450">
 										<mx:GridRow >
 											<mx:GridItem/>
 											<mx:GridItem horizontalAlign="center" minWidth="80">
-												<s:Label text="Cout unitaire" />
+												<s:Label text="{Translations.UNIT_COST.getItemAt(Session.LANGUAGE)}" />
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" minWidth="80">
-												<s:Label text="Quantité"/>
+												<s:Label text="{Translations.QUANTITY.getItemAt(Session.LANGUAGE)}"/>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" minWidth="80">
-												<s:Label text="Prix à payer"/>
+												<s:Label text="{Translations.PRICE_TO_PAY.getItemAt(Session.LANGUAGE)}"/>
 											</mx:GridItem>
 										</mx:GridRow>
 									</mx:Grid>
@@ -1472,11 +1471,11 @@
 											 maxHeight="180" width="450">
 										<mx:GridRow >
 											<mx:GridItem horizontalAlign="center">
-												<mx:Image toolTip="Wheat" source="{ImageContainer.WHEAT}" click="spendAllMoneyForWheat()"/>
+												<mx:Image toolTip="{Translations.WHEAT.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WHEAT}" click="spendAllMoneyForWheat()"/>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<s:Label text="{Numbers.WHEAT_PRICE_BUY}"/>
-												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<s:TextInput text="{city.wheatBought}" 
@@ -1487,16 +1486,16 @@
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<s:Label text="{city.wheatBought*Numbers.WHEAT_PRICE_BUY}"/>
-												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
 											</mx:GridItem>
 										</mx:GridRow>
 										<mx:GridRow >
 											<mx:GridItem horizontalAlign="center">
-												<mx:Image toolTip="Wood" source="{ImageContainer.WOOD}" click="spendAllMoneyForWood()"/>
+												<mx:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}" click="spendAllMoneyForWood()"/>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<s:Label text="{Numbers.WOOD_PRICE_BUY}"/>
-												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<s:TextInput text="{city.woodBought}" 
@@ -1507,16 +1506,16 @@
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<s:Label text="{city.woodBought*Numbers.WOOD_PRICE_BUY}"/>
-												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
 											</mx:GridItem>
 										</mx:GridRow>
 										<mx:GridRow >
 											<mx:GridItem horizontalAlign="center">
-												<mx:Image toolTip="Iron" source="{ImageContainer.IRON}" click="spendAllMoneyForIron()"/>
+												<mx:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}" click="spendAllMoneyForIron()"/>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<s:Label text="{Numbers.IRON_PRICE_BUY}"/>
-												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<s:TextInput text="{city.ironBought}" 
@@ -1527,16 +1526,16 @@
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<s:Label text="{city.ironBought*Numbers.IRON_PRICE_BUY}"/>
-												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
 											</mx:GridItem>
 										</mx:GridRow>
 										<mx:GridRow>
 											<mx:GridItem horizontalAlign="center">
-												<mx:Image toolTip="Bows" source="{ImageContainer.BOW}" click="spendAllMoneyForBows()"/>
+												<mx:Image toolTip="{Translations.BOW.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.BOW}" click="spendAllMoneyForBows()"/>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<s:Label text="{Numbers.BOW_PRICE_BUY}"/>
-												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<s:TextInput text="{city.bowsBought}" 
@@ -1547,16 +1546,16 @@
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<s:Label text="{city.bowsBought*Numbers.BOW_PRICE_BUY}"/>
-												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
 											</mx:GridItem>
 										</mx:GridRow>
 										<mx:GridRow>
 											<mx:GridItem horizontalAlign="center">
-												<mx:Image toolTip="Swords" source="{ImageContainer.SWORD}" click="spendAllMoneyForSwords()"/>
+												<mx:Image toolTip="{Translations.SWORD.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.SWORD}" click="spendAllMoneyForSwords()"/>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<s:Label text="{Numbers.SWORD_PRICE_BUY}"/>
-												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<s:TextInput text="{city.swordsBought}" 
@@ -1567,16 +1566,16 @@
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<s:Label text="{city.swordsBought*Numbers.SWORD_PRICE_BUY}"/>
-												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
 											</mx:GridItem>
 										</mx:GridRow>
 										<mx:GridRow>
 											<mx:GridItem horizontalAlign="center">
-												<mx:Image toolTip="Armors" source="{ImageContainer.ARMOR}" click="spendAllMoneyForArmors()"/>
+												<mx:Image toolTip="{Translations.ARMOR.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.ARMOR}" click="spendAllMoneyForArmors()"/>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<s:Label text="{Numbers.ARMOR_PRICE_BUY}"/>
-												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<s:TextInput text="{city.armorsBought}" 
@@ -1587,7 +1586,7 @@
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<s:Label text="{city.armorsBought*Numbers.ARMOR_PRICE_BUY}"/>
-												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
 											</mx:GridItem>
 										</mx:GridRow>
 									</mx:Grid>
@@ -1602,11 +1601,11 @@
 											<mx:GridItem/>
 											<mx:GridItem/>
 											<mx:GridItem horizontalAlign="center">
-												<s:Label text="Dépense Totale :" minWidth="150"/>
+												<s:Label text="{Translations.TOTAL_SPENDING.getItemAt(Session.LANGUAGE)} : " minWidth="150"/>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<s:Label text="{city.goldSpent}"/>
-												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
 											</mx:GridItem>
 											<mx:GridItem/>
 										</mx:GridRow>
@@ -1617,21 +1616,21 @@
 							<!-- =============================================================================================== -->
 							<!-- Vente -->
 							
-							<s:NavigatorContent label="Vente" width="650">
-								<s:Button label="Effectuer la vente" left="-130" bottom="0" click="sell()"/>
+							<s:NavigatorContent label="{Translations.SELLING.getItemAt(Session.LANGUAGE)}" width="650">
+								<s:Button label="{Translations.SELL.getItemAt(Session.LANGUAGE)}" left="-130" bottom="0" click="sell()"/>
 								<s:VGroup>
 									<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle"
 											 width="450">
 										<mx:GridRow >
 											<mx:GridItem/>
 											<mx:GridItem horizontalAlign="center" minWidth="80">
-												<s:Label text="Prix unitaire" />
+												<s:Label text="{Translations.UNIT_COST.getItemAt(Session.LANGUAGE)}" />
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" minWidth="80">
-												<s:Label text="Quantité"/>
+												<s:Label text="{Translations.QUANTITY.getItemAt(Session.LANGUAGE)}"/>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" minWidth="80">
-												<s:Label text="Gain"/>
+												<s:Label text="{Translations.PROFIT.getItemAt(Session.LANGUAGE)}"/>
 											</mx:GridItem>
 										</mx:GridRow>
 									</mx:Grid>
@@ -1639,11 +1638,11 @@
 											 maxHeight="180" width="450">
 										<mx:GridRow >
 											<mx:GridItem horizontalAlign="center">
-												<mx:Image toolTip="Wheat" source="{ImageContainer.WHEAT}" click="sellAllWheat()"/>
+												<mx:Image toolTip="{Translations.WHEAT.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WHEAT}" click="sellAllWheat()"/>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<s:Label text="{Numbers.WHEAT_PRICE_SELL}"/>
-												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<s:TextInput text="{city.wheatSold}" 
@@ -1654,16 +1653,16 @@
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<s:Label text="{city.wheatSold*Numbers.WHEAT_PRICE_SELL}"/>
-												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
 											</mx:GridItem>
 										</mx:GridRow>
 										<mx:GridRow >
 											<mx:GridItem horizontalAlign="center">
-												<mx:Image toolTip="Wood" source="{ImageContainer.WOOD}" click="sellAllWood()"/>
+												<mx:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}" click="sellAllWood()"/>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<s:Label text="{Numbers.WOOD_PRICE_SELL}"/>
-												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<s:TextInput text="{city.woodSold}" 
@@ -1674,16 +1673,16 @@
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<s:Label text="{city.woodSold*Numbers.WOOD_PRICE_SELL}"/>
-												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
 											</mx:GridItem>
 										</mx:GridRow>
 										<mx:GridRow >
 											<mx:GridItem horizontalAlign="center">
-												<mx:Image toolTip="Iron" source="{ImageContainer.IRON}" click="sellAllIron()"/>
+												<mx:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}" click="sellAllIron()"/>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<s:Label text="{Numbers.IRON_PRICE_SELL}"/>
-												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<s:TextInput text="{city.ironSold}" 
@@ -1694,16 +1693,16 @@
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<s:Label text="{city.ironSold*Numbers.IRON_PRICE_SELL}"/>
-												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
 											</mx:GridItem>
 										</mx:GridRow>
 										<mx:GridRow>
 											<mx:GridItem horizontalAlign="center">
-												<mx:Image toolTip="Bows" source="{ImageContainer.BOW}" click="sellAllBows()"/>
+												<mx:Image toolTip="{Translations.BOW.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.BOW}" click="sellAllBows()"/>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<s:Label text="{Numbers.BOW_PRICE_SELL}"/>
-												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<s:TextInput text="{city.bowsSold}" 
@@ -1714,16 +1713,16 @@
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<s:Label text="{city.bowsSold*Numbers.BOW_PRICE_SELL}"/>
-												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
 											</mx:GridItem>
 										</mx:GridRow>
 										<mx:GridRow>
 											<mx:GridItem horizontalAlign="center">
-												<mx:Image toolTip="Swords" source="{ImageContainer.SWORD}" click="sellAllSwords()"/>
+												<mx:Image toolTip="{Translations.SWORD.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.SWORD}" click="sellAllSwords()"/>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<s:Label text="{Numbers.SWORD_PRICE_SELL}"/>
-												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<s:TextInput text="{city.swordsSold}" 
@@ -1734,16 +1733,16 @@
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<s:Label text="{city.swordsSold*Numbers.SWORD_PRICE_SELL}"/>
-												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
 											</mx:GridItem>
 										</mx:GridRow>
 										<mx:GridRow>
 											<mx:GridItem horizontalAlign="center">
-												<mx:Image toolTip="Armors" source="{ImageContainer.ARMOR}" click="sellAllArmors()"/>
+												<mx:Image toolTip="{Translations.ARMOR.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.ARMOR}" click="sellAllArmors()"/>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<s:Label text="{Numbers.ARMOR_PRICE_SELL}"/>
-												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<s:TextInput text="{city.armorsSold}" 
@@ -1754,7 +1753,7 @@
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<s:Label text="{city.armorsSold*Numbers.ARMOR_PRICE_SELL}"/>
-												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
 											</mx:GridItem>
 										</mx:GridRow>
 									</mx:Grid>
@@ -1769,11 +1768,11 @@
 											<mx:GridItem/>
 											<mx:GridItem/>
 											<mx:GridItem horizontalAlign="center">
-												<s:Label text="Gain Total :" minWidth="150"/>
+												<s:Label text="{Translations.TOTAL_PROFIT.getItemAt(Session.LANGUAGE)} : " minWidth="150"/>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<s:Label text="{city.goldEarned}"/>
-												<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
 											</mx:GridItem>
 											<mx:GridItem/>
 										</mx:GridRow>
@@ -1789,25 +1788,25 @@
 				<!-- =============================================================================================== -->
 				<!-- Forge Tab -->
 				
-				<s:NavigatorContent label="Forge">
+				<s:NavigatorContent label="{Translations.FORGE.getItemAt(Session.LANGUAGE)}">
 					<s:VGroup width="100%" horizontalAlign="center">
 						<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle">
 						  <mx:GridRow >
 							  <mx:GridItem/>
 							  <mx:GridItem horizontalAlign="center">
-								  <s:Label text="Workers" />
+								  <s:Label text="{Translations.WORKERS.getItemAt(Session.LANGUAGE)}" />
 							  </mx:GridItem>
 							  <mx:GridItem horizontalAlign="center">
-								  <s:Label text="Wood Spent" />
+								  <s:Label text="{Translations.WOOD_SPENT.getItemAt(Session.LANGUAGE)}" />
 							  </mx:GridItem>
 							  <mx:GridItem horizontalAlign="center">
-								  <s:Label text="Iron Spent" />
+								  <s:Label text="{Translations.IRON_SPENT.getItemAt(Session.LANGUAGE)}" />
 							  </mx:GridItem>
 						  </mx:GridRow>
 						  <mx:GridRow >
 							  <mx:GridItem horizontalAlign="center">
 								  <mx:Image toolTip=" "
-											toolTipCreate="{onCreateForgeToolTip(event, 'Arcs', Numbers.BOW_WOOD, Numbers.BOW_IRON)}"
+											toolTipCreate="{onCreateForgeToolTip(event, Translations.BOW.getItemAt(Session.LANGUAGE) as String, Numbers.BOW_WOOD, Numbers.BOW_IRON)}"
 											source="{ImageContainer.BOW}" click="addAllUnemployedToBow()"/>
 							  </mx:GridItem>
 							  <mx:GridItem horizontalAlign="center">
@@ -1828,7 +1827,7 @@
 							<mx:GridRow >
 								<mx:GridItem horizontalAlign="center">
 									<mx:Image toolTip=" "
-											  toolTipCreate="{onCreateForgeToolTip(event, 'Epees', Numbers.SWORD_WOOD, Numbers.SWORD_IRON)}"
+											  toolTipCreate="{onCreateForgeToolTip(event, Translations.SWORD.getItemAt(Session.LANGUAGE) as String, Numbers.SWORD_WOOD, Numbers.SWORD_IRON)}"
 											  source="{ImageContainer.SWORD}" click="addAllUnemployedToSword()"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
@@ -1849,7 +1848,7 @@
 							<mx:GridRow >
 								<mx:GridItem horizontalAlign="center">
 									<mx:Image toolTip=" "
-											  toolTipCreate="{onCreateForgeToolTip(event, 'Armures', Numbers.ARMOR_WOOD, Numbers.ARMOR_IRON)}"
+											  toolTipCreate="{onCreateForgeToolTip(event, Translations.ARMOR.getItemAt(Session.LANGUAGE) as String, Numbers.ARMOR_WOOD, Numbers.ARMOR_IRON)}"
 											  source="{ImageContainer.ARMOR}" click="addAllUnemployedToArmor()"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
@@ -1901,28 +1900,28 @@
 				<!-- =============================================================================================== -->
 				<!-- Equipment Tab -->
 				
-				<s:NavigatorContent label="Equipment">
+				<s:NavigatorContent label="{Translations.EQUIPMENT.getItemAt(Session.LANGUAGE)}">
 					<s:VGroup width="100%" horizontalAlign="center">
 						<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle">
 							<mx:GridRow >
 								<mx:GridItem >
 								</mx:GridItem >
 								<mx:GridItem horizontalAlign="center">
-									<s:Label text="Stock" />
+									<s:Label text="{Translations.STOCK.getItemAt(Session.LANGUAGE)}" />
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
-									<s:Label text="Production" />
+									<s:Label text="{Translations.PRODUCTION.getItemAt(Session.LANGUAGE)}" />
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
-									<s:Label text="Armies" />
+									<s:Label text="{Translations.ARMIES.getItemAt(Session.LANGUAGE)}" />
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
-									<s:Label text="Prevision" />
+									<s:Label text="{Translations.PREVISION.getItemAt(Session.LANGUAGE)}" />
 								</mx:GridItem>
 							</mx:GridRow>
 							<mx:GridRow >
 								<mx:GridItem horizontalAlign="center">
-									<mx:Image toolTip="Arcs" source="{ImageContainer.BOW}"/>
+									<mx:Image toolTip="{Translations.BOW.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.BOW}"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
 									<s:Label text="{city.bowStock}" styleName="numberLabel"/>
@@ -1943,7 +1942,7 @@
 							</mx:GridRow>
 							<mx:GridRow >
 								<mx:GridItem horizontalAlign="center">
-									<mx:Image toolTip="Epees" source="{ImageContainer.SWORD}"/>
+									<mx:Image toolTip="{Translations.SWORD.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.SWORD}"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
 									<s:Label text="{city.swordStock}" styleName="numberLabel"/>
@@ -1964,7 +1963,7 @@
 							</mx:GridRow>
 							<mx:GridRow >
 								<mx:GridItem horizontalAlign="center">
-									<mx:Image toolTip="Armures" source="{ImageContainer.ARMOR}"/>
+									<mx:Image toolTip="{Translations.ARMOR.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.ARMOR}"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
 									<s:Label text="{city.armorStock}" styleName="numberLabel"/>
@@ -1990,7 +1989,7 @@
 				<!-- =============================================================================================== -->
 				<!-- Merchants Tab -->
 				
-				<s:NavigatorContent label="Marchands">
+				<s:NavigatorContent label="{Translations.MERCHANTS.getItemAt(Session.LANGUAGE)}">
 					<s:VGroup height="100%">
 						<s:HGroup width="100%" horizontalAlign="center">
 							<s:VGroup horizontalAlign="center" height="100%">
@@ -1999,12 +1998,12 @@
 											  toolTip=" "
 											  toolTipCreate="{onCreateMerchantToolTip(event)}"
 											  source="{ImageContainer.QUESTION}"/>
-									<s:Button label="New Merchants" click="newMerchants()"/>
+									<s:Button label="{Translations.NEW_MERCHANTS.getItemAt(Session.LANGUAGE)}" click="newMerchants()"/>
 								</s:HGroup>
 								<s:Scroller maxHeight="200">
 									<s:Group>
 										<s:List id="merchantsList"
-												itemRenderer="com.uralys.tribes.renderers.MerchantListRenderer4Board"
+												itemRenderer="com.uralys.tribes.renderers.MerchantListRenderer"
 												dataProvider="{city.merchants}"
 												borderVisible="false"
 												width="275"
@@ -2024,7 +2023,7 @@
 									 visible="{merchant != null}">
 								<mx:GridRow >
 									<mx:GridItem >
-										<s:Label text="People in this caravan" />
+										<s:Label text="{Translations.NB_CARAVAN.getItemAt(Session.LANGUAGE)}" />
 									</mx:GridItem>
 									<mx:GridItem>
 										<s:TextInput text="{merchant.size}" 
@@ -2035,7 +2034,7 @@
 													 width="100"/>
 									</mx:GridItem>
 									<mx:GridItem>
-										<s:Button label="Delete" click="deleteMerchant()"/>
+										<s:Button label="{Translations.DELETE.getItemAt(Session.LANGUAGE)}" click="deleteMerchant()"/>
 									</mx:GridItem>
 								</mx:GridRow>
 								<mx:GridRow>
@@ -2046,15 +2045,15 @@
 								<mx:GridRow >
 									<mx:GridItem />
 									<mx:GridItem horizontalAlign="center">
-										<s:Label text="Transport" />
+										<s:Label text="{Translations.CARRIAGE.getItemAt(Session.LANGUAGE)}" />
 									</mx:GridItem>
 									<mx:GridItem horizontalAlign="center">
-										<s:Label text="Stock available" />
+										<s:Label text="{Translations.AVAILABLE_STOCK.getItemAt(Session.LANGUAGE)}" />
 									</mx:GridItem>
 								</mx:GridRow>
 								<mx:GridRow >
 									<mx:GridItem horizontalAlign="center">
-										<mx:Image toolTip="Wheat" source="{ImageContainer.WHEAT}" click="addAllWheatToMerchant()" width="25" height="25"/>
+										<mx:Image toolTip="{Translations.WHEAT.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WHEAT}" click="addAllWheatToMerchant()" width="25" height="25"/>
 									</mx:GridItem>
 									<mx:GridItem horizontalAlign="center">
 										<s:TextInput text="{merchant.wheat}" 
@@ -2070,7 +2069,7 @@
 								</mx:GridRow>
 								<mx:GridRow >
 									<mx:GridItem horizontalAlign="center">
-										<mx:Image toolTip="Wood" source="{ImageContainer.WOOD}" click="addAllWoodToMerchant()" width="25" height="25"/>
+										<mx:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}" click="addAllWoodToMerchant()" width="25" height="25"/>
 									</mx:GridItem>
 									<mx:GridItem horizontalAlign="center">
 										<s:TextInput text="{merchant.wood}" 
@@ -2086,7 +2085,7 @@
 								</mx:GridRow>
 								<mx:GridRow >
 									<mx:GridItem horizontalAlign="center">
-										<mx:Image toolTip="Iron" source="{ImageContainer.IRON}" click="addAllIronToMerchant()" width="25" height="25"/>
+										<mx:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}" click="addAllIronToMerchant()" width="25" height="25"/>
 									</mx:GridItem>
 									<mx:GridItem horizontalAlign="center">
 										<s:TextInput text="{merchant.iron}" 
@@ -2102,7 +2101,7 @@
 								</mx:GridRow>
 								<mx:GridRow >
 									<mx:GridItem horizontalAlign="center">
-										<mx:Image toolTip="Gold" source="{ImageContainer.GOLD}" click="addAllGoldToMerchant()" width="25" height="25"/>
+										<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" click="addAllGoldToMerchant()" width="25" height="25"/>
 									</mx:GridItem>
 									<mx:GridItem horizontalAlign="center">
 										<s:TextInput text="{merchant.gold}" 
@@ -2129,14 +2128,14 @@
 				<!-- =============================================================================================== -->
 				<!-- Armies Tab -->
 				
-				<s:NavigatorContent label="Armees">
+				<s:NavigatorContent label="{Translations.ARMIES.getItemAt(Session.LANGUAGE)}">
 					<s:HGroup width="100%" horizontalAlign="center">
 						<s:VGroup horizontalAlign="center">
-							<s:Button label="New Army" click="newArmy()"/>
+							<s:Button label="{Translations.NEW_ARMY.getItemAt(Session.LANGUAGE)}" click="newArmy()"/>
 							<s:Scroller height="200">
 								<s:Group>
 									<s:List id="armiesList"
-											itemRenderer="com.uralys.tribes.renderers.ArmyListRenderer4Board"
+											itemRenderer="com.uralys.tribes.renderers.ArmyListRenderer"
 											dataProvider="{city.armies}"
 											borderVisible="false"
 											width="275"
@@ -2156,7 +2155,7 @@
 								 visible="{army != null}">
 							<mx:GridRow >
 								<mx:GridItem >
-									<s:Label text="People in this army" />
+									<s:Label text="{Translations.NB_ARMY.getItemAt(Session.LANGUAGE)}" />
 								</mx:GridItem>
 								<mx:GridItem>
 									<s:TextInput text="{army.size}" 
@@ -2167,7 +2166,7 @@
 												 width="100"/>
 								</mx:GridItem>
 								<mx:GridItem>
-									<s:Button label="Delete" click="deleteArmy()"/>
+									<s:Button label="{Translations.DELETE.getItemAt(Session.LANGUAGE)}" click="deleteArmy()"/>
 								</mx:GridItem>
 							</mx:GridRow>
 							<mx:GridRow>
@@ -2178,15 +2177,15 @@
 							<mx:GridRow >
 								<mx:GridItem />
 								<mx:GridItem horizontalAlign="center">
-									<s:Label text="Equipement" />
+									<s:Label text="{Translations.EQUIPMENT.getItemAt(Session.LANGUAGE)}" />
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
-									<s:Label text="Stock available" />
+									<s:Label text="{Translations.AVAILABLE_STOCK.getItemAt(Session.LANGUAGE)}" />
 								</mx:GridItem>
 							</mx:GridRow>
 							<mx:GridRow >
 								<mx:GridItem horizontalAlign="center">
-									<mx:Image toolTip="Arcs" source="{ImageContainer.BOW}" click="addAllBowsToArmy()"/>
+									<mx:Image toolTip="{Translations.BOW.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.BOW}" click="addAllBowsToArmy()"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
 									<s:TextInput text="{army.bows}" 
@@ -2202,7 +2201,7 @@
 							</mx:GridRow>
 							<mx:GridRow >
 								<mx:GridItem horizontalAlign="center">
-									<mx:Image toolTip="Epees" source="{ImageContainer.SWORD}" click="addAllSwordsToArmy()"/>
+									<mx:Image toolTip="{Translations.SWORD.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.SWORD}" click="addAllSwordsToArmy()"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
 									<s:TextInput text="{army.swords}" 
@@ -2218,7 +2217,7 @@
 							</mx:GridRow>
 							<mx:GridRow >
 								<mx:GridItem horizontalAlign="center">
-									<mx:Image toolTip="Armures" source="{ImageContainer.ARMOR}" click="addAllArmorsToArmy()"/>
+									<mx:Image toolTip="{Translations.ARMOR.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.ARMOR}" click="addAllArmorsToArmy()"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
 									<s:TextInput text="{army.armors}" 

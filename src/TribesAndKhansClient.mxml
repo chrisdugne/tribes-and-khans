@@ -22,7 +22,6 @@
 			import com.uralys.tribes.core.Pager;
 			import com.uralys.tribes.managers.AccountManager;
 			import com.uralys.tribes.pages.Login;
-			import com.uralys.tribes.pages.Map;
 			
 			import mx.core.FlexGlobals;
 			
@@ -114,41 +113,37 @@
 	<s:HGroup width="100%" horizontalAlign="center">
 		<mx:Image source="../images/fond.jpg" width="100%" height="100%" alpha="0.45"/>
 	</s:HGroup>
+		
+	<!-- header -->
+	<s:HGroup width="100%" paddingLeft="5" paddingRight="5" paddingBottom="-20">
+		<mx:Image id="frenchButton" source="{ImageContainer.FR_FLAG}" click="french()" visible="{Session.LANGUAGE != 0}" width="25"/>
+		<mx:Image id="englishButton" source="{ImageContainer.EN_FLAG}" click="english()" visible="{Session.LANGUAGE != 1}" width="25"/>
+		<mx:Image id="usButton" source="{ImageContainer.US_FLAG}" click="us()" visible="{Session.LANGUAGE != 2}" width="25"/>
+
+		<mx:Spacer width="100%"/>
+		<s:Label text="{Session.profil ? Translations.LOG_AS.getItemAt(Session.LANGUAGE) + ' : '+ Session.uralysProfile.email : Translations.LOG_IN.getItemAt(Session.LANGUAGE)}"
+				 color="#222299"/>
+	</s:HGroup>	
+	<mx:HRule width="100%" chromeColor="#222299" top="20"/>
 	
-	<s:VGroup width="100%" height="100%" paddingTop="3" paddingBottom="3">
-		
-		<!-- header -->
-		<s:HGroup width="100%" paddingLeft="5" paddingRight="5">
-			<mx:Image id="frenchButton" source="{ImageContainer.FR_FLAG}" click="french()" visible="{Session.LANGUAGE != 0}" width="25"/>
-			<mx:Image id="englishButton" source="{ImageContainer.EN_FLAG}" click="english()" visible="{Session.LANGUAGE != 1}" width="25"/>
-			<mx:Image id="usButton" source="{ImageContainer.US_FLAG}" click="us()" visible="{Session.LANGUAGE != 2}" width="25"/>
-
-			<mx:Spacer width="100%"/>
-			<s:Label text="{Session.profil ? Translations.LOG_AS.getItemAt(Session.LANGUAGE) + ' : '+ Session.uralysProfile.email : Translations.LOG_IN.getItemAt(Session.LANGUAGE)}"
-					 color="#222299"/>
-		</s:HGroup>	
-		<mx:HRule width="100%" chromeColor="#222299"/>
-		
-		
-		<!-- content -->
-		<s:Group id="window" width="100%" height="100%"/>
-		
-
-		<!-- footer -->
-		<mx:HRule width="100%" chromeColor="#222299"/>
-		<s:HGroup width="100%" horizontalAlign="center">
-			<mx:Image source="../images/logos/uralysminilogo.png" 
-					  x="65" bottom="2"
-					  click="navigateToURL(new URLRequest('http://www.uralys.com'), '_new');"/>
-			<mx:Spacer width="10%"/>
-			<s:Label text="{Translations.GO_TO_FORUM.getItemAt(Session.LANGUAGE)}"
-					 click="navigateToURL(new URLRequest('http://www.uralys.com/forumTAK'), '_new');"
-					 color="#222299"/>
-			<mx:Spacer width="20%"/>
-			<s:Label text=" Tribes And Khans 2011   -    version {Session.VERSION}" 
-					 color="#222299"/>
-		</s:HGroup>	
-	</s:VGroup>
+	
+	<!-- content -->
+	<s:Group id="window" height="100%" width="100%" top="24"/>
+	
+	
+	<!-- footer -->
+	<mx:HRule width="100%" chromeColor="#222299" bottom="30"/>
+	<s:HGroup width="100%" horizontalAlign="center" bottom="0">
+		<mx:Image source="../images/logos/uralysminilogo.png" 
+				  click="navigateToURL(new URLRequest('http://www.uralys.com'), '_new');"/>
+		<mx:Spacer width="10%"/>
+		<s:Label text="{Translations.GO_TO_FORUM.getItemAt(Session.LANGUAGE)}"
+				 click="navigateToURL(new URLRequest('http://www.uralys.com/forumTAK'), '_new');"
+				 color="#222299"/>
+		<mx:Spacer width="20%"/>
+		<s:Label text=" Tribes And Khans 2011   -    version {Session.VERSION}" 
+				 color="#222299"/>
+	</s:HGroup>	
 	
 	<!-- ========================================================================== -->
 	<!-- windows -->

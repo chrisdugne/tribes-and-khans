@@ -73,17 +73,22 @@
 	
 	<!-- ========================================================================================================== -->
 	
-	<s:VGroup horizontalAlign="center" top="180" width="100%">
+	<s:HGroup width="100%" horizontalAlign="center" y="-18">
+		<mx:Image source="{ImageContainer.LOGO}"/>
+	</s:HGroup>
+	
+	<s:VGroup horizontalAlign="center" top="340" width="100%">
+		<mx:Spacer height="-20"/>
 		<mx:SWFLoader source="{ImageContainer.LOADING}" 
 					  visible="{Session.WAIT_FOR_CONNECTION}"
-					  width="50" height="50"/>
-		<mx:Spacer height="-50"/>
-		<mx:Image source="{ImageContainer.GROUPE_PERSO}"/>
+					  width="30" height="30"/>
+		<mx:Spacer height="-10"/>
+		<mx:Image source="{ImageContainer.GROUPE_PERSO}" height="200" width="350"/>
 	</s:VGroup>
 	
 	
 	<s:VGroup width="100%"
-			  paddingTop="90"
+			  y="240"
 			  horizontalAlign="center"
 			  creationComplete="initForm()">
 		<mx:Spacer width="30"/>

@@ -7,6 +7,9 @@
  
 	<fx:Script>
 		<![CDATA[
+			import com.uralys.tribes.commons.Session;
+			import com.uralys.tribes.commons.Translations;
+			
 			[Bindable]
 			public var itemName:String;
 
@@ -39,9 +42,9 @@
 			  paddingLeft="10" paddingRight="10">
 					
 		<s:Label text="{itemName}" styleName="whiteNumberLabel"/>
-		<mx:Image toolTip="Wood" source="{ImageContainer.WOOD}"/>
+		<mx:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}"/>
 		<s:Label text="{woodCost}" styleName="whiteNumberLabel"/>
-		<mx:Image toolTip="Iron" source="{ImageContainer.IRON}"/>
+		<mx:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}"/>
 		<s:Label text="{ironCost}" styleName="whiteNumberLabel"/>
 	</s:HGroup>
 	

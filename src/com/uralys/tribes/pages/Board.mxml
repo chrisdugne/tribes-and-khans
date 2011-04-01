@@ -12,6 +12,7 @@
 			
 			import com.uralys.tribes.commons.Numbers;
 			import com.uralys.tribes.commons.Session;
+			import com.uralys.tribes.commons.Translations;
 			import com.uralys.tribes.core.BoardClickListener;
 			import com.uralys.tribes.core.BoardDrawer;
 			import com.uralys.tribes.core.Pager;
@@ -176,8 +177,10 @@
 				for each(var player:Player in game.players){
 					if(player.playerUID != Session.currentPlayer.playerUID){
 						for each(var city:City in player.cities){
-							if(city.creationTurn < game.currentTurn)
+							if(city.creationTurn < game.currentTurn){
+								city.name += " ("+player.name+")";
 								Session.allOtherCities.addItem(city);
+							}
 						}
 					}
 				}
@@ -693,6 +696,8 @@
 					
 				}
 			}
+			
+			private var storeLogoInitX:int;			
 
 		]]>
 	</fx:Script>
@@ -720,26 +725,26 @@
 				 xTo="1500"
 				 target="{cityGroup}"
 				 easingFunction="{Quadratic.easeIn}"/>
-
+		
 
 	</fx:Declarations>
-
-	
 	
 	<s:Group id="main" width="100%" height="100%">
+		
+		
 		<s:VGroup left="10" id="buttonsGroup" visible="{Session.TURN_SAVING_DONE}">
-			<s:Button label="Save Turn" left="10" right="5" click="saveTurn()"/>
-			<s:Button label="Leave this game" left="10" right="5" click="leave()"/>
+			<s:Button label="{Translations.SAVE_TURN.getItemAt(Session.LANGUAGE)}" left="10" right="5" click="saveTurn()"/>
+			<s:Button label="{Translations.LEAVE_THIS_GAME.getItemAt(Session.LANGUAGE)}" left="10" right="5" click="leave()"/>
 		</s:VGroup>
 		<s:VGroup horizontalAlign="left" top="70" left="35">
-			<s:Label text="Mes Villes"/>
+			<s:Label text="{Translations.MY_CITIES.getItemAt(Session.LANGUAGE)}"/>
 			<s:Scroller height="200">
 				<s:Group>
 					<s:List id="citiesList"
 							itemRenderer="com.uralys.tribes.renderers.CityListRenderer"
 							dataProvider="{Session.currentPlayer.cities}"
 							borderVisible="false"
-							width="275"
+							width="340"
 							contentBackgroundAlpha="0"
 							creationComplete="initCitiesList()">
 						<s:layout>
@@ -748,14 +753,14 @@
 					</s:List>
 				</s:Group>
 			</s:Scroller>
-			<s:Label text="Autres Villes"/>
+			<s:Label text="{Translations.OTHER_CITIES.getItemAt(Session.LANGUAGE)}"/>
 			<s:Scroller height="200">
 				<s:Group>
 					<s:List id="otherCitiesList"
 							itemRenderer="com.uralys.tribes.renderers.OtherCityListRenderer"
 							dataProvider="{Session.allOtherCities}"
 							borderVisible="false"
-							width="275"
+							width="340"
 							contentBackgroundAlpha="0"
 							creationComplete="initOtherCitiesList()">
 						<s:layout>
@@ -774,13 +779,13 @@
 		
 		<mx:ViewStack id="viewstack" width="200" top="100" right="95">
 			
-			<s:NavigatorContent label="Armees">
+			<s:NavigatorContent label="{Translations.ARMIES.getItemAt(Session.LANGUAGE)}">
 				<s:HGroup width="100%" horizontalAlign="center">
 					<s:VGroup horizontalAlign="right">
 						<s:Scroller height="200" width="260">
 							<s:Group>
 								<s:List id="armiesList"
-										itemRenderer="com.uralys.tribes.renderers.ArmyListRenderer4Board"
+										itemRenderer="com.uralys.tribes.renderers.ArmyListRenderer"
 										dataProvider="{Session.currentPlayer.armies}"
 										borderVisible="false"
 										width="240"
@@ -795,12 +800,12 @@
 					</s:VGroup>
 				</s:HGroup>
 			</s:NavigatorContent>
-			<s:NavigatorContent label="Marchands">
+			<s:NavigatorContent label="{Translations.MERCHANTS.getItemAt(Session.LANGUAGE)}">
 				<s:VGroup horizontalAlign="right">
 					<s:Scroller height="200" width="260">
 						<s:Group>
 							<s:List id="merchantsList"
-									itemRenderer="com.uralys.tribes.renderers.MerchantListRenderer4Board"
+									itemRenderer="com.uralys.tribes.renderers.MerchantListRenderer"
 									dataProvider="{Session.currentPlayer.merchants}"
 									borderVisible="false"
 									width="240"
@@ -818,21 +823,21 @@
 
 		<!-- =============================================================================================== -->
 		
-		<s:Button label="Conflits" click="{FlexGlobals.topLevelApplication.showconflicts.play()}" right="10"/>
+		<s:Button label="{Translations.CONFLICT.getItemAt(Session.LANGUAGE)}s" click="{FlexGlobals.topLevelApplication.showconflicts.play()}" right="10"/>
 		<s:HGroup width="100%" horizontalAlign="center" paddingTop="5">
 			<s:Label text="X : {coordinateX}"/>
 			<mx:Spacer width="200"/>
 			<s:Label text="Y : {coordinateY}"/>
 		</s:HGroup>
-		<s:HGroup width="100%" horizontalAlign="center" paddingTop="50" bottom="-3">
-			<s:CheckBox id="checkBoxDetails" label="Details" selected="true" skinClass="spark.skins.spark.CheckBoxSkin"/>
+		<s:HGroup width="100%" horizontalAlign="center" bottom="35">
+			<s:CheckBox id="checkBoxDetails" label="{Translations.DETAILS.getItemAt(Session.LANGUAGE)}" selected="true" skinClass="spark.skins.spark.CheckBoxSkin"/>
 			<mx:Spacer width="45"/>			
-			<s:CheckBox id="checkBoxImages" label="Images" selected="true" skinClass="spark.skins.spark.CheckBoxSkin"/>
+			<s:CheckBox id="checkBoxImages" label="{Translations.IMAGES.getItemAt(Session.LANGUAGE)}" selected="true" skinClass="spark.skins.spark.CheckBoxSkin"/>
 			<mx:Spacer width="45"/>			
-			<s:CheckBox id="checkBoxTexts" label="Textes" selected="true" skinClass="spark.skins.spark.CheckBoxSkin"/>
+			<s:CheckBox id="checkBoxTexts" label="{Translations.TEXTS.getItemAt(Session.LANGUAGE)}" selected="true" skinClass="spark.skins.spark.CheckBoxSkin"/>
 		</s:HGroup>
 		<s:HGroup width="200" height="200" horizontalAlign="center"
-				  bottom="20"
+				  bottom="45"
 				  right="150">
 			<s:Group width="200" height="200"
 					 id="minimap"
@@ -944,12 +949,12 @@
 					
 					<s:VGroup id="merchantChoiceGroup" 
 							  includeInLayout="false">
-						<s:Button label="Build a city here" click="buildCity()"/>
+						<s:Button label="{Translations.BUILD_HERE.getItemAt(Session.LANGUAGE)}" click="buildCity()"/>
 					</s:VGroup>
 						
 					<s:VGroup id="selectionChoiceGroup" 
 							  includeInLayout="false">
-						<s:Button label="Enter city" click="enterCity(event)"/>
+						<s:Button label="{Translations.ENTER_CITY.getItemAt(Session.LANGUAGE)}" click="enterCity(event)"/>
 						
 						<!-- =============================================================================================== -->
 						<!-- Units Tab -->
@@ -959,12 +964,12 @@
 						
 						<mx:ViewStack id="viewstackSelectionGroup" width="170" top="100" right="35">
 							
-							<s:NavigatorContent label="Armees">
+							<s:NavigatorContent label="{Translations.ARMIES.getItemAt(Session.LANGUAGE)}">
 								<s:VGroup horizontalAlign="right">
 									<s:Scroller maxHeight="200">
 										<s:Group>
 											<s:List id="selectionChoiceArmyList"
-													itemRenderer="com.uralys.tribes.renderers.ArmyListRenderer4Board"
+													itemRenderer="com.uralys.tribes.renderers.ArmyListRenderer"
 													dataProvider="{selectedCity.armies}"
 													borderVisible="false"
 													width="275"
@@ -978,12 +983,12 @@
 									</s:Scroller>
 								</s:VGroup>
 							</s:NavigatorContent>
-							<s:NavigatorContent label="Marchands">
+							<s:NavigatorContent label="{Translations.MERCHANTS.getItemAt(Session.LANGUAGE)}">
 								<s:VGroup horizontalAlign="right">
 									<s:Scroller maxHeight="200">
 										<s:Group>
 											<s:List id="selectionChoiceMerchantList"
-													itemRenderer="com.uralys.tribes.renderers.MerchantListRenderer4Board"
+													itemRenderer="com.uralys.tribes.renderers.MerchantListRenderer"
 													dataProvider="{selectedCity.merchants}"
 													borderVisible="false"
 													width="275"
@@ -1030,6 +1035,7 @@
 	</s:VGroup>
 		
 	<!-- ====================================================================================== -->
-
+	
+	<mx:Image source="{ImageContainer.LOGO}" height="80" width="300" right="70" y="-9"/>
 	
 </s:Group>

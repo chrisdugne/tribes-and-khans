@@ -108,9 +108,11 @@
 		]]>
 	</fx:Script>
 	
-	<s:HGroup horizontalAlign="center" right="-650" bottom="-45" width="100%">
-		<mx:Image source="{ImageContainer.GROUPE_PERSO}"/>
+	<s:HGroup width="100%" horizontalAlign="center" y="-18">
+		<mx:Image source="{ImageContainer.LOGO}"/>
 	</s:HGroup>
+	
+	<mx:Image source="{ImageContainer.GROUPE_PERSO}" top="180" right="60"/>
 	
 	<s:HGroup width="100%" visible="{Session.firstHomeLoadingDone}">
 		<s:VGroup paddingLeft="5" horizontalAlign="center">
@@ -133,7 +135,7 @@
 		</s:VGroup>
 	</s:HGroup>
 	
-	<s:HGroup width="100%" horizontalAlign="center" paddingTop="50">
+	<s:HGroup width="100%" horizontalAlign="left" paddingLeft="100" paddingTop="220">
 		<mx:ViewStack id="viewstack" width="100%" >	
 			
 			<s:NavigatorContent id="emptyView"/>

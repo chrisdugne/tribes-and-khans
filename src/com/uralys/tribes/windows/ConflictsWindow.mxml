@@ -10,6 +10,7 @@
 		
 		<![CDATA[
 			import com.uralys.tribes.commons.Session;
+			import com.uralys.tribes.commons.Translations;
 			import com.uralys.tribes.entities.Conflict;
 			import com.uralys.tribes.entities.MoveConflict;
 			import com.uralys.tribes.renderers.ConflictReport;
@@ -45,7 +46,7 @@
 		<s:Button label="Ok" click="{FlexGlobals.topLevelApplication.hideconflicts.play()}"/>
 	</s:HGroup>
 	<s:VGroup width="100%" horizontalAlign="center">
-		<s:Label text="Conflicts :" styleName="littleBlueStyle"/>
+		<s:Label text="{Translations.CONFLICT.getItemAt(Session.LANGUAGE)}s :" styleName="littleBlueStyle"/>
 		<s:Scroller height="350">
 			<s:VGroup id="conflictsGroup" horizontalAlign="center"/>
 		</s:Scroller>

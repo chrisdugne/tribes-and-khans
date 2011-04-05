@@ -2,10 +2,11 @@ package com.uralys.tribes.managers {
 	
 	import com.uralys.tribes.commons.Names;
 	import com.uralys.tribes.commons.Session;
+	import com.uralys.tribes.commons.Translations;
 	import com.uralys.tribes.core.Pager;
-	import com.uralys.tribes.entities.Profil;
+	import com.uralys.tribes.entities.Player;
 	import com.uralys.tribes.entities.UralysProfile;
-	import com.uralys.tribes.pages.Home;
+	import com.uralys.tribes.pages.Board;
 	
 	import mx.collections.ArrayCollection;
 	import mx.core.FlexGlobals;
@@ -27,7 +28,7 @@ package com.uralys.tribes.managers {
 		//============================================================================================//
 		
 		private var accountWrapper:RemoteObject;
-		private var playerWrapper:RemoteObject;
+		private var gameWrapper:RemoteObject;
 		
 		// -  ================================================================================
 		
@@ -37,9 +38,9 @@ package com.uralys.tribes.managers {
 			accountWrapper.endpoint = Session.isLocal ? Names.LOCAL_LOGGER_SERVER_AMF_ENDPOINT 
 													  : Names.URALYS_LOGGER_SERVER_AMF_ENDPOINT;
 
-			playerWrapper = new RemoteObject();
-			playerWrapper.destination = "PlayerWrapper";
-			playerWrapper.endpoint = Names.SERVER_AMF_ENDPOINT;
+			gameWrapper = new RemoteObject();
+			gameWrapper.destination = "GameWrapper";
+			gameWrapper.endpoint = Names.SERVER_AMF_ENDPOINT;
 		}
 
 		
@@ -66,16 +67,6 @@ package com.uralys.tribes.managers {
 			accountWrapper.login(email, password);
 		}
 		
-		
-		// la liste des games vient d'etre refreshed.
-		// on la stocke pour la passer en param dans le gotopage(Home) qd on a recu le profil refreshed
-		private var games:ArrayCollection;
-		public function refreshProfil(games:ArrayCollection):void{
-			this.games = games;
-			playerWrapper.getProfil.addEventListener("result", refreshedProfil);
-			playerWrapper.getProfil(Session.uralysProfile.uralysUID);
-		}
-		
 		//--------------------------------------------------------------------------------------------//
 		
 		public function changeLanguage(uralysUID:String, language:int):void{
@@ -97,8 +88,8 @@ package com.uralys.tribes.managers {
 				Session.WAIT_FOR_CONNECTION = false;
 			}
 			else{
-				playerWrapper.createProfil.addEventListener("result", profilCreated);
-				playerWrapper.createProfil(Session.uralysProfile.uralysUID, this.email); 
+				gameWrapper.createPlayer.addEventListener("result", playerCreated);
+				gameWrapper.createPlayer(Session.uralysProfile.uralysUID, this.email); 
 			}
 		}
 		
@@ -113,45 +104,39 @@ package com.uralys.tribes.managers {
 				Session.WAIT_FOR_CONNECTION = false;
 			}
 			else{
-				playerWrapper.getProfil.addEventListener("result", receivedProfil);
-				playerWrapper.getProfil(Session.uralysProfile.uralysUID);
+				gameWrapper.getPlayer.addEventListener("result", receivedPlayer);
+				gameWrapper.getPlayer(Session.uralysProfile.uralysUID);
 			}
 		}
 
 		//-------------------------------------------------------------------------//
 		// TribesAndKhansServer
 
-		public function profilCreated(event:ResultEvent):void{
-			Session.profil = event.result as Profil;
+		public function playerCreated(event:ResultEvent):void{
+			var uralysUID:String = event.result as String;
 			
-			if(!profilCreatedAutomatically)
-				FlexGlobals.topLevelApplication.message("Profil Uralys cree. Bienvenue !", 5);
+			if(!playerCreatedAutomatically)
+				FlexGlobals.topLevelApplication.message(Translations.WELCOME.getItemAt(Session.LANGUAGE), 5);
 			
-			finalizeLogin();
+			gameWrapper.getPlayer.addEventListener("result", receivedPlayer);
+			gameWrapper.getPlayer(uralysUID);
 		}
 		
-		private var profilCreatedAutomatically:Boolean = false;
-		public function receivedProfil(event:ResultEvent):void{
-			var profil:Profil = event.result as Profil;
+		private var playerCreatedAutomatically:Boolean = false;
+		public function receivedPlayer(event:ResultEvent):void{
+			var player:Player = event.result as Player;
 			
-			if(profil == null){
-				profilCreatedAutomatically = true;
-				playerWrapper.createProfil.addEventListener("result", profilCreated);
-				playerWrapper.createProfil(Session.uralysProfile.uralysUID, this.email);
+			if(player == null){
+				playerCreatedAutomatically = true;
+				gameWrapper.createPlayer.addEventListener("result", playerCreated);
+				gameWrapper.createPlayer(Session.uralysProfile.uralysUID, this.email);
 			}
 			else{
 				
-				Session.profil = profil;
+				Session.player = player;
 				finalizeLogin();
 			}
 				
-		}
-
-		public function refreshedProfil(event:ResultEvent):void{
-			var profil:Profil = event.result as Profil;
-			
-			Session.profil = profil;
-			Pager.getInstance().goToPage(Home, Home.CURRENT_GAMES, this.games);
 		}
 
 		private function finalizeLogin():void{
@@ -159,7 +144,7 @@ package com.uralys.tribes.managers {
 			Session.WAIT_FOR_CONNECTION = false;
 			Session.WAIT_FOR_SERVER = false;
 			Session.LOGGED_IN = true;
-			Pager.getInstance().goToPage(Home);
+			Pager.getInstance().goToPage(Board);
 			
 		}
 		

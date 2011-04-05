@@ -2,7 +2,7 @@ package com.uralys.tribes.core
 {
 	import com.uralys.tribes.commons.Numbers;
 	import com.uralys.tribes.commons.Session;
-	import com.uralys.tribes.entities.Army;
+	import com.uralys.tribes.entities.Unit;
 	import com.uralys.tribes.entities.City;
 	import com.uralys.tribes.entities.Conflict;
 	import com.uralys.tribes.entities.Game;
@@ -66,18 +66,13 @@ package com.uralys.tribes.core
 			radialGrad.interpolationMethod
 		}
 
-		public function setBoards(board:Board):void{
+		public function setBoard(board:Board):void{
 			this.board = board;
-		}
-
-		public function setGame(game:Game):void{
-			this.game = game;
 		}
 
 		//=====================================================================================//
 		
 		private var board:Board;
-		private var game:Game;
 		
 		//=====================================================================================//
 
@@ -93,45 +88,38 @@ package com.uralys.tribes.core
 			drawMap();
 			drawConflicts();
 			
-			for each (var player:Player in game.players){
-				
-				// il faudra revoir ca pour les alliances
-				var isOpponent:Boolean = Session.currentPlayer.playerUID != player.playerUID;
-				
-				//-----------------------------------------------------------------------------------------//
-				// cities
-				
-				for each (var city:City in player.cities){
-					drawCity(city, isOpponent);
-				}
-
-				//-----------------------------------------------------------------------------------------//
-				// armies
-
-				for each (var army:Army in player.armies){					
-					drawArmy(army, isOpponent);
-				}
-
-				//-----------------------------------------------------------------------------------------//
-				// merchants
-
-				for each (var merchant:Army in player.merchants){
-					drawMerchant(merchant, isOpponent);
-				}
-				
-				//-----------------------------------------------------------------------------------------//
-				// lands
-				
-				for each (var land:int in player.lands){
-					drawLand(land, isOpponent);					
-				}
-			}
+//			for each (var player:Player in game.players){
+//				
+//				// il faudra revoir ca pour les alliances
+//				var isOpponent:Boolean = Session.player.uralysUID != player.uralysUID;
+//				
+//				//-----------------------------------------------------------------------------------------//
+//				// cities
+//				
+//				for each (var city:City in player.cities){
+//					drawCity(city, isOpponent);
+//				}
+//
+//				//-----------------------------------------------------------------------------------------//
+//				// armies
+//
+//				for each (var army:Unit in player.units){					
+//					drawArmy(army, isOpponent);
+//				}
+//
+//				//-----------------------------------------------------------------------------------------//
+//				// lands
+//				
+//				for each (var land:int in player.lands){
+//					drawLand(land, isOpponent);					
+//				}
+//			}
 		}
 
 		//=====================================================================================//
 		
 		public function drawConflicts():void{
-			for each(var conflict:Conflict in Session.currentPlayer.conflicts){
+			for each(var conflict:Conflict in Session.player.conflicts){
 				var image:Image = new Image();
 				
 				image.source = ImageContainer.CONFLIT;
@@ -144,6 +132,45 @@ package com.uralys.tribes.core
 				
 		}
 		
+		/**
+		 * genere les images autour de ce positionnement
+		 * 
+		 */ 
+//		private function refreshMap(x:Number, y:Number):void{
+//			
+//			// max left
+//			if(x>0)
+//				x=0;
+//			// max top 
+//			if(y>0)
+//				y=0;
+//			
+//			//------------------------------------------------//
+//
+//			var leftIndex:int = -x/Numbers.LAND_HEIGHT - 3;
+//			if(leftIndex<0)
+//				leftIndex = 0;
+//				
+//			var rightIndex:int = -x/Numbers.LAND_HEIGHT + Session.MAP_WIDTH/Numbers.LAND_HEIGHT + 3;
+//			if(rightIndex>board.mapPositioner.width/Numbers.LAND_HEIGHT)
+//				rightIndex = board.mapPositioner.width/Numbers.LAND_HEIGHT;
+//
+//			var topIndex:int = -y/Numbers.LAND_HEIGHT - 3;
+//			var bottomIndex:int = y/Numbers.LAND_HEIGHT + Session.MAP_WIDTH/Numbers.LAND_HEIGHT + 3;
+//			
+//			//------------------------------------------------//
+//			// init du tableau 
+//			
+//			for(var i:int=leftIndex; i < rightIndex; i++){
+//				for(var j:int=topIndex; j < bottomIndex; j++){
+//					if(Session.tiles[i][j] == null){
+//						Session.tiles[i][j] = new Object();
+//					}
+//				}
+//			}
+//		}
+
+		
 		public function drawMap():void{
 			
 			//------------------------------------------------//
@@ -151,9 +178,9 @@ package com.uralys.tribes.core
 			
 			Session.map = [];
 			
-			for(var i:int=0; i < board.image.width/Numbers.LAND_WIDTH; i++){
+			for(var i:int=0; i < board.mapPositioner.width/Numbers.LAND_WIDTH; i++){
 				Session.map[i] = [];
-				for(var j:int=0; j < board.image.height/Numbers.LAND_HEIGHT; j++){
+				for(var j:int=0; j < board.mapPositioner.height/Numbers.LAND_HEIGHT; j++){
 					Session.map[i][j] = Numbers.NOTHING;
 				}
 			}
@@ -161,32 +188,32 @@ package com.uralys.tribes.core
 			//------------------------------------------------//
 			// city floors
 			
-			for each (var player:Player in game.players){
-				for each (var city:City in player.cities){
-					
-					// de 0 a 29
-					var cityLandXmin:int = Math.floor((city.x - city.radius)/Numbers.LAND_WIDTH);	
-					var cityLandXmax:int = Math.floor((city.x + city.radius)/Numbers.LAND_WIDTH);	
-					var cityLandYmin:int = Math.floor((city.y - city.radius)/Numbers.LAND_HEIGHT);	
-					var cityLandYmax:int = Math.floor((city.y + city.radius)/Numbers.LAND_HEIGHT);
-					
-					
-					for(var i:int=cityLandXmin; i <= cityLandXmax; i++){
-						for(var j:int=cityLandYmin; j <= cityLandYmax; j++){
-							
-							var image:Image = new Image();
-							image.source = ImageContainer.SOL_VILLE;
-							
-							image.x = i * Numbers.LAND_WIDTH;
-							image.y = j * Numbers.LAND_HEIGHT;
-							
-							Session.map[i][j] = Numbers.PLAIN;
-							
-							board.mapTiles.addElement(image);
-						}
-					}
-				}
-			}
+//			for each (var player:Player in game.players){
+//				for each (var city:City in player.cities){
+//					
+//					// de 0 a 29
+//					var cityLandXmin:int = Math.floor((city.x - city.radius)/Numbers.LAND_WIDTH);	
+//					var cityLandXmax:int = Math.floor((city.x + city.radius)/Numbers.LAND_WIDTH);	
+//					var cityLandYmin:int = Math.floor((city.y - city.radius)/Numbers.LAND_HEIGHT);	
+//					var cityLandYmax:int = Math.floor((city.y + city.radius)/Numbers.LAND_HEIGHT);
+//					
+//					
+//					for(var i:int=cityLandXmin; i <= cityLandXmax; i++){
+//						for(var j:int=cityLandYmin; j <= cityLandYmax; j++){
+//							
+//							var image:Image = new Image();
+//							image.source = ImageContainer.SOL_VILLE;
+//							
+//							image.x = i * Numbers.LAND_WIDTH;
+//							image.y = j * Numbers.LAND_HEIGHT;
+//							
+//							Session.map[i][j] = Numbers.PLAIN;
+//							
+//							board.mapTiles.addElement(image);
+//						}
+//					}
+//				}
+//			}
 			
 			//------------------------------------------------//
 			// lacs (3x3 cases)
@@ -255,8 +282,8 @@ package com.uralys.tribes.core
 			//------------------------------------------------//
 			// forests
 			
-			for(var i:int=0; i < board.image.width/Numbers.LAND_WIDTH; i++){
-				for(var j:int=0; j < board.image.height/Numbers.LAND_HEIGHT; j++){
+			for(var i:int=0; i < board.mapPositioner.width/Numbers.LAND_WIDTH; i++){
+				for(var j:int=0; j < board.mapPositioner.height/Numbers.LAND_HEIGHT; j++){
 					if(Session.map[i][j] == Numbers.NOTHING){
 						var image:Image = new Image();
 						switch(Utils.random(2)){
@@ -287,41 +314,27 @@ package com.uralys.tribes.core
 				board.boardTexts.removeAllElements();
 			}catch(e:Error){}
 			
-			for each (var player:Player in game.players){
-				
-				var isOpponent:Boolean = Session.currentPlayer.playerUID != player.playerUID;
-				if(!isOpponent)
-					player = Session.currentPlayer; // toutes les modifs sont a jour dans Session.currentPlayer, et non dans 'game'
-				
-				//-----------------------------------------------------------------------------------------//
-				// cities
-				
-				for each (var city:City in player.cities){
-					drawCityText(city, isOpponent);
-				}
-				
-				//-----------------------------------------------------------------------------------------//
-				// armies
-				
-				for each (var army:Army in player.armies){					
-					//drawArmyText(army, isOpponent);
-				}
-				
-				//-----------------------------------------------------------------------------------------//
-				// merchants
-				
-				for each (var merchant:Army in player.merchants){
-					//drawMerchantText(merchant, isOpponent);
-				}
-				
-			}
+//			for each (var player:Player in game.players){
+//				
+//				var isOpponent:Boolean = Session.player.uralysUID != player.uralysUID;
+//				if(!isOpponent)
+//					player = Session.player; // toutes les modifs sont a jour dans Session.currentPlayer, et non dans 'game'
+//				
+//				//-----------------------------------------------------------------------------------------//
+//				// cities
+//				
+//				for each (var city:City in player.cities){
+//					drawCityText(city, isOpponent);
+//				}
+//				
+//			}
 		}
 	
 		//==================================================================================================//
 		
 		public function drawCity(city:City, isOpponent:Boolean):void{
 			
-			if(isOpponent && city.creationTurn == game.currentTurn)
+			if(isOpponent)
 				return;
 			
 			if(Session.DRAW_DETAILS){
@@ -413,7 +426,7 @@ package com.uralys.tribes.core
 
 		//==================================================================================================//
 
-		public function drawArmy(army:Army, isOpponent:Boolean):void{
+		public function drawArmy(army:Unit, isOpponent:Boolean):void{
 			
 			if(Session.DRAW_DETAILS){
 				
@@ -458,7 +471,7 @@ package com.uralys.tribes.core
 		
 		//==================================================================================================//
 
-		public function drawMerchant(merchant:Army, isOpponent:Boolean):void{
+		public function drawMerchant(merchant:Unit, isOpponent:Boolean):void{
 			
 			if(Session.DRAW_DETAILS){
 				
@@ -574,7 +587,7 @@ package com.uralys.tribes.core
 
 		//==================================================================================================//
 
-		public function removeArmyFromBoard(army:Army):void{
+		public function removeArmyFromBoard(army:Unit):void{
 			try{
 				if(army.armyCircle)board.boardEntities.removeElement(army.armyCircle);
 				if(army.lineTo)board.boardEntities.removeElement(army.lineTo);	
@@ -586,7 +599,7 @@ package com.uralys.tribes.core
 
 		}
 
-		public function refreshArmyOnBoard(army:Army):void{
+		public function refreshArmyOnBoard(army:Unit):void{
 			try{
 				board.boardEntities.removeElement(army.armyCircle);
 			}catch(e:Error){}
@@ -594,7 +607,7 @@ package com.uralys.tribes.core
 			drawArmy(army, false);
 		}
 
-		public function refreshMerchantOnBoard(merchant:Army):void{
+		public function refreshMerchantOnBoard(merchant:Unit):void{
 			try{
 				board.boardEntities.removeElement(merchant.armyCircle);
 			}catch(e:Error){}
@@ -606,7 +619,7 @@ package com.uralys.tribes.core
 		//==================================================================================================//
 		
 		var selectedArmyCircle:Ellipse = new Ellipse();
-		public function drawArmySelection(army:Army):void{
+		public function drawArmySelection(army:Unit):void{
 			
 			removeArmySelection();
 			
@@ -634,7 +647,7 @@ package com.uralys.tribes.core
 		//==================================================================================================//
 
 		// verifie si la case est accessible pour etre rajoutee aux contrees
-		public function testLand(armyMoved:Army):void{
+		public function testLand(armyMoved:Unit):void{
 			
 			if(armyMoved.type == 2)
 				return;
@@ -655,8 +668,8 @@ package com.uralys.tribes.core
 			
 			
 			// contree deja prevue comme conquise par une autre armee ce tour ci
-			for each(var army:Army in Session.currentPlayer.armies){
-				if(army.armyUID != armyMoved.armyUID
+			for each(var army:Unit in Session.player.units){
+				if(army.unitUID != armyMoved.unitUID
 				&& army.landExpected == armyMoved.landExpected){
 					landIsExpectedYet = true;
 					break;
@@ -664,13 +677,13 @@ package com.uralys.tribes.core
 			}
 			
 			// cest deja une contree enregistree
-			if(Session.currentPlayer.lands.contains(armyMoved.landExpected))
+			if(Session.player.lands.contains(armyMoved.landExpected))
 				landIsExpectedYet = true;
 			
 			// si les tests precedents sont ok, on regarde si la contree touche le royaume
 			if(!landIsExpectedYet){
 			
-				for each(var land:int in Session.currentPlayer.lands){
+				for each(var land:int in Session.player.lands){
 					if(land == armyMoved.landExpected+1
 					|| land == armyMoved.landExpected-1
 					|| land == armyMoved.landExpected-30
@@ -714,7 +727,7 @@ package com.uralys.tribes.core
 			FlexGlobals.topLevelApplication.hideconflicts.removeEventListener(EffectEvent.EFFECT_END, windowClosed);
 			
 			var mover:Move = new Move();
-			mover.target = board.image;
+			mover.target = board.mapPositioner;
 			mover.xTo = 250 - conflictInDisplay.x;
 			mover.yTo = 250 - conflictInDisplay.y;
 			mover.duration = 800;

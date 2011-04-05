@@ -2,7 +2,7 @@ package com.uralys.tribes.core
 {
 	import com.uralys.tribes.commons.Numbers;
 	import com.uralys.tribes.commons.Session;
-	import com.uralys.tribes.entities.Army;
+	import com.uralys.tribes.entities.Unit;
 	import com.uralys.tribes.entities.City;
 	import com.uralys.tribes.entities.Player;
 	import com.uralys.tribes.pages.Board;
@@ -24,7 +24,11 @@ package com.uralys.tribes.core
 	{	
 		//=====================================================================================//
 		
-		public static var boardPage : Board;
+		private var board : Board;
+		
+		public function setBoard(board:Board):void{
+			this.board = board;
+		}
 		
 		//=====================================================================================//
 	
@@ -42,47 +46,47 @@ package com.uralys.tribes.core
 			var clickX:int = event.localX;
 			var clickY:int = event.localY;
 			
-			for each(var city:City in Session.currentPlayer.cities){
+			for each(var city:City in Session.player.cities){
 				if(Math.sqrt(Math.pow(clickX - city.x,2) + Math.pow(clickY - city.y,2)) <= city.radius) {
 					if(city.cityUID == "new")
 						return;
 					
 					if(city.merchants.length + city.armies.length > 0)
-						boardPage.appearSelectionChoice(city);
+						board.appearSelectionChoice(city);
 					else
-						boardPage.clickOnCity(city);
+						board.clickOnCity(city);
 					
 					return;
 				}
 			}
 
-			for each(var army:Army in Session.currentPlayer.armies){
+			for each(var unit:Unit in Session.player.units){
 				// click on army
-				if(Math.sqrt(Math.pow(clickX - army.x,2) + Math.pow(clickY - army.y,2)) <= army.radius) {
-					boardPage.clickOnArmy(army);
+				if(Math.sqrt(Math.pow(clickX - unit.x,2) + Math.pow(clickY - unit.y,2)) <= unit.radius) {
+					board.clickOnArmy(unit);
 					return;
 				}
 				
 				// click on army move
-				else if(army.moves.length>0 && Math.sqrt(Math.pow(clickX - army.moves.getItemAt(0).xTo,2) + Math.pow(clickY - army.moves.getItemAt(0).yTo,2)) <= army.radius) {
-					boardPage.clickOnArmy(army);
+				else if(unit.moves.length>0 && Math.sqrt(Math.pow(clickX - unit.moves.getItemAt(0).xTo,2) + Math.pow(clickY - unit.moves.getItemAt(0).yTo,2)) <= unit.radius) {
+					board.clickOnArmy(unit);
 					return;
 				}
 			}
 
-			for each(var merchant:Army in Session.currentPlayer.merchants){
+			for each(var merchant:Unit in Session.player.units){
 				// click on caravan
 				if(Math.sqrt(Math.pow(clickX - merchant.x,2) + Math.pow(clickY - merchant.y,2)) <= merchant.radius) {
 					if(merchant.mayBuildAcity())
-						boardPage.appearMerchantChoice(merchant);
+						board.appearMerchantChoice(merchant);
 					else
-						boardPage.clickOnArmy(merchant);
+						board.clickOnArmy(merchant);
 					return;
 				}
 				
 				// click on army move
 				else if(merchant.moves.length>0 && Math.sqrt(Math.pow(clickX - merchant.moves.getItemAt(0).xTo,2) + Math.pow(clickY - merchant.moves.getItemAt(0).yTo,2)) <= merchant.radius) {
-					boardPage.clickOnArmy(merchant);
+					board.clickOnArmy(merchant);
 					return;
 				}
 				

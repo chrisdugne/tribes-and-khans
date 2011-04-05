@@ -10,16 +10,16 @@ package com.uralys.tribes.entities
 	import spark.primitives.Rect;
 
 	[Bindable]
-	[RemoteClass(alias="com.uralys.tribes.entities.Army")]
-	public class Army
+	[RemoteClass(alias="com.uralys.tribes.entities.Unit")]
+	public class Unit
 	{	
 
-		public function get armyUID():String {
-			return _armyUID;
+		public function get unitUID():String {
+			return _unitUID;
 		}
 	
-		public function set armyUID(o:String):void {
-			_armyUID = o;
+		public function set unitUID(o:String):void {
+			_unitUID = o;
 		}
 	
 		public function get size():int {
@@ -119,9 +119,37 @@ package com.uralys.tribes.entities
 			_moves = o;
 		}
 		
-		protected var _equipments:ArrayCollection = new ArrayCollection();
-		protected var _moves:ArrayCollection = new ArrayCollection();
-		protected var _armyUID:String;
+		public function get status():int {
+			return _status;
+		}
+		
+		public function set status(o:int):void {
+			_status = o;
+		}
+		
+		public function get currentCase():Case {
+			return _currentCase;
+		}
+		
+		public function set currentCase(o:Case):void {
+			_currentCase = o;
+		}
+		
+		public function get playerUID():String {
+			return _playerUID;
+		}
+		
+		public function set playerUID(o:String):void {
+			_playerUID = o;
+		}
+		
+		//==========================================================================//
+		
+		private var _status:int;
+		private var _currentCase:Case;
+		private var _playerUID:String;
+		
+		protected var _unitUID:String;
 		protected var _size:int;
 		protected var _speed:int;
 		protected var _value:int;
@@ -132,6 +160,9 @@ package com.uralys.tribes.entities
 		protected var _x:int;
 		protected var _y:int;
 		protected var _radius:int;
+
+		protected var _equipments:ArrayCollection = new ArrayCollection();
+		protected var _moves:ArrayCollection = new ArrayCollection();
 		
 		//==========================================================================//
 

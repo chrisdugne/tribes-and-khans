@@ -48,7 +48,7 @@
 			import com.uralys.tribes.entities.Game;
 			import com.uralys.tribes.entities.Player;
 			import com.uralys.tribes.entities.City;
-			import com.uralys.tribes.entities.Army;
+			import com.uralys.tribes.entities.Unit;
 			import com.uralys.tribes.entities.Equipment;
 			import com.uralys.tribes.entities.Conflict;
 			import com.uralys.tribes.entities.MoveConflict;
@@ -56,7 +56,7 @@
 				registerClassAlias("com.uralys.tribes.entities.Game", Game);
 				registerClassAlias("com.uralys.tribes.entities.Player", Player);
 				registerClassAlias("com.uralys.tribes.entities.City", City);
-				registerClassAlias("com.uralys.tribes.entities.Army", Army);
+				registerClassAlias("com.uralys.tribes.entities.Army", Unit);
 				registerClassAlias("com.uralys.tribes.entities.Equipment", Equipment);
 				registerClassAlias("com.uralys.tribes.entities.Conflict", Conflict);
 				registerClassAlias("com.uralys.tribes.entities.MoveConflict", MoveConflict);
@@ -77,7 +77,7 @@
 
 			public function createConflicts():void {
 				conflictsWindow.initWindow();
-				if(Session.currentPlayer.conflicts.length > 0)
+				if(Session.player.conflicts.length > 0)
 					showconflicts.play();
 			}
 			
@@ -121,7 +121,7 @@
 		<mx:Image id="usButton" source="{ImageContainer.US_FLAG}" click="us()" visible="{Session.LANGUAGE != 2}" width="25"/>
 
 		<mx:Spacer width="100%"/>
-		<s:Label text="{Session.profil ? Translations.LOG_AS.getItemAt(Session.LANGUAGE) + ' : '+ Session.uralysProfile.email : Translations.LOG_IN.getItemAt(Session.LANGUAGE)}"
+		<s:Label text="{Session.player ? Translations.LOG_AS.getItemAt(Session.LANGUAGE) + ' : '+ Session.uralysProfile.email : Translations.LOG_IN.getItemAt(Session.LANGUAGE)}"
 				 color="#222299"/>
 	</s:HGroup>	
 	<mx:HRule width="100%" chromeColor="#222299" top="20"/>

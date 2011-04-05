@@ -16,7 +16,7 @@
 			import com.uralys.tribes.core.BoardClickListener;
 			import com.uralys.tribes.core.BoardDrawer;
 			import com.uralys.tribes.core.Pager;
-			import com.uralys.tribes.entities.Army;
+			import com.uralys.tribes.entities.Unit;
 			import com.uralys.tribes.entities.City;
 			import com.uralys.tribes.entities.Conflict;
 			import com.uralys.tribes.entities.Equipment;
@@ -49,10 +49,8 @@
 
 			//---------------------------------------------------------------------------------------//
 			
-			private var game:Game;
-
 			[Bindable] private var selectedCity:City;
-			[Bindable] private var selectedUnit:Army;
+			[Bindable] private var selectedUnit:Unit;
 			
 			private var moveGradient:Array;
 			private var radialGrad:RadialGradientStroke;
@@ -64,9 +62,8 @@
 				timer = new Timer(41,1);
 				timer.addEventListener(TimerEvent.TIMER_COMPLETE, moveStoppedDuringDragging);
 
-				
-				limitLeft = 500-image.width;
-				limitUp = 500-image.height;
+				limitLeft = Session.MAP_WIDTH - mapPositioner.width;
+				limitUp = Session.MAP_HEIGHT - mapPositioner.height;
 				
 				initBoard();
 				
@@ -82,15 +79,15 @@
 			
 			// click sur une ville dans la barre laterale
 			protected function onCityClick(event:ItemClickEvent):void{
-				image.x = 250 - event.currentTarget.selectedItem.x;
-				image.y = 250 - event.currentTarget.selectedItem.y;
+				mapPositioner.x = 250 - event.currentTarget.selectedItem.x;
+				mapPositioner.y = 250 - event.currentTarget.selectedItem.y;
 			}
 			
 			// click sur une armee dans la barre laterale
 			// ou dans la liste sous 'enter city'
 			protected function onArmyClick(event:ItemClickEvent):void{
-				image.x = 250 - event.currentTarget.selectedItem.x;
-				image.y = 250 - event.currentTarget.selectedItem.y;
+				mapPositioner.x = 250 - event.currentTarget.selectedItem.x;
+				mapPositioner.y = 250 - event.currentTarget.selectedItem.y;
 				
 				selectionChoiceGroup.includeInLayout = false;
 				selectionChoiceGroup.visible = false;
@@ -108,83 +105,50 @@
 			// ici args contient 1 valeur.
 			// args[0] game
 			public function set params(args:Array):void{
-				game = args[0];
-				for each (var playerOfProfil:Player in Session.profil.players){
-					if(playerOfProfil.gameUID == game.gameUID){
-						Session.currentPlayer = playerOfProfil;
-						this.selectedCity = Session.currentPlayer.cities.getItemAt(0) as City;
-						
-						break;
-					}
-				}
 
-				for each(var army:Army in Session.currentPlayer.armies){
+				this.selectedCity = Session.player.cities.getItemAt(0) as City;
+
+				for each(var unit:Unit in Session.player.units){
+					if(unit.type == 2)
+						continue;
 					
-					army.moves = new ArrayCollection();
-					army.moves.addItem(new com.uralys.tribes.entities.Move());
-				
-					army.moves.getItemAt(0).xFrom = army.x;
-					army.moves.getItemAt(0).yFrom = army.y;
-					army.moves.getItemAt(0).xTo = army.x;
-					army.moves.getItemAt(0).yTo = army.y;
-					
-					army.type = 1;
-					
-					for each(var city:City in Session.currentPlayer.cities){
-						if(army.x == city.x && army.y == city.y){
-							city.armies.addItem(army);
-							city.armiesToFeed += army.size;
+					for each(var city:City in Session.player.cities){
+						if(unit.currentCase.x == city.x && unit.currentCase.y == city.y){
+							city.armies.addItem(unit);
+							city.unitsToFeed += unit.size;
 							break;
 						}
 					}
 					
-					for each(var equipment:Equipment in army.equipments){
+					for each(var equipment:Equipment in unit.equipments){
 						switch(equipment.item.name){
 							case "bow" :
-								army.bows += equipment.size;
+								unit.bows += equipment.size;
 								break;
 							case "sword" :
-								army.swords += equipment.size;
+								unit.swords += equipment.size;
 								break;
 							case "armor" :
-								army.armors += equipment.size;
+								unit.armors += equipment.size;
 								break;
 						}
 					}
 				}
 
-				for each(var merchant:Army in Session.currentPlayer.merchants){
+				for each(var merchant:Unit in Session.player.units){
 					
-					merchant.moves = new ArrayCollection();
-					merchant.moves.addItem(new com.uralys.tribes.entities.Move());
-				
-					merchant.moves.getItemAt(0).xFrom = merchant.x;
-					merchant.moves.getItemAt(0).yFrom = merchant.y;
-					merchant.moves.getItemAt(0).xTo = merchant.x;
-					merchant.moves.getItemAt(0).yTo = merchant.y;
-					merchant.type = 2;
-					
-					for each(var city:City in Session.currentPlayer.cities){
+					if(unit.type == 1)
+						continue;
+
+					for each(var city:City in Session.player.cities){
 						if(merchant.x == city.x && merchant.y == city.y){
 							city.merchants.addItem(merchant);
-							city.armiesToFeed += merchant.size;
+							city.unitsToFeed += merchant.size;
 							break;
 						}
 					}
 				}
 
-				Session.allOtherCities = new ArrayCollection();
-				for each(var player:Player in game.players){
-					if(player.playerUID != Session.currentPlayer.playerUID){
-						for each(var city:City in player.cities){
-							if(city.creationTurn < game.currentTurn){
-								city.name += " ("+player.name+")";
-								Session.allOtherCities.addItem(city);
-							}
-						}
-					}
-				}
-				
 			}
 			
 			//-----------------------------------------------------------//
@@ -199,10 +163,6 @@
 			
 			protected function initCitiesList():void{
 				citiesList.addEventListener(ItemClickEvent.ITEM_CLICK, onCityClick);
-			}
-			
-			protected function initOtherCitiesList():void{
-				otherCitiesList.addEventListener(ItemClickEvent.ITEM_CLICK, onCityClick);
 			}
 			
 			protected function initSelectionChoiceArmyList():void{
@@ -307,8 +267,8 @@
 					autoMoveNotNeeded = false;
 					// on decale l'image du nombre de pixels du dernier mouvement
 					// donc elle suit bien la souris et event.localXY a bien lieu au meme endroit sur l'image apres chaque mouseMove
-					image.x += (event.localX - draggingImageXFrom);
-					image.y += (event.localY - draggingImageYFrom);
+					mapPositioner.x += (event.localX - draggingImageXFrom);
+					mapPositioner.y += (event.localY - draggingImageYFrom);
 				}
 			}
 			
@@ -327,17 +287,17 @@
 						var clickY:int = event.localY;
 						var cityEntered:City = null;
 						
-						for each(var player:Player in game.players){
-							for each(var city:City in player.cities){
-								if(selectedUnit.ellipseTo != null && Math.sqrt(Math.pow(selectedUnit.ellipseTo.x - city.x,2) + Math.pow(selectedUnit.ellipseTo.y - city.y,2)) <= city.radius) {
-									cityEntered = city;
-									break;
-								}
-							}
-							
-							if(cityEntered)
-								break;
-						}
+//						for each(var player:Player in game.players){
+//							for each(var city:City in player.cities){
+//								if(selectedUnit.ellipseTo != null && Math.sqrt(Math.pow(selectedUnit.ellipseTo.x - city.x,2) + Math.pow(selectedUnit.ellipseTo.y - city.y,2)) <= city.radius) {
+//									cityEntered = city;
+//									break;
+//								}
+//							}
+//							
+//							if(cityEntered)
+//								break;
+//						}
 						
 						selectedUnit.moves.getItemAt(0).xFrom = selectedUnit.x;
 						selectedUnit.moves.getItemAt(0).yFrom = selectedUnit.y;
@@ -370,8 +330,8 @@
 				draggingStageYTo = event.stageY;
 				
 				autoMove.duration = 6*(Math.abs(draggingStageXTo - draggingStageXFrom) + Math.abs(draggingStageYTo - draggingStageYFrom));
-				autoMove.xTo = image.x + (draggingStageXTo - draggingStageXFrom)*3;
-				autoMove.yTo = image.y + (draggingStageYTo - draggingStageYFrom)*3;
+				autoMove.xTo = mapPositioner.x + (draggingStageXTo - draggingStageXFrom)*3;
+				autoMove.yTo = mapPositioner.y + (draggingStageYTo - draggingStageYFrom)*3;
 				
 				if(autoMove.xTo > 0)
 					autoMove.xTo = 0;
@@ -397,8 +357,8 @@
 			}
 
 			protected function mouseDownMiniMap(event:MouseEvent):void{
-				image.x = 250 - event.localX*15;
-				image.y = 250 - event.localY*15;
+				mapPositioner.x = 250 - event.localX*15;
+				mapPositioner.y = 250 - event.localY*15;
 				
 				isDragging = true;
 				
@@ -408,8 +368,8 @@
 
 			protected function mouseMoveMiniMap(event:MouseEvent):void{
 				if(isDragging){
-					image.x = 250 - event.localX*15;
-					image.y = 250 - event.localY*15;
+					mapPositioner.x = 250 - event.localX*15;
+					mapPositioner.y = 250 - event.localY*15;
 				}
 			}
 				
@@ -419,26 +379,24 @@
 			private function initBoard():void{
 				
 				//------------------------------------------------------------//
-				// mise a jour des contrees
-				
-				calculateLands();
-				
-				//------------------------------------------------------------//
 
-				BoardDrawer.getInstance().setBoards(this);
-				BoardDrawer.getInstance().setGame(game);
+				BoardClickListener.getInstance().setBoard(this);
+
+				BoardDrawer.getInstance().setBoard(this);
 				BoardDrawer.getInstance().redrawAllEntities();
-				BoardClickListener.boardPage = this;
-				
+
+				//------------------------------------------------------------//
 			
 				try{
 					FlexGlobals.topLevelApplication.createConflicts();	
 				}
 				catch(error:Error){}
+
+				//------------------------------------------------------------//
 				
 				if(selectedCity != null){
-					image.x = 250 - selectedCity.x;
-					image.y = 250 - selectedCity.y;
+					mapPositioner.x = 250 - selectedCity.x;
+					mapPositioner.y = 250 - selectedCity.y;
 				}
 				else{
 					FlexGlobals.topLevelApplication.message('GAME OVER', 7);
@@ -455,7 +413,7 @@
 			}
 
 			// idem on armyClick, mais click sur larmee elle meme (depuis BoardClickListener)
-			public function clickOnArmy(army:Army):void{
+			public function clickOnArmy(army:Unit):void{
 				
 				selectionChoiceGroup.includeInLayout = false;
 				selectionChoiceGroup.visible = false;
@@ -464,11 +422,11 @@
 				BoardDrawer.getInstance().drawArmySelection(army);
 			}
 			
-			public function appearMerchantChoice(merchant:Army):void{
+			public function appearMerchantChoice(merchant:Unit):void{
 				clickOnArmy(merchant);
 				
-				merchantChoiceGroup.x = image.x + merchant.x+7;
-				merchantChoiceGroup.y = image.y + merchant.y+7;
+				merchantChoiceGroup.x = mapPositioner.x + merchant.x+7;
+				merchantChoiceGroup.y = mapPositioner.y + merchant.y+7;
 				
 				merchantChoiceGroup.includeInLayout = true;
 				merchantChoiceGroup.visible = true;
@@ -477,8 +435,8 @@
 			public function appearSelectionChoice(city:City):void{
 				selectedCity = city;
 				
-				selectionChoiceGroup.x = image.x + city.x+20;
-				selectionChoiceGroup.y = image.y + city.y+20;
+				selectionChoiceGroup.x = mapPositioner.x + city.x+20;
+				selectionChoiceGroup.y = mapPositioner.y + city.y+20;
 				
 				selectionChoiceGroup.includeInLayout = true;
 				selectionChoiceGroup.visible = true;
@@ -503,13 +461,11 @@
 				city.x = selectedUnit.x;
 				city.y = selectedUnit.y;
 				
-				city.creationTurn = game.currentTurn;
-				
-				Session.currentPlayer.merchants.removeItemAt(Session.currentPlayer.merchants.getItemIndex(selectedUnit));
+				Session.player.units.removeItemAt(Session.player.units.getItemIndex(selectedUnit));
 				BoardDrawer.getInstance().removeArmyFromBoard(selectedUnit);
 				BoardDrawer.getInstance().drawCity(city, false);
 				
-				Session.currentPlayer.cities.addItem(city);
+				Session.player.cities.addItem(city);
 				
 				merchantChoiceGroup.visible = false;
 				merchantChoiceGroup.includeInLayout = false;
@@ -526,185 +482,179 @@
 				
 				comeBack.play();
 			}
-			
-			private function leave():void{
-				GameManager.getInstance().getCurrentGames();
-			}
-			
-			private function saveTurn():void{
-				
-				Session.TURN_SAVING_DONE = false;
-				
-				//------------------------------------------------------------------//
-
-				for each(var city:City in Session.currentPlayer.cities){
-					
-					city.wheat += city.wheatEarned - city.wheatSpent;
-					city.wood += city.woodEarned - city.woodSpent;
-					city.iron += city.ironEarned - city.ironSpent;
-					city.population += city.armyReleased - city.armyRaised;
-					
-					for each(var equipment:Equipment in city.equipmentStock){
-						switch(equipment.item.name){
-							case "bow" :
-								equipment.size = city.bowStock
-												+ city.bowsRestored
-												- city.bowsEquiped
-												+ city.bowWorkers * equipment.item.peopleRequired;
-								
-								break;
-							case "sword" :
-								equipment.size = city.swordStock
-												+ city.swordsRestored
-												- city.swordsEquiped
-												+ city.swordWorkers * equipment.item.peopleRequired;
-								break;
-							case "armor" :
-								equipment.size = city.armorStock
-											+ city.armorsRestored
-											- city.armorsEquiped
-											+ city.armorWorkers * equipment.item.peopleRequired;
-								break;
-						}
-					}
-
-					for each(var smith:Smith in city.smiths){
-						switch(smith.item.name){
-							case "bow" :
-								smith.people = city.bowWorkers;
-								break;
-							case "sword" :
-								smith.people = city.swordWorkers;
-								break;
-							case "armor" :
-								smith.people = city.armorWorkers;
-								break;
-						}
-					}
-				}
-				
-				for each(var army:Army in Session.currentPlayer.armies){
-					if(army.armyUID == "new"){
-						var bows:Equipment = new Equipment();
-						var swords:Equipment = new Equipment();
-						var armors:Equipment = new Equipment();
-						
-						bows.size = army.bows;
-						swords.size = army.swords;
-						armors.size = army.armors;
-						
-						for each(var equipment:Equipment in city.equipmentStock){
-							switch(equipment.item.name){
-								case "bow" :
-									bows.item = equipment.item;
-									break;
-								case "sword" :
-									swords.item = equipment.item;
-									break;
-								case "armor" :
-									armors.item = equipment.item;
-									break;
-							}
-						}
-						
-						army.equipments.addItem(bows);
-						army.equipments.addItem(swords);
-						army.equipments.addItem(armors);
-					}
-					else{
-						for each(var equipment:Equipment in army.equipments){
-							switch(equipment.item.name){
-								case "bow" :
-									equipment.size = army.bows;
-									break;
-								case "sword" :
-									equipment.size = army.swords;
-									break;
-								case "armor" :
-									equipment.size = army.armors;
-									break;
-							}
-						}
-					}
-					
-					// on ne passe pas les info graphiques par BlazesDS : inutile et surtout ca casse tout (objets enormes passes en AMF, ce qui casse le transfert)
-					army.armyCircle = null;
-					army.ellipseTo = null;
-					army.lineTo = null;
-					army.tmpLandSquare = null;
-				}
-				
-				for each(var merchant:Army in Session.currentPlayer.merchants){
-					
-					// on ne passe pas les info graphiques par BlazesDS : inutile et surtout ca casse tout (objets enormes passes en AMF, ce qui casse le transfert)
-					merchant.armyCircle = null;
-					merchant.ellipseTo = null;
-					merchant.lineTo = null;
-					merchant.tmpLandSquare = null;
-				}
-				
-				//------------------------------------------------------------------//
-				
-				FlexGlobals.topLevelApplication.conflictsWindow.conflictsGroup.removeAllElements();
-				Session.currentPlayer.lastTurnPlayed ++;
-				GameManager.getInstance().saveTurn(Session.currentPlayer);
-				Pager.getInstance().goToPage(Home, Home.CURRENT_GAMES, Session.GAMES_PLAYING);
-			}
-
+//			
+//			private function saveTurn():void{
+//				
+//				Session.TURN_SAVING_DONE = false;
+//				
+//				//------------------------------------------------------------------//
+//
+//				for each(var city:City in Session.currentPlayer.cities){
+//					
+//					city.wheat += city.wheatEarned - city.wheatSpent;
+//					city.wood += city.woodEarned - city.woodSpent;
+//					city.iron += city.ironEarned - city.ironSpent;
+//					city.population += city.armyReleased - city.armyRaised;
+//					
+//					for each(var equipment:Equipment in city.equipmentStock){
+//						switch(equipment.item.name){
+//							case "bow" :
+//								equipment.size = city.bowStock
+//												+ city.bowsRestored
+//												- city.bowsEquiped
+//												+ city.bowWorkers * equipment.item.peopleRequired;
+//								
+//								break;
+//							case "sword" :
+//								equipment.size = city.swordStock
+//												+ city.swordsRestored
+//												- city.swordsEquiped
+//												+ city.swordWorkers * equipment.item.peopleRequired;
+//								break;
+//							case "armor" :
+//								equipment.size = city.armorStock
+//											+ city.armorsRestored
+//											- city.armorsEquiped
+//											+ city.armorWorkers * equipment.item.peopleRequired;
+//								break;
+//						}
+//					}
+//
+//					for each(var smith:Smith in city.smiths){
+//						switch(smith.item.name){
+//							case "bow" :
+//								smith.people = city.bowWorkers;
+//								break;
+//							case "sword" :
+//								smith.people = city.swordWorkers;
+//								break;
+//							case "armor" :
+//								smith.people = city.armorWorkers;
+//								break;
+//						}
+//					}
+//				}
+//				
+//				for each(var army:Army in Session.currentPlayer.armies){
+//					if(army.armyUID == "new"){
+//						var bows:Equipment = new Equipment();
+//						var swords:Equipment = new Equipment();
+//						var armors:Equipment = new Equipment();
+//						
+//						bows.size = army.bows;
+//						swords.size = army.swords;
+//						armors.size = army.armors;
+//						
+//						for each(var equipment:Equipment in city.equipmentStock){
+//							switch(equipment.item.name){
+//								case "bow" :
+//									bows.item = equipment.item;
+//									break;
+//								case "sword" :
+//									swords.item = equipment.item;
+//									break;
+//								case "armor" :
+//									armors.item = equipment.item;
+//									break;
+//							}
+//						}
+//						
+//						army.equipments.addItem(bows);
+//						army.equipments.addItem(swords);
+//						army.equipments.addItem(armors);
+//					}
+//					else{
+//						for each(var equipment:Equipment in army.equipments){
+//							switch(equipment.item.name){
+//								case "bow" :
+//									equipment.size = army.bows;
+//									break;
+//								case "sword" :
+//									equipment.size = army.swords;
+//									break;
+//								case "armor" :
+//									equipment.size = army.armors;
+//									break;
+//							}
+//						}
+//					}
+//					
+//					// on ne passe pas les info graphiques par BlazesDS : inutile et surtout ca casse tout (objets enormes passes en AMF, ce qui casse le transfert)
+//					army.armyCircle = null;
+//					army.ellipseTo = null;
+//					army.lineTo = null;
+//					army.tmpLandSquare = null;
+//				}
+//				
+//				for each(var merchant:Army in Session.currentPlayer.merchants){
+//					
+//					// on ne passe pas les info graphiques par BlazesDS : inutile et surtout ca casse tout (objets enormes passes en AMF, ce qui casse le transfert)
+//					merchant.armyCircle = null;
+//					merchant.ellipseTo = null;
+//					merchant.lineTo = null;
+//					merchant.tmpLandSquare = null;
+//				}
+//				
+//				//------------------------------------------------------------------//
+//				
+//				FlexGlobals.topLevelApplication.conflictsWindow.conflictsGroup.removeAllElements();
+//				Session.currentPlayer.lastTurnPlayed ++;
+//				GameManager.getInstance().saveTurn(Session.currentPlayer);
+//				Pager.getInstance().goToPage(Home, Home.CURRENT_GAMES, Session.GAMES_PLAYING);
+//			}
+// 
 			//================================================================================//
-			
-			private function calculateLands():void{
-				for each (var player:Player in game.players){
-					var lands:ArrayCollection = new ArrayCollection();
-					for each (var city:City in player.cities){
-						
-						if(city.creationTurn == game.currentTurn)
-							continue;
-					
-						// de 0 a 29
-						var cityLandXmin:int = Math.floor((city.x - city.radius)/Numbers.LAND_WIDTH);	
-						var cityLandXmax:int = Math.floor((city.x + city.radius)/Numbers.LAND_WIDTH);	
-						var cityLandYmin:int = Math.floor((city.y - city.radius)/Numbers.LAND_HEIGHT);	
-						var cityLandYmax:int = Math.floor((city.y + city.radius)/Numbers.LAND_HEIGHT);
-						
-						for(var i:int=cityLandXmin; i <= cityLandXmax; i++){
-							for(var j:int=cityLandYmin; j <= cityLandYmax; j++){
-								var landNumber:int = image.width/Numbers.LAND_WIDTH * j + i;
-								lands.addItem(landNumber);
-							}
-						}
-					}
-
-					for each(var landNumberOwnedYet:int in player.lands){
-						var found:Boolean = false;
-						
-						for each(var landNumberFromPreviousCities:int in lands){
-							if(landNumberFromPreviousCities == landNumberOwnedYet){
-								found = true;
-								break;
-							}
-						}
-						
-						if(!found){
-							lands.addItem(landNumberOwnedYet);
-						}
-					}
-					
-					player.lands = lands;
-					if(Session.currentPlayer.playerUID == player.playerUID) // refresh
-						Session.currentPlayer.lands = player.lands;
-					
-				}
-			}
-			
+//			
+//			private function calculateLands():void{
+//				for each (var player:Player in game.players){
+//					var lands:ArrayCollection = new ArrayCollection();
+//					for each (var city:City in player.cities){
+//						
+//						// de 0 a 29
+//						var cityLandXmin:int = Math.floor((city.x - city.radius)/Numbers.LAND_WIDTH);	
+//						var cityLandXmax:int = Math.floor((city.x + city.radius)/Numbers.LAND_WIDTH);	
+//						var cityLandYmin:int = Math.floor((city.y - city.radius)/Numbers.LAND_HEIGHT);	
+//						var cityLandYmax:int = Math.floor((city.y + city.radius)/Numbers.LAND_HEIGHT);
+//						
+//						for(var i:int=cityLandXmin; i <= cityLandXmax; i++){
+//							for(var j:int=cityLandYmin; j <= cityLandYmax; j++){
+//								var landNumber:int = mapPositioner.width/Numbers.LAND_WIDTH * j + i;
+//								lands.addItem(landNumber);
+//							}
+//						}
+//					}
+//
+//					for each(var landNumberOwnedYet:int in player.lands){
+//						var found:Boolean = false;
+//						
+//						for each(var landNumberFromPreviousCities:int in lands){
+//							if(landNumberFromPreviousCities == landNumberOwnedYet){
+//								found = true;
+//								break;
+//							}
+//						}
+//						
+//						if(!found){
+//							lands.addItem(landNumberOwnedYet);
+//						}
+//					}
+//					
+//					player.lands = lands;
+//					if(Session.player.uralysUID == player.uralysUID) // refresh
+//						Session.player.lands = player.lands;
+//					
+//				}
+//			}
+//			
 			private var storeLogoInitX:int;			
+
 
 		]]>
 	</fx:Script>
 	
 	<fx:Declarations>
 		<mx:Move id="autoMove"
-				target="{image}"
+				target="{mapPositioner}"
 				easingFunction="{Quadratic.easeOut}"/>
 		
 		<mx:Move id="goLeft"
@@ -731,38 +681,17 @@
 	
 	<s:Group id="main" width="100%" height="100%">
 		
-		
-		<s:VGroup left="10" id="buttonsGroup" visible="{Session.TURN_SAVING_DONE}">
-			<s:Button label="{Translations.SAVE_TURN.getItemAt(Session.LANGUAGE)}" left="10" right="5" click="saveTurn()"/>
-			<s:Button label="{Translations.LEAVE_THIS_GAME.getItemAt(Session.LANGUAGE)}" left="10" right="5" click="leave()"/>
-		</s:VGroup>
 		<s:VGroup horizontalAlign="left" top="70" left="35">
 			<s:Label text="{Translations.MY_CITIES.getItemAt(Session.LANGUAGE)}"/>
 			<s:Scroller height="200">
 				<s:Group>
 					<s:List id="citiesList"
 							itemRenderer="com.uralys.tribes.renderers.CityListRenderer"
-							dataProvider="{Session.currentPlayer.cities}"
+							dataProvider="{Session.player.cities}"
 							borderVisible="false"
 							width="340"
 							contentBackgroundAlpha="0"
 							creationComplete="initCitiesList()">
-						<s:layout>
-							<s:VerticalLayout gap="1" useVirtualLayout="true" />
-						</s:layout>
-					</s:List>
-				</s:Group>
-			</s:Scroller>
-			<s:Label text="{Translations.OTHER_CITIES.getItemAt(Session.LANGUAGE)}"/>
-			<s:Scroller height="200">
-				<s:Group>
-					<s:List id="otherCitiesList"
-							itemRenderer="com.uralys.tribes.renderers.OtherCityListRenderer"
-							dataProvider="{Session.allOtherCities}"
-							borderVisible="false"
-							width="340"
-							contentBackgroundAlpha="0"
-							creationComplete="initOtherCitiesList()">
 						<s:layout>
 							<s:VerticalLayout gap="1" useVirtualLayout="true" />
 						</s:layout>
@@ -786,7 +715,7 @@
 							<s:Group>
 								<s:List id="armiesList"
 										itemRenderer="com.uralys.tribes.renderers.ArmyListRenderer"
-										dataProvider="{Session.currentPlayer.armies}"
+										dataProvider="{Session.player.units}"
 										borderVisible="false"
 										width="240"
 										contentBackgroundAlpha="0"
@@ -806,7 +735,7 @@
 						<s:Group>
 							<s:List id="merchantsList"
 									itemRenderer="com.uralys.tribes.renderers.MerchantListRenderer"
-									dataProvider="{Session.currentPlayer.merchants}"
+									dataProvider="{Session.player.units}"
 									borderVisible="false"
 									width="240"
 									contentBackgroundAlpha="0"
@@ -854,7 +783,7 @@
 						<s:SolidColor color="{0x000000}" alpha="0.8"/>
 					</s:fill>
 				</s:Rect>
-				<s:Rect x="{-image.x/15}" y="{-image.y/15}" width="33" height="33">
+				<s:Rect x="{-mapPositioner.x/15}" y="{-mapPositioner.y/15}" width="33" height="33">
 					<s:stroke>
 						<s:SolidColorStroke color="0xffffff" weight="1" scaleMode="normal"/>
 					</s:stroke>		
@@ -866,15 +795,15 @@
 		</s:HGroup>
 		<s:Group width="100%">
 			<s:HGroup width="100%" horizontalAlign="center" paddingTop="50">
-				<s:Group width="500" height="500"
+				<s:Group width="{Session.MAP_WIDTH}" height="{Session.MAP_HEIGHT}"
 						 id="boardImage"
-					 clipAndEnableScrolling="true">
-					<mx:Image id="image" 
-						  alpha="0"						  
-						  useHandCursor="true"
+						 clipAndEnableScrolling="true"		  
+						 useHandCursor="true">
+					<s:Group id="mapPositioner" 
 						  buttonMode="true"
+						  width="40000"
+						  height="40000"
 						  mouseChildren="false"
-						  source="{ImageContainer.MAP}"
 						  mouseDown="mouseDown(event)"
 						  mouseMove="mouseMove(event)"
 						  mouseOut="if(isDragging)mouseUp(event)"
@@ -891,8 +820,8 @@
 						 mouseEnabled="false"
 						 mouseEnabledWhereTransparent="false">
 						<s:Group id="mapTiles"
-								 x="{image.x}"
-								 y="{image.y}"/>
+								 x="{mapPositioner.x}"
+								 y="{mapPositioner.y}"/>
 				</s:Group>
 			</s:HGroup>
 			<s:HGroup width="100%" horizontalAlign="center" paddingTop="50"
@@ -905,8 +834,8 @@
 						 mouseEnabled="false"
 						 mouseEnabledWhereTransparent="false">
 						<s:Group id="boardEntities"
-								 x="{image.x}"
-								 y="{image.y}"/>
+								 x="{mapPositioner.x}"
+								 y="{mapPositioner.y}"/>
 				</s:Group>
 			</s:HGroup>
 			<s:HGroup width="100%" horizontalAlign="center" paddingTop="50"
@@ -919,8 +848,8 @@
 						 mouseEnabled="false"
 						 mouseEnabledWhereTransparent="false">
 					<s:Group id="boardImages"
-							 x="{image.x}"
-							 y="{image.y}"/>
+							 x="{mapPositioner.x}"
+							 y="{mapPositioner.y}"/>
 				</s:Group>
 			</s:HGroup>
 			<s:HGroup width="100%" horizontalAlign="center" paddingTop="50"
@@ -933,8 +862,8 @@
 						 mouseEnabledWhereTransparent="false"
 						 visible="{checkBoxTexts.selected}">
 					<s:Group id="boardTexts"
-							 x="{image.x}"
-							 y="{image.y}"/>
+							 x="{mapPositioner.x}"
+							 y="{mapPositioner.y}"/>
 				</s:Group>
 			</s:HGroup>
 			

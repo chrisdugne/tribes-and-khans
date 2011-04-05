@@ -6,13 +6,12 @@ package com.uralys.tribes.commons
 	public class Session{ 
 		
 		import com.uralys.tribes.entities.UralysProfile;
-		import com.uralys.tribes.entities.Profil;
 		import com.uralys.tribes.entities.Player;
 		import mx.core.FlexGlobals;
 		
 		//=====================================================//
 		
-		[Bindable] public static var VERSION:String = "1.0.45";
+		[Bindable] public static var VERSION:String = "1.1.01";
 		[Bindable] public static var LOGGED_IN:Boolean = false; 
 		[Bindable] public static var CONNECTED_TO_FACEBOOK:Boolean = false;
 		
@@ -24,6 +23,11 @@ package com.uralys.tribes.commons
 		[Bindable] public static var APPLICATION_WIDTH:int;	
 		
 		//=====================================================//
+
+		[Bindable] public static var MAP_WIDTH:int = 500;	
+		[Bindable] public static var MAP_HEIGHT:int = 500;	
+		
+		//=====================================================//
 		
 		[Bindable] public static var WAIT_FOR_SERVER:Boolean = false;
 		[Bindable] public static var WAIT_FOR_CONNECTION:Boolean = false; 
@@ -31,9 +35,7 @@ package com.uralys.tribes.commons
 		//=====================================================//
 		
 		[Bindable] public static var uralysProfile:UralysProfile;
-		[Bindable] public static var profil:Profil;
-		[Bindable] public static var currentPlayer:Player;
-		[Bindable] public static var allOtherCities:ArrayCollection = new ArrayCollection();
+		[Bindable] public static var player:Player;
 		
 		//=====================================================//
 		// liste des currentgames
@@ -66,8 +68,13 @@ package com.uralys.tribes.commons
 		
 		//=====================================================//
 		// BoardDrawer
-
+		
+		// Array[Array] stocke les images liees a chaque tile
+		// Session.tiles[i][j] = type 
+		public static var tiles:Array;
+		
 		// Array[Array] stocke le type de chaque 'land' (foret, plaine, lac, rocher)
+		// Session.map[i][j] = type 
 		public static var map:Array;
 		
 		// les cercles des entities sont dessinees sur la map

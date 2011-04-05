@@ -116,14 +116,6 @@ package com.uralys.tribes.entities
 			_y = o;
 		}
 	
-		public function get creationTurn():int {
-			return _creationTurn;
-		}
-	
-		public function set creationTurn(o:int):void {
-			_creationTurn = o;
-		}
-	
 		public function get radius():int {
 			return Math.sqrt(_population);
 		}
@@ -157,7 +149,6 @@ package com.uralys.tribes.entities
 		protected var _peopleCreatingIron:int;
 		protected var _x:int;
 		protected var _y:int;
-		protected var _creationTurn:int;
 		protected var _equipmentStock:ArrayCollection = new ArrayCollection();
 		protected var _smiths:ArrayCollection = new ArrayCollection();
 
@@ -174,11 +165,11 @@ package com.uralys.tribes.entities
 		protected var _armyRaised:int;
 		protected var _armyReleased:int;
 
-		public function set armiesToFeed(o:int):void{
+		public function set unitsToFeed(o:int):void{
 			_armiesToFeed = o;
 		}
 
-		public function get armiesToFeed():int{
+		public function get unitsToFeed():int{
 			return _armiesToFeed;
 		}
 

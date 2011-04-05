@@ -18,7 +18,7 @@
 			import mx.core.FlexGlobals;
 			
 			public function initWindow():void{
-				for each(var conflict:Conflict in Session.currentPlayer.conflicts){
+				for each(var conflict:Conflict in Session.player.conflicts){
 					
 					var conflictReport:ConflictReport = new ConflictReport();
 					conflictReport.conflict = conflict;

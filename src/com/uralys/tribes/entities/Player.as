@@ -6,54 +6,18 @@ package com.uralys.tribes.entities
 	[RemoteClass(alias="com.uralys.tribes.entities.Player")]
 	public class Player
 	{
-		private var _playerUID:String;
+		private var _uralysUID:String;
 		private var _name:String;
-		private var _gameUID:String;
-		private var _gameName:String;
-		private var _lastTurnPlayed:int;
+		private var _allyUID:String;
 		private var _cities:ArrayCollection;
-		private var _armies:ArrayCollection;
-		private var _merchants:ArrayCollection;
-		private var _allies:ArrayCollection;
+		private var _units:ArrayCollection;
 		private var _lands:ArrayCollection = new ArrayCollection();
-		private var _reports:ArrayCollection = new ArrayCollection();
 		private var _conflicts:ArrayCollection = new ArrayCollection();
 		
 		public function Player(){}
 
 		//-------------------------------------------------------//
 		
-
-		public function get gameName():String
-		{
-			return _gameName;
-		}
-
-		public function set gameName(value:String):void
-		{
-			_gameName = value;
-		}
-
-		public function get gameUID():String
-		{
-			return _gameUID;
-		}
-
-		public function set gameUID(value:String):void
-		{
-			_gameUID = value;
-		}
-
-		public function get lastTurnPlayed():int
-		{
-			return _lastTurnPlayed;
-		}
-
-		public function set lastTurnPlayed(value:int):void
-		{
-			_lastTurnPlayed = value;
-		}
-
 		public function get name():String
 		{
 			return _name;
@@ -66,12 +30,22 @@ package com.uralys.tribes.entities
 
 		public function get playerUID():String
 		{
-			return _playerUID;
+			return _uralysUID;
 		}
 
 		public function set playerUID(value:String):void
 		{
-			_playerUID = value;
+			_uralysUID = value;
+		}
+
+		public function get uralysUID():String
+		{
+			return _uralysUID;
+		}
+
+		public function set uralysUID(value:String):void
+		{
+			_uralysUID = value;
 		}
 		
 		public function get cities():ArrayCollection
@@ -83,34 +57,14 @@ package com.uralys.tribes.entities
 		{
 			_cities = value;
 		}
-		public function get armies():ArrayCollection
+		public function get units():ArrayCollection
 		{
-			return _armies;
+			return _units;
 		}
 		
-		public function set armies(value:ArrayCollection):void
+		public function set units(value:ArrayCollection):void
 		{
-			_armies = value;
-		}
-		
-		public function get allies():ArrayCollection
-		{
-			return _allies;
-		}
-		
-		public function set allies(value:ArrayCollection):void
-		{
-			_allies = value;
-		}
-		
-		public function get merchants():ArrayCollection
-		{
-			return _merchants;
-		}
-		
-		public function set merchants(value:ArrayCollection):void
-		{
-			_merchants = value;
+			_units = value;
 		}
 		
 		public function get lands():ArrayCollection
@@ -121,16 +75,6 @@ package com.uralys.tribes.entities
 		public function set lands(value:ArrayCollection):void
 		{
 			_lands = value;
-		}
-		
-		public function get reports():ArrayCollection
-		{
-			return _reports;
-		}
-		
-		public function set reports(value:ArrayCollection):void
-		{
-			_reports = value;
 		}
 		
 		public function get conflicts():ArrayCollection

@@ -9,6 +9,12 @@ import mx.collections.ArrayCollection;
 2:us
 **/
 public class Translations{
+
+	[Bindable]
+	public static var WELCOME:ArrayCollection = new ArrayCollection(
+									["Profil Uralys créé. Bienvenue !",
+									"Uralys profile created. Welcome !",
+									"Uralys profile created. Welcome !"]);
 	
 	//-----------------------------------------------------------------------------------//
 

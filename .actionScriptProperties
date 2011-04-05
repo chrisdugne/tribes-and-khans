@@ -15,10 +15,7 @@
   <applications>
     <application path="TribesAndKhansClient.mxml"/>
   </applications>
-  <modules>
-    <module application="src/TribesAndKhansClient.mxml" destPath="com/uralys/tribes/pages/home/modules/GameSelectionModule.swf" optimize="true" sourcePath="src/com/uralys/tribes/pages/home/modules/GameSelectionModule.mxml"/>
-    <module application="src/TribesAndKhansClient.mxml" destPath="com/uralys/tribes/pages/home/modules/CreateGameModule.swf" optimize="true" sourcePath="src/com/uralys/tribes/pages/home/modules/CreateGameModule.mxml"/>
-  </modules>
+  <modules/>
   <buildCSSFiles/>
   <flashCatalyst validateFlashCatalystCompatibility="false"/>
 </actionScriptProperties>

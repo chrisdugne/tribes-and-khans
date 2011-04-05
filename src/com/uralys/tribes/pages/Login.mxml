@@ -41,7 +41,7 @@
 			}	
 			
 			private function createAccount():void{
-				Session.WAIT_FOR_SERVER = true;
+				Session.WAIT_FOR_CONNECTION = true;
 				if(formChecked()){
 					var sharedObject:SharedObject = SharedObject.getLocal(Names.SHARED_OBJECT_NAME);
 					sharedObject.data.lastEmail = emailInput.text;

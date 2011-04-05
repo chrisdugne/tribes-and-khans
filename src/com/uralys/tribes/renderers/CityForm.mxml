@@ -10,7 +10,7 @@
 				import com.uralys.tribes.commons.Session;
 				import com.uralys.tribes.commons.Translations;
 				import com.uralys.tribes.core.BoardDrawer;
-				import com.uralys.tribes.entities.Army;
+				import com.uralys.tribes.entities.Unit;
 				import com.uralys.tribes.entities.City;
 				import com.uralys.tribes.entities.Equipment;
 				import com.uralys.tribes.entities.Item;
@@ -35,8 +35,8 @@
 				//----------------------------------------------------------//
 				
 				public var _city:City;
-				[Bindable] private var army:Army;
-				[Bindable] private var merchant:Army;
+				[Bindable] private var army:Unit;
+				[Bindable] private var merchant:Unit;
 
 				//----------------------------------------------------------//
 
@@ -123,7 +123,7 @@
 					city.ironSpent += city.swordWorkers * Numbers.SWORD_IRON;
 					city.ironSpent += city.armorWorkers * Numbers.ARMOR_IRON;
 					
-					city.wheatSpent += city.armiesToFeed;
+					city.wheatSpent += city.unitsToFeed;
 					
 					city.refreshUnemployed();
 					
@@ -1084,20 +1084,20 @@
 				// Armies - Merchants
 				
 				protected function onArmyClick(event:ItemClickEvent):void{
-					army = event.currentTarget.selectedItem as Army;
+					army = event.currentTarget.selectedItem as Unit;
 				}
 				
 				protected function onMerchantClick(event:ItemClickEvent):void{
-					merchant = event.currentTarget.selectedItem as Army;
+					merchant = event.currentTarget.selectedItem as Unit;
 				}
 				
 				protected function newArmy():void{
-					var newArmy:Army = new Army();
+					var newArmy:Unit = new Unit();
 					newArmy.size = 0; // "armyInputKeyUpHandler" va rajouter les 10 et les compter dans city.armyRaised
 					newArmy.x = city.x;
 					newArmy.y = city.y;
 					newArmy.speed = 200;
-					newArmy.armyUID = "new";
+					newArmy.unitUID = "new";
 					newArmy.type = 1;
 					
 					newArmy.moves = new ArrayCollection();
@@ -1109,7 +1109,7 @@
 					newArmy.moves.getItemAt(0).yTo = newArmy.y;
 					
 					city.armies.addItem(newArmy);
-					Session.currentPlayer.armies.addItem(newArmy);
+					Session.player.units.addItem(newArmy);
 					
 					armiesList.selectedIndex = city.armies.length - 1;
 					
@@ -1124,7 +1124,7 @@
 					BoardDrawer.getInstance().removeArmyFromBoard(army);
 					BoardDrawer.getInstance().drawCity(city, false);
 					
-					if(army.armyUID != "new"){
+					if(army.unitUID != "new"){
 						// pour une armee deja existante : on reajuste la pop, ils peuvent travailler des ce tour
 						// faille : si on a enleve des unites avant elles sont dans armyReleased et ne seront pas utilisees ce tour
 						city.population += army.size;
@@ -1179,13 +1179,13 @@
 					
 					// on enleve l'armee de la liste de la ville et du player
 					city.armies.removeItemAt(city.armies.getItemIndex(army));
-					Session.currentPlayer.armies.removeItemAt(Session.currentPlayer.armies.getItemIndex(army));
+					Session.player.units.removeItemAt(Session.player.units.getItemIndex(army));
 
 					
 					// on selectionne l'entree suivante dans la liste des armees
 					try{
 						armiesList.selectedIndex = 0;
-						army = city.armies.getItemAt(0) as Army;	
+						army = city.armies.getItemAt(0) as Unit;	
 					}
 					catch(e:Error){
 						army = null;
@@ -1195,12 +1195,12 @@
 				
 				
 				protected function newMerchants():void{
-					var newMerchant:Army = new Army();
+					var newMerchant:Unit = new Unit();
 					newMerchant.size = 0; // "merchantInputKeyUpHandler" va rajouter les 50
 					newMerchant.x = city.x;
 					newMerchant.y = city.y;
 					newMerchant.speed = 340;
-					newMerchant.armyUID = "new";
+					newMerchant.unitUID = "new";
 					newMerchant.type = 2;
 					
 					newMerchant.moves = new ArrayCollection();
@@ -1212,7 +1212,7 @@
 					newMerchant.moves.getItemAt(0).yTo = newMerchant.y;
 					
 					city.merchants.addItem(newMerchant);
-					Session.currentPlayer.merchants.addItem(newMerchant);
+					Session.player.units.addItem(newMerchant);
 					
 					merchantsList.selectedIndex = city.merchants.length - 1;
 					
@@ -1226,7 +1226,7 @@
 					BoardDrawer.getInstance().removeArmyFromBoard(merchant);
 					BoardDrawer.getInstance().drawCity(city, false);
 					
-					if(merchant.armyUID != "new"){
+					if(merchant.unitUID != "new"){
 						// pour une caravane deja existante : on reajuste la pop, ils peuvent travailler des ce tour
 						// faille : si on a enleve des unites avant elles sont dans armyReleased et ne seront pas utilisees ce tour
 						city.population += merchant.size;
@@ -1252,13 +1252,13 @@
 					
 					// on enleve la caravane de la liste de la ville et du player
 					city.merchants.removeItemAt(city.merchants.getItemIndex(merchant));
-					Session.currentPlayer.merchants.removeItemAt(Session.currentPlayer.merchants.getItemIndex(merchant));
+					Session.player.units.removeItemAt(Session.player.units.getItemIndex(merchant));
 					
 					
 					// on selectionne l'entree suivante dans la liste des armees
 					try{
 						merchantsList.selectedIndex = 0;
-						merchant = city.merchants.getItemAt(0) as Army;	
+						merchant = city.merchants.getItemAt(0) as Unit;	
 					}
 					catch(e:Error){
 						merchant = null;

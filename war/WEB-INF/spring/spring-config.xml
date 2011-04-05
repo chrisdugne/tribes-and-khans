@@ -20,27 +20,6 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 	
 	<!--  end of InitDao -->
 	<!-- ============================================================================================================================== -->
-	<!--  (PlayerService) -->
-		
-	<bean id="playerDao" 
-		class="com.uralys.tribes.dao.impl.PlayerDAO"
-		parent="mainDao"/>
-
-	<bean id="playerDomain" class="com.uralys.tribes.domain.impl.PlayerManager">
-		<constructor-arg index="0">
-			<ref bean="playerDao" />
-		</constructor-arg>
-	</bean>
-	
-	<bean id="playerServiceBean" 
-		class="com.uralys.tribes.services.impl.PlayerService">
-		<constructor-arg index="0">
-			<ref bean="playerDomain" />
-		</constructor-arg>
-	</bean>
-	
-	<!--  end of PlayerService -->
-	<!-- ============================================================================================================================== -->
 	<!--  (GameService) -->
 		
 	<bean id="gameDao" 

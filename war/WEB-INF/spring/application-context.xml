@@ -33,7 +33,6 @@
                <!-- <flex:secured/> -->
         </flex:message-broker>
         
-        <flex:remoting-destination destination-id="PlayerWrapper" ref="playerServiceBean" />
         <flex:remoting-destination destination-id="GameWrapper" ref="gameServiceBean" />
 
 </beans>

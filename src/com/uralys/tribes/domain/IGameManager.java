@@ -2,20 +2,13 @@ package com.uralys.tribes.domain;
 
 import java.util.List;
 
-import com.uralys.tribes.entities.Game;
 import com.uralys.tribes.entities.Item;
 import com.uralys.tribes.entities.Player;
 
 public interface IGameManager {
 
-	public void createGame(String uralysUID, String gameName, String playerName, int nbMinByTurn);
-	public void joinGame(String uralysUID, String gameUID, String playerName); 
-	public List<Game> getCurrentGames(String uralysUID);
-	public List<Game> getGamesToJoin();
-	
-	public boolean launchGame(String gameUID);
-
+	public String createPlayer(String uralysUID, String email);
+	public Player getPlayer(String uralysUID);
 	public List<Item> loadItems();
 	
-	public void saveTurn(Player player, boolean fromForceTurn);
 }

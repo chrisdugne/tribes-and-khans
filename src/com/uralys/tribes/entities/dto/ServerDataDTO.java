@@ -19,8 +19,9 @@ public class ServerDataDTO {
     @Extension(vendorName="datanucleus", key="gae.pk-name", value="true")
 	private String dataUID; 
 	
+	@Persistent	private int nbPlayers;
+	
 	@Persistent	private Boolean dataviewerVisible;
-	@Persistent	private String dataviewerPassword;
 
 	//-----------------------------------------------------------------------------------//
 
@@ -44,16 +45,16 @@ public class ServerDataDTO {
 		this.dataviewerVisible = dataviewerVisible;
 	}
 
-	public String getDataviewerPassword() {
-		return dataviewerPassword;
-	}
-
-	public void setDataviewerPassword(String dataviewerPassword) {
-		this.dataviewerPassword = dataviewerPassword;
-	}
-
 	public Boolean getDataviewerVisible() {
 		return dataviewerVisible;
+	}
+
+	public int getNbPlayers() {
+		return nbPlayers;
+	}
+
+	public void setNbPlayers(int nbPlayers) {
+		this.nbPlayers = nbPlayers;
 	}
 	
 	

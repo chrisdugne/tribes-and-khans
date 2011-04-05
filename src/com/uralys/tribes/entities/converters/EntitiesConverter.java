@@ -3,27 +3,25 @@ package com.uralys.tribes.entities.converters;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.uralys.tribes.entities.Army;
+import com.uralys.tribes.entities.Case;
+import com.uralys.tribes.entities.Unit;
 import com.uralys.tribes.entities.City;
 import com.uralys.tribes.entities.Conflict;
 import com.uralys.tribes.entities.Equipment;
-import com.uralys.tribes.entities.Game;
 import com.uralys.tribes.entities.Item;
 import com.uralys.tribes.entities.Move;
 import com.uralys.tribes.entities.MoveConflict;
 import com.uralys.tribes.entities.Player;
-import com.uralys.tribes.entities.Profil;
 import com.uralys.tribes.entities.Smith;
-import com.uralys.tribes.entities.dto.ArmyDTO;
+import com.uralys.tribes.entities.dto.CaseDTO;
+import com.uralys.tribes.entities.dto.UnitDTO;
 import com.uralys.tribes.entities.dto.CityDTO;
 import com.uralys.tribes.entities.dto.ConflictDTO;
 import com.uralys.tribes.entities.dto.EquipmentDTO;
-import com.uralys.tribes.entities.dto.GameDTO;
 import com.uralys.tribes.entities.dto.ItemDTO;
 import com.uralys.tribes.entities.dto.MoveConflictDTO;
 import com.uralys.tribes.entities.dto.MoveDTO;
 import com.uralys.tribes.entities.dto.PlayerDTO;
-import com.uralys.tribes.entities.dto.ProfilDTO;
 import com.uralys.tribes.entities.dto.SmithDTO;
 
 public class EntitiesConverter {
@@ -38,10 +36,6 @@ public class EntitiesConverter {
 		Move move = new Move();
 		
 		move.setMoveUID(moveDTO.getMoveUID());
-		move.setxFrom(moveDTO.getxFrom());
-		move.setxTo(moveDTO.getxTo());
-		move.setyFrom(moveDTO.getyFrom());
-		move.setyTo(moveDTO.getyTo());
 		
 		return move;
 	}
@@ -55,13 +49,9 @@ public class EntitiesConverter {
 		
 		Player player = new Player();
 		
-		player.setPlayerUID(playerDTO.getPlayerUID());
+		player.setUralysUID(playerDTO.getUralysUID());
 		player.setName(playerDTO.getName());
-		player.setGameName(playerDTO.getGameName());
-		player.setGameUID(playerDTO.getGameUID());
-		player.setLastTurnPlayed(playerDTO.getLastTurnPlayed());
-		player.setLands(playerDTO.getLands());
-		player.setAllies(playerDTO.getAllyUIDs());
+		player.setNbLands(playerDTO.getNbLands());
 		
 		//-----------------------------------------------------------------------------------//
 		List<City> cities = new ArrayList<City>();
@@ -84,22 +74,13 @@ public class EntitiesConverter {
 		
 		
 		//-----------------------------------------------------------------------------------//		
-		List<Army> armies = new ArrayList<Army>();
+		List<Unit> units = new ArrayList<Unit>();
 		
-		for(ArmyDTO armyDTO : playerDTO.getArmies()){
-			armies.add(convertArmyDTO(armyDTO));
+		for(UnitDTO unitDTO : playerDTO.getUnits()){
+			units.add(convertUnitDTO(unitDTO));
 		}
 		
-		player.setArmies(armies);
-		
-		//-----------------------------------------------------------------------------------//		
-		List<Army> merchants = new ArrayList<Army>();
-		
-		for(ArmyDTO merchantDTO : playerDTO.getMerchants()){
-			merchants.add(convertArmyDTO(merchantDTO));
-		}
-		
-		player.setMerchants(merchants);
+		player.setUnits(units);
 				//-----------------------------------------------------------------------------------//
 
 		return player;
@@ -108,58 +89,6 @@ public class EntitiesConverter {
 	}
 	
 	
-	//-----------------------------------------------------------------------------------//
-	
-	public static Game convertGameDTO(GameDTO gameDTO) {
-
-		if(gameDTO == null)
-			return null;
-		
-		Game game = new Game();
-		
-		game.setCreatorUralysUID(gameDTO.getCreatorUralysUID());
-		game.setGameUID(gameDTO.getGameUID());
-		game.setName(gameDTO.getName());
-		game.setStatus(gameDTO.getStatus());
-		game.setCurrentTurn(gameDTO.getCurrentTurn());
-		game.setBeginTurnTimeMillis(gameDTO.getBeginTurnTimeMillis());
-		game.setNbMinByTurn(gameDTO.getNbMinByTurn());
-		
-		List<Player> players = new ArrayList<Player>();
-		
-		for(PlayerDTO playerDTO : gameDTO.getPlayers()){
-			players.add(convertPlayerDTO(playerDTO));
-		}
-		
-		game.setPlayers(players);
-
-		return game;
-	}
-
-	
-	//-----------------------------------------------------------------------------------//
-	
-	public static Profil convertProfilDTO(ProfilDTO profilDTO) {
-		
-		if(profilDTO == null)
-			return null;
-		
-		Profil profil = new Profil();
-		
-		profil.setUralysUID(profilDTO.getUralysUID());
-		
-		List<Player> players = new ArrayList<Player>();
-		
-		for(PlayerDTO playerDTO : profilDTO.getPlayers()){
-			players.add(convertPlayerDTO(playerDTO));
-		}
-		
-		profil.setPlayers(players);
-		
-		return profil;
-	}
-	
-
 	//-----------------------------------------------------------------------------------//	
 	public static City convertCityDTO(CityDTO cityDTO) {
 		
@@ -180,7 +109,6 @@ public class EntitiesConverter {
 		city.setX(cityDTO.getX());
 		city.setY(cityDTO.getY());
 		city.setGold(cityDTO.getGold());
-		city.setCreationTurn(cityDTO.getCreationTurn());
 		
 		//---------------------------------//
 		
@@ -210,45 +138,78 @@ public class EntitiesConverter {
 	
 	//-----------------------------------------------------------------------------------//
 	
-	public static Army convertArmyDTO(ArmyDTO armyDTO) {
+	public static Unit convertUnitDTO(UnitDTO unitDTO) {
 		
-		if(armyDTO == null)
+		if(unitDTO == null)
 			return null;
 		
-		Army army = new Army();
+		Unit unit = new Unit();
 		
-		army.setArmyUID(armyDTO.getArmyUID());
-		army.setSize(armyDTO.getSize());
-		army.setSpeed(armyDTO.getSpeed());
-		army.setValue(armyDTO.getValue());
-		army.setX(armyDTO.getX());
-		army.setY(armyDTO.getY());
-		army.setGold(armyDTO.getGold());
-		army.setIron(armyDTO.getIron());
-		army.setWheat(armyDTO.getWheat());
-		army.setWood(armyDTO.getWood());
+		unit.setUnitUID(unitDTO.getUnitUID());
+		unit.setSize(unitDTO.getSize());
+		unit.setSpeed(unitDTO.getSpeed());
+		unit.setValue(unitDTO.getValue());
+		unit.setGold(unitDTO.getGold());
+		unit.setIron(unitDTO.getIron());
+		unit.setWheat(unitDTO.getWheat());
+		unit.setWood(unitDTO.getWood());
+		
+		unit.setType(unitDTO.getType());
+		unit.setStatus(unitDTO.getStatus());
+		unit.setCurrentCase(convertCaseDTO(unitDTO.getCurrentCase()));
+		unit.setPlayerUID(unitDTO.getPlayerUID());
 
 		//-----------------------------------------------------------------------------------//
 		
 		List<Equipment> equipments = new ArrayList<Equipment>();
 		
-		for(EquipmentDTO equipmentDTO : armyDTO.getEquipments()){
+		for(EquipmentDTO equipmentDTO : unitDTO.getEquipments()){
 			equipments.add(convertEquipmentDTO(equipmentDTO));
 		}
 		
-		army.setEquipments(equipments);
+		unit.setEquipments(equipments);
 
 		//-----------------------------------------------------------------------------------//
 
 		List<Move> moves = new ArrayList<Move>();
 		
-		for(MoveDTO moveDTO : armyDTO.getMoves()){
+		for(MoveDTO moveDTO : unitDTO.getMoves()){
 			moves.add(convertMoveDTO(moveDTO));
 		}
 		
-		army.setMoves(moves);
+		unit.setMoves(moves);
 		
-		return army;
+		return unit;
+	}
+	
+	//-----------------------------------------------------------------------------------//
+
+	
+	public static Case convertCaseDTO(CaseDTO caseDTO) {
+		
+		if(caseDTO == null)
+			return null;
+		
+		Case _case = new Case();
+		
+		_case.setX(caseDTO.getX());
+		_case.setY(caseDTO.getY());
+		_case.setType(caseDTO.getType());
+
+		_case.setCity(convertCityDTO(caseDTO.getCity()));
+		_case.setLandOwner(convertPlayerDTO(caseDTO.getLandOwner()));
+
+		//-----------------------------------------------------------------------------------//
+
+		List<Move> moves = new ArrayList<Move>();
+		
+		for(MoveDTO moveDTO : caseDTO.getMoves()){
+			moves.add(convertMoveDTO(moveDTO));
+		}
+		
+		_case.setRecordedMoves(moves);
+		
+		return _case;
 	}
 	
 	
@@ -317,31 +278,7 @@ public class EntitiesConverter {
 		Conflict conflict = new Conflict();
 
 		conflict.setConflictUID(conflictDTO.getConflictUID());
-		conflict.setReport(conflictDTO.getReport());
-		conflict.setStatus(conflictDTO.getStatus());
-		conflict.setX(conflictDTO.getX());
-		conflict.setY(conflictDTO.getY());
 		
-		//-----------------------------------------------------------------------------------//
-		
-		List<MoveConflict> moveAllies = new ArrayList<MoveConflict>();
-		
-		for(MoveConflictDTO moveConflictDTO : conflictDTO.getMoveAllies()){
-			moveAllies.add(convertMoveConflictDTO(moveConflictDTO));
-		}
-		
-		conflict.setMoveAllies(moveAllies);
-
-		//-----------------------------------------------------------------------------------//
-		
-		List<MoveConflict> moveEnnemies = new ArrayList<MoveConflict>();
-		
-		for(MoveConflictDTO moveConflictDTO : conflictDTO.getMoveEnnemies()){
-			moveEnnemies.add(convertMoveConflictDTO(moveConflictDTO));
-		}
-		
-		conflict.setMoveEnnemies(moveEnnemies);
-
 		//------------------------------------------------------------------------------------//
 		
 		return conflict;

@@ -1,37 +1,54 @@
 package com.uralys.tribes.domain.impl;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.logging.Logger;
 
 import com.uralys.tribes.dao.IGameDAO;
 import com.uralys.tribes.domain.IGameManager;
-import com.uralys.tribes.entities.Army;
-import com.uralys.tribes.entities.City;
-import com.uralys.tribes.entities.Equipment;
-import com.uralys.tribes.entities.Game;
+import com.uralys.tribes.entities.Case;
+import com.uralys.tribes.entities.Conflict;
 import com.uralys.tribes.entities.Item;
+import com.uralys.tribes.entities.Move;
 import com.uralys.tribes.entities.Player;
-import com.uralys.tribes.entities.Smith;
+import com.uralys.tribes.entities.Unit;
 import com.uralys.tribes.entities.converters.EntitiesConverter;
-import com.uralys.tribes.entities.dto.GameDTO;
 import com.uralys.tribes.entities.dto.ItemDTO;
 import com.uralys.utils.Utils;
 
 public class GameManager implements IGameManager {
+
 	
-	private static final Logger log = Logger.getLogger(GameManager.class.getName());
+	/*
+	 * 1 case 15min
+	 * 4 cases 1h
+	 * 96 cases/24h
+	 * plateau : 96h : 400x400 = 160000 tuiles
+	 * 
+	 * pour commencer
+	 * joueur i, place en (200 + 10i)(200 + 10i)
+	 * 
+	 * 
+	 * tile : height = 86
+	 * 		  width = 50+25+25 = 100
+	 * 
+	 * 50^2 = 25^2+ x^2 => x=sqrt(2500-625)
+	 * sqrt(1875) = 43
+	 * 
+	 * plateau height : 86 * 400 = 
+	 * plateau width  : 100 * 400 = 40000px
+	 * 
+	 */
+	//private static final Logger log = Logger.getLogger(GameManager.class.getName());
 
 	//==================================================================================================//
 	// game COEFF
-	
+
 	public final static int WHEAT_EARNING_COEFF = 5;
 	public final static int WOOD_EARNING_COEFF = 3;
 	public final static int IRON_EARNING_COEFF = 2;
 
 	//==================================================================================================//
-	
+
 	private IGameDAO gameDao;
 
 	public GameManager (IGameDAO gameDao){
@@ -40,451 +57,635 @@ public class GameManager implements IGameManager {
 
 	//==================================================================================================//
 	
-	public void createGame(String uralysUID, String gameName, String playerName, int nbMinByTurn)  {
-		gameDao.createGame(uralysUID, gameName, playerName, nbMinByTurn);
+	public String createPlayer(String uralysUID, String email) {
+		return gameDao.createPlayer(uralysUID, email);			
 	}
-
-	public void joinGame(String uralysUID, String gameUID, String playerName)  {
-		gameDao.joinGame(uralysUID, gameUID, playerName);
-	}
-
-	//==================================================================================================//
-
-	public List<Game> getCurrentGames(String uralysUID) {
+	
+	public Player getPlayer(String uralysUID) {
 		
-		List<Game> games = new ArrayList<Game>();
-		
-		for(GameDTO gameDTO : gameDao.getCurrentGames(uralysUID)){
-			games.add(EntitiesConverter.convertGameDTO(gameDTO));
+		if(uralysUID.startsWith("p")){
+			if(uralysUID.equals("player1"))
+				return player1;
+			if(uralysUID.equals("player2"))
+				return player2;
+			if(uralysUID.equals("player3"))
+				return player3;
+			
+			return null;			
 		}
-		
-		calculateTurnsNotPlayed(games);
-		
-		return games;
-	}
-	
 
-	public List<Game> getGamesToJoin(){
 		
-		List<Game> games = new ArrayList<Game>();
-		
-		for(GameDTO gameDTO : gameDao.getGamesToJoin()){
-			games.add(EntitiesConverter.convertGameDTO(gameDTO));
+		try{
+			return EntitiesConverter.convertPlayerDTO(gameDao.getPlayer(uralysUID));
 		}
-		
-		return games;
-	}
-
-	//==================================================================================================//
-
-	public boolean launchGame(String gameUID) {
-		return gameDao.launchGame(gameUID);
+		catch(Exception e){
+			e.printStackTrace();
+			return null;
+		}
 	}
 	
 	//==================================================================================================//
-	
+
 	public List<Item> loadItems() {
 		List<Item> items = new ArrayList<Item>();
-		
+
 		for(ItemDTO itemDTO : gameDao.loadItems()){
 			items.add(EntitiesConverter.convertItemDTO(itemDTO));
 		}
-		
+
 		return items;
 	}
 
 	//==================================================================================================//
+	// nouvel algo pour le deplacement des unites
+
+	private static Case[][] board = new Case[100][100];
+	private static Unit army1;
+	private static Unit army2;
+	private static Unit army3;
+
+	private static Player player1;
+	private static Player player2;
+	private static Player player3;
+
+	public static void main(String[] args){
+
+		//-----------------------------------------------------------------------------------//
+
+		GameManager game = new GameManager(null);
+
+		for(int i=0; i<100; i++){
+			for(int j=0; j<100; j++){
+				board[i][j] = new Case(i,j);
+			}
+		}
+
+		//-----------------------------------------------------------------------------------//
+
+		player1 = new Player();
+		player1.setUralysUID("player1");
+		player1.setAllyUID("alliance1");
+
+		//-----------------------------------------------------------------------------------//
+
+		player2 = new Player();
+		player2.setUralysUID("player2");
+		player2.setAllyUID("alliance2");
+
+		//-----------------------------------------------------------------------------------//
+
+		player3 = new Player();
+		player3.setUralysUID("player3");
+		player3.setAllyUID("alliance2");
+
+		//-----------------------------------------------------------------------------------//
+
+		army1 = new Unit();
+		army1.setUnitUID("army1");
+		army1.setValue(50);
+		army1.setCurrentCase(new Case(1, 0));
+		army1.setType(Unit.ARMY);
+		army1.setPlayerUID(player1.getUralysUID());
+
+		//-----------------------------------------------------------------------------------//
+
+		army2 = new Unit();
+		army2.setUnitUID("army2");
+		army2.setValue(230);
+		army2.setCurrentCase(new Case(2, 7));
+		army2.setType(Unit.ARMY);
+		army2.setPlayerUID(player2.getUralysUID());
+
+		//-----------------------------------------------------------------------------------//
+
+		army3 = new Unit();
+		army3.setUnitUID("army3");
+		army3.setValue(120);
+		army3.setCurrentCase(new Case(7, 6));
+		army3.setType(Unit.ARMY);
+		army3.setPlayerUID(player3.getUralysUID());
+
+		//-----------------------------------------------------------------------------------//
+		// le joueur cree son mouvement pour army1
+		// le premier move est sur la case actuelle de l'unite, de 'now' ˆ 'now + temps_de_deplacement' 
+
+		ArrayList<Move> moves1 = new ArrayList<Move>();
+		
+//		NewMove move10 = new NewMove(1,0,0,1);
+//		move10.setMoveUID("move10");
+//		NewMove move11 = new NewMove(1,1,1,3);
+//		move11.setMoveUID("move11");
+//		NewMove move12 = new NewMove(1,2,3,5);
+//		move12.setMoveUID("move12");
+//		NewMove move13 = new NewMove(1,3,5,7);
+//		move13.setMoveUID("move13");
+//		NewMove move14 = new NewMove(2,3,7,9);
+//		move14.setMoveUID("move14");
+//		NewMove move15 = new NewMove(2,4,9,11);
+//		move15.setMoveUID("move15");
+//
+//		moves1.add(move10);
+//		moves1.add(move11);
+//		moves1.add(move12);
+//		moves1.add(move13);
+//		moves1.add(move14);
+//		moves1.add(move15);
+
+		Move move10 = new Move(3,3,0,1);
+		move10.setMoveUID("move10");
+		Move move11 = new Move(3,4,1,5);
+		move11.setMoveUID("move11");
+		Move move12 = new Move(3,5,5,7);
+		move12.setMoveUID("move12");
+		
+		moves1.add(move10);
+		moves1.add(move11);
+		moves1.add(move12);
+		
+		//-----------------------------------------------------------------------------------//
+		// le joueur cree son mouvement pour army2
+
+		ArrayList<Move> moves2 = new ArrayList<Move>();
+
+//		NewMove move20 = new NewMove(2,7,0,2);
+//		move20.setMoveUID("move20");
+//		NewMove move21 = new NewMove(2,6,2,4);
+//		move21.setMoveUID("move21");
+//		NewMove move22 = new NewMove(2,5,4,6);
+//		move22.setMoveUID("move22");
+//		NewMove move23 = new NewMove(2,4,6,8);
+//		move23.setMoveUID("move23");
+//		NewMove move24 = new NewMove(2,3,8,10);
+//		move24.setMoveUID("move24");
+//		NewMove move25 = new NewMove(2,2,10,12);
+//		move25.setMoveUID("move25");
+//
+//		moves2.add(move20);
+//		moves2.add(move21);
+//		moves2.add(move22);
+//		moves2.add(move23);
+//		moves2.add(move24);
+//		moves2.add(move25);
+		
+
+		Move move20 = new Move(4,4,0,1);
+		move20.setMoveUID("move20");
+		Move move21 = new Move(3,4,1,6);
+		move21.setMoveUID("move21");
+		Move move22 = new Move(2,4,6,8);
+		move22.setMoveUID("move22");
+		
+		moves2.add(move20);
+		moves2.add(move21);
+		moves2.add(move22);
+
+		//-----------------------------------------------------------------------------------//
+		// le joueur cree son mouvement pour army3
+
+		ArrayList<Move> moves3 = new ArrayList<Move>();
+
+//		NewMove move30 = new NewMove(7,6,-9,-7);
+//		move30.setMoveUID("move30");
+//		NewMove move31 = new NewMove(6,6,-7,-5);
+//		move31.setMoveUID("move31");
+//		NewMove move32 = new NewMove(5,6,-5,-3);
+//		move32.setMoveUID("move32");
+//		NewMove move33 = new NewMove(4,6,-3,-1);
+//		move33.setMoveUID("move33");
+//		NewMove move34 = new NewMove(3,6,-1,1);
+//		move34.setMoveUID("move34");
+//		NewMove move35 = new NewMove(2,6,1,3);
+//		move35.setMoveUID("move35");
+//		NewMove move36 = new NewMove(1,6,1,3);
+//		move36.setMoveUID("move36");
+//		NewMove move37 = new NewMove(0,6,1,3);
+//		move37.setMoveUID("move37");
+//
+//		moves3.add(move30);
+//		moves3.add(move31);
+//		moves3.add(move32);
+//		moves3.add(move33);
+//		moves3.add(move34);
+//		moves3.add(move35);
+//		moves3.add(move36);
+//		moves3.add(move37);
+
+
+		Move move30 = new Move(3,5,0,2);
+		move30.setMoveUID("move30");
+		Move move31 = new Move(3,4,2,7);
+		move31.setMoveUID("move31");
+		Move move32 = new Move(4,4,7,9);
+		move32.setMoveUID("move32");
+		
+		moves3.add(move30);
+		moves3.add(move31);
+		moves3.add(move32);
+		
+		//-----------------------------------------------------------------------------------//		game.placeUnit(army1, moves1, new ArrayList<Unit>());
+		game.placeUnit(army2, moves2, new ArrayList<Unit>());
+		game.placeUnit(army3, moves3, new ArrayList<Unit>());
+
+		//-----------------------------------------------------------------------------------//
+		
+		System.out.println("================================================");
+		System.out.println("Affichage final des deplacements");
+		
+		printMove(army1);
+		printMove(army2);
+		printMove(army3);
+		System.out.println("---");
+		printConflict(army1);
+		printConflict(army2);
+		printConflict(army3);
+		//-----------------------------------------------------------------------------------//
+
+	}
+
+
+	private static void printMove(Unit unit) {
+		System.out.println("---");
+		System.out.println("moves pour unit : " + unit.getUnitUID());
+		
+		for(Move move : unit.getMoves()){
+			int i = move.getCase().getX();
+			int j = move.getCase().getY();
+			System.out.println("["+i+"]["+j+"] | value : " + move.getValue());
+		}
+	}
 	
-	public void saveTurn(Player player, boolean fromForceTurn){
+	private static void printConflict(Unit unit) {
+		System.out.println("---");
+		System.out.println((unit.getConflicts().size() == 0 ? "aucun " : "") + "conflict(s) pour unit : " + unit.getUnitUID());
 
-		log.info("-------------------------------------------------");
-		log.info("Save turn pour joueur : " + player.getName());
-
-		//----------------------------------------------------------------//
-		// Cities
-
-		for(City city : player.getCities()){
-
-			if(city.getCityUID().equals("new")){
-				log.info("Create a new city");
-				gameDao.createCity(city, player.getPlayerUID());
+		for(Conflict conflict : unit.getConflicts()){
+			int i = conflict.getCase().getX();
+			int j = conflict.getCase().getY();
+			System.out.println("["+i+"]["+j+"]");
+			
+			for(Unit opponent : conflict.getUnits()){
+				System.out.println("unit : " + opponent.getUnitUID());			
 			}
-			else{
-				log.info("saving city : " + city.getName());
-				
-				//----------------------------------------//
-				// Resources
-				// wheat : si < 0 : gens meurent de faim : calcul de pop en consequence
-				
-				boolean starvation = false;
-				
-				if(city.getWheat() < 0){
-					starvation = true;
-					city.setWheat(0);
-				}
+			
+		}
+	}
 
-				if(!fromForceTurn){ // else la pop a deja ete calculee
-					//----------------------------------------//
-					// Population
-					
-					int armyRaised = 0;
-					
-					// calcul de armyRaised
-					for(Army army : player.getArmies()){
-						if(army.getArmyUID().equals("new") && army.getX() == city.getX() && army.getY() == city.getY())
-							armyRaised += army.getSize();
+	// le premier Move est la case actuelle ou est posee l'unite avant son depart
+	// donc le premier waySafe est bien = true
+	private List<Unit> placeUnit(Unit unit, List<Move> moves, List<Unit> unitsMakingThisReplacing) {
+		
+		System.out.println("---------------------------------------");
+		System.out.println("place unit " + unit.getUnitUID());
+		
+		int currentUnitValue = unit.getValue();
+		System.out.println("initial value " + currentUnitValue);
+		
+		System.out.println("moves to check and record");
+		for(Move move : moves){
+			int i = move.getCase().getX();
+			int j = move.getCase().getY();
+
+			System.out.println("["+i+"]["+j+"]");
+		}
+
+		System.out.println("unitsMakingThisReplacing :");
+		for(Unit unitMakingThisReplacing : unitsMakingThisReplacing){
+			System.out.println(unitMakingThisReplacing.getUnitUID());
+		}
+		
+		List<Unit> unitsReplacedByThisPlacement = new ArrayList<Unit>();
+
+		System.out.println("----------");
+		List<Unit> previousOpponents = resetPreviousConflictsAndMovesAndGetPreviousOpponents(unit, unitsMakingThisReplacing);
+		System.out.println("----------");
+
+		ArrayList<Unit> unitsToReplace = new ArrayList<Unit>();
+
+		for(Move newMove : moves){
+
+			newMove.setValue(currentUnitValue);
+			newMove.setUnitUID(unit.getUnitUID());
+
+			int i = newMove.getCase().getX();
+			int j = newMove.getCase().getY();
+
+			System.out.println("passage par case ["+i+"]["+j+"], de temps("+newMove.getTimeFrom()+") ˆ temps("+newMove.getTimeTo()+")");
+			Case _case = getCase(i,j);
+
+			//-----------------------------------------------------------------------------------//
+
+			if(currentUnitValue == 0){
+				System.out.println("mouvement non appliquŽ, pas de calcul de croisement");
+			}
+			else if(_case.getRecordedMoves().size() == 0){
+				System.out.println("case libre");
+			}
+
+			if(currentUnitValue > 0 && _case.getRecordedMoves().size() > 0){
+				
+				Conflict conflict = new Conflict();
+				conflict.setConflictUID(Utils.generateUID());
+				conflict.setCase(_case);
+				conflict.getUnits().add(unit);
+				
+				for(Move recordedMove : _case.getRecordedMoves()){
+
+					String unitRecordedUID = recordedMove.getUnitUID();
+					System.out.println(" - trouvŽ un autre passage : unit " + unitRecordedUID);
+
+					if(recordedMove.getValue() == 0){
+						System.out.println("	mouvement non appliquŽ : pas de croisement avec ce passage");
+						continue;
 					}
-					
-					
-					log.info("update population (armyRaised : " + armyRaised + ")");
-					city.setPopulation(calculatePopulation(city.getPopulation(), starvation, armyRaised));
-				}
-				
-				log.info("updateCityResources");
-				gameDao.updateCityResources(city);
 
-				//----------------------------------------//
-				// Forge
-				
-				for(Smith smith : city.getSmiths()){
-					log.info("update smith " + smith.getItem().getName());
-					gameDao.updateSmith(smith.getSmithUID(), smith.getPeople());				
-				}
+					System.out.println(" 	passage de temps("+recordedMove.getTimeFrom()+") ˆ temps("+recordedMove.getTimeTo()+")");
 
-				//----------------------------------------//
-				// Equipment stock
-				
-				for(Equipment stock : city.getEquipmentStock()){
-					log.info("update stock " + stock.getItem().getName());
-					gameDao.updateStock(stock.getEquimentUID(), stock.getSize());	
+					if((newMove.getTimeFrom() >= recordedMove.getTimeFrom() 
+							&& newMove.getTimeFrom() <= recordedMove.getTimeTo())
+							||
+							(newMove.getTimeTo() >= recordedMove.getTimeFrom() 
+									&& newMove.getTimeTo() <= recordedMove.getTimeTo())){
+						
+						System.out.println("	croisement pendant le passage : enregistrement du conflit");
+						conflict.getUnits().add(dummyGetUnit(unitRecordedUID));
+
+						if(unitsMakingThisReplacing.size() == 0 || !contains(unitsMakingThisReplacing, unitRecordedUID)){
+							unitsToReplace.add(dummyGetUnit(unitRecordedUID));							
+						}
+					}
+					else{
+						System.out.println("	pas de croisement avec ce passage");
+					}
+
 				}
+				
+				if(conflict.getUnits().size() > 1){
+					currentUnitValue = calculateFinalValue(conflict, unit, currentUnitValue);
+					unit.getConflicts().add(conflict);
+				}
+			}
+
+			//-----------------------------------------------------------------------------------//
+			// enregistrement du move dans les recordedMoves APRES check de ceux ci (sinon on va le checker avec lui meme)
+		
+			System.out.println("recording move " + newMove.getMoveUID());
+			unit.getMoves().add(newMove);
+			_case.getRecordedMoves().add(newMove);
+		
+		} // fin du loop sur les moves 
+
+		//-----------------------------------------------------------------------------------//
+		// ON REPLACE TOUTES LES UNITES IMPACTEES
+
+		unitsMakingThisReplacing.add(unit);
+		
+		System.out.println("----------------");
+		System.out.println("replacing new opponents : " + unitsToReplace.size());
+		
+		for(Unit unitToReplace : unitsToReplace){
+			if(!contains(unitsReplacedByThisPlacement, unitToReplace.getUnitUID())){
+				System.out.println("replacing : " + unitToReplace.getUnitUID());
+				List<Unit> unitsReplacedConsequently = placeUnit(unitToReplace, unitToReplace.getMoves(), unitsMakingThisReplacing);
+				unitsReplacedByThisPlacement.add(unitToReplace);
+				unitsReplacedByThisPlacement.addAll(unitsReplacedConsequently);				
 			}
 		}
 		
-		//----------------------------------------------------------------//
-		// Armies
+		System.out.println("----------------");
 
-		List<String> createdArmyUIDs = new ArrayList<String>();
-		List<String> editedArmyUIDs = new ArrayList<String>();
-		List<String> toDeleteArmyUIDs = new ArrayList<String>();
-//		int armyRaised = 0;
+		System.out.println("unitsReplacedByThisPlacement :");
+		for(Unit unitReplacedByThisPlacement : unitsReplacedByThisPlacement){
+			System.out.println(unitReplacedByThisPlacement.getUnitUID());
+		}
 		
-		for(Army army : player.getArmies()){
-			
-			if(army.getMoves().size() > 0){
-				String moveUID = gameDao.saveMove(army.getMoves().get(0));
-				army.getMoves().get(0).setMoveUID(moveUID);
-			}
-			
-			if(army.getArmyUID().equals("new")){
-				createdArmyUIDs.add(gameDao.createArmy(army));
-//				armyRaised += army.getSize();
-			}
-			else{
-				gameDao.updateArmy(army);
-				editedArmyUIDs.add(army.getArmyUID());
-			}
+		System.out.println("----------------");
+		System.out.println("replacing old opponents : " + previousOpponents.size());
 
+		for(Unit previousOpponentToReplace : previousOpponents){
+			if(!contains(unitsReplacedByThisPlacement, previousOpponentToReplace.getUnitUID())){
+				System.out.println("replacing : " + previousOpponentToReplace.getUnitUID());
+				List<Unit> unitsReplacedConsequently = placeUnit(previousOpponentToReplace, previousOpponentToReplace.getMoves(), unitsMakingThisReplacing);
+				unitsReplacedByThisPlacement.add(previousOpponentToReplace);
+				unitsReplacedByThisPlacement.addAll(unitsReplacedConsequently);
+			}
+		}
+		
+		System.out.println("----------------");
+		System.out.println("fin du placement");
+		System.out.println("----------------");
+
+		return unitsReplacedByThisPlacement;
+
+	}
+
+	
+	
+	
+	// reset le conflit en memoire
+	// et return la liste des armees ennemies a replacer
+	private List<Unit> resetPreviousConflictsAndMovesAndGetPreviousOpponents(Unit unit, List<Unit> unitsMakingThisReplacing) {
+		System.out.println("resetPreviousConflictAndGetPreviousOpponents for unit " + unit.getUnitUID());
+
+		List<Unit> unitsToReplace = new ArrayList<Unit>();
+
+		for(Conflict conflict : unit.getConflicts()){
+			for(Unit opponentOrAlly : conflict.getUnits()){
+				if(!opponentOrAlly.equals(unit) && !contains(unitsMakingThisReplacing, opponentOrAlly.getUnitUID())){
+					System.out.println("found " + opponentOrAlly.getUnitUID());
+					unitsToReplace.add(opponentOrAlly);
+				}
+			}
 		}
 
-		List<String> existingArmyUIDs = gameDao.linkNewArmiesAndGetPreviousArmyUIDs(player.getPlayerUID(), createdArmyUIDs);
-
-		for(String existingArmyUID : existingArmyUIDs){
-			log.info("existingArmyUID : " + existingArmyUID);
-			boolean found = false;
+		for(Move move : unit.getMoves()){
+			int i = move.getCase().getX();
+			int j = move.getCase().getY();
 			
-			for(String editedArmyUID : editedArmyUIDs){
-				if(editedArmyUID.equals(existingArmyUID)){
-					found = true;
+			removeMoveFromRecordedMoves(i,j, move.getMoveUID());
+		}
+
+		unit.setMoves(new ArrayList<Move>());
+		unit.setConflicts(new ArrayList<Conflict>());
+		
+
+		return unitsToReplace;
+	}
+
+	
+	private boolean contains(List<Unit> unitsMakingThisReplacing, String unitUID) {
+		
+		List<String> unitUIDsMakingThisReplacing = new ArrayList<String>();
+				
+		for(Unit unitMakingThisReplacing : unitsMakingThisReplacing){
+			unitUIDsMakingThisReplacing.add(unitMakingThisReplacing.getUnitUID());
+		}
+		
+		return unitUIDsMakingThisReplacing.contains(unitUID);
+	}
+
+//
+//	private void removeConflictForUnit(Unit unit, String conflictUID) {
+//		int indexToRemove = -1;
+//
+//		for(NewConflict conflict : unit.getConflicts()){
+//			if(conflict.getConflictUID().equals(conflictUID)){
+//				indexToRemove = unit.getConflicts().indexOf(conflict);
+//				break;
+//			}
+//		}
+//
+//		if(indexToRemove >= 0){
+//			System.out.println("remove conflict " + unit.getConflicts().get(indexToRemove).getConflictUID());
+//			unit.getConflicts().remove(indexToRemove);
+//		}
+//	}
+
+	private void removeMoveFromRecordedMoves(int i, int j, String moveUID) {
+		Case _case = getCase(i,j);
+		int indexToRemove = -1;
+
+		for(Move recordedMove : _case.getRecordedMoves()){
+			if(recordedMove.getMoveUID().equals(moveUID)){
+				indexToRemove = _case.getRecordedMoves().indexOf(recordedMove);
+				break;
+			}
+		}
+
+		if(indexToRemove >= 0){
+			System.out.println("remove move " + _case.getRecordedMoves().get(indexToRemove).getMoveUID());
+			_case.getRecordedMoves().remove(indexToRemove);
+		}
+	}
+
+	private Case getCase(int i, int j) {
+		return board[i][j];
+	}
+
+//	private boolean sameAlly(Unit unit, Unit opponent) {
+//		return unit.getPlayer().getAllyUID().equals(opponent.getPlayer().getAllyUID());
+//	}
+
+	private Unit dummyGetUnit(String unitUID) {
+		if(unitUID.equals("army1"))
+			return army1;
+		if(unitUID.equals("army2"))
+			return army2;
+		if(unitUID.equals("army3"))
+			return army3;
+
+		return null;
+	}
+	
+
+	//-----------------------------------------------------------------------------------//
+	
+	private int calculateFinalValue(Conflict conflict, Unit unitInspected, int currentUnitValue) {
+		
+		ArrayList<ArrayList<Unit>> allies = new ArrayList<ArrayList<Unit>>();
+		int allyIndexOfTheUnitInspected = -1;
+		
+		// --------   rangement dans les allies sur la case
+		
+		for(Unit unit : conflict.getUnits()){
+			int allyIndex = -1;
+			
+			for(ArrayList<Unit> ally : allies){
+				if(getPlayer(ally.get(0).getPlayerUID()).getAllyUID().equals(getPlayer(unit.getPlayerUID()).getAllyUID())){
+					allyIndex = allies.indexOf(ally);
 					break;
 				}
 			}
 			
-			if(!found)
-				toDeleteArmyUIDs.add(existingArmyUID);
-		}
-		
-		
-		//----------------------------------------------------------------//
-		// Merchants
-		
-		List<String> createdMerchantUIDs = new ArrayList<String>();
-		List<String> editedMerchantUIDs = new ArrayList<String>();
-		
-		for(Army merchant : player.getMerchants()){
-			
-			if(merchant.getMoves().size() > 0){
-				String moveUID = gameDao.saveMove(merchant.getMoves().get(0));
-				merchant.getMoves().get(0).setMoveUID(moveUID);
-			}
-			
-			if(merchant.getArmyUID().equals("new")){
-				createdMerchantUIDs.add(gameDao.createArmy(merchant));
-//				armyRaised += merchant.getSize();
-			}
+			if(allyIndex >= 0)
+				allies.get(allyIndex).add(unit);
 			else{
-				gameDao.updateArmy(merchant);
-				editedMerchantUIDs.add(merchant.getArmyUID());
+				ArrayList<Unit> newAlly = new ArrayList<Unit>();
+				newAlly.add(unit);
+				allies.add(newAlly);
+				allyIndex = allies.size()-1;
 			}
+			
+			if(unit.equals(unitInspected)){
+				allyIndexOfTheUnitInspected = allyIndex;
+			}
+		}
+		
+		// --------   calcul des valeurs des allies
+
+		int[] allyValues = new int[allies.size()];
+		
+		for(ArrayList<Unit> ally : allies){
+			int allyValue = 0;
+
+			for(Unit unit : ally){
+				// si cest la unitInspected, sa valeur n'est pas encore enregistree dans le 'case.move' du conflit
+				// donc on prend sa valeur ˆ l'entree de la case
+				// sinon on recupere la valeur de larmee rencontree sur cette case
+				if(unit.equals(unitInspected)){
+					System.out.println("unitInspected value : " + currentUnitValue);
+					allyValue += currentUnitValue;
+				}
+				else
+					allyValue += getValueInTheRecordedMove(unit, conflict.getCase());
+			}
+			
+			allyValues[allies.indexOf(ally)] = allyValue;
 			
 		}
 		
-		List<String> existingMerchantUIDs = gameDao.linkNewMerchantsAndGetPreviousMerchantUIDs(player.getPlayerUID(), createdMerchantUIDs);
+		// ---------  calculate the winner points remaining
 		
-		for(String existingMerchantUID : existingMerchantUIDs){
-			log.info("existingMerchantUID : " + existingMerchantUID);
-			boolean found = false;
-			
-			for(String editedMerchantUID : editedMerchantUIDs){
-				if(editedMerchantUID.equals(existingMerchantUID)){
-					found = true;
-					break;
-				}
+		int firstAllyValue = 0;
+		int secondAllyValue = 0;
+		int indexOfBestAlly = -1;
+		
+		for(int i=0; i < allies.size(); i++){
+			if(allyValues[i] > firstAllyValue){
+				int oldFirstValue = firstAllyValue;
+				firstAllyValue = allyValues[i];
+				
+				if(oldFirstValue > secondAllyValue)
+					secondAllyValue = oldFirstValue;
+				
+				indexOfBestAlly = i;
 			}
-			
-			if(!found)
-				toDeleteArmyUIDs.add(existingMerchantUID);
-		}
-		
-		//----------------------------------------------------------------//
-		// delete armies ans merchants to be deleted
-
-		gameDao.deleteArmies(toDeleteArmyUIDs, player.getPlayerUID());
-
-		//----------------------------------------------------------------//
-		// Player
-		
-		gameDao.updatePlayer(player); // lastTurnPLayed, remove last Reports
-		
-		//----------------------------------------------------------------//
-		// verifying if new turn is ready
-		
-		gameDao.checkEndTurn(player.getGameUID());
-	}
-	
-	//==================================================================================================//
-
-
-	private void calculateTurnsNotPlayed(List<Game> games) {
-		log.info("==============================================================");
-		log.info("calculateTurnsNotPlayed (games.size : "+games.size()+")");
-		for(Game game : games){
-			
-			if(game.getCurrentTurn() == 0)
-				continue;
-
-			log.info("-----------------------------------");
-			log.info("game : " + game.getName());
-			
-			ArrayList<String> gamesToDelete = new ArrayList<String>();
-
-			for(Player player : game.getPlayers()){
-				
-				int nbTurnPlayedByOthersWithoutPlayer = game.getCurrentTurn() - player.getLastTurnPlayed() - 1;
-				
-				if(nbTurnPlayedByOthersWithoutPlayer == -1)
-					nbTurnPlayedByOthersWithoutPlayer = 0; //le joueur avait bien joue son dernier tour a l'heure : game.currentTurn = player.lastTurnPlayed
-
-				long millisSinceLastTurnBegining = new Date().getTime() - game.getBeginTurnTimeMillis();
-				
-				int nbTurnPlayedWithoutEveryone = (int) (millisSinceLastTurnBegining/(game.getNbMinByTurn()*60*1000));
-
-				if(nbTurnPlayedWithoutEveryone > 30){
-					if(!gamesToDelete.contains(game.getGameUID()))
-						gamesToDelete.add(game.getGameUID());
-				}
-				else{
-					log.info("-----------------------------");
-					log.info("player : " + player.getName());
-					log.info("nbTurnPlayedByOthersWithoutPlayer : " + nbTurnPlayedByOthersWithoutPlayer);
-					log.info("nbTurnPlayedWithoutEveryone : " + nbTurnPlayedWithoutEveryone);
-					
-					if(nbTurnPlayedByOthersWithoutPlayer + nbTurnPlayedWithoutEveryone > 0){
-						log.info("----");
-						log.info("force play");
-
-
-						game.setCurrentTurn(game.getCurrentTurn() + nbTurnPlayedWithoutEveryone);
-						game.setBeginTurnTimeMillis(game.getBeginTurnTimeMillis() + game.getNbMinByTurn()*60*1000*nbTurnPlayedWithoutEveryone);					
-						player.setLastTurnPlayed(game.getCurrentTurn()-1);
-						
-						for(int i = 0; i < nbTurnPlayedByOthersWithoutPlayer + nbTurnPlayedWithoutEveryone; i++){
-							forcePlayTurn(player);
-						}
-						
-						log.info("game.currentTurn set to : " + game.getCurrentTurn());
-						log.info("beginTurnTimeMillis : " + new Date(game.getBeginTurnTimeMillis()));
-						
-						gameDao.updateGame(game); // set currentTurn and beginTurnTimeMillis
-						
-						// on sauvegarde le dernier
-						log.info("----------");
-						log.info("saveTurn");
-						saveTurn(player, true);
-					}
-				}
-			}
-			
-			for(String gameUID : gamesToDelete){
-				deleteGame(gameUID);
+			else if(allyValues[i] > secondAllyValue){
+				secondAllyValue = allyValues[i];
 			}
 		}
-	}
-
-	private void deleteGame(String gameUID) {
-		gameDao.deleteGame(gameUID);
-	}
-
-	private void forcePlayTurn(Player player) {
-
-		log.info("-------------------------------------------------");
-		log.info("Tour force pour joueur : " + player.getName());
 		
-		for(City city : player.getCities()){
-			log.info("-------------------------------------------------");
-			log.info("ville : " + city.getName());
-			log.info("---------------------");
-			log.info("Forge : ");
-			
-			//----------------------------------------//
-			// Forge
-			
-			for(Smith smith : city.getSmiths()){
-				log.info(smith.getItem().getName() + " : " + smith.getPeople());
-				
-				int ironNeeded = smith.getPeople()*smith.getItem().getIron();
-				int woodNeeded = smith.getPeople()*smith.getItem().getWood();
+		System.out.println("firstAllyValue : " + firstAllyValue);
+		System.out.println("secondAllyValue : " + secondAllyValue);
 
-				log.info("ironNeeded : " + ironNeeded + ", iron in stock : " + city.getIron());
-				log.info("woodNeeded : " + woodNeeded + ", wood in stock : " + city.getWood());
-				
-				// penalite : si on a pas assez de stock quand on rate un tour, on ne construit rien du tout, on recolte a la place.
-				if(ironNeeded > city.getIron()){
-					log.info("stock de fer non suffisant : les workers passent sur la creation de fer");
-					city.setPeopleCreatingIron(city.getPeopleCreatingIron()+smith.getPeople());
-					smith.setPeople(0);
-				}
-				else if(woodNeeded > city.getWood()){
-					log.info("stock de bois non suffisant : les workers passent sur la creation de bois");
-					city.setPeopleCreatingWood(city.getPeopleCreatingWood()+smith.getPeople());
-					smith.setPeople(0);
-				}
-				// sinon ok, on construit les armes
-				else{
-					log.info("ressources suffisantes");
-					// consommation des ressources
-					city.setIron(city.getIron()-ironNeeded);
-					city.setWood(city.getWood()-woodNeeded);
-					
-					// augmentation du stock
-					for(Equipment equipment : city.getEquipmentStock()){
-						if(equipment.getItem().getName().equals(smith.getItem().getName())){
-							equipment.setSize(equipment.getSize() + smith.getPeople());
-							log.info("stock de " + equipment.getItem().getName() + " final : " + equipment.getSize() + "(+ "+smith.getPeople()+")");
-							break;
-						}
-					}
-				}
-			}
-				
-			//----------------------------------------//
-			// Resources
-			// wheat : si < 0 : gens meurent de faim : calcul de pop en consequence
+		//----------------------//
+		
+		if(indexOfBestAlly != allyIndexOfTheUnitInspected)
+			return 0;
+		else{
 			
-			log.info("---------------------");
-			log.info("Resources : ");
-			log.info("wheat : + " + (city.getPeopleCreatingWheat()*WHEAT_EARNING_COEFF - city.getPopulation()));
-			log.info("wood : + " + (city.getPeopleCreatingWood()*WOOD_EARNING_COEFF));
-			log.info("iron : + " + (city.getPeopleCreatingIron()*IRON_EARNING_COEFF));
+			System.out.println("battle won ! (or draw if returns 0 :p)");
+			double rateRemaining = (firstAllyValue - secondAllyValue)/(double)firstAllyValue;
+			System.out.println("rateRemaining : " + rateRemaining);
+			System.out.println("currentUnitValue returned : " + ((int)(currentUnitValue*rateRemaining)));
 			
-			city.setWheat(city.getWheat() + city.getPeopleCreatingWheat()*WHEAT_EARNING_COEFF - city.getPopulation());
-			city.setWood(city.getWood() + city.getPeopleCreatingWood()*WOOD_EARNING_COEFF);
-			city.setIron(city.getIron() + city.getPeopleCreatingIron()*IRON_EARNING_COEFF);
 			
-			boolean starvation = false;
-			
-			if(city.getWheat() < 0){
-				log.info("Starvation !");
-				starvation = true;
-				city.setWheat(0);
-				
-				// penalite : revolte : tout le monde fait du ble.
-				for(Smith smithStarving : city.getSmiths()){
-					smithStarving.setPeople(0);
-				}
-				
-				city.setPeopleCreatingWood(0);
-				city.setPeopleCreatingIron(0);
-				
-				city.setPeopleCreatingWheat(city.getPopulation());
-			}
-			
-			//----------------------------------------------------//
-			// Population : new workers are put in wheat creation
-			
-			int oldPopulation = city.getPopulation();	
-			city.setPopulation(calculatePopulation(city.getPopulation(), starvation, 0));
-			
-			int newComers = city.getPopulation() - oldPopulation;
-			city.setPeopleCreatingWheat(city.getPeopleCreatingWheat() + newComers);
-			
+			return (int)(currentUnitValue*rateRemaining);
 		}
+			
+		
 	}
-
-	private int calculatePopulation(int population, boolean starvation, int armyRaised) {
+	
+	private int getValueInTheRecordedMove(Unit unit, Case _case) {
 		
-		int maxPercentage = (12000 - population)/1000;
+		for(Move move : _case.getRecordedMoves()){
+			if(move.getUnitUID().equals(unit.getUnitUID())){
+				System.out.println("value of " + unit.getUnitUID() + " in this conflict : " + move.getValue());
+				return move.getValue();
+			}
+		}
 		
-		int naturalEvolutionPercentage = Utils.random(maxPercentage)+1;
-		int armyPercentage = 100*armyRaised/population;
-
-		if(population < 200)
-			naturalEvolutionPercentage *= 5;
-		else if(population < 500)
-			naturalEvolutionPercentage *= 4;
-		else if(population < 1000)
-			naturalEvolutionPercentage *= 3;
-		else if(population < 2000)
-			naturalEvolutionPercentage *= 2;
-		
-		
-		log.info("maxPercentage : " + maxPercentage);
-		log.info("naturalEvolutionPercentage : " + naturalEvolutionPercentage);
-		log.info("armyPercentage : " + armyPercentage);
-		
-		int evolutionPercentage = naturalEvolutionPercentage - (int)Math.sqrt(armyPercentage);
-
-		log.info("evolutionPercentage : " + evolutionPercentage);
-		
-		if(starvation)
-			evolutionPercentage -= 25;
-
-		log.info("final evolutionPercentage : " + evolutionPercentage);
-
-		
-		int populationEvolution =  population*evolutionPercentage/100;
-		
-		if(population > 10000)
-			populationEvolution /= 10;
-		
-		log.info("populationEvolution : " + populationEvolution);
-		
-		return population + populationEvolution;
+		// never 
+		System.out.println("??? I said NEVER !");
+		return -1;
 	}
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 }

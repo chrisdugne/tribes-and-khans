@@ -15,18 +15,17 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.uralys.tribes.dao.impl.UniversalDAO;
-import com.uralys.tribes.entities.dto.ArmyDTO;
+import com.uralys.tribes.entities.dto.CaseDTO;
 import com.uralys.tribes.entities.dto.CityDTO;
 import com.uralys.tribes.entities.dto.ConflictDTO;
 import com.uralys.tribes.entities.dto.EquipmentDTO;
-import com.uralys.tribes.entities.dto.GameDTO;
 import com.uralys.tribes.entities.dto.ItemDTO;
 import com.uralys.tribes.entities.dto.MoveConflictDTO;
 import com.uralys.tribes.entities.dto.MoveDTO;
 import com.uralys.tribes.entities.dto.PlayerDTO;
-import com.uralys.tribes.entities.dto.ProfilDTO;
 import com.uralys.tribes.entities.dto.ServerDataDTO;
 import com.uralys.tribes.entities.dto.SmithDTO;
+import com.uralys.tribes.entities.dto.UnitDTO;
 import com.uralys.utils.Utils;
 
 
@@ -135,17 +134,16 @@ public class DataviewerServlet extends HttpServlet {
 
 				//-----------------------------------------------------------------------------------//				// - HERE : add a line for every new DTO
 				
-				" <OPTION VALUE=\"profil\">ProfilDTO" +
 				" <OPTION VALUE=\"player\">PlayerDTO" +
-				" <OPTION VALUE=\"game\">GameDTO" +
 				" <OPTION VALUE=\"city\">CityDTO" +
+				" <OPTION VALUE=\"unit\">UnitDTO" +
 				" <OPTION VALUE=\"smith\">SmithDTO" +
-				" <OPTION VALUE=\"army\">ArmyDTO" +
-				" <OPTION VALUE=\"item\">ItemDTO" +
 				" <OPTION VALUE=\"equipment\">EquipmentDTO" +
+				" <OPTION VALUE=\"case\">CaseDTO" +
 				" <OPTION VALUE=\"move\">MoveDTO" +
 				" <OPTION VALUE=\"conflict\">ConflictDTO" +
 				" <OPTION VALUE=\"moveConflict\">MoveConflictDTO" +
+				" <OPTION VALUE=\"item\">ItemDTO" +
 				" <OPTION VALUE=\"serverdata\">ServerDataDTO" +
 				
 				//-----------------------------------------------------------------------------------//
@@ -263,7 +261,7 @@ public class DataviewerServlet extends HttpServlet {
 					if(field.getName().equals(idName))
 						editTable.append("<td><b>"+field.getName() + "</b> </td><td>" + field.get(o) + "</td>");
 					else if(field.getType().getName().equals("java.lang.Boolean"))
-						editTable.append("<td>"+field.getName() + "</td><td><select name="+field.getName()+"><option value=" + field.get(o) + ">"+ field.get(o) +"<option value=" + !(Boolean)field.get(o) + ">"+ !(Boolean)field.get(o) +"</td>");
+						editTable.append("<td>"+field.getName() + "</td><td><select name="+field.getName()+"><option value=true>true<option value=false>false</td>");
 					else if(field.getType().getName().equals("java.util.List"))
 						editTable.append("<td>"+field.getName() + "</td><td><textarea style=\"width: 280px;\" rows=\""+((List)field.get(o)).size()+"\" name=\""+field.getName()+"\">" + field.get(o) + "</textarea></td>");
 					else
@@ -516,16 +514,14 @@ public class DataviewerServlet extends HttpServlet {
 
 		if(dto.equals("player"))
 			return PlayerDTO.class;
-		else if(dto.equals("profil"))
-			return ProfilDTO.class;
-		else if(dto.equals("game"))
-			return GameDTO.class;
 		else if(dto.equals("city"))
 			return CityDTO.class;
 		else if(dto.equals("smith"))
 			return SmithDTO.class;
-		else if(dto.equals("army"))
-			return ArmyDTO.class;
+		else if(dto.equals("unit"))
+			return UnitDTO.class;
+		else if(dto.equals("case"))
+			return CaseDTO.class;
 		else if(dto.equals("equipment"))
 			return EquipmentDTO.class;
 		else if(dto.equals("item"))

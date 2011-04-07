@@ -3,6 +3,7 @@
 			   xmlns:s="library://ns.adobe.com/flex/spark" 
 			   xmlns:mx="library://ns.adobe.com/flex/mx" 
 			   xmlns:windows="com.uralys.tribes.windows.*" 
+			   frameRate="24"
 			   creationComplete="init()">
 	
 	<fx:Declarations>

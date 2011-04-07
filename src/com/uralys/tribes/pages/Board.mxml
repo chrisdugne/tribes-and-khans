@@ -13,10 +13,10 @@
 			import com.uralys.tribes.commons.Numbers;
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;
-			import com.uralys.tribes.core.BoardClickListener;
+			import com.uralys.tribes.core.BoardClickAnalyser;
 			import com.uralys.tribes.core.BoardDrawer;
+			import com.uralys.tribes.core.CronListener;
 			import com.uralys.tribes.core.Pager;
-			import com.uralys.tribes.entities.Unit;
 			import com.uralys.tribes.entities.City;
 			import com.uralys.tribes.entities.Conflict;
 			import com.uralys.tribes.entities.Equipment;
@@ -24,6 +24,7 @@
 			import com.uralys.tribes.entities.Move;
 			import com.uralys.tribes.entities.Player;
 			import com.uralys.tribes.entities.Smith;
+			import com.uralys.tribes.entities.Unit;
 			import com.uralys.tribes.managers.GameManager;
 			import com.uralys.tribes.windows.ReportsWindow;
 			
@@ -49,7 +50,7 @@
 
 			//---------------------------------------------------------------------------------------//
 			
-			[Bindable] private var selectedCity:City;
+			[Bindable] public var selectedCity:City;
 			[Bindable] private var selectedUnit:Unit;
 			
 			private var moveGradient:Array;
@@ -59,6 +60,8 @@
 
 			protected function init():void{
 
+				CronListener.getInstance().init(this);
+				
 				timer = new Timer(41,1);
 				timer.addEventListener(TimerEvent.TIMER_COMPLETE, moveStoppedDuringDragging);
 
@@ -75,6 +78,7 @@
 				radialGrad.entries = moveGradient;
 				radialGrad.interpolationMethod
 
+				
 			}
 			
 			// click sur une ville dans la barre laterale
@@ -107,6 +111,7 @@
 			public function set params(args:Array):void{
 
 				this.selectedCity = Session.player.cities.getItemAt(0) as City;
+				GameManager.getInstance().refreshCity(selectedCity, false);
 
 				for each(var unit:Unit in Session.player.units){
 					if(unit.type == 2)
@@ -172,7 +177,7 @@
 			protected function initSelectionChoiceMerchantList():void{
 				selectionChoiceMerchantList.addEventListener(ItemClickEvent.ITEM_CLICK, onArmyClick);
 			}
-
+			
 			
 			// ------------------------------------------------------------------------// 
 			// 		map scrolling
@@ -196,8 +201,8 @@
 			protected function mouseDown(event:MouseEvent):void{
 				
 				isDragging = true;
-				draggingImageXFrom = event.localX;
-				draggingImageYFrom = event.localY;
+				draggingImageXFrom = event.currentTarget.mouseX; // le x de la souris sur le mapContainer
+				draggingImageYFrom = event.currentTarget.mouseY; // le y de la souris sur le mapContainer
 				draggingStageXFrom = event.stageX;
 				draggingStageYFrom = event.stageY;
 				
@@ -215,8 +220,8 @@
 			private var autoMoveNotNeeded:Boolean = true;
 			protected function mouseMove(event:MouseEvent):void{
 				
-				coordinateX = event.localX;
-				coordinateY = event.localY;
+				coordinateX = Session.COORDINATE_X;
+				coordinateY = Session.COORDINATE_Y;
 				
 				if(Session.CURRENT_SELECTION_IS_ARMY){
 					Mouse.hide();
@@ -267,8 +272,8 @@
 					autoMoveNotNeeded = false;
 					// on decale l'image du nombre de pixels du dernier mouvement
 					// donc elle suit bien la souris et event.localXY a bien lieu au meme endroit sur l'image apres chaque mouseMove
-					mapPositioner.x += (event.localX - draggingImageXFrom);
-					mapPositioner.y += (event.localY - draggingImageYFrom);
+					mapPositioner.x += (event.currentTarget.mouseX - draggingImageXFrom);
+					mapPositioner.y += (event.currentTarget.mouseY - draggingImageYFrom);
 				}
 			}
 			
@@ -317,7 +322,7 @@
 						}
 					}
 					else
-						BoardClickListener.getInstance().clickOnBoard(event);
+						BoardClickAnalyser.getInstance().clickOnBoard(event);
 					
 					return;
 				}
@@ -332,7 +337,7 @@
 				autoMove.duration = 6*(Math.abs(draggingStageXTo - draggingStageXFrom) + Math.abs(draggingStageYTo - draggingStageYFrom));
 				autoMove.xTo = mapPositioner.x + (draggingStageXTo - draggingStageXFrom)*3;
 				autoMove.yTo = mapPositioner.y + (draggingStageYTo - draggingStageYFrom)*3;
-				
+
 				if(autoMove.xTo > 0)
 					autoMove.xTo = 0;
 				if(autoMove.yTo > 0)
@@ -368,8 +373,8 @@
 
 			protected function mouseMoveMiniMap(event:MouseEvent):void{
 				if(isDragging){
-					mapPositioner.x = 250 - event.localX*15;
-					mapPositioner.y = 250 - event.localY*15;
+					mapPositioner.x = Session.MAP_WIDTH/2 - event.localX*15;
+					mapPositioner.y = Session.MAP_WIDTH/2 - event.localY*15;
 				}
 			}
 				
@@ -378,12 +383,20 @@
 			
 			private function initBoard():void{
 				
+				if(selectedCity == null){
+					FlexGlobals.topLevelApplication.message('GAME OVER ON THIS SERVER', 7);					
+				}
+				
 				//------------------------------------------------------------//
 
-				BoardClickListener.getInstance().setBoard(this);
-
+				GameManager.getInstance().setBoard(this);
+				BoardClickAnalyser.getInstance().setBoard(this);
 				BoardDrawer.getInstance().setBoard(this);
-				BoardDrawer.getInstance().redrawAllEntities();
+
+				GameManager.getInstance().loadItems();
+				
+				mapPositioner.x = Session.MAP_WIDTH/2 - (selectedCity.x * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4) + Numbers.LAND_WIDTH/2)
+				mapPositioner.y = Session.MAP_WIDTH/2 - (selectedCity.x * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2) + Numbers.LAND_HEIGHT/2)
 
 				//------------------------------------------------------------//
 			
@@ -394,13 +407,6 @@
 
 				//------------------------------------------------------------//
 				
-				if(selectedCity != null){
-					mapPositioner.x = 250 - selectedCity.x;
-					mapPositioner.y = 250 - selectedCity.y;
-				}
-				else{
-					FlexGlobals.topLevelApplication.message('GAME OVER', 7);
-				}
 			}
 	
 			
@@ -408,6 +414,8 @@
 			
 			public function clickOnCity(city:City):void{
 				selectedCity = city;
+				GameManager.getInstance().refreshCity(selectedCity, false);
+
 				goLeft.play();
 				appearCity.play();
 			}
@@ -434,6 +442,7 @@
 
 			public function appearSelectionChoice(city:City):void{
 				selectedCity = city;
+				GameManager.getInstance().refreshCity(selectedCity, false);
 				
 				selectionChoiceGroup.x = mapPositioner.x + city.x+20;
 				selectionChoiceGroup.y = mapPositioner.y + city.y+20;
@@ -463,7 +472,7 @@
 				
 				Session.player.units.removeItemAt(Session.player.units.getItemIndex(selectedUnit));
 				BoardDrawer.getInstance().removeArmyFromBoard(selectedUnit);
-				BoardDrawer.getInstance().drawCity(city, false);
+				//BoardDrawer.getInstance().drawCity(city, false);
 				
 				Session.player.cities.addItem(city);
 				
@@ -754,10 +763,11 @@
 		
 		<s:Button label="{Translations.CONFLICT.getItemAt(Session.LANGUAGE)}s" click="{FlexGlobals.topLevelApplication.showconflicts.play()}" right="10"/>
 		<s:HGroup width="100%" horizontalAlign="center" paddingTop="5">
-			<s:Label text="X : {coordinateX}"/>
+			<s:Label text="X : {Session.COORDINATE_X}"/>
 			<mx:Spacer width="200"/>
-			<s:Label text="Y : {coordinateY}"/>
+			<s:Label text="Y : {Session.COORDINATE_Y}"/>
 		</s:HGroup>
+		<!--
 		<s:HGroup width="100%" horizontalAlign="center" bottom="35">
 			<s:CheckBox id="checkBoxDetails" label="{Translations.DETAILS.getItemAt(Session.LANGUAGE)}" selected="true" skinClass="spark.skins.spark.CheckBoxSkin"/>
 			<mx:Spacer width="45"/>			
@@ -765,6 +775,7 @@
 			<mx:Spacer width="45"/>			
 			<s:CheckBox id="checkBoxTexts" label="{Translations.TEXTS.getItemAt(Session.LANGUAGE)}" selected="true" skinClass="spark.skins.spark.CheckBoxSkin"/>
 		</s:HGroup>
+		-->
 		<s:HGroup width="200" height="200" horizontalAlign="center"
 				  bottom="45"
 				  right="150">
@@ -797,16 +808,14 @@
 			<s:HGroup width="100%" horizontalAlign="center" paddingTop="50">
 				<s:Group width="{Session.MAP_WIDTH}" height="{Session.MAP_HEIGHT}"
 						 id="boardImage"
-						 clipAndEnableScrolling="true"		  
+						 clipAndEnableScrolling="true"	  
 						 useHandCursor="true">
 					<s:Group id="mapPositioner" 
 						  buttonMode="true"
-						  width="40000"
-						  height="40000"
-						  mouseChildren="false"
+						  width="{Numbers.LAND_WIDTH*400}"
+						  height="{Numbers.LAND_HEIGHT*400}"
 						  mouseDown="mouseDown(event)"
 						  mouseMove="mouseMove(event)"
-						  mouseOut="if(isDragging)mouseUp(event)"
 						  mouseUp="mouseUp(event)"/>
 					
 				</s:Group>
@@ -819,20 +828,6 @@
 						 mouseChildren="false"
 						 mouseEnabled="false"
 						 mouseEnabledWhereTransparent="false">
-						<s:Group id="mapTiles"
-								 x="{mapPositioner.x}"
-								 y="{mapPositioner.y}"/>
-				</s:Group>
-			</s:HGroup>
-			<s:HGroup width="100%" horizontalAlign="center" paddingTop="50"
-					  mouseEnabled="false"
-					  mouseEnabledWhereTransparent="false"
-					  visible="{checkBoxDetails.selected}">
-				<s:Group width="500" height="500"
-						 clipAndEnableScrolling="true"
-						 mouseChildren="false"
-						 mouseEnabled="false"
-						 mouseEnabledWhereTransparent="false">
 						<s:Group id="boardEntities"
 								 x="{mapPositioner.x}"
 								 y="{mapPositioner.y}"/>
@@ -840,8 +835,7 @@
 			</s:HGroup>
 			<s:HGroup width="100%" horizontalAlign="center" paddingTop="50"
 					  mouseEnabled="false"
-					  mouseEnabledWhereTransparent="false"
-					  visible="{checkBoxImages.selected}">
+					  mouseEnabledWhereTransparent="false">
 				<s:Group width="500" height="500"
 						 clipAndEnableScrolling="true"
 						 mouseChildren="false"
@@ -859,12 +853,17 @@
 						 clipAndEnableScrolling="true"
 						 mouseChildren="false"
 						 mouseEnabled="false"
-						 mouseEnabledWhereTransparent="false"
-						 visible="{checkBoxTexts.selected}">
+						 mouseEnabledWhereTransparent="false">
 					<s:Group id="boardTexts"
 							 x="{mapPositioner.x}"
 							 y="{mapPositioner.y}"/>
 				</s:Group>
+			</s:HGroup>
+			<s:HGroup width="100%" horizontalAlign="center" verticalAlign="middle"
+					  mouseEnabled="false"
+					  mouseEnabledWhereTransparent="false"
+					  visible="{Session.WAIT_FOR_SERVER}">
+				<mx:SWFLoader source="{ImageContainer.LOADING}" />
 			</s:HGroup>
 			
 			<!-- =============================================================================================== -->
@@ -939,6 +938,8 @@
 				</s:Group>
 			</s:HGroup>
 		</s:Group>
+		
+		
 	</s:Group>
 	
 	<!-- ====================================================================================== -->

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 width="160">
+	
+	<fx:Script>
+		<![CDATA[
+			[Bindable] public var data:int;
+			[Bindable] public var step:int;
+			[Bindable] public var check:Function;
+			[Bindable] public var wantMax:Function;
+			
+			private function putNone():void{
+				data = 0;
+				check(data);
+			}
+
+			private function divide():void{
+				if(data > step*2){
+					data /= 2;
+				}
+				else if(data <= step)
+					data = 0;
+				else
+					data = step;
+				
+				check(data);
+			}
+
+			private function putLess():void{
+				if(data > step*2){
+					data -= step;
+				}
+				else if(data <= step)
+					data = 0;
+				else
+					data = step;
+				
+				check(data);
+			}
+
+			private function putMore():void{
+				data += step;
+				check(data);
+			}
+
+			private function multiply():void{
+				
+				if(data==0)
+					data = 50;
+				
+				data *= 2;
+
+				check(data);
+			}
+
+			private function putMax():void{
+				wantMax();
+			}
+			
+		]]>
+	</fx:Script>
+	
+	
+	<s:HGroup horizontalAlign="center" verticalAlign="middle">
+		<s:Button click="putNone()" width="10" height="10"/>
+		<s:VGroup clipAndEnableScrolling="false">
+			<mx:Image source="{ImageContainer.LEFT}"
+					  click="putLess()" 
+					  width="10" 
+					  height="10"/>
+			<mx:Image source="{ImageContainer.TOP_LEFT}"  
+					  click="divide()" 
+					  width="10" 
+					  height="10"/>
+		</s:VGroup>
+		<s:Label text="{data}" styleName="numberLabel" width="100" textAlign="center"/>
+		<s:VGroup clipAndEnableScrolling="true">
+			<mx:Image source="{ImageContainer.RIGHT}"
+					  click="putMore()"
+					  width="10" height="10"/>
+			<mx:Image source="{ImageContainer.TOP_RIGHT}"
+					  click="multiply()"
+					  width="10" height="10"/>
+		</s:VGroup>
+		<s:Button label="Max" click="putMax()" width="10" height="10"/>
+	</s:HGroup>
+</s:Group>

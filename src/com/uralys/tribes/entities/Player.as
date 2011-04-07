@@ -9,9 +9,10 @@ package com.uralys.tribes.entities
 		private var _uralysUID:String;
 		private var _name:String;
 		private var _allyUID:String;
+		private var _nbLands:int;
+		private var _lastStep:Number;
 		private var _cities:ArrayCollection;
 		private var _units:ArrayCollection;
-		private var _lands:ArrayCollection = new ArrayCollection();
 		private var _conflicts:ArrayCollection = new ArrayCollection();
 		
 		public function Player(){}
@@ -48,6 +49,26 @@ package com.uralys.tribes.entities
 			_uralysUID = value;
 		}
 		
+		public function get lastStep():Number
+		{
+			return _lastStep;
+		}
+		
+		public function set lastStep(value:Number):void
+		{
+			_lastStep = value;
+		}
+		
+		public function get allyUID():String
+		{
+			return _allyUID;
+		}
+
+		public function set allyUID(value:String):void
+		{
+			_allyUID = value;
+		}
+		
 		public function get cities():ArrayCollection
 		{
 			return _cities;
@@ -67,14 +88,14 @@ package com.uralys.tribes.entities
 			_units = value;
 		}
 		
-		public function get lands():ArrayCollection
+		public function get nbLands():int
 		{
-			return _lands;
+			return _nbLands;
 		}
 		
-		public function set lands(value:ArrayCollection):void
+		public function set nbLands(value:int):void
 		{
-			_lands = value;
+			_nbLands = value;
 		}
 		
 		public function get conflicts():ArrayCollection

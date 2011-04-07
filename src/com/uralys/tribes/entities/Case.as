@@ -6,20 +6,44 @@ package com.uralys.tribes.entities
 	[RemoteClass(alias="com.uralys.tribes.entities.Case")]
 	public class Case
 	{
-		public function Case(){}
-		
+		//--------------------------------------------------------------//
+
+		public function Case(i:int = 0, j:int = 0){
+			_x = i;
+			_y = j;
+			
+			if(Math.abs(i-j)%2 !=0){
+				// la difference entre x et y n'est pas paire
+				// c'est une 'non case' : un hexagone intermediaire qui ne fait pas partie du plateau
+				_type = -1;
+				_caseUID = "NON-CASE";
+			}
+			else{
+				_type = 0;
+				_caseUID = "empty";
+			}
+		}
 		
 		//--------------------------------------------------------------//
 		
+		protected var _caseUID:String;
 		protected var _x:int;
 		protected var _y:int;
 		protected var _recordedMoves:ArrayCollection;
-		protected var _type:int;
+		protected var _type:int; // type = -1 pour les 'non-cases'
 		protected var _city:City;
 		protected var _landOwner:Player;
 		
 		//--------------------------------------------------------------//
 		
+		
+		public function get caseUID():String {
+			return _caseUID;
+		}
+		
+		public function set caseUID(o:String):void {
+			_caseUID = o;
+		}
 		
 		public function get x():int {
 			return _x;

@@ -117,7 +117,7 @@ package com.uralys.tribes.entities
 		}
 	
 		public function get radius():int {
-			return Math.sqrt(_population);
+			return Math.sqrt(_population)/2;
 		}
 	
 		public function get equipmentStock():ArrayCollection {
@@ -266,7 +266,7 @@ package com.uralys.tribes.entities
 		}
 
 		public function get wheatSpent():int{
-			return _wheatSpent + population;
+			return _wheatSpent;
 		}
 		
 		public function set wheatSpent(o:int):void{
@@ -520,5 +520,18 @@ package com.uralys.tribes.entities
 		
 		//---------------------------------------------------------------//
 
+		
+		public function reset():void{
+			
+			woodSpent = 0;
+			ironSpent = 0;
+			wheatSpent = 0;
+			wheatEarned = 0;
+			woodEarned = 0;
+			ironEarned = 0;
+			armyRaised = 0;
+			armyReleased = 0;
+			_armiesToFeed = 0;
+		}
 	}
 }

@@ -11,7 +11,7 @@ package com.uralys.tribes.commons
 		
 		//=====================================================//
 		
-		[Bindable] public static var VERSION:String = "1.1.01";
+		[Bindable] public static var VERSION:String = "1.1.03";
 		[Bindable] public static var LOGGED_IN:Boolean = false; 
 		[Bindable] public static var CONNECTED_TO_FACEBOOK:Boolean = false;
 		
@@ -43,6 +43,9 @@ package com.uralys.tribes.commons
 		
 		// liste de tous les items
 		public static var ITEMS:ArrayCollection = new ArrayCollection();
+
+		// liste de toutes les cases loadees
+		public static var CASES_LOADED:ArrayCollection = new ArrayCollection();
 		
 		//=====================================================//
 		// Home : boolean pour charger la premiere liste des current games
@@ -56,6 +59,9 @@ package com.uralys.tribes.commons
 
 		// pour savoir si on click pour un deplacement de troupes
 		[Bindable] public static var CURRENT_SELECTION_IS_ARMY:Boolean = false;
+
+		[Bindable] public static var COORDINATE_X:int;
+		[Bindable] public static var COORDINATE_Y:int;
 		
 		//=====================================================//
 		// GameDetailsRenderer
@@ -69,9 +75,13 @@ package com.uralys.tribes.commons
 		//=====================================================//
 		// BoardDrawer
 		
+		// les coordonnees de la case qui est au centre du dernier chargement de cases
+		public static  var centerX:int;
+		public static  var centerY:int;
+		
 		// Array[Array] stocke les images liees a chaque tile
 		// Session.tiles[i][j] = type 
-		public static var tiles:Array;
+		//public static var tiles:Array;
 		
 		// Array[Array] stocke le type de chaque 'land' (foret, plaine, lac, rocher)
 		// Session.map[i][j] = type 

@@ -2,7 +2,7 @@
 <s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
 		 xmlns:mx="library://ns.adobe.com/flex/mx" 
-		 xmlns:forms="com.uralys.renderers.forms.*">
+		 xmlns:forms="com.uralys.renderers.forms.*" xmlns:renderers="com.uralys.tribes.renderers.*">
 	
 		<fx:Script>
 			<![CDATA[
@@ -10,11 +10,11 @@
 				import com.uralys.tribes.commons.Session;
 				import com.uralys.tribes.commons.Translations;
 				import com.uralys.tribes.core.BoardDrawer;
-				import com.uralys.tribes.entities.Unit;
 				import com.uralys.tribes.entities.City;
 				import com.uralys.tribes.entities.Equipment;
 				import com.uralys.tribes.entities.Item;
 				import com.uralys.tribes.entities.Smith;
+				import com.uralys.tribes.entities.Unit;
 				import com.uralys.tribes.tooltips.ForgeToolTip;
 				import com.uralys.tribes.tooltips.MerchantToolTip;
 				
@@ -34,113 +34,11 @@
 
 				//----------------------------------------------------------//
 				
-				public var _city:City;
+				[Bindable] public var city:City;
 				[Bindable] private var army:Unit;
 				[Bindable] private var merchant:Unit;
 
 				//----------------------------------------------------------//
-
-				[Bindable] 
-				public function set city(o:City){
-					_city = o;
-					
-					
-					// recuperation des stocks de la forge
-					for each(var equipment:Equipment in city.equipmentStock){
-						switch(equipment.item.name){
-							case "bow" :
-								city.bowStock = equipment.size;
-								break;
-							case "sword" :
-								city.swordStock = equipment.size;
-								break;
-							case "armor" :
-								city.armorStock = equipment.size;
-								break;
-						}
-					}
-				
-					// recuperations des workers pour chaque item de la forge
-					// et verification si on peut laisser autant de smith (si les stocks sont suffisants)
-					for each(var smith:Smith in city.smiths){
-						
-						switch(smith.item.name){
-							case "bow" :
-								city.bowWorkers = -1;
-
-								// la depense en bois pour les arcs est plus grande que le stock de bois
-								if(Numbers.BOW_WOOD * smith.people > city.wood)
-									city.bowWorkers = Math.floor(city.wood/Numbers.BOW_WOOD);
-								
-								// la depense en fer pour les arcs est plus grande que le stock de fer
-								if(Numbers.BOW_IRON * smith.people > city.iron)
-									city.bowWorkers = Math.floor(city.iron/Numbers.BOW_IRON);
-								
-								
-								if(city.bowWorkers == -1) // stock suffisant
-									city.bowWorkers = smith.people;
-									
-								break;
-							case "sword" :
-								city.swordWorkers = -1;
-								
-								// la depense en bois pour les epees est plus grande que le stock de bois
-								if(Numbers.SWORD_WOOD * smith.people > city.wood)
-									city.swordWorkers = Math.floor(city.wood/Numbers.SWORD_WOOD);
-								
-								// la depense en fer pour les epees est plus grande que le stock de fer
-								if(Numbers.SWORD_IRON * smith.people > city.iron)
-									city.swordWorkers = Math.floor(city.iron/Numbers.SWORD_IRON);
-								
-								if(city.swordWorkers == -1) // stock suffisant
-									city.swordWorkers = smith.people;
-								
-								break;
-							case "armor" :
-								city.armorWorkers = -1;
-								
-								// la depense en bois pour les armoures est plus grande que le stock de bois
-								if(Numbers.ARMOR_WOOD * smith.people > city.wood)
-									city.armorWorkers = Math.floor(city.wood/Numbers.ARMOR_WOOD);
-								
-								// la depense en fer pour les armoures est plus grande que le stock de fer
-								if(Numbers.ARMOR_IRON * smith.people > city.iron)
-									city.armorWorkers = Math.floor(city.iron/Numbers.ARMOR_IRON);
-								
-								if(city.armorWorkers == -1) // stock suffisant
-									city.armorWorkers = smith.people;
-								
-								break;
-						}
-					}
-					
-					// calcul des depenses prevues avec les choix du tour precedent
-					city.woodSpent += city.bowWorkers * Numbers.BOW_WOOD;
-					city.woodSpent += city.swordWorkers * Numbers.SWORD_WOOD;
-					city.woodSpent += city.armorWorkers * Numbers.ARMOR_WOOD;
-					
-					city.ironSpent += city.bowWorkers * Numbers.BOW_IRON;
-					city.ironSpent += city.swordWorkers * Numbers.SWORD_IRON;
-					city.ironSpent += city.armorWorkers * Numbers.ARMOR_IRON;
-					
-					city.wheatSpent += city.unitsToFeed;
-					
-					city.refreshUnemployed();
-					
-					// calcul des resources gagnees avec le precedent choix de peopleCreatingXXX
-					city.wheatEarned = Numbers.WHEAT_EARNING_COEFF * city.peopleCreatingWheat;
-					city.woodEarned = Numbers.WOOD_EARNING_COEFF * city.peopleCreatingWood;
-					city.ironEarned = Numbers.IRON_EARNING_COEFF * city.peopleCreatingIron;
-					
-					
-					city.refreshUnemployed();
-				}	
-
-				public function get city():City{
-					return _city;
-				}
-				
-				//-------------------------------------------------------------------------//
 
 				protected function cityNameInputHandler(event:KeyboardEvent):void	{
 					city.name = cityNameInput.text;
@@ -148,15 +46,18 @@
 				}
 				
 				//-------------------------------------------------------------------------//
-
-				protected function wheatInputKeyUpHandler(event:KeyboardEvent):void	{
+				
+				protected function wheatWorkersCheck(newNumber:int):void	{
 					
-					city.peopleCreatingWheat = parseInt(wheatInput.text);
+					var peopleAdded:int = newNumber - city.peopleCreatingWheat;
 					
-					if(city.population < city.peopleCreatingWheat)
-						city.peopleCreatingWheat = city.population;
+					if(city.unemployed < peopleAdded)
+						newNumber = city.peopleCreatingWheat + city.unemployed;
+					
+					city.peopleCreatingWheat = newNumber;
 					
 					city.wheatEarned = Numbers.WHEAT_EARNING_COEFF * city.peopleCreatingWheat;
+					wheatWorkersStepper.data = city.peopleCreatingWheat;
 				}
 
 				protected function  addAllUnemployedToWheat():void	{
@@ -166,13 +67,17 @@
 
 				//-------------------------------------------------------------------------//
 
-				protected function woodInputKeyUpHandler(event:KeyboardEvent):void	{
-					city.peopleCreatingWood = parseInt(woodInput.text);
+				protected function woodWorkersCheck(newNumber:int):void	{
 					
-					if(city.population < city.peopleCreatingWood)
-						city.peopleCreatingWood = city.population;
+					var peopleAdded:int = newNumber - city.peopleCreatingWood;
+					
+					if(city.unemployed < peopleAdded)
+						newNumber = city.peopleCreatingWood + city.unemployed;
+					
+					city.peopleCreatingWood = newNumber;
 					
 					city.woodEarned = Numbers.WOOD_EARNING_COEFF * city.peopleCreatingWood;
+					woodWorkersStepper.data = city.peopleCreatingWood;
 				}
 				
 				protected function  addAllUnemployedToWood():void	{
@@ -181,16 +86,20 @@
 				}
 				
 				//-------------------------------------------------------------------------//
-
-				protected function ironInputKeyUpHandler(event:KeyboardEvent):void	{
-					city.peopleCreatingIron = parseInt(ironInput.text);
+				
+				protected function ironWorkersCheck(newNumber:int):void	{
+				
+					var peopleAdded:int = newNumber - city.peopleCreatingIron;
 					
-					if(city.population < city.peopleCreatingIron)
-						city.peopleCreatingIron = city.population;
+					if(city.unemployed < peopleAdded)
+						newNumber = city.peopleCreatingIron + city.unemployed;
+					
+					city.peopleCreatingIron = newNumber;
 					
 					city.ironEarned = Numbers.IRON_EARNING_COEFF * city.peopleCreatingIron;
+					ironWorkersStepper.data = city.peopleCreatingIron;
 				}
-				
+
 				protected function  addAllUnemployedToIron():void	{
 					city.peopleCreatingIron += city.unemployed;
 					city.ironEarned = Numbers.IRON_EARNING_COEFF * city.peopleCreatingIron;
@@ -200,115 +109,113 @@
 				//-------------------------------------------------------------------------//
 				// Market - Achat
 				
-				
-				protected function wheatMarketBuyInputKeyUpHandler(event:KeyboardEvent):void	{
+				protected function wheatMarketBuyCheck(newNumber:int):void	{
 					
-					city.goldSpent -= city.wheatBought * Numbers.WHEAT_PRICE_BUY;
-					city.wheatBought = parseInt(wheatMarketBuyInput.text);
+					city.goldSpent -= (int)(city.wheatBought * Numbers.WHEAT_PRICE_BUY);
+					city.wheatBought = newNumber;
 					
 					if((city.gold-city.goldSpent)/Numbers.WHEAT_PRICE_BUY < city.wheatBought)
 						city.wheatBought = (city.gold-city.goldSpent)/Numbers.WHEAT_PRICE_BUY;
 					
-					city.goldSpent += city.wheatBought * Numbers.WHEAT_PRICE_BUY;
+					city.goldSpent += (int)(city.wheatBought * Numbers.WHEAT_PRICE_BUY);
 				}
 				
 				protected function spendAllMoneyForWheat():void	{
 					var newWheatBought:int = (city.gold-city.goldSpent)/Numbers.WHEAT_PRICE_BUY;
 					city.wheatBought += newWheatBought;
-					city.goldSpent += newWheatBought*Numbers.WHEAT_PRICE_BUY;
+					city.goldSpent += (int)(newWheatBought*Numbers.WHEAT_PRICE_BUY);
 				}
 				
 				
-				
-				protected function woodMarketBuyInputKeyUpHandler(event:KeyboardEvent):void	{
+				protected function woodMarketBuyCheck(newNumber:int):void	{
 					
-					city.goldSpent -= city.woodBought * Numbers.WOOD_PRICE_BUY;
-					city.woodBought = parseInt(woodMarketBuyInput.text);
+					city.goldSpent -= (int)(city.woodBought * Numbers.WOOD_PRICE_BUY);
+					city.woodBought = newNumber;
 					
 					if((city.gold-city.goldSpent)/Numbers.WOOD_PRICE_BUY < city.woodBought)
 						city.woodBought = (city.gold-city.goldSpent)/Numbers.WOOD_PRICE_BUY;
 					
-					city.goldSpent += city.woodBought * Numbers.WOOD_PRICE_BUY;
+					city.goldSpent += (int)(city.woodBought * Numbers.WOOD_PRICE_BUY);
 				}
 				
 				protected function spendAllMoneyForWood():void	{
 					var newWoodBought:int = (city.gold-city.goldSpent)/Numbers.WOOD_PRICE_BUY;
 					city.woodBought += newWoodBought;
-					city.goldSpent += newWoodBought*Numbers.WOOD_PRICE_BUY;
+					city.goldSpent += (int)(newWoodBought*Numbers.WOOD_PRICE_BUY);
 				}
 				
 				
-				
-				protected function ironMarketBuyInputKeyUpHandler(event:KeyboardEvent):void	{
+				protected function ironMarketBuyCheck(newNumber:int):void	{
 					
-					city.goldSpent -= city.ironBought * Numbers.IRON_PRICE_BUY;
-					city.ironBought = parseInt(ironMarketBuyInput.text);
+					city.goldSpent -= (int)(city.ironBought * Numbers.IRON_PRICE_BUY);
+					city.ironBought = newNumber;
 					
 					if((city.gold-city.goldSpent)/Numbers.IRON_PRICE_BUY < city.ironBought)
 						city.ironBought = (city.gold-city.goldSpent)/Numbers.IRON_PRICE_BUY;
 					
-					city.goldSpent += city.ironBought * Numbers.IRON_PRICE_BUY;
+					city.goldSpent += (int)(city.ironBought * Numbers.IRON_PRICE_BUY);
 				}
+				
 				
 				protected function spendAllMoneyForIron():void	{
 					var newIronBought:int = (city.gold-city.goldSpent)/Numbers.IRON_PRICE_BUY;
 					city.ironBought += newIronBought;
-					city.goldSpent += newIronBought*Numbers.IRON_PRICE_BUY;
+					city.goldSpent += (int)(newIronBought*Numbers.IRON_PRICE_BUY);
 				}
 				
 				
 				
-				protected function bowsMarketBuyInputKeyUpHandler(event:KeyboardEvent):void	{
+				protected function bowsMarketBuyCheck(newNumber:int):void	{
 					
-					city.goldSpent -= city.bowsBought * Numbers.BOW_PRICE_BUY;
-					city.bowsBought = parseInt(bowsMarketBuyInput.text);
+					city.goldSpent -= (int)(city.bowsBought * Numbers.BOW_PRICE_BUY);
+					city.bowsBought = newNumber;
 					
 					if((city.gold-city.goldSpent)/Numbers.BOW_PRICE_BUY < city.bowsBought)
 						city.bowsBought = (city.gold-city.goldSpent)/Numbers.BOW_PRICE_BUY;
 					
-					city.goldSpent += city.bowsBought * Numbers.BOW_PRICE_BUY;
+					city.goldSpent += (int)(city.bowsBought * Numbers.BOW_PRICE_BUY);
 				}
 				
 				protected function spendAllMoneyForBows():void	{
 					var newBowsBought:int = (city.gold-city.goldSpent)/Numbers.BOW_PRICE_BUY;
 					city.bowsBought += newBowsBought;
-					city.goldSpent += newBowsBought*Numbers.BOW_PRICE_BUY;
+					city.goldSpent += (int)(newBowsBought*Numbers.BOW_PRICE_BUY);
 				}
 				
 				
-				protected function swordsMarketBuyInputKeyUpHandler(event:KeyboardEvent):void	{
+				protected function swordsMarketBuyCheck(newNumber:int):void	{
 					
-					city.goldSpent -= city.swordsBought * Numbers.SWORD_PRICE_BUY;
-					city.swordsBought = parseInt(swordsMarketBuyInput.text);
+					city.goldSpent -= (int)(city.swordsBought * Numbers.SWORD_PRICE_BUY);
+					city.swordsBought = newNumber;
 					
 					if((city.gold-city.goldSpent)/Numbers.SWORD_PRICE_BUY < city.swordsBought)
 						city.swordsBought = (city.gold-city.goldSpent)/Numbers.SWORD_PRICE_BUY;
 					
-					city.goldSpent += city.swordsBought * Numbers.SWORD_PRICE_BUY;
+					city.goldSpent += (int)(city.swordsBought * Numbers.SWORD_PRICE_BUY);
 				}
 				
 				protected function spendAllMoneyForSwords():void	{
 					var newSwordsBought:int = (city.gold-city.goldSpent)/Numbers.SWORD_PRICE_BUY;
 					city.swordsBought += newSwordsBought;
-					city.goldSpent += newSwordsBought*Numbers.SWORD_PRICE_BUY;
+					city.goldSpent += (int)(newSwordsBought*Numbers.SWORD_PRICE_BUY);
 				}
 				
 				
-				protected function armorsMarketBuyInputKeyUpHandler(event:KeyboardEvent):void	{
+				protected function armorsMarketBuyCheck(newNumber:int):void	{
 					
-					city.goldSpent -= city.armorsBought * Numbers.ARMOR_PRICE_BUY;
-					city.armorsBought = parseInt(armorsMarketBuyInput.text);
+					city.goldSpent -= (int)(city.armorsBought * Numbers.ARMOR_PRICE_BUY);
+					city.armorsBought = newNumber;
 					
 					if((city.gold-city.goldSpent)/Numbers.ARMOR_PRICE_BUY < city.armorsBought)
 						city.armorsBought = (city.gold-city.goldSpent)/Numbers.ARMOR_PRICE_BUY;
 					
-					city.goldSpent += city.armorsBought * Numbers.ARMOR_PRICE_BUY;
+					city.goldSpent += (int)(city.armorsBought * Numbers.ARMOR_PRICE_BUY);
 				}
 				
 				protected function spendAllMoneyForArmors():void{
 					var newArmorsBought:int = (city.gold-city.goldSpent)/Numbers.ARMOR_PRICE_BUY;
 					city.armorsBought += newArmorsBought;
-					city.goldSpent += newArmorsBought*Numbers.ARMOR_PRICE_BUY;
+					city.goldSpent += (int)(newArmorsBought*Numbers.ARMOR_PRICE_BUY);
 				}
 				
 				
@@ -335,104 +242,104 @@
 				// Market - Vente
 				
 				
-				protected function wheatMarketSellInputKeyUpHandler(event:KeyboardEvent):void	{
+				protected function wheatMarketSellCheck(newNumber:int):void	{
 					
-					city.goldEarned -= city.wheatSold * Numbers.WHEAT_PRICE_SELL;
-					city.wheatSold = parseInt(wheatMarketSellInput.text);
+					city.goldEarned -= (int)(city.wheatSold * Numbers.WHEAT_PRICE_SELL);
+					city.wheatSold = newNumber;
 					
 					if((city.wheat-city.wheatSold) < 0)
 						city.wheatSold = city.wheat;
 					
-					city.goldEarned += city.wheatSold * Numbers.WHEAT_PRICE_SELL;
+					city.goldEarned += (int)(city.wheatSold * Numbers.WHEAT_PRICE_SELL);
 				}
 				
 				protected function sellAllWheat():void	{
 					city.wheatSold = city.wheat;
-					city.goldEarned += city.wheatSold*Numbers.WHEAT_PRICE_SELL;
+					city.goldEarned += (int)(city.wheatSold*Numbers.WHEAT_PRICE_SELL);
 				}
 
 				
-				protected function woodMarketSellInputKeyUpHandler(event:KeyboardEvent):void	{
+				protected function woodMarketSellCheck(newNumber:int):void	{
 					
-					city.goldEarned -= city.woodSold * Numbers.WOOD_PRICE_SELL;
-					city.woodSold = parseInt(woodMarketSellInput.text);
+					city.goldEarned -= (int)(city.woodSold * Numbers.WOOD_PRICE_SELL);
+					city.woodSold = newNumber;
 					
 					if((city.wood-city.woodSold) < 0)
 						city.woodSold = city.wood;
 					
-					city.goldEarned += city.woodSold * Numbers.WOOD_PRICE_SELL;
+					city.goldEarned += (int)(city.woodSold * Numbers.WOOD_PRICE_SELL);
 				}
 				
 				protected function sellAllWood():void	{
 					city.woodSold = city.wood;
-					city.goldEarned += city.woodSold*Numbers.WOOD_PRICE_SELL;
+					city.goldEarned += (int)(city.woodSold*Numbers.WOOD_PRICE_SELL);
 				}
 				
-				protected function ironMarketSellInputKeyUpHandler(event:KeyboardEvent):void	{
+				protected function ironMarketSellCheck(newNumber:int):void	{
 					
-					city.goldEarned -= city.ironSold * Numbers.IRON_PRICE_SELL;
-					city.ironSold = parseInt(ironMarketSellInput.text);
+					city.goldEarned -= (int)(city.ironSold * Numbers.IRON_PRICE_SELL);
+					city.ironSold = newNumber;
 					
 					if((city.iron-city.ironSold) < 0)
 						city.ironSold = city.iron;
 					
-					city.goldEarned += city.ironSold * Numbers.IRON_PRICE_SELL;
+					city.goldEarned += (int)(city.ironSold * Numbers.IRON_PRICE_SELL);
 				}
 				
 				protected function sellAllIron():void	{
 					city.ironSold = city.iron;
-					city.goldEarned += city.ironSold*Numbers.IRON_PRICE_SELL;
+					city.goldEarned += (int)(city.ironSold*Numbers.IRON_PRICE_SELL);
 				}
 				
 				
-				protected function bowsMarketSellInputKeyUpHandler(event:KeyboardEvent):void	{
+				protected function bowsMarketSellCheck(newNumber:int):void	{
 					
-					city.goldEarned -= city.bowsSold * Numbers.BOW_PRICE_SELL;
-					city.bowsSold = parseInt(bowsMarketSellInput.text);
+					city.goldEarned -= (int)(city.bowsSold * Numbers.BOW_PRICE_SELL);
+					city.bowsSold = newNumber;
 					
 					if((city.bowStock-city.bowsSold) < 0)
 						city.bowsSold = city.bowStock;
 					
-					city.goldEarned += city.bowsSold * Numbers.BOW_PRICE_SELL;
+					city.goldEarned += (int)(city.bowsSold * Numbers.BOW_PRICE_SELL);
 				}
 				
 				protected function sellAllBows():void	{
 					city.bowsSold = city.bowStock;
-					city.goldEarned += city.bowsSold*Numbers.BOW_PRICE_SELL;
+					city.goldEarned += (int)(city.bowsSold*Numbers.BOW_PRICE_SELL);
 				}
 				
 				
-				protected function swordsMarketSellInputKeyUpHandler(event:KeyboardEvent):void	{
+				protected function swordsMarketSellCheck(newNumber:int):void	{
 					
-					city.goldEarned -= city.swordsSold * Numbers.SWORD_PRICE_SELL;
-					city.swordsSold = parseInt(swordsMarketSellInput.text);
+					city.goldEarned -= (int)(city.swordsSold * Numbers.SWORD_PRICE_SELL);
+					city.swordsSold = newNumber;
 					
 					if((city.swordStock-city.swordsSold) < 0)
 						city.swordsSold = city.swordStock;
 					
-					city.goldEarned += city.swordsSold * Numbers.SWORD_PRICE_SELL;
+					city.goldEarned += (int)(city.swordsSold * Numbers.SWORD_PRICE_SELL);
 				}
 				
 				protected function sellAllSwords():void	{
 					city.swordsSold = city.swordStock;
-					city.goldEarned += city.swordsSold*Numbers.SWORD_PRICE_SELL;
+					city.goldEarned += (int)(city.swordsSold*Numbers.SWORD_PRICE_SELL);
 				}
 
 				
-				protected function armorsMarketSellInputKeyUpHandler(event:KeyboardEvent):void	{
+				protected function armorsMarketSellCheck(newNumber:int):void	{
 					
-					city.goldEarned -= city.armorsSold * Numbers.ARMOR_PRICE_SELL;
-					city.armorsSold = parseInt(armorsMarketSellInput.text);
+					city.goldEarned -= (int)(city.armorsSold * Numbers.ARMOR_PRICE_SELL);
+					city.armorsSold = newNumber;
 					
 					if((city.armorStock-city.armorsSold) < 0)
 						city.armorsSold = city.armorStock;
 					
-					city.goldEarned += city.armorsSold * Numbers.ARMOR_PRICE_SELL;
+					city.goldEarned += (int)(city.armorsSold * Numbers.ARMOR_PRICE_SELL);
 				}
 				
 				protected function sellAllArmors():void	{
 					city.armorsSold = city.armorStock;
-					city.goldEarned += city.armorsSold*Numbers.ARMOR_PRICE_SELL;
+					city.goldEarned += (int)(city.armorsSold*Numbers.ARMOR_PRICE_SELL);
 				}
 				
 				
@@ -475,41 +382,20 @@
 							return;
 						}
 					}
-					
-					// arriving here : no smith found : new one.
-					var smith:Smith = new Smith();
-					smith.smithUID = "new";
-					smith.people = newNbWorkers;
-					
-					for each(var item:Item in Session.ITEMS){
-						if(item.name == itemName){
-							smith.item = item;
-							break;
-						}
-					}
-					
-					city.smiths.addItem(smith);
-					
-					city.woodSpent += smith.people * smith.item.wood;
-					city.ironSpent += smith.people * smith.item.iron;
-					city.refreshUnemployed(); 
-					
 				}
 
-				protected function bowWorkersInputKeyUpHandler(event:Event):void{
+				protected function bowWorkersCheck(newNumber:int):void{
 					
 					// on enleve le precedent debit de ressources 
 					city.woodSpent -= city.bowWorkers * Numbers.BOW_WOOD;
 					city.ironSpent -= city.bowWorkers * Numbers.BOW_IRON;
 					
-					//trace("bowWorkersInput.text.length : " + bowWorkersInput.text.length);
+					var peopleAdded:int = newNumber - city.bowWorkers;
 					
-					if(bowWorkersInput.text.length == 0)
-						city.bowWorkers = 0;
-					else
-						city.bowWorkers = parseInt(bowWorkersInput.text);
+					if(city.unemployed < peopleAdded)
+						newNumber = city.bowWorkers + city.unemployed;
 					
-					//trace("city.bowWorkers : " + city.bowWorkers);
+					city.bowWorkers = newNumber;
 					
 					var woodAvailable:int = city.wood - city.woodSpent;
 					var ironAvailable:int = city.iron - city.ironSpent;
@@ -522,6 +408,7 @@
 					if(Numbers.BOW_IRON * city.bowWorkers > ironAvailable)
 						city.bowWorkers = Math.floor(ironAvailable/Numbers.BOW_IRON);
 							
+					
 					registerNewForgeWorkers("bow", city.bowWorkers);
 				}
 				
@@ -550,16 +437,18 @@
 					
 				}
 				
-				protected function swordWorkersInputKeyUpHandler(event:Event):void{
+				protected function swordWorkersCheck(newNumber:int):void{
 				
 					// on enleve le precedent debit de ressources 
 					city.woodSpent -= city.swordWorkers * Numbers.SWORD_WOOD;
 					city.ironSpent -= city.swordWorkers * Numbers.SWORD_IRON;
 					
-					if(swordWorkersInput.text.length == 0)
-						city.swordWorkers = 0;
-					else
-						city.swordWorkers = parseInt(swordWorkersInput.text)
+					var peopleAdded:int = newNumber - city.swordWorkers;
+					
+					if(city.unemployed < peopleAdded)
+						newNumber = city.swordWorkers + city.unemployed;
+					
+					city.swordWorkers = newNumber;
 							
 					var woodAvailable:int = city.wood - city.woodSpent;
 					var ironAvailable:int = city.iron - city.ironSpent;
@@ -597,16 +486,18 @@
 					registerNewForgeWorkers("sword", city.swordWorkers);
 				}
 				
-				protected function armorWorkersInputKeyUpHandler(event:Event):void{
+				protected function armorWorkersCheck(newNumber:int):void{
 					
 					// on enleve le precedent debit de ressources 
 					city.woodSpent -= city.armorWorkers * Numbers.ARMOR_WOOD;
 					city.ironSpent -= city.armorWorkers * Numbers.ARMOR_IRON;
 					
-					if(armorWorkersInput.text.length == 0)
-						city.armorWorkers = 0;
-					else	
-						city.armorWorkers = parseInt(armorWorkersInput.text);
+					var peopleAdded:int = newNumber - city.armorWorkers;
+					
+					if(city.unemployed < peopleAdded)
+						newNumber = city.armorWorkers + city.unemployed;
+					
+					city.armorWorkers = newNumber;
 					
 					var woodAvailable:int = city.wood - city.woodSpent;
 					var ironAvailable:int = city.iron - city.ironSpent;
@@ -1122,7 +1013,7 @@
 					
 					// on enleve les drawings du board (hack : je redessine la ville par dessus, armyCircle ne veut pas seffacer...: pose probleme affichage si la ville est trop petite)
 					BoardDrawer.getInstance().removeArmyFromBoard(army);
-					BoardDrawer.getInstance().drawCity(city, false);
+				//	BoardDrawer.getInstance().drawCity(city, false);
 					
 					if(army.unitUID != "new"){
 						// pour une armee deja existante : on reajuste la pop, ils peuvent travailler des ce tour
@@ -1224,7 +1115,7 @@
 					
 					// on enleve les drawings du board (hack : je redessine la ville par dessus, armyCircle ne veut pas seffacer...: pose probleme affichage si la ville est trop petite)
 					BoardDrawer.getInstance().removeArmyFromBoard(merchant);
-					BoardDrawer.getInstance().drawCity(city, false);
+				//	BoardDrawer.getInstance().drawCity(city, false);
 					
 					if(merchant.unitUID != "new"){
 						// pour une caravane deja existante : on reajuste la pop, ils peuvent travailler des ce tour
@@ -1357,14 +1248,14 @@
 							</mx:GridRow>
 							<mx:GridRow >
 								<mx:GridItem horizontalAlign="center">
-									<mx:Image toolTip="{Translations.WHEAT.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WHEAT}" click="addAllUnemployedToWheat()"/>
+									<mx:Image toolTip="{Translations.WHEAT.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WHEAT}"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
-									<s:TextInput text="{city.peopleCreatingWheat}" 
-												 id="wheatInput"
-												 keyUp="wheatInputKeyUpHandler(event)"
-												 restrict="0-9"
-												 width="100"/>
+									<renderers:SpecialNumStepper id="wheatWorkersStepper"
+																 data="{city.peopleCreatingWheat}"
+																 step="{1/Numbers.WHEAT_EARNING_COEFF + 1}"
+																 check="wheatWorkersCheck"
+																 wantMax="addAllUnemployedToWheat"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
 									<s:Label text="+ {city.wheatEarned}" color="{Numbers.GREEN}"/>
@@ -1378,11 +1269,11 @@
 									<mx:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}" click="addAllUnemployedToWood()"/>
 								</mx:GridItem>
 								<mx:GridItem>
-									<s:TextInput text="{city.peopleCreatingWood}" 
-												 id="woodInput" 
-												 keyUp="woodInputKeyUpHandler(event)"
-												 restrict="0-9"
-												 width="100"/>
+									<renderers:SpecialNumStepper id="woodWorkersStepper"
+																 data="{city.peopleCreatingWood}"
+																 step="{1/Numbers.WOOD_EARNING_COEFF + 1}"
+																 check="woodWorkersCheck"
+																 wantMax="addAllUnemployedToWood"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
 									<s:Label text="+ {city.woodEarned}" color="{Numbers.GREEN}"/>
@@ -1393,14 +1284,14 @@
 							</mx:GridRow>
 							<mx:GridRow >
 								<mx:GridItem horizontalAlign="center">
-									<mx:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}" click="addAllUnemployedToIron()"/>
+									<mx:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
-									<s:TextInput text="{city.peopleCreatingIron}" 
-												 id="ironInput" 
-												 keyUp="ironInputKeyUpHandler(event)"
-												 restrict="0-9"
-												 width="100"/>
+									<renderers:SpecialNumStepper id="ironWorkersStepper"
+																 data="{city.peopleCreatingIron}"
+																 step="{1/Numbers.IRON_EARNING_COEFF + 1}"
+																 check="ironWorkersCheck"
+																 wantMax="addAllUnemployedToIron"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
 									<s:Label text="+ {city.ironEarned}" color="{Numbers.GREEN}"/>
@@ -1420,7 +1311,7 @@
 									<s:Label text="Total" />
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
-									<s:Label text="{parseInt(wheatInput.text) + parseInt(woodInput.text) + parseInt(ironInput.text)}" />
+									<s:Label text="{city.peopleCreatingWheat + city.peopleCreatingWood + city.peopleCreatingIron}" />
 								</mx:GridItem>
 							</mx:GridRow>
 							<mx:GridRow>
@@ -1453,13 +1344,13 @@
 								<s:Button label="{Translations.BUY.getItemAt(Session.LANGUAGE)}" left="-130" bottom="0" click="buy()"/>
 								<s:VGroup>
 									<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle"
-											 width="450">
+											 width="520">
 										<mx:GridRow >
-											<mx:GridItem/>
+											<mx:GridItem minWidth="60"/>
 											<mx:GridItem horizontalAlign="center" minWidth="80">
 												<s:Label text="{Translations.UNIT_COST.getItemAt(Session.LANGUAGE)}" />
 											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center" minWidth="80">
+											<mx:GridItem horizontalAlign="center" minWidth="160">
 												<s:Label text="{Translations.QUANTITY.getItemAt(Session.LANGUAGE)}"/>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" minWidth="80">
@@ -1468,130 +1359,130 @@
 										</mx:GridRow>
 									</mx:Grid>
 									<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle"
-											 maxHeight="180" width="450">
-										<mx:GridRow >
+											 maxHeight="180" width="500">
+										<mx:GridRow>
 											<mx:GridItem horizontalAlign="center">
-												<mx:Image toolTip="{Translations.WHEAT.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WHEAT}" click="spendAllMoneyForWheat()"/>
+												<mx:Image toolTip="{Translations.WHEAT.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WHEAT}"/>
 											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center">
-												<s:Label text="{Numbers.WHEAT_PRICE_BUY}"/>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{Numbers.WHEAT_PRICE_BUY}" styleName="numberLabel"/>
 												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
 											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center">
-												<s:TextInput text="{city.wheatBought}" 
-															 id="wheatMarketBuyInput"
-															 keyUp="wheatMarketBuyInputKeyUpHandler(event)"
-															 restrict="0-9"
-															 width="100"/>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<renderers:SpecialNumStepper id="wheatMarketStepper"
+																			 data="{city.wheatBought}"
+																			 step="{1}"
+																			 check="wheatMarketBuyCheck"
+																			 wantMax="spendAllMoneyForWheat"/>
 											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center">
-												<s:Label text="{city.wheatBought*Numbers.WHEAT_PRICE_BUY}"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
-											</mx:GridItem>
-										</mx:GridRow>
-										<mx:GridRow >
-											<mx:GridItem horizontalAlign="center">
-												<mx:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}" click="spendAllMoneyForWood()"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center">
-												<s:Label text="{Numbers.WOOD_PRICE_BUY}"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center">
-												<s:TextInput text="{city.woodBought}" 
-															 id="woodMarketBuyInput"
-															 keyUp="woodMarketBuyInputKeyUpHandler(event)"
-															 restrict="0-9"
-															 width="100"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center">
-												<s:Label text="{city.woodBought*Numbers.WOOD_PRICE_BUY}"/>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{city.wheatBought*Numbers.WHEAT_PRICE_BUY}" styleName="numberLabel"/>
 												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
 											</mx:GridItem>
 										</mx:GridRow>
 										<mx:GridRow >
 											<mx:GridItem horizontalAlign="center">
-												<mx:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}" click="spendAllMoneyForIron()"/>
+												<mx:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}"/>
 											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center">
-												<s:Label text="{Numbers.IRON_PRICE_BUY}"/>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{Numbers.WOOD_PRICE_BUY}" styleName="numberLabel"/>
 												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
 											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<renderers:SpecialNumStepper id="woodMarketStepper"
+																			 data="{city.woodBought}"
+																			 step="{1}"
+																			 check="woodMarketBuyCheck"
+																			 wantMax="spendAllMoneyForWood"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{(int)(city.woodBought*Numbers.WOOD_PRICE_BUY)}" styleName="numberLabel"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+										</mx:GridRow>
+										<mx:GridRow >
 											<mx:GridItem horizontalAlign="center">
-												<s:TextInput text="{city.ironBought}" 
-															 id="ironMarketBuyInput"
-															 keyUp="ironMarketBuyInputKeyUpHandler(event)"
-															 restrict="0-9"
-															 width="100"/>
+												<mx:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{Numbers.IRON_PRICE_BUY}" styleName="numberLabel"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<renderers:SpecialNumStepper id="ironMarketStepper"
+																			 data="{city.ironBought}"
+																			 step="{1}"
+																			 check="ironMarketBuyCheck"
+																			 wantMax="spendAllMoneyForIron"/>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
-												<s:Label text="{city.ironBought*Numbers.IRON_PRICE_BUY}"/>
+												<s:Label text="{city.ironBought*Numbers.IRON_PRICE_BUY}" styleName="numberLabel"/>
 												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
 											</mx:GridItem>
 										</mx:GridRow>
 										<mx:GridRow>
 											<mx:GridItem horizontalAlign="center">
-												<mx:Image toolTip="{Translations.BOW.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.BOW}" click="spendAllMoneyForBows()"/>
+												<mx:Image toolTip="{Translations.BOW.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.BOW}"/>
 											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center">
-												<s:Label text="{Numbers.BOW_PRICE_BUY}"/>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{Numbers.BOW_PRICE_BUY}" styleName="numberLabel"/>
 												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
 											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center">
-												<s:TextInput text="{city.bowsBought}" 
-															 id="bowsMarketBuyInput"
-															 keyUp="bowsMarketBuyInputKeyUpHandler(event)"
-															 restrict="0-9"
-															 width="100"/>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<renderers:SpecialNumStepper id="bowsMarketStepper"
+																			 data="{city.bowsBought}"
+																			 step="{1}"
+																			 check="bowsMarketBuyCheck"
+																			 wantMax="spendAllMoneyForBows"/>
 											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center">
-												<s:Label text="{city.bowsBought*Numbers.BOW_PRICE_BUY}"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
-											</mx:GridItem>
-										</mx:GridRow>
-										<mx:GridRow>
-											<mx:GridItem horizontalAlign="center">
-												<mx:Image toolTip="{Translations.SWORD.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.SWORD}" click="spendAllMoneyForSwords()"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center">
-												<s:Label text="{Numbers.SWORD_PRICE_BUY}"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center">
-												<s:TextInput text="{city.swordsBought}" 
-															 id="swordsMarketBuyInput"
-															 keyUp="swordsMarketBuyInputKeyUpHandler(event)"
-															 restrict="0-9"
-															 width="100"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center">
-												<s:Label text="{city.swordsBought*Numbers.SWORD_PRICE_BUY}"/>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{city.bowsBought*Numbers.BOW_PRICE_BUY}" styleName="numberLabel"/>
 												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
 											</mx:GridItem>
 										</mx:GridRow>
 										<mx:GridRow>
 											<mx:GridItem horizontalAlign="center">
-												<mx:Image toolTip="{Translations.ARMOR.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.ARMOR}" click="spendAllMoneyForArmors()"/>
+												<mx:Image toolTip="{Translations.SWORD.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.SWORD}"/>
 											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center">
-												<s:Label text="{Numbers.ARMOR_PRICE_BUY}"/>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{Numbers.SWORD_PRICE_BUY}" styleName="numberLabel"/>
 												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
 											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center">
-												<s:TextInput text="{city.armorsBought}" 
-															 id="armorsMarketBuyInput"
-															 keyUp="armorsMarketBuyInputKeyUpHandler(event)"
-															 restrict="0-9"
-															 width="100"/>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<renderers:SpecialNumStepper id="swordsMarketStepper"
+																			 data="{city.swordsBought}"
+																			 step="{1}"
+																			 check="swordsMarketBuyCheck"
+																			 wantMax="spendAllMoneyForSwords"/>
 											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{city.swordsBought*Numbers.SWORD_PRICE_BUY}" styleName="numberLabel"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+										</mx:GridRow>
+										<mx:GridRow>
 											<mx:GridItem horizontalAlign="center">
-												<s:Label text="{city.armorsBought*Numbers.ARMOR_PRICE_BUY}"/>
+												<mx:Image toolTip="{Translations.ARMOR.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.ARMOR}"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{Numbers.ARMOR_PRICE_BUY}" styleName="numberLabel"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<renderers:SpecialNumStepper id="armorsMarketStepper"
+																			 data="{city.armorsBought}"
+																			 step="{1}"
+																			 check="armorsMarketBuyCheck"
+																			 wantMax="spendAllMoneyForArmors"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{city.armorsBought*Numbers.ARMOR_PRICE_BUY}" styleName="numberLabel"/>
 												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
 											</mx:GridItem>
 										</mx:GridRow>
 									</mx:Grid>
 									<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle"
-											 width="450">
+											 width="500">
 										<mx:GridRow>
 											<mx:GridItem colSpan="4">
 												<mx:HRule width="100%"/>
@@ -1600,11 +1491,11 @@
 										<mx:GridRow >
 											<mx:GridItem/>
 											<mx:GridItem/>
-											<mx:GridItem horizontalAlign="center">
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 												<s:Label text="{Translations.TOTAL_SPENDING.getItemAt(Session.LANGUAGE)} : " minWidth="150"/>
 											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center">
-												<s:Label text="{city.goldSpent}"/>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{city.goldSpent}" styleName="numberLabel"/>
 												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
 											</mx:GridItem>
 											<mx:GridItem/>
@@ -1620,13 +1511,13 @@
 								<s:Button label="{Translations.SELL.getItemAt(Session.LANGUAGE)}" left="-130" bottom="0" click="sell()"/>
 								<s:VGroup>
 									<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle"
-											 width="450">
+											 width="520">
 										<mx:GridRow >
-											<mx:GridItem/>
+											<mx:GridItem minWidth="70"/>
 											<mx:GridItem horizontalAlign="center" minWidth="80">
 												<s:Label text="{Translations.UNIT_COST.getItemAt(Session.LANGUAGE)}" />
 											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center" minWidth="80">
+											<mx:GridItem horizontalAlign="center" minWidth="160">
 												<s:Label text="{Translations.QUANTITY.getItemAt(Session.LANGUAGE)}"/>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" minWidth="80">
@@ -1635,130 +1526,130 @@
 										</mx:GridRow>
 									</mx:Grid>
 									<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle"
-											 maxHeight="180" width="450">
+											 maxHeight="180" width="520">
 										<mx:GridRow >
 											<mx:GridItem horizontalAlign="center">
-												<mx:Image toolTip="{Translations.WHEAT.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WHEAT}" click="sellAllWheat()"/>
+												<mx:Image toolTip="{Translations.WHEAT.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WHEAT}"/>
 											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center">
-												<s:Label text="{Numbers.WHEAT_PRICE_SELL}"/>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{Numbers.WHEAT_PRICE_SELL}" styleName="numberLabel"/>
 												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
 											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center">
-												<s:TextInput text="{city.wheatSold}" 
-															 id="wheatMarketSellInput"
-															 keyUp="wheatMarketSellInputKeyUpHandler(event)"
-															 restrict="0-9"
-															 width="100"/>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<renderers:SpecialNumStepper id="wheatMarketSellStepper"
+																			 data="{city.wheatSold}"
+																			 step="{1}"
+																			 check="wheatMarketSellCheck"
+																			 wantMax="sellAllWheat"/>
 											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center">
-												<s:Label text="{city.wheatSold*Numbers.WHEAT_PRICE_SELL}"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
-											</mx:GridItem>
-										</mx:GridRow>
-										<mx:GridRow >
-											<mx:GridItem horizontalAlign="center">
-												<mx:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}" click="sellAllWood()"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center">
-												<s:Label text="{Numbers.WOOD_PRICE_SELL}"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center">
-												<s:TextInput text="{city.woodSold}" 
-															 id="woodMarketSellInput"
-															 keyUp="woodMarketSellInputKeyUpHandler(event)"
-															 restrict="0-9"
-															 width="100"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center">
-												<s:Label text="{city.woodSold*Numbers.WOOD_PRICE_SELL}"/>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{(int)(city.wheatSold*Numbers.WHEAT_PRICE_SELL)}" styleName="numberLabel"/>
 												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
 											</mx:GridItem>
 										</mx:GridRow>
 										<mx:GridRow >
 											<mx:GridItem horizontalAlign="center">
-												<mx:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}" click="sellAllIron()"/>
+												<mx:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}"/>
 											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center">
-												<s:Label text="{Numbers.IRON_PRICE_SELL}"/>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{Numbers.WOOD_PRICE_SELL}" styleName="numberLabel"/>
 												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
 											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center">
-												<s:TextInput text="{city.ironSold}" 
-															 id="ironMarketSellInput"
-															 keyUp="ironMarketSellInputKeyUpHandler(event)"
-															 restrict="0-9"
-															 width="100"/>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<renderers:SpecialNumStepper id="woodMarketSellStepper"
+																			 data="{city.woodSold}"
+																			 step="{1}"
+																			 check="woodMarketSellCheck"
+																			 wantMax="sellAllWood"/>
 											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{city.woodSold*Numbers.WOOD_PRICE_SELL}" styleName="numberLabel"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+										</mx:GridRow>
+										<mx:GridRow >
 											<mx:GridItem horizontalAlign="center">
-												<s:Label text="{city.ironSold*Numbers.IRON_PRICE_SELL}"/>
+												<mx:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{Numbers.IRON_PRICE_SELL}" styleName="numberLabel"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<renderers:SpecialNumStepper id="ironMarketSellStepper"
+																			 data="{city.ironSold}"
+																			 step="{1}"
+																			 check="ironMarketSellCheck"
+																			 wantMax="sellAllIron"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{(int)(city.ironSold*Numbers.IRON_PRICE_SELL)}" styleName="numberLabel"/>
 												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
 											</mx:GridItem>
 										</mx:GridRow>
 										<mx:GridRow>
 											<mx:GridItem horizontalAlign="center">
-												<mx:Image toolTip="{Translations.BOW.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.BOW}" click="sellAllBows()"/>
+												<mx:Image toolTip="{Translations.BOW.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.BOW}"/>
 											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center">
-												<s:Label text="{Numbers.BOW_PRICE_SELL}"/>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{Numbers.BOW_PRICE_SELL}" styleName="numberLabel"/>
 												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
 											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center">
-												<s:TextInput text="{city.bowsSold}" 
-															 id="bowsMarketSellInput"
-															 keyUp="bowsMarketSellInputKeyUpHandler(event)"
-															 restrict="0-9"
-															 width="100"/>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<renderers:SpecialNumStepper id="bowsMarketSellStepper"
+																			 data="{city.bowsSold}"
+																			 step="{1}"
+																			 check="bowsMarketSellCheck"
+																			 wantMax="sellAllBows"/>
 											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center">
-												<s:Label text="{city.bowsSold*Numbers.BOW_PRICE_SELL}"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
-											</mx:GridItem>
-										</mx:GridRow>
-										<mx:GridRow>
-											<mx:GridItem horizontalAlign="center">
-												<mx:Image toolTip="{Translations.SWORD.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.SWORD}" click="sellAllSwords()"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center">
-												<s:Label text="{Numbers.SWORD_PRICE_SELL}"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center">
-												<s:TextInput text="{city.swordsSold}" 
-															 id="swordsMarketSellInput"
-															 keyUp="swordsMarketSellInputKeyUpHandler(event)"
-															 restrict="0-9"
-															 width="100"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center">
-												<s:Label text="{city.swordsSold*Numbers.SWORD_PRICE_SELL}"/>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{city.bowsSold*Numbers.BOW_PRICE_SELL}" styleName="numberLabel"/>
 												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
 											</mx:GridItem>
 										</mx:GridRow>
 										<mx:GridRow>
 											<mx:GridItem horizontalAlign="center">
-												<mx:Image toolTip="{Translations.ARMOR.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.ARMOR}" click="sellAllArmors()"/>
+												<mx:Image toolTip="{Translations.SWORD.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.SWORD}"/>
 											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center">
-												<s:Label text="{Numbers.ARMOR_PRICE_SELL}"/>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{Numbers.SWORD_PRICE_SELL}" styleName="numberLabel"/>
 												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
 											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center">
-												<s:TextInput text="{city.armorsSold}" 
-															 id="armorsMarketSellInput"
-															 keyUp="armorsMarketSellInputKeyUpHandler(event)"
-															 restrict="0-9"
-															 width="100"/>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<renderers:SpecialNumStepper id="swordsMarketSellStepper"
+																			 data="{city.swordsSold}"
+																			 step="{1}"
+																			 check="swordsMarketSellCheck"
+																			 wantMax="sellAllSwords"/>
 											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{city.swordsSold*Numbers.SWORD_PRICE_SELL}" styleName="numberLabel"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+										</mx:GridRow>
+										<mx:GridRow>
 											<mx:GridItem horizontalAlign="center">
-												<s:Label text="{city.armorsSold*Numbers.ARMOR_PRICE_SELL}"/>
+												<mx:Image toolTip="{Translations.ARMOR.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.ARMOR}"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{Numbers.ARMOR_PRICE_SELL}" styleName="numberLabel"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<renderers:SpecialNumStepper id="armorsMarketSellStepper"
+																			 data="{city.armorsSold}"
+																			 step="{1}"
+																			 check="armorsMarketSellCheck"
+																			 wantMax="sellAllArmors"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{city.armorsSold*Numbers.ARMOR_PRICE_SELL}" styleName="numberLabel"/>
 												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
 											</mx:GridItem>
 										</mx:GridRow>
 									</mx:Grid>
 									<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle"
-											 width="450">
+											 width="520">
 										<mx:GridRow>
 											<mx:GridItem colSpan="4">
 												<mx:HRule width="100%"/>
@@ -1767,11 +1658,11 @@
 										<mx:GridRow >
 											<mx:GridItem/>
 											<mx:GridItem/>
-											<mx:GridItem horizontalAlign="center">
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 												<s:Label text="{Translations.TOTAL_PROFIT.getItemAt(Session.LANGUAGE)} : " minWidth="150"/>
 											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center">
-												<s:Label text="{city.goldEarned}"/>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{city.goldEarned}" styleName="numberLabel"/>
 												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
 											</mx:GridItem>
 											<mx:GridItem/>
@@ -1807,63 +1698,60 @@
 							  <mx:GridItem horizontalAlign="center">
 								  <mx:Image toolTip=" "
 											toolTipCreate="{onCreateForgeToolTip(event, Translations.BOW.getItemAt(Session.LANGUAGE) as String, Numbers.BOW_WOOD, Numbers.BOW_IRON)}"
-											source="{ImageContainer.BOW}" click="addAllUnemployedToBow()"/>
+											source="{ImageContainer.BOW}"/>
 							  </mx:GridItem>
 							  <mx:GridItem horizontalAlign="center">
-								  <s:TextInput text="{city.bowWorkers}" 
-											   id="bowWorkersInput"
-											   keyUp="bowWorkersInputKeyUpHandler(event)"
-											   focusOut="bowWorkersInputKeyUpHandler(event)"
-											   restrict="0-9"
-											   width="100"/>
+								  <renderers:SpecialNumStepper id="bowWorkersStepper"
+															   data="{city.bowWorkers}"
+															   step="{1}"
+															   check="bowWorkersCheck"
+															   wantMax="addAllUnemployedToBow"/>
 							  </mx:GridItem>
 							  <mx:GridItem horizontalAlign="center">
-								  <s:Label text="{Numbers.BOW_WOOD * parseInt(bowWorkersInput.text)}" styleName="numberLabel"/>
+								  <s:Label text="{Numbers.BOW_WOOD * city.bowWorkers}" styleName="numberLabel"/>
 							  </mx:GridItem>
 							  <mx:GridItem horizontalAlign="center">
-								  <s:Label text="{Numbers.BOW_IRON * parseInt(bowWorkersInput.text)}" styleName="numberLabel"/>
+								  <s:Label text="{Numbers.BOW_IRON * city.bowWorkers}" styleName="numberLabel"/>
 							  </mx:GridItem>
 						  </mx:GridRow>
-							<mx:GridRow >
+							<mx:GridRow verticalAlign="middle">
 								<mx:GridItem horizontalAlign="center">
 									<mx:Image toolTip=" "
 											  toolTipCreate="{onCreateForgeToolTip(event, Translations.SWORD.getItemAt(Session.LANGUAGE) as String, Numbers.SWORD_WOOD, Numbers.SWORD_IRON)}"
-											  source="{ImageContainer.SWORD}" click="addAllUnemployedToSword()"/>
+											  source="{ImageContainer.SWORD}"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
-									<s:TextInput text="{city.swordWorkers}" 
-												 id="swordWorkersInput"
-												 keyUp="swordWorkersInputKeyUpHandler(event)"
-												 focusOut="swordWorkersInputKeyUpHandler(event)"
-												 restrict="0-9"
-												 width="100"/>
+									<renderers:SpecialNumStepper id="swordWorkersStepper"
+																 data="{city.swordWorkers}"
+																 step="{1}"
+																 check="swordWorkersCheck"
+																 wantMax="addAllUnemployedToSword"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
-									<s:Label text="{Numbers.SWORD_WOOD * parseInt(swordWorkersInput.text)}" styleName="numberLabel"/>
+									<s:Label text="{Numbers.SWORD_WOOD * city.swordWorkers}" styleName="numberLabel"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
-									<s:Label text="{Numbers.SWORD_IRON * parseInt(swordWorkersInput.text)}" styleName="numberLabel"/>
+									<s:Label text="{Numbers.SWORD_IRON * city.swordWorkers}" styleName="numberLabel"/>
 								</mx:GridItem>
 							</mx:GridRow>
 							<mx:GridRow >
 								<mx:GridItem horizontalAlign="center">
 									<mx:Image toolTip=" "
 											  toolTipCreate="{onCreateForgeToolTip(event, Translations.ARMOR.getItemAt(Session.LANGUAGE) as String, Numbers.ARMOR_WOOD, Numbers.ARMOR_IRON)}"
-											  source="{ImageContainer.ARMOR}" click="addAllUnemployedToArmor()"/>
+											  source="{ImageContainer.ARMOR}"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
-									<s:TextInput text="{city.armorWorkers}" 
-												 id="armorWorkersInput"
-												 keyUp="armorWorkersInputKeyUpHandler(event)"
-												 focusOut="armorWorkersInputKeyUpHandler(event)"
-												 restrict="0-9"
-												 width="100"/>
+									<renderers:SpecialNumStepper id="armorWorkersStepper"
+																 data="{city.armorWorkers}"
+																 step="{1}"
+																 check="armorWorkersCheck"
+																 wantMax="addAllUnemployedToArmor"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
-									<s:Label text="{Numbers.ARMOR_WOOD * parseInt(armorWorkersInput.text)}" styleName="numberLabel"/>
+									<s:Label text="{Numbers.ARMOR_WOOD * city.armorWorkers}" styleName="numberLabel"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
-									<s:Label text="{Numbers.ARMOR_IRON * parseInt(armorWorkersInput.text)}" styleName="numberLabel"/>
+									<s:Label text="{Numbers.ARMOR_IRON * city.armorWorkers}" styleName="numberLabel"/>
 								</mx:GridItem>
 							</mx:GridRow>
 						<mx:GridRow>
@@ -1876,18 +1764,18 @@
 								<s:Label text="Total" />
 							</mx:GridItem>
 							<mx:GridItem horizontalAlign="center">
-								<s:Label text="{parseInt(bowWorkersInput.text) + parseInt(swordWorkersInput.text) + parseInt(armorWorkersInput.text)}" />
+								<s:Label text="{city.bowWorkers + city.swordWorkers + city.armorWorkers}" />
 							</mx:GridItem>
 							<mx:GridItem horizontalAlign="center">
-								<s:Label text="{Numbers.SWORD_WOOD * parseInt(swordWorkersInput.text) 
-										 	   +Numbers.ARMOR_WOOD * parseInt(armorWorkersInput.text) 
-										 	   +Numbers.BOW_WOOD * parseInt(bowWorkersInput.text)}" 
+								<s:Label text="{Numbers.SWORD_WOOD * city.swordWorkers 
+										 	   +Numbers.ARMOR_WOOD * city.armorWorkers
+										 	   +Numbers.BOW_WOOD * city.bowWorkers}" 
 										 		styleName="numberLabel"/>
 							</mx:GridItem>
 							<mx:GridItem horizontalAlign="center">
-								<s:Label text="{Numbers.SWORD_IRON * parseInt(swordWorkersInput.text) 
-										 +Numbers.ARMOR_IRON * parseInt(armorWorkersInput.text) 
-										 +Numbers.BOW_IRON * parseInt(bowWorkersInput.text)}" 
+								<s:Label text="{Numbers.SWORD_IRON * city.swordWorkers
+										 +Numbers.ARMOR_IRON * city.armorWorkers
+										 +Numbers.BOW_IRON * city.bowWorkers}" 
 										 styleName="numberLabel"/>
 							</mx:GridItem>
 						</mx:GridRow>

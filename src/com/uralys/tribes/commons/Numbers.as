@@ -7,6 +7,14 @@ public class Numbers{
 
 import mx.collections.ArrayCollection;
 
+
+	// Sun Mar 27 02:17:11 UTC 2011
+	public static var SERVER_START:Number = 1301192231153;
+
+	// step toutes les 5 minutes
+	[Bindable]
+	public static var TIME_PER_STEP:int = 10;
+
 	// Main data  ==============================================================
 	
 	[Bindable]
@@ -42,9 +50,25 @@ import mx.collections.ArrayCollection;
 	//==================================================================================================//
 	// game COEFF
 	
-	public static var WHEAT_EARNING_COEFF:Number = 5;
-	public static var WOOD_EARNING_COEFF:Number = 3;
-	public static var IRON_EARNING_COEFF:Number = 2;
+	
+	/*
+		toutes les 5 min : ressources et constructions
+		
+		100 personnes mangent 1 de ble toutes les 5 min
+	                         12 / h
+							288 / 24h 
+	
+	    exemple avec pop 1000 - workers : 200 ble 200 fer 600 bois 
+		step 
+		ble : wheatSpent  : 10
+		      wheatEarned : workers/20;
+	
+	*/
+	
+	[Bindable] public static var FEED_COEFF:Number = 1/100;
+	[Bindable] public static var WHEAT_EARNING_COEFF:Number = 5/100;
+	[Bindable] public static var WOOD_EARNING_COEFF:Number = 3/100;
+	[Bindable] public static var IRON_EARNING_COEFF:Number = 2/100;
 
 	[Bindable] public static var WHEAT_PRICE_BUY:Number = 2;
 	[Bindable] public static var WOOD_PRICE_BUY:Number = 3.33;
@@ -69,7 +93,7 @@ import mx.collections.ArrayCollection;
 	// contrees
 
 	[Bindable] public static var LAND_WIDTH:int = 100;
-	[Bindable] public static var LAND_HEIGHT:int = 100;
+	[Bindable] public static var LAND_HEIGHT:int = 86;
 	
 	[Bindable] public static var NOTHING:int = 0;
 	[Bindable] public static var FOREST:int = 1;

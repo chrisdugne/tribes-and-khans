@@ -69,7 +69,16 @@ public final class ImageContainer
 	[Embed(source="resources/embed/foret2.png")]
 	[Bindable] public static var FORET2:Class;
 
-	[Embed(source="resources/embed/solville.png")]
+	[Embed(source="resources/embed/foret3.png")]
+	[Bindable] public static var FORET3:Class;
+
+	[Embed(source="resources/embed/foret4.png")]
+	[Bindable] public static var FORET4:Class;
+
+	[Embed(source="resources/embed/foret5.png")]
+	[Bindable] public static var FORET5:Class;
+
+	[Embed(source="resources/embed/sol_ville.png")]
 	[Bindable] public static var SOL_VILLE:Class;
 
 	[Embed(source="resources/embed/lac2.png")]
@@ -84,6 +93,20 @@ public final class ImageContainer
 	[Embed(source="resources/embed/roche2.png")]
 	[Bindable] public static var ROCHE2:Class;
 
+	//   ======================================================================//
+
+	[Embed(source="resources/embed/icons/left.png")]
+	[Bindable] public static var LEFT:Class;
+
+	[Embed(source="resources/embed/icons/right.png")]
+	[Bindable] public static var RIGHT:Class;
+
+	[Embed(source="resources/embed/icons/top_left.png")]
+	[Bindable] public static var TOP_LEFT:Class;
+
+	[Embed(source="resources/embed/icons/top_right.png")]
+	[Bindable] public static var TOP_RIGHT:Class;
+	
 	//   ======================================================================//
 
 	[Embed(source="resources/embed/house1.png")]

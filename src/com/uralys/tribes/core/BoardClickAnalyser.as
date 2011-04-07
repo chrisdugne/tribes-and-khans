@@ -2,9 +2,10 @@ package com.uralys.tribes.core
 {
 	import com.uralys.tribes.commons.Numbers;
 	import com.uralys.tribes.commons.Session;
-	import com.uralys.tribes.entities.Unit;
+	import com.uralys.tribes.entities.Case;
 	import com.uralys.tribes.entities.City;
 	import com.uralys.tribes.entities.Player;
+	import com.uralys.tribes.entities.Unit;
 	import com.uralys.tribes.pages.Board;
 	import com.uralys.utils.Map;
 	
@@ -20,7 +21,7 @@ package com.uralys.tribes.core
 		 - armies
 		 - merchants
 	*/
-	public class BoardClickListener
+	public class BoardClickAnalyser
 	{	
 		//=====================================================================================//
 		
@@ -32,16 +33,46 @@ package com.uralys.tribes.core
 		
 		//=====================================================================================//
 	
-		private static var instance : BoardClickListener = new BoardClickListener();
+		private static var instance : BoardClickAnalyser = new BoardClickAnalyser();
 	
-		public static function getInstance():BoardClickListener{
+		public static function getInstance():BoardClickAnalyser{
 			return instance;
 		}
 
-		public function BoardClickListener(){}
+		public function BoardClickAnalyser(){}
 
 		//=====================================================================================//
 		
+		public function clickOnCase(_case:Case):void{
+			
+			//----------------------------------//
+
+			if(_case.city == null 
+				|| _case.city.cityUID == "new")
+				return;
+
+			//----------------------------------//
+			
+			var cityInPlayerList:City = null;
+			
+			for each(var city:City in Session.player.cities){
+				if(city.cityUID == _case.city.cityUID){
+					cityInPlayerList = city;
+					break;
+				}
+			}
+			
+			if(cityInPlayerList == null)
+				return;
+			
+			//----------------------------------//
+			
+			if(cityInPlayerList.merchants.length + cityInPlayerList.armies.length > 0)
+				board.appearSelectionChoice(cityInPlayerList);
+			else
+				board.clickOnCity(cityInPlayerList);
+		}
+			
 		public function clickOnBoard(event:MouseEvent):void{
 			var clickX:int = event.localX;
 			var clickY:int = event.localY;

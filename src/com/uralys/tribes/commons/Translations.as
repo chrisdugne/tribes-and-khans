@@ -296,8 +296,8 @@ public class Translations{
 	[Bindable]
 	public static var STARVATION:ArrayCollection = new ArrayCollection(
 									["Famine prévue ! récoltez plus de blé !",
-									"Starvation ! gather mor wheat !",
-									"Starvation ! gather mor wheat !"]);
+									"Starvation ! gather more wheat !",
+									"Starvation ! gather more wheat !"]);
 
 	[Bindable]
 	public static var RESOURCES:ArrayCollection = new ArrayCollection(
@@ -409,15 +409,15 @@ public class Translations{
 
 	[Bindable]
 	public static var PRICE_TO_PAY:ArrayCollection = new ArrayCollection(
-									["Prix à payer",
-									"Price to pay",
-									"Price to pay"]);
+									["Coût",
+									"Cost",
+									"Cost"]);
 
 	[Bindable]
 	public static var TOTAL_SPENDING:ArrayCollection = new ArrayCollection(
-									["Dépense totale",
-									"Total spending",
-									"Total spending"]);
+									["Coût total",
+									"Total cost",
+									"Total cost"]);
 
 	[Bindable]
 	public static var SELLING:ArrayCollection = new ArrayCollection(
@@ -456,6 +456,14 @@ public class Translations{
 									["Armure",
 									"Armor",
 									"Armor"]);
+
+	//-----------------------------------------------------------------------------------//
+	
+	[Bindable]
+	public static var RESOURCES_UPDATED:ArrayCollection = new ArrayCollection(
+									["Ressources arrivées !",
+									"Resources received !",
+									"Resources received !"]);
 
 	//-----------------------------------------------------------------------------------//
 	

@@ -52,6 +52,7 @@ public class EntitiesConverter {
 		player.setUralysUID(playerDTO.getUralysUID());
 		player.setName(playerDTO.getName());
 		player.setNbLands(playerDTO.getNbLands());
+		player.setLastStep(playerDTO.getLastStep());
 		
 		//-----------------------------------------------------------------------------------//
 		List<City> cities = new ArrayList<City>();
@@ -192,6 +193,7 @@ public class EntitiesConverter {
 		
 		Case _case = new Case();
 		
+		_case.setCaseUID(caseDTO.getCaseUID());
 		_case.setX(caseDTO.getX());
 		_case.setY(caseDTO.getY());
 		_case.setType(caseDTO.getType());

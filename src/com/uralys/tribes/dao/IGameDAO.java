@@ -3,7 +3,9 @@ package com.uralys.tribes.dao;
 import java.util.List;
 
 import com.uralys.tribes.entities.City;
+import com.uralys.tribes.entities.Player;
 import com.uralys.tribes.entities.Unit;
+import com.uralys.tribes.entities.dto.CaseDTO;
 import com.uralys.tribes.entities.dto.ItemDTO;
 import com.uralys.tribes.entities.dto.PlayerDTO;
 
@@ -16,7 +18,9 @@ public interface IGameDAO {
 	
 	//==================================================================================================//
 	public List<ItemDTO> loadItems();
+	public List<CaseDTO> loadCases(List<String> caseUIDs);
 	
+	public void updatePlayer(Player player);
 	public void updateCityResources(City city);
 	public void updateSmith(String smithUID, int people);
 	public void updateStock(String equipmentUID, int size);

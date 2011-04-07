@@ -1,8 +1,10 @@
 package com.uralys.tribes.services.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.uralys.tribes.domain.IGameManager;
+import com.uralys.tribes.entities.Case;
 import com.uralys.tribes.entities.Item;
 import com.uralys.tribes.entities.Player;
 import com.uralys.tribes.services.IGameService;
@@ -34,10 +36,32 @@ public class GameService implements IGameService {
 		}
 	}
 	
+	public boolean savePlayer(Player player) {
+		try{
+			gameManager.savePlayer(player);
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return true;
+	}
+
 	//=========================================================================//
 	
 	public List<Item> loadItems() {
 		return gameManager.loadItems();
+	}
+	
+	
+	public List<Case> loadCases(List<String> caseUIDs) {
+		try{
+			return gameManager.loadCases(caseUIDs);
+		}
+		catch(Exception e){
+			e.printStackTrace();
+			return new ArrayList<Case>();
+		}
 	}
 	
 	//-----------------------------------------------------------------------------------//}

@@ -15,6 +15,7 @@ public class Player {
 	private int nbLands;
 	private List<Conflict> conflicts = new ArrayList<Conflict>();
 
+	private long lastStep;
 	
 	//-----------------------------------------------------------------------------------//
 
@@ -59,6 +60,12 @@ public class Player {
 	}
 	public void setUnits(List<Unit> units) {
 		this.units = units;
+	}
+	public long getLastStep() {
+		return lastStep;
+	}
+	public void setLastStep(long lastStep) {
+		this.lastStep = lastStep;
 	}
 	
 	

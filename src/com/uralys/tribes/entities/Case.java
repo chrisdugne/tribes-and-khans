@@ -14,6 +14,8 @@ public class Case {
 	
 	//-----------------------------------------------------------------------------------//
 
+	private String caseUID;
+
 	private int x;
 	private int y;
 	
@@ -36,6 +38,14 @@ public class Case {
 
 	public int getX() {
 		return x;
+	}
+
+	public String getCaseUID() {
+		return caseUID;
+	}
+
+	public void setCaseUID(String caseUID) {
+		this.caseUID = caseUID;
 	}
 
 	public void setX(int x) {

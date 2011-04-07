@@ -33,6 +33,7 @@ public class PlayerDTO {
 	@Persistent private List<String> unitUIDs = new ArrayList<String>();
 	@Persistent private List<String> conflictsUIDs = new ArrayList<String>();
 
+	@Persistent private Long lastStep;
 	
 	//-----------------------------------------------------------------------------------//
 
@@ -83,6 +84,12 @@ public class PlayerDTO {
 	}
 	public void setUnitUIDs(List<String> unitUIDs) {
 		this.unitUIDs = unitUIDs;
+	}
+	public Long getLastStep() {
+		return lastStep;
+	}
+	public void setLastStep(Long lastStep) {
+		this.lastStep = lastStep;
 	}
 	
 	//-----------------------------------------------------------------------------------//

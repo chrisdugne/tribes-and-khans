@@ -6,12 +6,16 @@ import java.util.List;
 import com.uralys.tribes.dao.IGameDAO;
 import com.uralys.tribes.domain.IGameManager;
 import com.uralys.tribes.entities.Case;
+import com.uralys.tribes.entities.City;
 import com.uralys.tribes.entities.Conflict;
+import com.uralys.tribes.entities.Equipment;
 import com.uralys.tribes.entities.Item;
 import com.uralys.tribes.entities.Move;
 import com.uralys.tribes.entities.Player;
+import com.uralys.tribes.entities.Smith;
 import com.uralys.tribes.entities.Unit;
 import com.uralys.tribes.entities.converters.EntitiesConverter;
+import com.uralys.tribes.entities.dto.CaseDTO;
 import com.uralys.tribes.entities.dto.ItemDTO;
 import com.uralys.utils.Utils;
 
@@ -83,6 +87,133 @@ public class GameManager implements IGameManager {
 			return null;
 		}
 	}
+
+	public void savePlayer(Player player) {
+		System.out.println("-------------------------------------------------");
+		System.out.println("Save turn pour joueur : " + player.getName());
+
+		//----------------------------------------------------------------//
+		// Cities
+
+		for(City city : player.getCities()){
+
+			if(city.getCityUID().equals("new")){
+				gameDao.createCity(city, player.getUralysUID());
+			}
+			else{
+				gameDao.updateCityResources(city);
+
+				//----------------------------------------//
+				// Forge
+				
+				for(Smith smith : city.getSmiths()){
+					gameDao.updateSmith(smith.getSmithUID(), smith.getPeople());				
+				}
+
+				//----------------------------------------//
+				// Equipment stock
+				
+				for(Equipment stock : city.getEquipmentStock()){
+					gameDao.updateStock(stock.getEquimentUID(), stock.getSize());	
+				}
+			}
+		}
+		
+//		//----------------------------------------------------------------//
+//		// Armies
+//
+//		List<String> createdArmyUIDs = new ArrayList<String>();
+//		List<String> editedArmyUIDs = new ArrayList<String>();
+//		List<String> toDeleteArmyUIDs = new ArrayList<String>();
+//		
+//		for(Army army : player.getArmies()){
+//			
+//			if(army.getMoves().size() > 0){
+//				String moveUID = gameDao.saveMove(army.getMoves().get(0));
+//				army.getMoves().get(0).setMoveUID(moveUID);
+//			}
+//			
+//			if(army.getArmyUID().equals("new")){
+//				createdArmyUIDs.add(gameDao.createArmy(army));
+////				armyRaised += army.getSize();
+//			}
+//			else{
+//				gameDao.updateArmy(army);
+//				editedArmyUIDs.add(army.getArmyUID());
+//			}
+//
+//		}
+//
+//		List<String> existingArmyUIDs = gameDao.linkNewArmiesAndGetPreviousArmyUIDs(player.getPlayerUID(), createdArmyUIDs);
+//
+//		for(String existingArmyUID : existingArmyUIDs){
+//			System.out.println("existingArmyUID : " + existingArmyUID);
+//			boolean found = false;
+//			
+//			for(String editedArmyUID : editedArmyUIDs){
+//				if(editedArmyUID.equals(existingArmyUID)){
+//					found = true;
+//					break;
+//				}
+//			}
+//			
+//			if(!found)
+//				toDeleteArmyUIDs.add(existingArmyUID);
+//		}
+//		
+//		
+//		//----------------------------------------------------------------//
+//		// Merchants
+//		
+//		List<String> createdMerchantUIDs = new ArrayList<String>();
+//		List<String> editedMerchantUIDs = new ArrayList<String>();
+//		
+//		for(Army merchant : player.getMerchants()){
+//			
+//			if(merchant.getMoves().size() > 0){
+//				String moveUID = gameDao.saveMove(merchant.getMoves().get(0));
+//				merchant.getMoves().get(0).setMoveUID(moveUID);
+//			}
+//			
+//			if(merchant.getArmyUID().equals("new")){
+//				createdMerchantUIDs.add(gameDao.createArmy(merchant));
+////				armyRaised += merchant.getSize();
+//			}
+//			else{
+//				gameDao.updateArmy(merchant);
+//				editedMerchantUIDs.add(merchant.getArmyUID());
+//			}
+//			
+//		}
+//		
+//		List<String> existingMerchantUIDs = gameDao.linkNewMerchantsAndGetPreviousMerchantUIDs(player.getPlayerUID(), createdMerchantUIDs);
+//		
+//		for(String existingMerchantUID : existingMerchantUIDs){
+//			System.out.println("existingMerchantUID : " + existingMerchantUID);
+//			boolean found = false;
+//			
+//			for(String editedMerchantUID : editedMerchantUIDs){
+//				if(editedMerchantUID.equals(existingMerchantUID)){
+//					found = true;
+//					break;
+//				}
+//			}
+//			
+//			if(!found)
+//				toDeleteArmyUIDs.add(existingMerchantUID);
+//		}
+//		
+//		//----------------------------------------------------------------//
+//		// delete armies ans merchants to be deleted
+//
+//		gameDao.deleteArmies(toDeleteArmyUIDs, player.getPlayerUID());
+
+		//----------------------------------------------------------------//
+		// Player
+		
+		gameDao.updatePlayer(player); // lastTurnPLayed, remove last Reports
+		
+	}
 	
 	//==================================================================================================//
 
@@ -96,6 +227,18 @@ public class GameManager implements IGameManager {
 		return items;
 	}
 
+	//==================================================================================================//
+
+	public List<Case> loadCases(List<String> caseUIDs) {
+		List<Case> cases = new ArrayList<Case>();
+
+		for(CaseDTO caseDTO : gameDao.loadCases(caseUIDs)){
+			cases.add(EntitiesConverter.convertCaseDTO(caseDTO));
+		}
+
+		return cases;
+	}
+	
 	//==================================================================================================//
 	// nouvel algo pour le deplacement des unites
 

@@ -1,5 +1,6 @@
 package com.uralys.tribes.dao.impl;
 
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -8,11 +9,13 @@ import javax.jdo.Query;
 
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.uralys.tribes.commons.Constants;
 import com.uralys.tribes.dao.IGameDAO;
 import com.uralys.tribes.entities.Case;
 import com.uralys.tribes.entities.City;
 import com.uralys.tribes.entities.Equipment;
 import com.uralys.tribes.entities.Move;
+import com.uralys.tribes.entities.Player;
 import com.uralys.tribes.entities.Unit;
 import com.uralys.tribes.entities.dto.CaseDTO;
 import com.uralys.tribes.entities.dto.CityDTO;
@@ -55,6 +58,11 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		playerDTO.setName("New Player");
 		playerDTO.setAllyUID(uralysUID);
 		playerDTO.setNbLands(7);
+		
+		long now = new Date().getTime();
+		long timeSpentMillis = now - Constants.SERVER_START;
+		
+		playerDTO.setLastStep(timeSpentMillis/(Constants.SERVER_STEP*60*1000));
 		
 		persist(playerDTO);
 		
@@ -176,7 +184,26 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		return UniversalDAO.getInstance().getListDTO(ItemDTO.class, 1, 100);
 	}
 
+	public List<CaseDTO> loadCases(List<String> caseUIDs) {
+		return UniversalDAO.getInstance().getListDTO(caseUIDs, CaseDTO.class);
+	}
+
 	//==================================================================================================//
+	
+	public void updatePlayer(Player player){
+
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		PlayerDTO playerDTO = pm.getObjectById(PlayerDTO.class, player.getUralysUID());
+	
+		long now = new Date().getTime();
+		long timeSpentMillis = now - Constants.SERVER_START;
+		
+		playerDTO.setLastStep(timeSpentMillis/(Constants.SERVER_STEP*60*1000));
+		playerDTO.setNbLands(player.getNbLands());
+
+		
+		pm.close();
+	}
 	
 	public void updateCityResources(City city){
 		

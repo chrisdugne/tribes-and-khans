@@ -1,0 +1,6 @@
+- creer ServerData : uid serverData, 0 joueurs
+- creer les items ! _bow, bow; 
+					_sword, sword; 
+					_armor, armor;
+- changer la version appengine
+- gandi domain a brancher dans le dns file

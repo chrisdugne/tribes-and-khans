@@ -33,7 +33,7 @@ public class DataviewerServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 	private String PASSWORD = "3bc7c708f8d865b506ffd1acde3b47f61af9445d";
-	private String VERSION = "1.1.0";
+	private String VERSION = "1.1.2";
 
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -157,7 +157,19 @@ public class DataviewerServlet extends HttpServlet {
 		
 		//-----------------------------------------------------------------------------------//
 		// - edit				
-		if(req.getParameter("action") != null && req.getParameter("action").equals("edit")){
+		if(req.getParameter("action") != null && req.getParameter("action").equals("confirmRemoveAll")){
+			out.println("<input type=\"button\" value=\"Confirm Remove All\" onclick=\"window.location = 'dataviewer?action=removeAll&pwd="+req.getParameter("pwd")+"&entity="+req.getParameter("entity")+"'\">");
+			out.println("<input type=\"button\" value=\"Cancel\" onclick=\"window.location = 'dataviewer?pwd="+req.getParameter("pwd")+"&dto="+req.getParameter("entity")+"'\">");
+			out.println("<h4>"+getDTOClass(req.getParameter("entity"))+"</h4>");
+			
+		}
+		else if(req.getParameter("action") != null && req.getParameter("action").equals("removeAll")){
+			Class selectedDTO = getDTOClass(req.getParameter("entity"));
+			
+			universalDao.deleteAll(selectedDTO);
+			out.println("<meta http-equiv=\"refresh\" content=\"0.1; URL=/dataviewer?pwd="+req.getParameter("pwd")+"&dto="+req.getParameter("entity")+"\">");	
+		}
+		else if(req.getParameter("action") != null && req.getParameter("action").equals("edit")){
 
 			
 			Class selectedDTO = getDTOClass(req.getParameter("entity"));
@@ -410,6 +422,7 @@ public class DataviewerServlet extends HttpServlet {
 
 			Class selectedDTO = getDTOClass(req.getParameter("dto"));
 			out.println("<input type=\"button\" value=\"Create new\" onclick=\"window.location = 'dataviewer?action=create&pwd="+req.getParameter("pwd")+"&entity="+req.getParameter("dto")+"'\">");
+			out.println("<input type=\"button\" value=\"Remove All!\" onclick=\"window.location = 'dataviewer?action=confirmRemoveAll&pwd="+req.getParameter("pwd")+"&entity="+req.getParameter("dto")+"'\">");
 			out.println("<h4>"+selectedDTO.getSimpleName()+"</h4>");
 			
 			int from = 1;

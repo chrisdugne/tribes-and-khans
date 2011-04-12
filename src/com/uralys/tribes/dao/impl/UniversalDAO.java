@@ -80,6 +80,15 @@ public class UniversalDAO{
 	}
 
 	//-----------------------------------------------------------------------------------//
+	
+	public <E> void deleteAll(Class<E> objectClass) {
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		Query query = pm.newQuery(objectClass);
+		query.deletePersistentAll();
+		pm.close();
+	}
+
+	//-----------------------------------------------------------------------------------//
 
 	public void makePersistent(Object newDTO) {
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();

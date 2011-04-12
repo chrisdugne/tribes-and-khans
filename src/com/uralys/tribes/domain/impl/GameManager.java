@@ -88,7 +88,7 @@ public class GameManager implements IGameManager {
 		}
 	}
 
-	public void savePlayer(Player player) {
+	public List<Unit> savePlayer(Player player) {
 		System.out.println("-------------------------------------------------");
 		System.out.println("Save turn pour joueur : " + player.getName());
 
@@ -119,49 +119,47 @@ public class GameManager implements IGameManager {
 			}
 		}
 		
-//		//----------------------------------------------------------------//
-//		// Armies
-//
-//		List<String> createdArmyUIDs = new ArrayList<String>();
-//		List<String> editedArmyUIDs = new ArrayList<String>();
-//		List<String> toDeleteArmyUIDs = new ArrayList<String>();
-//		
-//		for(Army army : player.getArmies()){
-//			
-//			if(army.getMoves().size() > 0){
-//				String moveUID = gameDao.saveMove(army.getMoves().get(0));
-//				army.getMoves().get(0).setMoveUID(moveUID);
-//			}
-//			
-//			if(army.getArmyUID().equals("new")){
-//				createdArmyUIDs.add(gameDao.createArmy(army));
-////				armyRaised += army.getSize();
-//			}
-//			else{
-//				gameDao.updateArmy(army);
-//				editedArmyUIDs.add(army.getArmyUID());
-//			}
-//
-//		}
-//
-//		List<String> existingArmyUIDs = gameDao.linkNewArmiesAndGetPreviousArmyUIDs(player.getPlayerUID(), createdArmyUIDs);
-//
-//		for(String existingArmyUID : existingArmyUIDs){
-//			System.out.println("existingArmyUID : " + existingArmyUID);
-//			boolean found = false;
-//			
-//			for(String editedArmyUID : editedArmyUIDs){
-//				if(editedArmyUID.equals(existingArmyUID)){
-//					found = true;
-//					break;
-//				}
-//			}
-//			
-//			if(!found)
-//				toDeleteArmyUIDs.add(existingArmyUID);
-//		}
-//		
-//		
+		//----------------------------------------------------------------//
+		// Units
+
+		List<String> createdUnitUIDs = new ArrayList<String>();
+		List<String> editedUnitUIDs = new ArrayList<String>();
+		List<String> toDeleteUnitUIDs = new ArrayList<String>();
+		
+		for(Unit unit : player.getUnits()){
+			
+			if(unit.getUnitUID().startsWith("NEW_")){ // flex newUnit : unitUID = 'playerUralysUID-nbUnits'
+				unit.setUnitUID(unit.getUnitUID().substring(4));
+				gameDao.createUnit(unit);
+				createdUnitUIDs.add(unit.getUnitUID());
+			}
+			else{
+				gameDao.updateUnit(unit);
+				editedUnitUIDs.add(unit.getUnitUID());
+			}
+
+			//place or replace Unit
+			placeUnit(unit, unit.getMoves(), new ArrayList<Unit>());
+		}
+
+		List<String> existingUnitUIDs = gameDao.linkNewUnitsAndGetPreviousUnitUIDs(player.getUralysUID(), createdUnitUIDs);
+
+		for(String existingUnitUID : existingUnitUIDs){
+			System.out.println("existingUnitUID : " + existingUnitUID);
+			boolean found = false;
+			
+			for(String editedUnitUID : editedUnitUIDs){
+				if(editedUnitUID.equals(existingUnitUID)){
+					found = true;
+					break;
+				}
+			}
+			
+			if(!found)
+				toDeleteUnitUIDs.add(existingUnitUID);
+		}
+		
+		
 //		//----------------------------------------------------------------//
 //		// Merchants
 //		
@@ -206,13 +204,15 @@ public class GameManager implements IGameManager {
 //		//----------------------------------------------------------------//
 //		// delete armies ans merchants to be deleted
 //
-//		gameDao.deleteArmies(toDeleteArmyUIDs, player.getPlayerUID());
+		gameDao.deleteUnits(toDeleteUnitUIDs, player.getUralysUID());
 
 		//----------------------------------------------------------------//
 		// Player
 		
 		gameDao.updatePlayer(player); // lastTurnPLayed, remove last Reports
+	
 		
+		return player.getUnits();
 	}
 	
 	//==================================================================================================//
@@ -250,11 +250,14 @@ public class GameManager implements IGameManager {
 	private static Player player1;
 	private static Player player2;
 	private static Player player3;
+	private static boolean debugLoop = false;
 
 	public static void main(String[] args){
 
 		//-----------------------------------------------------------------------------------//
-
+		
+		debugLoop = true;
+		
 		GameManager game = new GameManager(null);
 
 		for(int i=0; i<100; i++){
@@ -451,8 +454,8 @@ public class GameManager implements IGameManager {
 		System.out.println("moves pour unit : " + unit.getUnitUID());
 		
 		for(Move move : unit.getMoves()){
-			int i = move.getCase().getX();
-			int j = move.getCase().getY();
+			int i = move.getX();
+			int j = move.getY();
 			System.out.println("["+i+"]["+j+"] | value : " + move.getValue());
 		}
 	}
@@ -485,8 +488,8 @@ public class GameManager implements IGameManager {
 		
 		System.out.println("moves to check and record");
 		for(Move move : moves){
-			int i = move.getCase().getX();
-			int j = move.getCase().getY();
+			int i = move.getX();
+			int j = move.getY();
 
 			System.out.println("["+i+"]["+j+"]");
 		}
@@ -509,8 +512,8 @@ public class GameManager implements IGameManager {
 			newMove.setValue(currentUnitValue);
 			newMove.setUnitUID(unit.getUnitUID());
 
-			int i = newMove.getCase().getX();
-			int j = newMove.getCase().getY();
+			int i = newMove.getX();
+			int j = newMove.getY();
 
 			System.out.println("passage par case ["+i+"]["+j+"], de temps("+newMove.getTimeFrom()+") ˆ temps("+newMove.getTimeTo()+")");
 			Case _case = getCase(i,j);
@@ -550,10 +553,10 @@ public class GameManager implements IGameManager {
 									&& newMove.getTimeTo() <= recordedMove.getTimeTo())){
 						
 						System.out.println("	croisement pendant le passage : enregistrement du conflit");
-						conflict.getUnits().add(dummyGetUnit(unitRecordedUID));
+						conflict.getUnits().add(getUnit(unitRecordedUID));
 
 						if(unitsMakingThisReplacing.size() == 0 || !contains(unitsMakingThisReplacing, unitRecordedUID)){
-							unitsToReplace.add(dummyGetUnit(unitRecordedUID));							
+							unitsToReplace.add(getUnit(unitRecordedUID));							
 						}
 					}
 					else{
@@ -572,8 +575,13 @@ public class GameManager implements IGameManager {
 			// enregistrement du move dans les recordedMoves APRES check de ceux ci (sinon on va le checker avec lui meme)
 		
 			System.out.println("recording move " + newMove.getMoveUID());
-			unit.getMoves().add(newMove);
-			_case.getRecordedMoves().add(newMove);
+			if(debugLoop){
+				unit.getMoves().add(newMove);
+				_case.getRecordedMoves().add(newMove);
+			}
+			else{
+				gameDao.saveMove(newMove, unit.getUnitUID());
+			}
 		
 		} // fin du loop sur les moves 
 
@@ -641,10 +649,7 @@ public class GameManager implements IGameManager {
 		}
 
 		for(Move move : unit.getMoves()){
-			int i = move.getCase().getX();
-			int j = move.getCase().getY();
-			
-			removeMoveFromRecordedMoves(i,j, move.getMoveUID());
+			gameDao.deleteMove(move.getMoveUID(), move.getCaseUID(), unit.getUnitUID());
 		}
 
 		unit.setMoves(new ArrayList<Move>());
@@ -683,40 +688,48 @@ public class GameManager implements IGameManager {
 //		}
 //	}
 
-	private void removeMoveFromRecordedMoves(int i, int j, String moveUID) {
-		Case _case = getCase(i,j);
-		int indexToRemove = -1;
-
-		for(Move recordedMove : _case.getRecordedMoves()){
-			if(recordedMove.getMoveUID().equals(moveUID)){
-				indexToRemove = _case.getRecordedMoves().indexOf(recordedMove);
-				break;
-			}
-		}
-
-		if(indexToRemove >= 0){
-			System.out.println("remove move " + _case.getRecordedMoves().get(indexToRemove).getMoveUID());
-			_case.getRecordedMoves().remove(indexToRemove);
-		}
-	}
+//	private void removeMoveFromRecordedMoves(int i, int j, String moveUID) {
+//		Case _case = getCase(i,j);
+//		int indexToRemove = -1;
+//
+//		for(Move recordedMove : _case.getRecordedMoves()){
+//			if(recordedMove.getMoveUID().equals(moveUID)){
+//				indexToRemove = _case.getRecordedMoves().indexOf(recordedMove);
+//				break;
+//			}
+//		}
+//
+//		if(indexToRemove >= 0){
+//			System.out.println("remove move " + _case.getRecordedMoves().get(indexToRemove).getMoveUID());
+//			_case.getRecordedMoves().remove(indexToRemove);
+//		}
+//	}
 
 	private Case getCase(int i, int j) {
-		return board[i][j];
+		if(debugLoop)
+			return board[i][j];
+		else{
+			return EntitiesConverter.convertCaseDTO(gameDao.getCase(i,j));
+		}
+		
 	}
 
 //	private boolean sameAlly(Unit unit, Unit opponent) {
 //		return unit.getPlayer().getAllyUID().equals(opponent.getPlayer().getAllyUID());
 //	}
 
-	private Unit dummyGetUnit(String unitUID) {
-		if(unitUID.equals("army1"))
-			return army1;
-		if(unitUID.equals("army2"))
-			return army2;
-		if(unitUID.equals("army3"))
-			return army3;
+	private Unit getUnit(String unitUID) {
+		if(debugLoop){
+			if(unitUID.equals("army1"))
+				return army1;
+			if(unitUID.equals("army2"))
+				return army2;
+			if(unitUID.equals("army3"))
+				return army3;
 
-		return null;
+		}
+
+		return EntitiesConverter.convertUnitDTO(gameDao.getUnit(unitUID));
 	}
 	
 

@@ -36,6 +36,11 @@ public class EntitiesConverter {
 		Move move = new Move();
 		
 		move.setMoveUID(moveDTO.getMoveUID());
+		move.setCaseUID(moveDTO.getCaseUID());
+		move.setTimeFrom(moveDTO.getTimeFrom());
+		move.setTimeTo(moveDTO.getTimeTo());
+		move.setUnitUID(moveDTO.getUnitUID());
+		move.setValue(moveDTO.getValue());
 		
 		return move;
 	}

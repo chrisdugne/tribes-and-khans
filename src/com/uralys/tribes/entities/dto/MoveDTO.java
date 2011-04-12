@@ -20,10 +20,12 @@ public class MoveDTO {
     @Extension(vendorName="datanucleus", key="gae.pk-name", value="true")
 	private String moveUID;
 
-	@Persistent private int xFrom;
-	@Persistent private int xTo;
-	@Persistent private int yFrom;
-	@Persistent private int yTo;
+
+	@Persistent private String caseUID;
+	@Persistent private long timeFrom;
+	@Persistent private long timeTo;
+	@Persistent private String unitUID;
+	@Persistent private int value;
 
 	//-----------------------------------------------------------------------------------//
 
@@ -39,29 +41,35 @@ public class MoveDTO {
 	public void setMoveUID(String moveUID) {
 		this.moveUID = moveUID;
 	}
-	public int getxFrom() {
-		return xFrom;
+	public String getCaseUID() {
+		return caseUID;
 	}
-	public void setxFrom(int xFrom) {
-		this.xFrom = xFrom;
+	public void setCaseUID(String caseUID) {
+		this.caseUID = caseUID;
 	}
-	public int getxTo() {
-		return xTo;
+	public long getTimeFrom() {
+		return timeFrom;
 	}
-	public void setxTo(int xTo) {
-		this.xTo = xTo;
+	public void setTimeFrom(long timeFrom) {
+		this.timeFrom = timeFrom;
 	}
-	public int getyFrom() {
-		return yFrom;
+	public long getTimeTo() {
+		return timeTo;
 	}
-	public void setyFrom(int yFrom) {
-		this.yFrom = yFrom;
+	public void setTimeTo(long timeTo) {
+		this.timeTo = timeTo;
 	}
-	public int getyTo() {
-		return yTo;
+	public String getUnitUID() {
+		return unitUID;
 	}
-	public void setyTo(int yTo) {
-		this.yTo = yTo;
+	public void setUnitUID(String unitUID) {
+		this.unitUID = unitUID;
+	}
+	public int getValue() {
+		return value;
+	}
+	public void setValue(int value) {
+		this.value = value;
 	}
 	
 	//-----------------------------------------------------------------------------------//

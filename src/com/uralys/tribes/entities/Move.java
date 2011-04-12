@@ -6,7 +6,7 @@ public class Move {
 	
 	private String moveUID;
 
-	private Case _case;
+	private String caseUID;
 	private long timeFrom;
 	private long timeTo;
 	private String unitUID;
@@ -17,9 +17,10 @@ public class Move {
 	public Move(){}
 	
 	public Move(int i, int j, long timeFrom, long timeTo) {
-		_case = new Case(i, j);
+		
 		this.timeFrom = timeFrom;
 		this.timeTo = timeTo;
+		this.caseUID = "case_"+i+"_"+j;
 	}
 
 	//-----------------------------------------------------------------------------------//
@@ -30,11 +31,11 @@ public class Move {
 	public void setMoveUID(String moveUID) {
 		this.moveUID = moveUID;
 	}
-	public Case getCase() {
-		return _case;
+	public String getCaseUID() {
+		return caseUID;
 	}
-	public void setCase(Case _case) {
-		this._case = _case;
+	public void setCaseUID(String caseUID) {
+		this.caseUID = caseUID;
 	}
 	public long getTimeFrom() {
 		return timeFrom;
@@ -62,5 +63,16 @@ public class Move {
 	}
 	
 	//-----------------------------------------------------------------------------------//
+	
+	// caseUID : case_i_j
+	public int getX(){
+		String[] split = caseUID.split("_");
+		return Integer.parseInt(split[1]);
+	}
+
+	public int getY(){
+		String[] split = caseUID.split("_");
+		return Integer.parseInt(split[2]);
+	}
 	
 }

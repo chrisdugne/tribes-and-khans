@@ -7,6 +7,7 @@ import com.uralys.tribes.domain.IGameManager;
 import com.uralys.tribes.entities.Case;
 import com.uralys.tribes.entities.Item;
 import com.uralys.tribes.entities.Player;
+import com.uralys.tribes.entities.Unit;
 import com.uralys.tribes.services.IGameService;
 
 public class GameService implements IGameService {
@@ -36,15 +37,15 @@ public class GameService implements IGameService {
 		}
 	}
 	
-	public boolean savePlayer(Player player) {
+	public List<Unit> savePlayer(Player player) {
 		try{
-			gameManager.savePlayer(player);
+			return gameManager.savePlayer(player);
 		}
 		catch(Exception e){
 			e.printStackTrace();
+			return null;
 		}
 		
-		return true;
 	}
 
 	//=========================================================================//

@@ -7,7 +7,27 @@ package com.uralys.tribes.entities
 	[RemoteClass(alias="com.uralys.tribes.entities.City")]
 	public class City
 	{	
+		
+		//---------------------------------------------------------------------------//
 
+		protected var _cityUID:String;
+		protected var _forgeUID:String;
+		protected var _name:String;
+		protected var _population:int;
+		protected var _wheat:int;
+		protected var _wood:int;
+		protected var _iron:int;
+		protected var _gold:int;
+		protected var _peopleCreatingWheat:int;
+		protected var _peopleCreatingWood:int;
+		protected var _peopleCreatingIron:int;
+		protected var _x:int;
+		protected var _y:int;
+		protected var _equipmentStock:ArrayCollection = new ArrayCollection();
+		protected var _smiths:ArrayCollection = new ArrayCollection();
+		
+		//---------------------------------------------------------------------------//
+		
 		public function get cityUID():String {
 			return _cityUID;
 		}
@@ -136,23 +156,6 @@ package com.uralys.tribes.entities
 			_smiths = o;
 		}
 	
-		protected var _cityUID:String;
-		protected var _forgeUID:String;
-		protected var _name:String;
-		protected var _population:int;
-		protected var _wheat:int;
-		protected var _wood:int;
-		protected var _iron:int;
-		protected var _gold:int;
-		protected var _peopleCreatingWheat:int;
-		protected var _peopleCreatingWood:int;
-		protected var _peopleCreatingIron:int;
-		protected var _x:int;
-		protected var _y:int;
-		protected var _equipmentStock:ArrayCollection = new ArrayCollection();
-		protected var _smiths:ArrayCollection = new ArrayCollection();
-
-		
 		
 		//===============================================================================================//
 		// 	only on flex side

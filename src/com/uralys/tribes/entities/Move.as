@@ -1,21 +1,33 @@
 package com.uralys.tribes.entities
 {
+	import com.uralys.tribes.commons.Session;
+	
 	import mx.collections.ArrayCollection;
 
 	[Bindable]
 	[RemoteClass(alias="com.uralys.tribes.entities.Move")]
 	public class Move
 	{
-		public function Move(){}
+		public function Move(){
+		}
 		
+		// on ne peut pas le mettre dans le constructeur, car BlazeDS l'utilise aussi
+		public function initNewMove(unitUID:String, i:int, j:int, __timeFrom:Number = -1):void{
+			_timeFrom = __timeFrom == -1 ? new Date().getTime() : __timeFrom;
+			_moveUID = "NEW_"+i+"_"+j+"_"+unitUID+"_"+timeFrom;
+			_caseUID = "case_"+i+"_"+j;
+			_unitUID = unitUID;
+			_timeTo = -1;
+		}
+			
 		//--------------------------------------------------------------//
 		
 		protected var _moveUID:String;
 		protected var _unitUID:String;
-		protected var __case:Case;
+		protected var _caseUID:String;
 		protected var _timeFrom:Number;
 		protected var _timeTo:Number;
-		protected var _valur:int;
+		protected var _value:int;
 		
 		//--------------------------------------------------------------//
 		
@@ -36,12 +48,12 @@ package com.uralys.tribes.entities
 			_unitUID = o;
 		}
 		
-		public function get _case():Case {
-			return __case;
+		public function get caseUID():String {
+			return _caseUID;
 		}
 		
-		public function set _case(o:Case):void {
-			__case = o;
+		public function set caseUID(o:String):void {
+			_caseUID = o;
 		}
 		
 		public function get timeFrom():Number {
@@ -60,12 +72,12 @@ package com.uralys.tribes.entities
 			_timeTo = o;
 		}
 		
-		public function get valur():int {
-			return _valur;
+		public function get value():int {
+			return _value;
 		}
 		
-		public function set valur(o:int):void {
-			_valur = o;
+		public function set value(o:int):void {
+			_value = o;
 		}
 		
 

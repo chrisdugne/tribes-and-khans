@@ -50,6 +50,7 @@
 			import com.uralys.tribes.entities.Player;
 			import com.uralys.tribes.entities.City;
 			import com.uralys.tribes.entities.Unit;
+			import com.uralys.tribes.entities.Move;
 			import com.uralys.tribes.entities.Equipment;
 			import com.uralys.tribes.entities.Conflict;
 			import com.uralys.tribes.entities.MoveConflict;
@@ -57,7 +58,8 @@
 				registerClassAlias("com.uralys.tribes.entities.Game", Game);
 				registerClassAlias("com.uralys.tribes.entities.Player", Player);
 				registerClassAlias("com.uralys.tribes.entities.City", City);
-				registerClassAlias("com.uralys.tribes.entities.Army", Unit);
+				registerClassAlias("com.uralys.tribes.entities.Unit", Unit);
+				registerClassAlias("com.uralys.tribes.entities.Move", com.uralys.tribes.entities.Move);
 				registerClassAlias("com.uralys.tribes.entities.Equipment", Equipment);
 				registerClassAlias("com.uralys.tribes.entities.Conflict", Conflict);
 				registerClassAlias("com.uralys.tribes.entities.MoveConflict", MoveConflict);
@@ -65,7 +67,7 @@
 			
 			//-----------------------------------------------------------------------//
 			
-			public function message(message:String, time:int):void {
+			public function message(message:String, time:int = 3):void {
 				displayMessage.message = message;
 				displayMessage.time = time;
 				displayMessage.showMessage();

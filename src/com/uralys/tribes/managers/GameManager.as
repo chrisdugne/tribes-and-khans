@@ -9,6 +9,7 @@ package com.uralys.tribes.managers {
 	import com.uralys.tribes.entities.City;
 	import com.uralys.tribes.entities.Equipment;
 	import com.uralys.tribes.entities.Game;
+	import com.uralys.tribes.entities.Move;
 	import com.uralys.tribes.entities.Player;
 	import com.uralys.tribes.entities.Smith;
 	import com.uralys.tribes.entities.Unit;
@@ -50,12 +51,6 @@ package com.uralys.tribes.managers {
 			this.board = board;
 		}
 
-		public function tracetest():void{
-			trace("city.woodSpent : " + board.selectedCity.woodSpent);
-			trace("city.woodEarned : " + board.selectedCity.woodEarned);
-			trace("city.wood : " + board.selectedCity.wood);
-		}
-		
 		//=====================================================================================//
 		
 		private var board:Board;
@@ -65,8 +60,6 @@ package com.uralys.tribes.managers {
 		//============================================================================================//
 		
 		private function loginForceSteps():void {
-			trace("-------------");
-			trace("loginForceSteps");
 			
 			var now:Number = new Date().getTime();
 			var timeSpentMillis:Number = now - Numbers.SERVER_START;
@@ -74,22 +67,15 @@ package com.uralys.tribes.managers {
 			var nbStepsSinceBeginning:int = timeSpentMillis/(Numbers.TIME_PER_STEP*60*1000);
 			var nbStepsMissed:int = nbStepsSinceBeginning - Session.player.lastStep;
 			
-			trace("Session.player.lastStep : " + Session.player.lastStep);
-			trace("nbStepsMissed : " + nbStepsMissed);
-		
-			
 			for(var i:int = 0; i < nbStepsMissed-1; i++){
-				if(i%100 == 0)
-					trace(i);
 				saveStep(true);
 			}
-			
+		
 			// enregistre le statut lors du dernier step
-			trace("lastStep");
 			saveStep(false, true);
 		}
 		
-		public function saveStep(loginCatchUp:Boolean = false, loadCases:Boolean = false){
+		public function saveStep(loginCatchUp:Boolean = false, needToLoadCases:Boolean = false){
 			for each(var city:City in Session.player.cities){
 				
 				city.wheat += city.wheatEarned - city.wheatSpent;
@@ -150,7 +136,8 @@ package com.uralys.tribes.managers {
 			}
 			
 			for each(var unit:Unit in Session.player.units){
-				if(unit.unitUID == "new"){
+				if(unit.unitUID.indexOf("NEW_") != -1){ // newUnit : unitUID = 'NEW_...' create equipment
+					
 					var bows:Equipment = new Equipment();
 					var swords:Equipment = new Equipment();
 					var armors:Equipment = new Equipment();
@@ -173,6 +160,10 @@ package com.uralys.tribes.managers {
 						}
 					}
 					
+					bows.equimentUID = unit.unitUID + "_" + bows.item.itemUID; 
+					swords.equimentUID = unit.unitUID + "_" + swords.item.itemUID; 
+					armors.equimentUID = unit.unitUID + "_" + armors.item.itemUID; 
+
 					unit.equipments.addItem(bows);
 					unit.equipments.addItem(swords);
 					unit.equipments.addItem(armors);
@@ -193,15 +184,35 @@ package com.uralys.tribes.managers {
 					}
 				}
 				
-				unit.armyCircle = null;
-				unit.ellipseTo = null;
-				unit.lineTo = null;
-				unit.tmpLandSquare = null;
+				//unit.armyCircle = null;
+				//unit.ellipseTo = null;
+				//unit.lineTo = null;
+				//unit.tmpLandSquare = null;
 			}
 			
 			(Session.player.cities.getItemAt(0) as City).gold += Session.player.nbLands;
-			if(!loginCatchUp)
-				savePlayer(loadCases);
+			if(!loginCatchUp){
+				savePlayer(needToLoadCases);
+				
+				// remove le tag NEW_ sur les units + equipments + moves
+				for each(var unit:Unit in Session.player.units){
+					if(unit.unitUID.indexOf("NEW_") != -1)
+						unit.unitUID = unit.unitUID.substring(4);
+
+					for each(var equipment:Equipment in unit.equipments){
+						if(equipment.equimentUID.indexOf("NEW_") != -1)
+							equipment.equimentUID = equipment.equimentUID.substring(4);
+					}
+
+					for each(var move:Move in unit.moves){
+						if(move.moveUID.indexOf("NEW_") != -1)
+							move.moveUID = move.moveUID.substring(4);
+					}
+				}
+							
+			}
+			
+			
 		}
 		
 		public function refreshCity(city:City, starvation:Boolean):void{
@@ -356,9 +367,9 @@ package com.uralys.tribes.managers {
 
 			var caseUIDs:ArrayCollection = new ArrayCollection();
 			
-			for(var i:int = 0; i < 30; i++){
-				for(var j:int = 0; j < 30; j++){
-					caseUIDs.addItem("case_"+(centerX-15+i)+"_"+(centerY-15+j));
+			for(var i:int = 0; i < Numbers.NB_TILES_ON_EDGE_BY_LOADING; i++){
+				for(var j:int = 0; j < Numbers.NB_TILES_ON_EDGE_BY_LOADING; j++){
+					caseUIDs.addItem("case_"+(centerX-Numbers.NB_TILES_ON_EDGE_BY_LOADING/2+i)+"_"+(centerY-Numbers.NB_TILES_ON_EDGE_BY_LOADING/2+j));
 				}
 			}
 			
@@ -366,16 +377,22 @@ package com.uralys.tribes.managers {
 			gameWrapper.loadCases(caseUIDs);
 		}
 
-		public function savePlayer(loadCases:Boolean):void{
-			if(loadCases)
+		public function savePlayer(needToLoadCases:Boolean):void{
+			if(needToLoadCases)
 				gameWrapper.savePlayer.addEventListener("result", readyToLoadCases);
+			else
+				gameWrapper.savePlayer.removeEventListener("result", readyToLoadCases);
 			
+			gameWrapper.savePlayer.addEventListener("result", turnSaved);
 			gameWrapper.savePlayer(Session.player);
 		}
 		
 		//============================================================================================//
 		//  RESULTS FROM SERVER	
 		
+		
+		private function turnSaved(event:ResultEvent):void{
+		}
 		
 		private function readyToLoadCases(event:ResultEvent):void{
 			var city:City = Session.player.cities.getItemAt(0) as City;
@@ -395,16 +412,17 @@ package com.uralys.tribes.managers {
 			// init du tableau 29x29
 			
 			Session.map = [];
+			var offset:int = Numbers.NB_TILES_ON_EDGE_BY_LOADING/2;
 			
-			for(var i:int=Session.centerX-15; i < Session.centerX+15; i++){
+			for(var i:int=Session.centerX-offset; i < Session.centerX+offset; i++){
 				Session.map[i] = [];
-				for(var j:int=Session.centerY-15; j < Session.centerY+15; j++){
+				for(var j:int=Session.centerY-offset; j < Session.centerY+offset; j++){
 					Session.map[i][j] = new Case(i,j);
 				}
 			}
 
 			//------------------------------------------------//
-			// affectationdes vraies cases
+			// affectation des vraies cases
 			
 			for each(var _case:Case in Session.CASES_LOADED){
 				Session.map[_case.x][_case.y] = _case;

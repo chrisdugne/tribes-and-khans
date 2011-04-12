@@ -10,11 +10,25 @@ import mx.collections.ArrayCollection;
 **/
 public class Translations{
 
+	//-----------------------------------------------------------------------------------//
+
 	[Bindable]
 	public static var WELCOME:ArrayCollection = new ArrayCollection(
 									["Profil Uralys créé. Bienvenue !",
 									"Uralys profile created. Welcome !",
 									"Uralys profile created. Welcome !"]);
+	
+	[Bindable]
+	public static var CHECK_EMAIL:ArrayCollection = new ArrayCollection(
+									["Vérifiez votre email",
+									"Check your email",
+									"Check your email"]);
+	
+	[Bindable]
+	public static var CHECK_PWD:ArrayCollection = new ArrayCollection(
+									["Minimum 3 caractères pour le mot de passe",
+									"Password must be at least 3 characters",
+									"Password must be at least 3 characters"]);
 	
 	//-----------------------------------------------------------------------------------//
 
@@ -73,6 +87,18 @@ public class Translations{
 									["Rejoindre une partie",
 									"Join a Game",
 									"Join a Game"]);
+
+	[Bindable]
+	public static var FREE_PEOPLE:ArrayCollection = new ArrayCollection(
+									["Tout le monde travaille, libérez des travailleurs ! (50 requis)",
+									"Everybody is busy, free some workers ! (50 requested)",
+									"Everybody is busy, free some workers ! (50 requested)"]);
+
+	[Bindable]
+	public static var REMAINING_TIME:ArrayCollection = new ArrayCollection(
+									["Prochaine récolte dans",
+									"Next step in",
+									"Next step in"]);
 	
 
 	//-----------------------------------------------------------------------------------//

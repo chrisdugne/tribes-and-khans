@@ -15,6 +15,9 @@ import mx.collections.ArrayCollection;
 	[Bindable]
 	public static var TIME_PER_STEP:int = 10;
 
+	[Bindable]
+	public static var NB_TILES_ON_EDGE_BY_LOADING:int = 60;
+
 	// Main data  ==============================================================
 	
 	[Bindable]
@@ -89,6 +92,16 @@ import mx.collections.ArrayCollection;
 	[Bindable] public static var CITY_WOOD_BASE_PRICE:Number = 10000;
 	[Bindable] public static var CITY_GOLD_BASE_PRICE:Number = 500;
 
+	//==================================================================================================//
+	// 
+	
+	// speed = nb minutes pour avancer d'une case
+	[Bindable] public static var ARMY_BASE_SPEED:int = 200;
+
+	// speed = nb minutes pour avancer d'une case
+	[Bindable] public static var MERCHANT_BASE_SPEED:int = 340;
+	
+	
 	//==================================================================================================//
 	// contrees
 

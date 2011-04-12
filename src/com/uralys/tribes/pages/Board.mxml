@@ -15,7 +15,6 @@
 			import com.uralys.tribes.commons.Translations;
 			import com.uralys.tribes.core.BoardClickAnalyser;
 			import com.uralys.tribes.core.BoardDrawer;
-			import com.uralys.tribes.core.CronListener;
 			import com.uralys.tribes.core.Pager;
 			import com.uralys.tribes.entities.City;
 			import com.uralys.tribes.entities.Conflict;
@@ -60,8 +59,6 @@
 
 			protected function init():void{
 
-				CronListener.getInstance().init(this);
-				
 				timer = new Timer(41,1);
 				timer.addEventListener(TimerEvent.TIMER_COMPLETE, moveStoppedDuringDragging);
 
@@ -83,15 +80,25 @@
 			
 			// click sur une ville dans la barre laterale
 			protected function onCityClick(event:ItemClickEvent):void{
-				mapPositioner.x = 250 - event.currentTarget.selectedItem.x;
-				mapPositioner.y = 250 - event.currentTarget.selectedItem.y;
+				var city:City = event.currentTarget.selectedItem;
+				mapPositioner.x = Session.MAP_WIDTH/2 
+									- city.x * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4) 
+									- Numbers.LAND_WIDTH/2;
+				mapPositioner.y = Session.MAP_HEIGHT/2 
+									- city.y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2) 
+									- Numbers.LAND_HEIGHT/2;
 			}
 			
 			// click sur une armee dans la barre laterale
 			// ou dans la liste sous 'enter city'
 			protected function onArmyClick(event:ItemClickEvent):void{
-				mapPositioner.x = 250 - event.currentTarget.selectedItem.x;
-				mapPositioner.y = 250 - event.currentTarget.selectedItem.y;
+				var unit:Unit = event.currentTarget.selectedItem;
+				mapPositioner.x = Session.MAP_WIDTH/2 
+									- unit.currentCase.x * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4) 
+									- Numbers.LAND_WIDTH/2;
+				mapPositioner.y = Session.MAP_HEIGHT/2 
+									- unit.currentCase.y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2) 
+									- Numbers.LAND_WIDTH/2;
 				
 				selectionChoiceGroup.includeInLayout = false;
 				selectionChoiceGroup.visible = false;
@@ -106,54 +113,54 @@
 			//-----------------------------------------------------------//
 			
 			// set params est appelee avant creationComplete (init())
-			// ici args contient 1 valeur.
-			// args[0] game
 			public function set params(args:Array):void{
 
 				this.selectedCity = Session.player.cities.getItemAt(0) as City;
 				GameManager.getInstance().refreshCity(selectedCity, false);
 
+				refreshUnits();
+
+			}
+			
+			public function refreshUnits():void{
+				
 				for each(var unit:Unit in Session.player.units){
-					if(unit.type == 2)
-						continue;
 					
-					for each(var city:City in Session.player.cities){
-						if(unit.currentCase.x == city.x && unit.currentCase.y == city.y){
-							city.armies.addItem(unit);
-							city.unitsToFeed += unit.size;
-							break;
+					if(unit.type == 2){
+						for each(var city:City in Session.player.cities){
+							if(unit.currentCase.x == city.x && unit.currentCase.y == city.y){
+								city.merchants.addItem(unit);
+								city.unitsToFeed += unit.size;
+								break;
+							}
 						}
 					}
 					
-					for each(var equipment:Equipment in unit.equipments){
-						switch(equipment.item.name){
-							case "bow" :
-								unit.bows += equipment.size;
+					else if(unit.type == 1){
+						for each(var city:City in Session.player.cities){
+							
+							if(unit.currentCase.x == city.x && unit.currentCase.y == city.y){
+								city.armies.addItem(unit);
+								city.unitsToFeed += unit.size;
 								break;
-							case "sword" :
-								unit.swords += equipment.size;
-								break;
-							case "armor" :
-								unit.armors += equipment.size;
-								break;
+							}
 						}
-					}
-				}
-
-				for each(var merchant:Unit in Session.player.units){
-					
-					if(unit.type == 1)
-						continue;
-
-					for each(var city:City in Session.player.cities){
-						if(merchant.x == city.x && merchant.y == city.y){
-							city.merchants.addItem(merchant);
-							city.unitsToFeed += merchant.size;
-							break;
+						
+						for each(var equipment:Equipment in unit.equipments){
+							switch(equipment.item.name){
+								case "bow" :
+									unit.bows += equipment.size;
+									break;
+								case "sword" :
+									unit.swords += equipment.size;
+									break;
+								case "armor" :
+									unit.armors += equipment.size;
+									break;
+							}
 						}
 					}
 				}
-
 			}
 			
 			//-----------------------------------------------------------//
@@ -223,48 +230,50 @@
 				coordinateX = Session.COORDINATE_X;
 				coordinateY = Session.COORDINATE_Y;
 				
-				if(Session.CURRENT_SELECTION_IS_ARMY){
-					Mouse.hide();
+//				if(Session.CURRENT_SELECTION_IS_ARMY){
+//					Mouse.hide();
 					
-					if(!selectedUnit.ellipseToIsDrawn){
-						selectedUnit.ellipseTo = new Ellipse();
-						selectedUnit.ellipseTo.width = selectedUnit.radius*2;
-						selectedUnit.ellipseTo.height = selectedUnit.radius*2;
-						selectedUnit.ellipseTo.fill = new SolidColor(selectedUnit.type == 1 ? Numbers.WHITE : Numbers.YELLOW, 0.5);
-						
-						boardEntities.addElement(selectedUnit.ellipseTo);
-						selectedUnit.ellipseToIsDrawn = true;
-					}
+//					if(!selectedUnit.ellipseToIsDrawn){
+//						selectedUnit.ellipseTo = new Ellipse();
+//						selectedUnit.ellipseTo.width = selectedUnit.radius*2;
+//						selectedUnit.ellipseTo.height = selectedUnit.radius*2;
+//						selectedUnit.ellipseTo.fill = new SolidColor(selectedUnit.type == 1 ? Numbers.WHITE : Numbers.YELLOW, 0.5);
+//						
+//						boardEntities.addElement(selectedUnit.ellipseTo);
+//						selectedUnit.ellipseToIsDrawn = true;
+//					}
+//					
+//					if(!selectedUnit.lineToIsDrawn){
+//						selectedUnit.lineTo = new Line();
+//						selectedUnit.lineTo.xFrom = selectedUnit.x;
+//						selectedUnit.lineTo.yFrom = selectedUnit.y;
+//						selectedUnit.lineTo.stroke = radialGrad;
+//						
+//						boardEntities.addElement(selectedUnit.lineTo);
+//						selectedUnit.lineToIsDrawn = true;
+//					}
+//					
+//					selectedUnit.ellipseTo.x = coordinateX - selectedUnit.ellipseTo.width/2;
+//					selectedUnit.ellipseTo.y = coordinateY - selectedUnit.ellipseTo.height/2;
+//					selectedUnit.lineTo.xTo = coordinateX;
+//					selectedUnit.lineTo.yTo = coordinateY;
+//					
+//					var hyp:Number = Math.sqrt(Math.pow(selectedUnit.lineTo.xFrom - coordinateX,2) + Math.pow(selectedUnit.lineTo.yFrom - coordinateY,2));
+//					
+//					if(hyp > selectedUnit.speed){
+//						Mouse.show();
+//						selectedUnit.lineTo.xTo = selectedUnit.lineTo.xFrom - (selectedUnit.speed * (selectedUnit.lineTo.xFrom - coordinateX)/hyp);
+//						selectedUnit.lineTo.yTo = selectedUnit.lineTo.yFrom - (selectedUnit.speed * (selectedUnit.lineTo.yFrom - coordinateY)/hyp);
+//						selectedUnit.ellipseTo.x = selectedUnit.lineTo.xTo - selectedUnit.ellipseTo.width/2;
+//						selectedUnit.ellipseTo.y = selectedUnit.lineTo.yTo - selectedUnit.ellipseTo.height/2;
+//					}
 					
-					if(!selectedUnit.lineToIsDrawn){
-						selectedUnit.lineTo = new Line();
-						selectedUnit.lineTo.xFrom = selectedUnit.x;
-						selectedUnit.lineTo.yFrom = selectedUnit.y;
-						selectedUnit.lineTo.stroke = radialGrad;
-						
-						boardEntities.addElement(selectedUnit.lineTo);
-						selectedUnit.lineToIsDrawn = true;
-					}
+//					BoardDrawer.getInstance().testLand(selectedUnit);
 					
-					selectedUnit.ellipseTo.x = coordinateX - selectedUnit.ellipseTo.width/2;
-					selectedUnit.ellipseTo.y = coordinateY - selectedUnit.ellipseTo.height/2;
-					selectedUnit.lineTo.xTo = coordinateX;
-					selectedUnit.lineTo.yTo = coordinateY;
-					
-					var hyp:Number = Math.sqrt(Math.pow(selectedUnit.lineTo.xFrom - coordinateX,2) + Math.pow(selectedUnit.lineTo.yFrom - coordinateY,2));
-					
-					if(hyp > selectedUnit.speed){
-						Mouse.show();
-						selectedUnit.lineTo.xTo = selectedUnit.lineTo.xFrom - (selectedUnit.speed * (selectedUnit.lineTo.xFrom - coordinateX)/hyp);
-						selectedUnit.lineTo.yTo = selectedUnit.lineTo.yFrom - (selectedUnit.speed * (selectedUnit.lineTo.yFrom - coordinateY)/hyp);
-						selectedUnit.ellipseTo.x = selectedUnit.lineTo.xTo - selectedUnit.ellipseTo.width/2;
-						selectedUnit.ellipseTo.y = selectedUnit.lineTo.yTo - selectedUnit.ellipseTo.height/2;
-					}
-					
-					BoardDrawer.getInstance().testLand(selectedUnit);
-					
-				}
-				else if(isDragging){
+//				}
+//				else if(isDragging){
+				
+				if(isDragging){
 					
 					timer.stop();
 					timer.reset();
@@ -283,15 +292,15 @@
 				Mouse.show();
 				
 				if(autoMoveNotNeeded){
-					if(Session.CURRENT_SELECTION_IS_ARMY){
-						BoardDrawer.getInstance().removeArmySelection();
-						selectedUnit.moves = new ArrayCollection();
-						selectedUnit.moves.addItem(new com.uralys.tribes.entities.Move());
-						
-						var clickX:int = event.localX;
-						var clickY:int = event.localY;
-						var cityEntered:City = null;
-						
+//					if(Session.CURRENT_SELECTION_IS_ARMY){
+//						BoardDrawer.getInstance().removeArmySelection();
+//						selectedUnit.moves = new ArrayCollection();
+//						selectedUnit.moves.addItem(new com.uralys.tribes.entities.Move(selectedUnit.unitUID));
+//						
+//						var clickX:int = event.localX;
+//						var clickY:int = event.localY;
+//						var cityEntered:City = null;
+//					}
 //						for each(var player:Player in game.players){
 //							for each(var city:City in player.cities){
 //								if(selectedUnit.ellipseTo != null && Math.sqrt(Math.pow(selectedUnit.ellipseTo.x - city.x,2) + Math.pow(selectedUnit.ellipseTo.y - city.y,2)) <= city.radius) {
@@ -304,25 +313,24 @@
 //								break;
 //						}
 						
-						selectedUnit.moves.getItemAt(0).xFrom = selectedUnit.x;
-						selectedUnit.moves.getItemAt(0).yFrom = selectedUnit.y;
-						if(cityEntered){
-							selectedUnit.moves.getItemAt(0).xTo = cityEntered.x;
-							selectedUnit.moves.getItemAt(0).yTo = cityEntered.y;
-							selectedUnit.lineTo.xTo = cityEntered.x;
-							selectedUnit.lineTo.yTo = cityEntered.y;
-							selectedUnit.ellipseTo.x = cityEntered.x - selectedUnit.ellipseTo.width/2;
-							selectedUnit.ellipseTo.y = cityEntered.y - selectedUnit.ellipseTo.height/2;
-						}
-						else{
-							if(selectedUnit.ellipseTo != null){
-								selectedUnit.moves.getItemAt(0).xTo = selectedUnit.lineTo.xTo;
-								selectedUnit.moves.getItemAt(0).yTo = selectedUnit.lineTo.yTo;
-							}
-						}
-					}
-					else
-						BoardClickAnalyser.getInstance().clickOnBoard(event);
+//						selectedUnit.moves.getItemAt(0).xFrom = selectedUnit.x;
+//						selectedUnit.moves.getItemAt(0).yFrom = selectedUnit.y;
+//						if(cityEntered){
+//							selectedUnit.moves.getItemAt(0).xTo = cityEntered.x;
+//							selectedUnit.moves.getItemAt(0).yTo = cityEntered.y;
+//							selectedUnit.lineTo.xTo = cityEntered.x;
+//							selectedUnit.lineTo.yTo = cityEntered.y;
+//							selectedUnit.ellipseTo.x = cityEntered.x - selectedUnit.ellipseTo.width/2;
+//							selectedUnit.ellipseTo.y = cityEntered.y - selectedUnit.ellipseTo.height/2;
+//						}
+//						else{
+//							if(selectedUnit.ellipseTo != null){
+//								selectedUnit.moves.getItemAt(0).xTo = selectedUnit.lineTo.xTo;
+//								selectedUnit.moves.getItemAt(0).yTo = selectedUnit.lineTo.yTo;
+//							}
+//						}
+//					else
+//						BoardClickAnalyser.getInstance().clickOnBoard(event);
 					
 					return;
 				}
@@ -393,6 +401,12 @@
 				BoardClickAnalyser.getInstance().setBoard(this);
 				BoardDrawer.getInstance().setBoard(this);
 
+				/*
+					1 - loadItems
+					2 - calculate missed steps
+					3 - save lastmissed step
+					4 - load cases
+				*/
 				GameManager.getInstance().loadItems();
 				
 				mapPositioner.x = Session.MAP_WIDTH/2 - (selectedCity.x * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4) + Numbers.LAND_WIDTH/2)
@@ -433,25 +447,30 @@
 			public function appearMerchantChoice(merchant:Unit):void{
 				clickOnArmy(merchant);
 				
-				merchantChoiceGroup.x = mapPositioner.x + merchant.x+7;
-				merchantChoiceGroup.y = mapPositioner.y + merchant.y+7;
+				//merchantChoiceGroup.x = mapPositioner.x + merchant.x+7;
+				//merchantChoiceGroup.y = mapPositioner.y + merchant.y+7;
 				
 				merchantChoiceGroup.includeInLayout = true;
 				merchantChoiceGroup.visible = true;
 			}
 
 			public function appearSelectionChoice(city:City):void{
+				
 				selectedCity = city;
 				GameManager.getInstance().refreshCity(selectedCity, false);
 				
-				selectionChoiceGroup.x = mapPositioner.x + city.x+20;
-				selectionChoiceGroup.y = mapPositioner.y + city.y+20;
+				selectionChoiceGroup.x = selectedCity.x * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4) + mapPositioner.x + 100;
+				selectionChoiceGroup.y = selectedCity.y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2) + mapPositioner.y + 100;
 				
 				selectionChoiceGroup.includeInLayout = true;
 				selectionChoiceGroup.visible = true;
 			}
 			
 			private function enterCity(event:MouseEvent):void{
+				
+				selectionChoiceGroup.includeInLayout = false;
+				selectionChoiceGroup.visible = false;
+				
 				goLeft.play();
 				appearCity.play();
 			}
@@ -467,8 +486,8 @@
 				city.iron = selectedUnit.iron - (Numbers.CITY_IRON_BASE_PRICE + selectedUnit.size * 10);
 				city.population = selectedUnit.size;
 				
-				city.x = selectedUnit.x;
-				city.y = selectedUnit.y;
+				city.x = selectedUnit.currentCase.x;
+				city.y = selectedUnit.currentCase.y;
 				
 				Session.player.units.removeItemAt(Session.player.units.getItemIndex(selectedUnit));
 				BoardDrawer.getInstance().removeArmyFromBoard(selectedUnit);
@@ -655,8 +674,6 @@
 //				}
 //			}
 //			
-			private var storeLogoInitX:int;			
-
 
 		]]>
 	</fx:Script>
@@ -817,129 +834,79 @@
 						  mouseDown="mouseDown(event)"
 						  mouseMove="mouseMove(event)"
 						  mouseUp="mouseUp(event)"/>
+					<s:Group id="inGameMenus" 
+							 width="{Numbers.LAND_WIDTH*400}"
+							 height="{Numbers.LAND_HEIGHT*400}"
+							 mouseEnabled="false"
+							 mouseChildren="true"
+							 mouseEnabledWhereTransparent="false">
 					
-				</s:Group>
-			</s:HGroup>
-			<s:HGroup width="100%" horizontalAlign="center" paddingTop="50"
-					  mouseEnabled="false"
-					  mouseEnabledWhereTransparent="false">
-				<s:Group width="500" height="500"
-						 clipAndEnableScrolling="true"
-						 mouseChildren="false"
-						 mouseEnabled="false"
-						 mouseEnabledWhereTransparent="false">
-						<s:Group id="boardEntities"
-								 x="{mapPositioner.x}"
-								 y="{mapPositioner.y}"/>
-				</s:Group>
-			</s:HGroup>
-			<s:HGroup width="100%" horizontalAlign="center" paddingTop="50"
-					  mouseEnabled="false"
-					  mouseEnabledWhereTransparent="false">
-				<s:Group width="500" height="500"
-						 clipAndEnableScrolling="true"
-						 mouseChildren="false"
-						 mouseEnabled="false"
-						 mouseEnabledWhereTransparent="false">
-					<s:Group id="boardImages"
-							 x="{mapPositioner.x}"
-							 y="{mapPositioner.y}"/>
-				</s:Group>
-			</s:HGroup>
-			<s:HGroup width="100%" horizontalAlign="center" paddingTop="50"
-					  mouseEnabled="false"
-					  mouseEnabledWhereTransparent="false">
-				<s:Group width="500" height="500"
-						 clipAndEnableScrolling="true"
-						 mouseChildren="false"
-						 mouseEnabled="false"
-						 mouseEnabledWhereTransparent="false">
-					<s:Group id="boardTexts"
-							 x="{mapPositioner.x}"
-							 y="{mapPositioner.y}"/>
-				</s:Group>
-			</s:HGroup>
-			<s:HGroup width="100%" horizontalAlign="center" verticalAlign="middle"
-					  mouseEnabled="false"
-					  mouseEnabledWhereTransparent="false"
-					  visible="{Session.WAIT_FOR_SERVER}">
-				<mx:SWFLoader source="{ImageContainer.LOADING}" />
-			</s:HGroup>
-			
-			<!-- =============================================================================================== -->
-			<!-- on board menus-->
-			
-			<s:HGroup width="100%" horizontalAlign="center" paddingTop="50"
-					  mouseEnabled="false"
-					  mouseEnabledWhereTransparent="false">
-				<s:Group width="500" height="500"
-						 clipAndEnableScrolling="true">
-					
-					<s:VGroup id="merchantChoiceGroup" 
-							  includeInLayout="false">
-						<s:Button label="{Translations.BUILD_HERE.getItemAt(Session.LANGUAGE)}" click="buildCity()"/>
-					</s:VGroup>
+						<s:VGroup id="merchantChoiceGroup" 
+								  visible="false"
+								  includeInLayout="false">
+							<s:Button label="{Translations.BUILD_HERE.getItemAt(Session.LANGUAGE)}" click="buildCity()"/>
+						</s:VGroup>
 						
-					<s:VGroup id="selectionChoiceGroup" 
-							  includeInLayout="false">
-						<s:Button label="{Translations.ENTER_CITY.getItemAt(Session.LANGUAGE)}" click="enterCity(event)"/>
-						
-						<!-- =============================================================================================== -->
-						<!-- Units Tab -->
-						
-						<s:TabBar id="tabsSelectionGroup" dataProvider="{viewstackSelectionGroup}" skinClass="spark.skins.spark.TabBarSkin"
-								  top="70" right="35"/>
-						
-						<mx:ViewStack id="viewstackSelectionGroup" width="170" top="100" right="35">
+						<s:VGroup id="selectionChoiceGroup"
+								  visible="false"
+								  includeInLayout="false">
+							<s:Button label="{Translations.ENTER_CITY.getItemAt(Session.LANGUAGE)}" click="enterCity(event)"/>
 							
-							<s:NavigatorContent label="{Translations.ARMIES.getItemAt(Session.LANGUAGE)}">
-								<s:VGroup horizontalAlign="right">
-									<s:Scroller maxHeight="200">
-										<s:Group>
-											<s:List id="selectionChoiceArmyList"
-													itemRenderer="com.uralys.tribes.renderers.ArmyListRenderer"
-													dataProvider="{selectedCity.armies}"
-													borderVisible="false"
-													width="275"
-													contentBackgroundAlpha="0"
-													creationComplete="initSelectionChoiceArmyList()">
-												<s:layout>
-													<s:VerticalLayout gap="1" useVirtualLayout="true" />
-												</s:layout>
-											</s:List>
-										</s:Group>
-									</s:Scroller>
-								</s:VGroup>
-							</s:NavigatorContent>
-							<s:NavigatorContent label="{Translations.MERCHANTS.getItemAt(Session.LANGUAGE)}">
-								<s:VGroup horizontalAlign="right">
-									<s:Scroller maxHeight="200">
-										<s:Group>
-											<s:List id="selectionChoiceMerchantList"
-													itemRenderer="com.uralys.tribes.renderers.MerchantListRenderer"
-													dataProvider="{selectedCity.merchants}"
-													borderVisible="false"
-													width="275"
-													contentBackgroundAlpha="0"
-													creationComplete="initSelectionChoiceMerchantList()">
-												<s:layout>
-													<s:VerticalLayout gap="1" useVirtualLayout="true" />
-												</s:layout>
-											</s:List>
-										</s:Group>
-									</s:Scroller>
-								</s:VGroup>
-							</s:NavigatorContent>
-						</mx:ViewStack>
-						
-						<!-- =============================================================================================== -->
-						
-					</s:VGroup>
+							<!-- =============================================================================================== -->
+							<!-- Units Tab -->
+							
+							<s:TabBar id="tabsSelectionGroup" dataProvider="{viewstackSelectionGroup}" skinClass="spark.skins.spark.TabBarSkin"
+									  top="70" right="35"/>
+							
+							<mx:ViewStack id="viewstackSelectionGroup" width="170" top="100" right="35">
+								
+								<s:NavigatorContent label="{Translations.ARMIES.getItemAt(Session.LANGUAGE)}">
+									<s:VGroup horizontalAlign="right">
+										<s:Scroller maxHeight="200">
+											<s:Group>
+												<s:List id="selectionChoiceArmyList"
+														itemRenderer="com.uralys.tribes.renderers.ArmyListRenderer"
+														dataProvider="{selectedCity.armies}"
+														borderVisible="false"
+														width="275"
+														contentBackgroundAlpha="0"
+														creationComplete="initSelectionChoiceArmyList()">
+													<s:layout>
+														<s:VerticalLayout gap="1" useVirtualLayout="true" />
+													</s:layout>
+												</s:List>
+											</s:Group>
+										</s:Scroller>
+									</s:VGroup>
+								</s:NavigatorContent>
+								<s:NavigatorContent label="{Translations.MERCHANTS.getItemAt(Session.LANGUAGE)}">
+									<s:VGroup horizontalAlign="right">
+										<s:Scroller maxHeight="200">
+											<s:Group>
+												<s:List id="selectionChoiceMerchantList"
+														itemRenderer="com.uralys.tribes.renderers.MerchantListRenderer"
+														dataProvider="{selectedCity.merchants}"
+														borderVisible="false"
+														width="275"
+														contentBackgroundAlpha="0"
+														creationComplete="initSelectionChoiceMerchantList()">
+													<s:layout>
+														<s:VerticalLayout gap="1" useVirtualLayout="true" />
+													</s:layout>
+												</s:List>
+											</s:Group>
+										</s:Scroller>
+									</s:VGroup>
+								</s:NavigatorContent>
+							</mx:ViewStack>
+							
+							<!-- =============================================================================================== -->
+							
+						</s:VGroup>
+					</s:Group>
 				</s:Group>
 			</s:HGroup>
 		</s:Group>
-		
-		
 	</s:Group>
 	
 	<!-- ====================================================================================== -->
@@ -966,6 +933,14 @@
 		
 	<!-- ====================================================================================== -->
 	
-	<mx:Image source="{ImageContainer.LOGO}" height="80" width="300" right="70" y="-9"/>
+	<mx:Image source="{ImageContainer.MINI_LOGO}" right="70" y="-7"/>
+	<renderers:StepProgress top="7" left="20"/>
+	<s:HGroup width="100%" height="100%" horizontalAlign="center">
+		<s:VGroup height="100%">
+			<mx:Spacer height="40%"/>
+			<mx:SWFLoader source="{ImageContainer.LOADING}" 
+						  visible="{Session.WAIT_FOR_SERVER}"/>
+		</s:VGroup>
+	</s:HGroup>
 	
 </s:Group>

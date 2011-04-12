@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 width="160"
+		 creationComplete="init()">
+
+	<fx:Script>
+		<![CDATA[
+			import com.uralys.tribes.commons.Numbers;
+			import com.uralys.tribes.commons.Session;
+			import com.uralys.tribes.commons.Translations;
+			import com.uralys.tribes.managers.GameManager;
+			
+			import flash.events.TimerEvent;
+			import flash.utils.Timer;
+			
+			import mx.controls.Alert;
+			import mx.core.FlexGlobals;
+			
+			public var timer:Timer = new Timer( 1000 );
+			
+			public function init():void
+			{			
+				this.timer.addEventListener( TimerEvent.TIMER, updateProgress );
+				this.timer.start();
+			}
+			
+			protected function updateProgress( timerEvent:TimerEvent ):void
+			{
+				var millisSpent:Number = getMillisSpent();
+				var millisRemaining:Number = Numbers.TIME_PER_STEP*60*1000 - millisSpent;
+				
+				var minutes:int = millisRemaining/60/1000;
+				var secs:int = (millisRemaining-minutes*60*1000)/1000;
+				
+				this.progress.setProgress( millisSpent, Numbers.TIME_PER_STEP*60*1000 );
+				this.progress.label = Translations.REMAINING_TIME.getItemAt(Session.LANGUAGE) + "   " +minutes+": "+(secs>9 ? "" : "0")+secs;
+				
+				if(minutes == Numbers.TIME_PER_STEP-1 && secs == 59)
+					nextStep();
+			}
+
+			protected function getMillisSpent():Number{
+				var now:Number = new Date().getTime();
+				var timeSpentMillis:Number = now - Numbers.SERVER_START;
+
+				var nbStepsSinceBeginning:int = timeSpentMillis/(Numbers.TIME_PER_STEP*60*1000);
+				var millisRemainingUntilNextStep:Number = timeSpentMillis - nbStepsSinceBeginning * Numbers.TIME_PER_STEP*60*1000;
+
+				return millisRemainingUntilNextStep;
+			}
+
+			protected function nextStep():void{
+				GameManager.getInstance().saveStep();
+				
+				// message 'resources recues'
+				FlexGlobals.topLevelApplication.message(Translations.RESOURCES_UPDATED.getItemAt(Session.LANGUAGE), 3);
+			}
+				
+		]]>
+	</fx:Script>
+	
+	<mx:ProgressBar id="progress"
+					minimum="100" 
+					maximum="100" 
+					mode="manual"
+					label="{Translations.REMAINING_TIME.getItemAt(Session.LANGUAGE)}    --:--" 
+					labelPlacement="top"/>
+	<mx:Button label="plop" y="9" click="nextStep()"/>
+
+</s:Group>

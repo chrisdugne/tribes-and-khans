@@ -55,9 +55,9 @@
 
 			private function formChecked():Boolean{
 				if(!Utils.isValidEmail(emailInput.text))
-					FlexGlobals.topLevelApplication.message('Check your email', 3);
+					FlexGlobals.topLevelApplication.message(Translations.CHECK_EMAIL.getItemAt(Session.LANGUAGE));
 				else if(passwordInput.text.length < 3)
-					FlexGlobals.topLevelApplication.message('Password must be at least 3 characters', 3);
+					FlexGlobals.topLevelApplication.message(Translations.CHECK_PWD.getItemAt(Session.LANGUAGE));
 				else
 					return true;
 				

@@ -2,18 +2,46 @@
 package com.uralys.tribes.entities
 {
 	import com.uralys.tribes.commons.Numbers;
+	import com.uralys.tribes.commons.Session;
 	
 	import mx.collections.ArrayCollection;
 	
-	import spark.primitives.Ellipse;
-	import spark.primitives.Line;
-	import spark.primitives.Rect;
-
 	[Bindable]
 	[RemoteClass(alias="com.uralys.tribes.entities.Unit")]
 	public class Unit
 	{	
-
+		//==========================================================================//
+		
+		public function Unit(){}
+		
+		// on ne peut pas le mettre dans le constructeur, car BlazeDS l'utilise aussi
+		public function initNewUnit(i:int = 0, j:int = 0):void{
+			_currentCase = Session.map[i][j];
+			_unitUID = "NEW_"+Session.player.uralysUID+"_"+(Session.player.units.length+1)+"_"+(new Date().getTime());
+		}
+		
+		//==========================================================================//
+		
+		private var _status:int;
+		private var _currentCase:Case;
+		private var _playerUID:String;
+		
+		protected var _unitUID:String;
+		protected var _size:int;
+		protected var _speed:int;
+		protected var _value:int;
+		protected var _wheat:int;
+		protected var _wood:int;
+		protected var _iron:int;
+		protected var _gold:int;
+		protected var _radius:int;
+		
+		protected var _equipments:ArrayCollection = new ArrayCollection();
+		protected var _moves:ArrayCollection = new ArrayCollection();
+		protected var _conflicts:ArrayCollection = new ArrayCollection();
+		
+		//==========================================================================//
+		
 		public function get unitUID():String {
 			return _unitUID;
 		}
@@ -30,6 +58,14 @@ package com.uralys.tribes.entities
 			_size = o;
 		}
 	
+		public function get currentCase():Case {
+			return _currentCase;
+		}
+	
+		public function set currentCase(o:Case):void {
+			_currentCase = o;
+		}
+	
 		public function get speed():int {
 			return _speed;
 		}
@@ -39,7 +75,10 @@ package com.uralys.tribes.entities
 		}
 	
 		public function get value():int {
-			return _value;
+			return size 
+				+ (bows > size ? size : bows) 
+				+ (swords > size ? size : swords) *2 
+				+ (armors > size ? size : armors) *3;
 		}
 	
 		public function set value(o:int):void {
@@ -78,23 +117,6 @@ package com.uralys.tribes.entities
 			_gold = o;
 		}
 		
-	
-		public function get x():int {
-			return _x;
-		}
-	
-		public function set x(o:int):void {
-			_x = o;
-		}
-	
-		public function get y():int {
-			return _y;
-		}
-	
-		public function set y(o:int):void {
-			_y = o;
-		}
-	
 		public function get radius():int {
 			return Math.sqrt(_size)/2 + 2; // min 2 pixels
 		}
@@ -119,20 +141,20 @@ package com.uralys.tribes.entities
 			_moves = o;
 		}
 		
+		public function get conflicts():ArrayCollection {
+			return _conflicts;
+		}
+		
+		public function set conflicts(o:ArrayCollection):void {
+			_conflicts = o;
+		}
+		
 		public function get status():int {
 			return _status;
 		}
 		
 		public function set status(o:int):void {
 			_status = o;
-		}
-		
-		public function get currentCase():Case {
-			return _currentCase;
-		}
-		
-		public function set currentCase(o:Case):void {
-			_currentCase = o;
 		}
 		
 		public function get playerUID():String {
@@ -143,26 +165,6 @@ package com.uralys.tribes.entities
 			_playerUID = o;
 		}
 		
-		//==========================================================================//
-		
-		private var _status:int;
-		private var _currentCase:Case;
-		private var _playerUID:String;
-		
-		protected var _unitUID:String;
-		protected var _size:int;
-		protected var _speed:int;
-		protected var _value:int;
-		protected var _wheat:int;
-		protected var _wood:int;
-		protected var _iron:int;
-		protected var _gold:int;
-		protected var _x:int;
-		protected var _y:int;
-		protected var _radius:int;
-
-		protected var _equipments:ArrayCollection = new ArrayCollection();
-		protected var _moves:ArrayCollection = new ArrayCollection();
 		
 		//==========================================================================//
 
@@ -208,14 +210,14 @@ package com.uralys.tribes.entities
 		//==========================================================================//
 
 		public var type:int; // 1 armee,  2 marchand
-		public var ellipseTo:Ellipse;
-		public var lineTo:Line;
-		public var ellipseToIsDrawn:Boolean = false;
-		public var lineToIsDrawn:Boolean = false;
+		//public var ellipseTo:Ellipse;
+		//public var lineTo:Line;
+		//public var ellipseToIsDrawn:Boolean = false;
+		//public var lineToIsDrawn:Boolean = false;
 		
 		public var landExpected:int = -1;
-		public var tmpLandSquare:Rect;
-		public var armyCircle:Ellipse;
+		//public var tmpLandSquare:Rect;
+		//public var armyCircle:Ellipse;
 		
 	}
 }

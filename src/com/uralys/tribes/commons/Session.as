@@ -11,7 +11,7 @@ package com.uralys.tribes.commons
 		
 		//=====================================================//
 		
-		[Bindable] public static var VERSION:String = "1.1.03";
+		[Bindable] public static var VERSION:String = "1.1.04";
 		[Bindable] public static var LOGGED_IN:Boolean = false; 
 		[Bindable] public static var CONNECTED_TO_FACEBOOK:Boolean = false;
 		
@@ -58,7 +58,7 @@ package com.uralys.tribes.commons
 		[Bindable] public static var TURN_SAVING_DONE:Boolean = true;
 
 		// pour savoir si on click pour un deplacement de troupes
-		[Bindable] public static var CURRENT_SELECTION_IS_ARMY:Boolean = false;
+		//[Bindable] public static var CURRENT_SELECTION_IS_ARMY:Boolean = false;
 
 		[Bindable] public static var COORDINATE_X:int;
 		[Bindable] public static var COORDINATE_Y:int;

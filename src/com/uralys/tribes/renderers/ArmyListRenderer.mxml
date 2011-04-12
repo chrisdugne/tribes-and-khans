@@ -68,10 +68,7 @@
 			<s:Label color="#FFFFFF" 
 					 left="20" 
 					 verticalCenter="2"
-					 text="{data.size 
-					 		+ (data.bows > data.size ? data.size : data.bows) 
-					 		+ (data.swords > data.size ? data.size : data.swords) *2 
-					 		+ (data.armors > data.size ? data.size : data.armors) *3} pts"/>
+					 text="{data.value} pts"/>
 		</s:HGroup>
 		<s:HGroup y="30">
 			<mx:Image source="{ImageContainer.BOW}" width="25"/>

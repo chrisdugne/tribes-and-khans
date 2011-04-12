@@ -78,6 +78,12 @@ public final class ImageContainer
 	[Embed(source="resources/embed/foret5.png")]
 	[Bindable] public static var FORET5:Class;
 
+	[Embed(source="resources/embed/foret6.png")]
+	[Bindable] public static var FORET6:Class;
+	
+	[Embed(source="resources/embed/foret7.png")]
+	[Bindable] public static var FORET7:Class;
+
 	[Embed(source="resources/embed/sol_ville.png")]
 	[Bindable] public static var SOL_VILLE:Class;
 
@@ -145,13 +151,13 @@ public final class ImageContainer
 	//   ======================================================================//
 
 	[Bindable] public static var LOGO:Bitmap;
-	[Bindable] public static var LOGO_BIS:Bitmap;
 	[Bindable] public static var GROUPE_PERSO:Bitmap;
 	[Bindable] public static var FERMIER:Bitmap;
 	[Bindable] public static var FORGERON:Bitmap;
 	[Bindable] public static var MARCHAND:Bitmap;
 	[Bindable] public static var MARCHANDE:Bitmap;
 	[Bindable] public static var GUERRIER:Bitmap;
+	[Bindable] public static var MINI_LOGO:Bitmap;
 
 	//   ======================================================================//
 	
@@ -166,7 +172,8 @@ public final class ImageContainer
 		 "webresources/images/persos/marchand.png",
 		 "webresources/images/persos/marchande.png",
 		 "webresources/images/persos/guerrier.png",
-		 "webresources/images/persos/forgeron.png"]);
+		 "webresources/images/persos/forgeron.png",
+		 "webresources/images/minilogo.png"])
 	
 	public static function loadImages():void{
 		loadNextImage();
@@ -184,7 +191,6 @@ public final class ImageContainer
 		switch(currentImage){
 			case 0:
 				LOGO = event.currentTarget.content;
-				LOGO_BIS = event.currentTarget.content;
 				break;
 			case 1:
 				GROUPE_PERSO = event.currentTarget.content;
@@ -204,10 +210,13 @@ public final class ImageContainer
 			case 6:
 				FORGERON = event.currentTarget.content;
 				break;
+			case 7:
+				MINI_LOGO = event.currentTarget.content;
+				break;
 		}
 		
 		currentImage++;
-		if(currentImage < 7)
+		if(currentImage < 8)
 			loadNextImage();
 	}
 

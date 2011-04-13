@@ -11,7 +11,7 @@ package com.uralys.tribes.commons
 		
 		//=====================================================//
 		
-		[Bindable] public static var VERSION:String = "1.1.04";
+		[Bindable] public static var VERSION:String = "1.1.05";
 		[Bindable] public static var LOGGED_IN:Boolean = false; 
 		[Bindable] public static var CONNECTED_TO_FACEBOOK:Boolean = false;
 		
@@ -62,6 +62,9 @@ package com.uralys.tribes.commons
 
 		[Bindable] public static var COORDINATE_X:int;
 		[Bindable] public static var COORDINATE_Y:int;
+
+		[Bindable] public static var BOARD_X:int;
+		[Bindable] public static var BOARD_Y:int;
 		
 		//=====================================================//
 		// GameDetailsRenderer

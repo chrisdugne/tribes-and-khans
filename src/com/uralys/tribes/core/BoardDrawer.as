@@ -253,6 +253,10 @@ package com.uralys.tribes.core
 		protected function tileIsRolledOn(event:MouseEvent):void{
 			Session.COORDINATE_X = (event.currentTarget.data as Case).x;
 			Session.COORDINATE_Y = (event.currentTarget.data as Case).y;
+			
+			Session.BOARD_X = event.target.mouseX;
+			Session.BOARD_Y = event.target.mouseY;
+			
 		}
 
 		protected function cityIsRolledOn(event:MouseEvent):void{

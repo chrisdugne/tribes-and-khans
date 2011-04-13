@@ -230,6 +230,8 @@
 				coordinateX = Session.COORDINATE_X;
 				coordinateY = Session.COORDINATE_Y;
 				
+				
+				
 //				if(Session.CURRENT_SELECTION_IS_ARMY){
 //					Mouse.hide();
 					
@@ -464,6 +466,12 @@
 				
 				selectionChoiceGroup.includeInLayout = true;
 				selectionChoiceGroup.visible = true;
+				
+				
+				trace(currentMouseHighLight.x);
+				trace(currentMouseHighLight.y);
+				trace(selectionChoiceGroup.x);
+				trace(selectionChoiceGroup.y);
 			}
 			
 			private function enterCity(event:MouseEvent):void{
@@ -834,9 +842,20 @@
 						  mouseDown="mouseDown(event)"
 						  mouseMove="mouseMove(event)"
 						  mouseUp="mouseUp(event)"/>
-					<s:Group id="inGameMenus" 
+					<s:Group id="highlighters"
 							 width="{Numbers.LAND_WIDTH*400}"
 							 height="{Numbers.LAND_HEIGHT*400}"
+							 x="{mapPositioner.x}"
+							 y="{mapPositioner.y}"
+							 mouseEnabled="false"
+							 mouseChildren="false"
+							 mouseEnabledWhereTransparent="false">
+						
+						<renderers:TileHighlight id="currentMouseHighLight"
+												 x="{Session.COORDINATE_X * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4)}"
+												 y="{Session.COORDINATE_Y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2)}"/>
+					</s:Group>
+					<s:Group id="inGameMenus" 
 							 mouseEnabled="false"
 							 mouseChildren="true"
 							 mouseEnabledWhereTransparent="false">
@@ -904,8 +923,21 @@
 							
 						</s:VGroup>
 					</s:Group>
-				</s:Group>
+ 				</s:Group>
+					
 			</s:HGroup>
+			<mx:Image source="{ImageContainer.MAP_BORDER_TOP}"
+					  x="{boardImage.x-30}"
+					  y="{boardImage.y-30}"/>
+			<mx:Image source="{ImageContainer.MAP_BORDER_BOTTOM}"
+					  x="{boardImage.x-30}"
+					  y="{boardImage.y+Session.MAP_HEIGHT}"/>
+			<mx:Image source="{ImageContainer.MAP_BORDER_LEFT}"
+					  x="{boardImage.x-27}"
+					  y="{boardImage.y}"/>
+			<mx:Image source="{ImageContainer.MAP_BORDER_RIGHT}"
+					  x="{boardImage.x+Session.MAP_WIDTH}"
+					  y="{boardImage.y}"/>
 		</s:Group>
 	</s:Group>
 	

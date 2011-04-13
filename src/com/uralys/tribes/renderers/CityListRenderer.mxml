@@ -54,19 +54,24 @@
 		</mx:Transition>
 	</s:transitions>
 	
-	<s:Group id="groupDetails" height="20" width="300" width.hovered="320" width.selected="320">
-		<s:Rect left="0" right="0" top="0" bottom="0" radiusX="5" radiusY="5">
+	<s:Group id="groupDetails" height="33" width="300" width.hovered="320" width.selected="320">
+		<s:Rect id="backgroundRect" left="0" right="0" top="0" bottom="0"  >
 			<s:fill>
-				<s:SolidColor color="{data.wheat + data.wheatEarned - data.wheatSpent &lt; 0 ? Numbers.RED : color}" 
-							  color.hovered="{data.wheat + data.wheatEarned - data.wheatSpent &lt; 0 ? Numbers.RED : colorHovered}" 
-							  color.selected="{data.wheat + data.wheatEarned - data.wheatSpent &lt; 0 ? Numbers.RED : colorSelected}" />
+				<s:BitmapFill source="{ImageContainer.CITY_BUTTON_CENTER}" fillMode="repeat"/>
 			</s:fill>
 		</s:Rect>
-		<s:Label id="labelName" 
-				 color="#FFFFFF" 
-				 left="10" 
-				 verticalCenter="2"
-				 text="{data.name}"/>
+
+		<s:HGroup width="100%" verticalAlign="middle">
+			<mx:Image source="{ImageContainer.CITY_BUTTON_LEFT}"/>
+			<s:Label id="labelName" 
+					 color="#000000" 
+					 left="10" 
+					 verticalCenter="2"
+					 text="{data.name}"
+					 />
+			<mx:Spacer width="120%"/>
+			<mx:Image source="{ImageContainer.CITY_BUTTON_RIGHT}"/>
+		</s:HGroup>
 	</s:Group>
 	
 </s:ItemRenderer>

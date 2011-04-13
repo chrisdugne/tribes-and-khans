@@ -26,6 +26,17 @@ public final class ImageContainer
 	[Bindable] public static var US_FLAG:Class;
 	
 	//   ======================================================================//
+
+	[Embed(source="resources/embed/buttons/ville-left.png")]
+	[Bindable] public static var CITY_BUTTON_LEFT:Class;
+
+	[Embed(source="resources/embed/buttons/ville-right.png")]
+	[Bindable] public static var CITY_BUTTON_RIGHT:Class;
+
+	[Embed(source="resources/embed/buttons/ville-center.png")]
+	[Bindable] public static var CITY_BUTTON_CENTER:Class;
+	
+	//   ======================================================================//
 	
 	[Embed(source="resources/embed/map.jpg")]
 	[Bindable] public static var MAP:Class;
@@ -158,6 +169,12 @@ public final class ImageContainer
 	[Bindable] public static var MARCHANDE:Bitmap;
 	[Bindable] public static var GUERRIER:Bitmap;
 	[Bindable] public static var MINI_LOGO:Bitmap;
+	[Bindable] public static var MAP_BORDER_TOP:Bitmap;
+	[Bindable] public static var MAP_BORDER_BOTTOM:Bitmap;
+	[Bindable] public static var MAP_BORDER_LEFT:Bitmap;
+	[Bindable] public static var MAP_BORDER_RIGHT:Bitmap;
+	[Bindable] public static var HIGHLIGHT_1:Bitmap;
+	[Bindable] public static var HIGHLIGHT_2:Bitmap;
 
 	//   ======================================================================//
 	
@@ -173,7 +190,13 @@ public final class ImageContainer
 		 "webresources/images/persos/marchande.png",
 		 "webresources/images/persos/guerrier.png",
 		 "webresources/images/persos/forgeron.png",
-		 "webresources/images/minilogo.png"])
+		 "webresources/images/minilogo.png",
+		 "webresources/images/map/border-top.png",
+		 "webresources/images/map/border-bottom.png",
+		 "webresources/images/map/border-left.png",
+		 "webresources/images/map/border-right.png",
+		 "webresources/images/map/highlight1.png",
+		 "webresources/images/map/highlight2.png"])
 	
 	public static function loadImages():void{
 		loadNextImage();
@@ -213,10 +236,28 @@ public final class ImageContainer
 			case 7:
 				MINI_LOGO = event.currentTarget.content;
 				break;
+			case 8:
+				MAP_BORDER_TOP = event.currentTarget.content;
+				break;
+			case 9:
+				MAP_BORDER_BOTTOM = event.currentTarget.content;
+				break;
+			case 10:
+				MAP_BORDER_LEFT = event.currentTarget.content;
+				break;
+			case 11:
+				MAP_BORDER_RIGHT = event.currentTarget.content;
+				break;
+			case 12:
+				HIGHLIGHT_1 = event.currentTarget.content;
+				break;
+			case 13:
+				HIGHLIGHT_2 = event.currentTarget.content;
+				break;
 		}
 		
 		currentImage++;
-		if(currentImage < 8)
+		if(currentImage < 14)
 			loadNextImage();
 	}
 

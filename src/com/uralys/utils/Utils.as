@@ -1,6 +1,11 @@
 package com.uralys.utils
 {
 
+import com.uralys.tribes.commons.Numbers;
+
+import flash.display.BitmapData;
+import flash.display.Sprite;
+
 import mx.collections.ArrayCollection;
 
 public class Utils
@@ -37,6 +42,19 @@ public class Utils
 		public static function round(n:Number, p:int):Number {
 		   return Math.round( n * Math.pow(10, p)) / Math.pow(10, p);
 		}
+
+		//---------------------------------------------------------------------//
+		// fonction pour recuperer les coordonnees sur le mappositionner lorsquon connait les coordonnees de la case.
+		
+		public static function getXOnBoard(xForTheCell:int):int {
+			return xForTheCell * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4);
+		}
+
+		public static function getYOnBoard(yForTheCell:int):int {
+			return yForTheCell * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2);
+		}
+
+		//---------------------------------------------------------------------//
 
 		/*
 		public static function getPositionName(p:int, gender:int):String {
@@ -128,6 +146,36 @@ public class Utils
 
                
            return time < limit.getTime();
+		}
+		
+		
+		/**
+		 * Creates a sprite object out of bitmapData.
+		 * The returned sprite can will cover all non transparent areas of the
+		 * given picture.
+		 * 
+		 * @param bitmapData:BirmapData - The BitmapData for the sprite creation
+		 * 
+		 * @param grainSize:uint - Defines how accurate the sprite will get drawn. 
+		 * A high grainSize will result in a better performance (especially when 
+		 * dealing with large images).
+		 * 
+		 * @return Sprite - a sprite object that covers all non-transparent areas of
+		 * the given bitmapData
+		 * 
+		 * */                  
+		public static function createHitArea(bitmapData:BitmapData, grainSize:uint=1):Sprite{
+			var _hitarea:Sprite = new Sprite();
+			_hitarea.graphics.beginFill(0x000000, 1.0);            
+			for(var x:uint=0;x<bitmapData.width;x+=grainSize) {
+				for(var y:uint=grainSize;y<bitmapData.height;y+=grainSize) {                    
+					if(x<=bitmapData.width && y<=bitmapData.height && bitmapData.getPixel(x,y)!=0) {
+						_hitarea.graphics.drawRect(x,y,grainSize,grainSize);                        
+					}                    
+				}
+			}            
+			_hitarea.graphics.endFill();                        
+			return _hitarea;
 		}
 		
 }

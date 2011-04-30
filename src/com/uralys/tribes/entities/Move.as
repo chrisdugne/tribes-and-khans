@@ -3,6 +3,7 @@ package com.uralys.tribes.entities
 	import com.uralys.tribes.commons.Session;
 	
 	import mx.collections.ArrayCollection;
+	import mx.utils.StringUtil;
 
 	[Bindable]
 	[RemoteClass(alias="com.uralys.tribes.entities.Move")]
@@ -80,6 +81,26 @@ package com.uralys.tribes.entities
 			_value = o;
 		}
 		
+		//--------------------------------------------------------------//
+		
+		public function getX():int {
+			
+			var firstIndex:int = _caseUID.indexOf("_");
+			var secondIndex:int = _caseUID.indexOf("_",firstIndex+1);
+			var lengthBetweenIndexes:int = secondIndex - firstIndex;
+			
+			return parseInt(_caseUID.substr(firstIndex+1, lengthBetweenIndexes));
+		}
+		
+		public function getY():int {
+			
+			var firstIndex:int = _caseUID.indexOf("_");
+			var secondIndex:int = _caseUID.indexOf("_",firstIndex+1);
+			var lengthBetweenIndexes:int = secondIndex - firstIndex;
+			
+			return parseInt(_caseUID.substr(secondIndex+1));
+		}
+
 
 	}
 }

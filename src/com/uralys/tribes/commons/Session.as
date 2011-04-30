@@ -1,5 +1,8 @@
 package com.uralys.tribes.commons
 {
+	import com.uralys.tribes.entities.Case;
+	import com.uralys.tribes.pages.Board;
+	
 	import mx.collections.ArrayCollection;
 	
 	
@@ -11,7 +14,7 @@ package com.uralys.tribes.commons
 		
 		//=====================================================//
 		
-		[Bindable] public static var VERSION:String = "1.1.05";
+		[Bindable] public static var VERSION:String = "1.1.06";
 		[Bindable] public static var LOGGED_IN:Boolean = false; 
 		[Bindable] public static var CONNECTED_TO_FACEBOOK:Boolean = false;
 		
@@ -54,6 +57,8 @@ package com.uralys.tribes.commons
 		//=====================================================//
 		// Board
 		
+		[Bindable] public static var board:Board;
+
 		// pour que le tour soit bien sauvegarde avant de faire le refresh games+profil
 		[Bindable] public static var TURN_SAVING_DONE:Boolean = true;
 
@@ -63,9 +68,12 @@ package com.uralys.tribes.commons
 		[Bindable] public static var COORDINATE_X:int;
 		[Bindable] public static var COORDINATE_Y:int;
 
-		[Bindable] public static var BOARD_X:int;
-		[Bindable] public static var BOARD_Y:int;
-		
+		[Bindable] public static var CURRENT_SELECTION_X:int;
+		[Bindable] public static var CURRENT_SELECTION_Y:int;
+
+		[Bindable] public static var CURRENT_CASE_SELECTED:Case;
+		[Bindable] public static var MOVE_A_UNIT:Boolean;
+
 		//=====================================================//
 		// GameDetailsRenderer
 		

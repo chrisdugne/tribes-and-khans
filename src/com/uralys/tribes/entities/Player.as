@@ -122,5 +122,17 @@ package com.uralys.tribes.entities
 		{
 			_hasAlreadyPlayedHisTurn = value;
 		}
+
+		public function getUnit(unitUID:String):Unit{
+			
+			for each(var unit:Unit in units){
+				if(unit.unitUID == unitUID || unit.unitUID.substr(4) == unitUID)
+					return unit;
+			}
+			
+			return null;
+		}	
+		
+		//-------------------------------------------------------//
 }
 }

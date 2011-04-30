@@ -9,6 +9,7 @@ package com.uralys.tribes.managers {
 	import com.uralys.tribes.entities.City;
 	import com.uralys.tribes.entities.Equipment;
 	import com.uralys.tribes.entities.Game;
+	import com.uralys.tribes.entities.Item;
 	import com.uralys.tribes.entities.Move;
 	import com.uralys.tribes.entities.Player;
 	import com.uralys.tribes.entities.Smith;
@@ -46,16 +47,6 @@ package com.uralys.tribes.managers {
 		}
 		
 		//=====================================================================================//
-		
-		public function setBoard(board:Board):void{
-			this.board = board;
-		}
-
-		//=====================================================================================//
-		
-		private var board:Board;
-		
-		//============================================================================================//
 		// CONTROLS
 		//============================================================================================//
 		
@@ -135,84 +126,106 @@ package com.uralys.tribes.managers {
 				refreshCity(city, starvation);
 			}
 			
-			for each(var unit:Unit in Session.player.units){
-				if(unit.unitUID.indexOf("NEW_") != -1){ // newUnit : unitUID = 'NEW_...' create equipment
-					
-					var bows:Equipment = new Equipment();
-					var swords:Equipment = new Equipment();
-					var armors:Equipment = new Equipment();
-					
-					bows.size = unit.bows;
-					swords.size = unit.swords;
-					armors.size = unit.armors;
-					
-					for each(var equipment:Equipment in city.equipmentStock){
-						switch(equipment.item.name){
-							case "bow" :
-								bows.item = equipment.item;
-								break;
-							case "sword" :
-								swords.item = equipment.item;
-								break;
-							case "armor" :
-								armors.item = equipment.item;
-								break;
-						}
-					}
-					
-					bows.equimentUID = unit.unitUID + "_" + bows.item.itemUID; 
-					swords.equimentUID = unit.unitUID + "_" + swords.item.itemUID; 
-					armors.equimentUID = unit.unitUID + "_" + armors.item.itemUID; 
-
-					unit.equipments.addItem(bows);
-					unit.equipments.addItem(swords);
-					unit.equipments.addItem(armors);
-				}
-				else{
-					for each(var equipment:Equipment in unit.equipments){
-						switch(equipment.item.name){
-							case "bow" :
-								equipment.size = unit.bows;
-								break;
-							case "sword" :
-								equipment.size = unit.swords;
-								break;
-							case "armor" :
-								equipment.size = unit.armors;
-								break;
-						}
-					}
-				}
-				
-				//unit.armyCircle = null;
-				//unit.ellipseTo = null;
-				//unit.lineTo = null;
-				//unit.tmpLandSquare = null;
-			}
-			
 			(Session.player.cities.getItemAt(0) as City).gold += Session.player.nbLands;
-			if(!loginCatchUp){
+			
+			if(!loginCatchUp)
 				savePlayer(needToLoadCases);
+		}
+		
+		//-------------------------------------------------------------------------//
+		
+		private var unitsBeingSaved:Array;
+		public function saveUnits (units:ArrayCollection):void
+		{
+			unitsBeingSaved = units.toArray();
+			saveNextUnit(unitsBeingSaved.shift());
+		}
+
+		public function saveUnit (unit:Unit):void{
+			saveNextUnit(unit);
+		}
+
+		private function saveNextUnit (unit:Unit):void{
+			
+			trace("saveUnit : " + unit.unitUID);
+			if(unit.unitUID.indexOf("NEW_") != -1){ // newUnit : unitUID = 'NEW_...' create equipment
 				
-				// remove le tag NEW_ sur les units + equipments + moves
-				for each(var unit:Unit in Session.player.units){
-					if(unit.unitUID.indexOf("NEW_") != -1)
-						unit.unitUID = unit.unitUID.substring(4);
-
-					for each(var equipment:Equipment in unit.equipments){
-						if(equipment.equimentUID.indexOf("NEW_") != -1)
-							equipment.equimentUID = equipment.equimentUID.substring(4);
-					}
-
-					for each(var move:Move in unit.moves){
-						if(move.moveUID.indexOf("NEW_") != -1)
-							move.moveUID = move.moveUID.substring(4);
+				var bows:Equipment = new Equipment();
+				var swords:Equipment = new Equipment();
+				var armors:Equipment = new Equipment();
+				
+				bows.size = unit.bows;
+				swords.size = unit.swords;
+				armors.size = unit.armors;
+				
+				for each(var item:Item in Session.ITEMS){
+					switch(item.name){
+						case "bow" :
+							bows.item = item;
+							break;
+						case "sword" :
+							swords.item = item;
+							break;
+						case "armor" :
+							armors.item = item;
+							break;
 					}
 				}
-							
+				
+				bows.equimentUID = unit.unitUID + "_" + bows.item.itemUID; 
+				swords.equimentUID = unit.unitUID + "_" + swords.item.itemUID; 
+				armors.equimentUID = unit.unitUID + "_" + armors.item.itemUID; 
+				
+				unit.equipments.addItem(bows);
+				unit.equipments.addItem(swords);
+				unit.equipments.addItem(armors);
+				
+			}
+			else{
+				refreshUnitEquipment(unit);
 			}
 			
+			//---------------------------------------------------------------//
+			// save the unit on server side
 			
+			trace("call to gameWrapper.saveUnit");
+			
+			gameWrapper.saveUnit.addEventListener("result", unitSaved);
+			gameWrapper.saveUnit(Session.player.uralysUID, unit);
+			
+			//---------------------------------------------------------------//
+			
+			// remove le tag NEW_ sur les units + equipments + moves
+			if(unit.unitUID.indexOf("NEW_") != -1)
+				unit.unitUID = unit.unitUID.substring(4);
+			
+			
+			for each(var equipment:Equipment in unit.equipments){
+				if(equipment.equimentUID.indexOf("NEW_") != -1)
+					equipment.equimentUID = equipment.equimentUID.substring(4);
+			}
+			
+			for each(var move:Move in unit.moves){
+				if(move.moveUID.indexOf("NEW_") != -1)
+					move.moveUID = move.moveUID.substring(4);
+			}
+		}
+		
+		private function refreshUnitEquipment(unit:Unit):void
+		{
+			for each(var equipment:Equipment in unit.equipments){
+				switch(equipment.item.name){
+					case "bow" :
+						equipment.size = unit.bows;
+						break;
+					case "sword" :
+						equipment.size = unit.swords;
+						break;
+					case "armor" :
+						equipment.size = unit.armors;
+						break;
+				}
+			}
 		}
 		
 		public function refreshCity(city:City, starvation:Boolean):void{
@@ -383,16 +396,13 @@ package com.uralys.tribes.managers {
 			else
 				gameWrapper.savePlayer.removeEventListener("result", readyToLoadCases);
 			
-			gameWrapper.savePlayer.addEventListener("result", turnSaved);
 			gameWrapper.savePlayer(Session.player);
 		}
+
 		
 		//============================================================================================//
 		//  RESULTS FROM SERVER	
 		
-		
-		private function turnSaved(event:ResultEvent):void{
-		}
 		
 		private function readyToLoadCases(event:ResultEvent):void{
 			var city:City = Session.player.cities.getItemAt(0) as City;
@@ -431,6 +441,12 @@ package com.uralys.tribes.managers {
 			//------------------------------------------------//
 			
 			BoardDrawer.getInstance().refreshDisplay();
+		}
+		
+		
+		private function unitSaved(event:ResultEvent):void{
+			if(unitsBeingSaved != null && unitsBeingSaved.length > 0)
+				saveNextUnit(unitsBeingSaved.shift());
 		}
 	}
 }

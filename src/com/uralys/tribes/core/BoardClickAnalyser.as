@@ -25,14 +25,6 @@ package com.uralys.tribes.core
 	{	
 		//=====================================================================================//
 		
-		private var board : Board;
-		
-		public function setBoard(board:Board):void{
-			this.board = board;
-		}
-		
-		//=====================================================================================//
-	
 		private static var instance : BoardClickAnalyser = new BoardClickAnalyser();
 	
 		public static function getInstance():BoardClickAnalyser{
@@ -42,6 +34,16 @@ package com.uralys.tribes.core
 		public function BoardClickAnalyser(){}
 
 		//=====================================================================================//
+		
+		public function rollOnCase(_case:Case):void{
+			Session.COORDINATE_X = _case.x;
+			Session.COORDINATE_Y = _case.y;			
+		}
+		
+		public function rollOnCity(city:City):void{
+			Session.COORDINATE_X = city.x;
+			Session.COORDINATE_Y = city.y;			
+		}
 		
 		public function clickOnCase(_case:Case):void{
 			
@@ -93,9 +95,9 @@ package com.uralys.tribes.core
 		private function clickOnCity(city:City):void{
 			
 			if(city.merchants.length + city.armies.length > 0)
-				board.appearSelectionChoice(city);
+				Session.board.appearSelectionChoice(city);
 			else
-				board.clickOnCity(city);
+				Session.board.clickOnCity(city);
 		}
 			
 //		public function clickOnBoard(event:MouseEvent):void{

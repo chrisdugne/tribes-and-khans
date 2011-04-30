@@ -1,5 +1,6 @@
 package com.uralys.tribes.core
 {
+	import com.dncompute.graphics.GraphicsUtil;
 	import com.uralys.tribes.commons.Numbers;
 	import com.uralys.tribes.commons.Session;
 	import com.uralys.tribes.entities.Case;
@@ -16,6 +17,7 @@ package com.uralys.tribes.core
 	
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
+	import flash.geom.Point;
 	
 	import mx.collections.ArrayCollection;
 	import mx.collections.SortField;
@@ -69,13 +71,9 @@ package com.uralys.tribes.core
 			radialGrad.interpolationMethod
 		}
 
-		public function setBoard(board:Board):void{
-			this.board = board;
-		}
-
 		//=====================================================================================//
 		
-		private var board:Board;
+		private var currentUnitMovesImages:ArrayCollection;
 		
 		//=====================================================================================//
 
@@ -103,25 +101,41 @@ package com.uralys.tribes.core
 			
 			var offset:int = Numbers.NB_TILES_ON_EDGE_BY_LOADING/2;
 			
+			// draw city grounds
 			for(var j:int=Session.centerY-offset; j < Session.centerY+offset; j++){
 				for(var i:int=Session.centerX-offset; i < Session.centerX+offset; i++){
 					var _case:Case = Session.map[i][j];
 					if(_case.type == 1)
-						drawCase(Session.map[i][j]); 
+						drawCase(_case); 
 				}
 			}
 			
-			for(var j:int=Session.centerY-offset; j < Session.centerY+offset; j++){
-				for(var i:int=Session.centerX-offset; i < Session.centerX+offset; i++){
+			for(var j:int=Session.centerY-offset; j < Session.centerY+offset; j++)
+			{
+				// draw city houses
+				for(var i:int=Session.centerX-offset; i < Session.centerX+offset; i++)
+				{
 					var _case:Case = Session.map[i][j];
 					if(_case.type == 1)
 						drawCity(_case.city);
 				}
 
-				for(var i:int=Session.centerX-offset; i < Session.centerX+offset; i++){
+				// draw forests grounds
+				for(var i:int=Session.centerX-offset; i < Session.centerX+offset; i++)
+				{
 					var _case:Case = Session.map[i][j];
-					if(_case.type == 0)
-						drawCase(Session.map[i][j]);
+					if(_case.type == 0){
+						drawCase(_case);
+					}
+				}
+
+				// draw units
+				for(var i:int=Session.centerX-offset; i < Session.centerX+offset; i++)
+				{
+					var _case:Case = Session.map[i][j];
+					
+					if(_case.refresh())
+						drawUnits(_case);
 				}
 			}
 			
@@ -182,7 +196,28 @@ package com.uralys.tribes.core
 			image.addEventListener(MouseEvent.CLICK, tileIsCLicked);
 			image.addEventListener(MouseEvent.ROLL_OVER, tileIsRolledOn);
 			
-			board.mapPositioner.addElement(image);
+			Session.board.mapPositioner.addElement(image);
+		}
+
+		public function drawUnits(_case:Case):void{
+			
+			// ------------------//
+			// affichage des pions (armées-marchands)
+			
+			var imageUnit:Image = new Image();
+			
+			if(_case.armies.length > 0){
+				imageUnit.source = ImageContainer.ARMY_PLAYER;
+			}
+			else if(_case.merchants.length > 0){
+				imageUnit.source = ImageContainer.MERCHANT_PLAYER;				
+			}
+			
+			imageUnit.x = _case.x * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4) + 15;
+			imageUnit.y = _case.y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2) - 10;
+			imageUnit.mouseEnabled = false;
+			
+			Session.board.mapPositioner.addElement(imageUnit);
 		}
 		
 		
@@ -235,7 +270,7 @@ package com.uralys.tribes.core
 			for each(var image:Image in images.values()){
 				//var num:int = Utils.random(images.length) - 1;
 				//boardImages.addElement(images.removeItemAt(num) as Image);
-				board.mapPositioner.addElement(image);
+				Session.board.mapPositioner.addElement(image);
 			}
 		}
 		
@@ -251,17 +286,11 @@ package com.uralys.tribes.core
 		}
 		
 		protected function tileIsRolledOn(event:MouseEvent):void{
-			Session.COORDINATE_X = (event.currentTarget.data as Case).x;
-			Session.COORDINATE_Y = (event.currentTarget.data as Case).y;
-			
-			Session.BOARD_X = event.target.mouseX;
-			Session.BOARD_Y = event.target.mouseY;
-			
+			BoardClickAnalyser.getInstance().rollOnCase(event.currentTarget.data as Case);
 		}
 
 		protected function cityIsRolledOn(event:MouseEvent):void{
-			Session.COORDINATE_X = (event.currentTarget.data as City).x;
-			Session.COORDINATE_Y = (event.currentTarget.data as City).y;
+			BoardClickAnalyser.getInstance().rollOnCity(event.currentTarget.data as City);
 		}
 		
 		//==================================================================================================//
@@ -610,7 +639,7 @@ package com.uralys.tribes.core
 			
 			armyMiniCircle.fill = new SolidColor(isOpponent ? Numbers.RED : Numbers.BLUE);
 			
-			board.minimap.addElement(armyMiniCircle);
+			Session.board.minimap.addElement(armyMiniCircle);
 			
 			//------------------------------------------------------------//
 			
@@ -655,7 +684,7 @@ package com.uralys.tribes.core
 			
 			merchantMiniCircle.fill = new SolidColor(isOpponent ? Numbers.RED : Numbers.BLUE);
 			
-			board.minimap.addElement(merchantMiniCircle);
+			Session.board.minimap.addElement(merchantMiniCircle);
 		
 			//------------------------------------------------------------//
 			
@@ -769,6 +798,54 @@ package com.uralys.tribes.core
 			}catch(e:Error){}
 			
 			drawMerchant(merchant, false);
+		}
+
+		//==================================================================================================//
+		
+		public function addAllUnitMovesImages(unit:Unit):void{
+			
+			currentUnitMovesImages = new ArrayCollection();
+			
+			var xPreviousMove:int = -1; 
+			var yPreviousMove:int = -1; 
+			
+			for each(var unitMove:com.uralys.tribes.entities.Move in unit.moves)
+			{
+				//------------------------------------------------------//
+
+				var moveHighlight:Image = new Image();
+				moveHighlight.source = ImageContainer.getImage(ImageContainer.HIGHLIGHT_1);
+				moveHighlight.x = Utils.getXOnBoard(unitMove.getX());
+				moveHighlight.y = Utils.getYOnBoard(unitMove.getY());
+				
+				currentUnitMovesImages.addItem(moveHighlight);
+				Session.board.highlighters.addElement(moveHighlight);
+				
+				//------------------------------------------------------//
+				
+				if(xPreviousMove >= 0){
+					Session.board.highlighters.graphics.lineStyle(1,0x000000);
+					Session.board.highlighters.graphics.beginFill(0x999999);
+ 
+					GraphicsUtil.drawArrow(
+						Session.board.highlighters.graphics,
+						new Point(Utils.getXOnBoard(xPreviousMove)+Numbers.LAND_WIDTH/2,Utils.getYOnBoard(yPreviousMove)+Numbers.LAND_HEIGHT/2),
+						new Point(Utils.getXOnBoard(unitMove.getX())+Numbers.LAND_WIDTH/2,Utils.getYOnBoard(unitMove.getY())+Numbers.LAND_HEIGHT/2)
+					);
+				}
+				
+				//------------------------------------------------------//
+
+				xPreviousMove = unitMove.getX();
+				yPreviousMove = unitMove.getY();
+			}
+		}
+		
+		public function removeAllUnitMovesImages():void{
+			for each(var image:Image in currentUnitMovesImages){
+				Session.board.highlighters.removeElement(image);
+				Session.board.highlighters.graphics.clear();
+			}	
 		}
 		
 		
@@ -886,7 +963,7 @@ package com.uralys.tribes.core
 			FlexGlobals.topLevelApplication.hideconflicts.removeEventListener(EffectEvent.EFFECT_END, windowClosed);
 			
 			var mover:Move = new Move();
-			mover.target = board.mapPositioner;
+			mover.target = Session.board.mapPositioner;
 			mover.xTo = 250 - conflictInDisplay.x;
 			mover.yTo = 250 - conflictInDisplay.y;
 			mover.duration = 800;

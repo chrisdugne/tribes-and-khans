@@ -1,5 +1,7 @@
 package com.uralys.tribes.entities
 {
+	import com.uralys.tribes.commons.Session;
+	
 	import mx.collections.ArrayCollection;
 	
 	[Bindable]
@@ -93,6 +95,43 @@ package com.uralys.tribes.entities
 			_landOwner = o;
 		}
 		
+		//--------------------------------------------------------------//
+		// Flex only
+		
+		
+		public var armies:ArrayCollection = new ArrayCollection();
+		public var merchants:ArrayCollection = new ArrayCollection();
+		
+		
+		public function refresh():Boolean{
+			
+			var foundUnitsOnThisCase:Boolean = false;
+			var now:Number = new Date().getTime();
+			armies.removeAll();
+			merchants.removeAll();
+				
+			for each(var move:Move in recordedMoves){
+				if(move.timeFrom < now && (move.timeTo > now || move.timeTo == -1))
+				{
+					foundUnitsOnThisCase = true;
 
+					var unit:Unit = Session.player.getUnit(move.unitUID);
+					switch(unit.type){
+						case 1:
+							armies.addItem(unit);
+							break;
+						case 2:
+							merchants.addItem(unit);
+							break;
+					}
+				}
+			}
+			
+			return foundUnitsOnThisCase;
+		}
+		
+		//--------------------------------------------------------------//
+		
+		
 	}
 }

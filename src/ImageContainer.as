@@ -175,7 +175,20 @@ public final class ImageContainer
 	[Bindable] public static var MAP_BORDER_RIGHT:Bitmap;
 	[Bindable] public static var HIGHLIGHT_1:Bitmap;
 	[Bindable] public static var HIGHLIGHT_2:Bitmap;
+	[Bindable] public static var MERCHANT_PLAYER:Bitmap;
+	[Bindable] public static var MERCHANT_ALLY:Bitmap;
+	[Bindable] public static var MERCHANT_ENNEMY:Bitmap;
+	[Bindable] public static var ARMY_PLAYER:Bitmap;
+	[Bindable] public static var ARMY_ALLY:Bitmap;
+	[Bindable] public static var ARMY_ENNEMY:Bitmap;
 
+	//   ======================================================================//
+
+	// permet de faire des copies pour avoir plein d'image a partir du meme bitmap
+	public static function getImage(bitmap:Bitmap):Bitmap{
+		return new Bitmap(bitmap.bitmapData);
+	}
+	
 	//   ======================================================================//
 	
 	private static var loader:Loader;
@@ -196,7 +209,14 @@ public final class ImageContainer
 		 "webresources/images/map/border-left.png",
 		 "webresources/images/map/border-right.png",
 		 "webresources/images/map/highlight1.png",
-		 "webresources/images/map/highlight2.png"])
+		 "webresources/images/map/highlight2.png",
+		 "webresources/images/persos/marchand_vert.png",
+		 "webresources/images/persos/marchand_bleu.png",
+		 "webresources/images/persos/marchand_rouge.png",
+		 "webresources/images/persos/guerrier_vert.png",
+		 "webresources/images/persos/guerrier_bleu.png",
+		 "webresources/images/persos/guerrier_rouge.png"
+		 ])
 	
 	public static function loadImages():void{
 		loadNextImage();
@@ -254,13 +274,32 @@ public final class ImageContainer
 			case 13:
 				HIGHLIGHT_2 = event.currentTarget.content;
 				break;
+			case 14:
+				MERCHANT_PLAYER = event.currentTarget.content;
+				break;
+			case 15:
+				MERCHANT_ALLY = event.currentTarget.content;
+				break;
+			case 16:
+				MERCHANT_ENNEMY = event.currentTarget.content;
+				break;
+			case 17:
+				ARMY_PLAYER = event.currentTarget.content;
+				break;
+			case 18:
+				ARMY_ALLY = event.currentTarget.content;
+				break;
+			case 19:
+				ARMY_ENNEMY = event.currentTarget.content;
+				break;
 		}
 		
 		currentImage++;
-		if(currentImage < 14)
+		if(currentImage < 20)
 			loadNextImage();
 	}
 
 	
+
 }
 }

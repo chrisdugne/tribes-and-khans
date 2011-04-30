@@ -71,6 +71,12 @@ public class Translations{
 	//-----------------------------------------------------------------------------------//
 
 	[Bindable]
+	public static var WAY_SELECTION:ArrayCollection = new ArrayCollection(
+									["Edition du chemin de l'unité",
+									"Unit way edition",
+									"Unit way edition"]);
+
+	[Bindable]
 	public static var YOUR_GAMES:ArrayCollection = new ArrayCollection(
 									["Parties en cours",
 									"Your games",

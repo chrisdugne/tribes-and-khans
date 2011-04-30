@@ -30,8 +30,12 @@ public interface IGameDAO {
 
 	public void createUnit(Unit unit);
 	public void updateUnit(Unit unit);
+	
 	public List<String> linkNewUnitsAndGetPreviousUnitUIDs(String uralysUID, List<String> createdUnitUIDs);
+	public void linkNewUnit(String uralysUID, String unitUID);
+	
 	public void deleteUnits(List<String> toDeleteUnitUIDs, String uralysUID);
+	public void deleteUnit(String uralysUID, String unitUID);
 	public UnitDTO getUnit(String unitUID);
 	
 	public void createCity(City city, String playerUID);

@@ -37,15 +37,32 @@ public class GameService implements IGameService {
 		}
 	}
 	
-	public List<Unit> savePlayer(Player player) {
+	public void savePlayer(Player player) {
 		try{
-			return gameManager.savePlayer(player);
+			gameManager.savePlayer(player);
 		}
 		catch(Exception e){
 			e.printStackTrace();
-			return null;
 		}
 		
+	}
+
+	public void saveUnit(String uralysUID, Unit unit) {
+		try{
+			gameManager.saveUnit(uralysUID, unit);
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	public void deleteUnit(String uralysUID, String unitUID) {
+		try{
+			gameManager.deleteUnit(uralysUID, unitUID);
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
 	}
 
 	//=========================================================================//

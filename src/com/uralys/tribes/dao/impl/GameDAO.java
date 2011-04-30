@@ -340,6 +340,14 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		
 		return previousUIDList;
 	}
+	
+	public void linkNewUnit(String uralysUID, String unitUID) {
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		PlayerDTO playerDTO = pm.getObjectById(PlayerDTO.class, uralysUID);
+		
+		playerDTO.getUnitUIDs().add(unitUID);
+		pm.close();
+	}
 
 	
 	@SuppressWarnings("unchecked")
@@ -375,6 +383,39 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			pm.deletePersistent(unitDTO);
 		}
 		
+		pm.close();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void deleteUnit(String uralysUID, String unitUID){
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		PlayerDTO playerDTO = pm.getObjectById(PlayerDTO.class, uralysUID);
+		
+		playerDTO.getUnitUIDs().remove(unitUID);
+		
+		if(debug)log.info("delete unit : " + unitUID);
+		UnitDTO unitDTO = pm.getObjectById(UnitDTO.class, unitUID);
+		
+		if(unitDTO.getEquipmentUIDs().size() > 0){
+			Query query = pm.newQuery("select from " + EquipmentDTO.class.getName() + " where :uids.contains(key)");
+			List<EquipmentDTO> equipments = (List<EquipmentDTO>) query.execute(unitDTO.getEquipmentUIDs());
+			
+			for(EquipmentDTO equipmentDTO : equipments){
+				if(debug)log.info("delete equipmentDTO : " + equipmentDTO.getEquimentUID());
+				pm.deletePersistent(equipmentDTO);
+			}
+		}
+		
+		if(unitDTO.getMoveUIDs().size() > 0){
+			Query query = pm.newQuery("select from " + MoveDTO.class.getName() + " where :uids.contains(key)");
+			List<MoveDTO> moves = (List<MoveDTO>) query.execute(unitDTO.getMoveUIDs());
+			
+			for(MoveDTO moveDTO : moves){
+				deleteMove(moveDTO.getMoveUID(), moveDTO.getCaseUID(), moveDTO.getUnitUID());
+			}
+		}
+		
+		pm.deletePersistent(unitDTO);
 		pm.close();
 	}
 	

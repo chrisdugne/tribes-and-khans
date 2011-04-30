@@ -88,12 +88,15 @@ public class GameManager implements IGameManager {
 		}
 	}
 
-	public List<Unit> savePlayer(Player player) {
+	public void savePlayer(Player player) {
 		System.out.println("-------------------------------------------------");
 		System.out.println("Save turn pour joueur : " + player.getName());
 
 		//----------------------------------------------------------------//
 		// Cities
+
+		System.out.println("--------------------");
+		System.out.println("Saving cities");
 
 		for(City city : player.getCities()){
 
@@ -120,99 +123,40 @@ public class GameManager implements IGameManager {
 		}
 		
 		//----------------------------------------------------------------//
-		// Units
-
-		List<String> createdUnitUIDs = new ArrayList<String>();
-		List<String> editedUnitUIDs = new ArrayList<String>();
-		List<String> toDeleteUnitUIDs = new ArrayList<String>();
-		
-		for(Unit unit : player.getUnits()){
-			
-			if(unit.getUnitUID().startsWith("NEW_")){ // flex newUnit : unitUID = 'playerUralysUID-nbUnits'
-				unit.setUnitUID(unit.getUnitUID().substring(4));
-				gameDao.createUnit(unit);
-				createdUnitUIDs.add(unit.getUnitUID());
-			}
-			else{
-				gameDao.updateUnit(unit);
-				editedUnitUIDs.add(unit.getUnitUID());
-			}
-
-			//place or replace Unit
-			placeUnit(unit, unit.getMoves(), new ArrayList<Unit>());
-		}
-
-		List<String> existingUnitUIDs = gameDao.linkNewUnitsAndGetPreviousUnitUIDs(player.getUralysUID(), createdUnitUIDs);
-
-		for(String existingUnitUID : existingUnitUIDs){
-			System.out.println("existingUnitUID : " + existingUnitUID);
-			boolean found = false;
-			
-			for(String editedUnitUID : editedUnitUIDs){
-				if(editedUnitUID.equals(existingUnitUID)){
-					found = true;
-					break;
-				}
-			}
-			
-			if(!found)
-				toDeleteUnitUIDs.add(existingUnitUID);
-		}
-		
-		
-//		//----------------------------------------------------------------//
-//		// Merchants
-//		
-//		List<String> createdMerchantUIDs = new ArrayList<String>();
-//		List<String> editedMerchantUIDs = new ArrayList<String>();
-//		
-//		for(Army merchant : player.getMerchants()){
-//			
-//			if(merchant.getMoves().size() > 0){
-//				String moveUID = gameDao.saveMove(merchant.getMoves().get(0));
-//				merchant.getMoves().get(0).setMoveUID(moveUID);
-//			}
-//			
-//			if(merchant.getArmyUID().equals("new")){
-//				createdMerchantUIDs.add(gameDao.createArmy(merchant));
-////				armyRaised += merchant.getSize();
-//			}
-//			else{
-//				gameDao.updateArmy(merchant);
-//				editedMerchantUIDs.add(merchant.getArmyUID());
-//			}
-//			
-//		}
-//		
-//		List<String> existingMerchantUIDs = gameDao.linkNewMerchantsAndGetPreviousMerchantUIDs(player.getPlayerUID(), createdMerchantUIDs);
-//		
-//		for(String existingMerchantUID : existingMerchantUIDs){
-//			System.out.println("existingMerchantUID : " + existingMerchantUID);
-//			boolean found = false;
-//			
-//			for(String editedMerchantUID : editedMerchantUIDs){
-//				if(editedMerchantUID.equals(existingMerchantUID)){
-//					found = true;
-//					break;
-//				}
-//			}
-//			
-//			if(!found)
-//				toDeleteArmyUIDs.add(existingMerchantUID);
-//		}
-//		
-//		//----------------------------------------------------------------//
-//		// delete armies ans merchants to be deleted
-//
-		gameDao.deleteUnits(toDeleteUnitUIDs, player.getUralysUID());
-
-		//----------------------------------------------------------------//
 		// Player
 		
 		gameDao.updatePlayer(player); // lastTurnPLayed, remove last Reports
+	}
 	
+	//==================================================================================================//
+
+	public void saveUnit(String uralysUID, Unit unit){
+		System.out.println("-----------------------------------");
+		System.out.println("saveUnit : " + unit.getUnitUID() + " for uralysUID : " + uralysUID);
 		
-		return player.getUnits();
+		if(unit.getUnitUID().startsWith("NEW_")){ // flex newUnit : unitUID = 'playerUralysUID-nbUnits'
+			System.out.println("creating the unit");
+			
+			// remove the 'NEW_' tag
+			unit.setUnitUID(unit.getUnitUID().substring(4));
+			
+			gameDao.createUnit(unit);
+			gameDao.linkNewUnit(uralysUID, unit.getUnitUID());
+		}
+		else{
+			System.out.println("updating the unit");
+
+			gameDao.updateUnit(unit);
+		}
+
+		//place or replace Unit
+		
+		System.out.println("placing the unit");
+		placeUnit(unit, unit.getMoves(), new ArrayList<Unit>());
+	}
+	
+	public void deleteUnit(String uralysUID, String unitUID){
+		gameDao.deleteUnit(uralysUID, unitUID);
 	}
 	
 	//==================================================================================================//

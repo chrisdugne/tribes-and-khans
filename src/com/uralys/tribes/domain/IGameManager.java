@@ -12,7 +12,9 @@ public interface IGameManager {
 	public String createPlayer(String uralysUID, String email);
 	public Player getPlayer(String uralysUID);
 
-	public List<Unit> savePlayer(Player player);
+	public void savePlayer(Player player);
+	public void saveUnit(String uralysUID, Unit unit);
+	public void deleteUnit(String uralysUID, String unitUID);
 	
 	public List<Item> loadItems();
 	public List<Case> loadCases(List<String> caseUIDs);

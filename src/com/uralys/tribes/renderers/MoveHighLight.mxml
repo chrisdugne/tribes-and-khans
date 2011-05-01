@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group   xmlns:fx="http://ns.adobe.com/mxml/2009"  
+			xmlns:mx="library://ns.adobe.com/flex/mx"  
+			xmlns:s="library://ns.adobe.com/flex/spark" 
+			width="{Numbers.LAND_WIDTH}" height="{Numbers.LAND_HEIGHT}"
+			mouseEnabled="false">
+
+	<fx:Declarations>
+		<s:State name="normal" id="normalState"/>	
+		<s:State name="showTooltip" id="showTooltipState"/>	
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.uralys.tribes.commons.Numbers;
+			import com.uralys.tribes.entities.Move;
+			import com.uralys.utils.Utils;
+			
+			[Bindable] public var _move:Move;
+
+		]]>
+	</fx:Script>
+	
+	<mx:Image source="{ImageContainer.getImage(ImageContainer.HIGHLIGHT_1)}"
+			  mouseEnabled="false"/>
+	
+	<s:Button id="deleteButton" label="x" right="0" top="0" width="20"/>
+	<s:Button id="showTooltipButton"
+			  right="15"
+			  top="0"
+			  width="20"
+			  label.normal="s"
+			  label.showTooltip="h"
+			  click.normal="{currentState = showTooltipState.name}"
+			  click.showTooltip="{currentState = normalState.name}"
+			  />
+	<s:VGroup excludeFrom="normal" bottom="0"
+			  mouseEnabled="false">
+		<s:Label text="timefrom : {_move.timeFrom}"/>
+		<s:Label text="timeto : {_move.timeTo}"/>
+	</s:VGroup>
+</s:Group>

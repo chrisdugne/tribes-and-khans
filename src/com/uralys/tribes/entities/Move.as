@@ -13,12 +13,12 @@ package com.uralys.tribes.entities
 		}
 		
 		// on ne peut pas le mettre dans le constructeur, car BlazeDS l'utilise aussi
-		public function initNewMove(unitUID:String, i:int, j:int, __timeFrom:Number = -1):void{
+		public function initNewMove(unitUID:String, i:int, j:int, __timeFrom:Number = -1, __timeTo:Number = -1):void{
 			_timeFrom = __timeFrom == -1 ? new Date().getTime() : __timeFrom;
-			_moveUID = "NEW_"+i+"_"+j+"_"+unitUID+"_"+timeFrom;
+			_moveUID = "NEW_"+timeFrom+"_"+i+"_"+j+"_"+unitUID;
 			_caseUID = "case_"+i+"_"+j;
 			_unitUID = unitUID;
-			_timeTo = -1;
+			_timeTo = __timeTo;
 		}
 			
 		//--------------------------------------------------------------//
@@ -83,23 +83,6 @@ package com.uralys.tribes.entities
 		
 		//--------------------------------------------------------------//
 		
-		public function getX():int {
-			
-			var firstIndex:int = _caseUID.indexOf("_");
-			var secondIndex:int = _caseUID.indexOf("_",firstIndex+1);
-			var lengthBetweenIndexes:int = secondIndex - firstIndex;
-			
-			return parseInt(_caseUID.substr(firstIndex+1, lengthBetweenIndexes));
-		}
-		
-		public function getY():int {
-			
-			var firstIndex:int = _caseUID.indexOf("_");
-			var secondIndex:int = _caseUID.indexOf("_",firstIndex+1);
-			var lengthBetweenIndexes:int = secondIndex - firstIndex;
-			
-			return parseInt(_caseUID.substr(secondIndex+1));
-		}
 
 
 	}

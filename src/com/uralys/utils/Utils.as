@@ -55,6 +55,27 @@ public class Utils
 		}
 
 		//---------------------------------------------------------------------//
+		
+		public static function getXFromCaseUID(caseUID:String):int {
+			
+			var firstIndex:int = caseUID.indexOf("_");
+			var secondIndex:int = caseUID.indexOf("_",firstIndex+1);
+			var lengthBetweenIndexes:int = secondIndex - firstIndex;
+			
+			return parseInt(caseUID.substr(firstIndex+1, lengthBetweenIndexes));
+		}
+		
+		public static function getYFromCaseUID(caseUID:String):int {
+			
+			var firstIndex:int = caseUID.indexOf("_");
+			var secondIndex:int = caseUID.indexOf("_",firstIndex+1);
+			var lengthBetweenIndexes:int = secondIndex - firstIndex;
+			
+			return parseInt(caseUID.substr(secondIndex+1));
+		}
+		
+		
+		//---------------------------------------------------------------------//
 
 		/*
 		public static function getPositionName(p:int, gender:int):String {

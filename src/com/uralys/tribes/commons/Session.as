@@ -14,7 +14,7 @@ package com.uralys.tribes.commons
 		
 		//=====================================================//
 		
-		[Bindable] public static var VERSION:String = "1.1.06";
+		[Bindable] public static var VERSION:String = "1.1.07";
 		[Bindable] public static var LOGGED_IN:Boolean = false; 
 		[Bindable] public static var CONNECTED_TO_FACEBOOK:Boolean = false;
 		
@@ -90,12 +90,7 @@ package com.uralys.tribes.commons
 		public static  var centerX:int;
 		public static  var centerY:int;
 		
-		// Array[Array] stocke les images liees a chaque tile
-		// Session.tiles[i][j] = type 
-		//public static var tiles:Array;
-		
-		// Array[Array] stocke le type de chaque 'land' (foret, plaine, lac, rocher)
-		// Session.map[i][j] = type 
+		// Session.map[i][j] = case i,j 
 		public static var map:Array;
 		
 		// les cercles des entities sont dessinees sur la map

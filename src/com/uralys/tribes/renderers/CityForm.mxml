@@ -17,6 +17,7 @@
 				import com.uralys.tribes.entities.Move;
 				import com.uralys.tribes.entities.Smith;
 				import com.uralys.tribes.entities.Unit;
+				import com.uralys.tribes.managers.GameManager;
 				import com.uralys.tribes.tooltips.ForgeToolTip;
 				import com.uralys.tribes.tooltips.MerchantToolTip;
 				import com.uralys.utils.Utils;
@@ -1084,6 +1085,7 @@
 					
 					
 					Session.player.units.addItem(newUnit);
+					Session.map[city.x][city.y].units.addItem(newUnit);
 					
 					// on rajoute le move dans la case de la ville et on refresh le contenu de la case pour afficher dans le menu des unites de droite
 					Session.CURRENT_CASE_SELECTED.recordedMoves.addItem(moveInCity);
@@ -1114,9 +1116,6 @@
 				}
 
 				protected function deleteArmy():void{
-					
-					// on enleve les drawings du board (hack : je redessine la ville par dessus, armyCircle ne veut pas seffacer...: pose probleme affichage si la ville est trop petite)
-					BoardDrawer.getInstance().removeArmyFromBoard(army);
 					
 					if(army.unitUID.indexOf("NEW") != 0){
 						// pour une armee deja existante : on reajuste la pop, ils peuvent travailler des ce tour
@@ -1190,6 +1189,8 @@
 					Session.CURRENT_CASE_SELECTED.refresh();
 					Session.board.armiesList.dataProvider = Session.CURRENT_CASE_SELECTED.armies;
 					
+					GameManager.getInstance().deleteUnit(army);
+					
 					// on selectionne l'entree suivante dans la liste des armees
 					try{
 						armiesList.selectedIndex = 0;
@@ -1198,6 +1199,7 @@
 					catch(e:Error){
 						army = null;
 					}
+					
 					
 				}
 				
@@ -1269,7 +1271,7 @@
 						Session.board.merchantsList.dataProvider = Session.CURRENT_CASE_SELECTED.merchants;
 					}catch(error:Error){}
 						
-					
+					GameManager.getInstance().deleteUnit(merchant);
 					
 					// on selectionne l'entree suivante dans la liste des armees
 					try{

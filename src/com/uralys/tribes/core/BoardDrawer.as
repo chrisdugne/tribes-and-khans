@@ -7,11 +7,13 @@ package com.uralys.tribes.core
 	import com.uralys.tribes.entities.City;
 	import com.uralys.tribes.entities.Conflict;
 	import com.uralys.tribes.entities.Game;
+	import com.uralys.tribes.entities.Move;
 	import com.uralys.tribes.entities.MoveConflict;
 	import com.uralys.tribes.entities.Player;
 	import com.uralys.tribes.entities.Unit;
 	import com.uralys.tribes.managers.GameManager;
 	import com.uralys.tribes.pages.Board;
+	import com.uralys.tribes.renderers.MoveHighLight;
 	import com.uralys.utils.Map;
 	import com.uralys.utils.Utils;
 	
@@ -26,12 +28,14 @@ package com.uralys.tribes.core
 	import mx.core.IVisualElement;
 	import mx.core.UIComponent;
 	import mx.events.EffectEvent;
+	import mx.events.ToolTipEvent;
 	import mx.graphics.GradientEntry;
 	import mx.graphics.RadialGradientStroke;
 	import mx.graphics.SolidColor;
 	import mx.graphics.SolidColorStroke;
 	import mx.utils.ObjectUtil;
 	
+	import spark.components.Button;
 	import spark.components.Group;
 	import spark.components.Label;
 	import spark.effects.Move;
@@ -73,7 +77,7 @@ package com.uralys.tribes.core
 
 		//=====================================================================================//
 		
-		private var currentUnitMovesImages:ArrayCollection;
+		private var currentUnitMoveHighLights:ArrayCollection;
 		
 		//=====================================================================================//
 
@@ -139,7 +143,7 @@ package com.uralys.tribes.core
 				}
 			}
 			
-			
+			Session.board.refreshUnitsInCity();
 			Session.WAIT_FOR_SERVER = false;
 		}
 		
@@ -207,15 +211,17 @@ package com.uralys.tribes.core
 			var imageUnit:Image = new Image();
 			
 			if(_case.armies.length > 0){
-				imageUnit.source = ImageContainer.ARMY_PLAYER;
+				imageUnit.source = ImageContainer.getImage(ImageContainer.ARMY_PLAYER);
 			}
 			else if(_case.merchants.length > 0){
-				imageUnit.source = ImageContainer.MERCHANT_PLAYER;				
+				imageUnit.source = ImageContainer.getImage(ImageContainer.MERCHANT_PLAYER);				
 			}
 			
 			imageUnit.x = _case.x * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4) + 15;
 			imageUnit.y = _case.y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2) - 10;
 			imageUnit.mouseEnabled = false;
+			
+			_case.imageUnit = imageUnit; 
 			
 			Session.board.mapPositioner.addElement(imageUnit);
 		}
@@ -629,29 +635,29 @@ package com.uralys.tribes.core
 //				board.boardEntities.addElement(armyCircle);
 			}
 			
-			var armyMiniCircle:Ellipse;
-			armyMiniCircle = new Ellipse();
-			armyMiniCircle.width = army.radius*2/4;
-			armyMiniCircle.height = army.radius*2/4;
-			armyMiniCircle.x = (army.currentCase.x - army.radius/2)/15;
-			armyMiniCircle.y = (army.currentCase.y - army.radius/2)/15;
+//			var armyMiniCircle:Ellipse;
+//			armyMiniCircle = new Ellipse();
+//			armyMiniCircle.width = army.radius*2/4;
+//			armyMiniCircle.height = army.radius*2/4;
+//			armyMiniCircle.x = (army.currentCase.x - army.radius/2)/15;
+//			armyMiniCircle.y = (army.currentCase.y - army.radius/2)/15;
+//			
+//			
+//			armyMiniCircle.fill = new SolidColor(isOpponent ? Numbers.RED : Numbers.BLUE);
+//			
+//			Session.board.minimap.addElement(armyMiniCircle);
 			
-			
-			armyMiniCircle.fill = new SolidColor(isOpponent ? Numbers.RED : Numbers.BLUE);
-			
-			Session.board.minimap.addElement(armyMiniCircle);
+			//------------------------------------------------------------//
+//			
+//			if(Session.DRAW_TEXTS){
+//				
+//			}
 			
 			//------------------------------------------------------------//
 			
-			if(Session.DRAW_TEXTS){
-				
-			}
-			
-			//------------------------------------------------------------//
-			
-			if(Session.DRAW_IMAGES){
-				drawArmyImages(army.currentCase.x, army.currentCase.y, army.radius, 1);
-			}
+//			if(Session.DRAW_IMAGES){
+//				drawArmyImages(army.currentCase.x, army.currentCase.y, army.radius, 1);
+//			}
 		}
 		
 		//==================================================================================================//
@@ -674,29 +680,29 @@ package com.uralys.tribes.core
 //				board.boardEntities.addElement(merchantCircle);
 //			}
 			
-			var merchantMiniCircle:Ellipse;
-			merchantMiniCircle = new Ellipse();
-			merchantMiniCircle.width = merchant.radius*2/4;
-			merchantMiniCircle.height = merchant.radius*2/4;
-			merchantMiniCircle.x = (merchant.currentCase.x - merchant.radius/2)/15;
-			merchantMiniCircle.y = (merchant.currentCase.y - merchant.radius/2)/15;
-			
-			
-			merchantMiniCircle.fill = new SolidColor(isOpponent ? Numbers.RED : Numbers.BLUE);
-			
-			Session.board.minimap.addElement(merchantMiniCircle);
+//			var merchantMiniCircle:Ellipse;
+//			merchantMiniCircle = new Ellipse();
+//			merchantMiniCircle.width = merchant.radius*2/4;
+//			merchantMiniCircle.height = merchant.radius*2/4;
+//			merchantMiniCircle.x = (merchant.currentCase.x - merchant.radius/2)/15;
+//			merchantMiniCircle.y = (merchant.currentCase.y - merchant.radius/2)/15;
+//			
+//			
+//			merchantMiniCircle.fill = new SolidColor(isOpponent ? Numbers.RED : Numbers.BLUE);
+//			
+//			Session.board.minimap.addElement(merchantMiniCircle);
 		
 			//------------------------------------------------------------//
-			
-			if(Session.DRAW_TEXTS){
-				
-			}
+//			
+//			if(Session.DRAW_TEXTS){
+//				
+//			}
 			
 			//------------------------------------------------------------//
 			
-			if(Session.DRAW_IMAGES){
-				drawArmyImages(merchant.currentCase.x, merchant.currentCase.y, merchant.radius, 2);
-			}
+//			if(Session.DRAW_IMAGES){
+//				drawArmyImages(merchant.currentCase.x, merchant.currentCase.y, merchant.radius, 2);
+//			}
 		}
 
 		//==================================================================================================//
@@ -804,46 +810,60 @@ package com.uralys.tribes.core
 		
 		public function addAllUnitMovesImages(unit:Unit):void{
 			
-			currentUnitMovesImages = new ArrayCollection();
+			currentUnitMoveHighLights = new ArrayCollection();
 			
 			var xPreviousMove:int = -1; 
 			var yPreviousMove:int = -1; 
 			
+			var numOfTheMove:int = 0;
 			for each(var unitMove:com.uralys.tribes.entities.Move in unit.moves)
 			{
 				//------------------------------------------------------//
 
-				var moveHighlight:Image = new Image();
-				moveHighlight.source = ImageContainer.getImage(ImageContainer.HIGHLIGHT_1);
-				moveHighlight.x = Utils.getXOnBoard(unitMove.getX());
-				moveHighlight.y = Utils.getYOnBoard(unitMove.getY());
+				numOfTheMove++;
 				
-				currentUnitMovesImages.addItem(moveHighlight);
+				//------------------------------------------------------//
+
+				var moveHighlight:MoveHighLight = new MoveHighLight();
+				moveHighlight.x = Utils.getXOnBoard(Utils.getXFromCaseUID(unitMove.caseUID));
+				moveHighlight.y = Utils.getYOnBoard(Utils.getYFromCaseUID(unitMove.caseUID));
+				moveHighlight._move = unitMove;
+				
+				currentUnitMoveHighLights.addItem(moveHighlight);
 				Session.board.highlighters.addElement(moveHighlight);
 				
 				//------------------------------------------------------//
 				
 				if(xPreviousMove >= 0){
 					Session.board.highlighters.graphics.lineStyle(1,0x000000);
-					Session.board.highlighters.graphics.beginFill(0x999999);
+					Session.board.highlighters.graphics.beginFill(0x22ee22);
  
 					GraphicsUtil.drawArrow(
 						Session.board.highlighters.graphics,
 						new Point(Utils.getXOnBoard(xPreviousMove)+Numbers.LAND_WIDTH/2,Utils.getYOnBoard(yPreviousMove)+Numbers.LAND_HEIGHT/2),
-						new Point(Utils.getXOnBoard(unitMove.getX())+Numbers.LAND_WIDTH/2,Utils.getYOnBoard(unitMove.getY())+Numbers.LAND_HEIGHT/2)
+						new Point(Utils.getXOnBoard(Utils.getXFromCaseUID(unitMove.caseUID))+Numbers.LAND_WIDTH/2,Utils.getYOnBoard(Utils.getYFromCaseUID(unitMove.caseUID))+Numbers.LAND_HEIGHT/2)
 					);
+				}
+				
+				// recorded a second move : wait for timeTo of the first move
+				if(numOfTheMove == 2){
+					trace("on doit enregistrer un move a ecouter !");
+					var _moveToListen:com.uralys.tribes.entities.Move = unit.moves.getItemAt(0) as com.uralys.tribes.entities.Move;
+					trace(_moveToListen.moveUID);
+						
+					CronMover.getInstance().addTimer(_moveToListen);
 				}
 				
 				//------------------------------------------------------//
 
-				xPreviousMove = unitMove.getX();
-				yPreviousMove = unitMove.getY();
+				xPreviousMove = Utils.getXFromCaseUID(unitMove.caseUID);
+				yPreviousMove = Utils.getYFromCaseUID(unitMove.caseUID);
 			}
 		}
 		
 		public function removeAllUnitMovesImages():void{
-			for each(var image:Image in currentUnitMovesImages){
-				Session.board.highlighters.removeElement(image);
+			for each(var moveHighLight:MoveHighLight in currentUnitMoveHighLights){
+				Session.board.highlighters.removeElement(moveHighLight);
 				Session.board.highlighters.graphics.clear();
 			}	
 		}
@@ -962,7 +982,7 @@ package com.uralys.tribes.core
 		protected function windowClosed(event:EffectEvent):void{
 			FlexGlobals.topLevelApplication.hideconflicts.removeEventListener(EffectEvent.EFFECT_END, windowClosed);
 			
-			var mover:Move = new Move();
+			var mover:spark.effects.Move = new spark.effects.Move();
 			mover.target = Session.board.mapPositioner;
 			mover.xTo = 250 - conflictInDisplay.x;
 			mover.yTo = 250 - conflictInDisplay.y;
@@ -986,9 +1006,9 @@ package com.uralys.tribes.core
 			
 			// recupere le dernier move (on part de la fin et on chope le premier non null (null = armyStanding : pas de move))
 			var i:int = 1;
-			var lastMove:Move = null;
+			var lastMove:com.uralys.tribes.entities.Move = null;
 			while(lastMove == null){
-				lastMove = moves.getItemAt(moves.length-i) as Move;
+				lastMove = moves.getItemAt(moves.length-i) as com.uralys.tribes.entities.Move;
 				i++;
 			}
 			
@@ -996,7 +1016,7 @@ package com.uralys.tribes.core
 			lastMove.addEventListener(EffectEvent.EFFECT_END, moveConflictDone);
 		}
 
-		private function moveArmyOnConflict(moveConflict:MoveConflict, xTo:int, yTo:int):Move{
+		private function moveArmyOnConflict(moveConflict:MoveConflict, xTo:int, yTo:int):spark.effects.Move{
 			
 			var radius:int =  Math.sqrt(moveConflict.armySize)/2 + 2;
 			var images:Array = drawArmyImages(moveConflict.xFrom, moveConflict.yFrom, radius, 1);
@@ -1006,7 +1026,7 @@ package com.uralys.tribes.core
 			}
 			
 			if(!moveConflict.armyStanding){
-				var mover:Move = new Move();
+				var mover:spark.effects.Move = new spark.effects.Move();
 				mover.targets = images;
 				mover.xFrom = moveConflict.xFrom;
 				mover.yFrom = moveConflict.yFrom;

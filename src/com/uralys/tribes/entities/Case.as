@@ -3,6 +3,7 @@ package com.uralys.tribes.entities
 	import com.uralys.tribes.commons.Session;
 	
 	import mx.collections.ArrayCollection;
+	import mx.controls.Image;
 	
 	[Bindable]
 	[RemoteClass(alias="com.uralys.tribes.entities.Case")]
@@ -32,6 +33,7 @@ package com.uralys.tribes.entities
 		protected var _x:int;
 		protected var _y:int;
 		protected var _recordedMoves:ArrayCollection;
+		protected var _units:ArrayCollection;
 		protected var _type:int; // type = -1 pour les 'non-cases'
 		protected var _city:City;
 		protected var _landOwner:Player;
@@ -71,6 +73,14 @@ package com.uralys.tribes.entities
 			_recordedMoves = o;
 		}
 		
+		public function get units():ArrayCollection {
+			return _units;
+		}
+		
+		public function set units(o:ArrayCollection):void {
+			_units = o;
+		}
+		
 		public function get type():int {
 			return _type;
 		}
@@ -101,6 +111,7 @@ package com.uralys.tribes.entities
 		
 		public var armies:ArrayCollection = new ArrayCollection();
 		public var merchants:ArrayCollection = new ArrayCollection();
+		public var imageUnit:Image;
 		
 		
 		public function refresh():Boolean{
@@ -115,7 +126,12 @@ package com.uralys.tribes.entities
 				{
 					foundUnitsOnThisCase = true;
 
-					var unit:Unit = Session.player.getUnit(move.unitUID);
+					var unit:Unit = getUnit(move.unitUID);
+					var unitInPlayer:Unit = Session.player.getUnit(unit.unitUID);
+					
+					if(unitInPlayer != null)
+						unitInPlayer.currentCaseUID = _caseUID;
+					
 					switch(unit.type){
 						case 1:
 							armies.addItem(unit);
@@ -132,6 +148,15 @@ package com.uralys.tribes.entities
 		
 		//--------------------------------------------------------------//
 		
+		public function getUnit(unitUID:String):Unit{
+			
+			for each(var unit:Unit in _units){
+				if(unit.unitUID == unitUID || unit.unitUID.substr(4) == unitUID)
+					return unit;
+			}
+			
+			return null;
+		}	
 		
 	}
 }

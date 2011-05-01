@@ -16,14 +16,14 @@ package com.uralys.tribes.entities
 		
 		// on ne peut pas le mettre dans le constructeur, car BlazeDS l'utilise aussi
 		public function initNewUnit(i:int = 0, j:int = 0):void{
-			_currentCase = Session.map[i][j];
+			_currentCaseUID = (Session.map[i][j] as Case).caseUID;
 			_unitUID = "NEW_"+Session.player.uralysUID+"_"+(Session.player.units.length+1)+"_"+(new Date().getTime());
 		}
 		
 		//==========================================================================//
 		
 		private var _status:int;
-		private var _currentCase:Case;
+		private var _currentCaseUID:String;
 		private var _playerUID:String;
 		
 		protected var _unitUID:String;
@@ -58,12 +58,12 @@ package com.uralys.tribes.entities
 			_size = o;
 		}
 	
-		public function get currentCase():Case {
-			return _currentCase;
+		public function get currentCaseUID():String {
+			return _currentCaseUID;
 		}
 	
-		public function set currentCase(o:Case):void {
-			_currentCase = o;
+		public function set currentCaseUID(o:String):void {
+			_currentCaseUID = o;
 		}
 	
 		public function get speed():int {

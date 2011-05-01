@@ -21,6 +21,7 @@
 			import com.uralys.tribes.commons.Translations;
 			import com.uralys.tribes.core.BoardClickAnalyser;
 			import com.uralys.tribes.core.BoardDrawer;
+			import com.uralys.tribes.core.CronMover;
 			import com.uralys.tribes.core.Pager;
 			import com.uralys.tribes.entities.City;
 			import com.uralys.tribes.entities.Conflict;
@@ -32,6 +33,7 @@
 			import com.uralys.tribes.entities.Unit;
 			import com.uralys.tribes.managers.GameManager;
 			import com.uralys.tribes.windows.ReportsWindow;
+			import com.uralys.utils.Utils;
 			
 			import mx.collections.ArrayCollection;
 			import mx.containers.TitleWindow;
@@ -106,10 +108,10 @@
 				
 				var unit:Unit = event.currentTarget.selectedItem;
 				mapPositioner.x = Session.MAP_WIDTH/2 
-									- unit.currentCase.x * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4) 
+									- Utils.getXFromCaseUID(unit.currentCaseUID) * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4) 
 									- Numbers.LAND_WIDTH/2;
 				mapPositioner.y = Session.MAP_HEIGHT/2 
-									- unit.currentCase.y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2) 
+									- Utils.getYFromCaseUID(unit.currentCaseUID) * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2) 
 									- Numbers.LAND_WIDTH/2;
 				
 				selectionChoiceGroup.includeInLayout = false;
@@ -128,38 +130,14 @@
 			//-----------------------------------------------------------//
 			
 			// set params est appelee avant creationComplete (init())
-			public function set params(args:Array):void{
-
+			public function set params(args:Array):void
+			{
 				this.selectedCity = Session.player.cities.getItemAt(0) as City;
 				GameManager.getInstance().refreshCity(selectedCity, false);
-
-				refreshUnits();
-
-			}
-			
-			public function refreshUnits():void{
+				
 				
 				for each(var unit:Unit in Session.player.units){
-					
-					if(unit.type == 2){
-						for each(var city:City in Session.player.cities){
-							if(unit.currentCase.x == city.x && unit.currentCase.y == city.y){
-								city.merchants.addItem(unit);
-								city.unitsToFeed += unit.size;
-								break;
-							}
-						}
-					}
-					
-					else if(unit.type == 1){
-						for each(var city:City in Session.player.cities){
-							
-							if(unit.currentCase.x == city.x && unit.currentCase.y == city.y){
-								city.armies.addItem(unit);
-								city.unitsToFeed += unit.size;
-								break;
-							}
-						}
+					if(unit.type == 1){
 						
 						for each(var equipment:Equipment in unit.equipments){
 							switch(equipment.item.name){
@@ -172,6 +150,36 @@
 								case "armor" :
 									unit.armors += equipment.size;
 									break;
+							}
+						}
+					}
+				}
+			}
+			
+			//-----------------------------------------------------------//
+			
+			// appelee apres le BoardDrawer.refreshDisplay, qui raffraichit toutes les currentCaseUID des units de toutes les cases.
+			public function refreshUnitsInCity():void{
+				
+				for each(var unit:Unit in Session.player.units){
+					
+					if(unit.type == 2){
+						for each(var city:City in Session.player.cities){
+							if(Utils.getXFromCaseUID(unit.currentCaseUID) == city.x && Utils.getYFromCaseUID(unit.currentCaseUID) == city.y){
+								city.merchants.addItem(unit);
+								city.unitsToFeed += unit.size;
+								break;
+							}
+						}
+					}
+					
+					else if(unit.type == 1){
+						for each(var city:City in Session.player.cities){
+							
+							if(Utils.getXFromCaseUID(unit.currentCaseUID) == city.x && Utils.getYFromCaseUID(unit.currentCaseUID) == city.y){
+								city.armies.addItem(unit);
+								city.unitsToFeed += unit.size;
+								break;
 							}
 						}
 					}
@@ -259,14 +267,10 @@
 				if(Session.MOVE_A_UNIT){
 					// manipulation d'une unite : gestion du deplacement
 					var lastMove:com.uralys.tribes.entities.Move = selectedUnit.moves.getItemAt(selectedUnit.moves.length-1) as com.uralys.tribes.entities.Move;
-					var lastMoveX:int = lastMove.getX();
-					var lastMoveY:int = lastMove.getY();
+					var lastMoveX:int = Utils.getXFromCaseUID(lastMove.caseUID);
+					var lastMoveY:int = Utils.getYFromCaseUID(lastMove.caseUID);
 	
 					var distance:int = Math.abs(lastMoveX - Session.COORDINATE_X) + Math.abs(lastMoveY - Session.COORDINATE_Y);
-					
-					trace("move from " + lastMoveX + " | " + lastMoveY);
-					trace("move to " + Session.COORDINATE_X + " | " + Session.COORDINATE_Y);
-					trace("distance : " + distance);
 					
 					if(distance > 2 || lastMoveY == Session.COORDINATE_Y){
 						FlexGlobals.topLevelApplication.message("distance trop longue, choisir une case à cote du dernier deplacement");
@@ -277,13 +281,17 @@
 						var newMove:com.uralys.tribes.entities.Move = new com.uralys.tribes.entities.Move();
 						
 						var timeFrom:Number;
-						if(lastMove.timeTo == -1){
-							timeFrom = lastMove.timeTo;
+						var timeTo:Number;
+						
+						
+						if(selectedUnit.moves.length == 1){
+							timeFrom = new Date().getTime() + Numbers.BASE_TIME_PER_MOVE_MILLIS * selectedUnit.speed/Numbers.BASE_SPEED;
 						}
 						else{
-							timeFrom = lastMove.timeTo;
+							timeFrom = lastMove.timeFrom + Numbers.BASE_TIME_PER_MOVE_MILLIS * selectedUnit.speed/Numbers.BASE_SPEED;
 						}
 						
+						lastMove.timeTo = timeFrom;
 						newMove.initNewMove(selectedUnit.unitUID, Session.COORDINATE_X, Session.COORDINATE_Y, timeFrom);
 						selectedUnit.moves.addItem(newMove);
 					
@@ -470,8 +478,8 @@
 				city.iron = selectedUnit.iron - (Numbers.CITY_IRON_BASE_PRICE + selectedUnit.size * 10);
 				city.population = selectedUnit.size;
 				
-				city.x = selectedUnit.currentCase.x;
-				city.y = selectedUnit.currentCase.y;
+				city.x = Utils.getXFromCaseUID(selectedUnit.currentCaseUID);
+				city.y = Utils.getYFromCaseUID(selectedUnit.currentCaseUID);
 				
 				Session.player.units.removeItemAt(Session.player.units.getItemIndex(selectedUnit));
 				BoardDrawer.getInstance().removeArmyFromBoard(selectedUnit);
@@ -846,33 +854,29 @@
 							 x="{mapPositioner.x}"
 							 y="{mapPositioner.y}"
 							 mouseEnabled="false"
-							 mouseChildren="false"
+							 mouseChildren="true"
 							 mouseEnabledWhereTransparent="false">
 						
 						<mx:Image id="currentMouseHighLightNormal"
 								  source="{ImageContainer.getImage(ImageContainer.HIGHLIGHT_1)}"
 								  visible="{!Session.MOVE_A_UNIT}"
 								  x="{Session.COORDINATE_X * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4)}"
-								  y="{Session.COORDINATE_Y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2)}"/>
+								  y="{Session.COORDINATE_Y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2)}"
+								  mouseEnabled="false"/>
 
 						<mx:Image id="currentMouseHighLight4UnitMoves"
 								  source="{ImageContainer.getImage(ImageContainer.HIGHLIGHT_2)}"
 								  visible="{Session.MOVE_A_UNIT}"
 								  x="{Session.COORDINATE_X * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4)}"
-								  y="{Session.COORDINATE_Y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2)}"/>
+								  y="{Session.COORDINATE_Y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2)}"
+								  mouseEnabled="false"/>
 
 						<mx:Image id="currentSelectionHighLight"
 								  source="{ImageContainer.getImage(ImageContainer.HIGHLIGHT_2)}"
 								  x="{Session.CURRENT_SELECTION_X * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4)}"
-								  y="{Session.CURRENT_SELECTION_Y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2)}"/>
+								  y="{Session.CURRENT_SELECTION_Y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2)}"
+								  mouseEnabled="false"/>
 						
-						<!--
-						<mx:Image id="currentUnitHighLight"
-								  source="{ImageContainer.getImage(ImageContainer.HIGHLIGHT_1)}"
-								  visible="{Session.MOVE_A_UNIT}"
-								  x="{Session.CURRENT_SELECTION_X * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4)}"
-								  y="{Session.CURRENT_SELECTION_Y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2)}"/>
-						-->
 					</s:Group>
 					<s:Group id="inGameMenus" 
 							 mouseEnabled="false"

@@ -147,6 +147,9 @@ package com.uralys.tribes.managers {
 
 		private function saveNextUnit (unit:Unit):void{
 			
+			if(unit == null)
+				return;
+			
 			trace("saveUnit : " + unit.unitUID);
 			if(unit.unitUID.indexOf("NEW_") != -1){ // newUnit : unitUID = 'NEW_...' create equipment
 				
@@ -187,8 +190,6 @@ package com.uralys.tribes.managers {
 			
 			//---------------------------------------------------------------//
 			// save the unit on server side
-			
-			trace("call to gameWrapper.saveUnit");
 			
 			gameWrapper.saveUnit.addEventListener("result", unitSaved);
 			gameWrapper.saveUnit(Session.player.uralysUID, unit);
@@ -374,7 +375,7 @@ package com.uralys.tribes.managers {
 		public function loadItems():void{
 			gameWrapper.loadItems.addEventListener("result", itemsLoaded);
 			gameWrapper.loadItems();
-		}
+		} 
 
 		public function loadCases(centerX:int, centerY:int):void{
 
@@ -399,7 +400,10 @@ package com.uralys.tribes.managers {
 			gameWrapper.savePlayer(Session.player);
 		}
 
-		
+		public function deleteUnit (unit:Unit):void{
+			gameWrapper.deleteUnit(Session.player.uralysUID, unit.unitUID);
+		}
+
 		//============================================================================================//
 		//  RESULTS FROM SERVER	
 		

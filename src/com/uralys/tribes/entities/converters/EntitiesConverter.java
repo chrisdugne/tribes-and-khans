@@ -3,6 +3,7 @@ package com.uralys.tribes.entities.converters;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.uralys.tribes.dao.impl.UniversalDAO;
 import com.uralys.tribes.entities.Case;
 import com.uralys.tribes.entities.Unit;
 import com.uralys.tribes.entities.City;
@@ -162,7 +163,7 @@ public class EntitiesConverter {
 		
 		unit.setType(unitDTO.getType());
 		unit.setStatus(unitDTO.getStatus());
-		unit.setCurrentCase(convertCaseDTO(unitDTO.getCurrentCase()));
+		unit.setCurrentCaseUID(unitDTO.getCurrentCaseUID());
 		unit.setPlayerUID(unitDTO.getPlayerUID());
 
 		//-----------------------------------------------------------------------------------//
@@ -180,7 +181,8 @@ public class EntitiesConverter {
 		List<Move> moves = new ArrayList<Move>();
 		
 		for(MoveDTO moveDTO : unitDTO.getMoves()){
-			moves.add(convertMoveDTO(moveDTO));
+			Move move = convertMoveDTO(moveDTO);
+			moves.add(move);
 		}
 		
 		unit.setMoves(moves);
@@ -207,15 +209,30 @@ public class EntitiesConverter {
 		_case.setLandOwner(convertPlayerDTO(caseDTO.getLandOwner()));
 
 		//-----------------------------------------------------------------------------------//
-
+		
 		List<Move> moves = new ArrayList<Move>();
+		List<String> unitUIDs = new ArrayList<String>();
 		
 		for(MoveDTO moveDTO : caseDTO.getMoves()){
-			moves.add(convertMoveDTO(moveDTO));
+			Move move = convertMoveDTO(moveDTO);
+			moves.add(move);
+			unitUIDs.add(move.getUnitUID());
 		}
 		
 		_case.setRecordedMoves(moves);
+
+		//-----------------------------------------------------------------------------------//
 		
+		List<Unit> units = new ArrayList<Unit>();
+
+		for(UnitDTO unitDTO : UniversalDAO.getInstance().getListDTO(unitUIDs, UnitDTO.class)){
+			units.add(convertUnitDTO(unitDTO));
+		}
+		
+		_case.setUnits(units);
+		
+		//-----------------------------------------------------------------------------------//
+
 		return _case;
 	}
 	

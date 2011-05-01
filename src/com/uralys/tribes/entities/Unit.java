@@ -22,7 +22,7 @@ public class Unit {
 	private int value;
 	private int status = FREE;
 	private int type;
-	private Case currentCase;
+	private String currentCaseUID;
 	private String playerUID;
 
 	private int size;
@@ -64,12 +64,12 @@ public class Unit {
 		this.status = status;
 	}
 
-	public Case getCurrentCase() {
-		return currentCase;
+	public String getCurrentCaseUID() {
+		return currentCaseUID;
 	}
 
-	public void setCurrentCase(Case currentCase) {
-		this.currentCase = currentCase;
+	public void setCurrentCaseUID(String currentCaseUID) {
+		this.currentCaseUID = currentCaseUID;
 	}
 
 	public List<Move> getMoves() {

@@ -20,6 +20,7 @@ public class Case {
 	private int y;
 	
 	private List<Move> recordedMoves;
+	private List<Unit> units;
 	private int type;
 	private City city;
 	private Player landOwner;
@@ -66,6 +67,14 @@ public class Case {
 
 	public void setRecordedMoves(List<Move> moves) {
 		this.recordedMoves = moves;
+	}
+
+	public List<Unit> getUnits() {
+		return units;
+	}
+
+	public void setUnits(List<Unit> units) {
+		this.units = units;
 	}
 
 	public int getType() {

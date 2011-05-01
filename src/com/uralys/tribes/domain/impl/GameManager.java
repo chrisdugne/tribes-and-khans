@@ -233,7 +233,7 @@ public class GameManager implements IGameManager {
 		army1 = new Unit();
 		army1.setUnitUID("army1");
 		army1.setValue(50);
-		army1.setCurrentCase(new Case(1, 0));
+		army1.setCurrentCaseUID("case_1_0");
 		army1.setType(Unit.ARMY);
 		army1.setPlayerUID(player1.getUralysUID());
 
@@ -242,7 +242,7 @@ public class GameManager implements IGameManager {
 		army2 = new Unit();
 		army2.setUnitUID("army2");
 		army2.setValue(230);
-		army2.setCurrentCase(new Case(2, 7));
+		army1.setCurrentCaseUID("case_2_7");
 		army2.setType(Unit.ARMY);
 		army2.setPlayerUID(player2.getUralysUID());
 
@@ -251,7 +251,7 @@ public class GameManager implements IGameManager {
 		army3 = new Unit();
 		army3.setUnitUID("army3");
 		army3.setValue(120);
-		army3.setCurrentCase(new Case(7, 6));
+		army1.setCurrentCaseUID("case_7_6");
 		army3.setType(Unit.ARMY);
 		army3.setPlayerUID(player3.getUralysUID());
 

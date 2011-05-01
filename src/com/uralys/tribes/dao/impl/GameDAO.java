@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 
@@ -154,7 +155,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		player.getCityUIDs().add(cityUID);
 	}
 
-	private void createCase(int x, int y, String cityUID, int type, String landOwnerUID, PersistenceManager pm) {
+	private CaseDTO createCase(int x, int y, String cityUID, int type, String landOwnerUID, PersistenceManager pm) {
 		
 		CaseDTO _case = new CaseDTO();
 
@@ -166,9 +167,11 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		_case.setX(x);
 		_case.setY(y);
 		_case.setCityUID(cityUID);
+		_case.setLandOwnerUID(landOwnerUID);
 		_case.setType(type);
 
 		pm.makePersistent(_case);
+		return _case;
 	}
 
 	private int getInitialCityX(int numplayer) {
@@ -191,7 +194,12 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 
 	public CaseDTO getCase(int i, int j) {
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
-		return pm.getObjectById(CaseDTO.class, "case_"+i+"_"+j);
+		try{
+			return pm.getObjectById(CaseDTO.class, "case_"+i+"_"+j);
+		}
+		catch(JDOObjectNotFoundException e){
+			return createCase(i, j, null, Case.FOREST, null, pm);
+		}
 	}
 
 	//==================================================================================================//

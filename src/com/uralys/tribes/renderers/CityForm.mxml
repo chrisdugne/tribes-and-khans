@@ -26,23 +26,12 @@
 				import mx.core.FlexGlobals;
 				import mx.events.ItemClickEvent;
 				import mx.events.ToolTipEvent;
+				import mx.messaging.messages.ISmallMessage;
 				import mx.utils.ObjectUtil;
 				
 				//----------------------------------------------------------//
 				
-				protected function initArmiesList():void{
-					armiesList.addEventListener(ItemClickEvent.ITEM_CLICK, onArmyClick);
-				}
-
-				protected function initMerchantsList():void{
-					merchantsList.addEventListener(ItemClickEvent.ITEM_CLICK, onMerchantClick);
-				}
-
-				//----------------------------------------------------------//
-				
 				[Bindable] public var city:City;
-				[Bindable] private var army:Unit;
-				[Bindable] private var merchant:Unit;
 
 				//----------------------------------------------------------//
 
@@ -570,7 +559,7 @@
 				
 				protected function wheatMerchantCheck(newNumber:int):void{
 					
-					var previousNbWheat:int = merchant.wheat;
+					var previousNbWheat:int = city.merchant.wheat;
 					var newNbWheat:int = newNumber;
 					
 					if(newNbWheat > previousNbWheat){
@@ -591,19 +580,19 @@
 						city.wheat += previousNbWheat - newNbWheat;
 					}
 					
-					merchant.wheat = newNbWheat;
-					wheatMerchantStepper.data = merchant.wheat;
+					city.merchant.wheat = newNbWheat;
+					wheatMerchantStepper.data = city.merchant.wheat;
 				}
 				
 				protected function addAllWheatToMerchant():void{
-					merchant.wheat += city.wheat;
+					city.merchant.wheat += city.wheat;
 					city.wheat = 0;
 				}
 				
 				
 				protected function woodMerchantCheck(newNumber:int):void{
 					
-					var previousNbWood:int = merchant.wood;
+					var previousNbWood:int = city.merchant.wood;
 					var newNbWood:int = newNumber;
 					
 					if(newNbWood > previousNbWood){
@@ -624,18 +613,18 @@
 						city.wood += previousNbWood - newNbWood;
 					}
 					
-					merchant.wood = newNbWood;
-					woodMerchantStepper.data = merchant.wood;
+					city.merchant.wood = newNbWood;
+					woodMerchantStepper.data = city.merchant.wood;
 				}
 				
 				protected function addAllWoodToMerchant():void{
-					merchant.wood += city.wood;
+					city.merchant.wood += city.wood;
 					city.wood = 0;
 				}
 				
 				protected function ironMerchantCheck(newNumber:int):void{
 					
-					var previousNbIron:int = merchant.iron;
+					var previousNbIron:int = city.merchant.iron;
 					var newNbIron:int = newNumber;
 					
 					if(newNbIron > previousNbIron){
@@ -656,18 +645,18 @@
 						city.iron += previousNbIron - newNbIron;
 					}
 					
-					merchant.iron = newNbIron;
-					ironMerchantStepper.data = merchant.iron;
+					city.merchant.iron = newNbIron;
+					ironMerchantStepper.data = city.merchant.iron;
 				}
 				
 				protected function addAllIronToMerchant():void{
-					merchant.iron += city.iron;
+					city.merchant.iron += city.iron;
 					city.iron = 0;
 				}
 				
 				protected function goldMerchantCheck(newNumber:int):void{
 					
-					var previousNbGold:int = merchant.gold;
+					var previousNbGold:int = city.merchant.gold;
 					var newNbGold:int = newNumber;
 					
 					if(newNbGold > previousNbGold){
@@ -688,18 +677,18 @@
 						city.gold += previousNbGold - newNbGold;
 					}
 					
-					merchant.gold = newNbGold;
-					goldMerchantStepper.data = merchant.gold;
+					city.merchant.gold = newNbGold;
+					goldMerchantStepper.data = city.merchant.gold;
 				}
 				
 				protected function addAllGoldToMerchant():void{
-					merchant.gold += city.gold;
+					city.merchant.gold += city.gold;
 					city.gold = 0;
 				}
 				
 				protected function bowsMerchantCheck(newNumber:int):void{
 					
-					var previousNbBows:int = merchant.bows;
+					var previousNbBows:int = city.merchant.bows;
 					var newNbBows:int = newNumber;
 					
 					if(newNbBows > previousNbBows){
@@ -720,18 +709,18 @@
 						city.bowStock += previousNbBows - newNbBows;
 					}
 					
-					merchant.bows = newNbBows;
-					bowsMerchantStepper.data = merchant.bows;
+					city.merchant.bows = newNbBows;
+					bowsMerchantStepper.data = city.merchant.bows;
 				}
 				
 				protected function addAllBowsToMerchant():void{
-					merchant.bows += city.bowStock;
+					city.merchant.bows += city.bowStock;
 					city.bowStock = 0;
 				}
 				
 				protected function swordsMerchantCheck(newNumber:int):void{
 					
-					var previousNbSwords:int = merchant.swords;
+					var previousNbSwords:int = city.merchant.swords;
 					var newNbSwords:int = newNumber;
 					
 					if(newNbSwords > previousNbSwords){
@@ -752,19 +741,19 @@
 						city.swordStock += previousNbSwords - newNbSwords;
 					}
 					
-					merchant.swords = newNbSwords;
-					swordsMerchantStepper.data = merchant.swords;
+					city.merchant.swords = newNbSwords;
+					swordsMerchantStepper.data = city.merchant.swords;
 				}
 				
 				protected function addAllSwordsToMerchant():void{
-					merchant.swords += city.swordStock;
+					city.merchant.swords += city.swordStock;
 					city.swordStock = 0;
 				}
 				
 				
 				protected function armorsMerchantCheck(newNumber:int):void{
 					
-					var previousNbArmors:int = merchant.armors;
+					var previousNbArmors:int = city.merchant.armors;
 					var newNbArmors:int = newNumber;
 					
 					if(newNbArmors > previousNbArmors){
@@ -785,12 +774,12 @@
 						city.armorStock += previousNbArmors - newNbArmors;
 					}
 					
-					merchant.armors = newNbArmors;
-					armorsMerchantStepper.data = merchant.armors;
+					city.merchant.armors = newNbArmors;
+					armorsMerchantStepper.data = city.merchant.armors;
 				}
 				
 				protected function addAllArmorsToMerchant():void{
-					merchant.armors += city.armorStock;
+					city.merchant.armors += city.armorStock;
 					city.armorStock = 0;
 				}
 				
@@ -799,7 +788,7 @@
 				
 				protected function bowsArmyCheck(newNumber:int):void{
 					
-					var previousNbBows:int = army.bows;
+					var previousNbBows:int = city.army.bows;
 					var newNbBows:int = newNumber;
 					
 					if(newNbBows > previousNbBows){
@@ -834,17 +823,17 @@
 						}
 					}
 					
-					army.bows = newNbBows;
-					bowsArmyStepper.data = army.bows;
+					city.army.bows = newNbBows;
+					bowsArmyStepper.data = city.army.bows;
 				}
 				
 				protected function addAllBowsToArmy():void{
-					bowsArmyCheck(army.bows + city.bowStock);
+					bowsArmyCheck(city.army.bows + city.bowStock);
 				}
 				
 				protected function swordsArmyCheck(newNumber:int):void{
 					
-					var previousNbSwords:int = army.swords;
+					var previousNbSwords:int = city.army.swords;
 					var newNbSwords:int = newNumber;
 					
 					if(newNbSwords > previousNbSwords){
@@ -879,17 +868,17 @@
 						}
 					}
 					
-					army.swords = newNbSwords;	
-					swordsArmyStepper.data = army.swords;
+					city.army.swords = newNbSwords;	
+					swordsArmyStepper.data = city.army.swords;
 				}
 				
 				protected function addAllSwordsToArmy():void{
-					swordsArmyCheck(army.swords + city.swordStock);
+					swordsArmyCheck(city.army.swords + city.swordStock);
 				}
 				
 				protected function armorsArmyCheck(newNumber:int):void{
 					
-					var previousNbArmors:int = army.armors;
+					var previousNbArmors:int = city.army.armors;
 					var newNbArmors:int = newNumber;
 					
 					if(newNbArmors > previousNbArmors){
@@ -924,24 +913,23 @@
 						}
 					}
 					
-					army.armors = newNbArmors;
-					armorsArmyStepper.data = army.armors;
+					city.army.armors = newNbArmors;
+					armorsArmyStepper.data = city.army.armors;
 				}
 				
 				protected function addAllArmorsToArmy():void{
-					armorsArmyCheck(army.armors + city.armorStock);
+					armorsArmyCheck(city.army.armors + city.armorStock);
 				}
 				
 				//-------------------------------------------------------------------------//
 				
 				protected function addAllUnemployedToArmy():void	{
-					armyCheck(army.size + city.unemployed);
+					armyCheck(city.army.size + city.unemployed);
 				}
 				
 				protected function armyCheck(newNumber:int):void	{
 					
-					
-					var previousArmySize:int = army.size;
+					var previousArmySize:int = city.army.size;
 					var newArmySize:int = newNumber;
 					
 					// caravan : min 50, max : population
@@ -953,8 +941,8 @@
 					if(city.unemployed < peopleAddedWithStepper)
 						newArmySize = previousArmySize + city.unemployed;
 					
-					army.size = newArmySize;
-					armyStepper.data = army.size;
+					city.army.size = newArmySize;
+					armyStepper.data = city.army.size;
 					
 					
 					if(newArmySize > previousArmySize){
@@ -982,25 +970,17 @@
 						}
 					}
 					
-					
-//					if(army.ellipseTo){
-//						army.ellipseTo.width = army.radius*2;
-//						army.ellipseTo.height = army.radius*2;
-//					}
-						
-					// on refresh le drawing au board
-					BoardDrawer.getInstance().refreshArmyOnBoard(army);
 				}
 				
 				//-------------------------------------------------------------------------//
 
 				protected function addAllUnemployedToMerchants():void	{
-					merchantsCheck(merchant.size + city.unemployed);
+					merchantsCheck(city.merchant.size + city.unemployed);
 				}
 				
 				protected function merchantsCheck(newNumber:int):void	{
 					
-					var previousMerchantSize:int = merchant.size;
+					var previousMerchantSize:int = city.merchant.size;
 					var newMerchantSize:int = newNumber;
 					
 					// caravan : min 50, max : population
@@ -1012,8 +992,8 @@
 					if(city.unemployed < peopleAddedWithStepper)
 						newMerchantSize = previousMerchantSize + city.unemployed;
 					
-					merchant.size = newMerchantSize;
-					merchantsStepper.data = merchant.size;
+					city.merchant.size = newMerchantSize;
+					merchantsStepper.data = city.merchant.size;
 					
 					if(newMerchantSize > previousMerchantSize){
 						// on ajoute des gens dans une caravane
@@ -1041,13 +1021,8 @@
 					}
 					
 					
-//					if(merchant.ellipseTo){
-//						merchant.ellipseTo.width = merchant.radius*2;
-//						merchant.ellipseTo.height = merchant.radius*2;
-//					}
-						
 					// on refresh le drawing au board
-					BoardDrawer.getInstance().refreshMerchantOnBoard(merchant);
+					BoardDrawer.getInstance().refreshMerchantOnBoard(city.merchant);
 				}
 				
 				
@@ -1056,11 +1031,11 @@
 				// Armies - Merchants
 				
 				protected function onArmyClick(event:ItemClickEvent):void{
-					army = event.currentTarget.selectedItem as Unit;
+					city.army = event.currentTarget.selectedItem as Unit;
 				}
 				
 				protected function onMerchantClick(event:ItemClickEvent):void{
-					merchant = event.currentTarget.selectedItem as Unit;
+					city.merchant = event.currentTarget.selectedItem as Unit;
 				}
 				
 				protected function newUnit(type:int):Unit{
@@ -1080,22 +1055,33 @@
 					
 					newUnit.moves = new ArrayCollection();
 					var moveInCity:Move = new Move();
-					moveInCity.initNewMove(newUnit.unitUID.substr(4), city.x, city.y);
+					moveInCity.initNewMove(newUnit.unitUID, city.x, city.y);
 					newUnit.moves.addItem(moveInCity);
 					
-					
 					Session.player.units.addItem(newUnit);
-					Session.map[city.x][city.y].units.addItem(newUnit);
 					
 					// on rajoute le move dans la case de la ville et on refresh le contenu de la case pour afficher dans le menu des unites de droite
+					Session.CURRENT_CASE_SELECTED.units.addItem(newUnit);
 					Session.CURRENT_CASE_SELECTED.recordedMoves.addItem(moveInCity);
 					Session.CURRENT_CASE_SELECTED.refresh();
-					
-					BoardDrawer.getInstance().drawUnits(Session.CURRENT_CASE_SELECTED);
 					
 					return newUnit;
 				}
 				
+				protected function validateArmy():void
+				{
+					currentState = recordingUnitState.name;
+					GameManager.getInstance().saveUnit(city.army);
+					BoardDrawer.getInstance().refreshUnits(Session.CURRENT_CASE_SELECTED);
+				}
+
+				protected function validateMerchant():void
+				{
+					currentState = recordingUnitState.name;
+					GameManager.getInstance().saveUnit(city.merchant);
+					BoardDrawer.getInstance().refreshUnits(Session.CURRENT_CASE_SELECTED);
+				}
+
 				protected function newArmy():void{
 					
 					var newArmy:Unit = newUnit(1);
@@ -1103,33 +1089,29 @@
 					if(newArmy == null)
 						return;
 
-					// refresh de la liste des armies (semble foireux)
-					Session.board.armiesList.dataProvider = Session.CURRENT_CASE_SELECTED.armies;
-					
-					city.armies.addItem(newArmy);
-					
-					armiesList.selectedIndex = city.armies.length - 1;
 
-					
-					army = newArmy;
+					city.army = newArmy;
 					armyCheck(50);
+					
 				}
 
-				protected function deleteArmy():void{
-					
-					if(army.unitUID.indexOf("NEW") != 0){
+				protected function deleteArmy():void
+				{
+					trace("delete army" + city.army.unitUID);
+				
+					if(city.army.unitUID.indexOf("NEW") != 0){
 						// pour une armee deja existante : on reajuste la pop, ils peuvent travailler des ce tour
 						// faille : si on a enleve des unites avant elles sont dans armyReleased et ne seront pas utilisees ce tour
-						city.population += army.size;
+						city.population += city.army.size;
 					}
 					else{
 						// pour une armee nouvelle, la pop n'a pas bouge, on reajuste armyRaised et armyReleased par contre
 						
-						if(city.armyRaised > army.size){
-							city.armyRaised -= army.size;
+						if(city.armyRaised > city.army.size){
+							city.armyRaised -= city.army.size;
 						}
 						else{
-							city.armyReleased += army.size - city.armyRaised;
+							city.armyReleased += city.army.size - city.armyRaised;
 							city.armyRaised = 0;
 						}
 						
@@ -1137,7 +1119,7 @@
 					
 					// on remet les armements dans les stocks de la ville
 					// on enleve des arcs a l'armee
-					var nbBowsRestored:int = army.bows;
+					var nbBowsRestored:int = city.army.bows;
 					
 					if(city.bowsEquiped > nbBowsRestored){
 						city.bowsEquiped -= nbBowsRestored;
@@ -1148,7 +1130,7 @@
 					}
 					
 					// on enleve des epees a l'armee
-					var nbSwordsRestored:int = army.swords;
+					var nbSwordsRestored:int = city.army.swords;
 					
 					if(city.swordsEquiped > nbSwordsRestored){
 						city.swordsEquiped -= nbSwordsRestored;
@@ -1159,7 +1141,7 @@
 					}
 					
 					// on enleve des armures a l'armee
-					var nbArmorsRestored:int = army.armors;
+					var nbArmorsRestored:int = city.army.armors;
 					
 					if(city.armorsEquiped > nbArmorsRestored){
 						city.armorsEquiped -= nbArmorsRestored;
@@ -1169,36 +1151,29 @@
 						city.armorsEquiped = 0;
 					}
 					
-					
-					// on enleve l'armee de la liste de la ville et du player
-					city.armies.removeItemAt(city.armies.getItemIndex(army));
-					Session.player.units.removeItemAt(Session.player.units.getItemIndex(army));
+					Session.player.units.removeItemAt(Session.player.units.getItemIndex(city.army));
 
 					// on enleve le move dans la case de la ville et on refresh le contenu de la case pour afficher dans le menu des unites de droite
 					var indexToRemove:int = -1;
 					for each(var recordedMovesInTheCity:Move in Session.CURRENT_CASE_SELECTED.recordedMoves){
-						if(recordedMovesInTheCity.unitUID == army.unitUID || recordedMovesInTheCity.unitUID == army.unitUID.substr(4)){
+						trace("recordedMove.unitUID: " + recordedMovesInTheCity.unitUID);
+						
+						if(recordedMovesInTheCity.unitUID == city.army.unitUID)
+						{
 							indexToRemove = Session.CURRENT_CASE_SELECTED.recordedMoves.getItemIndex(recordedMovesInTheCity);
 							break;
 						}
 					}
-					
+					trace(indexToRemove);
 					if(indexToRemove >= 0)
 						Session.CURRENT_CASE_SELECTED.recordedMoves.removeItemAt(indexToRemove);
 					
 					Session.CURRENT_CASE_SELECTED.refresh();
-					Session.board.armiesList.dataProvider = Session.CURRENT_CASE_SELECTED.armies;
+					BoardDrawer.getInstance().refreshUnits(Session.CURRENT_CASE_SELECTED);
 					
-					GameManager.getInstance().deleteUnit(army);
+					GameManager.getInstance().deleteUnit(city.army);
 					
-					// on selectionne l'entree suivante dans la liste des armees
-					try{
-						armiesList.selectedIndex = 0;
-						army = city.armies.getItemAt(0) as Unit;	
-					}
-					catch(e:Error){
-						army = null;
-					}
+					city.army = null;
 					
 					
 				}
@@ -1206,82 +1181,66 @@
 				
 				protected function newMerchants():void{
 					
-					
 					var newMerchant:Unit = newUnit(2);
 					if(newMerchant == null)
 						return;
 					
-					city.merchants.addItem(newMerchant);
-					
-					merchantsList.selectedIndex = city.merchants.length - 1;
-					
-					merchant = newMerchant;
+					city.merchant = newMerchant;
 					merchantsCheck(50);
 				}
 
 				protected function deleteMerchant():void{
 					
-					// on enleve les drawings du board (hack : je redessine la ville par dessus, armyCircle ne veut pas seffacer...: pose probleme affichage si la ville est trop petite)
-					BoardDrawer.getInstance().removeArmyFromBoard(merchant);
+					trace("delete merchant" + city.merchant.unitUID);
 					
-					if(merchant.unitUID.indexOf("NEW") != 0){
+					if(city.merchant.unitUID.indexOf("NEW") != 0){
 						// pour une caravane deja existante : on reajuste la pop, ils peuvent travailler des ce tour
 						// faille : si on a enleve des unites avant elles sont dans armyReleased et ne seront pas utilisees ce tour
-						city.population += merchant.size;
+						city.population += city.merchant.size;
 					}
 					else{
 						// pour une caravane nouvelle, la pop n'a pas bouge, on reajuste armyRaised et armyReleased par contre
 						
-						if(city.armyRaised > merchant.size){
-							city.armyRaised -= merchant.size;
+						if(city.armyRaised > city.merchant.size){
+							city.armyRaised -= city.merchant.size;
 						}
 						else{
-							city.armyReleased += merchant.size - city.armyRaised;
+							city.armyReleased += city.merchant.size - city.armyRaised;
 							city.armyRaised = 0;
 						}
 						
 					}
 					
 					// on remet les provisions transportees dans les stocks de la ville
-					city.wheat += merchant.wheat;
-					city.wood += merchant.wood;
-					city.iron += merchant.iron;
-					city.gold += merchant.gold;
+					city.wheat += city.merchant.wheat;
+					city.wood += city.merchant.wood;
+					city.iron += city.merchant.iron;
+					city.gold += city.merchant.gold;
 					
 					// on enleve la caravane de la liste de la ville et du player
-					city.merchants.removeItemAt(city.merchants.getItemIndex(merchant));
-					Session.player.units.removeItemAt(Session.player.units.getItemIndex(merchant));
+					Session.player.units.removeItemAt(Session.player.units.getItemIndex(city.merchant));
 					
 					// on enleve le move dans la case de la ville et on refresh le contenu de la case pour afficher dans le menu des unites de droite
 					var indexToRemove:int = -1;
 					for each(var recordedMovesInTheCity:Move in Session.CURRENT_CASE_SELECTED.recordedMoves){
 						
-						if(recordedMovesInTheCity.unitUID == merchant.unitUID || recordedMovesInTheCity.unitUID == merchant.unitUID.substr(4)){
+						trace("recordedMove.unitUID: " + recordedMovesInTheCity.unitUID);
+						if(recordedMovesInTheCity.unitUID == city.merchant.unitUID){
 							indexToRemove = Session.CURRENT_CASE_SELECTED.recordedMoves.getItemIndex(recordedMovesInTheCity);
 							break;
 						}
 					}
 					
+					trace(indexToRemove);
 					if(indexToRemove >= 0)
 						Session.CURRENT_CASE_SELECTED.recordedMoves.removeItemAt(indexToRemove);
 					
 					Session.CURRENT_CASE_SELECTED.refresh();
+					BoardDrawer.getInstance().refreshUnits(Session.CURRENT_CASE_SELECTED);
 					
-					try{// if the Session.board.merchantsList has not been clicked yet, it is null.
-						Session.board.merchantsList.dataProvider = Session.CURRENT_CASE_SELECTED.merchants;
-					}catch(error:Error){}
-						
-					GameManager.getInstance().deleteUnit(merchant);
+					GameManager.getInstance().deleteUnit(city.merchant);
 					
-					// on selectionne l'entree suivante dans la liste des armees
-					try{
-						merchantsList.selectedIndex = 0;
-						merchant = city.merchants.getItemAt(0) as Unit;	
-					}
-					catch(e:Error){
-						merchant = null;
-					}
-					
+					city.merchant = null;
 				}
 				
 			]]>
@@ -1290,6 +1249,9 @@
 		<fx:Declarations>
 			<s:Fade id="fader" duration="1000" alphaFrom="1" alphaTo="0"/>
 			<s:Fade id="shower" duration="1000" alphaFrom="0" alphaTo="1"/>
+			
+			<s:State name="normal" id="normalState"/>
+			<s:State name="recordingUnit" id="recordingUnitState"/>
 		</fx:Declarations>
 	
 		<mx:Image source="{ImageContainer.FERMIER}" x="950" y="-70" visible="{viewstack.selectedIndex == 0}" hideEffect="fader" showEffect="shower"/>
@@ -1360,10 +1322,10 @@
 				
 				<s:NavigatorContent label="{Translations.RESOURCES.getItemAt(Session.LANGUAGE)}">
 					<s:HGroup width="100%" horizontalAlign="center">
-						<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle">
+						<mx:Grid verticalGap="10" horizontalGap="55" horizontalAlign="center" verticalAlign="middle">
 							<mx:GridRow >
 								<mx:GridItem/>
-								<mx:GridItem horizontalAlign="center">
+								<mx:GridItem horizontalAlign="center" width="100">
 									<s:Label text="{Translations.WORKERS.getItemAt(Session.LANGUAGE)}" />
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
@@ -1373,7 +1335,7 @@
 									<s:Label text="{Translations.SPENDING.getItemAt(Session.LANGUAGE)}"/>
 								</mx:GridItem>
 							</mx:GridRow>
-							<mx:GridRow >
+							<mx:GridRow>
 								<mx:GridItem horizontalAlign="center">
 									<mx:Image toolTip="{Translations.WHEAT.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WHEAT}"/>
 								</mx:GridItem>
@@ -1384,10 +1346,10 @@
 																 check="wheatWorkersCheck"
 																 wantMax="addAllUnemployedToWheat"/>
 								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
+								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 									<s:Label text="+ {city.wheatEarned}" color="{Numbers.GREEN}"/>
 								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
+								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 									<s:Label text="- {city.wheatSpent}"  color="{city.wheatSpent > 0 ? Numbers.RED : Numbers.GREEN}"/>
 								</mx:GridItem>
 							</mx:GridRow>
@@ -1402,10 +1364,10 @@
 																 check="woodWorkersCheck"
 																 wantMax="addAllUnemployedToWood"/>
 								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
+								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 									<s:Label text="+ {city.woodEarned}" color="{Numbers.GREEN}"/>
 								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
+								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 									<s:Label text="- {city.woodSpent}" color="{city.woodSpent > 0 ? Numbers.RED : Numbers.GREEN}"/>
 								</mx:GridItem>
 							</mx:GridRow>
@@ -1420,10 +1382,10 @@
 																 check="ironWorkersCheck"
 																 wantMax="addAllUnemployedToIron"/>
 								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
+								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 									<s:Label text="+ {city.ironEarned}" color="{Numbers.GREEN}"/>
 								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
+								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 									<s:Label text="- {city.ironSpent}" color="{city.ironSpent > 0 ? Numbers.RED : Numbers.GREEN}"/>
 								</mx:GridItem>
 							</mx:GridRow>
@@ -1928,7 +1890,7 @@
 									<s:Label text="{Translations.PRODUCTION.getItemAt(Session.LANGUAGE)}" />
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
-									<s:Label text="{Translations.ARMIES.getItemAt(Session.LANGUAGE)}" />
+									<s:Label text="{Translations.ARMY.getItemAt(Session.LANGUAGE)}" />
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
 									<s:Label text="{Translations.PREVISION.getItemAt(Session.LANGUAGE)}" />
@@ -2008,49 +1970,47 @@
 					<s:VGroup height="100%">
 						<s:HGroup width="100%" horizontalAlign="center">
 							<s:VGroup horizontalAlign="center" height="100%">
-								<s:HGroup>
+								
+								<s:HGroup width="200">
+									<s:Button label="{Translations.NEW_MERCHANTS.getItemAt(Session.LANGUAGE)}" 
+											  click="newMerchants()"
+											  visible="{city.merchant == null}"/>
 									<mx:Image width="30" height="30" 
 											  toolTip=" "
 											  toolTipCreate="{onCreateMerchantToolTip(event)}"
 											  source="{ImageContainer.QUESTION}"/>
-									<s:Button label="{Translations.NEW_MERCHANTS.getItemAt(Session.LANGUAGE)}" click="newMerchants()"/>
 								</s:HGroup>
-								<s:Scroller maxHeight="200">
-									<s:Group>
-										<s:List id="merchantsList"
-												itemRenderer="com.uralys.tribes.renderers.MerchantListRenderer"
-												dataProvider="{city.merchants}"
-												borderVisible="false"
-												width="275"
-												contentBackgroundAlpha="0"
-												creationComplete="initMerchantsList()">
-											<s:layout>
-												<s:VerticalLayout gap="1" useVirtualLayout="true" />
-											</s:layout>
-										</s:List>
-									</s:Group>
-								</s:Scroller>
+								<s:Button label="{Translations.VALIDATE.getItemAt(Session.LANGUAGE)}" 
+										  click="validateMerchant()"
+										  visible="{city.merchant != null}"
+										  excludeFrom="recordingUnit"/>
+								<s:Button label="{Translations.DELETE.getItemAt(Session.LANGUAGE)}"
+										  click="deleteMerchant()"
+										  visible="{city.merchant != null}"
+										  excludeFrom="recordingUnit"/>
+								<mx:ProgressBar indeterminate="true"
+												includeIn="recordingUnit"/>
+								
+								<renderers:MerchantsRenderer merchant="{city.merchant}" visible="{city.merchant != null}"/>
 							</s:VGroup>
 							<s:VGroup>
 							<mx:Grid verticalGap="10" 
 									 horizontalGap="10" 
 									 horizontalAlign="center" 
 									 verticalAlign="middle"
-									 visible="{merchant != null}">
+									 visible="{city.merchant != null}">
 								<mx:GridRow >
 									<mx:GridItem >
 										<s:Label text="{Translations.NB_CARAVAN.getItemAt(Session.LANGUAGE)}" />
 									</mx:GridItem>
 									<mx:GridItem>
 										<renderers:SpecialNumStepper id="merchantsStepper"
-																	 data="{merchant.size}"
+																	 data="{city.merchant.size}"
 																	 step="{1}"
 																	 check="merchantsCheck"
 																	 wantMax="addAllUnemployedToMerchants"/>
 									</mx:GridItem>
-									<mx:GridItem>
-										<s:Button label="{Translations.DELETE.getItemAt(Session.LANGUAGE)}" click="deleteMerchant()"/>
-									</mx:GridItem>
+									<mx:GridItem/>
 								</mx:GridRow>
 								<mx:GridRow>
 									<mx:GridItem colSpan="3">
@@ -2058,13 +2018,14 @@
 									</mx:GridItem>
 								</mx:GridRow >
 							</mx:Grid>
-							<s:Scroller maxHeight="200" width="100%">
-								<s:Group width="100%">
+							<s:Scroller maxHeight="200" width="100%"
+										visible="{city.merchant != null}" >
+								<s:Group width="100%"
+										 visible="{city.merchant != null}">
 									<mx:Grid verticalGap="10" 
 											 horizontalGap="10" 
 											 horizontalAlign="center" 
 											 verticalAlign="middle"
-											 visible="{merchant != null}" 
 											 width="100%">
 										<mx:GridRow >
 											<mx:GridItem />
@@ -2081,7 +2042,7 @@
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<renderers:SpecialNumStepper id="wheatMerchantStepper"
-																			 data="{merchant.wheat}"
+																			 data="{city.merchant.wheat}"
 																			 step="{1}"
 																			 check="wheatMerchantCheck"
 																			 wantMax="addAllWheatToMerchant"/>
@@ -2096,7 +2057,7 @@
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<renderers:SpecialNumStepper id="woodMerchantStepper"
-																			 data="{merchant.wood}"
+																			 data="{city.merchant.wood}"
 																			 step="{1}"
 																			 check="woodMerchantCheck"
 																			 wantMax="addAllWoodToMerchant"/>
@@ -2111,7 +2072,7 @@
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<renderers:SpecialNumStepper id="ironMerchantStepper"
-																			 data="{merchant.iron}"
+																			 data="{city.merchant.iron}"
 																			 step="{1}"
 																			 check="ironMerchantCheck"
 																			 wantMax="addAllIronToMerchant"/>
@@ -2126,7 +2087,7 @@
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<renderers:SpecialNumStepper id="goldMerchantStepper"
-																			 data="{merchant.gold}"
+																			 data="{city.merchant.gold}"
 																			 step="{1}"
 																			 check="goldMerchantCheck"
 																			 wantMax="addAllGoldToMerchant"/>
@@ -2141,7 +2102,7 @@
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<renderers:SpecialNumStepper id="bowsMerchantStepper"
-																			 data="{merchant.bows}"
+																			 data="{city.merchant.bows}"
 																			 step="{1}"
 																			 check="bowsMerchantCheck"
 																			 wantMax="addAllBowsToMerchant"/>
@@ -2156,7 +2117,7 @@
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<renderers:SpecialNumStepper id="swordsMerchantStepper"
-																			 data="{merchant.swords}"
+																			 data="{city.merchant.swords}"
 																			 step="{1}"
 																			 check="swordsMerchantCheck"
 																			 wantMax="addAllSwordsToMerchant"/>
@@ -2171,7 +2132,7 @@
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<renderers:SpecialNumStepper id="armorsMerchantStepper"
-																			 data="{merchant.armors}"
+																			 data="{city.merchant.armors}"
 																			 step="{1}"
 																			 check="armorsMerchantCheck"
 																			 wantMax="addAllArmorsToMerchant"/>
@@ -2196,45 +2157,42 @@
 				<!-- =============================================================================================== -->
 				<!-- Armies Tab -->
 				
-				<s:NavigatorContent label="{Translations.ARMIES.getItemAt(Session.LANGUAGE)}">
+				<s:NavigatorContent label="{Translations.ARMY.getItemAt(Session.LANGUAGE)}">
 					<s:HGroup width="100%" horizontalAlign="center">
 						<s:VGroup horizontalAlign="center">
-							<s:Button label="{Translations.NEW_ARMY.getItemAt(Session.LANGUAGE)}" click="newArmy()"/>
-							<s:Scroller height="200">
-								<s:Group>
-									<s:List id="armiesList"
-											itemRenderer="com.uralys.tribes.renderers.ArmyListRenderer"
-											dataProvider="{city.armies}"
-											borderVisible="false"
-											width="275"
-											contentBackgroundAlpha="0"
-											creationComplete="initArmiesList()">
-										<s:layout>
-											<s:VerticalLayout gap="1" useVirtualLayout="true" />
-										</s:layout>
-									</s:List>
-								</s:Group>
-							</s:Scroller>
+							<s:Button label="{Translations.NEW_ARMY.getItemAt(Session.LANGUAGE)}" 
+									  click="newArmy()"
+									  visible="{city.army == null}"
+									  excludeFrom="recordingUnit"/>
+							<s:Button label="{Translations.VALIDATE.getItemAt(Session.LANGUAGE)}" 
+									  click="validateArmy()"
+									  visible="{city.army != null}"
+									  excludeFrom="recordingUnit"/>
+							<s:Button label="{Translations.DELETE.getItemAt(Session.LANGUAGE)}" 
+									  click="deleteArmy()"
+									  visible="{city.army != null}"
+									  excludeFrom="recordingUnit"/>
+							<mx:ProgressBar indeterminate="true"
+											includeIn="recordingUnit"/>
+							<renderers:ArmyRenderer army="{city.army}" visible="{city.army != null}"/>
 						</s:VGroup>
 						<mx:Grid verticalGap="10" 
 								 horizontalGap="10" 
 								 horizontalAlign="center" 
 								 verticalAlign="middle"
-								 visible="{army != null}">
+								 visible="{city.army != null}">
 							<mx:GridRow >
 								<mx:GridItem >
 									<s:Label text="{Translations.NB_ARMY.getItemAt(Session.LANGUAGE)}" />
 								</mx:GridItem>
 								<mx:GridItem>
 									<renderers:SpecialNumStepper id="armyStepper"
-																 data="{army.size}"
+																 data="{city.army.size}"
 																 step="{1}"
 																 check="armyCheck"
 																 wantMax="addAllUnemployedToArmy"/>
 								</mx:GridItem>
-								<mx:GridItem>
-									<s:Button label="{Translations.DELETE.getItemAt(Session.LANGUAGE)}" click="deleteArmy()"/>
-								</mx:GridItem>
+								<mx:GridItem/>
 							</mx:GridRow>
 							<mx:GridRow>
 								<mx:GridItem colSpan="4">
@@ -2256,7 +2214,7 @@
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
 									<renderers:SpecialNumStepper id="bowsArmyStepper"
-																 data="{army.bows}"
+																 data="{city.army.bows}"
 																 step="{1}"
 																 check="bowsArmyCheck"
 																 wantMax="addAllBowsToArmy"/>
@@ -2271,7 +2229,7 @@
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
 									<renderers:SpecialNumStepper id="swordsArmyStepper"
-																 data="{army.swords}"
+																 data="{city.army.swords}"
 																 step="{1}"
 																 check="swordsArmyCheck"
 																 wantMax="addAllSwordsToArmy"/>
@@ -2286,7 +2244,7 @@
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
 									<renderers:SpecialNumStepper id="armorsArmyStepper"
-																 data="{army.armors}"
+																 data="{city.army.armors}"
 																 step="{1}"
 																 check="armorsArmyCheck"
 																 wantMax="addAllArmorsToArmy"/>

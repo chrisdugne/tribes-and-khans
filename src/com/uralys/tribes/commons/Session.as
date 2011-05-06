@@ -11,10 +11,10 @@ package com.uralys.tribes.commons
 		import com.uralys.tribes.entities.UralysProfile;
 		import com.uralys.tribes.entities.Player;
 		import mx.core.FlexGlobals;
-		
+
 		//=====================================================//
 		
-		[Bindable] public static var VERSION:String = "1.1.07";
+		[Bindable] public static var VERSION:String = "1.1.08";
 		[Bindable] public static var LOGGED_IN:Boolean = false; 
 		[Bindable] public static var CONNECTED_TO_FACEBOOK:Boolean = false;
 		
@@ -73,7 +73,11 @@ package com.uralys.tribes.commons
 
 		[Bindable] public static var CURRENT_CASE_SELECTED:Case;
 		[Bindable] public static var MOVE_A_UNIT:Boolean;
-
+		
+		// cette liste est remplie par les case.refresh.
+		// une fois remplie, on peut appeler le GameManager.deleteMoves
+		public static var movesToDelete:ArrayCollection = new ArrayCollection();
+		
 		//=====================================================//
 		// GameDetailsRenderer
 		

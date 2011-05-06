@@ -153,6 +153,8 @@
 							}
 						}
 					}
+					
+					unit.isModified = false;
 				}
 			}
 			
@@ -160,13 +162,17 @@
 			
 			// appelee apres le BoardDrawer.refreshDisplay, qui raffraichit toutes les currentCaseUID des units de toutes les cases.
 			public function refreshUnitsInCity():void{
-				
+				trace("refreshUnitsInCity");
+				trace(ObjectUtil.toString(Session.player));
 				for each(var unit:Unit in Session.player.units){
 					
 					if(unit.type == 2){
+						trace("found a merchant " + unit.currentCaseUID);
 						for each(var city:City in Session.player.cities){
+							trace("city.x " + city.x);
+							trace("city.y " + city.y);
 							if(Utils.getXFromCaseUID(unit.currentCaseUID) == city.x && Utils.getYFromCaseUID(unit.currentCaseUID) == city.y){
-								city.merchants.addItem(unit);
+								city.merchant = unit;
 								city.unitsToFeed += unit.size;
 								break;
 							}
@@ -174,27 +180,32 @@
 					}
 					
 					else if(unit.type == 1){
+						trace("found an army " + unit.currentCaseUID);
 						for each(var city:City in Session.player.cities){
 							
+							trace("city.x " + city.x);
+							trace("city.y " + city.y);
+							
 							if(Utils.getXFromCaseUID(unit.currentCaseUID) == city.x && Utils.getYFromCaseUID(unit.currentCaseUID) == city.y){
-								city.armies.addItem(unit);
+								city.army = unit;
 								city.unitsToFeed += unit.size;
 								break;
 							}
 						}
 					}
 				}
+				
 			}
 			
 			//-----------------------------------------------------------//
-			
-			protected function initArmiesList():void{
-				armiesList.addEventListener(ItemClickEvent.ITEM_CLICK, onArmyClick);
-			}
-			
-			protected function initMerchantsList():void{
-				merchantsList.addEventListener(ItemClickEvent.ITEM_CLICK, onArmyClick);
-			}
+//			
+//			protected function initArmiesList():void{
+//				armiesList.addEventListener(ItemClickEvent.ITEM_CLICK, onArmyClick);
+//			}
+//			
+//			protected function initMerchantsList():void{
+//				merchantsList.addEventListener(ItemClickEvent.ITEM_CLICK, onArmyClick);
+//			}
 			
 			protected function initCitiesList():void{
 				citiesList.addEventListener(ItemClickEvent.ITEM_CLICK, onCityClick);
@@ -259,7 +270,6 @@
 			}
 			
 			protected function mouseUp(event:MouseEvent):void{
-				
 				isDragging = false;
 				Mouse.show();
 				
@@ -497,18 +507,6 @@
 				FlexGlobals.topLevelApplication.message("Vous utilisez plus de travailleurs que vous n'avez de population !", 5);
 			}
 			
-			private function saveUnitsAndGoBackToMain():void{
-				
-				var units:ArrayCollection = new ArrayCollection();
-				units.addAll(cityForm.city.armies);
-				units.addAll(cityForm.city.merchants);
-				
-				GameManager.getInstance().saveUnits(units);
-				
-				FlexGlobals.topLevelApplication.message("Units saved");
-				backToMain();
-			}
-			
 			private function backToMain():void
 			{
 				hideCity.play();
@@ -740,45 +738,13 @@
 		<mx:ViewStack id="viewstack" width="200" top="100" right="95"
 					  excludeFrom="moveUnit">
 			
-			<s:NavigatorContent label="{Translations.ARMIES.getItemAt(Session.LANGUAGE)}">
-				<s:HGroup width="100%" horizontalAlign="center">
-					<s:VGroup horizontalAlign="right">
-						<s:Scroller height="200" width="260">
-							<s:Group>
-								<s:List id="armiesList"
-										itemRenderer="com.uralys.tribes.renderers.ArmyListRenderer"
-										dataProvider="{Session.CURRENT_CASE_SELECTED.armies}"
-										borderVisible="false"
-										width="240"
-										contentBackgroundAlpha="0"
-										creationComplete="initArmiesList()">
-									<s:layout>
-										<s:VerticalLayout gap="1" useVirtualLayout="true" />
-									</s:layout>
-								</s:List>
-							</s:Group>
-						</s:Scroller>
-					</s:VGroup>
-				</s:HGroup>
+			<s:NavigatorContent label="{Translations.ARMY.getItemAt(Session.LANGUAGE)}">
+				<renderers:ArmyRenderer army="{Session.CURRENT_CASE_SELECTED.army}" 
+										visible="{Session.CURRENT_CASE_SELECTED != null &amp;&amp; Session.CURRENT_CASE_SELECTED.army !=null &amp;&amp; Session.CURRENT_CASE_SELECTED.army.size > 0}"/>
 			</s:NavigatorContent>
 			<s:NavigatorContent label="{Translations.MERCHANTS.getItemAt(Session.LANGUAGE)}">
-				<s:VGroup horizontalAlign="right">
-					<s:Scroller height="200" width="260">
-						<s:Group>
-							<s:List id="merchantsList"
-									itemRenderer="com.uralys.tribes.renderers.MerchantListRenderer"
-									dataProvider="{Session.CURRENT_CASE_SELECTED.merchants}"
-									borderVisible="false"
-									width="240"
-									contentBackgroundAlpha="0"
-									creationComplete="initMerchantsList()">
-								<s:layout>
-									<s:VerticalLayout gap="1" useVirtualLayout="true" />
-								</s:layout>
-							</s:List>
-						</s:Group>
-					</s:Scroller>
-				</s:VGroup>
+				<renderers:MerchantsRenderer merchant="{Session.CURRENT_CASE_SELECTED.merchants}" 
+											 visible="{Session.CURRENT_CASE_SELECTED != null &amp;&amp; Session.CURRENT_CASE_SELECTED.merchants !=null &amp;&amp; Session.CURRENT_CASE_SELECTED.merchants.size > 0}"/>
 			</s:NavigatorContent>
 		</mx:ViewStack>
 
@@ -858,21 +824,21 @@
 							 mouseEnabledWhereTransparent="false">
 						
 						<mx:Image id="currentMouseHighLightNormal"
-								  source="{ImageContainer.getImage(ImageContainer.HIGHLIGHT_1)}"
+								  source="{ImageContainer.getImage(ImageContainer.HIGHLIGHT_BLEU)}"
 								  visible="{!Session.MOVE_A_UNIT}"
 								  x="{Session.COORDINATE_X * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4)}"
 								  y="{Session.COORDINATE_Y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2)}"
 								  mouseEnabled="false"/>
 
 						<mx:Image id="currentMouseHighLight4UnitMoves"
-								  source="{ImageContainer.getImage(ImageContainer.HIGHLIGHT_2)}"
+								  source="{ImageContainer.getImage(ImageContainer.HIGHLIGHT_BLANC)}"
 								  visible="{Session.MOVE_A_UNIT}"
 								  x="{Session.COORDINATE_X * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4)}"
 								  y="{Session.COORDINATE_Y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2)}"
 								  mouseEnabled="false"/>
 
 						<mx:Image id="currentSelectionHighLight"
-								  source="{ImageContainer.getImage(ImageContainer.HIGHLIGHT_2)}"
+								  source="{ImageContainer.getImage(ImageContainer.HIGHLIGHT_BLANC)}"
 								  x="{Session.CURRENT_SELECTION_X * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4)}"
 								  y="{Session.CURRENT_SELECTION_Y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2)}"
 								  mouseEnabled="false"/>
@@ -926,7 +892,7 @@
 			  includeInLayout="false">
 		<s:HGroup>
 			<s:Button label="&lt;-- Ok" 
-					  click="{selectedCity.unemployed >= 0 ? saveUnitsAndGoBackToMain() : messageUnemployed()}"/>
+					  click="{selectedCity.unemployed >= 0 ? backToMain() : messageUnemployed()}"/>
 			<mx:Spacer width="450"/>
 		</s:HGroup>
 		<renderers:CityForm 

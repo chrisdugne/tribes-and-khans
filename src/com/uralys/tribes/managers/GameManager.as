@@ -134,24 +134,13 @@ package com.uralys.tribes.managers {
 		
 		//-------------------------------------------------------------------------//
 		
-		private var unitsBeingSaved:Array;
-		public function saveUnits (units:ArrayCollection):void
-		{
-			unitsBeingSaved = units.toArray();
-			saveNextUnit(unitsBeingSaved.shift());
-		}
-
 		public function saveUnit (unit:Unit):void{
-			saveNextUnit(unit);
-		}
-
-		private function saveNextUnit (unit:Unit):void{
 			
 			if(unit == null)
 				return;
 			
 			trace("saveUnit : " + unit.unitUID);
-			if(unit.unitUID.indexOf("NEW_") != -1){ // newUnit : unitUID = 'NEW_...' create equipment
+			if(unit.status == Unit.TO_BE_CREATED){
 				
 				var bows:Equipment = new Equipment();
 				var swords:Equipment = new Equipment();
@@ -196,10 +185,10 @@ package com.uralys.tribes.managers {
 			
 			//---------------------------------------------------------------//
 			
-			// remove le tag NEW_ sur les units + equipments + moves
-			if(unit.unitUID.indexOf("NEW_") != -1)
-				unit.unitUID = unit.unitUID.substring(4);
+			if(unit.status == Unit.TO_BE_CREATED)
+				unit.status = Unit.FREE;
 			
+			unit.isModified = false;
 			
 			for each(var equipment:Equipment in unit.equipments){
 				if(equipment.equimentUID.indexOf("NEW_") != -1)
@@ -404,6 +393,25 @@ package com.uralys.tribes.managers {
 			gameWrapper.deleteUnit(Session.player.uralysUID, unit.unitUID);
 		}
 
+		//--------------------------------------------------------------------------------//
+		// pour que les appels AMF se fassent 1 par 1, on utilise le deleteNextMove, qui est appele à chaque 'moveDeleted'
+		// (je ne peux pas appeler en meme temps gameWrapper.deleteMove plusieurs fois)
+		
+		private var movesBeingDeleted:Array;
+		private function deleteAllMovesToBeDeleted ():void
+		{
+			movesBeingDeleted = Session.movesToDelete.toArray();
+			deleteNextMove(movesBeingDeleted.shift());
+		}
+		
+		private function deleteNextMove (move:Move):void{
+			if(move == null)
+				return;
+			
+			gameWrapper.deleteMove.addEventListener("result", moveDeleted);
+			gameWrapper.deleteMove(move.moveUID, move.caseUID, move.unitUID);
+		}
+
 		//============================================================================================//
 		//  RESULTS FROM SERVER	
 		
@@ -444,13 +452,25 @@ package com.uralys.tribes.managers {
 
 			//------------------------------------------------//
 			
+			// on va appeler le case.refresh sur toutes les cases à l'interieur de refreshDisplay()
+			// ce qui va rafraichir les moves des units sur chaque case
+			// et remplir Session.movesToDelete
 			BoardDrawer.getInstance().refreshDisplay();
+			
+			// on supprime maintenant tous les Session.movesToDelete
+			deleteAllMovesToBeDeleted();
 		}
 		
 		
 		private function unitSaved(event:ResultEvent):void{
-			if(unitsBeingSaved != null && unitsBeingSaved.length > 0)
-				saveNextUnit(unitsBeingSaved.shift());
+			Session.board.cityForm.currentState = Session.board.cityForm.normalState.name;
+		}
+
+		private function moveDeleted(event:ResultEvent):void{
+			if(movesBeingDeleted != null && movesBeingDeleted.length > 0)
+				deleteNextMove(movesBeingDeleted.shift());
+			else
+				Session.movesToDelete = new ArrayCollection();
 		}
 	}
 }

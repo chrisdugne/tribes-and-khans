@@ -3,5 +3,5 @@
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
 		 xmlns:mx="library://ns.adobe.com/flex/mx">
 	
-	<mx:Image source="{ImageContainer.HIGHLIGHT_1}"/>
+	<mx:Image source="{ImageContainer.HIGHLIGHT_BLEU}"/>
 </s:Group>

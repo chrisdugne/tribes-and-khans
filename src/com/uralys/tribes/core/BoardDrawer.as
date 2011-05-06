@@ -139,7 +139,7 @@ package com.uralys.tribes.core
 					var _case:Case = Session.map[i][j];
 					
 					if(_case.refresh())
-						drawUnits(_case);
+						refreshUnits(_case);
 				}
 			}
 			
@@ -203,17 +203,25 @@ package com.uralys.tribes.core
 			Session.board.mapPositioner.addElement(image);
 		}
 
-		public function drawUnits(_case:Case):void{
-			
-			// ------------------//
-			// affichage des pions (armées-marchands)
+		// ---------------------------------------------------------------------//
+		// affichage des pions (armées-marchands)
+		
+		public function refreshUnits(_case:Case):void
+		{
+			if(_case.imageUnit != null){
+				try{
+					Session.board.mapPositioner.removeElement(_case.imageUnit);	
+				}
+				catch(e:Error){}
+			}
 			
 			var imageUnit:Image = new Image();
 			
-			if(_case.armies.length > 0){
+			
+			if(_case.army && _case.army.status != Unit.TO_BE_CREATED){
 				imageUnit.source = ImageContainer.getImage(ImageContainer.ARMY_PLAYER);
 			}
-			else if(_case.merchants.length > 0){
+			else if(_case.merchants && _case.merchants.status != Unit.TO_BE_CREATED){
 				imageUnit.source = ImageContainer.getImage(ImageContainer.MERCHANT_PLAYER);				
 			}
 			

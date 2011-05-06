@@ -21,7 +21,7 @@
 		]]>
 	</fx:Script>
 	
-	<mx:Image source="{ImageContainer.getImage(ImageContainer.HIGHLIGHT_1)}"
+	<mx:Image source="{ImageContainer.getImage(ImageContainer.HIGHLIGHT_VERT)}"
 			  mouseEnabled="false"/>
 	
 	<s:Button id="deleteButton" label="x" right="0" top="0" width="20"/>

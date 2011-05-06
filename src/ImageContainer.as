@@ -38,9 +38,6 @@ public final class ImageContainer
 	
 	//   ======================================================================//
 	
-	[Embed(source="resources/embed/map.jpg")]
-	[Bindable] public static var MAP:Class;
-
 	[Embed(source="resources/embed/icons/wheat.png")]
 	[Bindable] public static var WHEAT:Class;
 
@@ -123,6 +120,12 @@ public final class ImageContainer
 
 	[Embed(source="resources/embed/icons/top_right.png")]
 	[Bindable] public static var TOP_RIGHT:Class;
+
+	[Embed(source="resources/embed/icons/all_left.png")]
+	[Bindable] public static var ALL_LEFT:Class;
+
+	[Embed(source="resources/embed/icons/all_right.png")]
+	[Bindable] public static var ALL_RIGHT:Class;
 	
 	//   ======================================================================//
 
@@ -173,8 +176,10 @@ public final class ImageContainer
 	[Bindable] public static var MAP_BORDER_BOTTOM:Bitmap;
 	[Bindable] public static var MAP_BORDER_LEFT:Bitmap;
 	[Bindable] public static var MAP_BORDER_RIGHT:Bitmap;
-	[Bindable] public static var HIGHLIGHT_1:Bitmap;
-	[Bindable] public static var HIGHLIGHT_2:Bitmap;
+	[Bindable] public static var HIGHLIGHT_BLEU:Bitmap;
+	[Bindable] public static var HIGHLIGHT_BLANC:Bitmap;
+	[Bindable] public static var HIGHLIGHT_VERT:Bitmap;
+	[Bindable] public static var HIGHLIGHT_ROUGE:Bitmap;
 	[Bindable] public static var MERCHANT_PLAYER:Bitmap;
 	[Bindable] public static var MERCHANT_ALLY:Bitmap;
 	[Bindable] public static var MERCHANT_ENNEMY:Bitmap;
@@ -208,8 +213,10 @@ public final class ImageContainer
 		 "webresources/images/map/border-bottom.png",
 		 "webresources/images/map/border-left.png",
 		 "webresources/images/map/border-right.png",
-		 "webresources/images/map/highlight1.png",
-		 "webresources/images/map/highlight2.png",
+		 "webresources/images/map/highlight_bleu.png",
+		 "webresources/images/map/highlight_blanc.png",
+		 "webresources/images/map/highlight_vert.png",
+		 "webresources/images/map/highlight_rouge.png",
 		 "webresources/images/persos/marchand_vert.png",
 		 "webresources/images/persos/marchand_bleu.png",
 		 "webresources/images/persos/marchand_rouge.png",
@@ -269,33 +276,39 @@ public final class ImageContainer
 				MAP_BORDER_RIGHT = event.currentTarget.content;
 				break;
 			case 12:
-				HIGHLIGHT_1 = event.currentTarget.content;
+				HIGHLIGHT_BLEU = event.currentTarget.content;
 				break;
 			case 13:
-				HIGHLIGHT_2 = event.currentTarget.content;
+				HIGHLIGHT_BLANC = event.currentTarget.content;
 				break;
 			case 14:
-				MERCHANT_PLAYER = event.currentTarget.content;
+				HIGHLIGHT_VERT = event.currentTarget.content;
 				break;
 			case 15:
-				MERCHANT_ALLY = event.currentTarget.content;
+				HIGHLIGHT_ROUGE = event.currentTarget.content;
 				break;
 			case 16:
-				MERCHANT_ENNEMY = event.currentTarget.content;
+				MERCHANT_PLAYER = event.currentTarget.content;
 				break;
 			case 17:
-				ARMY_PLAYER = event.currentTarget.content;
+				MERCHANT_ALLY = event.currentTarget.content;
 				break;
 			case 18:
-				ARMY_ALLY = event.currentTarget.content;
+				MERCHANT_ENNEMY = event.currentTarget.content;
 				break;
 			case 19:
+				ARMY_PLAYER = event.currentTarget.content;
+				break;
+			case 20:
+				ARMY_ALLY = event.currentTarget.content;
+				break;
+			case 21:
 				ARMY_ENNEMY = event.currentTarget.content;
 				break;
 		}
 		
 		currentImage++;
-		if(currentImage < 20)
+		if(currentImage < 22)
 			loadNextImage();
 	}
 

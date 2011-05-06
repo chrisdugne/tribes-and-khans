@@ -11,13 +11,21 @@ package com.uralys.tribes.entities
 	public class Unit
 	{	
 		//==========================================================================//
+				
+		public static const TO_BE_CREATED:int = -1;
+		public static const INTERCEPTED:int = 1;
+		public static const FREE:int = 2;
+		public static const DESTROYED:int = 3;
+		
+		//==========================================================================//
 		
 		public function Unit(){}
 		
 		// on ne peut pas le mettre dans le constructeur, car BlazeDS l'utilise aussi
 		public function initNewUnit(i:int = 0, j:int = 0):void{
 			_currentCaseUID = (Session.map[i][j] as Case).caseUID;
-			_unitUID = "NEW_"+Session.player.uralysUID+"_"+(Session.player.units.length+1)+"_"+(new Date().getTime());
+			_unitUID = Session.player.uralysUID+"_"+(Session.player.units.length+1)+"_"+(new Date().getTime());
+			_status = TO_BE_CREATED;
 		}
 		
 		//==========================================================================//
@@ -47,6 +55,7 @@ package com.uralys.tribes.entities
 		}
 	
 		public function set unitUID(o:String):void {
+			isModified = true;
 			_unitUID = o;
 		}
 	
@@ -55,6 +64,7 @@ package com.uralys.tribes.entities
 		}
 	
 		public function set size(o:int):void {
+			isModified = true;
 			_size = o;
 		}
 	
@@ -63,6 +73,7 @@ package com.uralys.tribes.entities
 		}
 	
 		public function set currentCaseUID(o:String):void {
+			isModified = true;
 			_currentCaseUID = o;
 		}
 	
@@ -71,6 +82,7 @@ package com.uralys.tribes.entities
 		}
 	
 		public function set speed(o:int):void {
+			isModified = true;
 			_speed = o;
 		}
 	
@@ -82,6 +94,7 @@ package com.uralys.tribes.entities
 		}
 	
 		public function set value(o:int):void {
+			isModified = true;
 			_value = o;
 		}
 		
@@ -90,6 +103,7 @@ package com.uralys.tribes.entities
 		}
 		
 		public function set wheat(o:int):void {
+			isModified = true;
 			_wheat = o;
 		}
 		
@@ -98,6 +112,7 @@ package com.uralys.tribes.entities
 		}
 		
 		public function set wood(o:int):void {
+			isModified = true;
 			_wood = o;
 		}
 		
@@ -106,6 +121,7 @@ package com.uralys.tribes.entities
 		}
 		
 		public function set iron(o:int):void {
+			isModified = true;
 			_iron = o;
 		}
 		
@@ -114,6 +130,7 @@ package com.uralys.tribes.entities
 		}
 		
 		public function set gold(o:int):void {
+			isModified = true;
 			_gold = o;
 		}
 		
@@ -122,6 +139,7 @@ package com.uralys.tribes.entities
 		}
 	
 		public function set radius(o:int):void {
+			isModified = true;
 			_radius = o;
 		}
 		
@@ -130,6 +148,7 @@ package com.uralys.tribes.entities
 		}
 		
 		public function set equipments(o:ArrayCollection):void {
+			isModified = true;
 			_equipments = o;
 		}
 		
@@ -138,6 +157,7 @@ package com.uralys.tribes.entities
 		}
 		
 		public function set moves(o:ArrayCollection):void {
+			isModified = true;
 			_moves = o;
 		}
 		
@@ -146,6 +166,7 @@ package com.uralys.tribes.entities
 		}
 		
 		public function set conflicts(o:ArrayCollection):void {
+			isModified = true;
 			_conflicts = o;
 		}
 		
@@ -154,6 +175,7 @@ package com.uralys.tribes.entities
 		}
 		
 		public function set status(o:int):void {
+			isModified = true;
 			_status = o;
 		}
 		
@@ -162,6 +184,7 @@ package com.uralys.tribes.entities
 		}
 		
 		public function set playerUID(o:String):void {
+			isModified = true;
 			_playerUID = o;
 		}
 		
@@ -171,12 +194,14 @@ package com.uralys.tribes.entities
 		private var _bows:int;
 		private var _swords:int;
 		private var _armors:int;
+
 		
 		public function get bows():int{
 			return _bows;
 		}
 
 		public function set bows(o:int):void{
+			isModified = true;
 			_bows = o;
 		}
 
@@ -185,6 +210,7 @@ package com.uralys.tribes.entities
 		}
 
 		public function set swords(o:int):void{
+			isModified = true;
 			_swords = o;
 		}
 
@@ -193,6 +219,7 @@ package com.uralys.tribes.entities
 		}
 
 		public function set armors(o:int):void{
+			isModified = true;
 			_armors = o;
 		}
 
@@ -210,14 +237,22 @@ package com.uralys.tribes.entities
 		//==========================================================================//
 
 		public var type:int; // 1 armee,  2 marchand
-		//public var ellipseTo:Ellipse;
-		//public var lineTo:Line;
-		//public var ellipseToIsDrawn:Boolean = false;
-		//public var lineToIsDrawn:Boolean = false;
 		
 		public var landExpected:int = -1;
 		//public var tmpLandSquare:Rect;
-		//public var armyCircle:Ellipse;
 		
+		//==========================================================================//
+
+		private var _isModified:Boolean;
+		
+		public function get isModified():Boolean
+		{
+			return _isModified;
+		}
+		
+		public function set isModified(value:Boolean):void
+		{
+			_isModified = value;
+		}
 	}
 }

@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<s:ItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
 				xmlns:s="library://ns.adobe.com/flex/spark" 
 				xmlns:mx="library://ns.adobe.com/flex/mx" 
 				useHandCursor="true"
 				buttonMode="true"
-				contentBackgroundAlpha="0"
-				click="onClick(event)">
+				contentBackgroundAlpha="0">
 	
 	<s:states>
 		<s:State name="normal" />
@@ -15,21 +14,18 @@
 	
 	<fx:Script>
 		<![CDATA[
+			import com.uralys.tribes.commons.Session;
+			import com.uralys.tribes.commons.Translations;
+			import com.uralys.tribes.entities.Unit;
+			
+			import mx.core.FlexGlobals;
 			import mx.events.ItemClickEvent;
 			
+			
+			[Bindable] public var army:Unit;
 			[Bindable] private var color:Number = 0x1111ee;
 			[Bindable] private var colorHovered:Number = 0x1111ee;
 			[Bindable] private var colorSelected:Number = 0x2211cc;
-			
-			private function onClick(event:MouseEvent):void{
-				
-				var e:ItemClickEvent = new ItemClickEvent(ItemClickEvent.ITEM_CLICK, true);
-				
-				e.item = data;
-				e.index = itemIndex;
-				
-				dispatchEvent(e);
-			}
 			
 		]]>
 	</fx:Script>
@@ -52,38 +48,45 @@
 		</mx:Transition>
 	</s:transitions>
 	
-	<s:Group id="groupDetails" height="60" width="160" width.hovered="180" width.selected="180">
+	<s:Group id="groupDetails" height="90" width="160" width.hovered="170" width.selected="170">
 		<s:Rect left="0" right="0" top="0" bottom="0" radiusX="5" radiusY="5">
 			<s:fill>
-				<s:SolidColor color="{color}" color.hovered="{colorHovered}" color.selected="{colorSelected}" />
+				<s:SolidColor color="{color}" color.hovered="{colorHovered}" color.selected="{colorSelected}" alpha="0.4"/>
 			</s:fill>
 		</s:Rect>
 		<s:HGroup width="100%">
+			<s:Label color="#FFFFFF" 
+					 left="20" 
+					 verticalCenter="2"
+					 text="{Translations.ARMY.getItemAt(Session.LANGUAGE)} {army.status == Unit.TO_BE_CREATED || army.isModified ? Translations.NOT_VALIDATED.getItemAt(Session.LANGUAGE) : ''}"/>
+		</s:HGroup>
+		<s:HGroup width="100%"
+				  y="30">
 			<mx:Image source="{ImageContainer.WARRIOR1}"/>
 			<s:Label color="#FFFFFF" 
 					 left="20" 
 					 verticalCenter="2"
-					 text="{data.size}"/>
+					 text="{army.size}"/>
 			<mx:Spacer width="100%"/>
 			<s:Label color="#FFFFFF" 
 					 left="20" 
 					 verticalCenter="2"
-					 text="{data.value} pts"/>
+					 text="{army.value} pts"/>
 		</s:HGroup>
-		<s:HGroup y="30">
+		<s:HGroup y="60">
 			<mx:Image source="{ImageContainer.BOW}" width="25"/>
 			<s:Label color="#FFFFFF" 
 					 verticalCenter="2"
-					 text="{data.bows}"/>
+					 text="{army.bows}"/>
 			<mx:Image source="{ImageContainer.SWORD}" width="25"/>
 			<s:Label color="#FFFFFF" 
 					 verticalCenter="2"
-					 text="{data.swords}"/>
+					 text="{army.swords}"/>
 			<mx:Image source="{ImageContainer.ARMOR}" width="25"/>
 			<s:Label color="#FFFFFF" 
 					 verticalCenter="2"
-					 text="{data.armors}"/>
+					 text="{army.armors}"/>
 		</s:HGroup>
 	</s:Group>
 	
-</s:ItemRenderer>
+</s:Group>

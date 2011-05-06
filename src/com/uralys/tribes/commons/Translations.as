@@ -374,22 +374,46 @@ public class Translations{
 									"Merchants in this caravan"]);
 
 	[Bindable]
+	public static var CARAVAN:ArrayCollection = new ArrayCollection(
+									["Caravane",
+									"Caravan",
+									"Caravan"]);
+
+	[Bindable]
 	public static var NB_ARMY:ArrayCollection = new ArrayCollection(
 									["Nombre de guerriers",
 									"Warriors in this army",
 									"Warriors in this army"]);
 
 	[Bindable]
-	public static var ARMIES:ArrayCollection = new ArrayCollection(
-									["Armées",
-									"Armies",
-									"Armies"]);
+	public static var ARMY:ArrayCollection = new ArrayCollection(
+									["Armée",
+									"Army",
+									"Army"]);
 
 	[Bindable]
 	public static var NEW_ARMY:ArrayCollection = new ArrayCollection(
 									["Créer une Armée",
 									"New Army",
 									"New Army"]);
+
+	[Bindable]
+	public static var VALIDATE:ArrayCollection = new ArrayCollection(
+									["Valider",
+									"Validate",
+									"Validate"]);
+
+	[Bindable]
+	public static var NOT_VALIDATED:ArrayCollection = new ArrayCollection(
+									["Non validée !",
+									"Not validated !" ,
+									"Not validated !"]);
+
+	[Bindable]
+	public static var MUST_VALIDATE_UNIT:ArrayCollection = new ArrayCollection(
+									["Il faut d'abord valider cette unité !",
+									"You must validate this unit first !",
+									"You must validate this unit first !"]);
 
 	[Bindable]
 	public static var CITIES:ArrayCollection = new ArrayCollection(

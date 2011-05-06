@@ -161,8 +161,8 @@ package com.uralys.tribes.entities
 		// 	only on flex side
 		//===============================================================================================//
 		
-		public var merchants:ArrayCollection = new ArrayCollection();
-		public var armies:ArrayCollection = new ArrayCollection();
+		public var merchant:Unit;
+		public var army:Unit;
 		protected var _unemployed:int;
 		protected var _armiesToFeed:int;
 		protected var _armyRaised:int;

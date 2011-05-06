@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<s:ItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
 				xmlns:s="library://ns.adobe.com/flex/spark" 
 				xmlns:mx="library://ns.adobe.com/flex/mx" 
 				useHandCursor="true"
 				buttonMode="true"
-				contentBackgroundAlpha="0"
-				click="onClick(event)">
+				contentBackgroundAlpha="0">
 	
 	<s:states>
 		<s:State name="normal" />
@@ -17,22 +16,13 @@
 		<![CDATA[
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;
-			
-			import mx.events.ItemClickEvent;
+			import com.uralys.tribes.entities.Unit;
 			
 			[Bindable] private var color:Number = 0x11ee11;
 			[Bindable] private var colorHovered:Number = 0x11ee11;
 			[Bindable] private var colorSelected:Number = 0x22cc11;
-			
-			private function onClick(event:MouseEvent):void{
-				
-				var e:ItemClickEvent = new ItemClickEvent(ItemClickEvent.ITEM_CLICK, true);
-				
-				e.item = data;
-				e.index = itemIndex;
-				
-				dispatchEvent(e);
-			}
+
+			[Bindable] public var merchant:Unit;
 			
 		]]>
 	</fx:Script>
@@ -55,41 +45,75 @@
 		</mx:Transition>
 	</s:transitions>
 	
-	<s:Group id="groupDetails" height="60" width="160" width.hovered="190" width.selected="190">
+	<s:Group id="groupDetails" height="180" width="160" width.hovered="170" width.selected="170">
 		<s:Rect left="0" right="0" top="0" bottom="0" radiusX="5" radiusY="5">
 			<s:fill>
-				<s:SolidColor color="{color}" color.hovered="{colorHovered}" color.selected="{colorSelected}" />
+				<s:SolidColor color="{color}" color.hovered="{colorHovered}" color.selected="{colorSelected}" alpha="0.6"/>
 			</s:fill>
 		</s:Rect>
-		
-		<s:VGroup horizontalAlign="center" verticalAlign="middle">
+		<s:HGroup width="100%">
+			<s:Label color="#FFFFFF" 
+					 left="20" 
+					 verticalCenter="2"
+					 text="{Translations.CARAVAN.getItemAt(Session.LANGUAGE)} {merchant.status == Unit.TO_BE_CREATED || merchant.isModified ? Translations.NOT_VALIDATED.getItemAt(Session.LANGUAGE) : ''}"/>
+		</s:HGroup>
+		<s:HGroup width="100%"
+				  y="30">
+			<mx:Image source="{ImageContainer.MERCHANT1}"/>
+			<s:Label color="#FFFFFF" 
+					 left="20" 
+					 verticalCenter="2"
+					 text="{merchant.size}"/>
+		</s:HGroup>
+		<s:VGroup horizontalAlign="center" verticalAlign="middle"
+				  y="60">
+			
 			<s:HGroup horizontalAlign="center" verticalAlign="middle">
 				
 				<mx:Image toolTip="{Translations.WHEAT.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WHEAT}" width="25" height="25"/>
 				<mx:Spacer width="2"/>
-				<s:Label text="{data.wheat}" 
+				<s:Label text="{merchant.wheat}" 
 						 color="#FFFFFF" />
 				
 				<mx:Spacer width="3"/>
 				<mx:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}" width="25" height="25"/>
 				<mx:Spacer width="2"/>
-				<s:Label text="{data.wood}" 
+				<s:Label text="{merchant.wood}" 
 						 color="#FFFFFF" />
 				
 			</s:HGroup>
 			<s:HGroup horizontalAlign="center" verticalAlign="middle">
 				<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
 				<mx:Spacer width="2"/>
-				<s:Label text="{data.gold}" 
+				<s:Label text="{merchant.gold}" 
 						 color="#FFFFFF" />
 				
 				<mx:Spacer width="3"/>
 				<mx:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}" width="25" height="25"/>
 				<mx:Spacer width="2"/>
-				<s:Label text="{data.iron}" 
+				<s:Label text="{merchant.iron}" 
 						 color="#FFFFFF" />
+			</s:HGroup>
+			<s:HGroup horizontalAlign="center" verticalAlign="middle">
+				<mx:Image toolTip="{Translations.BOW.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.BOW}" width="25" height="25"/>
+				<mx:Spacer width="2"/>
+				<s:Label text="{merchant.bows}" 
+						 color="#FFFFFF" />
+				
+				<mx:Spacer width="3"/>
+				<mx:Image toolTip="{Translations.SWORD.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.SWORD}" width="25" height="25"/>
+				<mx:Spacer width="2"/>
+				<s:Label text="{merchant.swords}" 
+						 color="#FFFFFF" />
+			</s:HGroup>
+			<s:HGroup horizontalAlign="center" verticalAlign="middle">
+				<mx:Image toolTip="{Translations.ARMOR.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.ARMOR}" width="25" height="25"/>
+				<mx:Spacer width="2"/>
+				<s:Label text="{merchant.armors}" 
+						 color="#FFFFFF" />
+				
 			</s:HGroup>
 		</s:VGroup>
 	</s:Group>
 	
-</s:ItemRenderer>
+</s:Group>

@@ -1,6 +1,7 @@
 package com.uralys.tribes.entities
 {
 	import com.uralys.tribes.commons.Session;
+	import com.uralys.tribes.managers.GameManager;
 	
 	import mx.collections.ArrayCollection;
 	import mx.controls.Image;
@@ -109,40 +110,78 @@ package com.uralys.tribes.entities
 		// Flex only
 		
 		
-		public var armies:ArrayCollection = new ArrayCollection();
-		public var merchants:ArrayCollection = new ArrayCollection();
+		public var army:Unit;
+		public var merchants:Unit;
 		public var imageUnit:Image;
 		
-		
 		public function refresh():Boolean{
-			
 			var foundUnitsOnThisCase:Boolean = false;
 			var now:Number = new Date().getTime();
-			armies.removeAll();
-			merchants.removeAll();
+			var recordedMovesToDelete:ArrayCollection = new ArrayCollection();
+			
+			if(recordedMoves != null && recordedMoves.length > 0){
+				trace("-------");
+				trace("refreshing moves for " + caseUID);
+			}
+			
+			army = null;
+			merchants = null;
 				
 			for each(var move:Move in recordedMoves){
-				if(move.timeFrom < now && (move.timeTo > now || move.timeTo == -1))
+				
+				var unit:Unit = getUnit(move.unitUID);
+				var unitInPlayer:Unit = Session.player.getUnit(unit.unitUID);
+				
+				trace("unit : " + unit.unitUID);
+				
+				if(move.timeFrom <= now && (move.timeTo > now || move.timeTo == -1))
 				{
+					trace("move actif : " + move.moveUID);
+					
+					// c'est le move actif, on recupere les unites qui sont sur la case
 					foundUnitsOnThisCase = true;
-
-					var unit:Unit = getUnit(move.unitUID);
-					var unitInPlayer:Unit = Session.player.getUnit(unit.unitUID);
 					
 					if(unitInPlayer != null)
 						unitInPlayer.currentCaseUID = _caseUID;
 					
 					switch(unit.type){
 						case 1:
-							armies.addItem(unit);
+							army = unit;
 							break;
 						case 2:
-							merchants.addItem(unit);
+							merchants = unit;
 							break;
 					}
 				}
+				else if(move.timeTo != -1 && move.timeTo < now){
+					// move perimé
+					trace("move périmé : " + move.moveUID);
+					
+					// on refresh unit dans Session.player.units : on enleve ce move terminé
+					var indexToRemove:int = -1;
+					for each (var moveInUnit:Move in unit.moves)
+					{
+						if(moveInUnit.moveUID == move.moveUID){
+							indexToRemove = unit.moves.getItemIndex(moveInUnit);
+							break;
+						}
+					}
+					
+					unit.moves.removeItemAt(indexToRemove);
+					
+					// on stock le move a supprimer de recordedMoves pour le supprimer apres cette boucle.
+					recordedMovesToDelete.addItem(move);
+					
+					// on stock le move dans la liste à supprimer
+					Session.movesToDelete.addItem(move);
+				}
 			}
 			
+			// on refresh unit dans Session.player.units : on enleve ce move terminé
+			for each (var moveToRemoveFromRecordedMoves:Move in recordedMovesToDelete)
+				recordedMoves.removeItemAt(recordedMoves.getItemIndex(moveToRemoveFromRecordedMoves));
+			
+				
 			return foundUnitsOnThisCase;
 		}
 		

@@ -15,6 +15,7 @@ public interface IGameService {
 	public void savePlayer(Player player);
 	public void saveUnit(String uralysUID, Unit unit);
 	public void deleteUnit(String uralysUID, String unitUID);
+	public void deleteMove(String moveUID, String caseUID, String unitUID);
 	
 	public List<Item> loadItems();
 	public List<Case> loadCases(List<String> caseUIDs);

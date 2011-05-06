@@ -56,6 +56,7 @@ public class EntitiesConverter {
 		Player player = new Player();
 		
 		player.setUralysUID(playerDTO.getUralysUID());
+		player.setAllyUID(playerDTO.getAllyUID());
 		player.setName(playerDTO.getName());
 		player.setNbLands(playerDTO.getNbLands());
 		player.setLastStep(playerDTO.getLastStep());
@@ -82,7 +83,7 @@ public class EntitiesConverter {
 		
 		//-----------------------------------------------------------------------------------//		
 		List<Unit> units = new ArrayList<Unit>();
-		
+	
 		for(UnitDTO unitDTO : playerDTO.getUnits()){
 			units.add(convertUnitDTO(unitDTO));
 		}

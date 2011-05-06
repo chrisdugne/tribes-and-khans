@@ -7,6 +7,7 @@ public class Unit {
 
 	//-----------------------------------------------------------------------------------//
 	
+	public final static int TO_BE_CREATED = -1;
 	public final static int INTERCEPTED = 1;
 	public final static int FREE = 2;
 	public final static int DESTROYED = 3;

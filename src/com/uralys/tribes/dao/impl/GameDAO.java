@@ -281,6 +281,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 
 		unitDTO.setValue(unit.getValue());
 		unitDTO.setType(unit.getType());
+		unitDTO.setStatus(Unit.FREE);
 
 		unitDTO.setCurrentCaseUID(unit.getMoves().get(0).getCaseUID());
 		

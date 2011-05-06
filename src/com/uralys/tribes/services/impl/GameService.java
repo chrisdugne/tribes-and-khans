@@ -29,7 +29,7 @@ public class GameService implements IGameService {
 	
 	public Player getPlayer(String uralysUID) {
 		try{
-			return gameManager.getPlayer(uralysUID);
+			return gameManager.getPlayer(uralysUID, false);
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -59,6 +59,15 @@ public class GameService implements IGameService {
 	public void deleteUnit(String uralysUID, String unitUID) {
 		try{
 			gameManager.deleteUnit(uralysUID, unitUID);
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	public void deleteMove(String moveUID, String caseUID, String unitUID) {
+		try{
+			gameManager.deleteMove(moveUID, caseUID, unitUID);
 		}
 		catch(Exception e){
 			e.printStackTrace();

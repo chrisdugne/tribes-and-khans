@@ -18,7 +18,7 @@ import com.uralys.tribes.dao.impl.UniversalDAO;
 import com.uralys.tribes.entities.dto.CaseDTO;
 import com.uralys.tribes.entities.dto.CityDTO;
 import com.uralys.tribes.entities.dto.GatheringDTO;
-import com.uralys.tribes.entities.dto.MeetingDTO;
+import com.uralys.tribes.entities.dto.ConflictDTO;
 import com.uralys.tribes.entities.dto.EquipmentDTO;
 import com.uralys.tribes.entities.dto.ItemDTO;
 import com.uralys.tribes.entities.dto.MoveConflictDTO;
@@ -544,7 +544,7 @@ public class DataviewerServlet extends HttpServlet {
 		else if(dto.equals("move"))
 			return MoveDTO.class;
 		else if(dto.equals("meeting"))
-			return MeetingDTO.class;
+			return ConflictDTO.class;
 		else if(dto.equals("gathering"))
 			return GatheringDTO.class;
 		else if(dto.equals("moveConflict"))

@@ -102,8 +102,8 @@ public class PlayerDTO {
 		return UniversalDAO.getInstance().getListDTO(cityUIDs, CityDTO.class);		
 	}
 	
-	public List<MeetingDTO> getMeetings() {
-		return UniversalDAO.getInstance().getListDTO(meetingsUIDs, MeetingDTO.class);		
+	public List<ConflictDTO> getMeetings() {
+		return UniversalDAO.getInstance().getListDTO(meetingsUIDs, ConflictDTO.class);		
 	}
 	
 	//-----------------------------------------------------------------------------------//

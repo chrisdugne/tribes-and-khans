@@ -7,6 +7,7 @@ import com.uralys.tribes.entities.Move;
 import com.uralys.tribes.entities.Player;
 import com.uralys.tribes.entities.Unit;
 import com.uralys.tribes.entities.dto.CaseDTO;
+import com.uralys.tribes.entities.dto.ConflictDTO;
 import com.uralys.tribes.entities.dto.ItemDTO;
 import com.uralys.tribes.entities.dto.PlayerDTO;
 import com.uralys.tribes.entities.dto.UnitDTO;
@@ -45,5 +46,6 @@ public interface IGameDAO {
 	public void deleteMoves(String unitUID);
 	
 	public void addUnitInGathering(String gatheringUID, String unitUID);
+	public ConflictDTO getConflict(String conflictUIDExpected);
 	
 }

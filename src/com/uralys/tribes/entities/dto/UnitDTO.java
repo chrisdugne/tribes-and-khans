@@ -27,6 +27,12 @@ public class UnitDTO {
 	private String unitUID;
 	
 	@Persistent private int value;
+	
+	@Persistent private long beginTime;
+	@Persistent private long endTime;
+
+	@Persistent private String gatheringUIDExpected;
+	@Persistent private String conflictUIDExpected;
 
 	@Persistent private int status;
 	@Persistent private int type;
@@ -111,6 +117,30 @@ public class UnitDTO {
 	}
 	public void setType(int type) {
 		this.type = type;
+	}
+	public long getBeginTime() {
+		return beginTime;
+	}
+	public void setBeginTime(long beginTime) {
+		this.beginTime = beginTime;
+	}
+	public long getEndTime() {
+		return endTime;
+	}
+	public void setEndTime(long endTime) {
+		this.endTime = endTime;
+	}
+	public String getGatheringUIDExpected() {
+		return gatheringUIDExpected;
+	}
+	public void setGatheringUIDExpected(String gatheringUIDExpected) {
+		this.gatheringUIDExpected = gatheringUIDExpected;
+	}
+	public String getConflictUIDExpected() {
+		return conflictUIDExpected;
+	}
+	public void setConflictUIDExpected(String conflictUIDExpected) {
+		this.conflictUIDExpected = conflictUIDExpected;
 	}
 	public String getPlayerUID() {
 		return playerUID;

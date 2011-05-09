@@ -71,15 +71,5 @@ public class Move {
 	
 	//-----------------------------------------------------------------------------------//
 	
-	// caseUID : case_i_j
-	public int getX(){
-		String[] split = caseUID.split("_");
-		return Integer.parseInt(split[1]);
-	}
-
-	public int getY(){
-		String[] split = caseUID.split("_");
-		return Integer.parseInt(split[2]);
-	}
 	
 }

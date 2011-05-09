@@ -3,18 +3,11 @@ package com.uralys.tribes.entities;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Meeting {
+public class Conflict {
 	
 	//-----------------------------------------------------------------------------------//
 
-	public static final int CONFLICT = 1;
-	public static final int GATHERING = 2;
-	
-	//-----------------------------------------------------------------------------------//
-	
-	private String meetingUID;
-	private String playerUID;
-	private int type;
+	private String conflictUID;
 
 	private long timeFrom;
 	private long timeTo;
@@ -31,29 +24,17 @@ public class Meeting {
 	public void setGatherings(List<Gathering> gatherings) {
 		this.gatherings = gatherings;
 	}
-	public String getMeetingUID() {
-		return meetingUID;
+	public String getConflictUID() {
+		return conflictUID;
 	}
-	public void setMeetingUID(String meetingUID) {
-		this.meetingUID = meetingUID;
+	public void setConflictUID(String meetingUID) {
+		this.conflictUID = meetingUID;
 	}
 	public String getCaseUID() {
 		return caseUID;
 	}
 	public void setCaseUID(String caseUID) {
 		this.caseUID = caseUID;
-	}
-	public String getPlayerUID() {
-		return playerUID;
-	}
-	public void setPlayerUID(String playerUID) {
-		this.playerUID = playerUID;
-	}
-	public int getType() {
-		return type;
-	}
-	public void setType(int type) {
-		this.type = type;
 	}
 	public long getTimeFrom() {
 		return timeFrom;

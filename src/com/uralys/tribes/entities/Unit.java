@@ -33,9 +33,14 @@ public class Unit {
 	private int iron;
 	private int gold;
 	
+	private long beginTime;
+	private long endTime;
+
+	private String gatheringUIDExpected;
+	private String conflictUIDExpected;
+	
 	private List<Move> moves = new ArrayList<Move>();
 	private List<Equipment> equipments = new ArrayList<Equipment>();
-	private List<Meeting> meetings = new ArrayList<Meeting>();
 
 	//-----------------------------------------------------------------------------------//
 	
@@ -86,14 +91,6 @@ public class Unit {
 
 	public void setPlayerUID(String playerUID) {
 		this.playerUID = playerUID;
-	}
-
-	public List<Meeting> getMeetings() {
-		return meetings;
-	}
-
-	public void setMeetings(List<Meeting> meetings) {
-		this.meetings = meetings;
 	}
 
 	public int getSize() {
@@ -152,8 +149,41 @@ public class Unit {
 		this.equipments = equipments;
 	}
 
+	public long getBeginTime() {
+		return beginTime;
+	}
+	
+	public void setBeginTime(long beginTime) {
+		this.beginTime = beginTime;
+	}
+	
+	public long getEndTime() {
+		return endTime;
+	}
+	
+	public void setEndTime(long endTime) {
+		this.endTime = endTime;
+	}
+	
 	//-----------------------------------------------------------------------------------//
 	
+
+	public String getGatheringUIDExpected() {
+		return gatheringUIDExpected;
+	}
+
+	public void setGatheringUIDExpected(String gatheringUIDExpected) {
+		this.gatheringUIDExpected = gatheringUIDExpected;
+	}
+
+	public String getConflictUIDExpected() {
+		return conflictUIDExpected;
+	}
+
+	public void setConflictUIDExpected(String conflictUIDExpected) {
+		this.conflictUIDExpected = conflictUIDExpected;
+	}
+
 	public boolean equals(Unit unit){
 		return unit.getUnitUID().equals(unitUID);
 	}

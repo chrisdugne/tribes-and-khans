@@ -21,6 +21,7 @@ import com.uralys.tribes.entities.Player;
 import com.uralys.tribes.entities.Unit;
 import com.uralys.tribes.entities.dto.CaseDTO;
 import com.uralys.tribes.entities.dto.CityDTO;
+import com.uralys.tribes.entities.dto.ConflictDTO;
 import com.uralys.tribes.entities.dto.EquipmentDTO;
 import com.uralys.tribes.entities.dto.GatheringDTO;
 import com.uralys.tribes.entities.dto.ItemDTO;
@@ -539,6 +540,11 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		gathering.getUnitUIDs().add(unitUID);
 		
 		pm.close();
+	}
+
+	public ConflictDTO getConflict(String conflictUID) {
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		return pm.getObjectById(ConflictDTO.class, conflictUID);
 	}
 
 	//==================================================================================================//

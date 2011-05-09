@@ -30,7 +30,6 @@ public class UnitDTO {
 
 	@Persistent private int status;
 	@Persistent private int type;
-	@Persistent private String currentCaseUID;
 	@Persistent private String playerUID;
 	
 	@Persistent private int size;
@@ -113,12 +112,6 @@ public class UnitDTO {
 	public void setType(int type) {
 		this.type = type;
 	}
-	public String getCurrentCaseUID() {
-		return currentCaseUID;
-	}
-	public void setCurrentCaseUID(String currentCaseUID) {
-		this.currentCaseUID = currentCaseUID;
-	}
 	public String getPlayerUID() {
 		return playerUID;
 	}
@@ -128,12 +121,6 @@ public class UnitDTO {
 
 	//-----------------------------------------------------------------------------------//
 
-	public CaseDTO getCurrentCase() {
-		return (CaseDTO) UniversalDAO.getInstance().getObjectDTO(currentCaseUID, CaseDTO.class);
-	}
-	
-	//-----------------------------------------------------------------------------------//
-	
 	public List<EquipmentDTO> getEquipments() {
 		return UniversalDAO.getInstance().getListDTO(equipmentUIDs, EquipmentDTO.class);
 	}

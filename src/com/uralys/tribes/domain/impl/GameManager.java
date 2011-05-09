@@ -240,7 +240,6 @@ public class GameManager implements IGameManager {
 		army1 = new Unit();
 		army1.setUnitUID("army1");
 		army1.setValue(50);
-		army1.setCurrentCaseUID("case_1_0");
 		army1.setType(Unit.ARMY);
 		army1.setPlayerUID(player1.getUralysUID());
 
@@ -249,7 +248,6 @@ public class GameManager implements IGameManager {
 		army2 = new Unit();
 		army2.setUnitUID("army2");
 		army2.setValue(230);
-		army1.setCurrentCaseUID("case_2_7");
 		army2.setType(Unit.ARMY);
 		army2.setPlayerUID(player2.getUralysUID());
 
@@ -258,7 +256,6 @@ public class GameManager implements IGameManager {
 		army3 = new Unit();
 		army3.setUnitUID("army3");
 		army3.setValue(120);
-		army1.setCurrentCaseUID("case_7_6");
 		army3.setType(Unit.ARMY);
 		army3.setPlayerUID(player3.getUralysUID());
 
@@ -493,7 +490,7 @@ public class GameManager implements IGameManager {
 			
 
 			if(debug)System.out.println("passage par case ["+newMove.getX()+"]["+newMove.getY()+"], de temps("+newMove.getTimeFrom()+") ˆ temps("+newMove.getTimeTo()+")");
-			Case _case = getCase(newMove.getCaseUID(), true);
+			Case _case = getCase(newMove.getCaseUID());
 
 			//-----------------------------------------------------------------------------------//
 
@@ -601,7 +598,7 @@ public class GameManager implements IGameManager {
 
 					if(debug)System.out.println(" - plusieurs gatherings !! => conflit");
 					
-					int[] result = calculateFinalValue(meeting, unit, currentUnitValue);
+					int[] result = calculateFinalValue(meeting, unit, currentUnitValue, _case);
 					currentUnitValue = result[1];
 					if(result[0] < 0){
 						// on a un Rassemblement
@@ -778,18 +775,11 @@ public class GameManager implements IGameManager {
 //		}
 //	}
 
-	private HashMap<String, Case> casesLoaded = new HashMap<String, Case>();
-	private Case getCase(String caseUID, boolean cacheAvailable) {
+	private Case getCase(String caseUID) {
 		if(debugLoop)
 			return board[getXFromCaseUID(caseUID)][getYFromCaseUID(caseUID)];
 		else{
-
-			if(!cacheAvailable || casesLoaded.get(caseUID) == null){
-				casesLoaded.put(caseUID, EntitiesConverter.convertCaseDTO(gameDao.getCase(getXFromCaseUID(caseUID),getYFromCaseUID(caseUID))));
-			}
-
-			return casesLoaded.get(caseUID);
-			
+			return EntitiesConverter.convertCaseDTO(gameDao.getCase(getXFromCaseUID(caseUID),getYFromCaseUID(caseUID)));
 		}
 		
 	}
@@ -820,7 +810,7 @@ public class GameManager implements IGameManager {
 
 	//-----------------------------------------------------------------------------------//
 	
-	private int[] calculateFinalValue(Meeting meeting, Unit unitInspected, int currentUnitValue) {
+	private int[] calculateFinalValue(Meeting meeting, Unit unitInspected, int currentUnitValue, Case _case) {
 
 		// result[0] : conflict -1 ou 1 (il y a conflit ou non)
 		// result[1] : currentUnitValue
@@ -859,7 +849,7 @@ public class GameManager implements IGameManager {
 					allyValue += currentUnitValue;
 				}
 				else
-					allyValue += getValueInTheRecordedMove(unit, meeting.getCaseUID());
+					allyValue += getValueInTheRecordedMove(unit, meeting.getCaseUID(), _case);
 			}
 			
 			allyValues[index++] = allyValue;
@@ -914,9 +904,7 @@ public class GameManager implements IGameManager {
 		
 	}
 	
-	private int getValueInTheRecordedMove(Unit unit, String caseUID) {
-		
-		Case _case = getCase(caseUID, true);
+	private int getValueInTheRecordedMove(Unit unit, String caseUID, Case _case) {
 		
 		for(Move move : _case.getRecordedMoves()){
 			if(move.getUnitUID().equals(unit.getUnitUID())){

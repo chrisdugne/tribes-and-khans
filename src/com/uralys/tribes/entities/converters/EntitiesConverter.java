@@ -168,7 +168,6 @@ public class EntitiesConverter {
 		
 		unit.setType(unitDTO.getType());
 		unit.setStatus(unitDTO.getStatus());
-		unit.setCurrentCaseUID(unitDTO.getCurrentCaseUID());
 		unit.setPlayerUID(unitDTO.getPlayerUID());
 
 		//-----------------------------------------------------------------------------------//

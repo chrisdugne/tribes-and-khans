@@ -215,14 +215,19 @@ package com.uralys.tribes.core
 				catch(e:Error){}
 			}
 			
-			var imageUnit:Image = new Image();
+			var imageUnit:Image;
 			
 			
 			if(_case.army && _case.army.status != Unit.TO_BE_CREATED){
+				imageUnit = new Image();
 				imageUnit.source = ImageContainer.getImage(ImageContainer.ARMY_PLAYER);
 			}
 			else if(_case.merchants && _case.merchants.status != Unit.TO_BE_CREATED){
+				imageUnit = new Image();
 				imageUnit.source = ImageContainer.getImage(ImageContainer.MERCHANT_PLAYER);				
+			}
+			else{
+				return; // no unit
 			}
 			
 			imageUnit.x = _case.x * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4) + 15;
@@ -859,7 +864,7 @@ package com.uralys.tribes.core
 					var _moveToListen:com.uralys.tribes.entities.Move = unit.moves.getItemAt(0) as com.uralys.tribes.entities.Move;
 					trace(_moveToListen.moveUID);
 						
-					CronMover.getInstance().addTimer(_moveToListen);
+					UnitMover.getInstance().addTimer(_moveToListen);
 				}
 				
 				//------------------------------------------------------//

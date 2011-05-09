@@ -59,6 +59,13 @@
 					city.peopleCreatingWheat += city.unemployed;
 					city.wheatEarned = Numbers.WHEAT_EARNING_COEFF * city.peopleCreatingWheat;
 				}
+				
+				
+				protected function pickUpPeopleInPeopleCreatingWheat(peopleToPickUp:int):void	{
+					var peopleRequired:int = peopleToPickUp - city.unemployed;
+					wheatWorkersCheck(city.peopleCreatingWheat - peopleRequired);
+				}
+				
 
 				//-------------------------------------------------------------------------//
 
@@ -928,7 +935,7 @@
 				}
 				
 				protected function armyCheck(newNumber:int):void	{
-					
+					trace("armycheck : " + newNumber);
 					var previousArmySize:int = city.army.size;
 					var newArmySize:int = newNumber;
 					
@@ -939,11 +946,20 @@
 					var peopleAddedWithStepper:int = newArmySize - previousArmySize;
 					
 					if(city.unemployed < peopleAddedWithStepper)
+					{
+						// on rajoute le nombre de unemployed necessaire
+						pickUpPeopleInPeopleCreatingWheat(peopleAddedWithStepper - city.unemployed);
+						
+						// unemployed est maintenant au moins pile ce qu'il faut
 						newArmySize = previousArmySize + city.unemployed;
+					}
 					
 					city.army.size = newArmySize;
 					armyStepper.data = city.army.size;
 					
+					trace("newArmySize : " + newArmySize);
+					trace("city.armyReleased : " + city.armyReleased);
+					trace("city.armyRaised : " + city.armyRaised);
 					
 					if(newArmySize > previousArmySize){
 						// on ajoute des gens dans une armee
@@ -970,6 +986,11 @@
 						}
 					}
 					
+					
+					trace("city.armyReleased : " + city.armyReleased);
+					trace("city.armyRaised : " + city.armyRaised);
+					
+					
 				}
 				
 				//-------------------------------------------------------------------------//
@@ -990,7 +1011,13 @@
 					var peopleAddedWithStepper:int = newMerchantSize - previousMerchantSize;
 
 					if(city.unemployed < peopleAddedWithStepper)
+					{
+						// on rajoute le nombre de unemployed necessaire
+						pickUpPeopleInPeopleCreatingWheat(peopleAddedWithStepper - city.unemployed);
+						
+						// unemployed est maintenant au moins pile ce qu'il faut
 						newMerchantSize = previousMerchantSize + city.unemployed;
+					}
 					
 					city.merchant.size = newMerchantSize;
 					merchantsStepper.data = city.merchant.size;
@@ -1041,8 +1068,13 @@
 				protected function newUnit(type:int):Unit{
 					
 					if(city.unemployed < 50){
-						FlexGlobals.topLevelApplication.message(Translations.FREE_PEOPLE.getItemAt(Session.LANGUAGE));
-						return null;
+						
+						pickUpPeopleInPeopleCreatingWheat(50);
+						
+						if(city.unemployed < 50){
+							FlexGlobals.topLevelApplication.message(Translations.FREE_PEOPLE.getItemAt(Session.LANGUAGE));
+							return null;
+						}
 					}
 					
 					var newUnit:Unit = new Unit();
@@ -1071,14 +1103,24 @@
 				protected function validateArmy():void
 				{
 					currentState = recordingUnitState.name;
-					GameManager.getInstance().saveUnit(city.army);
+					
+					if(city.army.status == Unit.TO_BE_CREATED)
+						GameManager.getInstance().createUnit(city.army, city.cityUID);
+					else
+						GameManager.getInstance().updateUnit(city.army, city.cityUID);
+
 					BoardDrawer.getInstance().refreshUnits(Session.CURRENT_CASE_SELECTED);
 				}
 
 				protected function validateMerchant():void
 				{
 					currentState = recordingUnitState.name;
-					GameManager.getInstance().saveUnit(city.merchant);
+					
+					if(city.merchant.status == Unit.TO_BE_CREATED)
+						GameManager.getInstance().createUnit(city.merchant, city.cityUID);
+					else
+						GameManager.getInstance().updateUnit(city.merchant, city.cityUID);
+					
 					BoardDrawer.getInstance().refreshUnits(Session.CURRENT_CASE_SELECTED);
 				}
 
@@ -1099,7 +1141,7 @@
 				{
 					trace("delete army" + city.army.unitUID);
 				
-					if(city.army.unitUID.indexOf("NEW") != 0){
+					if(city.army.status != Unit.TO_BE_CREATED){
 						// pour une armee deja existante : on reajuste la pop, ils peuvent travailler des ce tour
 						// faille : si on a enleve des unites avant elles sont dans armyReleased et ne seront pas utilisees ce tour
 						city.population += city.army.size;
@@ -1107,7 +1149,7 @@
 					else{
 						// pour une armee nouvelle, la pop n'a pas bouge, on reajuste armyRaised et armyReleased par contre
 						
-						if(city.armyRaised > city.army.size){
+						if(city.armyRaised >= city.army.size){
 							city.armyRaised -= city.army.size;
 						}
 						else{
@@ -1193,15 +1235,17 @@
 					
 					trace("delete merchant" + city.merchant.unitUID);
 					
-					if(city.merchant.unitUID.indexOf("NEW") != 0){
+					if(city.merchant.status != Unit.TO_BE_CREATED){
 						// pour une caravane deja existante : on reajuste la pop, ils peuvent travailler des ce tour
 						// faille : si on a enleve des unites avant elles sont dans armyReleased et ne seront pas utilisees ce tour
 						city.population += city.merchant.size;
 					}
 					else{
 						// pour une caravane nouvelle, la pop n'a pas bouge, on reajuste armyRaised et armyReleased par contre
-						
-						if(city.armyRaised > city.merchant.size){
+						trace("city.armyRaised " + city.armyRaised);
+						trace("city.armyReleased " + city.armyReleased);
+
+						if(city.armyRaised >= city.merchant.size){
 							city.armyRaised -= city.merchant.size;
 						}
 						else{
@@ -1209,6 +1253,8 @@
 							city.armyRaised = 0;
 						}
 						
+						trace("city.armyRaised " + city.armyRaised);
+						trace("city.armyReleased " + city.armyReleased);
 					}
 					
 					// on remet les provisions transportees dans les stocks de la ville

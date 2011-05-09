@@ -21,8 +21,9 @@
 			import com.uralys.tribes.commons.Translations;
 			import com.uralys.tribes.core.BoardClickAnalyser;
 			import com.uralys.tribes.core.BoardDrawer;
-			import com.uralys.tribes.core.CronMover;
 			import com.uralys.tribes.core.Pager;
+			import com.uralys.tribes.core.UnitMover;
+			import com.uralys.tribes.entities.Case;
 			import com.uralys.tribes.entities.City;
 			import com.uralys.tribes.entities.Conflict;
 			import com.uralys.tribes.entities.Equipment;
@@ -101,12 +102,11 @@
 			
 			// click sur une armee dans la barre laterale
 			// ou dans la liste sous 'enter city'
-			protected function onArmyClick(event:ItemClickEvent):void{
+			protected function onUnitClick(unit:Unit):void{
 				
 				if(Session.MOVE_A_UNIT)
 					return;
 				
-				var unit:Unit = event.currentTarget.selectedItem;
 				mapPositioner.x = Session.MAP_WIDTH/2 
 									- Utils.getXFromCaseUID(unit.currentCaseUID) * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4) 
 									- Numbers.LAND_WIDTH/2;
@@ -114,12 +114,7 @@
 									- Utils.getYFromCaseUID(unit.currentCaseUID) * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2) 
 									- Numbers.LAND_WIDTH/2;
 				
-				selectionChoiceGroup.includeInLayout = false;
-				selectionChoiceGroup.visible = false;
-				merchantChoiceGroup.includeInLayout = false;
-				merchantChoiceGroup.visible = false;
-				
-				selectedUnit = event.currentTarget.selectedItem;
+				selectedUnit = unit;
 				
 				Session.MOVE_A_UNIT = true;
 				currentState = "moveUnit";
@@ -162,15 +157,11 @@
 			
 			// appelee apres le BoardDrawer.refreshDisplay, qui raffraichit toutes les currentCaseUID des units de toutes les cases.
 			public function refreshUnitsInCity():void{
-				trace("refreshUnitsInCity");
-				trace(ObjectUtil.toString(Session.player));
 				for each(var unit:Unit in Session.player.units){
 					
 					if(unit.type == 2){
-						trace("found a merchant " + unit.currentCaseUID);
-						for each(var city:City in Session.player.cities){
-							trace("city.x " + city.x);
-							trace("city.y " + city.y);
+						for each(var city:City in Session.player.cities)
+						{
 							if(Utils.getXFromCaseUID(unit.currentCaseUID) == city.x && Utils.getYFromCaseUID(unit.currentCaseUID) == city.y){
 								city.merchant = unit;
 								city.unitsToFeed += unit.size;
@@ -180,12 +171,8 @@
 					}
 					
 					else if(unit.type == 1){
-						trace("found an army " + unit.currentCaseUID);
-						for each(var city:City in Session.player.cities){
-							
-							trace("city.x " + city.x);
-							trace("city.y " + city.y);
-							
+						for each(var city:City in Session.player.cities)
+						{
 							if(Utils.getXFromCaseUID(unit.currentCaseUID) == city.x && Utils.getYFromCaseUID(unit.currentCaseUID) == city.y){
 								city.army = unit;
 								city.unitsToFeed += unit.size;
@@ -237,12 +224,6 @@
 				draggingStageXFrom = event.stageX;
 				draggingStageYFrom = event.stageY;
 				
-				
-				selectionChoiceGroup.visible = false;
-				selectionChoiceGroup.includeInLayout = false;
-				merchantChoiceGroup.visible = false;
-				merchantChoiceGroup.includeInLayout = false;
-				
 				if(Session.MOVE_A_UNIT){
 					// manipulation d'une unite
 				}
@@ -273,43 +254,13 @@
 				isDragging = false;
 				Mouse.show();
 				
+				enterCityButton.visible = false;
+				enterCityButton.includeInLayout = false;
+				buildCityButton.visible = false;
+				buildCityButton.includeInLayout = false;
 				
 				if(Session.MOVE_A_UNIT){
-					// manipulation d'une unite : gestion du deplacement
-					var lastMove:com.uralys.tribes.entities.Move = selectedUnit.moves.getItemAt(selectedUnit.moves.length-1) as com.uralys.tribes.entities.Move;
-					var lastMoveX:int = Utils.getXFromCaseUID(lastMove.caseUID);
-					var lastMoveY:int = Utils.getYFromCaseUID(lastMove.caseUID);
-	
-					var distance:int = Math.abs(lastMoveX - Session.COORDINATE_X) + Math.abs(lastMoveY - Session.COORDINATE_Y);
-					
-					if(distance > 2 || lastMoveY == Session.COORDINATE_Y){
-						FlexGlobals.topLevelApplication.message("distance trop longue, choisir une case à cote du dernier deplacement");
-					}
-					else if(Math.abs(lastMoveX - Session.COORDINATE_X) + Math.abs(lastMoveY - Session.COORDINATE_Y) > 0){
-
-						// ajout d'un move
-						var newMove:com.uralys.tribes.entities.Move = new com.uralys.tribes.entities.Move();
-						
-						var timeFrom:Number;
-						var timeTo:Number;
-						
-						
-						if(selectedUnit.moves.length == 1){
-							timeFrom = new Date().getTime() + Numbers.BASE_TIME_PER_MOVE_MILLIS * selectedUnit.speed/Numbers.BASE_SPEED;
-						}
-						else{
-							timeFrom = lastMove.timeFrom + Numbers.BASE_TIME_PER_MOVE_MILLIS * selectedUnit.speed/Numbers.BASE_SPEED;
-						}
-						
-						lastMove.timeTo = timeFrom;
-						newMove.initNewMove(selectedUnit.unitUID, Session.COORDINATE_X, Session.COORDINATE_Y, timeFrom);
-						selectedUnit.moves.addItem(newMove);
-					
-						// refresh highlight images
-						BoardDrawer.getInstance().removeAllUnitMovesImages();
-						BoardDrawer.getInstance().addAllUnitMovesImages(selectedUnit);
-					}
-					
+					UnitMover.getInstance().recordMove(selectedUnit);
 				}
 				else{
 					Session.CURRENT_SELECTION_X = Session.COORDINATE_X;
@@ -318,7 +269,6 @@
 					Session.CURRENT_CASE_SELECTED = Session.map[Session.CURRENT_SELECTION_X][Session.CURRENT_SELECTION_Y];
 					Session.CURRENT_CASE_SELECTED.refresh();
 				}
-				
 				
 				if(autoMoveNotNeeded){
 					return;
@@ -414,7 +364,7 @@
 
 			private function validateUnitMoves():void{
 				Session.MOVE_A_UNIT = false;
-				GameManager.getInstance().saveUnit(selectedUnit);
+				GameManager.getInstance().updateUnit(selectedUnit);
 
 				selectedUnit = null;
 				currentState = "classic";
@@ -432,27 +382,15 @@
 				appearCity.play();
 			}
 
-			// idem onArmyClick, mais click sur larmee elle meme (depuis BoardClickListener)
-			public function clickOnArmy(army:Unit):void{
-				
-				selectionChoiceGroup.includeInLayout = false;
-				selectionChoiceGroup.visible = false;
-				
-				selectedUnit = army;
-				BoardDrawer.getInstance().drawArmySelection(army);
-			}
-			
 			public function appearMerchantChoice(merchant:Unit):void{
-				clickOnArmy(merchant);
-				
-				//merchantChoiceGroup.x = mapPositioner.x + merchant.x+7;
-				//merchantChoiceGroup.y = mapPositioner.y + merchant.y+7;
-				
-				merchantChoiceGroup.includeInLayout = true;
-				merchantChoiceGroup.visible = true;
+				buildCityButton.includeInLayout = true;
+				buildCityButton.visible = true;
 			}
 
-			public function appearSelectionChoice(city:City):void{
+			/**
+			 * le BoardClickListener regarde si il y a une ville dans la case clickee et arrive ici
+			 */ 
+			public function showEnterCity(city:City):void{
 				if(Session.MOVE_A_UNIT){
 					return;
 				}
@@ -460,19 +398,12 @@
 				selectedCity = city;
 				GameManager.getInstance().refreshCity(selectedCity, false);
 				
-				selectionChoiceGroup.x = selectedCity.x * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4) + mapPositioner.x + 100;
-				selectionChoiceGroup.y = selectedCity.y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2) + mapPositioner.y + 100;
-				
-				selectionChoiceGroup.includeInLayout = true;
-				selectionChoiceGroup.visible = true;
+				enterCityButton.includeInLayout = true;
+				enterCityButton.visible = true;
 				
 			}
 			
 			private function enterCity(event:MouseEvent):void{
-				
-				selectionChoiceGroup.includeInLayout = false;
-				selectionChoiceGroup.visible = false;
-				
 				goLeft.play();
 				appearCity.play();
 			}
@@ -497,8 +428,8 @@
 				
 				Session.player.cities.addItem(city);
 				
-				merchantChoiceGroup.visible = false;
-				merchantChoiceGroup.includeInLayout = false;
+				buildCityButton.visible = false;
+				buildCityButton.includeInLayout = false;
 			}
 
 			//-----------------------------------------------------------//
@@ -732,19 +663,21 @@
 		<!-- Units Tab -->
 
 		<s:TabBar id="tabs" dataProvider="{viewstack}" skinClass="spark.skins.spark.TabBarSkin"
-				  top="70" right="135"
+				  top="110" right="135"
 				  excludeFrom="moveUnit"/>
 		
-		<mx:ViewStack id="viewstack" width="200" top="100" right="95"
+		<mx:ViewStack id="viewstack" width="200" top="140" right="95"
 					  excludeFrom="moveUnit">
 			
 			<s:NavigatorContent label="{Translations.ARMY.getItemAt(Session.LANGUAGE)}">
 				<renderers:ArmyRenderer army="{Session.CURRENT_CASE_SELECTED.army}" 
-										visible="{Session.CURRENT_CASE_SELECTED != null &amp;&amp; Session.CURRENT_CASE_SELECTED.army !=null &amp;&amp; Session.CURRENT_CASE_SELECTED.army.size > 0}"/>
+										visible="{Session.CURRENT_CASE_SELECTED != null &amp;&amp; Session.CURRENT_CASE_SELECTED.army !=null &amp;&amp; Session.CURRENT_CASE_SELECTED.army.size > 0}"
+										click="onUnitClick(Session.CURRENT_CASE_SELECTED.army)"/>
 			</s:NavigatorContent>
 			<s:NavigatorContent label="{Translations.MERCHANTS.getItemAt(Session.LANGUAGE)}">
 				<renderers:MerchantsRenderer merchant="{Session.CURRENT_CASE_SELECTED.merchants}" 
-											 visible="{Session.CURRENT_CASE_SELECTED != null &amp;&amp; Session.CURRENT_CASE_SELECTED.merchants !=null &amp;&amp; Session.CURRENT_CASE_SELECTED.merchants.size > 0}"/>
+											 visible="{Session.CURRENT_CASE_SELECTED != null &amp;&amp; Session.CURRENT_CASE_SELECTED.merchants !=null &amp;&amp; Session.CURRENT_CASE_SELECTED.merchants.size > 0}"
+											 click="onUnitClick(Session.CURRENT_CASE_SELECTED.merchants)"/>
 			</s:NavigatorContent>
 		</mx:ViewStack>
 
@@ -752,6 +685,22 @@
 				  excludeFrom="classic">
 			<s:Label text="{Translations.WAY_SELECTION.getItemAt(Session.LANGUAGE)}"/>
 			<s:Button label="Done" click="{validateUnitMoves()}" visible="{selectedUnit != null}"/>
+		</s:VGroup>
+		
+		<s:VGroup id="buildCityButton"
+				  top="70" right="125"
+				  visible="false"
+				  includeInLayout="false"
+				  excludeFrom="moveUnit">
+			<s:Button label="{Translations.BUILD_HERE.getItemAt(Session.LANGUAGE)}" click="buildCity()"/>
+		</s:VGroup>
+		
+		<s:VGroup id="enterCityButton"
+				  top="70" right="125"
+				  visible="false"
+				  includeInLayout="false"
+				  excludeFrom="moveUnit">
+			<s:Button label="{Translations.ENTER_CITY.getItemAt(Session.LANGUAGE)}" click="enterCity(event)"/>
 		</s:VGroup>
 		
 		<!-- =============================================================================================== -->
@@ -813,7 +762,9 @@
 						  height="{Numbers.LAND_HEIGHT*400}"
 						  mouseDown="mouseDown(event)"
 						  mouseMove="mouseMove(event)"
-						  mouseUp="mouseUp(event)"/>
+						  mouseUp="mouseUp(event)"
+						  mouseOver="{Mouse.hide()}"
+						  mouseOut="{Mouse.show()}"/>
 					<s:Group id="highlighters"
 							 width="{Numbers.LAND_WIDTH*400}"
 							 height="{Numbers.LAND_HEIGHT*400}"
@@ -843,23 +794,6 @@
 								  y="{Session.CURRENT_SELECTION_Y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2)}"
 								  mouseEnabled="false"/>
 						
-					</s:Group>
-					<s:Group id="inGameMenus" 
-							 mouseEnabled="false"
-							 mouseChildren="true"
-							 mouseEnabledWhereTransparent="false">
-					
-						<s:VGroup id="merchantChoiceGroup" 
-								  visible="false"
-								  includeInLayout="false">
-							<s:Button label="{Translations.BUILD_HERE.getItemAt(Session.LANGUAGE)}" click="buildCity()"/>
-						</s:VGroup>
-						
-						<s:VGroup id="selectionChoiceGroup"
-								  visible="false"
-								  includeInLayout="false">
-							<s:Button label="{Translations.ENTER_CITY.getItemAt(Session.LANGUAGE)}" click="enterCity(event)"/>
-						</s:VGroup>
 					</s:Group>
  				</s:Group>
 					
@@ -892,7 +826,8 @@
 			  includeInLayout="false">
 		<s:HGroup>
 			<s:Button label="&lt;-- Ok" 
-					  click="{selectedCity.unemployed >= 0 ? backToMain() : messageUnemployed()}"/>
+					  click="{selectedCity.unemployed >= 0 ? backToMain() : messageUnemployed()}"
+					  enabled="{cityForm.currentState != 'recordingUnit'}"/>
 			<mx:Spacer width="450"/>
 		</s:HGroup>
 		<renderers:CityForm 

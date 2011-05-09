@@ -109,6 +109,17 @@ package com.uralys.tribes.entities
 		//--------------------------------------------------------------//
 		// Flex only
 		
+		public function refreshRecordedMove(moveToRefresh:Move):void
+		{
+			for each(var recordedMove:Move in recordedMoves){
+				if(recordedMove.moveUID == moveToRefresh.moveUID){
+					recordedMove.timeTo = moveToRefresh.timeTo;
+					return;
+				}
+			}
+		}
+
+		//----------------------------------------//
 		
 		public var army:Unit;
 		public var merchants:Unit;
@@ -120,7 +131,7 @@ package com.uralys.tribes.entities
 			var recordedMovesToDelete:ArrayCollection = new ArrayCollection();
 			
 			if(recordedMoves != null && recordedMoves.length > 0){
-				trace("-------");
+				trace("**");
 				trace("refreshing moves for " + caseUID);
 			}
 			
@@ -129,11 +140,12 @@ package com.uralys.tribes.entities
 				
 			for each(var move:Move in recordedMoves){
 				
-				var unit:Unit = getUnit(move.unitUID);
-				var unitInPlayer:Unit = Session.player.getUnit(unit.unitUID);
+				var unitInPlayer:Unit = Session.player.getUnit(move.unitUID);
+				var unit:Unit = unitInPlayer == null ? getUnit(move.unitUID) : unitInPlayer;
 				
 				trace("unit : " + unit.unitUID);
-				
+				trace("move.timeTo : " + move.timeTo);
+				trace("now : " + now);
 				if(move.timeFrom <= now && (move.timeTo > now || move.timeTo == -1))
 				{
 					trace("move actif : " + move.moveUID);
@@ -142,7 +154,7 @@ package com.uralys.tribes.entities
 					foundUnitsOnThisCase = true;
 					
 					if(unitInPlayer != null)
-						unitInPlayer.currentCaseUID = _caseUID;
+						unit.currentCaseUID = _caseUID;
 					
 					switch(unit.type){
 						case 1:
@@ -187,15 +199,23 @@ package com.uralys.tribes.entities
 		
 		//--------------------------------------------------------------//
 		
-		public function getUnit(unitUID:String):Unit{
+		private function getUnit(unitUID:String):Unit{
 			
-			for each(var unit:Unit in _units){
+			for each(var unit:Unit in _units)
+			{
+				// si c'est une unite ennemie, elle ne peut pas etre modifiee
+				// sinon, on va la trouver dans 'unitInPlayer' et on prendra donc celle qui sera manipule dans la Session
+				// donc pas d'importance sur le set false ici, juste pour que graphiquement ca colle si cest une unite ennemie 
+				unit.isModified = false; 
+				
 				if(unit.unitUID == unitUID || unit.unitUID.substr(4) == unitUID)
 					return unit;
 			}
 			
 			return null;
 		}	
+
+		//--------------------------------------------------------------//
 		
 	}
 }

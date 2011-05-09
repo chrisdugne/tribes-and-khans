@@ -19,6 +19,7 @@ package com.uralys.tribes.managers {
 	
 	import mx.collections.ArrayCollection;
 	import mx.controls.Alert;
+	import mx.rpc.CallResponder;
 	import mx.rpc.events.FaultEvent;
 	import mx.rpc.events.ResultEvent;
 	import mx.rpc.remoting.mxml.RemoteObject;
@@ -36,14 +37,24 @@ package com.uralys.tribes.managers {
 
 		//============================================================================================//
 		
-		private var gameWrapper:RemoteObject;
+		private var savePlayerResponder:CallResponder;
+		private var loadCasesResponder:CallResponder;
 
 		// -  ================================================================================
 		
-		public function GameManager(){
-			gameWrapper = new RemoteObject();
+		public function GameManager()
+		{
+			savePlayerResponder = new CallResponder();
+			loadCasesResponder = new CallResponder();
+		}
+		
+		private function getGameWrapper():RemoteObject{
+			
+			var gameWrapper:RemoteObject = new RemoteObject();
 			gameWrapper.destination = "GameWrapper";
 			gameWrapper.endpoint = Names.SERVER_AMF_ENDPOINT;
+			
+			return gameWrapper;
 		}
 		
 		//=====================================================================================//
@@ -51,22 +62,28 @@ package com.uralys.tribes.managers {
 		//============================================================================================//
 		
 		private function loginForceSteps():void {
-			
+			trace("loginForceSteps");
 			var now:Number = new Date().getTime();
 			var timeSpentMillis:Number = now - Numbers.SERVER_START;
 			
 			var nbStepsSinceBeginning:int = timeSpentMillis/(Numbers.TIME_PER_STEP*60*1000);
 			var nbStepsMissed:int = nbStepsSinceBeginning - Session.player.lastStep;
 			
+			trace(nbStepsMissed + " missed");
 			for(var i:int = 0; i < nbStepsMissed-1; i++){
 				saveStep(true);
 			}
 		
-			// enregistre le statut lors du dernier step
-			saveStep(false, true);
+			// enregistre le statut lors du dernier step a rattrapper
+			if(nbStepsMissed > 0)
+				saveStep();
+
+			
+			var city:City = Session.player.cities.getItemAt(0) as City;
+			BoardDrawer.getInstance().refreshMap(city.x, city.y);
 		}
 		
-		public function saveStep(loginCatchUp:Boolean = false, needToLoadCases:Boolean = false){
+		public function saveStep(loginCatchUp:Boolean = false){
 			for each(var city:City in Session.player.cities){
 				
 				city.wheat += city.wheatEarned - city.wheatSpent;
@@ -80,8 +97,7 @@ package com.uralys.tribes.managers {
 					city.wheat = 0;
 				}
 				
-				var armyRaised:int = city.armyReleased - city.armyRaised;
-				
+				var armyRaised:int = city.armyRaised - city.armyReleased;
 				city.population = calculatePopulation(city.population, starvation, armyRaised);
 
 				for each(var equipment:Equipment in city.equipmentStock){
@@ -129,66 +145,54 @@ package com.uralys.tribes.managers {
 			(Session.player.cities.getItemAt(0) as City).gold += Session.player.nbLands;
 			
 			if(!loginCatchUp)
-				savePlayer(needToLoadCases);
+				savePlayer();
 		}
 		
 		//-------------------------------------------------------------------------//
 		
-		public function saveUnit (unit:Unit):void{
-			
+		
+		public function createUnit(unit:Unit, cityUID):void
+		{
 			if(unit == null)
 				return;
 			
-			trace("saveUnit : " + unit.unitUID);
-			if(unit.status == Unit.TO_BE_CREATED){
-				
-				var bows:Equipment = new Equipment();
-				var swords:Equipment = new Equipment();
-				var armors:Equipment = new Equipment();
-				
-				bows.size = unit.bows;
-				swords.size = unit.swords;
-				armors.size = unit.armors;
-				
-				for each(var item:Item in Session.ITEMS){
-					switch(item.name){
-						case "bow" :
-							bows.item = item;
-							break;
-						case "sword" :
-							swords.item = item;
-							break;
-						case "armor" :
-							armors.item = item;
-							break;
-					}
+			var bows:Equipment = new Equipment();
+			var swords:Equipment = new Equipment();
+			var armors:Equipment = new Equipment();
+			
+			bows.size = unit.bows;
+			swords.size = unit.swords;
+			armors.size = unit.armors;
+			
+			for each(var item:Item in Session.ITEMS){
+				switch(item.name){
+					case "bow" :
+						bows.item = item;
+						break;
+					case "sword" :
+						swords.item = item;
+						break;
+					case "armor" :
+						armors.item = item;
+						break;
 				}
-				
-				bows.equimentUID = unit.unitUID + "_" + bows.item.itemUID; 
-				swords.equimentUID = unit.unitUID + "_" + swords.item.itemUID; 
-				armors.equimentUID = unit.unitUID + "_" + armors.item.itemUID; 
-				
-				unit.equipments.addItem(bows);
-				unit.equipments.addItem(swords);
-				unit.equipments.addItem(armors);
-				
-			}
-			else{
-				refreshUnitEquipment(unit);
 			}
 			
-			//---------------------------------------------------------------//
-			// save the unit on server side
+			bows.equimentUID = unit.unitUID + "_" + bows.item.itemUID; 
+			swords.equimentUID = unit.unitUID + "_" + swords.item.itemUID; 
+			armors.equimentUID = unit.unitUID + "_" + armors.item.itemUID; 
 			
-			gameWrapper.saveUnit.addEventListener("result", unitSaved);
-			gameWrapper.saveUnit(Session.player.uralysUID, unit);
+			unit.equipments.addItem(bows);
+			unit.equipments.addItem(swords);
+			unit.equipments.addItem(armors);
 			
-			//---------------------------------------------------------------//
 			
-			if(unit.status == Unit.TO_BE_CREATED)
-				unit.status = Unit.FREE;
+			var gameWrapper:RemoteObject = getGameWrapper();
+			gameWrapper.createUnit.addEventListener("result", unitSaved);
+			gameWrapper.createUnit(Session.player.uralysUID, unit, cityUID);
+			currentUnitBeingSaved = unit;
 			
-			unit.isModified = false;
+			unit.status = Unit.FREE;
 			
 			for each(var equipment:Equipment in unit.equipments){
 				if(equipment.equimentUID.indexOf("NEW_") != -1)
@@ -200,6 +204,22 @@ package com.uralys.tribes.managers {
 					move.moveUID = move.moveUID.substring(4);
 			}
 		}
+		
+		public function updateUnit(unit:Unit, cityUID:String = null):void{
+			
+			trace("gameManager.updateUnit");
+			
+			if(unit == null)
+				return;
+			
+			refreshUnitEquipment(unit);
+			
+			var gameWrapper:RemoteObject = getGameWrapper();
+			gameWrapper.updateUnit.addEventListener("result", unitSaved);
+			gameWrapper.updateUnit(unit, cityUID);
+			currentUnitBeingSaved = unit;
+		}
+
 		
 		private function refreshUnitEquipment(unit:Unit):void
 		{
@@ -217,6 +237,8 @@ package com.uralys.tribes.managers {
 				}
 			}
 		}
+		
+		//-------------------------------------------------------------------------------//
 		
 		public function refreshCity(city:City, starvation:Boolean):void{
 			
@@ -353,7 +375,7 @@ package com.uralys.tribes.managers {
 			if(population > 10000)
 				populationEvolution /= 10;
 			
-			return population + populationEvolution;
+			return population + populationEvolution - armyRaised;
 		}
 		
 		//============================================================================================//
@@ -361,13 +383,16 @@ package com.uralys.tribes.managers {
 		//============================================================================================//
 		//  ASKING SERVER
 		
-		public function loadItems():void{
+		public function loadItems():void
+		{
+			var gameWrapper:RemoteObject = getGameWrapper();
 			gameWrapper.loadItems.addEventListener("result", itemsLoaded);
 			gameWrapper.loadItems();
 		} 
 
 		public function loadCases(centerX:int, centerY:int):void{
-
+			
+			trace("loadCases");
 			var caseUIDs:ArrayCollection = new ArrayCollection();
 			
 			for(var i:int = 0; i < Numbers.NB_TILES_ON_EDGE_BY_LOADING; i++){
@@ -376,21 +401,18 @@ package com.uralys.tribes.managers {
 				}
 			}
 			
-			gameWrapper.loadCases.addEventListener("result", casesLoaded);
-			gameWrapper.loadCases(caseUIDs);
+			loadCasesResponder.addEventListener("result", casesLoaded);
+			loadCasesResponder.token = getGameWrapper().loadCases(caseUIDs);
+			
 		}
 
-		public function savePlayer(needToLoadCases:Boolean):void{
-			if(needToLoadCases)
-				gameWrapper.savePlayer.addEventListener("result", readyToLoadCases);
-			else
-				gameWrapper.savePlayer.removeEventListener("result", readyToLoadCases);
-			
-			gameWrapper.savePlayer(Session.player);
+		public function savePlayer():void{
+			trace("gameWrapper.savePlayer");
+			savePlayerResponder.token = getGameWrapper().savePlayer(Session.player);
 		}
 
 		public function deleteUnit (unit:Unit):void{
-			gameWrapper.deleteUnit(Session.player.uralysUID, unit.unitUID);
+			getGameWrapper().deleteUnit(Session.player.uralysUID, unit.unitUID);
 		}
 
 		//--------------------------------------------------------------------------------//
@@ -408,6 +430,7 @@ package com.uralys.tribes.managers {
 			if(move == null)
 				return;
 			
+			var gameWrapper:RemoteObject = getGameWrapper();
 			gameWrapper.deleteMove.addEventListener("result", moveDeleted);
 			gameWrapper.deleteMove(move.moveUID, move.caseUID, move.unitUID);
 		}
@@ -416,11 +439,6 @@ package com.uralys.tribes.managers {
 		//  RESULTS FROM SERVER	
 		
 		
-		private function readyToLoadCases(event:ResultEvent):void{
-			var city:City = Session.player.cities.getItemAt(0) as City;
-			BoardDrawer.getInstance().refreshMap(city.x, city.y);
-		}
-
 		private function itemsLoaded(event:ResultEvent):void{
 			Session.ITEMS = event.result as ArrayCollection;
 			Numbers.loadItemData();
@@ -428,6 +446,8 @@ package com.uralys.tribes.managers {
 		}
 		
 		private function casesLoaded(event:ResultEvent):void{
+			trace("casesLoaded");
+			
 			Session.CASES_LOADED = event.result as ArrayCollection;
 			
 			//------------------------------------------------//
@@ -461,8 +481,10 @@ package com.uralys.tribes.managers {
 			deleteAllMovesToBeDeleted();
 		}
 		
-		
-		private function unitSaved(event:ResultEvent):void{
+		private var currentUnitBeingSaved:Unit;
+		private function unitSaved(event:ResultEvent):void
+		{
+			currentUnitBeingSaved.isModified = false;
 			Session.board.cityForm.currentState = Session.board.cityForm.normalState.name;
 		}
 

@@ -1,6 +1,7 @@
 package com.uralys.tribes.entities
 {
 	import com.uralys.tribes.commons.Session;
+	import com.uralys.utils.Utils;
 	
 	import mx.collections.ArrayCollection;
 	import mx.utils.StringUtil;
@@ -83,6 +84,13 @@ package com.uralys.tribes.entities
 		
 		//--------------------------------------------------------------//
 		
+		public function getX():int {
+			return Utils.getXFromCaseUID(_caseUID);
+		}
+
+		public function getY():int {
+			return Utils.getYFromCaseUID(_caseUID);
+		}
 
 
 	}

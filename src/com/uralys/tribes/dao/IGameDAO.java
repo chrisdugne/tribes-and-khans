@@ -28,8 +28,8 @@ public interface IGameDAO {
 	public void updateSmith(String smithUID, int people);
 	public void updateStock(String equipmentUID, int size);
 
-	public void createUnit(Unit unit);
-	public void updateUnit(Unit unit);
+	public void createUnit(Unit unit, String cityUID);
+	public void updateUnit(Unit unit, String cityUID);
 	
 	public List<String> linkNewUnitsAndGetPreviousUnitUIDs(String uralysUID, List<String> createdUnitUIDs);
 	public void linkNewUnit(String uralysUID, String unitUID);
@@ -41,6 +41,9 @@ public interface IGameDAO {
 	public void createCity(City city, String playerUID);
 	
 	public String saveMove(Move move, String unitUID);
-	public void deleteMove(String moveUID, String caseUID, String unitUID);
+	public void deleteMove(String moveUID);
+	public void deleteMoves(String unitUID);
+	
+	public void addUnitInGathering(String gatheringUID, String unitUID);
 	
 }

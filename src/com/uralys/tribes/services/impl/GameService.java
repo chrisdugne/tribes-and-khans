@@ -47,9 +47,18 @@ public class GameService implements IGameService {
 		
 	}
 
-	public void saveUnit(String uralysUID, Unit unit) {
+	public void createUnit(String uralysUID, Unit unit, String cityUID) {
 		try{
-			gameManager.saveUnit(uralysUID, unit);
+			gameManager.createUnit(uralysUID, unit, cityUID);
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	public void updateUnit(Unit unit, String cityUID) {
+		try{
+			gameManager.updateUnit(unit, cityUID);
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -65,9 +74,9 @@ public class GameService implements IGameService {
 		}
 	}
 	
-	public void deleteMove(String moveUID, String caseUID, String unitUID) {
+	public void deleteMove(String moveUID) {
 		try{
-			gameManager.deleteMove(moveUID, caseUID, unitUID);
+			gameManager.deleteMove(moveUID);
 		}
 		catch(Exception e){
 			e.printStackTrace();

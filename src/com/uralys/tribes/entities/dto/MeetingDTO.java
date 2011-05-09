@@ -13,7 +13,7 @@ import javax.jdo.annotations.PrimaryKey;
 import com.uralys.tribes.dao.impl.UniversalDAO;
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
-public class ConflictDTO {
+public class MeetingDTO {
 	
 	//-----------------------------------------------------------------------------------//
 
@@ -24,16 +24,18 @@ public class ConflictDTO {
 
 	@Persistent
     @Extension(vendorName="datanucleus", key="gae.pk-name", value="true")
-	private String conflictUID;
+	private String meetingUID;
 	
-	@Persistent private List<String> moveAlliesUIDs = new ArrayList<String>();
-	@Persistent private List<String> moveEnnemiesUIDs = new ArrayList<String>();
+	@Persistent private List<String> gatheringUIDs = new ArrayList<String>();
 	
 	@Persistent private Integer x;
 	@Persistent private Integer y;
 
+	@Persistent private int type;
 	@Persistent private int status;
-	@Persistent private String report;
+
+	@Persistent private long timeFrom;
+	@Persistent private long timeTo;
 	
 	//-----------------------------------------------------------------------------------//
 
@@ -43,35 +45,17 @@ public class ConflictDTO {
 	public void setKey(String key) {
 		this.key = key; 
 	}
-	public String getConflictUID() {
-		return conflictUID;
+	public String getMeetingUID() {
+		return meetingUID;
 	}
-	public void setConflictUID(String conflictUID) {
-		this.conflictUID = conflictUID;
+	public void setMeetingUID(String meetingUID) {
+		this.meetingUID = meetingUID;
 	}
 	public int getStatus() {
 		return status;
 	}
 	public void setStatus(int status) {
 		this.status = status;
-	}
-	public String getReport() {
-		return report;
-	}
-	public void setReport(String report) {
-		this.report = report;
-	}
-	public List<String> getMoveAlliesUIDs() {
-		return moveAlliesUIDs;
-	}
-	public void setMoveAlliesUIDs(List<String> moveAlliesUIDs) {
-		this.moveAlliesUIDs = moveAlliesUIDs;
-	}
-	public List<String> getMoveEnnemiesUIDs() {
-		return moveEnnemiesUIDs;
-	}
-	public void setMoveEnnemiesUIDs(List<String> moveEnnemiesUIDs) {
-		this.moveEnnemiesUIDs = moveEnnemiesUIDs;
 	}
 	public Integer getX() {
 		return x;
@@ -85,16 +69,36 @@ public class ConflictDTO {
 	public void setY(Integer y) {
 		this.y = y;
 	}
+	public long getTimeFrom() {
+		return timeFrom;
+	}
+	public void setTimeFrom(long timeFrom) {
+		this.timeFrom = timeFrom;
+	}
+	public long getTimeTo() {
+		return timeTo;
+	}
+	public void setTimeTo(long timeTo) {
+		this.timeTo = timeTo;
+	}
+	public List<String> getGatheringUIDs() {
+		return gatheringUIDs;
+	}
+	public void setGatheringUIDs(List<String> gatheringUIDs) {
+		this.gatheringUIDs = gatheringUIDs;
+	}
+	public int getType() {
+		return type;
+	}
+	public void setType(int type) {
+		this.type = type;
+	}
 	
 	
 	//-----------------------------------------------------------------------------------//
 	
-	public List<MoveConflictDTO> getMoveAllies() {
-		return UniversalDAO.getInstance().getListDTO(moveAlliesUIDs, MoveConflictDTO.class);		
-	}
-
-	public List<MoveConflictDTO> getMoveEnnemies() {
-		return UniversalDAO.getInstance().getListDTO(moveEnnemiesUIDs, MoveConflictDTO.class);		
+	public List<GatheringDTO> getGatherings() {
+		return UniversalDAO.getInstance().getListDTO(gatheringUIDs, GatheringDTO.class);		
 	}
 	
 }

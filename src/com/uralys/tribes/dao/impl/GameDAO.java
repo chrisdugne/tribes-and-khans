@@ -22,6 +22,7 @@ import com.uralys.tribes.entities.Unit;
 import com.uralys.tribes.entities.dto.CaseDTO;
 import com.uralys.tribes.entities.dto.CityDTO;
 import com.uralys.tribes.entities.dto.EquipmentDTO;
+import com.uralys.tribes.entities.dto.GatheringDTO;
 import com.uralys.tribes.entities.dto.ItemDTO;
 import com.uralys.tribes.entities.dto.MoveDTO;
 import com.uralys.tribes.entities.dto.PlayerDTO;
@@ -263,7 +264,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		pm.close();
 	}
 
-	public void createUnit(Unit unit){
+	public void createUnit(Unit unit, String cityUID){
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		UnitDTO unitDTO = new UnitDTO(); 
 		
@@ -304,6 +305,11 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		}
 		
 		//--------------------------------------//
+
+		CityDTO city = pm.getObjectById(CityDTO.class, cityUID);
+		city.setPopulation(city.getPopulation() - unit.getSize());
+		
+		//--------------------------------------//
 		
 		pm.makePersistent(unitDTO);
 		pm.close();
@@ -314,9 +320,14 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		return pm.getObjectById(UnitDTO.class, unitUID);
 	}
 	
-	public void updateUnit(Unit unit){
+	public void updateUnit(Unit unit, String cityUID){
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		UnitDTO unitDTO = pm.getObjectById(UnitDTO.class, unit.getUnitUID());
+		
+		if(cityUID != null){
+			CityDTO city = pm.getObjectById(CityDTO.class, cityUID);
+			city.setPopulation(city.getPopulation() - unit.getSize() + unitDTO.getSize());
+		}
 		
 		unitDTO.setSize(unit.getSize());
 		unitDTO.setValue(unit.getValue());
@@ -385,7 +396,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 				List<MoveDTO> moves = (List<MoveDTO>) query.execute(unitDTO.getMoveUIDs());
 				
 				for(MoveDTO moveDTO : moves){
-					deleteMove(moveDTO.getMoveUID(), moveDTO.getCaseUID(), moveDTO.getUnitUID());
+					deleteMove(moveDTO.getMoveUID());
 				}
 			}
 			
@@ -420,7 +431,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			List<MoveDTO> moves = (List<MoveDTO>) query.execute(unitDTO.getMoveUIDs());
 			
 			for(MoveDTO moveDTO : moves){
-				deleteMove(moveDTO.getMoveUID(), moveDTO.getCaseUID(), moveDTO.getUnitUID());
+				deleteMove(moveDTO.getMoveUID());
 			}
 		}
 		
@@ -445,6 +456,26 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		moveDTO.setUnitUID(move.getUnitUID());
 		moveDTO.setValue(move.getValue());
 		
+		if(debug)log.info("move.getGathering().getGatheringUID() ; " + move.getGathering().getGatheringUID());
+		if(move.getGathering().getGatheringUID().equals("notcreatedyet")){
+			GatheringDTO gatheringDTO = new GatheringDTO(); 
+			
+			String gatheringUID = Utils.generateUID();
+			Key key2 = KeyFactory.createKey(GatheringDTO.class.getSimpleName(), gatheringUID);
+			
+			gatheringDTO.setKey(KeyFactory.keyToString(key2));
+			gatheringDTO.setGatheringUID(gatheringUID);
+			gatheringDTO.setAllyUID(move.getGathering().getAllyUID());
+			
+			for(Unit unit : move.getGathering().getUnits()){
+				gatheringDTO.getUnitUIDs().add(unit.getUnitUID());			
+			}
+			
+			pm.makePersistent(gatheringDTO);
+			move.getGathering().setGatheringUID(gatheringUID);
+		}
+
+		moveDTO.setGatheringUID(move.getGathering().getGatheringUID());
 		
 		pm.makePersistent(moveDTO);
 		
@@ -460,21 +491,55 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		return moveUID;
 	}
 	
-	public void deleteMove(String moveUID, String caseUID, String unitUID) {
-		
-		if(debug)log.info("delete moveDTO : " + moveUID);
-		if(moveUID.contains("NEW"))
-			return;
+	public void deleteMoves(String unitUID) {
 
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
-		CaseDTO caseDTO = pm.getObjectById(CaseDTO.class, caseUID);
 		UnitDTO unitDTO = pm.getObjectById(UnitDTO.class, unitUID);
-		MoveDTO moveDTO = pm.getObjectById(MoveDTO.class, moveUID);
 		
-		caseDTO.getMoveUIDs().remove(moveUID);
-		unitDTO.getMoveUIDs().remove(moveUID);
+		for(MoveDTO moveDTO : unitDTO.getMoves()){
+			deleteMove(moveDTO.getMoveUID());
+		}
+	}
+
 		
-		pm.deletePersistent(moveDTO);
+	public void deleteMove(String moveUID) {
+		try{
+
+			if(moveUID.contains("NEW"))
+				moveUID =  moveUID.substring(4);
+			
+			if(debug)log.info("delete moveDTO : " + moveUID);
+
+			PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+			MoveDTO moveDTO = pm.getObjectById(MoveDTO.class, moveUID);
+			CaseDTO caseDTO = pm.getObjectById(CaseDTO.class, moveDTO.getCaseUID());
+			UnitDTO unitDTO = pm.getObjectById(UnitDTO.class, moveDTO.getUnitUID());
+			GatheringDTO gatheringDTO = pm.getObjectById(GatheringDTO.class, moveDTO.getGatheringUID());
+			
+			caseDTO.getMoveUIDs().remove(moveUID);
+			unitDTO.getMoveUIDs().remove(moveUID);
+			
+			gatheringDTO.getUnitUIDs().remove(moveDTO.getUnitUID());
+			
+			if(gatheringDTO.getUnitUIDs().size() == 0){
+				pm.deletePersistent(gatheringDTO);
+			}
+				
+			pm.deletePersistent(moveDTO);
+			pm.close();			
+		}
+		catch(Exception e){
+			// le move n'existe pas encore
+		}
+	}
+
+	public void addUnitInGathering(String gatheringUID, String unitUID) {
+
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		GatheringDTO gathering = pm.getObjectById(GatheringDTO.class, gatheringUID);
+		
+		gathering.getUnitUIDs().add(unitUID);
+		
 		pm.close();
 	}
 

@@ -5,9 +5,10 @@ import java.util.List;
 
 import com.uralys.tribes.dao.impl.UniversalDAO;
 import com.uralys.tribes.entities.Case;
+import com.uralys.tribes.entities.Gathering;
 import com.uralys.tribes.entities.Unit;
 import com.uralys.tribes.entities.City;
-import com.uralys.tribes.entities.Conflict;
+import com.uralys.tribes.entities.Meeting;
 import com.uralys.tribes.entities.Equipment;
 import com.uralys.tribes.entities.Item;
 import com.uralys.tribes.entities.Move;
@@ -15,9 +16,10 @@ import com.uralys.tribes.entities.MoveConflict;
 import com.uralys.tribes.entities.Player;
 import com.uralys.tribes.entities.Smith;
 import com.uralys.tribes.entities.dto.CaseDTO;
+import com.uralys.tribes.entities.dto.GatheringDTO;
 import com.uralys.tribes.entities.dto.UnitDTO;
 import com.uralys.tribes.entities.dto.CityDTO;
-import com.uralys.tribes.entities.dto.ConflictDTO;
+import com.uralys.tribes.entities.dto.MeetingDTO;
 import com.uralys.tribes.entities.dto.EquipmentDTO;
 import com.uralys.tribes.entities.dto.ItemDTO;
 import com.uralys.tribes.entities.dto.MoveConflictDTO;
@@ -42,6 +44,8 @@ public class EntitiesConverter {
 		move.setTimeTo(moveDTO.getTimeTo());
 		move.setUnitUID(moveDTO.getUnitUID());
 		move.setValue(moveDTO.getValue());
+
+		move.setGathering(convertGatheringDTO(moveDTO.getGathering()));
 		
 		return move;
 	}
@@ -72,10 +76,10 @@ public class EntitiesConverter {
 		player.setCities(cities);
 
 		//-----------------------------------------------------------------------------------//		
-		List<Conflict> conflicts = new ArrayList<Conflict>();
+		List<Meeting> conflicts = new ArrayList<Meeting>();
 		
-		for(ConflictDTO conflictDTO : playerDTO.getConflicts()){
-			conflicts.add(convertConflictDTO(conflictDTO));
+		for(MeetingDTO conflictDTO : playerDTO.getMeetings()){
+			conflicts.add(convertMeetingDTO(conflictDTO));
 		}
 		
 		player.setConflicts(conflicts);
@@ -85,7 +89,7 @@ public class EntitiesConverter {
 		List<Unit> units = new ArrayList<Unit>();
 	
 		for(UnitDTO unitDTO : playerDTO.getUnits()){
-			units.add(convertUnitDTO(unitDTO));
+			units.add(convertUnitDTO(unitDTO, true));
 		}
 		
 		player.setUnits(units);
@@ -146,7 +150,7 @@ public class EntitiesConverter {
 	
 	//-----------------------------------------------------------------------------------//
 	
-	public static Unit convertUnitDTO(UnitDTO unitDTO) {
+	public static Unit convertUnitDTO(UnitDTO unitDTO, boolean requireMoves) {
 		
 		if(unitDTO == null)
 			return null;
@@ -178,15 +182,21 @@ public class EntitiesConverter {
 		unit.setEquipments(equipments);
 
 		//-----------------------------------------------------------------------------------//
-
-		List<Move> moves = new ArrayList<Move>();
 		
-		for(MoveDTO moveDTO : unitDTO.getMoves()){
-			Move move = convertMoveDTO(moveDTO);
-			moves.add(move);
+		// pour eviter le loop infini : pas besoin des moves pour les units dans le gathering
+		if(requireMoves)
+		{
+			List<Move> moves = new ArrayList<Move>();
+			
+			for(MoveDTO moveDTO : unitDTO.getMoves()){
+				Move move = convertMoveDTO(moveDTO);
+				moves.add(move);
+			}
+			
+			unit.setMoves(moves);
 		}
-		
-		unit.setMoves(moves);
+
+		//-----------------------------------------------------------------------------------//
 		
 		return unit;
 	}
@@ -227,7 +237,7 @@ public class EntitiesConverter {
 		List<Unit> units = new ArrayList<Unit>();
 
 		for(UnitDTO unitDTO : UniversalDAO.getInstance().getListDTO(unitUIDs, UnitDTO.class)){
-			units.add(convertUnitDTO(unitDTO));
+			units.add(convertUnitDTO(unitDTO, true));
 		}
 		
 		_case.setUnits(units);
@@ -295,18 +305,55 @@ public class EntitiesConverter {
 	
 	//-----------------------------------------------------------------------------------//
 	
-	public static Conflict convertConflictDTO(ConflictDTO conflictDTO) {
+	public static Meeting convertMeetingDTO(MeetingDTO meetingDTO) {
 		
-		if(conflictDTO == null)
+		if(meetingDTO == null)
 			return null;
 		
-		Conflict conflict = new Conflict();
+		Meeting meeting = new Meeting();
+		meeting.setMeetingUID(meetingDTO.getMeetingUID());
+		meeting.setCaseUID("case_"+meetingDTO.getX()+"_"+meetingDTO.getY());
+		meeting.setTimeFrom(meetingDTO.getTimeFrom());
+		meeting.setTimeTo(meetingDTO.getTimeTo());
+		meeting.setType(meetingDTO.getType());
 
-		conflict.setConflictUID(conflictDTO.getConflictUID());
+		//-----------------------------------------------------------------------------------//
 		
+		List<Gathering> gatherings = new ArrayList<Gathering>();
+
+		for(GatheringDTO gatheringDTO : meetingDTO.getGatherings()){
+			gatherings.add(convertGatheringDTO(gatheringDTO));
+		}
+		
+		meeting.setGatherings(gatherings);
+
 		//------------------------------------------------------------------------------------//
 		
-		return conflict;
+		return meeting;
+	}
+	
+	//-----------------------------------------------------------------------------------//
+	
+	public static Gathering convertGatheringDTO(GatheringDTO gatheringDTO) {
+		if(gatheringDTO == null)
+			return null;
+		
+		Gathering gathering = new Gathering();
+		
+		gathering.setAllyUID(gatheringDTO.getAllyUID());
+		gathering.setGatheringUID(gatheringDTO.getGatheringUID());
+
+		//-----------------------------------------------------------------------------------//
+
+		List<Unit> units = new ArrayList<Unit>();
+		
+		for(UnitDTO unitDTO : gatheringDTO.getUnits()){
+			units.add(convertUnitDTO(unitDTO, false));
+		}
+		
+		gathering.setUnits(units);
+		
+		return gathering;
 	}
 	//-----------------------------------------------------------------------------------//
 	

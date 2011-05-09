@@ -31,7 +31,7 @@ public class PlayerDTO {
 	@Persistent private int nbLands; 
 	@Persistent private List<String> cityUIDs = new ArrayList<String>();
 	@Persistent private List<String> unitUIDs = new ArrayList<String>();
-	@Persistent private List<String> conflictsUIDs = new ArrayList<String>();
+	@Persistent private List<String> meetingsUIDs = new ArrayList<String>();
 
 	@Persistent private Long lastStep;
 	
@@ -61,11 +61,11 @@ public class PlayerDTO {
 	public void setCityUIDs(List<String> cityUIDs) {
 		this.cityUIDs = cityUIDs;
 	}
-	public List<String> getConflictsUIDs() {
-		return conflictsUIDs;
+	public List<String> getMeetingsUIDs() {
+		return meetingsUIDs;
 	}
-	public void setConflictsUIDs(List<String> conflictsUIDs) {
-		this.conflictsUIDs = conflictsUIDs;
+	public void setMeetingsUIDs(List<String> meetingsUIDs) {
+		this.meetingsUIDs = meetingsUIDs;
 	}
 	public int getNbLands() {
 		return nbLands;
@@ -102,8 +102,8 @@ public class PlayerDTO {
 		return UniversalDAO.getInstance().getListDTO(cityUIDs, CityDTO.class);		
 	}
 	
-	public List<ConflictDTO> getConflicts() {
-		return UniversalDAO.getInstance().getListDTO(conflictsUIDs, ConflictDTO.class);		
+	public List<MeetingDTO> getMeetings() {
+		return UniversalDAO.getInstance().getListDTO(meetingsUIDs, MeetingDTO.class);		
 	}
 	
 	//-----------------------------------------------------------------------------------//

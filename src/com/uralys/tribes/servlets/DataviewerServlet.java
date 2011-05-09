@@ -17,7 +17,8 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.uralys.tribes.dao.impl.UniversalDAO;
 import com.uralys.tribes.entities.dto.CaseDTO;
 import com.uralys.tribes.entities.dto.CityDTO;
-import com.uralys.tribes.entities.dto.ConflictDTO;
+import com.uralys.tribes.entities.dto.GatheringDTO;
+import com.uralys.tribes.entities.dto.MeetingDTO;
 import com.uralys.tribes.entities.dto.EquipmentDTO;
 import com.uralys.tribes.entities.dto.ItemDTO;
 import com.uralys.tribes.entities.dto.MoveConflictDTO;
@@ -141,7 +142,8 @@ public class DataviewerServlet extends HttpServlet {
 				" <OPTION VALUE=\"equipment\">EquipmentDTO" +
 				" <OPTION VALUE=\"case\">CaseDTO" +
 				" <OPTION VALUE=\"move\">MoveDTO" +
-				" <OPTION VALUE=\"conflict\">ConflictDTO" +
+				" <OPTION VALUE=\"meeting\">MeetingDTO" +
+				" <OPTION VALUE=\"gathering\">GatheringDTO" +
 				" <OPTION VALUE=\"moveConflict\">MoveConflictDTO" +
 				" <OPTION VALUE=\"item\">ItemDTO" +
 				" <OPTION VALUE=\"serverdata\">ServerDataDTO" +
@@ -541,8 +543,10 @@ public class DataviewerServlet extends HttpServlet {
 			return ItemDTO.class;
 		else if(dto.equals("move"))
 			return MoveDTO.class;
-		else if(dto.equals("conflict"))
-			return ConflictDTO.class;
+		else if(dto.equals("meeting"))
+			return MeetingDTO.class;
+		else if(dto.equals("gathering"))
+			return GatheringDTO.class;
 		else if(dto.equals("moveConflict"))
 			return MoveConflictDTO.class;
 		else if(dto.equals("serverdata"))

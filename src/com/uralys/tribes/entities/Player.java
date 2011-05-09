@@ -13,7 +13,7 @@ public class Player {
 	private List<City> cities = new ArrayList<City>();
 	private List<Unit> units = new ArrayList<Unit>();
 	private int nbLands;
-	private List<Conflict> conflicts = new ArrayList<Conflict>();
+	private List<Meeting> conflicts = new ArrayList<Meeting>();
 
 	private long lastStep;
 	
@@ -43,10 +43,10 @@ public class Player {
 	public void setNbLands(int nbLands) {
 		this.nbLands = nbLands;
 	}
-	public List<Conflict> getConflicts() {
+	public List<Meeting> getConflicts() {
 		return conflicts;
 	}
-	public void setConflicts(List<Conflict> conflicts) {
+	public void setConflicts(List<Meeting> conflicts) {
 		this.conflicts = conflicts;
 	}
 	public String getAllyUID() {

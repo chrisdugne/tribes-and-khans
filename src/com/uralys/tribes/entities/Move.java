@@ -10,6 +10,7 @@ public class Move {
 	private long timeFrom;
 	private long timeTo;
 	private String unitUID;
+	private Gathering gathering;
 	private int value;
 	
 	//-----------------------------------------------------------------------------------//
@@ -54,6 +55,12 @@ public class Move {
 	}
 	public void setUnitUID(String unitUID) {
 		this.unitUID = unitUID;
+	}
+	public Gathering getGathering() {
+		return gathering;
+	}
+	public void setGathering(Gathering gathering) {
+		this.gathering = gathering;
 	}
 	public int getValue() {
 		return value;

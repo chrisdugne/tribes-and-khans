@@ -36,7 +36,7 @@ public class Unit {
 	
 	private List<Move> moves = new ArrayList<Move>();
 	private List<Equipment> equipments = new ArrayList<Equipment>();
-	private List<Conflict> conflicts = new ArrayList<Conflict>();
+	private List<Meeting> meetings = new ArrayList<Meeting>();
 
 	//-----------------------------------------------------------------------------------//
 	
@@ -97,12 +97,12 @@ public class Unit {
 		this.playerUID = playerUID;
 	}
 
-	public List<Conflict> getConflicts() {
-		return conflicts;
+	public List<Meeting> getMeetings() {
+		return meetings;
 	}
 
-	public void setConflicts(List<Conflict> conflicts) {
-		this.conflicts = conflicts;
+	public void setMeetings(List<Meeting> meetings) {
+		this.meetings = meetings;
 	}
 
 	public int getSize() {

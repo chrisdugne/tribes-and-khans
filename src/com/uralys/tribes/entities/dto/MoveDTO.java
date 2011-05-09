@@ -7,6 +7,8 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import com.uralys.tribes.dao.impl.UniversalDAO;
+
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 public class MoveDTO {
 
@@ -25,6 +27,7 @@ public class MoveDTO {
 	@Persistent private long timeFrom;
 	@Persistent private long timeTo;
 	@Persistent private String unitUID;
+	@Persistent private String gatheringUID;
 	@Persistent private int value;
 
 	//-----------------------------------------------------------------------------------//
@@ -71,7 +74,16 @@ public class MoveDTO {
 	public void setValue(int value) {
 		this.value = value;
 	}
+	public String getGatheringUID() {
+		return gatheringUID;
+	}
+	public void setGatheringUID(String gatheringUID) {
+		this.gatheringUID = gatheringUID;
+	}
 	
 	//-----------------------------------------------------------------------------------//
-	
+
+	public GatheringDTO getGathering() {
+		return (GatheringDTO) UniversalDAO.getInstance().getObjectDTO(gatheringUID, GatheringDTO.class);
+	}
 }

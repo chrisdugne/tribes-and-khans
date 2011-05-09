@@ -207,7 +207,7 @@ package com.uralys.tribes.managers {
 		
 		public function updateUnit(unit:Unit, cityUID:String = null):void{
 			
-			trace("gameManager.updateUnit");
+			trace("gameManager.updateUnit : " + unit.unitUID);
 			
 			if(unit == null)
 				return;
@@ -432,7 +432,7 @@ package com.uralys.tribes.managers {
 			
 			var gameWrapper:RemoteObject = getGameWrapper();
 			gameWrapper.deleteMove.addEventListener("result", moveDeleted);
-			gameWrapper.deleteMove(move.moveUID, move.caseUID, move.unitUID);
+			gameWrapper.deleteMove(move.moveUID);
 		}
 
 		//============================================================================================//

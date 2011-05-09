@@ -69,7 +69,6 @@ public class Utils
 			
 			var firstIndex:int = caseUID.indexOf("_");
 			var secondIndex:int = caseUID.indexOf("_",firstIndex+1);
-			var lengthBetweenIndexes:int = secondIndex - firstIndex;
 			
 			return parseInt(caseUID.substr(secondIndex+1));
 		}

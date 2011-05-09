@@ -104,6 +104,9 @@
 			// ou dans la liste sous 'enter city'
 			protected function onUnitClick(unit:Unit):void{
 				
+				if(unit.status == Unit.TO_BE_CREATED)
+					return;
+				
 				if(Session.MOVE_A_UNIT)
 					return;
 				
@@ -157,6 +160,13 @@
 			
 			// appelee apres le BoardDrawer.refreshDisplay, qui raffraichit toutes les currentCaseUID des units de toutes les cases.
 			public function refreshUnitsInCity():void{
+				
+				for each(var city:City in Session.player.cities){
+					city.merchant = null;
+					city.army = null;
+					city.unitsToFeed = 0;
+				}
+				
 				for each(var unit:Unit in Session.player.units){
 					
 					if(unit.type == 2){

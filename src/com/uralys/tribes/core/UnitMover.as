@@ -91,6 +91,9 @@ package com.uralys.tribes.core
 			// sauvegarde de l'unite cote serveur
 			GameManager.getInstance().updateUnit(unit);
 			
+			// on refresh les villes au cas ou le deplacement fait partir/arriver une unite de/dans une ville
+			Session.board.refreshUnitsInCity();
+			
 			trace("move resolu");
 			trace("-----");
 		}

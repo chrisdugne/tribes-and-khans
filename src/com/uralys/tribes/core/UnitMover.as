@@ -68,7 +68,7 @@ package com.uralys.tribes.core
 			
 			// refresh de la case dont on part : suppression du move dans case.recordedMoves et dans unit.moves
 			var caseToRefresh:Case = Session.map[moveToPerform.getX()][moveToPerform.getY()] as Case;		
-			caseToRefresh.refresh();
+			caseToRefresh.forceRefresh();
 			
 			// efface le 'pion' de la case
 			BoardDrawer.getInstance().refreshUnits(caseToRefresh);
@@ -83,7 +83,7 @@ package com.uralys.tribes.core
 			// refresh de la nouvelle case active : ajout de l'unité sur la case
 			var newCaseToRefresh:Case = Session.map[newCurrentMove.getX()][newCurrentMove.getY()] as Case;
 			trace("newCaseToRefresh : " + newCaseToRefresh.caseUID);
-			newCaseToRefresh.refresh();
+			newCaseToRefresh.forceRefresh();
 
 			// affiche le 'pion' de la case
 			BoardDrawer.getInstance().refreshUnits(newCaseToRefresh);

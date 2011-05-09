@@ -267,7 +267,7 @@
 					Session.CURRENT_SELECTION_Y = Session.COORDINATE_Y;
 					
 					Session.CURRENT_CASE_SELECTED = Session.map[Session.CURRENT_SELECTION_X][Session.CURRENT_SELECTION_Y];
-					Session.CURRENT_CASE_SELECTED.refresh();
+					Session.CURRENT_CASE_SELECTED.tryRefresh();
 				}
 				
 				if(autoMoveNotNeeded){

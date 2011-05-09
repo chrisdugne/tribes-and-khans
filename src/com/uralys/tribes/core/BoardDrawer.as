@@ -138,7 +138,7 @@ package com.uralys.tribes.core
 				{
 					var _case:Case = Session.map[i][j];
 					
-					if(_case.refresh())
+					if(_case.tryRefresh())
 						refreshUnits(_case);
 				}
 			}

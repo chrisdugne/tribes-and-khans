@@ -125,7 +125,14 @@ package com.uralys.tribes.entities
 		public var merchants:Unit;
 		public var imageUnit:Image;
 		
-		public function refresh():Boolean{
+		public function tryRefresh():Boolean{
+			if(army == null && merchants == null)
+				return forceRefresh();
+			
+			return false;
+		}
+
+		public function forceRefresh():Boolean{
 			var foundUnitsOnThisCase:Boolean = false;
 			var now:Number = new Date().getTime();
 			var recordedMovesToDelete:ArrayCollection = new ArrayCollection();

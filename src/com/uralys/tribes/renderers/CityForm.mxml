@@ -1095,7 +1095,7 @@
 					// on rajoute le move dans la case de la ville et on refresh le contenu de la case pour afficher dans le menu des unites de droite
 					Session.CURRENT_CASE_SELECTED.units.addItem(newUnit);
 					Session.CURRENT_CASE_SELECTED.recordedMoves.addItem(moveInCity);
-					Session.CURRENT_CASE_SELECTED.refresh();
+					Session.CURRENT_CASE_SELECTED.forceRefresh();
 					
 					return newUnit;
 				}
@@ -1210,7 +1210,7 @@
 					if(indexToRemove >= 0)
 						Session.CURRENT_CASE_SELECTED.recordedMoves.removeItemAt(indexToRemove);
 					
-					Session.CURRENT_CASE_SELECTED.refresh();
+					Session.CURRENT_CASE_SELECTED.forceRefresh();
 					BoardDrawer.getInstance().refreshUnits(Session.CURRENT_CASE_SELECTED);
 					
 					GameManager.getInstance().deleteUnit(city.army);
@@ -1281,7 +1281,7 @@
 					if(indexToRemove >= 0)
 						Session.CURRENT_CASE_SELECTED.recordedMoves.removeItemAt(indexToRemove);
 					
-					Session.CURRENT_CASE_SELECTED.refresh();
+					Session.CURRENT_CASE_SELECTED.forceRefresh();
 					BoardDrawer.getInstance().refreshUnits(Session.CURRENT_CASE_SELECTED);
 					
 					GameManager.getInstance().deleteUnit(city.merchant);

@@ -211,11 +211,33 @@ package com.uralys.tribes.core
 			
 			if(_case.army && _case.army.status != Unit.TO_BE_CREATED){
 				imageUnit = new Image();
-				imageUnit.source = ImageContainer.getImage(ImageContainer.ARMY_PLAYER);
+				
+				switch(_case.army.ownerStatus){
+					case Unit.PLAYER:
+						imageUnit.source = ImageContainer.getImage(ImageContainer.ARMY_PLAYER);
+						break;
+					case Unit.ALLY:
+						imageUnit.source = ImageContainer.getImage(ImageContainer.ARMY_ALLY);
+						break;
+					case Unit.ENNEMY:
+						imageUnit.source = ImageContainer.getImage(ImageContainer.ARMY_ENNEMY);
+						break;
+				}
 			}
 			else if(_case.merchants && _case.merchants.status != Unit.TO_BE_CREATED){
 				imageUnit = new Image();
-				imageUnit.source = ImageContainer.getImage(ImageContainer.MERCHANT_PLAYER);				
+
+				switch(_case.army.ownerStatus){
+					case Unit.PLAYER:
+						imageUnit.source = ImageContainer.getImage(ImageContainer.MERCHANT_PLAYER);
+						break;
+					case Unit.ALLY:
+						imageUnit.source = ImageContainer.getImage(ImageContainer.MERCHANT_ALLY);
+						break;
+					case Unit.ENNEMY:
+						imageUnit.source = ImageContainer.getImage(ImageContainer.MERCHANT_ENNEMY);
+						break;
+				}
 			}
 			else{
 				return; // no unit
@@ -232,6 +254,8 @@ package com.uralys.tribes.core
 		
 		
 		public function drawCity(city:City):void{
+			
+			trace("draw city " + city.cityUID);
 			
 			var angle:int = 0;
 			var distanceAuCentre:int = 0;
@@ -262,6 +286,7 @@ package com.uralys.tribes.core
 				image.x = (cityPx - image.width - 10) + (Math.cos(angle)*(distanceAuCentre/2));
 				image.y = (cityPy - image.height - 10) + (Math.sin(angle)*(distanceAuCentre/2));
 				
+				trace(city.cityUID)
 				image.data = city;
 				image.addEventListener(MouseEvent.CLICK, cityIsCLicked);
 				image.addEventListener(MouseEvent.ROLL_OVER, cityIsRolledOn);

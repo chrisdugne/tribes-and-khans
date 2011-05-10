@@ -167,7 +167,7 @@ package com.uralys.tribes.entities
 					}
 					else{
 						// plus tard, pour les ally, on va devoir checker si unit.playerUID est bien dans notre alliance.
-						unit.ownerStatus = Unit.ENNEMY;						
+						unit.ownerStatus = Unit.ENNEMY;				
 					}
 					
 					

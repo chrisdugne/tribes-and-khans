@@ -54,6 +54,8 @@ package com.uralys.tribes.core
 				return;
 
 			//----------------------------------//
+
+			trace("clickOnHouse : " + city.cityUID);
 			
 			var cityInPlayerList:City = null;
 			
@@ -73,12 +75,15 @@ package com.uralys.tribes.core
 		}
 		
 		
-		public function clickOnHouse(city:City):void{
-			
+		public function clickOnHouse(city:City):void
+		{
+			trace("clickOnHouse : " + city.cityUID);
 			var cityInPlayerList:City = null;
 			
-			for each(var city:City in Session.player.cities){
-				if(city.cityUID == city.cityUID){
+			for each(var cityInSessionDotPlayer:City in Session.player.cities)
+			{
+				trace("city in session.player : " + cityInSessionDotPlayer.cityUID);
+				if(cityInSessionDotPlayer.cityUID == city.cityUID){
 					cityInPlayerList = city;
 					break;
 				}
@@ -92,20 +97,8 @@ package com.uralys.tribes.core
 			clickOnCity(cityInPlayerList);				
 		}
 
-		private function clickOnCity(city:City):void{
-			
-			var cityIsOwnedByPlayer:Boolean = false;
-			for each(var cityOfPlayer:City in Session.player.cities)
-			{
-				if(cityOfPlayer.cityUID == city.cityUID){
-					cityIsOwnedByPlayer = true;
-					break;
-				}
-			}
-			
-			if(!cityIsOwnedByPlayer)
-				return;
-			
+		private function clickOnCity(city:City):void
+		{
 			if(city.merchant != null || city.army != null)
 				Session.board.showEnterCity(city);
 			else

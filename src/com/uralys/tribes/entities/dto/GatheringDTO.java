@@ -26,7 +26,10 @@ public class GatheringDTO {
     @Extension(vendorName="datanucleus", key="gae.pk-name", value="true")
 	private String gatheringUID;
 	
-	@Persistent private String allyUID;
+	@Persistent
+	private String allyUID;
+	@Persistent
+	private String newArmyUID;
 	@Persistent private List<String> unitUIDs = new ArrayList<String>();
 	
 	//-----------------------------------------------------------------------------------//
@@ -43,6 +46,12 @@ public class GatheringDTO {
 	}
 	public void setGatheringUID(String gatheringUID) {
 		this.gatheringUID = gatheringUID;
+	}
+	public String getNewArmyUID() {
+		return newArmyUID;
+	}
+	public void setNewArmyUID(String newArmyUID) {
+		this.newArmyUID = newArmyUID;
 	}
 	public List<String> getUnitUIDs() {
 		return unitUIDs;

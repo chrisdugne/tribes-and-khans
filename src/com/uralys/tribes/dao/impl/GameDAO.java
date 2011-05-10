@@ -284,6 +284,10 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		unitDTO.setValue(unit.getValue());
 		unitDTO.setType(unit.getType());
 		unitDTO.setStatus(Unit.FREE);
+		
+		unitDTO.setBeginTime(new Date().getTime());
+		unitDTO.setEndTime(-1);
+		
 
 		//--------------------------------------//
 		// init Equipment
@@ -330,11 +334,17 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		
 		unitDTO.setSize(unit.getSize());
 		unitDTO.setValue(unit.getValue());
-		
+		unitDTO.setSpeed(unit.getSpeed());
+	
 		unitDTO.setWheat(unit.getWheat());
 		unitDTO.setWood(unit.getWood());
 		unitDTO.setIron(unit.getIron());
 		unitDTO.setGold(unit.getGold());
+
+		unitDTO.setGatheringUIDExpected(unit.getGatheringUIDExpected());
+		unitDTO.setConflictUIDExpected(unit.getConflictUIDExpected());
+		unitDTO.setBeginTime(unit.getBeginTime());
+		unitDTO.setEndTime(unit.getEndTime());
 
 		pm.close();
 		
@@ -532,8 +542,8 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		}
 	}
 
-	public void addUnitInGathering(String gatheringUID, String unitUID) {
-
+	public void addUnitInGathering(String gatheringUID, String unitUID) 
+	{
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		GatheringDTO gathering = pm.getObjectById(GatheringDTO.class, gatheringUID);
 		
@@ -542,9 +552,22 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		pm.close();
 	}
 
-	public ConflictDTO getConflict(String conflictUID) {
+	public ConflictDTO getConflict(String conflictUID) 
+	{
+		if(conflictUID == null)
+			return null;
+		
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		return pm.getObjectById(ConflictDTO.class, conflictUID);
+	}
+
+	public GatheringDTO getGathering(String gatheringUID) 
+	{
+		if(gatheringUID == null)
+			return null;
+		
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		return pm.getObjectById(GatheringDTO.class, gatheringUID);
 	}
 
 	//==================================================================================================//

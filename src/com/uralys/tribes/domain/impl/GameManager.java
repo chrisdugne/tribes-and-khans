@@ -135,27 +135,31 @@ public class GameManager implements IGameManager {
 	//==================================================================================================//
 
 	
-	public void createUnit(String uralysUID, Unit unit, String cityUID){
+	public void createUnit(String uralysUID, Unit unit, String cityUID, boolean needReplacing){
 
 		if(debug)System.out.println("-----------------------------------");
 		if(debug)System.out.println("createUnit : " + unit.getUnitUID() + " for uralysUID : " + uralysUID);
 		
 		gameDao.createUnit(unit, cityUID);
 		gameDao.linkNewUnit(uralysUID, unit.getUnitUID());
-		
-		if(debug)System.out.println("placing the unit");
-		placeUnit(unit, unit.getMoves(), new ArrayList<Unit>());
+
+		if(needReplacing){
+			if(debug)System.out.println("placing the unit");
+			placeUnit(unit, unit.getMoves(), new ArrayList<Unit>());
+		}
 	}
 	
-	public void updateUnit(Unit unit, String cityUID){
+	public void updateUnit(Unit unit, String cityUID, boolean needReplacing){
 
 		if(debug)System.out.println("-----------------------------------");
 		if(debug)System.out.println("updateUnit : " + unit.getUnitUID());
 
 		gameDao.updateUnit(unit, cityUID);
 		
-		if(debug)System.out.println("placing the unit");
-		placeUnit(unit, unit.getMoves(), new ArrayList<Unit>());
+		if(needReplacing){
+			if(debug)System.out.println("placing the unit");
+			placeUnit(unit, unit.getMoves(), new ArrayList<Unit>());
+		}
 	}
 	
 	public void deleteUnit(String uralysUID, String unitUID){
@@ -461,17 +465,15 @@ public class GameManager implements IGameManager {
 			if(debug)System.out.println("["+i+"]["+j+"]");
 		}
 
-		if(debug)System.out.println("**");
 		if(debug)System.out.println("unitsMakingThisReplacing :");
 		for(Unit unitMakingThisReplacing : unitsMakingThisReplacing){
 			if(debug)System.out.println(unitMakingThisReplacing.getUnitUID());
 		}
-		if(debug)System.out.println("**");
 		
 		List<Unit> unitsReplacedByThisPlacement = new ArrayList<Unit>();
 
 		if(debug)System.out.println("****");
-		List<Unit> previousOpponents = resetPreviousConflictsAndMovesAndGetPreviousOpponents(unit, unitsMakingThisReplacing);
+		List<Unit> previousOpponents = checkAndRecalculatePreviousGatheringsAndConflictsAndMovesAndReturnPreviousOpponentsToBeReplaced(unit, unitsMakingThisReplacing);
 		if(debug)System.out.println("****");
 
 		ArrayList<Unit> unitsToReplace = new ArrayList<Unit>();
@@ -480,8 +482,8 @@ public class GameManager implements IGameManager {
 		for(Move newMove : moves){
 
 			if(foundAGathering){
-				if(debug)System.out.println("foundAGathering yet, move not taken in account");
-				continue; // passe au move suivant
+				if(debug)System.out.println("foundAGathering yet => mouvement non appliqué");
+				currentUnitValue = 0;
 			}
 			
 			newMove.setValue(currentUnitValue);
@@ -700,18 +702,56 @@ public class GameManager implements IGameManager {
 
 	// reset le conflit en memoire
 	// et return la liste des armees ennemies a replacer
-	private List<Unit> resetPreviousConflictsAndMovesAndGetPreviousOpponents(Unit unit, List<Unit> unitsMakingThisReplacing) {
+	private List<Unit> checkAndRecalculatePreviousGatheringsAndConflictsAndMovesAndReturnPreviousOpponentsToBeReplaced(Unit unit, List<Unit> unitsMakingThisReplacing) 
+	{
+		if(debug)System.out.println("checkAndRecalculatePreviousGatheringsAndConflictsAndMovesAndReturnPreviousOpponentsToBeReplaced for unit " + unit.getUnitUID());
 
-		if(debug)System.out.println("resetPreviousConflictsAndMovesAndGetPreviousOpponents for unit " + unit.getUnitUID());
+		// d'abord on regarde si il y avait un gathering de prevu
+		// si oui, il etait forcement plus loin puisqu'on vient de croiser cette unit et qu'elle s'arrete forcement au gathering.
+		if(unit.getGatheringUIDExpected() != null){
+			if(debug)System.out.println("found a gathering expected !");
+			Gathering gatheringExpected = EntitiesConverter.convertGatheringDTO(gameDao.getGathering(unit.getGatheringUIDExpected()));
+			if(debug)System.out.println("gathering : " + gatheringExpected.getGatheringUID());
 
+			// on doit modifier ce gathering
+			// il faut simplement que l'armee restante (la 2e) devienne gathering.newArmy
+			// on met donc toutes les proprietes de l'armee restante dans gathering.newArmy
+			// quant a notre unit, elle est enlevee de gathering.units
+			// s'il n'y a pas d'autre gathering suivant, ou de conflit prevu sur cette case, on ne replace l'autre unit pour qu'elle suive le reste de son chemin
+			
+			Unit unitStaying;
+			if(gatheringExpected.getUnits().get(0).getUnitUID().equals(unit.getUnitUID()))
+				unitStaying = gatheringExpected.getUnits().get(1);
+			else
+				unitStaying = gatheringExpected.getUnits().get(0);
+			
+			if(debug)System.out.println("unitStaying : " + unitStaying.getUnitUID());
+			Unit newUnit = getUnit(gatheringExpected.getNewArmyUID(), true);
+			transformUnitInNewUnit(unitStaying, newUnit);
+			
+			if(debug)System.out.println("removing the unit");
+			gatheringExpected.remove(unit.getUnitUID());
+			
+			
+			boolean noMoreReasonForTheSecondUnitToStaySoItNeedsReplacing = true;
+			if(newUnit.getGatheringUIDExpected() != null)
+				noMoreReasonForTheSecondUnitToStaySoItNeedsReplacing = false;
+				
+			updateUnit(unitStaying, null, noMoreReasonForTheSecondUnitToStaySoItNeedsReplacing);
+			updateUnit(newUnit, null, false);
+		}
+		
 		List<Unit> unitsToReplace = new ArrayList<Unit>();
 		Conflict conflict = EntitiesConverter.convertConflictDTO(gameDao.getConflict(unit.getConflictUIDExpected()));
 		
-		for(Gathering gathering : conflict.getGatherings()){
-			for(Unit opponentOrAlly : gathering.getUnits()){
-				if(!opponentOrAlly.equals(unit) && !contains(unitsMakingThisReplacing, opponentOrAlly.getUnitUID())){
-					if(debug)System.out.println("found " + opponentOrAlly.getUnitUID());
-					unitsToReplace.add(opponentOrAlly);
+		if(conflict != null){
+			for(Gathering gathering : conflict.getGatherings()){
+				if(debug)System.out.println("found a gathering in a conflict");
+				for(Unit opponentOrAlly : gathering.getUnits()){
+					if(!opponentOrAlly.equals(unit) && !contains(unitsMakingThisReplacing, opponentOrAlly.getUnitUID())){
+						if(debug)System.out.println("unit : " + opponentOrAlly.getUnitUID());
+						unitsToReplace.add(opponentOrAlly);
+					}
 				}
 			}
 		}
@@ -725,7 +765,52 @@ public class GameManager implements IGameManager {
 		return unitsToReplace;
 	}
 
-	
+	/**
+	 * on ne change pas la reference 
+	 * comme ca la newUnit est toujours liee au gathering1 et appartient à gathering2.units
+	 * donc on modifie tous les champs de newUnit
+	 * 
+	 * le begintime ne change pas.
+	 * le endtime ne change pas.
+	 * le gatheringUIDExpected ne change pas.
+	 * le conflictUIDExpected ne change pas.
+	 * 
+	 * @param unit
+	 * @param newUnit
+	 */
+	private void transformUnitInNewUnit(Unit unit, Unit newUnit) {
+		
+		newUnit.setType(unit.getType());
+		newUnit.setSize(unit.getSize());
+		newUnit.setValue(unit.getValue());
+		newUnit.setSpeed(unit.getSpeed());
+		newUnit.setStatus(unit.getStatus());
+
+		newUnit.setGold(unit.getGold());
+		newUnit.setIron(unit.getIron());
+		newUnit.setWheat(unit.getWheat());
+		newUnit.setWood(unit.getWood());
+
+		newUnit.setPlayerUID(unit.getPlayerUID());
+		
+		newUnit.setMoves(unit.getMoves());
+		newUnit.setEquipments(newUnit.getEquipments());
+		
+	}
+
+//	private void removeUnitFromNewArmy(Unit unitToRemove, Unit newArmy) 
+//	{
+//		newArmy.setValue(newArmy.getValue() - unitToRemove.getValue());
+//		newArmy.setGold(newArmy.getGold() - unitToRemove.getGold());
+//		newArmy.setIron(newArmy.getIron() - unitToRemove.getIron());
+//		newArmy.setWheat(newArmy.getWheat() - unitToRemove.getWheat());
+//		newArmy.setWood(newArmy.getWood() - unitToRemove.getWood());
+//		newArmy.set(newArmy.get - unitToRemove.get);
+//		newArmy.set(newArmy.get - unitToRemove.get);
+//		newArmy.set(newArmy.get - unitToRemove.get);
+//		
+//	}
+
 	private boolean contains(List<Unit> unitsMakingThisReplacing, String unitUID) {
 		
 		List<String> unitUIDsMakingThisReplacing = new ArrayList<String>();

@@ -14,8 +14,8 @@ public interface IGameManager {
 
 	public void savePlayer(Player player);
 
-	public void createUnit(String uralysUID, Unit unit, String cityUID);
-	public void updateUnit(Unit unit, String cityUID);
+	public void createUnit(String uralysUID, Unit unit, String cityUID, boolean needReplacing);
+	public void updateUnit(Unit unit, String cityUID, boolean needReplacing);
 	
 	public void deleteUnit(String uralysUID, String unitUID);
 	public void deleteMove(String moveUID) ;

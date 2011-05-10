@@ -142,7 +142,7 @@ public class DataviewerServlet extends HttpServlet {
 				" <OPTION VALUE=\"equipment\">EquipmentDTO" +
 				" <OPTION VALUE=\"case\">CaseDTO" +
 				" <OPTION VALUE=\"move\">MoveDTO" +
-				" <OPTION VALUE=\"meeting\">MeetingDTO" +
+				" <OPTION VALUE=\"conflict\">ConflictDTO" +
 				" <OPTION VALUE=\"gathering\">GatheringDTO" +
 				" <OPTION VALUE=\"moveConflict\">MoveConflictDTO" +
 				" <OPTION VALUE=\"item\">ItemDTO" +
@@ -543,7 +543,7 @@ public class DataviewerServlet extends HttpServlet {
 			return ItemDTO.class;
 		else if(dto.equals("move"))
 			return MoveDTO.class;
-		else if(dto.equals("meeting"))
+		else if(dto.equals("conflict"))
 			return ConflictDTO.class;
 		else if(dto.equals("gathering"))
 			return GatheringDTO.class;

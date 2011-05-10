@@ -49,7 +49,7 @@ public class GameService implements IGameService {
 
 	public void createUnit(String uralysUID, Unit unit, String cityUID) {
 		try{
-			gameManager.createUnit(uralysUID, unit, cityUID);
+			gameManager.createUnit(uralysUID, unit, cityUID, true);
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -58,7 +58,7 @@ public class GameService implements IGameService {
 	
 	public void updateUnit(Unit unit, String cityUID) {
 		try{
-			gameManager.updateUnit(unit, cityUID);
+			gameManager.updateUnit(unit, cityUID, true);
 		}
 		catch(Exception e){
 			e.printStackTrace();

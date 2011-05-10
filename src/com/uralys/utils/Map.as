@@ -12,6 +12,14 @@ public class Map
 	public function put(key:Object, value:Object):void{
 		links.addItem(new Mapping(key, value));
 	}
+
+	public function refresh(value:Object, newValue:Object):void{
+		
+		for each(var mapping:Mapping in links){
+			if(mapping.value == value)
+				mapping.value = newValue;
+		}
+	}
 		
 	public function remove(key:Object):void{
 		

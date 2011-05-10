@@ -77,7 +77,7 @@ package com.uralys.tribes.core
 
 		//=====================================================================================//
 		
-		private var currentUnitMoveHighLights:ArrayCollection;
+		private var currentUnitMoveHighLights:ArrayCollection = new ArrayCollection();;
 		
 		//=====================================================================================//
 
@@ -97,12 +97,6 @@ package com.uralys.tribes.core
 		 */ 
 		public function refreshDisplay():void{
 			
-			try{
-				//board.boardEntities.removeAllElements();
-				//board.boardImages.removeAllElements();
-				//board.boardTexts.removeAllElements();
-			}catch(e:Error){}
-			
 			var offset:int = Numbers.NB_TILES_ON_EDGE_BY_LOADING/2;
 			
 			// draw city grounds
@@ -116,7 +110,6 @@ package com.uralys.tribes.core
 			
 			for(var j:int=Session.centerY-offset; j < Session.centerY+offset; j++)
 			{
-				// draw city houses
 				for(var i:int=Session.centerX-offset; i < Session.centerX+offset; i++)
 				{
 					var _case:Case = Session.map[i][j];
@@ -137,9 +130,7 @@ package com.uralys.tribes.core
 				for(var i:int=Session.centerX-offset; i < Session.centerX+offset; i++)
 				{
 					var _case:Case = Session.map[i][j];
-					
-					if(_case.tryRefresh())
-						refreshUnits(_case);
+					refreshUnits(_case);
 				}
 			}
 			
@@ -821,56 +812,29 @@ package com.uralys.tribes.core
 
 		//==================================================================================================//
 		
-		public function addAllUnitMovesImages(unit:Unit):void{
+		public function addMoveImages(move:com.uralys.tribes.entities.Move, xPreviousMove:int, yPreviousMove:int):void{
 			
-			currentUnitMoveHighLights = new ArrayCollection();
-			
-			var xPreviousMove:int = -1; 
-			var yPreviousMove:int = -1; 
-			
-			var numOfTheMove:int = 0;
-			for each(var unitMove:com.uralys.tribes.entities.Move in unit.moves)
-			{
-				//------------------------------------------------------//
+			//------------------------------------------------------//
 
-				numOfTheMove++;
-				
-				//------------------------------------------------------//
-
-				var moveHighlight:MoveHighLight = new MoveHighLight();
-				moveHighlight.x = Utils.getXOnBoard(Utils.getXFromCaseUID(unitMove.caseUID));
-				moveHighlight.y = Utils.getYOnBoard(Utils.getYFromCaseUID(unitMove.caseUID));
-				moveHighlight._move = unitMove;
-				
-				currentUnitMoveHighLights.addItem(moveHighlight);
-				Session.board.highlighters.addElement(moveHighlight);
-				
-				//------------------------------------------------------//
-				
-				if(xPreviousMove >= 0){
-					Session.board.highlighters.graphics.lineStyle(1,0x000000);
-					Session.board.highlighters.graphics.beginFill(0x22ee22);
+			var moveHighlight:MoveHighLight = new MoveHighLight();
+			moveHighlight.x = Utils.getXOnBoard(Utils.getXFromCaseUID(move.caseUID));
+			moveHighlight.y = Utils.getYOnBoard(Utils.getYFromCaseUID(move.caseUID));
+			moveHighlight._move = move;
+			
+			currentUnitMoveHighLights.addItem(moveHighlight);
+			Session.board.highlighters.addElement(moveHighlight);
+			
+			//------------------------------------------------------//
+			
+			if(xPreviousMove >= 0){
+				Session.board.highlighters.graphics.lineStyle(1,0x000000);
+				Session.board.highlighters.graphics.beginFill(0x22ee22);
  
-					GraphicsUtil.drawArrow(
-						Session.board.highlighters.graphics,
-						new Point(Utils.getXOnBoard(xPreviousMove)+Numbers.LAND_WIDTH/2,Utils.getYOnBoard(yPreviousMove)+Numbers.LAND_HEIGHT/2),
-						new Point(Utils.getXOnBoard(Utils.getXFromCaseUID(unitMove.caseUID))+Numbers.LAND_WIDTH/2,Utils.getYOnBoard(Utils.getYFromCaseUID(unitMove.caseUID))+Numbers.LAND_HEIGHT/2)
-					);
-				}
-				
-				// recorded a second move : wait for timeTo of the first move
-				if(numOfTheMove == 2){
-					trace("on doit enregistrer un move a ecouter !");
-					var _moveToListen:com.uralys.tribes.entities.Move = unit.moves.getItemAt(0) as com.uralys.tribes.entities.Move;
-					trace(_moveToListen.moveUID);
-						
-					UnitMover.getInstance().addTimer(_moveToListen);
-				}
-				
-				//------------------------------------------------------//
-
-				xPreviousMove = Utils.getXFromCaseUID(unitMove.caseUID);
-				yPreviousMove = Utils.getYFromCaseUID(unitMove.caseUID);
+				GraphicsUtil.drawArrow(
+					Session.board.highlighters.graphics,
+					new Point(Utils.getXOnBoard(xPreviousMove)+Numbers.LAND_WIDTH/2,Utils.getYOnBoard(yPreviousMove)+Numbers.LAND_HEIGHT/2),
+					new Point(Utils.getXOnBoard(Utils.getXFromCaseUID(move.caseUID))+Numbers.LAND_WIDTH/2,Utils.getYOnBoard(Utils.getYFromCaseUID(move.caseUID))+Numbers.LAND_HEIGHT/2)
+				);
 			}
 		}
 		
@@ -879,6 +843,7 @@ package com.uralys.tribes.core
 				Session.board.highlighters.removeElement(moveHighLight);
 				Session.board.highlighters.graphics.clear();
 			}	
+			currentUnitMoveHighLights = new ArrayCollection();
 		}
 		
 		

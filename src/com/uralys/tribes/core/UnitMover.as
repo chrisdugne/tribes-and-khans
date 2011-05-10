@@ -13,6 +13,7 @@ package com.uralys.tribes.core
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
 	
+	import mx.collections.ArrayCollection;
 	import mx.core.FlexGlobals;
 
 	public class UnitMover
@@ -34,23 +35,34 @@ package com.uralys.tribes.core
 		
 		// ============================================================================================
 		
-		public function addTimer(move:Move):void{
+		public function addTimer(moves:Array):void
+		{
+			var firstMove:Move = moves[0] as Move; 
+			trace("registering a timer for move " + firstMove.moveUID);
+			trace("case :  " + firstMove.caseUID);
 			
-			for each (var moveListened:Move in timers.values()){
-				if(move.moveUID == moveListened.moveUID){
-					trace(move.moveUID + " est deja ecouté");
+			for each (var moveToRegister:Move in moves){
+				trace("move to register : " + moveToRegister.moveUID);
+			}
+			
+			for each (var movesListened:Array in timers.values())
+			{
+				var moveListened:Move = movesListened[0] as Move;
+				
+				if(firstMove.moveUID == moveListened.moveUID){
+					trace(firstMove.moveUID + " est deja ecouté");
+					timers.refresh(movesListened, moves);
 					return;
 				}
 			}
 			
-			trace("move.timeTo " + move.timeTo);
-			var timeToWait:Number = move.timeTo - new Date().getTime();
+			var timeToWait:Number = firstMove.timeTo - new Date().getTime();
 			
 			var t:Timer = new Timer(timeToWait, 1);
 			t.addEventListener(TimerEvent.TIMER_COMPLETE, moveIsDone);
 			t.start();
 			
-			timers.put(t, move);
+			timers.put(t, moves);
 		}
 		
 		// ============================================================================================
@@ -59,10 +71,14 @@ package com.uralys.tribes.core
 			trace("-----");
 			trace("un move se produit !")
 			
-			var moveToPerform:Move = timers.get(e.currentTarget) as Move;
-			var unit:Unit  = Session.player.getUnit(moveToPerform.unitUID);
+			var moves:Array = timers.get(e.currentTarget) as Array;
+			var moveToPerform:Move = moves.shift() as Move;
 			
 			trace(moveToPerform.moveUID);
+			
+			for each (var moveToRegister:Move in moves){
+				trace("moves listened : " + moveToRegister.moveUID);
+			}
 			
 			timers.remove(e.currentTarget);
 			
@@ -73,23 +89,20 @@ package com.uralys.tribes.core
 			// efface le 'pion' de la case
 			BoardDrawer.getInstance().refreshUnits(caseToRefresh);
 			
-			// le nouveau move a ecouter :
-			var newCurrentMove:Move = unit.moves.getItemAt(0) as Move;
+			// on recupere le suivant
+			var newCurrentMove:Move = moves[0] as Move;
+			trace("newCurrentMove to listen : " + newCurrentMove.getX()+","+newCurrentMove.getY());
 			
-			// on le met a l'ecoute dans le CronMover (ici) si il a un timeTo
+			// on ecoute le nouveau move si son timeTo n'est pas illimité
 			if(newCurrentMove.timeTo != -1)
-				addTimer(newCurrentMove);
+				addTimer(moves);
 			
 			// refresh de la nouvelle case active : ajout de l'unité sur la case
 			var newCaseToRefresh:Case = Session.map[newCurrentMove.getX()][newCurrentMove.getY()] as Case;
-			trace("newCaseToRefresh : " + newCaseToRefresh.caseUID);
 			newCaseToRefresh.forceRefresh();
 
 			// affiche le 'pion' de la case
 			BoardDrawer.getInstance().refreshUnits(newCaseToRefresh);
-			
-			// sauvegarde de l'unite cote serveur
-			GameManager.getInstance().updateUnit(unit);
 			
 			// on refresh les villes au cas ou le deplacement fait partir/arriver une unite de/dans une ville
 			Session.board.refreshUnitsInCity();
@@ -100,12 +113,81 @@ package com.uralys.tribes.core
 
 		// ============================================================================================
 		
-		public function recordMove(unit:Unit){
+		private var movesPending:ArrayCollection;
+		private var moveBeginsNow:Boolean;
+		
+		public function validatePendingMoves(unit:Unit){
+			trace("validatePendingMoves");
+			var previousMove:com.uralys.tribes.entities.Move = movesPending.getItemAt(0) as com.uralys.tribes.entities.Move;
+
 			
-			// manipulation d'une unite : gestion du deplacement
+			movesPending.removeItemAt(0);
+			
+			for each(var newMove:Move in movesPending){
+				
+				var timeFrom:Number;
+				
+				if(moveBeginsNow){
+					timeFrom = new Date().getTime() + Numbers.BASE_TIME_PER_MOVE_MILLIS * unit.speed/Numbers.BASE_SPEED;
+				}
+				else{
+					timeFrom = previousMove.timeFrom + Numbers.BASE_TIME_PER_MOVE_MILLIS * unit.speed/Numbers.BASE_SPEED;
+				}
+				
+				newMove.timeFrom = timeFrom;
+				newMove.timeTo = -1;
+				previousMove.timeTo = timeFrom;
+				
+				trace("previousMove : " + previousMove.getX()+","+previousMove.getY());
+				trace(previousMove.timeFrom + " | " + previousMove.timeTo);
+				trace("newMove : " + newMove.getX()+","+newMove.getY());
+				trace(newMove.timeFrom + " | " + newMove.timeTo);
+				trace("*");
+
+				
+				unit.moves.addItem(newMove);
+				
+				// ajout du newMove dans les recordedMoves de la case courante
+				var caseSelected:Case = Session.map[Utils.getXFromCaseUID(newMove.caseUID)][Utils.getYFromCaseUID(newMove.caseUID)] as Case;
+				caseSelected.recordedMoves.addItem(newMove);
+				
+				// refresh du recordedMove qui correspond a lastMove sur la case du lastMove pour enregistrer le nouveau timeTo
+				var previousMoveX:int = Utils.getXFromCaseUID(previousMove.caseUID);
+				var previousMoveY:int = Utils.getYFromCaseUID(previousMove.caseUID);
+				var caseOfLastMove:Case = Session.map[previousMoveX][previousMoveY] as Case;
+				caseOfLastMove.refreshRecordedMove(previousMove);
+				
+				previousMove = newMove;
+				moveBeginsNow = false;
+			}
+
+			if(unit.moves.length > 1)
+				UnitMover.getInstance().addTimer(unit.moves.toArray());
+		}
+
+		public function resetPendingMoves(unit:Unit){
+			trace("resetPendingMoves");
+			trace("moves already recorded : " + unit.moves.length);
+			
+			movesPending = new ArrayCollection();
+			moveBeginsNow = unit.moves.length == 1;
+			
+			// manipulation d'une unite : initialisation du deplacement
 			var lastMove:com.uralys.tribes.entities.Move = unit.moves.getItemAt(unit.moves.length-1) as com.uralys.tribes.entities.Move;
+			movesPending.addItem(lastMove);
+			
+			trace("lastMove : " + lastMove.getX()+","+lastMove.getY());
+			trace(lastMove.timeFrom + " | " + lastMove.timeTo);
+		}
+
+		public function recordMove(unit:Unit){
+			trace("recordMove");
+			
+			var lastMove:com.uralys.tribes.entities.Move = movesPending.getItemAt(movesPending.length-1) as com.uralys.tribes.entities.Move;
 			var lastMoveX:int = Utils.getXFromCaseUID(lastMove.caseUID);
 			var lastMoveY:int = Utils.getYFromCaseUID(lastMove.caseUID);
+			trace("lastMoveX : " + lastMoveX);
+			trace("lastMoveY : " + lastMoveY);
 			
 			var distance:int = Math.abs(lastMoveX - Session.COORDINATE_X) + Math.abs(lastMoveY - Session.COORDINATE_Y);
 			
@@ -117,32 +199,11 @@ package com.uralys.tribes.core
 				// ajout d'un move
 				var newMove:com.uralys.tribes.entities.Move = new com.uralys.tribes.entities.Move();
 				
-				var timeFrom:Number;
-				var timeTo:Number;
-				
-				
-				if(unit.moves.length == 1){
-					timeFrom = new Date().getTime() + Numbers.BASE_TIME_PER_MOVE_MILLIS * unit.speed/Numbers.BASE_SPEED;
-				}
-				else{
-					timeFrom = lastMove.timeFrom + Numbers.BASE_TIME_PER_MOVE_MILLIS * unit.speed/Numbers.BASE_SPEED;
-				}
-				
-				lastMove.timeTo = timeFrom;
-				newMove.initNewMove(unit.unitUID, Session.COORDINATE_X, Session.COORDINATE_Y, timeFrom);
-				unit.moves.addItem(newMove);
-				
-				// ajout du newMove dans les recordedMoves de la case courante
-				var caseSelected:Case = Session.map[Session.COORDINATE_X][Session.COORDINATE_Y] as Case;
-				caseSelected.recordedMoves.addItem(newMove);
-				
-				// refresh du recordedMove qui correspond a lastMove sur la case du lastMove pour enregistrer le nouveau timeTo
-				var caseOfLastMove:Case = Session.map[lastMoveX][lastMoveY] as Case;
-				caseOfLastMove.refreshRecordedMove(lastMove);
+				newMove.initNewMove(unit.unitUID, Session.COORDINATE_X, Session.COORDINATE_Y);
+				movesPending.addItem(newMove);
 				
 				// refresh highlight images et rajoute les listeners sur les moves actifs
-				BoardDrawer.getInstance().removeAllUnitMovesImages();
-				BoardDrawer.getInstance().addAllUnitMovesImages(unit);
+				BoardDrawer.getInstance().addMoveImages(newMove, lastMove.getX(), lastMove.getY());
 			}
 		}
 	}

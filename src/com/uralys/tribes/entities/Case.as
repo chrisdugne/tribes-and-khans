@@ -33,7 +33,7 @@ package com.uralys.tribes.entities
 		protected var _caseUID:String;
 		protected var _x:int;
 		protected var _y:int;
-		protected var _recordedMoves:ArrayCollection;
+		protected var _recordedMoves:ArrayCollection = new ArrayCollection();
 		protected var _units:ArrayCollection;
 		protected var _type:int; // type = -1 pour les 'non-cases'
 		protected var _city:City;
@@ -124,9 +124,10 @@ package com.uralys.tribes.entities
 		public var army:Unit;
 		public var merchants:Unit;
 		public var imageUnit:Image;
+		public var refreshAlreadyHappened:Boolean = false;
 		
 		public function tryRefresh():Boolean{
-			if(army == null && merchants == null)
+			if(!refreshAlreadyHappened)
 				return forceRefresh();
 			
 			return false;
@@ -139,7 +140,7 @@ package com.uralys.tribes.entities
 			
 			if(recordedMoves != null && recordedMoves.length > 0){
 				trace("**");
-				trace("refreshing moves for " + caseUID);
+				trace("refreshing moves for " + _caseUID);
 			}
 			
 			army = null;
@@ -160,8 +161,15 @@ package com.uralys.tribes.entities
 					// c'est le move actif, on recupere les unites qui sont sur la case
 					foundUnitsOnThisCase = true;
 					
-					if(unitInPlayer != null)
+					if(unitInPlayer != null){
 						unit.currentCaseUID = _caseUID;
+						unit.ownerStatus = Unit.PLAYER;
+					}
+					else{
+						// plus tard, pour les ally, on va devoir checker si unit.playerUID est bien dans notre alliance.
+						unit.ownerStatus = Unit.ENNEMY;						
+					}
+					
 					
 					switch(unit.type){
 						case 1:
@@ -171,6 +179,8 @@ package com.uralys.tribes.entities
 							merchants = unit;
 							break;
 					}
+					
+					unit.isModified = false;
 				}
 				else if(move.timeTo != -1 && move.timeTo < now){
 					// move perimé
@@ -200,7 +210,7 @@ package com.uralys.tribes.entities
 			for each (var moveToRemoveFromRecordedMoves:Move in recordedMovesToDelete)
 				recordedMoves.removeItemAt(recordedMoves.getItemIndex(moveToRemoveFromRecordedMoves));
 			
-				
+			refreshAlreadyHappened = true;
 			return foundUnitsOnThisCase;
 		}
 		

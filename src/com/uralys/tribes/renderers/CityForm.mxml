@@ -1057,14 +1057,6 @@
 				//-------------------------------------------------------------------------//
 				// Armies - Merchants
 				
-				protected function onArmyClick(event:ItemClickEvent):void{
-					city.army = event.currentTarget.selectedItem as Unit;
-				}
-				
-				protected function onMerchantClick(event:ItemClickEvent):void{
-					city.merchant = event.currentTarget.selectedItem as Unit;
-				}
-				
 				protected function newUnit(type:int):Unit{
 					
 					if(city.unemployed < 50){

@@ -14,6 +14,8 @@ package com.uralys.tribes.entities
 		}
 		
 		// on ne peut pas le mettre dans le constructeur, car BlazeDS l'utilise aussi
+
+
 		public function initNewMove(unitUID:String, i:int, j:int, __timeFrom:Number = -1, __timeTo:Number = -1):void{
 			_timeFrom = __timeFrom == -1 ? new Date().getTime() : __timeFrom;
 			_moveUID = "NEW_"+timeFrom+"_"+i+"_"+j+"_"+unitUID;
@@ -30,9 +32,19 @@ package com.uralys.tribes.entities
 		protected var _timeFrom:Number;
 		protected var _timeTo:Number;
 		protected var _value:int;
+		protected var _gathering:Gathering;
 		
 		//--------------------------------------------------------------//
 		
+		public function get gathering():Gathering
+		{
+			return _gathering;
+		}
+		
+		public function set gathering(value:Gathering):void
+		{
+			_gathering = value;
+		}
 		
 		public function get moveUID():String {
 			return _moveUID;

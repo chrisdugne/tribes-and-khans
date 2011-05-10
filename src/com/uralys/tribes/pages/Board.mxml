@@ -106,6 +106,11 @@
 				
 				if(unit.status == Unit.TO_BE_CREATED)
 					return;
+
+				trace(unit.ownerStatus);
+				
+				if(unit.ownerStatus != Unit.PLAYER)
+					return;
 				
 				if(Session.MOVE_A_UNIT)
 					return;
@@ -122,7 +127,17 @@
 				Session.MOVE_A_UNIT = true;
 				currentState = "moveUnit";
 				
-				BoardDrawer.getInstance().addAllUnitMovesImages(selectedUnit);
+				UnitMover.getInstance().resetPendingMoves(selectedUnit);
+				BoardDrawer.getInstance().removeAllUnitMovesImages();
+				
+				var xPreviousMove:int = -1;
+				var yPreviousMove:int = -1;
+				for each(var move:com.uralys.tribes.entities.Move in selectedUnit.moves){
+					BoardDrawer.getInstance().addMoveImages(move, xPreviousMove, yPreviousMove);
+					
+					xPreviousMove = Utils.getXFromCaseUID(move.caseUID);
+					yPreviousMove = Utils.getYFromCaseUID(move.caseUID); 
+				}
 			}
 			
 			//-----------------------------------------------------------//
@@ -372,9 +387,13 @@
 	
 			//----------------------------------------------------------------------------------------//
 
-			private function validateUnitMoves():void{
+			private function validateUnitMoves(cancel:Boolean):void{
+				
 				Session.MOVE_A_UNIT = false;
-				GameManager.getInstance().updateUnit(selectedUnit);
+				if(!cancel){
+					UnitMover.getInstance().validatePendingMoves(selectedUnit);					
+					GameManager.getInstance().updateUnit(selectedUnit);
+				}
 
 				selectedUnit = null;
 				currentState = "classic";
@@ -694,7 +713,8 @@
 		<s:VGroup top="150" right="95"
 				  excludeFrom="classic">
 			<s:Label text="{Translations.WAY_SELECTION.getItemAt(Session.LANGUAGE)}"/>
-			<s:Button label="Done" click="{validateUnitMoves()}" visible="{selectedUnit != null}"/>
+			<s:Button label="Done" click="{validateUnitMoves(false)}" visible="{selectedUnit != null}"/>
+			<s:Button label="Cancel" click="{validateUnitMoves(true)}" visible="{selectedUnit != null}"/>
 		</s:VGroup>
 		
 		<s:VGroup id="buildCityButton"
@@ -772,9 +792,7 @@
 						  height="{Numbers.LAND_HEIGHT*400}"
 						  mouseDown="mouseDown(event)"
 						  mouseMove="mouseMove(event)"
-						  mouseUp="mouseUp(event)"
-						  mouseOver="{Mouse.hide()}"
-						  mouseOut="{Mouse.show()}"/>
+						  mouseUp="mouseUp(event)"/>
 					<s:Group id="highlighters"
 							 width="{Numbers.LAND_WIDTH*400}"
 							 height="{Numbers.LAND_HEIGHT*400}"

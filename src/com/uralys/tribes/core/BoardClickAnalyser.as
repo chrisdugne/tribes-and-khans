@@ -94,6 +94,18 @@ package com.uralys.tribes.core
 
 		private function clickOnCity(city:City):void{
 			
+			var cityIsOwnedByPlayer:Boolean = false;
+			for each(var cityOfPlayer:City in Session.player.cities)
+			{
+				if(cityOfPlayer.cityUID == city.cityUID){
+					cityIsOwnedByPlayer = true;
+					break;
+				}
+			}
+			
+			if(!cityIsOwnedByPlayer)
+				return;
+			
 			if(city.merchant != null || city.army != null)
 				Session.board.showEnterCity(city);
 			else

@@ -30,6 +30,11 @@ package com.uralys.tribes.entities
 		
 		//==========================================================================//
 		
+		private var _beginTime:Number;
+		private var _endTime:Number;
+		private var _gatheringUIDExpected:String;
+		private var _conflictUIDExpected:String;
+		
 		private var _status:int;
 		private var _currentCaseUID:String;
 		private var _playerUID:String;
@@ -188,6 +193,45 @@ package com.uralys.tribes.entities
 			_playerUID = o;
 		}
 		
+		public function get beginTime():Number
+		{
+			return _beginTime;
+		}
+		
+		public function set beginTime(value:Number):void
+		{
+			_beginTime = value;
+		}
+		
+		public function get endTime():Number
+		{
+			return _endTime;
+		}
+		
+		public function set endTime(value:Number):void
+		{
+			_endTime = value;
+		}
+		
+		public function get gatheringUIDExpected():String
+		{
+			return _gatheringUIDExpected;
+		}
+		
+		public function set gatheringUIDExpected(value:String):void
+		{
+			_gatheringUIDExpected = value;
+		}
+		
+		public function get conflictUIDExpected():String
+		{
+			return _conflictUIDExpected;
+		}
+		
+		public function set conflictUIDExpected(value:String):void
+		{
+			_conflictUIDExpected = value;
+		}
 		
 		//==========================================================================//
 
@@ -235,7 +279,10 @@ package com.uralys.tribes.entities
 		}
 		
 		//==========================================================================//
-
+		
+		public static const ARMY:int = 1;
+		public static const MERCHANT:int = 2;
+		
 		public var type:int; // 1 armee,  2 marchand
 		
 		public var landExpected:int = -1;
@@ -254,5 +301,14 @@ package com.uralys.tribes.entities
 		{
 			_isModified = value;
 		}
+
+		//==========================================================================//
+		
+		public static const PLAYER:int = 1;
+		public static const ALLY:int = 2;
+		public static const ENNEMY:int = 3;
+		
+		public var ownerStatus:int; //
+		
 	}
 }

@@ -468,6 +468,7 @@ package com.uralys.tribes.managers {
 			
 			for each(var _case:Case in Session.CASES_LOADED){
 				Session.map[_case.x][_case.y] = _case;
+				(Session.map[_case.x][_case.y] as Case).forceRefresh();
 			}
 
 			//------------------------------------------------//

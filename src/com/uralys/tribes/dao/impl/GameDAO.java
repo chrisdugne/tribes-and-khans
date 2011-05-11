@@ -309,8 +309,11 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		
 		//--------------------------------------//
 
-		CityDTO city = pm.getObjectById(CityDTO.class, cityUID);
-		city.setPopulation(city.getPopulation() - unit.getSize());
+		if(cityUID != null)
+		{
+			CityDTO city = pm.getObjectById(CityDTO.class, cityUID);
+			city.setPopulation(city.getPopulation() - unit.getSize());
+		}
 		
 		//--------------------------------------//
 		
@@ -449,7 +452,17 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	}
 	
 
-	public String saveMove(Move move, String unitUID) {
+	public void unvalidateMove(Move move) {
+
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		MoveDTO moveDTO = pm.getObjectById(MoveDTO.class, move.getMoveUID());
+		
+		moveDTO.setValue(0);
+		
+		pm.close();
+	}
+
+	public String saveMove(Move move) {
 		
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		MoveDTO moveDTO = new MoveDTO(); 
@@ -492,7 +505,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		CaseDTO _case = pm.getObjectById(CaseDTO.class, move.getCaseUID());
 		_case.getMoveUIDs().add(moveUID);
 		
-		UnitDTO _unit = pm.getObjectById(UnitDTO.class, unitUID);
+		UnitDTO _unit = pm.getObjectById(UnitDTO.class, move.getUnitUID());
 		_unit.getMoveUIDs().add(moveUID);
 		
 		pm.close();
@@ -528,11 +541,11 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			caseDTO.getMoveUIDs().remove(moveUID);
 			unitDTO.getMoveUIDs().remove(moveUID);
 			
-			gatheringDTO.getUnitUIDs().remove(moveDTO.getUnitUID());
-			
-			if(gatheringDTO.getUnitUIDs().size() == 0){
+			if(gatheringDTO.getUnitUIDs().size() == 1){
 				pm.deletePersistent(gatheringDTO);
 			}
+			else
+				gatheringDTO.getUnitUIDs().remove(moveDTO.getUnitUID());
 				
 			pm.deletePersistent(moveDTO);
 			pm.close();			

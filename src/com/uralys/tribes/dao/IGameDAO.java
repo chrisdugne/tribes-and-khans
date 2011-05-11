@@ -42,7 +42,8 @@ public interface IGameDAO {
 	
 	public void createCity(City city, String playerUID);
 	
-	public String saveMove(Move move, String unitUID);
+	public String saveMove(Move move);
+	public void unvalidateMove(Move move);
 	public void deleteMove(String moveUID);
 	public void deleteMoves(String unitUID);
 	

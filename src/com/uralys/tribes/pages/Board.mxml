@@ -858,7 +858,7 @@
 					  enabled="{cityForm.currentState != 'recordingUnit'}"/>
 			<mx:Spacer width="450"/>
 		</s:HGroup>
-		<renderers:CityForm 
+		<renderers:CityForms 
 				id="cityForm"
 			    city="{selectedCity}"/>
 		<mx:Spacer height="55"/>

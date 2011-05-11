@@ -77,12 +77,10 @@ package com.uralys.tribes.core
 		
 		public function clickOnHouse(city:City):void
 		{
-			trace("clickOnHouse : " + city.cityUID);
 			var cityInPlayerList:City = null;
 			
 			for each(var cityInSessionDotPlayer:City in Session.player.cities)
 			{
-				trace("city in session.player : " + cityInSessionDotPlayer.cityUID);
 				if(cityInSessionDotPlayer.cityUID == city.cityUID){
 					cityInPlayerList = city;
 					break;

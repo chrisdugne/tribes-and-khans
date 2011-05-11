@@ -6,6 +6,7 @@ import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.Random;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 public class Utils {
@@ -212,6 +213,17 @@ public class Utils {
 		case 3: return "rd";
 		default: return "th";
 		}
+	}
+
+
+	public final static boolean local = true;
+	private static final Logger log = Logger.getLogger(Utils.class.getName());
+	
+	public static void print(String string) {
+		if(local)
+			System.out.println(string);
+		else
+			log.info(string);
 	}
 
 }

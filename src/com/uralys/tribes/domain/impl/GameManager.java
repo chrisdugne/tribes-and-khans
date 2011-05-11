@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Logger;
 
 import com.uralys.tribes.dao.IGameDAO;
 import com.uralys.tribes.domain.IGameManager;
@@ -22,6 +21,7 @@ import com.uralys.tribes.entities.converters.EntitiesConverter;
 import com.uralys.tribes.entities.dto.CaseDTO;
 import com.uralys.tribes.entities.dto.ItemDTO;
 import com.uralys.tribes.utils.TribesUtils;
+import com.uralys.utils.Utils;
 
 public class GameManager implements IGameManager {
 
@@ -46,7 +46,6 @@ public class GameManager implements IGameManager {
 	 * plateau width  : 100 * 400 = 40000px
 	 * 
 	 */
-	private static final Logger log = Logger.getLogger(GameManager.class.getName());
 
 	//==================================================================================================//
 	// game COEFF
@@ -93,14 +92,14 @@ public class GameManager implements IGameManager {
 	}
 
 	public void savePlayer(Player player) {
-		if(debug)log.info("-------------------------------------------------");
-		if(debug)log.info("Save turn pour joueur : " + player.getName());
+		if(debug)Utils.print("-------------------------------------------------");
+		if(debug)Utils.print("Save turn pour joueur : " + player.getName());
 
 		//----------------------------------------------------------------//
 		// Cities
 
-		if(debug)log.info("--------------------");
-		if(debug)log.info("Saving cities");
+		if(debug)Utils.print("--------------------");
+		if(debug)Utils.print("Saving cities");
 
 		for(City city : player.getCities()){
 
@@ -137,14 +136,14 @@ public class GameManager implements IGameManager {
 	
 	public void createUnit(String uralysUID, Unit unit, String cityUID, boolean needReplacing){
 
-		if(debug)log.info("-----------------------------------");
-		if(debug)log.info("createUnit : " + unit.getUnitUID() + " for uralysUID : " + uralysUID);
+		if(debug)Utils.print("-----------------------------------");
+		if(debug)Utils.print("createUnit : " + unit.getUnitUID() + " for uralysUID : " + uralysUID);
 		
 		gameDao.createUnit(unit, cityUID);
 		gameDao.linkNewUnit(uralysUID, unit.getUnitUID());
 
 		if(needReplacing){
-			if(debug)log.info("placing the unit");
+			if(debug)Utils.print("placing the unit");
 			unitsLoaded = new HashMap<String, Unit>();
 			playerAlreadyLoaded = new HashMap<String, Player>();
 			placeUnit(unit, unit.getMoves(), new ArrayList<Unit>());
@@ -153,13 +152,13 @@ public class GameManager implements IGameManager {
 	
 	public void updateUnit(Unit unit, String cityUID, boolean needReplacing){
 
-		if(debug)log.info("-----------------------------------");
-		if(debug)log.info("updateUnit : " + unit.getUnitUID());
+		if(debug)Utils.print("-----------------------------------");
+		if(debug)Utils.print("updateUnit : " + unit.getUnitUID());
 
 		gameDao.updateUnit(unit, cityUID);
 		
 		if(needReplacing){
-			if(debug)log.info("placing the unit");
+			if(debug)Utils.print("placing the unit");
 			unitsLoaded = new HashMap<String, Unit>();
 			playerAlreadyLoaded = new HashMap<String, Player>();
 			placeUnit(unit, unit.getMoves(), new ArrayList<Unit>());
@@ -213,7 +212,7 @@ public class GameManager implements IGameManager {
 
 	public static void main(String[] args){
 
-		if(topdebug)log.info("entree dans placeUnit | " + new Date());
+		if(topdebug)Utils.print("entree dans placeUnit | " + new Date());
 		//-----------------------------------------------------------------------------------//
 		
 		debugLoop = true;
@@ -391,13 +390,13 @@ public class GameManager implements IGameManager {
 
 		//-----------------------------------------------------------------------------------//
 		
-		if(debug)log.info("================================================");
-		if(debug)log.info("Affichage final des deplacements");
+		if(debug)Utils.print("================================================");
+		if(debug)Utils.print("Affichage final des deplacements");
 		
 		printMove(army1);
 		printMove(army2);
 		printMove(army3);
-		if(debug)log.info("---");
+		if(debug)Utils.print("---");
 		printConflict(army1);
 		printConflict(army2);
 		printConflict(army3);
@@ -407,27 +406,27 @@ public class GameManager implements IGameManager {
 
 
 	private static void printMove(Unit unit) {
-		if(debug)log.info("---");
-		if(debug)log.info("moves pour unit : " + unit.getUnitUID());
+		if(debug)Utils.print("---");
+		if(debug)Utils.print("moves pour unit : " + unit.getUnitUID());
 		
 		for(Move move : unit.getMoves()){
 			int i = TribesUtils.getX(move.getCaseUID());
 			int j = TribesUtils.getY(move.getCaseUID());
-			if(debug)log.info("["+i+"]["+j+"] | value : " + move.getValue());
+			if(debug)Utils.print("["+i+"]["+j+"] | value : " + move.getValue());
 		}
 	}
 	
 	private static void printConflict(Unit unit) {
-		if(debug)log.info("---");
-		if(debug)log.info((unit.getConflictUIDExpected() == null ? "aucun " : "") + "conflict pour unit : " + unit.getUnitUID());
+		if(debug)Utils.print("---");
+		if(debug)Utils.print((unit.getConflictUIDExpected() == null ? "aucun " : "") + "conflict pour unit : " + unit.getUnitUID());
 
 //		for(Conflict meeting : unit.getConflicts()){
 //			int i = getXFromCaseUID(meeting.getCaseUID());
 //			int j = getYFromCaseUID(meeting.getCaseUID());
-//			if(debug)log.info("["+i+"]["+j+"]");
+//			if(debug)Utils.print("["+i+"]["+j+"]");
 			
 //			for(Unit opponent : meeting.getUnits()){
-//				if(debug)log.info("unit : " + opponent.getUnitUID());			
+//				if(debug)Utils.print("unit : " + opponent.getUnitUID());			
 //			}
 			
 //		}
@@ -449,10 +448,10 @@ public class GameManager implements IGameManager {
 	private List<Unit> placeUnit(Unit unitArriving, List<Move> moves, List<Unit> unitsMakingThisReplacing) {
 		
 		
-		if(topdebug)log.info("entree dans placeUnit | " + new Date());
+		if(topdebug)Utils.print("entree dans placeUnit | " + new Date());
 		
-		if(debug)log.info("---------------------------------------");
-		if(debug)log.info("place unit " + unitArriving.getUnitUID());
+		if(debug)Utils.print("---------------------------------------");
+		if(debug)Utils.print("place unit " + unitArriving.getUnitUID());
 		
 		int currentUnitValue = unitArriving.getValue();
 		String allyUID = getPlayer(unitArriving.getPlayerUID(), true).getAllyUID();
@@ -460,38 +459,38 @@ public class GameManager implements IGameManager {
 		if(debug){
 			System.out
 			.println("initial value : " + currentUnitValue);
-			log.info("ally : " + allyUID);
-			log.info("moves to check and record");
+			Utils.print("ally : " + allyUID);
+			Utils.print("moves to check and record");
 
 			for(Move move : moves){
 				int i = TribesUtils.getX(move.getCaseUID());
 				int j = TribesUtils.getY(move.getCaseUID());
 				
-				log.info("["+i+"]["+j+"]");
+				Utils.print("["+i+"]["+j+"]");
 			}
 
-			log.info("unitsMakingThisReplacing :");
+			Utils.print("unitsMakingThisReplacing :");
 			
 			for(Unit unitMakingThisReplacing : unitsMakingThisReplacing){
-				log.info(unitMakingThisReplacing.getUnitUID());
+				Utils.print(unitMakingThisReplacing.getUnitUID());
 			}
 		}
 		
 		List<Unit> unitsReplacedByThisPlacement = new ArrayList<Unit>();
 
-		if(debug)log.info("****");
+		if(debug)Utils.print("****");
 		List<Unit> previousUnitsMet = checkAndRecalculatePreviousGatheringsAndConflictsAndMovesAndReturnPreviousOpponentsToBeReplaced(unitArriving, unitsMakingThisReplacing);
-		if(debug)log.info("****");
+		if(debug)Utils.print("****");
 
 		ArrayList<Unit> unitsToReplace = new ArrayList<Unit>();
 
-		if(topdebug)log.info("debut du loop dans les moves  | " + new Date());
+		if(topdebug)Utils.print("debut du loop dans les moves  | " + new Date());
 
 		boolean foundAGathering = false;
 		for(Move arrivalOnThisCaseMove : moves){
 
 			if(foundAGathering){
-				if(debug)log.info("foundAGathering yet => mouvement non appliqué");
+				if(debug)Utils.print("foundAGathering yet => mouvement non appliqué");
 				currentUnitValue = 0;
 			}
 			
@@ -501,10 +500,10 @@ public class GameManager implements IGameManager {
 			arrivalOnThisCaseMove.getGathering().getUnits().add(unitArriving);
 			
 			if(debug){
-				log.info("gathering : " + arrivalOnThisCaseMove.getGathering().getGatheringUID());
+				Utils.print("gathering : " + arrivalOnThisCaseMove.getGathering().getGatheringUID());
 				int i = TribesUtils.getX(arrivalOnThisCaseMove.getCaseUID());
 				int j = TribesUtils.getY(arrivalOnThisCaseMove.getCaseUID());
-				log.info("passage par case ["+i+"]["+j+"], de temps("+arrivalOnThisCaseMove.getTimeFrom()+") à temps("+arrivalOnThisCaseMove.getTimeTo()+")");
+				Utils.print("passage par case ["+i+"]["+j+"], de temps("+arrivalOnThisCaseMove.getTimeFrom()+") à temps("+arrivalOnThisCaseMove.getTimeTo()+")");
 			}
 
 			Case _case = getCase(arrivalOnThisCaseMove.getCaseUID());
@@ -512,10 +511,10 @@ public class GameManager implements IGameManager {
 			//-----------------------------------------------------------------------------------//
 
 			if(currentUnitValue == 0){
-				if(debug)log.info("mouvement non appliqué, pas de calcul de croisement");
+				if(debug)Utils.print("mouvement non appliqué, pas de calcul de croisement");
 			}
 			else if(_case.getRecordedMoves().size() == 0){
-				if(debug)log.info("case libre");
+				if(debug)Utils.print("case libre");
 			}
 
 			if(currentUnitValue > 0 && _case.getRecordedMoves().size() > 0)
@@ -526,14 +525,14 @@ public class GameManager implements IGameManager {
 				{
 					String unitRecordedUID = recordedMove.getUnitUID();
 					
-					if(debug)log.info(" - trouvé un recordedMove : unit " + unitRecordedUID);
+					if(debug)Utils.print(" - trouvé un recordedMove : unit " + unitRecordedUID);
 
 					if(recordedMove.getValue() == 0){
-						if(debug)log.info("	recordedMove non appliqué (value = 0) : pas de croisement avec ce recordedMove");
+						if(debug)Utils.print("	recordedMove non appliqué (value = 0) : pas de croisement avec ce recordedMove");
 						continue;
 					}
 
-					if(debug)log.info(" 	recordedMove de ["+new Date(recordedMove.getTimeFrom())+"] à ["+new Date(recordedMove.getTimeTo())+"]");
+					if(debug)Utils.print(" 	recordedMove de ["+new Date(recordedMove.getTimeFrom())+"] à ["+new Date(recordedMove.getTimeTo())+"]");
 					
 					//---------------------------------------------------------------------//
 					// tests de croisement
@@ -542,7 +541,7 @@ public class GameManager implements IGameManager {
 					
 					if(arrivalOnThisCaseMove.getTimeTo() == -1 && recordedMove.getTimeTo() == -1)
 					{
-						if(debug)log.info("	les 2 timeTo sont à -1 : croisement car les 2 unites s'arretent sur la meme case");
+						if(debug)Utils.print("	les 2 timeTo sont à -1 : croisement car les 2 unites s'arretent sur la meme case");
 						meetingHappens = true;
 					}
 					
@@ -567,7 +566,7 @@ public class GameManager implements IGameManager {
 										move1.getTimeTo() <= move2.getTimeTo()))
 							
 						{
-							if(debug)log.info("	croisement lors d'un passage par la case");
+							if(debug)Utils.print("	croisement lors d'un passage par la case");
 							meetingHappens = true;
 						}
 					}
@@ -577,31 +576,31 @@ public class GameManager implements IGameManager {
 					
 					if(meetingHappens)
 					{
-						if(debug)log.info(" - meetingHappens !");
+						if(debug)Utils.print(" - meetingHappens !");
 						Gathering existingGathering = recordedMove.getGathering();
 
 						if(existingGathering.getAllyUID().equals(allyUID))
 						{
-							if(debug)log.info(" - trouvé un ally : unit " + unitRecordedUID);
+							if(debug)Utils.print(" - trouvé un ally : unit " + unitRecordedUID);
 							Unit unitRecorded = getUnit(unitRecordedUID, true);
 							
 							if(unitRecorded.getType() != unitArriving.getType()){
-								if(debug)log.info("  les unités sont de types differents : pas de gathering");
+								if(debug)Utils.print("  les unités sont de types differents : pas de gathering");
 							}
 							else{
 								foundAGathering = true;
 
 								if(existingGathering.getUnits().size() == 2){
-									if(debug)log.info("  il est deja dans un gathering de 2 units");
+									if(debug)Utils.print("  il est deja dans un gathering de 2 units");
 									// ici il faut refaire la newarmy1 et faire une newarmy2 avec le premier arrive de ces 2 la 
 								}
 								else{
 									
-									if(debug)log.info(" - addUnitInGathering  " + unitRecordedUID);
+									if(debug)Utils.print(" - addUnitInGathering  " + unitRecordedUID);
 									arrivalOnThisCaseMove.setGathering(existingGathering);
 									gameDao.addUnitInGathering(existingGathering.getGatheringUID(), unitArriving.getUnitUID());
 									
-									if(debug)log.info(" - creation de la nouvelle army");
+									if(debug)Utils.print(" - creation de la nouvelle army");
 									createNewArmy(unitArriving, unitRecorded, arrivalOnThisCaseMove);
 									
 									unitArriving.setEndTime(arrivalOnThisCaseMove.getTimeFrom());
@@ -610,7 +609,7 @@ public class GameManager implements IGameManager {
 									unitArriving.setGatheringUIDExpected(existingGathering.getGatheringUID());
 									unitRecorded.setGatheringUIDExpected(existingGathering.getGatheringUID());
 									
-									if(debug)log.info(" - annulation des moves prevus de unitRecorded");
+									if(debug)Utils.print(" - annulation des moves prevus de unitRecorded");
 									unitsToReplace.addAll(cancelRecordedMovesAndReturnAllUnitsToReplace(unitRecorded, arrivalOnThisCaseMove.getTimeFrom()));
 									
 									updateUnit(unitArriving, null, false);
@@ -619,16 +618,16 @@ public class GameManager implements IGameManager {
 							}
 						}
 
-//						if(debug)log.info(" - enregistrement du gathering dans le meeting");
+//						if(debug)Utils.print(" - enregistrement du gathering dans le meeting");
 //						storeNewGatheringInTheConflict(conflict, newMove.getGathering());
 
-//						if(debug)log.info(" - enregistrement de l'unite à replacer");
+//						if(debug)Utils.print(" - enregistrement de l'unite à replacer");
 //						if(unitsMakingThisReplacing.size() == 0 || !contains(unitsMakingThisReplacing, unitRecordedUID)){
 //							unitsToReplace.add(getUnit(unitRecordedUID, true));							
 //						}
 					}
 					else{
-						if(debug)log.info("	pas de croisement avec ce passage");
+						if(debug)Utils.print("	pas de croisement avec ce passage");
 					}
 
 				}
@@ -642,7 +641,7 @@ public class GameManager implements IGameManager {
 //					conflict.setConflictUID(Utils.generateUID());
 //					conflict.setCaseUID(_case.getCaseUID());
 //					
-//					if(debug)log.info(" - plusieurs gatherings !! => conflit");
+//					if(debug)Utils.print(" - plusieurs gatherings !! => conflit");
 //					
 //					int[] result = calculateFinalValue(conflict, unit, currentUnitValue, _case);
 //					currentUnitValue = result[1];
@@ -662,7 +661,7 @@ public class GameManager implements IGameManager {
 			//-----------------------------------------------------------------------------------//
 			// enregistrement du move dans les recordedMoves APRES check de ceux ci (sinon on va le checker avec lui meme)
 		
-			if(debug)log.info("recording move " + arrivalOnThisCaseMove.getMoveUID());
+			if(debug)Utils.print("recording move " + arrivalOnThisCaseMove.getMoveUID());
 			if(debugLoop){
 				unitArriving.getMoves().add(arrivalOnThisCaseMove);
 				_case.getRecordedMoves().add(arrivalOnThisCaseMove);
@@ -673,64 +672,64 @@ public class GameManager implements IGameManager {
 		
 		} // fin du loop sur les moves 
 
-		if(topdebug)log.info("fin du loop dans les moves  | " + new Date());
+		if(topdebug)Utils.print("fin du loop dans les moves  | " + new Date());
 		
 		//-----------------------------------------------------------------------------------//
 		// ON REPLACE TOUTES LES UNITES IMPACTEES
 
-		if(topdebug)log.info("debut du replacement  | " + new Date());
+		if(topdebug)Utils.print("debut du replacement  | " + new Date());
 		unitsMakingThisReplacing.add(unitArriving);
 		
-		if(debug)log.info("----------------");
-		if(debug)log.info("replacing new opponents : " + unitsToReplace.size());
+		if(debug)Utils.print("----------------");
+		if(debug)Utils.print("replacing new opponents : " + unitsToReplace.size());
 		
 		for(Unit unitToReplace : unitsToReplace){
 			if(!contains(unitsReplacedByThisPlacement, unitToReplace.getUnitUID())){
-				if(debug)log.info("replacing : " + unitToReplace.getUnitUID());
+				if(debug)Utils.print("replacing : " + unitToReplace.getUnitUID());
 				List<Unit> unitsReplacedConsequently = placeUnit(unitToReplace, unitToReplace.getMoves(), unitsMakingThisReplacing);
 				unitsReplacedByThisPlacement.add(unitToReplace);
 				unitsReplacedByThisPlacement.addAll(unitsReplacedConsequently);				
 			}
 		}
 		
-		if(debug)log.info("----------------");
+		if(debug)Utils.print("----------------");
 
-		if(debug)log.info("unitsReplacedByThisPlacement :");
+		if(debug)Utils.print("unitsReplacedByThisPlacement :");
 		for(Unit unitReplacedByThisPlacement : unitsReplacedByThisPlacement){
-			if(debug)log.info(unitReplacedByThisPlacement.getUnitUID());
+			if(debug)Utils.print(unitReplacedByThisPlacement.getUnitUID());
 		}
 		
-		if(debug)log.info("----------------");
-		if(debug)log.info("replacing old opponents : " + previousUnitsMet.size());
+		if(debug)Utils.print("----------------");
+		if(debug)Utils.print("replacing old opponents : " + previousUnitsMet.size());
 
 		for(Unit previousOpponentToReplace : previousUnitsMet){
 			if(!contains(unitsReplacedByThisPlacement, previousOpponentToReplace.getUnitUID())){
-				if(debug)log.info("replacing : " + previousOpponentToReplace.getUnitUID());
+				if(debug)Utils.print("replacing : " + previousOpponentToReplace.getUnitUID());
 				List<Unit> unitsReplacedConsequently = placeUnit(previousOpponentToReplace, previousOpponentToReplace.getMoves(), unitsMakingThisReplacing);
 				unitsReplacedByThisPlacement.add(previousOpponentToReplace);
 				unitsReplacedByThisPlacement.addAll(unitsReplacedConsequently);
 			}
 		}
 		
-		if(debug)log.info("----------------");
-		if(debug)log.info("fin du placement");
-		if(debug)log.info("----------------");
+		if(debug)Utils.print("----------------");
+		if(debug)Utils.print("fin du placement");
+		if(debug)Utils.print("----------------");
 
-		if(topdebug)log.info("fin du replacement, et du placement  | " + new Date());
+		if(topdebug)Utils.print("fin du replacement, et du placement  | " + new Date());
 		return unitsReplacedByThisPlacement;
 
 	}
 
 	
 	private List<Unit> cancelRecordedMovesAndReturnAllUnitsToReplace(Unit unit, long timeFromWhichMovesMustBeCancelled){ 
-		if(debug)log.info("cancelRecordedMovesAndReturnAllUnitsToReplace");
+		if(debug)Utils.print("cancelRecordedMovesAndReturnAllUnitsToReplace");
 		
 		List<Unit> unitsToReplace = new ArrayList<Unit>();
 		
 		for(Move move : unit.getMoves()){
-			if(debug)log.info("move " + move.getMoveUID());
+			if(debug)Utils.print("move " + move.getMoveUID());
 			if(move.getTimeFrom() > timeFromWhichMovesMustBeCancelled){
-				if(debug)log.info("isCancelled");
+				if(debug)Utils.print("isCancelled");
 				gameDao.unvalidateMove(move);
 				
 				if(move.getGathering().getUnits().size() > 1)
@@ -741,13 +740,13 @@ public class GameManager implements IGameManager {
 					else
 						unitToReplace = move.getGathering().getUnits().get(0);
 
-					if(debug)log.info("found a unit to replace : " + unitToReplace.getUnitUID());
+					if(debug)Utils.print("found a unit to replace : " + unitToReplace.getUnitUID());
 					unitsToReplace.add(unitToReplace);
 				}
 				
 			}
 			else
-				if(debug)log.info("is still available");
+				if(debug)Utils.print("is still available");
 		}
 
 		return unitsToReplace;
@@ -760,16 +759,18 @@ public class GameManager implements IGameManager {
 
 		Unit newArmUnit = new Unit();
 		newArmUnit.setUnitUID(ownerUID+"_X_"+arrivalOnThisCaseMove.getTimeFrom());
+		newArmUnit.setPlayerUID(ownerUID);
 		newArmUnit.setBeginTime(arrivalOnThisCaseMove.getTimeFrom());
 		newArmUnit.setStatus(unitArriving.getStatus());
 		newArmUnit.setSize(unitArriving.getSize() + unitRecorded.getSize());
+		newArmUnit.setValue(unitArriving.getValue() + unitRecorded.getValue());
 	
 		newArmUnit.setSpeed(unitArriving.getSpeed());
 		newArmUnit.setType(unitArriving.getType());
 		
 		ArrayList<Move> moves = new ArrayList<Move>();
 		
-		arrivalOnThisCaseMove.setMoveUID(arrivalOnThisCaseMove+"_"+TribesUtils.getX(arrivalOnThisCaseMove.getCaseUID())+"_"+TribesUtils.getY(arrivalOnThisCaseMove.getCaseUID())+"_"+newArmUnit.getUnitUID());
+		arrivalOnThisCaseMove.setMoveUID(arrivalOnThisCaseMove.getTimeFrom()+"_"+TribesUtils.getX(arrivalOnThisCaseMove.getCaseUID())+"_"+TribesUtils.getY(arrivalOnThisCaseMove.getCaseUID())+"_"+newArmUnit.getUnitUID());
 		arrivalOnThisCaseMove.setUnitUID(newArmUnit.getUnitUID());
 		arrivalOnThisCaseMove.setTimeTo(-1);
 		
@@ -805,7 +806,7 @@ public class GameManager implements IGameManager {
 //		
 //		if(!alreadyRecorded)
 //		{
-//			if(debug)log.info("	croisement pendant le passage : enregistrement du meeting");
+//			if(debug)Utils.print("	croisement pendant le passage : enregistrement du meeting");
 //			conflict.getGatherings().add(gatheringToRecord);
 //		}
 //	}
@@ -814,15 +815,15 @@ public class GameManager implements IGameManager {
 	// et return la liste des armees à replacer
 	private List<Unit> checkAndRecalculatePreviousGatheringsAndConflictsAndMovesAndReturnPreviousOpponentsToBeReplaced(Unit unit, List<Unit> unitsMakingThisReplacing) 
 	{
-		if(debug)log.info("checkAndRecalculatePreviousGatheringsAndConflictsAndMovesAndReturnPreviousOpponentsToBeReplaced for unit " + unit.getUnitUID());
+		if(debug)Utils.print("checkAndRecalculatePreviousGatheringsAndConflictsAndMovesAndReturnPreviousOpponentsToBeReplaced for unit " + unit.getUnitUID());
 		List<Unit> unitsToReplace = new ArrayList<Unit>();
 
 		// d'abord on regarde si il y avait un gathering de prevu
 		// si oui, il etait forcement plus loin puisqu'on vient de croiser cette unit et qu'elle s'arrete forcement au gathering.
 		if(unit.getGatheringUIDExpected() != null){
-			if(debug)log.info("found a gathering expected !");
+			if(debug)Utils.print("found a gathering expected !");
 			Gathering gatheringExpected = EntitiesConverter.convertGatheringDTO(gameDao.getGathering(unit.getGatheringUIDExpected()));
-			if(debug)log.info("gathering : " + gatheringExpected.getGatheringUID());
+			if(debug)Utils.print("gathering : " + gatheringExpected.getGatheringUID());
 
 			// on doit modifier ce gathering
 			// il faut simplement que l'armee restante (la 2e) devienne gathering.newArmy
@@ -836,11 +837,11 @@ public class GameManager implements IGameManager {
 			else
 				unitStaying = gatheringExpected.getUnits().get(0);
 			
-			if(debug)log.info("unitStaying : " + unitStaying.getUnitUID());
+			if(debug)Utils.print("unitStaying : " + unitStaying.getUnitUID());
 			Unit newUnit = getUnit(gatheringExpected.getNewArmyUID(), true);
 			transformUnitInNewUnit(unitStaying, newUnit);
 			
-			if(debug)log.info("removing the unit");
+			if(debug)Utils.print("removing the unit");
 			gatheringExpected.remove(unit.getUnitUID());
 			
 			updateUnit(unitStaying, null, false);
@@ -854,19 +855,19 @@ public class GameManager implements IGameManager {
 		// si oui, il etait forcement plus loin puisqu'on vient de croiser cette unit et qu'elle s'arrete forcement au conflit.
 		if(unit.getGatheringUIDExpected() != null)
 		{
-			if(debug)log.info("found a confict expected !");
+			if(debug)Utils.print("found a confict expected !");
 			Conflict conflictExpected = EntitiesConverter.convertConflictDTO(gameDao.getConflict(unit.getConflictUIDExpected()));
-			if(debug)log.info("conflict : " + conflictExpected.getConflictUID());
+			if(debug)Utils.print("conflict : " + conflictExpected.getConflictUID());
 		
 			for(Gathering gathering : conflictExpected.getGatherings())
 			{
-				if(debug)log.info("found a gathering in a conflict");
+				if(debug)Utils.print("found a gathering in a conflict");
 				for(Unit opponentOrAlly : gathering.getUnits())
 				{
-					if(debug)log.info("unit : " + opponentOrAlly.getUnitUID());
+					if(debug)Utils.print("unit : " + opponentOrAlly.getUnitUID());
 //					if(!opponentOrAlly.equals(unit) && !contains(unitsMakingThisReplacing, opponentOrAlly.getUnitUID()))
 //					{
-//						if(debug)log.info("unit : " + opponentOrAlly.getUnitUID());
+//						if(debug)Utils.print("unit : " + opponentOrAlly.getUnitUID());
 //						unitsToReplace.add(opponentOrAlly);
 //					}
 				}
@@ -953,7 +954,7 @@ public class GameManager implements IGameManager {
 //		}
 //
 //		if(indexToRemove >= 0){
-//			if(debug)log.info("remove conflict " + unit.getConflicts().get(indexToRemove).getConflictUID());
+//			if(debug)Utils.print("remove conflict " + unit.getConflicts().get(indexToRemove).getConflictUID());
 //			unit.getConflicts().remove(indexToRemove);
 //		}
 //	}
@@ -970,7 +971,7 @@ public class GameManager implements IGameManager {
 //		}
 //
 //		if(indexToRemove >= 0){
-//			if(debug)log.info("remove move " + _case.getRecordedMoves().get(indexToRemove).getMoveUID());
+//			if(debug)Utils.print("remove move " + _case.getRecordedMoves().get(indexToRemove).getMoveUID());
 //			_case.getRecordedMoves().remove(indexToRemove);
 //		}
 //	}
@@ -1019,16 +1020,16 @@ public class GameManager implements IGameManager {
 		// result[1] : currentUnitValue
 		int[] result = new int[2];
 		
-		if(debug)log.info("------------------");
-		if(topdebug)log.info("debut du calculateFinalValue  | " + new Date());
-		if(debug)log.info("calculateFinalValue : unitInspected : " + unitInspected.getUnitUID());
+		if(debug)Utils.print("------------------");
+		if(topdebug)Utils.print("debut du calculateFinalValue  | " + new Date());
+		if(debug)Utils.print("calculateFinalValue : unitInspected : " + unitInspected.getUnitUID());
 		int allyIndexOfTheUnitInspected = -1;
 		
 		// --------   rassemblement sur la meme case par une alliance : pas de conflit
 
 		if(meeting.getGatherings().size() == 1){
-			if(topdebug)log.info("fin du calculateFinalValue  | " + new Date());		
-			if(debug)log.info("rassemblement sur la meme case par une alliance : pas de conflit");
+			if(topdebug)Utils.print("fin du calculateFinalValue  | " + new Date());		
+			if(debug)Utils.print("rassemblement sur la meme case par une alliance : pas de conflit");
 			
 			result[0] = -1;
 			result[1] = currentUnitValue;
@@ -1048,7 +1049,7 @@ public class GameManager implements IGameManager {
 				// donc on prend sa valeur à l'entree de la case
 				// sinon on recupere la valeur de larmee rencontree sur cette case
 				if(unit.equals(unitInspected)){
-					if(debug)log.info("unitInspected value : " + currentUnitValue);
+					if(debug)Utils.print("unitInspected value : " + currentUnitValue);
 					allyValue += currentUnitValue;
 				}
 				else
@@ -1080,8 +1081,8 @@ public class GameManager implements IGameManager {
 			}
 		}
 		
-		if(debug)log.info("firstAllyValue : " + firstAllyValue);
-		if(debug)log.info("secondAllyValue : " + secondAllyValue);
+		if(debug)Utils.print("firstAllyValue : " + firstAllyValue);
+		if(debug)Utils.print("secondAllyValue : " + secondAllyValue);
 
 		//----------------------//
 		
@@ -1093,10 +1094,10 @@ public class GameManager implements IGameManager {
 		}
 		else{
 			
-			if(debug)log.info("battle won ! (or draw if returns 0 :p)");
+			if(debug)Utils.print("battle won ! (or draw if returns 0 :p)");
 			double rateRemaining = (firstAllyValue - secondAllyValue)/(double)firstAllyValue;
-			if(debug)log.info("rateRemaining : " + rateRemaining);
-			if(debug)log.info("currentUnitValue returned : " + ((int)(currentUnitValue*rateRemaining)));
+			if(debug)Utils.print("rateRemaining : " + rateRemaining);
+			if(debug)Utils.print("currentUnitValue returned : " + ((int)(currentUnitValue*rateRemaining)));
 			
 
 			result[0] = -1;
@@ -1111,13 +1112,13 @@ public class GameManager implements IGameManager {
 		
 		for(Move move : _case.getRecordedMoves()){
 			if(move.getUnitUID().equals(unit.getUnitUID())){
-				if(debug)log.info("value of " + unit.getUnitUID() + " in this conflict : " + move.getValue());
+				if(debug)Utils.print("value of " + unit.getUnitUID() + " in this conflict : " + move.getValue());
 				return move.getValue();
 			}
 		}
 		
 		// never 
-		if(debug)log.info("??? I said NEVER !");
+		if(debug)Utils.print("??? I said NEVER !");
 		return -1;
 	}
 }

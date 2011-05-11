@@ -285,7 +285,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		unitDTO.setType(unit.getType());
 		unitDTO.setStatus(Unit.FREE);
 		
-		unitDTO.setBeginTime(new Date().getTime());
+		unitDTO.setBeginTime(unit.getBeginTime());
 		unitDTO.setEndTime(-1);
 		
 

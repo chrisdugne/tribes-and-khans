@@ -1,6 +1,7 @@
 package com.uralys.tribes.entities
 {
 	import com.uralys.tribes.commons.Session;
+	import com.uralys.tribes.core.UnitMover;
 	import com.uralys.tribes.managers.GameManager;
 	
 	import mx.collections.ArrayCollection;
@@ -150,6 +151,7 @@ package com.uralys.tribes.entities
 				
 				var unitInPlayer:Unit = Session.player.getUnit(move.unitUID);
 				var unit:Unit = unitInPlayer == null ? getUnit(move.unitUID) : unitInPlayer;
+				UnitMover.getInstance().addTimer(unit.moves.toArray());
 				
 				trace("unit : " + unit.unitUID);
 				trace("move.timeTo : " + move.timeTo);
@@ -203,6 +205,9 @@ package com.uralys.tribes.entities
 					
 					// on stock le move dans la liste à supprimer
 					Session.movesToDelete.addItem(move);
+				}
+				else{
+					//move futur
 				}
 			}
 			

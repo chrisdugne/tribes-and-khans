@@ -255,8 +255,6 @@ package com.uralys.tribes.core
 		
 		public function drawCity(city:City):void{
 			
-			trace("draw city " + city.cityUID);
-			
 			var angle:int = 0;
 			var distanceAuCentre:int = 0;
 			var insideCircle:Boolean = true;
@@ -286,7 +284,6 @@ package com.uralys.tribes.core
 				image.x = (cityPx - image.width - 10) + (Math.cos(angle)*(distanceAuCentre/2));
 				image.y = (cityPy - image.height - 10) + (Math.sin(angle)*(distanceAuCentre/2));
 				
-				trace(city.cityUID)
 				image.data = city;
 				image.addEventListener(MouseEvent.CLICK, cityIsCLicked);
 				image.addEventListener(MouseEvent.ROLL_OVER, cityIsRolledOn);

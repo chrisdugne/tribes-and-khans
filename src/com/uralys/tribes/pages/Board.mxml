@@ -285,7 +285,7 @@
 				buildCityButton.includeInLayout = false;
 				
 				if(Session.MOVE_A_UNIT){
-					UnitMover.getInstance().recordMove(selectedUnit);
+					newMoveAdded = UnitMover.getInstance().recordMove(selectedUnit);
 				}
 				else{
 					Session.CURRENT_SELECTION_X = Session.COORDINATE_X;
@@ -387,6 +387,9 @@
 	
 			//----------------------------------------------------------------------------------------//
 
+			[Bindable]
+			private var newMoveAdded:Boolean = false;
+			
 			private function validateUnitMoves(cancel:Boolean):void{
 				
 				Session.MOVE_A_UNIT = false;
@@ -397,6 +400,7 @@
 
 				selectedUnit = null;
 				currentState = "classic";
+				newMoveAdded = false;
 				
 				BoardDrawer.getInstance().removeAllUnitMovesImages();
 			}
@@ -713,7 +717,7 @@
 		<s:VGroup top="150" right="95"
 				  excludeFrom="classic">
 			<s:Label text="{Translations.WAY_SELECTION.getItemAt(Session.LANGUAGE)}"/>
-			<s:Button label="Done" click="{validateUnitMoves(false)}" visible="{selectedUnit != null}"/>
+			<s:Button label="Done" click="{validateUnitMoves(false)}" visible="{selectedUnit != null}" enabled="{newMoveAdded}"/>
 			<s:Button label="Cancel" click="{validateUnitMoves(true)}" visible="{selectedUnit != null}"/>
 		</s:VGroup>
 		
@@ -858,7 +862,7 @@
 					  enabled="{cityForm.currentState != 'recordingUnit'}"/>
 			<mx:Spacer width="450"/>
 		</s:HGroup>
-		<renderers:CityForms 
+		<renderers:CityForm 
 				id="cityForm"
 			    city="{selectedCity}"/>
 		<mx:Spacer height="55"/>

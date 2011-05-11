@@ -55,8 +55,6 @@ package com.uralys.tribes.core
 
 			//----------------------------------//
 
-			trace("clickOnHouse : " + city.cityUID);
-			
 			var cityInPlayerList:City = null;
 			
 			for each(var city:City in Session.player.cities){

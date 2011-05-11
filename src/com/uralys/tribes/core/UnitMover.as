@@ -37,7 +37,19 @@ package com.uralys.tribes.core
 		
 		public function addTimer(moves:Array):void
 		{
+			var now:Number = new Date().getTime();
+			trace("addTimer pour nbmoves : " + moves.length);
+			// on degage les moves perimés
+			while(moves[0].timeTo != -1 && moves[0].timeTo < now){
+				trace("move :  " + moves[0].moveUID + " est perime");
+				moves.shift();
+			}
+
 			var firstMove:Move = moves[0] as Move; 
+			
+			if(firstMove.timeTo == -1)
+				return;
+			
 			trace("registering a timer for move " + firstMove.moveUID);
 			trace("case :  " + firstMove.caseUID);
 			
@@ -117,10 +129,8 @@ package com.uralys.tribes.core
 		private var moveBeginsNow:Boolean;
 		
 		public function validatePendingMoves(unit:Unit){
-			trace("validatePendingMoves");
 			var previousMove:com.uralys.tribes.entities.Move = movesPending.getItemAt(0) as com.uralys.tribes.entities.Move;
 
-			
 			movesPending.removeItemAt(0);
 			
 			for each(var newMove:Move in movesPending){
@@ -137,13 +147,6 @@ package com.uralys.tribes.core
 				newMove.timeFrom = timeFrom;
 				newMove.timeTo = -1;
 				previousMove.timeTo = timeFrom;
-				
-				trace("previousMove : " + previousMove.getX()+","+previousMove.getY());
-				trace(previousMove.timeFrom + " | " + previousMove.timeTo);
-				trace("newMove : " + newMove.getX()+","+newMove.getY());
-				trace(newMove.timeFrom + " | " + newMove.timeTo);
-				trace("*");
-
 				
 				unit.moves.addItem(newMove);
 				
@@ -180,7 +183,7 @@ package com.uralys.tribes.core
 			trace(lastMove.timeFrom + " | " + lastMove.timeTo);
 		}
 
-		public function recordMove(unit:Unit){
+		public function recordMove(unit:Unit):Boolean{
 			trace("recordMove");
 			
 			var lastMove:com.uralys.tribes.entities.Move = movesPending.getItemAt(movesPending.length-1) as com.uralys.tribes.entities.Move;
@@ -193,6 +196,7 @@ package com.uralys.tribes.core
 			
 			if(distance > 2 || lastMoveY == Session.COORDINATE_Y){
 				FlexGlobals.topLevelApplication.message("distance trop longue, choisir une case à cote du dernier deplacement");
+				return false;
 			}
 			else if(Math.abs(lastMoveX - Session.COORDINATE_X) + Math.abs(lastMoveY - Session.COORDINATE_Y) > 0){
 				
@@ -204,7 +208,10 @@ package com.uralys.tribes.core
 				
 				// refresh highlight images et rajoute les listeners sur les moves actifs
 				BoardDrawer.getInstance().addMoveImages(newMove, lastMove.getX(), lastMove.getY());
+				return true;
 			}
+			
+			return false;
 		}
 	}
 }

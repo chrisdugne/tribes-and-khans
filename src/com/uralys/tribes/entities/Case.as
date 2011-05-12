@@ -156,6 +156,10 @@ package com.uralys.tribes.entities
 				trace("unit : " + unit.unitUID);
 				trace("move.timeTo : " + move.timeTo);
 				trace("now : " + now);
+				
+				if(unit.status == Unit.DESTROYED)
+					continue;
+				
 				if(move.timeFrom <= now && (move.timeTo > now || move.timeTo == -1))
 				{
 					trace("move actif : " + move.moveUID);
@@ -164,6 +168,7 @@ package com.uralys.tribes.entities
 					foundUnitsOnThisCase = true;
 					
 					if(unitInPlayer != null){
+						trace("unit.currentCaseUID : " + _caseUID);
 						unit.currentCaseUID = _caseUID;
 						unit.ownerStatus = Unit.PLAYER;
 					}

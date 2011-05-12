@@ -150,8 +150,17 @@
 				
 				
 				for each(var unit:Unit in Session.player.units){
-					if(unit.type == 1){
-						
+					
+					var now:Number = new Date().getTime();
+					
+					if(unit.endTime != -1 && unit.endTime < now)
+					{
+						unit.status = Unit.DESTROYED;
+						continue;
+					}
+					
+					if(unit.type == 1)
+					{
 						for each(var equipment:Equipment in unit.equipments){
 							switch(equipment.item.name){
 								case "bow" :
@@ -184,6 +193,9 @@
 				
 				for each(var unit:Unit in Session.player.units){
 					
+					if(unit.status == Unit.DESTROYED)
+						continue;
+					
 					if(unit.type == 2){
 						for each(var city:City in Session.player.cities)
 						{
@@ -205,6 +217,8 @@
 							}
 						}
 					}
+					
+					trace("city.army : " + city.army);
 				}
 				
 			}
@@ -756,6 +770,7 @@
 			<s:CheckBox id="checkBoxTexts" label="{Translations.TEXTS.getItemAt(Session.LANGUAGE)}" selected="true" skinClass="spark.skins.spark.CheckBoxSkin"/>
 		</s:HGroup>
 		-->
+		<!--
 		<s:HGroup width="200" height="200" horizontalAlign="center"
 				  bottom="45"
 				  right="150">
@@ -784,6 +799,7 @@
 				</s:Rect>
 			</s:Group>
 		</s:HGroup>
+		-->
 		<s:Group width="100%">
 			<s:HGroup width="100%" horizontalAlign="center" paddingTop="50">
 				<s:Group width="{Session.MAP_WIDTH}" height="{Session.MAP_HEIGHT}"

@@ -25,7 +25,7 @@ package com.uralys.tribes.commons
 		public static var BASE_TIME_PER_MOVE_MILLIS:int = 15*1000;
 	
 		[Bindable]
-		public static var NB_TILES_ON_EDGE_BY_LOADING:int = 60;
+		public static var NB_TILES_ON_EDGE_BY_LOADING:int = 18; 
 	
 		// Main data  ==============================================================
 		

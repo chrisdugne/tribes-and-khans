@@ -80,7 +80,7 @@ package com.uralys.tribes.core
 			for each(var cityInSessionDotPlayer:City in Session.player.cities)
 			{
 				if(cityInSessionDotPlayer.cityUID == city.cityUID){
-					cityInPlayerList = city;
+					cityInPlayerList = cityInSessionDotPlayer;
 					break;
 				}
 			}

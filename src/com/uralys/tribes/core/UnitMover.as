@@ -40,11 +40,14 @@ package com.uralys.tribes.core
 			var now:Number = new Date().getTime();
 			trace("addTimer pour nbmoves : " + moves.length);
 			// on degage les moves perimés
-			while(moves[0].timeTo != -1 && moves[0].timeTo < now){
+			while(moves.length > 0  && moves[0].timeTo != -1 && moves[0].timeTo < now){
 				trace("move :  " + moves[0].moveUID + " est perime");
 				moves.shift();
 			}
 
+			if(moves.length == 0)
+				return;
+			
 			var firstMove:Move = moves[0] as Move; 
 			
 			if(firstMove.timeTo == -1)

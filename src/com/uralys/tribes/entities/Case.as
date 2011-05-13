@@ -154,13 +154,11 @@ package com.uralys.tribes.entities
 				UnitMover.getInstance().addTimer(unit.moves.toArray());
 				
 				trace("unit : " + unit.unitUID);
+				trace("unit.endTime : " + unit.endTime);
 				trace("move.timeTo : " + move.timeTo);
 				trace("now : " + now);
 				
-				if(unit.status == Unit.DESTROYED)
-					continue;
-				
-				if(move.timeFrom <= now && (move.timeTo > now || move.timeTo == -1))
+				if(unit.status != Unit.DESTROYED && move.timeFrom <= now && (move.timeTo > now || move.timeTo == -1))
 				{
 					trace("move actif : " + move.moveUID);
 					

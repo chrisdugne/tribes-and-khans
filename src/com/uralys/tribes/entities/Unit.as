@@ -27,6 +27,7 @@ package com.uralys.tribes.entities
 			_unitUID = Session.player.uralysUID+"_"+(Session.player.units.length+1)+"_"+(new Date().getTime());
 			_status = TO_BE_CREATED;
 			_beginTime = new Date().getTime();
+			_endTime = -1;
 		}
 		
 		//==========================================================================//

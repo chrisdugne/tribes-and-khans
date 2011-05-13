@@ -422,14 +422,17 @@ package com.uralys.tribes.managers {
 		private var movesBeingDeleted:Array;
 		private function deleteAllMovesToBeDeleted ():void
 		{
+			trace("deleteAllMovesToBeDeleted");
 			movesBeingDeleted = Session.movesToDelete.toArray();
 			deleteNextMove(movesBeingDeleted.shift());
 		}
 		
 		private function deleteNextMove (move:Move):void{
+			trace("deleteNextMove");
 			if(move == null)
 				return;
 			
+			trace("gameWrapper.deleteMove");
 			var gameWrapper:RemoteObject = getGameWrapper();
 			gameWrapper.deleteMove.addEventListener("result", moveDeleted);
 			gameWrapper.deleteMove(move.moveUID);
@@ -487,6 +490,19 @@ package com.uralys.tribes.managers {
 		{
 			currentUnitBeingSaved.isModified = false;
 			Session.board.cityForm.currentState = Session.board.cityForm.normalState.name;
+			
+			if(event.result){
+				var casesAltered:ArrayCollection = event.result as ArrayCollection;
+				
+				for each(var caseAltered:Case in casesAltered)
+				{
+					trace("caseAltered : " + caseAltered.caseUID);
+					try{
+						(Session.map[caseAltered.x][caseAltered.y] as Case).forceRefresh();
+					}
+					catch(e:Error){trace("not able to refresh this case");};
+				}
+			}
 		}
 
 		private function moveDeleted(event:ResultEvent):void{

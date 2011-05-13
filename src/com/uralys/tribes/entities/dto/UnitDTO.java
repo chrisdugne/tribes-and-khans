@@ -34,7 +34,6 @@ public class UnitDTO {
 	@Persistent private String gatheringUIDExpected;
 	@Persistent private String conflictUIDExpected;
 
-	@Persistent private int status;
 	@Persistent private int type;
 	@Persistent private String playerUID;
 	
@@ -105,12 +104,6 @@ public class UnitDTO {
 	}
 	public void setGold(int gold) {
 		this.gold = gold;
-	}
-	public int getStatus() {
-		return status;
-	}
-	public void setStatus(int status) {
-		this.status = status;
 	}
 	public int getType() {
 		return type;

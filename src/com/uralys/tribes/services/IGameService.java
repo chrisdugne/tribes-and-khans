@@ -17,7 +17,7 @@ public interface IGameService {
 	public void deleteMove(String moveUID);
 	
 	public void createUnit(String uralysUID, Unit unit, String cityUID);
-	public void updateUnit(Unit unit, String cityUID);
+	public List<Case> updateUnit(Unit unit, String cityUID);
 
 	
 	public List<Item> loadItems();

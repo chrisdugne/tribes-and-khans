@@ -10,12 +10,12 @@ import com.uralys.tribes.entities.Unit;
 public interface IGameManager {
 
 	public String createPlayer(String uralysUID, String email);
-	public Player getPlayer(String uralysUID, boolean cacheAvailable);
+	public Player getPlayer(String uralysUID);
 
 	public void savePlayer(Player player);
 
 	public void createUnit(String uralysUID, Unit unit, String cityUID, boolean needReplacing);
-	public void updateUnit(Unit unit, String cityUID, boolean needReplacing);
+	public List<Case> updateUnit(Unit unit, String cityUID, boolean needReplacing);
 	
 	public void deleteUnit(String uralysUID, String unitUID);
 	public void deleteMove(String moveUID) ;

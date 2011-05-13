@@ -283,7 +283,6 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 
 		unitDTO.setValue(unit.getValue());
 		unitDTO.setType(unit.getType());
-		unitDTO.setStatus(Unit.FREE);
 		
 		unitDTO.setBeginTime(unit.getBeginTime());
 		unitDTO.setEndTime(-1);
@@ -327,6 +326,8 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	}
 	
 	public void updateUnit(Unit unit, String cityUID){
+		
+		System.out.println("dao.updateUnit, unit.getEndTime() : " + unit.getEndTime());
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		UnitDTO unitDTO = pm.getObjectById(UnitDTO.class, unit.getUnitUID());
 		
@@ -461,8 +462,18 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		
 		pm.close();
 	}
+	
+	public void setTimeToForMove(String moveUID, long timeTo) {
+		
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		MoveDTO moveDTO = pm.getObjectById(MoveDTO.class, moveUID);
+		
+		moveDTO.setTimeTo(timeTo);
+		
+		pm.close();
+	}
 
-	public String saveMove(Move move) {
+	public String createMove(Move move) {
 		
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		MoveDTO moveDTO = new MoveDTO(); 

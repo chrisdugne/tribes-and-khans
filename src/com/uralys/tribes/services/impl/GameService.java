@@ -29,7 +29,7 @@ public class GameService implements IGameService {
 	
 	public Player getPlayer(String uralysUID) {
 		try{
-			return gameManager.getPlayer(uralysUID, false);
+			return gameManager.getPlayer(uralysUID);
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -56,12 +56,13 @@ public class GameService implements IGameService {
 		}
 	}
 	
-	public void updateUnit(Unit unit, String cityUID) {
+	public List<Case> updateUnit(Unit unit, String cityUID) {
 		try{
-			gameManager.updateUnit(unit, cityUID, true);
+			return gameManager.updateUnit(unit, cityUID, true);
 		}
 		catch(Exception e){
 			e.printStackTrace();
+			return null;
 		}
 	}
 

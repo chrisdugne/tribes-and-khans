@@ -5,8 +5,10 @@ package com.uralys.tribes.managers {
 	import com.uralys.tribes.commons.Session;
 	import com.uralys.tribes.core.BoardDrawer;
 	import com.uralys.tribes.core.Pager;
+	import com.uralys.tribes.core.UnitMover;
 	import com.uralys.tribes.entities.Case;
 	import com.uralys.tribes.entities.City;
+	import com.uralys.tribes.entities.DataContainer4UnitSaved;
 	import com.uralys.tribes.entities.Equipment;
 	import com.uralys.tribes.entities.Game;
 	import com.uralys.tribes.entities.Item;
@@ -212,7 +214,7 @@ package com.uralys.tribes.managers {
 			if(unit == null)
 				return;
 			
-			refreshUnitEquipment(unit);
+			refreshUnitEquipmentForServerSide(unit);
 			
 			var gameWrapper:RemoteObject = getGameWrapper();
 			gameWrapper.updateUnit.addEventListener("result", unitSaved);
@@ -221,7 +223,7 @@ package com.uralys.tribes.managers {
 		}
 
 		
-		private function refreshUnitEquipment(unit:Unit):void
+		private function refreshUnitEquipmentForServerSide(unit:Unit):void
 		{
 			for each(var equipment:Equipment in unit.equipments){
 				switch(equipment.item.name){
@@ -236,6 +238,62 @@ package com.uralys.tribes.managers {
 						break;
 				}
 			}
+		}
+
+		public function prepareUnitForClientSide(unit:Unit):void
+		{
+			var now:Number = new Date().getTime();
+			
+			trace("prepareUnitForClientSide : " + unit.unitUID);
+			trace("unit.endTime : " + unit.endTime);
+			
+			if(unit.endTime != -1 && unit.endTime < now)
+			{
+				unit.status = Unit.DESTROYED;
+				return;
+			}
+			
+			if(unit.type == 1)
+			{
+				for each(var equipment:Equipment in unit.equipments){
+					switch(equipment.item.name){
+						case "bow" :
+							unit.bows += equipment.size;
+							break;
+						case "sword" :
+							unit.swords += equipment.size;
+							break;
+						case "armor" :
+							unit.armors += equipment.size;
+							break;
+					}
+				}
+			}
+			
+			unit.isModified = false;	
+		}
+		
+		//-------------------------------------------------------------------------------//
+
+		/**
+		 * utilisee lors d'un loadcases uniquement 
+		 * le case.forceRefresh trouve toutes les unites
+		 * et appelle ici pour les enregistrer au passage
+		 * ensuite on va faire un addTimer sur chacune des unites
+		 */
+		public function registerUnitInSession(unit:Unit):void{
+			
+			var foundInSession:Boolean = false;
+			
+			for each(var unitInSession:Unit in Session.allUnits){
+				if(unit.unitUID == unitInSession.unitUID){
+					foundInSession = true;
+					break;
+				}
+			}
+			
+			if(!foundInSession)
+				Session.allUnits.addItem(unit);
 		}
 		
 		//-------------------------------------------------------------------------------//
@@ -468,17 +526,20 @@ package com.uralys.tribes.managers {
 
 			//------------------------------------------------//
 			// affectation des vraies cases
+			// on va appeler le case.refresh sur toutes les cases
+			// ce qui va rafraichir les moves des units sur chaque case
+			// et remplir Session.movesToDelete
+			// et Session.allUnits
+			
 			
 			for each(var _case:Case in Session.CASES_LOADED){
 				Session.map[_case.x][_case.y] = _case;
-				(Session.map[_case.x][_case.y] as Case).forceRefresh();
+				(Session.map[_case.x][_case.y] as Case).forceRefresh(true);
 			}
 
 			//------------------------------------------------//
 			
-			// on va appeler le case.refresh sur toutes les cases à l'interieur de refreshDisplay()
-			// ce qui va rafraichir les moves des units sur chaque case
-			// et remplir Session.movesToDelete
+			UnitMover.getInstance().refreshTimers();
 			BoardDrawer.getInstance().refreshDisplay();
 			
 			// on supprime maintenant tous les Session.movesToDelete
@@ -488,20 +549,69 @@ package com.uralys.tribes.managers {
 		private var currentUnitBeingSaved:Unit;
 		private function unitSaved(event:ResultEvent):void
 		{
+			trace("--------");
+			trace("unitSaved");
+			
 			currentUnitBeingSaved.isModified = false;
 			Session.board.cityForm.currentState = Session.board.cityForm.normalState.name;
 			
-			if(event.result){
-				var casesAltered:ArrayCollection = event.result as ArrayCollection;
+			if(event.result != null)
+			{
+
+				var casesAltered:ArrayCollection = event.result.casesAltered;
+				var unitsAltered:ArrayCollection = event.result.unitsAltered;
+
+				for each(var unitAltered:Unit in unitsAltered)
+				{
+					trace("unitAltered : " + unitAltered.unitUID);
+					prepareUnitForClientSide(unitAltered);
+					
+					var unitInPlayer:Unit = Session.player.getUnit(unitAltered.unitUID);
+					
+					if(unitInPlayer == null)
+						Session.player.units.addItem(unitAltered);
+					else{
+						Session.player.refreshUnit(unitAltered);
+					}
+						
+					
+					try{
+						UnitMover.getInstance().addTimer(unitAltered.moves.toArray());
+					}
+					catch(e:Error){trace("not able to addTimer for this unit");};
+				}
 				
 				for each(var caseAltered:Case in casesAltered)
 				{
 					trace("caseAltered : " + caseAltered.caseUID);
 					try{
-						(Session.map[caseAltered.x][caseAltered.y] as Case).forceRefresh();
+						var caseInSession:Case = (Session.map[caseAltered.x][caseAltered.y] as Case);
+						
+						if(caseInSession != null)
+							Session.map[caseAltered.x][caseAltered.y].recordedMoves = caseAltered.recordedMoves;
+						else
+							Session.map[caseAltered.x][caseAltered.y] = caseAltered;
+						
+						Session.map[caseAltered.x][caseAltered.y].forceRefresh();
 					}
 					catch(e:Error){trace("not able to refresh this case");};
 				}
+
+				refreshStatusOfAllUnitsInSession();
+				
+				// on refresh les villes au cas ou le deplacement fait partir/arriver une unite de/dans une ville
+				Session.board.refreshUnitsInCity();
+			}
+
+			trace("--------");
+		}
+
+		public function refreshStatusOfAllUnitsInSession():void
+		{
+			for each(var unit:Unit in Session.player.units)
+			{
+				if(unit.endTime != -1 && unit.endTime < new Date().getTime())
+					unit.status = Unit.DESTROYED;
 			}
 		}
 

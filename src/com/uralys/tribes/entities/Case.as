@@ -134,7 +134,7 @@ package com.uralys.tribes.entities
 			return false;
 		}
 
-		public function forceRefresh():Boolean{
+		public function forceRefresh(globalRefresh:Boolean = false):Boolean{
 			var foundUnitsOnThisCase:Boolean = false;
 			var now:Number = new Date().getTime();
 			var recordedMovesToDelete:ArrayCollection = new ArrayCollection();
@@ -151,10 +151,24 @@ package com.uralys.tribes.entities
 				
 				var unitInPlayer:Unit = Session.player.getUnit(move.unitUID);
 				var unit:Unit = unitInPlayer == null ? getUnit(move.unitUID) : unitInPlayer;
-				UnitMover.getInstance().addTimer(unit.moves.toArray());
+				
+				if(unitInPlayer != null){
+					trace("unit.currentCaseUID : " + _caseUID);
+					unit.currentCaseUID = _caseUID;
+					unit.ownerStatus = Unit.PLAYER;
+				}
+				else{
+					// plus tard, pour les ally, on va devoir checker si unit.playerUID est bien dans notre alliance.
+					unit.ownerStatus = Unit.ENNEMY;				
+				}
+				
+				if(globalRefresh){
+					GameManager.getInstance().registerUnitInSession(unit);
+				}
 				
 				trace("unit : " + unit.unitUID);
-				trace("unit.endTime : " + unit.endTime);
+				trace("unit.status : " + unit.status);
+				trace("move.timeFrom : " + move.timeFrom);
 				trace("move.timeTo : " + move.timeTo);
 				trace("now : " + now);
 				
@@ -164,17 +178,6 @@ package com.uralys.tribes.entities
 					
 					// c'est le move actif, on recupere les unites qui sont sur la case
 					foundUnitsOnThisCase = true;
-					
-					if(unitInPlayer != null){
-						trace("unit.currentCaseUID : " + _caseUID);
-						unit.currentCaseUID = _caseUID;
-						unit.ownerStatus = Unit.PLAYER;
-					}
-					else{
-						// plus tard, pour les ally, on va devoir checker si unit.playerUID est bien dans notre alliance.
-						unit.ownerStatus = Unit.ENNEMY;				
-					}
-					
 					
 					switch(unit.type){
 						case 1:
@@ -191,17 +194,19 @@ package com.uralys.tribes.entities
 					// move perimé
 					trace("move périmé : " + move.moveUID);
 					
-					// on refresh unit dans Session.player.units : on enleve ce move terminé
-					var indexToRemove:int = -1;
-					for each (var moveInUnit:Move in unit.moves)
-					{
-						if(moveInUnit.moveUID == move.moveUID){
-							indexToRemove = unit.moves.getItemIndex(moveInUnit);
-							break;
+					if(unitInPlayer == null){
+						// on refresh unit dans Session.player.units : on enleve ce move terminé
+						var indexToRemove:int = -1;
+						for each (var moveInUnit:Move in unit.moves)
+						{
+							if(moveInUnit.moveUID == move.moveUID){
+								indexToRemove = unit.moves.getItemIndex(moveInUnit);
+								break;
+							}
 						}
+						
+						unit.moves.removeItemAt(indexToRemove);
 					}
-					
-					unit.moves.removeItemAt(indexToRemove);
 					
 					// on stock le move a supprimer de recordedMoves pour le supprimer apres cette boucle.
 					recordedMovesToDelete.addItem(move);
@@ -214,7 +219,7 @@ package com.uralys.tribes.entities
 				}
 			}
 			
-			// on refresh unit dans Session.player.units : on enleve ce move terminé
+			// on degage les move perimes des recordedMoves de la case
 			for each (var moveToRemoveFromRecordedMoves:Move in recordedMovesToDelete)
 				recordedMoves.removeItemAt(recordedMoves.getItemIndex(moveToRemoveFromRecordedMoves));
 			

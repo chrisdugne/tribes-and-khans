@@ -150,33 +150,7 @@
 				
 				
 				for each(var unit:Unit in Session.player.units){
-					
-					var now:Number = new Date().getTime();
-					
-					if(unit.endTime != -1 && unit.endTime < now)
-					{
-						unit.status = Unit.DESTROYED;
-						continue;
-					}
-					
-					if(unit.type == 1)
-					{
-						for each(var equipment:Equipment in unit.equipments){
-							switch(equipment.item.name){
-								case "bow" :
-									unit.bows += equipment.size;
-									break;
-								case "sword" :
-									unit.swords += equipment.size;
-									break;
-								case "armor" :
-									unit.armors += equipment.size;
-									break;
-							}
-						}
-					}
-					
-					unit.isModified = false;
+					GameManager.getInstance().prepareUnitForClientSide(unit);
 				}
 			}
 			
@@ -184,7 +158,6 @@
 			
 			// appelee apres le BoardDrawer.refreshDisplay, qui raffraichit toutes les currentCaseUID des units de toutes les cases.
 			public function refreshUnitsInCity():void{
-				
 				for each(var city:City in Session.player.cities){
 					city.merchant = null;
 					city.army = null;
@@ -192,10 +165,10 @@
 				}
 				
 				for each(var unit:Unit in Session.player.units){
-					
+
 					if(unit.status == Unit.DESTROYED)
 						continue;
-					
+
 					if(unit.type == 2){
 						for each(var city:City in Session.player.cities)
 						{
@@ -218,7 +191,6 @@
 						}
 					}
 					
-					trace("city.army : " + city.army);
 				}
 				
 			}

@@ -13,7 +13,7 @@ package com.uralys.tribes.entities
 		protected var _gatheringUID:String;
 		protected var _allyUID:String;
 		protected var _newArmyUID:String;
-		protected var _units:ArrayCollection;
+		protected var _unitUIDs:ArrayCollection;
 		
 		//--------------------------------------------------------------//
 		
@@ -42,12 +42,12 @@ package com.uralys.tribes.entities
 			_newArmyUID = o;
 		}
 		
-		public function get units():ArrayCollection {
-			return _units;
+		public function get unitUIDs():ArrayCollection {
+			return _unitUIDs;
 		}
 		
-		public function set units(o:ArrayCollection):void {
-			_units = o;
+		public function set unitUIDs(o:ArrayCollection):void {
+			_unitUIDs = o;
 		}
 		
 

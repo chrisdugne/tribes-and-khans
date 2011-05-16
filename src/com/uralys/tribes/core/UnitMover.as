@@ -34,14 +34,29 @@ package com.uralys.tribes.core
 		private static var timers:Map = new Map();
 		
 		// ============================================================================================
+	
+		public function refreshTimers():void
+		{
+			for each(var timer:Timer in timers.keySet()){
+				timer.stop();
+			}
+			
+			timers.removeAll();
+			
+			for each(var unit:Unit in Session.allUnits){
+				addTimer(unit.moves.toArray());
+			}
+		}
+			
+		// ============================================================================================
+
 		
 		public function addTimer(moves:Array):void
 		{
 			var now:Number = new Date().getTime();
-			trace("addTimer pour nbmoves : " + moves.length);
+			
 			// on degage les moves perimés
 			while(moves.length > 0  && moves[0].timeTo != -1 && moves[0].timeTo < now){
-				trace("move :  " + moves[0].moveUID + " est perime");
 				moves.shift();
 			}
 
@@ -53,19 +68,12 @@ package com.uralys.tribes.core
 			if(firstMove.timeTo == -1)
 				return;
 			
-			trace("registering a timer for move " + firstMove.moveUID);
-			trace("case :  " + firstMove.caseUID);
-			
-			for each (var moveToRegister:Move in moves){
-				trace("move to register : " + moveToRegister.moveUID);
-			}
-			
 			for each (var movesListened:Array in timers.values())
 			{
 				var moveListened:Move = movesListened[0] as Move;
 				
 				if(firstMove.moveUID == moveListened.moveUID){
-					trace(firstMove.moveUID + " est deja ecouté");
+					trace(firstMove.moveUID + " est deja ecouté, refreshing registered moves");
 					timers.refresh(movesListened, moves);
 					return;
 				}
@@ -83,17 +91,12 @@ package com.uralys.tribes.core
 		// ============================================================================================
 		
 		private function moveIsDone(e:TimerEvent):void{
-			trace("-----");
-			trace("un move se produit !")
+			
+			trace("--------");
+			trace("moveIsDone");
 			
 			var moves:Array = timers.get(e.currentTarget) as Array;
 			var moveToPerform:Move = moves.shift() as Move;
-			
-			trace(moveToPerform.moveUID);
-			
-			for each (var moveToRegister:Move in moves){
-				trace("moves listened : " + moveToRegister.moveUID);
-			}
 			
 			timers.remove(e.currentTarget);
 			
@@ -101,29 +104,33 @@ package com.uralys.tribes.core
 			var caseToRefresh:Case = Session.map[moveToPerform.getX()][moveToPerform.getY()] as Case;		
 			caseToRefresh.forceRefresh();
 			
+			trace("efface le pion ancien");
+			
 			// efface le 'pion' de la case
 			BoardDrawer.getInstance().refreshUnits(caseToRefresh);
 			
 			// on recupere le suivant
 			var newCurrentMove:Move = moves[0] as Move;
-			trace("newCurrentMove to listen : " + newCurrentMove.getX()+","+newCurrentMove.getY());
 			
 			// on ecoute le nouveau move si son timeTo n'est pas illimité
 			if(newCurrentMove.timeTo != -1)
 				addTimer(moves);
 			
+			
 			// refresh de la nouvelle case active : ajout de l'unité sur la case
 			var newCaseToRefresh:Case = Session.map[newCurrentMove.getX()][newCurrentMove.getY()] as Case;
 			newCaseToRefresh.forceRefresh();
 
+			trace("affiche le pion nouveau");
+
 			// affiche le 'pion' de la case
 			BoardDrawer.getInstance().refreshUnits(newCaseToRefresh);
 			
+			// refresh du status de toutes les unites
+			GameManager.getInstance().refreshStatusOfAllUnitsInSession();
+			
 			// on refresh les villes au cas ou le deplacement fait partir/arriver une unite de/dans une ville
 			Session.board.refreshUnitsInCity();
-			
-			trace("move resolu");
-			trace("-----");
 		}
 
 		// ============================================================================================
@@ -166,34 +173,24 @@ package com.uralys.tribes.core
 				previousMove = newMove;
 				moveBeginsNow = false;
 			}
-
-			if(unit.moves.length > 1)
-				UnitMover.getInstance().addTimer(unit.moves.toArray());
+			
 		}
 
-		public function resetPendingMoves(unit:Unit){
-			trace("resetPendingMoves");
-			trace("moves already recorded : " + unit.moves.length);
-			
+		public function resetPendingMoves(unit:Unit)
+		{
 			movesPending = new ArrayCollection();
 			moveBeginsNow = unit.moves.length == 1;
 			
 			// manipulation d'une unite : initialisation du deplacement
 			var lastMove:com.uralys.tribes.entities.Move = unit.moves.getItemAt(unit.moves.length-1) as com.uralys.tribes.entities.Move;
 			movesPending.addItem(lastMove);
-			
-			trace("lastMove : " + lastMove.getX()+","+lastMove.getY());
-			trace(lastMove.timeFrom + " | " + lastMove.timeTo);
 		}
 
-		public function recordMove(unit:Unit):Boolean{
-			trace("recordMove");
-			
+		public function recordMove(unit:Unit):Boolean
+		{
 			var lastMove:com.uralys.tribes.entities.Move = movesPending.getItemAt(movesPending.length-1) as com.uralys.tribes.entities.Move;
 			var lastMoveX:int = Utils.getXFromCaseUID(lastMove.caseUID);
 			var lastMoveY:int = Utils.getYFromCaseUID(lastMove.caseUID);
-			trace("lastMoveX : " + lastMoveX);
-			trace("lastMoveY : " + lastMoveY);
 			
 			var distance:int = Math.abs(lastMoveX - Session.COORDINATE_X) + Math.abs(lastMoveY - Session.COORDINATE_Y);
 			

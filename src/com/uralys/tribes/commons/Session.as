@@ -14,7 +14,7 @@ package com.uralys.tribes.commons
 
 		//=====================================================//
 		
-		[Bindable] public static var VERSION:String = "1.1.16";
+		[Bindable] public static var VERSION:String = "1.1.17";
 		[Bindable] public static var LOGGED_IN:Boolean = false; 
 		[Bindable] public static var CONNECTED_TO_FACEBOOK:Boolean = false;
 		
@@ -77,6 +77,10 @@ package com.uralys.tribes.commons
 		// cette liste est remplie par les case.refresh.
 		// une fois remplie, on peut appeler le GameManager.deleteMoves
 		public static var movesToDelete:ArrayCollection = new ArrayCollection();
+
+		
+		// contient toutes les unitUID
+		public static var allUnits:ArrayCollection = new ArrayCollection();
 		
 		//=====================================================//
 		// GameDetailsRenderer
@@ -105,6 +109,7 @@ package com.uralys.tribes.commons
 		
 		// les images des entities sont dessinees sur la map
 		[Bindable] public static var DRAW_IMAGES:Boolean = true;
+		
 		
 	}
 }

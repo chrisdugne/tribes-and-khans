@@ -122,15 +122,34 @@ package com.uralys.tribes.entities
 		{
 			_hasAlreadyPlayedHisTurn = value;
 		}
-
+		
+		//-------------------------------------------------------//
+		
 		public function getUnit(unitUID:String):Unit{
 			
 			for each(var unit:Unit in units){
-				if(unit.unitUID == unitUID || unit.unitUID.substr(4) == unitUID)
+				if(unit.unitUID == unitUID)
 					return unit;
 			}
 			
 			return null;
+		}	
+
+		public function refreshUnit(unitRefreshed:Unit):void{
+			
+			var indexFound:int = -1;
+			for each(var unit:Unit in units){
+				if(unit.unitUID == unitRefreshed.unitUID){
+					indexFound = units.getItemIndex(unit);
+					break;
+				}
+			}
+			
+			if(indexFound > 0){
+				units.removeItemAt(indexFound);
+			}
+			
+			units.addItem(unitRefreshed);
 		}	
 		
 		//-------------------------------------------------------//

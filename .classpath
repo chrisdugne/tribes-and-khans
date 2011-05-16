@@ -16,5 +16,6 @@
 	<classpathentry kind="lib" path="war/WEB-INF/lib/org.springframework.transaction-3.0.0.M2.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/org.springframework.web-3.0.0.M2.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/org.springframework.web.servlet-3.0.0.M2.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/profilerImpl.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>

@@ -467,13 +467,13 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		MoveDTO moveDTO = pm.getObjectById(MoveDTO.class, moveUID);
-		
+
 		moveDTO.setTimeTo(timeTo);
 		
 		pm.close();
 	}
 
-	public String createMove(Move move) {
+	public String createMove(Move move, boolean requireLinks) {
 		
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		MoveDTO moveDTO = new MoveDTO(); 
@@ -499,10 +499,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			gatheringDTO.setKey(KeyFactory.keyToString(key2));
 			gatheringDTO.setGatheringUID(gatheringUID);
 			gatheringDTO.setAllyUID(move.getGathering().getAllyUID());
-			
-			for(Unit unit : move.getGathering().getUnits()){
-				gatheringDTO.getUnitUIDs().add(unit.getUnitUID());			
-			}
+			gatheringDTO.setUnitUIDs(move.getGathering().getUnitUIDs());
 			
 			pm.makePersistent(gatheringDTO);
 			move.getGathering().setGatheringUID(gatheringUID);
@@ -512,12 +509,13 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		
 		pm.makePersistent(moveDTO);
 		
-		
-		CaseDTO _case = pm.getObjectById(CaseDTO.class, move.getCaseUID());
-		_case.getMoveUIDs().add(moveUID);
-		
-		UnitDTO _unit = pm.getObjectById(UnitDTO.class, move.getUnitUID());
-		_unit.getMoveUIDs().add(moveUID);
+		if(requireLinks){
+			CaseDTO _case = pm.getObjectById(CaseDTO.class, move.getCaseUID());
+			_case.getMoveUIDs().add(moveUID);
+			
+			UnitDTO _unit = pm.getObjectById(UnitDTO.class, move.getUnitUID());
+			_unit.getMoveUIDs().add(moveUID);
+		}
 		
 		pm.close();
 		

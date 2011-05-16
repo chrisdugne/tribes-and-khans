@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.uralys.tribes.domain.IGameManager;
 import com.uralys.tribes.entities.Case;
+import com.uralys.tribes.entities.DataContainer4UnitSaved;
 import com.uralys.tribes.entities.Item;
 import com.uralys.tribes.entities.Player;
 import com.uralys.tribes.entities.Unit;
@@ -47,16 +48,17 @@ public class GameService implements IGameService {
 		
 	}
 
-	public void createUnit(String uralysUID, Unit unit, String cityUID) {
+	public DataContainer4UnitSaved createUnit(String uralysUID, Unit unit, String cityUID) {
 		try{
-			gameManager.createUnit(uralysUID, unit, cityUID, true);
+			return gameManager.createUnit(uralysUID, unit, cityUID, true);
 		}
 		catch(Exception e){
 			e.printStackTrace();
+			return null;
 		}
 	}
 	
-	public List<Case> updateUnit(Unit unit, String cityUID) {
+	public DataContainer4UnitSaved updateUnit(Unit unit, String cityUID) {
 		try{
 			return gameManager.updateUnit(unit, cityUID, true);
 		}

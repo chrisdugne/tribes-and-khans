@@ -19,7 +19,7 @@ public class Gathering {
 	private String gatheringUID = "notcreatedyet";
 	private String allyUID;
 	private String newArmyUID;
-	private List<Unit> units = new ArrayList<Unit>();
+	private List<String> unitUIDs = new ArrayList<String>();
 
 	// -----------------------------------------------------------------------------------//
 
@@ -39,12 +39,12 @@ public class Gathering {
 		this.newArmyUID = newArmyUID;
 	}
 
-	public List<Unit> getUnits() {
-		return units;
+	public List<String> getUnitUIDs() {
+		return unitUIDs;
 	}
 
-	public void setUnits(List<Unit> units) {
-		this.units = units;
+	public void setUnitUIDs(List<String> unitUIDs) {
+		this.unitUIDs = unitUIDs;
 	}
 
 	public String getAllyUID() {
@@ -59,14 +59,14 @@ public class Gathering {
 	
 	public void remove(String unitUID) {
 		int indexToRemove = -1;
-		for(Unit unitInGathering : units){
+		for(String unitUIDInGathering : unitUIDs){
 			indexToRemove ++;
-			if(unitInGathering.getUnitUID().equals(unitUID)){
+			if(unitUIDInGathering.equals(unitUID)){
 				break;
 			}
 		}
 		
-		units.remove(indexToRemove);
+		unitUIDs.remove(indexToRemove);
 	}
 
 }

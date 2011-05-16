@@ -31,7 +31,7 @@ public class EntitiesConverter {
 
 	// -----------------------------------------------------------------------------------//
 
-	public static Move convertMoveDTO(MoveDTO moveDTO) {
+	public static Move convertMoveDTO(MoveDTO moveDTO, boolean requireLinkedGathering) {
 
 		if (moveDTO == null)
 			return null;
@@ -45,14 +45,15 @@ public class EntitiesConverter {
 		move.setUnitUID(moveDTO.getUnitUID());
 		move.setValue(moveDTO.getValue());
 
-		move.setGathering(convertGatheringDTO(moveDTO.getGathering()));
+		if(requireLinkedGathering)
+			move.setGathering(convertGatheringDTO(moveDTO.getGathering()));
 
 		return move;
 	}
 
 	// -----------------------------------------------------------------------------------//
 
-	public static Player convertPlayerDTO(PlayerDTO playerDTO) {
+	public static Player convertPlayerDTO(PlayerDTO playerDTO, boolean requireFullData) {
 
 		if (playerDTO == null)
 			return null;
@@ -64,14 +65,17 @@ public class EntitiesConverter {
 		player.setName(playerDTO.getName());
 		player.setNbLands(playerDTO.getNbLands());
 		player.setLastStep(playerDTO.getLastStep());
-
+		
+		if(!requireFullData)
+			return player;
+			
 		// -----------------------------------------------------------------------------------//
 
 		List<City> cities = new ArrayList<City>();
 
 		for (CityDTO cityDTO : playerDTO.getCities()) {
 			System.out.println("city : " + cityDTO.getCityUID());
-			cities.add(convertCityDTO(cityDTO));
+			cities.add(convertCityDTO(cityDTO, true));
 		}
 
 		player.setCities(cities);
@@ -91,7 +95,7 @@ public class EntitiesConverter {
 		List<Unit> units = new ArrayList<Unit>();
 
 		for (UnitDTO unitDTO : playerDTO.getUnits()) {
-			units.add(convertUnitDTO(unitDTO, true));
+			units.add(convertUnitDTO(unitDTO, true, false));
 		}
 
 		player.setUnits(units);
@@ -105,7 +109,7 @@ public class EntitiesConverter {
 
 	// -----------------------------------------------------------------------------------//
 
-	public static City convertCityDTO(CityDTO cityDTO) {
+	public static City convertCityDTO(CityDTO cityDTO, boolean requireFullData) {
 
 		if (cityDTO == null)
 			return null;
@@ -125,34 +129,39 @@ public class EntitiesConverter {
 		city.setY(cityDTO.getY());
 		city.setGold(cityDTO.getGold());
 
-		// ---------------------------------//
-
-		List<Equipment> stock = new ArrayList<Equipment>();
-
-		for (EquipmentDTO equipmentDTO : cityDTO.getEquipmentStock()) {
-			stock.add(convertEquipmentDTO(equipmentDTO));
+		if(requireFullData){
+			// ---------------------------------//
+			
+			List<Equipment> stock = new ArrayList<Equipment>();
+			
+			for (EquipmentDTO equipmentDTO : cityDTO.getEquipmentStock()) {
+				stock.add(convertEquipmentDTO(equipmentDTO));
+			}
+			
+			city.setEquipmentStock(stock);
+			
+			// ---------------------------------//
+			
+			List<Smith> smiths = new ArrayList<Smith>();
+			
+			for (SmithDTO smithDTO : cityDTO.getSmiths()) {
+				smiths.add(convertSmithDTO(smithDTO));
+			}
+			
+			city.setSmiths(smiths);
+			
+			// ---------------------------------//			
 		}
-
-		city.setEquipmentStock(stock);
-
-		// ---------------------------------//
-
-		List<Smith> smiths = new ArrayList<Smith>();
-
-		for (SmithDTO smithDTO : cityDTO.getSmiths()) {
-			smiths.add(convertSmithDTO(smithDTO));
-		}
-
-		city.setSmiths(smiths);
-
-		// ---------------------------------//
 
 		return city;
 	}
 
 	// -----------------------------------------------------------------------------------//
 
-	public static Unit convertUnitDTO(UnitDTO unitDTO, boolean requireMoves) {
+	/*
+	 * requireLinkedGatherings est forcement false si requireMoves est false
+	 */
+	public static Unit convertUnitDTO(UnitDTO unitDTO, boolean requireMoves, boolean requireLinkedGatherings) {
 
 		if (unitDTO == null)
 			return null;
@@ -194,7 +203,7 @@ public class EntitiesConverter {
 			List<Move> moves = new ArrayList<Move>();
 
 			for (MoveDTO moveDTO : unitDTO.getMoves()) {
-				Move move = convertMoveDTO(moveDTO);
+				Move move = convertMoveDTO(moveDTO, requireLinkedGatherings);
 				moves.add(move);
 			}
 
@@ -220,8 +229,8 @@ public class EntitiesConverter {
 		_case.setY(caseDTO.getY());
 		_case.setType(caseDTO.getType());
 
-		_case.setCity(convertCityDTO(caseDTO.getCity()));
-		_case.setLandOwner(convertPlayerDTO(caseDTO.getLandOwner()));
+		_case.setCity(convertCityDTO(caseDTO.getCity(), false));
+		_case.setLandOwner(convertPlayerDTO(caseDTO.getLandOwner(), false));
 
 		// -----------------------------------------------------------------------------------//
 
@@ -229,7 +238,7 @@ public class EntitiesConverter {
 		List<String> unitUIDs = new ArrayList<String>();
 
 		for (MoveDTO moveDTO : caseDTO.getMoves()) {
-			Move move = convertMoveDTO(moveDTO);
+			Move move = convertMoveDTO(moveDTO, true);
 			moves.add(move);
 			unitUIDs.add(move.getUnitUID());
 		}
@@ -242,7 +251,7 @@ public class EntitiesConverter {
 
 		for (UnitDTO unitDTO : UniversalDAO.getInstance().getListDTO(unitUIDs,
 				UnitDTO.class)) {
-			units.add(convertUnitDTO(unitDTO, true));
+			units.add(convertUnitDTO(unitDTO, false, false));
 		}
 
 		_case.setUnits(units);
@@ -346,16 +355,7 @@ public class EntitiesConverter {
 		gathering.setNewArmyUID(gatheringDTO.getNewArmyUID());
 		gathering.setAllyUID(gatheringDTO.getAllyUID());
 		gathering.setGatheringUID(gatheringDTO.getGatheringUID());
-
-		// -----------------------------------------------------------------------------------//
-
-		List<Unit> units = new ArrayList<Unit>();
-
-		for (UnitDTO unitDTO : gatheringDTO.getUnits()) {
-			units.add(convertUnitDTO(unitDTO, false));
-		}
-
-		gathering.setUnits(units);
+		gathering.setUnitUIDs(gatheringDTO.getUnitUIDs());
 
 		return gathering;
 	}

@@ -42,7 +42,7 @@ public interface IGameDAO {
 	
 	public void createCity(City city, String playerUID);
 	
-	public String createMove(Move move);
+	public String createMove(Move move, boolean requireLinks);
 	public void setTimeToForMove(String moveUID, long timeTo);
 	public void unvalidateMove(Move move);
 	public void deleteMove(String moveUID);

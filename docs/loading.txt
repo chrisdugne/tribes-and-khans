@@ -1,0 +1,27 @@
+Notes sur le chargement des donnees.
+1 - login -> geturalysprofile
+2 - getplayer -> set Session.player -> goToPage(Board)
+3 - Board.set params()
+	- refresh cities (smiths, stocks...)
+	- prepareUnits 
+		equipments -> bows, swords, armors..
+		status (FREE, DESTROYED...)
+	- deleteUnits DESTROYED
+4 - Board.init()
+	- timer pour le map-auto-move
+	- initBoard()
+		- test gameOver
+		- loadItems
+			- itemsLoaded : loginForceSteps (+ saveStep)
+			- BoardDrawer.refreshMap : loadCases
+			- casesLoaded : 
+				- loop sur cases : forceRefresh
+					- set unit.currentCaseUID
+					- GameManager.registerUnitInSession : stockage dans Session.allUnits
+					- stockage des moves perimes dans Session.movesToDelete
+				- UnitMover.refreshTimers (addTimer sur chaque unit de Session.allUnits)
+				- BoardDrawer.refreshDisplay
+					- draw des cases
+				- Session.refreshUnitsInCity
+				 -deleteAllMovesToBeDeleted : delete des Session.movesToDelete
+	    - createConflicts

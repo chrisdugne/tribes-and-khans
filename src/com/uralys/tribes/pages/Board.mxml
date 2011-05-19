@@ -96,8 +96,6 @@
 				if(unit.status == Unit.TO_BE_CREATED)
 					return;
 
-				trace(unit.ownerStatus);
-				
 				if(unit.ownerStatus != Unit.PLAYER)
 					return;
 				
@@ -116,6 +114,7 @@
 				Session.MOVE_A_UNIT = true;
 				currentState = "moveUnit";
 				
+				UnitMover.getInstance().refreshMoves(selectedUnit);
 				UnitMover.getInstance().resetPendingMoves(selectedUnit);
 				BoardDrawer.getInstance().removeAllUnitMovesImages();
 				
@@ -178,6 +177,7 @@
 						for each(var city:City in Session.player.cities)
 						{
 							if(Utils.getXFromCaseUID(unit.currentCaseUID) == city.x && Utils.getYFromCaseUID(unit.currentCaseUID) == city.y){
+								trace("found an army in city : " + unit.ownerStatus);
 								city.army = unit;
 								city.unitsToFeed += unit.size;
 								break;

@@ -176,6 +176,24 @@ package com.uralys.tribes.core
 			
 		}
 
+		public function refreshMoves(unit:Unit){
+			
+			var nbIndexesToRemove:int = 0;
+			var now:Number = new Date().getTime();
+			
+			for each(var move:Move in unit.moves){
+				
+				if(now > move.timeTo && move.timeTo != -1)
+					nbIndexesToRemove++;
+				else
+					break;
+			}
+			
+			for(var i:int = 0; i < nbIndexesToRemove; i++)
+				unit.moves.removeItemAt(0);
+			
+		}
+
 		public function resetPendingMoves(unit:Unit)
 		{
 			movesPending = new ArrayCollection();

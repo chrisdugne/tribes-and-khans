@@ -271,6 +271,8 @@ package com.uralys.tribes.managers {
 				}
 			}
 			
+			unit.ownerStatus = Unit.PLAYER;
+			unit.currentCaseUID = (unit.moves.getItemAt(0) as Move).caseUID;
 			unit.isModified = false;	
 			return true;
 		}

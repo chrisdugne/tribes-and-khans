@@ -153,8 +153,6 @@ package com.uralys.tribes.entities
 				var unit:Unit = unitInPlayer == null ? getUnit(move.unitUID) : unitInPlayer;
 				
 				if(unitInPlayer != null){
-					trace("unit.currentCaseUID : " + _caseUID);
-					unit.currentCaseUID = _caseUID;
 					unit.ownerStatus = Unit.PLAYER;
 				}
 				else{

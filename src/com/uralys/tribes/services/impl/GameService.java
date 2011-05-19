@@ -13,94 +13,95 @@ import com.uralys.tribes.services.IGameService;
 
 public class GameService implements IGameService {
 
-	//=========================================================================//
-	
+	// =========================================================================//
+
 	private IGameManager gameManager;
 
-	public GameService (IGameManager gameManager){
+	public GameService(IGameManager gameManager) {
 		this.gameManager = gameManager;
 	}
 
-	
-	//=========================================================================//
+	// =========================================================================//
 
 	public String createPlayer(String uralysUID, String email) {
 		return gameManager.createPlayer(uralysUID, email);
 	}
-	
+
 	public Player getPlayer(String uralysUID) {
-		try{
+		try {
 			return gameManager.getPlayer(uralysUID);
-		}
-		catch(Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
-	}
-	
-	public void savePlayer(Player player) {
-		try{
-			gameManager.savePlayer(player);
-		}
-		catch(Exception e){
-			e.printStackTrace();
-		}
-		
 	}
 
-	public DataContainer4UnitSaved createUnit(String uralysUID, Unit unit, String cityUID) {
-		try{
-			return gameManager.createUnit(uralysUID, unit, cityUID, true);
+	public void savePlayer(Player player) {
+		try {
+			gameManager.savePlayer(player);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		catch(Exception e){
+
+	}
+
+	public DataContainer4UnitSaved createUnit(String uralysUID, Unit unit,
+			String cityUID) {
+		try {
+			return gameManager.createUnit(uralysUID, unit, cityUID, true);
+		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
-	
+
 	public DataContainer4UnitSaved updateUnit(Unit unit, String cityUID) {
-		try{
+		try {
 			return gameManager.updateUnit(unit, cityUID, true);
-		}
-		catch(Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
 
 	public void deleteUnit(String uralysUID, String unitUID) {
-		try{
+		try {
 			gameManager.deleteUnit(uralysUID, unitUID);
-		}
-		catch(Exception e){
-			e.printStackTrace();
-		}
-	}
-	
-	public void deleteMove(String moveUID) {
-		try{
-			gameManager.deleteMove(moveUID);
-		}
-		catch(Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	//=========================================================================//
-	
+	public void deleteUnits(String uralysUID, List<String> unitUIDs) {
+		try {
+			gameManager.deleteUnits(uralysUID, unitUIDs);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void deleteMove(String moveUID) {
+		try {
+			gameManager.deleteMove(moveUID);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	// =========================================================================//
+
 	public List<Item> loadItems() {
 		return gameManager.loadItems();
 	}
-	
-	
+
 	public List<Case> loadCases(List<String> caseUIDs) {
-		try{
+		try {
 			return gameManager.loadCases(caseUIDs);
-		}
-		catch(Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 			return new ArrayList<Case>();
 		}
 	}
-	
-	//-----------------------------------------------------------------------------------//}
+
+	// -----------------------------------------------------------------------------------//
+}

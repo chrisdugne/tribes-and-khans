@@ -1,7 +1,6 @@
 package com.uralys.tribes.domain.impl;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -616,15 +615,6 @@ public class GameManager implements IGameManager {
 								foundAGathering = true;
 
 								if(existingGathering.getUnitUIDs().size() == 2){
-									if(debug)Utils.print("  il est deja dans un gathering de 2 units");
-									// ici il faut refaire la newarmy1 et faire une newarmy2 avec le premier arrive de ces 2 la 
-									// createnewary : A1+A3
-									
-									//recursion sur previousNewArmy.getGatheringUIDExpected() pour trouver toutes les unitToReplace
-									// unitRecordedUID est celle qui reste (A1)
-									// on doit replace la 2e unit du gathering (A2)
-									unitsToReplace.addAll(getUnitToReplaceFromGathering(existingGathering, unitRecordedUID, datacontainer));
-									
 									/*
 									 * au depart on a :
 									 * A1
@@ -632,17 +622,14 @@ public class GameManager implements IGameManager {
 									 * n2 = n1+A3 (g2)
 									 * 
 									 * A4 arrive avant A2
-									 * on croise A1 : gatheringE : g1
-									 *  
-									 *  => on set A2.gatheringExpected = null
-									 *   + on doit replacer A2
+									 * on croise A1 : gatheringE : g1 (existingGathering)
 									 *  
 									 *  recursion sur gi.ni si gi.ni a un gatheringExpected
 									 *  => g1.n1 a un gatheringExpected : g2
 									 *  	=> on set A3.gatheringExpected = null
+									 *  	 + on set A3.endtime a 1 (pour le rendre perimé ce qui correspond à delete)
 									 *  	 + on doit replacer A3
 									 *  
-									 *  => on supprime ni+gi
 									 *  => on cree n3 = A1+A4 et g3
 									 *  
 									 *  
@@ -657,36 +644,42 @@ public class GameManager implements IGameManager {
 									 *  n5 = n4 + A3 (g5)
 									 *  
 									 */
+									if(debug)Utils.print("  il est deja dans un gathering de 2 units");
+									
+									// recursion sur previousNewArmy.getGatheringUIDExpected() pour trouver toutes les unitToReplace
+									// unitRecordedUID est celle qui reste (A1)
+									// on doit replace la 2e unit du gathering (A2)
+									// et ainsi de suite pour chacun des newArmy.gatheringExpected 
+									recuringOnNextGatheringImpacted(existingGathering, unitRecordedUID, datacontainer, unitsToReplace);
+									
 								}
-								else
-								{
-									if(debug)Utils.print(" - addUnitInGathering  " + unitRecordedUID);
-									arrivalOnThisCaseMove.setGathering(existingGathering);
-									gameDao.addUnitInGathering(existingGathering.getGatheringUID(), unitArriving.getUnitUID());
-									
-									if(debug)Utils.print(" - attribution des endTime sur les units, et du timeTo sur le recordedMove");
-									unitArriving.setEndTime(arrivalOnThisCaseMove.getTimeFrom());
-									unitRecorded.setEndTime(arrivalOnThisCaseMove.getTimeFrom());
-									gameDao.setTimeToForMove(recordedMove.getMoveUID(), arrivalOnThisCaseMove.getTimeFrom());
+								
+								if(debug)Utils.print(" - addUnitInGathering  " + unitRecordedUID);
+								arrivalOnThisCaseMove.setGathering(existingGathering);
+								gameDao.addUnitInGathering(existingGathering.getGatheringUID(), unitArriving.getUnitUID());
+								
+								if(debug)Utils.print(" - attribution des endTime sur les units, et du timeTo sur le recordedMove");
+								unitArriving.setEndTime(arrivalOnThisCaseMove.getTimeFrom());
+								unitRecorded.setEndTime(arrivalOnThisCaseMove.getTimeFrom());
+								gameDao.setTimeToForMove(recordedMove.getMoveUID(), arrivalOnThisCaseMove.getTimeFrom());
 
-									if(debug)Utils.print(" - creation de la nouvelle army");
-									Unit newUnit = createNewArmy(unitArriving, unitRecorded, arrivalOnThisCaseMove);
-									
-									// les liens sur unit.move viennent detre fait par le createNewArmy.createUnit.placeUnit.createMove
-									requireLinks = false;
-									
-									unitArriving.setGatheringUIDExpected(existingGathering.getGatheringUID());
-									unitRecorded.setGatheringUIDExpected(existingGathering.getGatheringUID());
-									
-									if(debug)Utils.print(" - annulation des moves prevus de unitRecorded");
-									unitsToReplace.addAll(cancelRecordedMovesAndReturnAllUnitsToReplace(unitRecorded, arrivalOnThisCaseMove.getTimeFrom(), datacontainer));
-									
-									updateUnit(unitArriving, null, false);
-									updateUnit(unitRecorded, null, false);
+								if(debug)Utils.print(" - creation de la nouvelle army");
+								Unit newUnit = createNewArmy(unitArriving, unitRecorded, arrivalOnThisCaseMove);
+								
+								// les liens sur unit.move viennent detre fait par le createNewArmy.createUnit.placeUnit.createMove
+								requireLinks = false;
+								
+								unitArriving.setGatheringUIDExpected(existingGathering.getGatheringUID());
+								unitRecorded.setGatheringUIDExpected(existingGathering.getGatheringUID());
+								
+								if(debug)Utils.print(" - annulation des moves prevus de unitRecorded");
+								unitsToReplace.addAll(cancelRecordedMovesAndReturnAllUnitsToReplace(unitRecorded, arrivalOnThisCaseMove.getTimeFrom(), datacontainer));
+								
+								updateUnit(unitArriving, null, false);
+								updateUnit(unitRecorded, null, false);
 
-									datacontainer.objectsAltered.addUnitAltered(newUnit);
-									datacontainer.objectsAltered.addUnitAltered(unitRecorded);
-								}
+								datacontainer.objectsAltered.addUnitAltered(newUnit);
+								datacontainer.objectsAltered.addUnitAltered(unitRecorded);
 								
 							}// endif croisement avec un ally de meme type
 						
@@ -795,19 +788,54 @@ public class GameManager implements IGameManager {
 
 	}
 
-	
-	private Collection<? extends Unit> getUnitToReplaceFromGathering(Gathering gathering, String unitNotToReplaceUID, DataContainer datacontainer) {
-		
+	/*
+	 *  
+	 * au depart on a :
+	 * A1
+	 * n1 = A1+A2 (g1)
+	 * n2 = n1+A3 (g2)
+	 * 
+	 * A4 arrive avant A2
+	 * on croise A1 : gatheringE : g1 (existingGathering)
+	 *  
+	 *  recursion sur gi.ni si gi.ni a un gatheringExpected
+	 *  => g1.n1 a un gatheringExpected : g2
+	 *  	=> on set A3.gatheringExpected = null
+	 *  	 + on doit replacer A3
+	 *  
+	 *  => on supprime ni+gi
+	 *  => on cree n3 = A1+A4 et g3
+	 */
+	// g1, A1
+	// g2, n1
+	private void recuringOnNextGatheringImpacted(Gathering gathering, String unitNotToReplaceUID, DataContainer datacontainer, List<Unit> unitsToReplace) {
+
+		if(debug)Utils.print("  recuringOnNextGatheringImpacted : " + gathering.getGatheringUID());
+		if(debug)Utils.print("  unitNotToReplaceUID : " + unitNotToReplaceUID);
+
+		// A2, A3
 		Unit unitToReplace;
 		if(gathering.getUnitUIDs().get(0).equals(unitNotToReplaceUID))
 			unitToReplace = getUnit(gathering.getUnitUIDs().get(1), datacontainer);
 		else
 			unitToReplace = getUnit(gathering.getUnitUIDs().get(0), datacontainer);
 
-		Unit newArmy = getUnit(gathering.getNewArmyUID(), datacontainer);
-		return null;
-		//if(newArmy.getGatheringUIDExpected())
+		unitToReplace.setGatheringUIDExpected(null);
+		unitToReplace.setConflictUIDExpected(null);
+		unitToReplace.setEndTime(1); // ce qui sert de delete : le user va delete cette unit lors de son prochain loading
+		updateUnit(unitToReplace, null, false); // le replace se fera plus tard, tout sera enregistré
 		
+		if(debug)Utils.print("  unitToReplace : " + unitToReplace.getUnitUID());
+		unitsToReplace.add(unitToReplace); // A2, A3
+		
+		// n1, n2
+		Unit newArmy = getUnit(gathering.getNewArmyUID(), datacontainer);
+		
+		// g2
+		if(newArmy.getGatheringUIDExpected() != null){
+			Gathering nextGathering = EntitiesConverter.convertGatheringDTO(gameDao.getGathering(newArmy.getGatheringUIDExpected()));
+			recuringOnNextGatheringImpacted(nextGathering, newArmy.getUnitUID(), datacontainer, unitsToReplace);
+		}
 	}
 
 	private List<Unit> cancelRecordedMovesAndReturnAllUnitsToReplace(Unit unit, long timeFromWhichMovesMustBeCancelled, DataContainer datacontainer){ 
@@ -977,38 +1005,41 @@ public class GameManager implements IGameManager {
 		return unitsToReplace;
 	}
 
-	/**
-	 * on ne change pas la reference 
-	 * comme ca la newUnit est toujours liee au gathering1 et appartient à gathering2.units
-	 * donc on modifie tous les champs de newUnit
-	 * 
-	 * le begintime ne change pas.
-	 * le endtime ne change pas.
-	 * le gatheringUIDExpected ne change pas.
-	 * le conflictUIDExpected ne change pas.
-	 * 
-	 * @param unit
-	 * @param newUnit
-	 */
-	private void transformUnitInNewUnit(Unit unit, Unit newUnit) {
-		
-		newUnit.setType(unit.getType());
-		newUnit.setSize(unit.getSize());
-		newUnit.setValue(unit.getValue());
-		newUnit.setSpeed(unit.getSpeed());
-		newUnit.setStatus(unit.getStatus());
-
-		newUnit.setGold(unit.getGold());
-		newUnit.setIron(unit.getIron());
-		newUnit.setWheat(unit.getWheat());
-		newUnit.setWood(unit.getWood());
-
-		newUnit.setPlayerUID(unit.getPlayerUID());
-		
-		newUnit.setMoves(unit.getMoves());
-		newUnit.setEquipments(newUnit.getEquipments());
-		
-	}
+	
+	// DEPRECATED : car le probleme ne change pas : il faut recalculer les recordedMoves !!!!!
+	// a reflechir pour fair une systeme par reference, la recursion aurait lieu uniquement au calcul des values lors des conflits
+//	/**
+//	 * on ne change pas la reference 
+//	 * comme ca la newUnit est toujours liee au gathering1 et appartient à gathering2.units
+//	 * donc on modifie tous les champs de newUnit
+//	 * 
+//	 * le begintime ne change pas.
+//	 * le endtime ne change pas.
+//	 * le gatheringUIDExpected ne change pas.
+//	 * le conflictUIDExpected ne change pas.
+//	 * 
+//	 * @param unit
+//	 * @param newUnit
+//	 */
+//	private void transformUnitInNewUnit(Unit unit, Unit newUnit) {
+//		
+//		newUnit.setType(unit.getType());
+//		newUnit.setSize(unit.getSize());
+//		newUnit.setValue(unit.getValue());
+//		newUnit.setSpeed(unit.getSpeed());
+//		newUnit.setStatus(unit.getStatus());
+//
+//		newUnit.setGold(unit.getGold());
+//		newUnit.setIron(unit.getIron());
+//		newUnit.setWheat(unit.getWheat());
+//		newUnit.setWood(unit.getWood());
+//
+//		newUnit.setPlayerUID(unit.getPlayerUID());
+//		
+//		newUnit.setMoves(unit.getMoves());
+//		newUnit.setEquipments(newUnit.getEquipments());
+//		
+//	}
 
 //	private void removeUnitFromNewArmy(Unit unitToRemove, Unit newArmy) 
 //	{

@@ -36,7 +36,7 @@ public interface IGameDAO {
 	public List<String> linkNewUnitsAndGetPreviousUnitUIDs(String uralysUID, List<String> createdUnitUIDs);
 	public void linkNewUnit(String uralysUID, String unitUID);
 	
-	public void deleteUnits(List<String> toDeleteUnitUIDs, String uralysUID);
+	public void deleteUnits(String uralysUID, List<String> toDeleteUnitUIDs);
 	public void deleteUnit(String uralysUID, String unitUID);
 	public UnitDTO getUnit(String unitUID);
 	

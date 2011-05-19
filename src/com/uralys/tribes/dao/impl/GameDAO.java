@@ -384,7 +384,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 
 	
 	@SuppressWarnings("unchecked")
-	public void deleteUnits(List<String> toDeleteUnitUIDs, String uralysUID){
+	public void deleteUnits(String uralysUID, List<String> toDeleteUnitUIDs){
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		PlayerDTO playerDTO = pm.getObjectById(PlayerDTO.class, uralysUID);
 

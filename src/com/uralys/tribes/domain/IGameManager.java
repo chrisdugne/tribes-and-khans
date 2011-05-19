@@ -19,6 +19,7 @@ public interface IGameManager {
 	public DataContainer4UnitSaved updateUnit(Unit unit, String cityUID, boolean needReplacing);
 	
 	public void deleteUnit(String uralysUID, String unitUID);
+	public void deleteUnits(String uralysUID, List<String> unitUIDs);
 	public void deleteMove(String moveUID) ;
 	
 	public List<Item> loadItems();

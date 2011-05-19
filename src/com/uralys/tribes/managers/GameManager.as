@@ -240,17 +240,18 @@ package com.uralys.tribes.managers {
 			}
 		}
 
-		public function prepareUnitForClientSide(unit:Unit):void
+		public function prepareUnitForClientSide(unit:Unit):Boolean
 		{
 			var now:Number = new Date().getTime();
 			
 			trace("prepareUnitForClientSide : " + unit.unitUID);
 			trace("unit.endTime : " + unit.endTime);
+			trace("now : " + now);
 			
 			if(unit.endTime != -1 && unit.endTime < now)
 			{
 				unit.status = Unit.DESTROYED;
-				return;
+				return false;
 			}
 			
 			if(unit.type == 1)
@@ -271,6 +272,7 @@ package com.uralys.tribes.managers {
 			}
 			
 			unit.isModified = false;	
+			return true;
 		}
 		
 		//-------------------------------------------------------------------------------//
@@ -473,6 +475,10 @@ package com.uralys.tribes.managers {
 			getGameWrapper().deleteUnit(Session.player.uralysUID, unit.unitUID);
 		}
 
+		public function deleteUnits (unitUIDs:ArrayCollection):void{
+			getGameWrapper().deleteUnits(Session.player.uralysUID, unitUIDs);
+		}
+
 		//--------------------------------------------------------------------------------//
 		// pour que les appels AMF se fassent 1 par 1, on utilise le deleteNextMove, qui est appele à chaque 'moveDeleted'
 		// (je ne peux pas appeler en meme temps gameWrapper.deleteMove plusieurs fois)
@@ -541,6 +547,7 @@ package com.uralys.tribes.managers {
 			
 			UnitMover.getInstance().refreshTimers();
 			BoardDrawer.getInstance().refreshDisplay();
+			Session.board.refreshUnitsInCity();
 			
 			// on supprime maintenant tous les Session.movesToDelete
 			deleteAllMovesToBeDeleted();

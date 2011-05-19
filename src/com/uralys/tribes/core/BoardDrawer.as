@@ -134,7 +134,6 @@ package com.uralys.tribes.core
 				}
 			}
 			
-			Session.board.refreshUnitsInCity();
 			Session.WAIT_FOR_SERVER = false;
 		}
 		
@@ -199,10 +198,7 @@ package com.uralys.tribes.core
 		
 		public function refreshUnits(_case:Case):void
 		{
-			trace("drawer.refreshUnits sur case : " + _case.caseUID);
-			
 			if(_case.imageUnit != null){
-				trace("trouve une image a effacer");
 				try{
 					Session.board.mapPositioner.removeElement(_case.imageUnit);	
 				}
@@ -212,7 +208,6 @@ package com.uralys.tribes.core
 			var imageUnit:Image;
 			
 			if(_case.army && _case.army.status != Unit.TO_BE_CREATED){
-				trace("REFRESH ARMY " + _case.army);
 				imageUnit = new Image();
 				
 				switch(_case.army.ownerStatus){
@@ -243,7 +238,6 @@ package com.uralys.tribes.core
 				}
 			}
 			else{
-				trace("no unit");
 				return; // no unit
 			}
 			

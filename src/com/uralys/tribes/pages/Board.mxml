@@ -61,9 +61,6 @@
 			[Bindable] public var selectedCity:City;
 			[Bindable] private var selectedUnit:Unit;
 			
-			private var moveGradient:Array;
-			private var radialGrad:RadialGradientStroke;
-
 			//----------------------------------------------------------//
 
 			protected function init():void{
@@ -76,14 +73,6 @@
 				
 				initBoard();
 				
-				moveGradient = [];
-				moveGradient.push(new GradientEntry(0xFFFFFF));
-				moveGradient.push(new GradientEntry(0x00cccc));
-				moveGradient.push(new GradientEntry(0x000000));
-				radialGrad = new RadialGradientStroke();
-				radialGrad.entries = moveGradient;
-				radialGrad.interpolationMethod
-
 				currentState = 'classic';
 			}
 			
@@ -148,10 +137,15 @@
 				this.selectedCity = Session.player.cities.getItemAt(0) as City;
 				GameManager.getInstance().refreshCity(selectedCity, false);
 				
-				
-				for each(var unit:Unit in Session.player.units){
-					GameManager.getInstance().prepareUnitForClientSide(unit);
+				var unitUIDsToDelete:ArrayCollection = new ArrayCollection();
+				for each(var unit:Unit in Session.player.units)
+				{
+					var unitIsPrepared:Boolean = GameManager.getInstance().prepareUnitForClientSide(unit);
+					if(!unitIsPrepared)
+						unitUIDsToDelete.addItem(unit.unitUID);
 				}
+
+				GameManager.getInstance().deleteUnits(unitUIDsToDelete);
 			}
 			
 			//-----------------------------------------------------------//

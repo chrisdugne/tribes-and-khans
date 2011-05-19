@@ -6,7 +6,7 @@ Notes sur le chargement des donnees.
 	- prepareUnits 
 		equipments -> bows, swords, armors..
 		status (FREE, DESTROYED...)
-	- deleteUnits DESTROYED
+	- deleteUnits DESTROYED (supprime les Session.player.units uniquement)
 4 - Board.init()
 	- timer pour le map-auto-move
 	- initBoard()

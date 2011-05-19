@@ -1,6 +1,7 @@
 package com.uralys.tribes.domain.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -182,6 +183,10 @@ public class GameManager implements IGameManager {
 	
 	public void deleteUnit(String uralysUID, String unitUID){
 		gameDao.deleteUnit(uralysUID, unitUID);
+	}
+	
+	public void deleteUnits(String uralysUID, List<String> unitUIDs){
+		gameDao.deleteUnits(uralysUID, unitUIDs);
 	}
 
 	public void deleteMove(String moveUID) {
@@ -613,6 +618,45 @@ public class GameManager implements IGameManager {
 								if(existingGathering.getUnitUIDs().size() == 2){
 									if(debug)Utils.print("  il est deja dans un gathering de 2 units");
 									// ici il faut refaire la newarmy1 et faire une newarmy2 avec le premier arrive de ces 2 la 
+									// createnewary : A1+A3
+									
+									//recursion sur previousNewArmy.getGatheringUIDExpected() pour trouver toutes les unitToReplace
+									// unitRecordedUID est celle qui reste (A1)
+									// on doit replace la 2e unit du gathering (A2)
+									unitsToReplace.addAll(getUnitToReplaceFromGathering(existingGathering, unitRecordedUID, datacontainer));
+									
+									/*
+									 * au depart on a :
+									 * A1
+									 * n1 = A1+A2 (g1)
+									 * n2 = n1+A3 (g2)
+									 * 
+									 * A4 arrive avant A2
+									 * on croise A1 : gatheringE : g1
+									 *  
+									 *  => on set A2.gatheringExpected = null
+									 *   + on doit replacer A2
+									 *  
+									 *  recursion sur gi.ni si gi.ni a un gatheringExpected
+									 *  => g1.n1 a un gatheringExpected : g2
+									 *  	=> on set A3.gatheringExpected = null
+									 *  	 + on doit replacer A3
+									 *  
+									 *  => on supprime ni+gi
+									 *  => on cree n3 = A1+A4 et g3
+									 *  
+									 *  
+									 *  au final on a :
+									 *  A1
+									 *  n3 = A1+A4 (g3)
+									 * 	
+									 *  replace A2 
+									 *  n4 = n3 + A2 (g4)
+									 *  
+									 *  replace A3 
+									 *  n5 = n4 + A3 (g5)
+									 *  
+									 */
 								}
 								else
 								{
@@ -752,6 +796,20 @@ public class GameManager implements IGameManager {
 	}
 
 	
+	private Collection<? extends Unit> getUnitToReplaceFromGathering(Gathering gathering, String unitNotToReplaceUID, DataContainer datacontainer) {
+		
+		Unit unitToReplace;
+		if(gathering.getUnitUIDs().get(0).equals(unitNotToReplaceUID))
+			unitToReplace = getUnit(gathering.getUnitUIDs().get(1), datacontainer);
+		else
+			unitToReplace = getUnit(gathering.getUnitUIDs().get(0), datacontainer);
+
+		Unit newArmy = getUnit(gathering.getNewArmyUID(), datacontainer);
+		return null;
+		//if(newArmy.getGatheringUIDExpected())
+		
+	}
+
 	private List<Unit> cancelRecordedMovesAndReturnAllUnitsToReplace(Unit unit, long timeFromWhichMovesMustBeCancelled, DataContainer datacontainer){ 
 		if(debug)Utils.print("cancelRecordedMovesAndReturnAllUnitsToReplace");
 		
@@ -853,60 +911,60 @@ public class GameManager implements IGameManager {
 		List<Unit> unitsToReplace = new ArrayList<Unit>();
 
 		// d'abord on regarde si il y avait un gathering de prevu
-		// si oui, il etait forcement plus loin puisqu'on vient de croiser cette unit et qu'elle s'arrete forcement au gathering.
-		if(unit.getGatheringUIDExpected() != null){
-			if(debug)Utils.print("found a gathering expected !");
-			Gathering gatheringExpected = EntitiesConverter.convertGatheringDTO(gameDao.getGathering(unit.getGatheringUIDExpected()));
-			if(debug)Utils.print("gathering : " + gatheringExpected.getGatheringUID());
-
-			// on doit modifier ce gathering
-			// il faut simplement que l'armee restante (la 2e) devienne gathering.newArmy
-			// on met donc toutes les proprietes de l'armee restante dans gathering.newArmy
-			// quant a notre unit, elle est enlevee de gathering.units
-			// s'il n'y a pas d'autre gathering suivant, ou de conflit prevu sur cette case, on replace l'autre unit pour qu'elle suive le reste de son chemin
-			
-			Unit unitStaying;
-			if(gatheringExpected.getUnitUIDs().get(0).equals(unit.getUnitUID()))
-				unitStaying = getUnit(gatheringExpected.getUnitUIDs().get(1), datacontainer);
-			else
-				unitStaying = getUnit(gatheringExpected.getUnitUIDs().get(0), datacontainer);
-			
-			if(debug)Utils.print("unitStaying : " + unitStaying.getUnitUID());
-			Unit newUnit = getUnit(gatheringExpected.getNewArmyUID(), datacontainer);
-			transformUnitInNewUnit(unitStaying, newUnit);
-			
-			if(debug)Utils.print("removing the unit");
-			gatheringExpected.remove(unit.getUnitUID());
-			
-			updateUnit(unitStaying, null, false);
-			updateUnit(newUnit, null, false);
-			
-			if(newUnit.getGatheringUIDExpected() != null)
-				unitsToReplace.add(unitStaying);
-		}
+		// si oui, il etait forcement plus loin puisqu'on vient de croiser une unit et qu'elle s'arrete forcement au gathering.
+//		if(unit.getGatheringUIDExpected() != null){
+//			if(debug)Utils.print("found a gathering expected !");
+//			Gathering gatheringExpected = EntitiesConverter.convertGatheringDTO(gameDao.getGathering(unit.getGatheringUIDExpected()));
+//			if(debug)Utils.print("gathering : " + gatheringExpected.getGatheringUID());
+//
+//			// on doit modifier ce gathering
+//			// il faut simplement que l'armee restante (la 2e) devienne gathering.newArmy
+//			// on met donc toutes les proprietes de l'armee restante dans gathering.newArmy
+//			// quant a notre unit, elle est enlevee de gathering.units
+//			// s'il n'y a pas d'autre gathering suivant, ou de conflit prevu sur cette case, on replace l'autre unit pour qu'elle suive le reste de son chemin
+//			
+//			Unit unitStaying;
+//			if(gatheringExpected.getUnitUIDs().get(0).equals(unit.getUnitUID()))
+//				unitStaying = getUnit(gatheringExpected.getUnitUIDs().get(1), datacontainer);
+//			else
+//				unitStaying = getUnit(gatheringExpected.getUnitUIDs().get(0), datacontainer);
+//			
+//			if(debug)Utils.print("unitStaying : " + unitStaying.getUnitUID());
+//			Unit newUnit = getUnit(gatheringExpected.getNewArmyUID(), datacontainer);
+//			transformUnitInNewUnit(unitStaying, newUnit);
+//			
+//			if(debug)Utils.print("removing the unit");
+//			gatheringExpected.remove(unit.getUnitUID());
+//			
+//			updateUnit(unitStaying, null, false);
+//			updateUnit(newUnit, null, false);
+//			
+//			if(newUnit.getGatheringUIDExpected() != null)
+//				unitsToReplace.add(unitStaying);
+//		}
 		
 		// enuite on regarde si il y avait un conflit de prevu
 		// si oui, il etait forcement plus loin puisqu'on vient de croiser cette unit et qu'elle s'arrete forcement au conflit.
-		if(unit.getConflictUIDExpected() != null)
-		{
-			if(debug)Utils.print("found a confict expected !");
-			Conflict conflictExpected = EntitiesConverter.convertConflictDTO(gameDao.getConflict(unit.getConflictUIDExpected()));
-			if(debug)Utils.print("conflict : " + conflictExpected.getConflictUID());
-		
-			for(Gathering gathering : conflictExpected.getGatherings())
-			{
-				if(debug)Utils.print("found a gathering in a conflict");
-				for(String opponentOrAllyUID : gathering.getUnitUIDs())
-				{
-					if(debug)Utils.print("unit : " + opponentOrAllyUID);
-//					if(!opponentOrAlly.equals(unit) && !contains(unitsMakingThisReplacing, opponentOrAlly.getUnitUID()))
-//					{
-//						if(debug)Utils.print("unit : " + opponentOrAlly.getUnitUID());
-//						unitsToReplace.add(opponentOrAlly);
-//					}
-				}
-			}
-		}
+//		if(unit.getConflictUIDExpected() != null)
+//		{
+//			if(debug)Utils.print("found a confict expected !");
+//			Conflict conflictExpected = EntitiesConverter.convertConflictDTO(gameDao.getConflict(unit.getConflictUIDExpected()));
+//			if(debug)Utils.print("conflict : " + conflictExpected.getConflictUID());
+//		
+//			for(Gathering gathering : conflictExpected.getGatherings())
+//			{
+//				if(debug)Utils.print("found a gathering in a conflict");
+//				for(String opponentOrAllyUID : gathering.getUnitUIDs())
+//				{
+//					if(debug)Utils.print("unit : " + opponentOrAllyUID);
+////					if(!opponentOrAlly.equals(unit) && !contains(unitsMakingThisReplacing, opponentOrAlly.getUnitUID()))
+////					{
+////						if(debug)Utils.print("unit : " + opponentOrAlly.getUnitUID());
+////						unitsToReplace.add(opponentOrAlly);
+////					}
+//				}
+//			}
+//		}
 
 		// on supprime tous les moves (+ gathering, + case.recordedMove, + unit.move)
 		gameDao.deleteMoves(unit.getUnitUID());

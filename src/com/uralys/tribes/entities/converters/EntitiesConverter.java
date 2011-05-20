@@ -352,7 +352,7 @@ public class EntitiesConverter {
 
 		Gathering gathering = new Gathering();
 
-		gathering.setNewArmyUID(gatheringDTO.getNewArmyUID());
+		gathering.setNewUnitUID(gatheringDTO.getNewUnitUID());
 		gathering.setAllyUID(gatheringDTO.getAllyUID());
 		gathering.setGatheringUID(gatheringDTO.getGatheringUID());
 		gathering.setUnitUIDs(gatheringDTO.getUnitUIDs());

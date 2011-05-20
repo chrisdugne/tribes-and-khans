@@ -18,7 +18,7 @@ public class Gathering {
 
 	private String gatheringUID = "notcreatedyet";
 	private String allyUID;
-	private String newArmyUID;
+	private String newUnitUID;
 	private List<String> unitUIDs = new ArrayList<String>();
 
 	// -----------------------------------------------------------------------------------//
@@ -31,12 +31,12 @@ public class Gathering {
 		this.gatheringUID = gatheringUID;
 	}
 
-	public String getNewArmyUID() {
-		return newArmyUID;
+	public String getNewUnitUID() {
+		return newUnitUID;
 	}
 
-	public void setNewArmyUID(String newArmyUID) {
-		this.newArmyUID = newArmyUID;
+	public void setNewUnitUID(String newUnitUID) {
+		this.newUnitUID = newUnitUID;
 	}
 
 	public List<String> getUnitUIDs() {

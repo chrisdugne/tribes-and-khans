@@ -29,7 +29,7 @@ public class GatheringDTO {
 	@Persistent
 	private String allyUID;
 	@Persistent
-	private String newArmyUID;
+	private String newUnitUID;
 	@Persistent private List<String> unitUIDs = new ArrayList<String>();
 	
 	//-----------------------------------------------------------------------------------//
@@ -47,11 +47,11 @@ public class GatheringDTO {
 	public void setGatheringUID(String gatheringUID) {
 		this.gatheringUID = gatheringUID;
 	}
-	public String getNewArmyUID() {
-		return newArmyUID;
+	public String getNewUnitUID() {
+		return newUnitUID;
 	}
-	public void setNewArmyUID(String newArmyUID) {
-		this.newArmyUID = newArmyUID;
+	public void setNewUnitUID(String newUnitUID) {
+		this.newUnitUID = newUnitUID;
 	}
 	public List<String> getUnitUIDs() {
 		return unitUIDs;

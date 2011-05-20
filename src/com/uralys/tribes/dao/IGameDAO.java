@@ -44,11 +44,12 @@ public interface IGameDAO {
 	
 	public String createMove(Move move, boolean requireLinks);
 	public void setTimeToForMove(String moveUID, long timeTo);
+	public void setNewGatheringForMove(String moveUID, String gatheringUID);
 	public void unvalidateMove(Move move);
 	public void deleteMove(String moveUID);
 	public void deleteMoves(String unitUID);
 	
-	public void addUnitInGathering(String gatheringUID, String unitUID);
+	public void addUnitInGatheringAndSetNewArmy(String gatheringUID, String unitUID, String newUnitUID);
 	
 	public ConflictDTO getConflict(String conflictUID);
 	public GatheringDTO getGathering(String gatheringUID);

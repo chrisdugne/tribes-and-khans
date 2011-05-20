@@ -126,7 +126,6 @@ package com.uralys.tribes.entities
 		//-------------------------------------------------------//
 		
 		public function getUnit(unitUID:String):Unit{
-			
 			for each(var unit:Unit in units){
 				if(unit.unitUID == unitUID)
 					return unit;
@@ -138,6 +137,7 @@ package com.uralys.tribes.entities
 		public function refreshUnit(unitRefreshed:Unit):void{
 			
 			var indexFound:int = -1;
+			
 			for each(var unit:Unit in units){
 				if(unit.unitUID == unitRefreshed.unitUID){
 					indexFound = units.getItemIndex(unit);
@@ -145,7 +145,7 @@ package com.uralys.tribes.entities
 				}
 			}
 			
-			if(indexFound > 0){
+			if(indexFound >= 0){
 				units.removeItemAt(indexFound);
 			}
 			

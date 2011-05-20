@@ -80,7 +80,6 @@ package com.uralys.tribes.entities
 		}
 	
 		public function set currentCaseUID(o:String):void {
-			isModified = true;
 			_currentCaseUID = o;
 		}
 	

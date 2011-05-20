@@ -150,7 +150,11 @@
 			//-----------------------------------------------------------//
 			
 			// appelee apres le BoardDrawer.refreshDisplay, qui raffraichit toutes les currentCaseUID des units de toutes les cases.
-			public function refreshUnitsInCity():void{
+			public function refreshUnitsInCity(unitBeingMovedUID:String = null):void{
+				trace("%%%");
+				trace("refreshUnitsInCity");
+				trace("Session.player.units : " + Session.player.units.length);
+				
 				for each(var city:City in Session.player.cities){
 					city.merchant = null;
 					city.army = null;
@@ -159,6 +163,13 @@
 				
 				for each(var unit:Unit in Session.player.units){
 
+					if(unitBeingMovedUID != null
+					&& unitBeingMovedUID == unit.unitUID){
+						// pas forcemement le meilleur endroit, mais ils est appele a chaque UnitMover.moveIsDone
+						// et ca refresh unit.currentCaseUID
+						UnitMover.getInstance().refreshMoves(unit);
+					}
+					
 					if(unit.status == Unit.DESTROYED)
 						continue;
 
@@ -177,7 +188,6 @@
 						for each(var city:City in Session.player.cities)
 						{
 							if(Utils.getXFromCaseUID(unit.currentCaseUID) == city.x && Utils.getYFromCaseUID(unit.currentCaseUID) == city.y){
-								trace("found an army in city : " + unit.ownerStatus);
 								city.army = unit;
 								city.unitsToFeed += unit.size;
 								break;
@@ -187,6 +197,7 @@
 					
 				}
 				
+				trace("%%%");
 			}
 			
 			//-----------------------------------------------------------//

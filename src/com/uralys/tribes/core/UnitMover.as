@@ -130,7 +130,7 @@ package com.uralys.tribes.core
 			GameManager.getInstance().refreshStatusOfAllUnitsInSession();
 			
 			// on refresh les villes au cas ou le deplacement fait partir/arriver une unite de/dans une ville
-			Session.board.refreshUnitsInCity();
+			Session.board.refreshUnitsInCity(moveToPerform.unitUID);
 		}
 
 		// ============================================================================================
@@ -177,11 +177,14 @@ package com.uralys.tribes.core
 		}
 
 		public function refreshMoves(unit:Unit){
-			
+			trace("-----");
+			trace("refreshMoves : " + unit.unitUID);
 			var nbIndexesToRemove:int = 0;
 			var now:Number = new Date().getTime();
+			trace("now : " + now);
 			
 			for each(var move:Move in unit.moves){
+				trace("move.timeTo : " + move.timeTo);
 				
 				if(now > move.timeTo && move.timeTo != -1)
 					nbIndexesToRemove++;
@@ -189,9 +192,13 @@ package com.uralys.tribes.core
 					break;
 			}
 			
+			trace("nbIndexesToRemove : " + nbIndexesToRemove);
 			for(var i:int = 0; i < nbIndexesToRemove; i++)
 				unit.moves.removeItemAt(0);
 			
+			unit.currentCaseUID = (unit.moves.getItemAt(0) as Move).caseUID;
+			trace("unit.currentCaseUID : " + unit.currentCaseUID);
+			trace("-----");
 		}
 
 		public function resetPendingMoves(unit:Unit)

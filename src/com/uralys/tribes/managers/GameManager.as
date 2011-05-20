@@ -270,10 +270,12 @@ package com.uralys.tribes.managers {
 					}
 				}
 			}
-			
+
+			UnitMover.getInstance().refreshMoves(unit);
+
 			unit.ownerStatus = Unit.PLAYER;
-			unit.currentCaseUID = (unit.moves.getItemAt(0) as Move).caseUID;
 			unit.isModified = false;	
+			
 			return true;
 		}
 		

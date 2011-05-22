@@ -95,6 +95,9 @@ package com.uralys.tribes.core
 
 		private function clickOnCity(city:City):void
 		{
+			if(Session.MOVE_A_UNIT)
+				return;
+			
 			if(city.merchant != null || city.army != null)
 				Session.board.showEnterCity(city);
 			else

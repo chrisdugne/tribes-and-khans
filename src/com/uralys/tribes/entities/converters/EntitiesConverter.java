@@ -5,27 +5,27 @@ import java.util.List;
 
 import com.uralys.tribes.dao.impl.UniversalDAO;
 import com.uralys.tribes.entities.Case;
-import com.uralys.tribes.entities.Gathering;
-import com.uralys.tribes.entities.Unit;
 import com.uralys.tribes.entities.City;
 import com.uralys.tribes.entities.Conflict;
 import com.uralys.tribes.entities.Equipment;
+import com.uralys.tribes.entities.Gathering;
 import com.uralys.tribes.entities.Item;
 import com.uralys.tribes.entities.Move;
 import com.uralys.tribes.entities.MoveConflict;
 import com.uralys.tribes.entities.Player;
 import com.uralys.tribes.entities.Smith;
+import com.uralys.tribes.entities.Unit;
 import com.uralys.tribes.entities.dto.CaseDTO;
-import com.uralys.tribes.entities.dto.GatheringDTO;
-import com.uralys.tribes.entities.dto.UnitDTO;
 import com.uralys.tribes.entities.dto.CityDTO;
 import com.uralys.tribes.entities.dto.ConflictDTO;
 import com.uralys.tribes.entities.dto.EquipmentDTO;
+import com.uralys.tribes.entities.dto.GatheringDTO;
 import com.uralys.tribes.entities.dto.ItemDTO;
 import com.uralys.tribes.entities.dto.MoveConflictDTO;
 import com.uralys.tribes.entities.dto.MoveDTO;
 import com.uralys.tribes.entities.dto.PlayerDTO;
 import com.uralys.tribes.entities.dto.SmithDTO;
+import com.uralys.tribes.entities.dto.UnitDTO;
 
 public class EntitiesConverter {
 
@@ -206,6 +206,13 @@ public class EntitiesConverter {
 				Move move = convertMoveDTO(moveDTO, requireLinkedGatherings);
 				moves.add(move);
 			}
+			
+			if(unit.getGatheringUIDExpected() != null){
+				GatheringDTO gathering = (GatheringDTO) UniversalDAO.getInstance().getObjectDTO(unit.getGatheringUIDExpected(), GatheringDTO.class);
+				UnitDTO newUnit = (UnitDTO) UniversalDAO.getInstance().getObjectDTO(gathering.getNewUnitUID(), UnitDTO.class);
+				Move move = convertMoveDTO(newUnit.getMoves().get(0), requireLinkedGatherings);
+				moves.add(move);
+			}
 
 			unit.setMoves(moves);
 		}
@@ -249,8 +256,7 @@ public class EntitiesConverter {
 
 		List<Unit> units = new ArrayList<Unit>();
 
-		for (UnitDTO unitDTO : UniversalDAO.getInstance().getListDTO(unitUIDs,
-				UnitDTO.class)) {
+		for (UnitDTO unitDTO : UniversalDAO.getInstance().getListDTO(unitUIDs, UnitDTO.class)) {
 			units.add(convertUnitDTO(unitDTO, false, false));
 		}
 

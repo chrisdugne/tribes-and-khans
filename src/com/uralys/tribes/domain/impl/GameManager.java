@@ -532,7 +532,7 @@ public class GameManager implements IGameManager {
 				Utils.print("gathering : " + arrivalOnThisCaseMove.getGathering().getGatheringUID());
 				int i = TribesUtils.getX(arrivalOnThisCaseMove.getCaseUID());
 				int j = TribesUtils.getY(arrivalOnThisCaseMove.getCaseUID());
-				Utils.print("passage par case ["+i+"]["+j+"], de temps("+arrivalOnThisCaseMove.getTimeFrom()+") ˆ temps("+arrivalOnThisCaseMove.getTimeTo()+")");
+				Utils.print("passage par case ["+i+"]["+j+"], de ("+new Date(arrivalOnThisCaseMove.getTimeFrom())+") ˆ ("+new Date(arrivalOnThisCaseMove.getTimeTo())+")");
 			}
 
 			Case _case = getCase(arrivalOnThisCaseMove.getCaseUID());
@@ -694,6 +694,7 @@ public class GameManager implements IGameManager {
 								// les liens sur unit.move viennent detre fait par le createNewArmy.createUnit.placeUnit.createMove
 								//requireLinks = false;
 								
+								unitArriving.getMoves().add(arrivalOnThisCaseMove);
 								unitArriving.setGatheringUIDExpected(existingGathering.getGatheringUID());
 								unitRecorded.setGatheringUIDExpected(existingGathering.getGatheringUID());
 								
@@ -910,7 +911,7 @@ public class GameManager implements IGameManager {
 		String ownerUID = unitArriving.getPlayerUID();
 
 		Unit newUnit = new Unit();
-		newUnit.setUnitUID(ownerUID+"_X_"+firstMoveForNewUnit.getTimeFrom());
+		newUnit.setUnitUID(ownerUID+"_"+Utils.generatePassword(3)+"_"+firstMoveForNewUnit.getTimeFrom());
 		newUnit.setPlayerUID(ownerUID);
 		newUnit.setBeginTime(firstMoveForNewUnit.getTimeFrom());
 		newUnit.setEndTime(-1);

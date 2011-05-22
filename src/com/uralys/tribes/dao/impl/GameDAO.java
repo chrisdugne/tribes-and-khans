@@ -476,6 +476,9 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		String uid = moveUID.contains("NEW") ? moveUID.substring(4) : moveUID;
 		MoveDTO moveDTO = pm.getObjectById(MoveDTO.class, uid);
 
+		GatheringDTO previousGatheringDTO = pm.getObjectById(GatheringDTO.class, moveDTO.getGatheringUID());
+		pm.deletePersistent(previousGatheringDTO);
+
 		moveDTO.setGatheringUID(gatheringUID);
 		
 		pm.close();
@@ -508,6 +511,10 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			gatheringDTO.setGatheringUID(gatheringUID);
 			gatheringDTO.setAllyUID(move.getGathering().getAllyUID());
 			gatheringDTO.setUnitUIDs(move.getGathering().getUnitUIDs());
+
+			if(debug)Utils.print("creating gathering "+gatheringUID+" for unit " + gatheringDTO.getUnitUIDs().get(0));
+			if(move.getGathering().getUnitUIDs().size() > 1)
+				if(debug)Utils.print("and unit " + gatheringDTO.getUnitUIDs().get(1));
 			
 			pm.makePersistent(gatheringDTO);
 			move.getGathering().setGatheringUID(gatheringUID);

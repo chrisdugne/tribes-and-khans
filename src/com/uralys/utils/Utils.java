@@ -54,7 +54,10 @@ public class Utils {
 	 * Default length is 8, the common unix system effective password length.
 	 */
 	public static String generatePassword() {
-		int n = 8;
+		return generatePassword(8);
+	}
+
+	public static String generatePassword(int n) {
 		char[] pw = new char[n];
 		int c = 'A';
 		int r1 = 0;

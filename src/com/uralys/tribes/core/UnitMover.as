@@ -92,45 +92,50 @@ package com.uralys.tribes.core
 		
 		private function moveIsDone(e:TimerEvent):void{
 			
-			trace("--------");
-			trace("moveIsDone");
-			
-			var moves:Array = timers.get(e.currentTarget) as Array;
-			var moveToPerform:Move = moves.shift() as Move;
-			
-			timers.remove(e.currentTarget);
-			
-			// refresh de la case dont on part : suppression du move dans case.recordedMoves et dans unit.moves
-			var caseToRefresh:Case = Session.map[moveToPerform.getX()][moveToPerform.getY()] as Case;		
-			caseToRefresh.forceRefresh();
-			
-			trace("efface le pion ancien");
-			
-			// efface le 'pion' de la case
-			BoardDrawer.getInstance().refreshUnits(caseToRefresh);
-			
-			// on recupere le suivant
-			var newCurrentMove:Move = moves[0] as Move;
-			
-			// on ecoute le nouveau move si son timeTo n'est pas illimité
-			if(newCurrentMove.timeTo != -1)
-				addTimer(moves);
-			
-			
-			// refresh de la nouvelle case active : ajout de l'unité sur la case
-			var newCaseToRefresh:Case = Session.map[newCurrentMove.getX()][newCurrentMove.getY()] as Case;
-			newCaseToRefresh.forceRefresh();
-
-			trace("affiche le pion nouveau");
-
-			// affiche le 'pion' de la case
-			BoardDrawer.getInstance().refreshUnits(newCaseToRefresh);
-			
-			// refresh du status de toutes les unites
-			GameManager.getInstance().refreshStatusOfAllUnitsInSession();
-			
-			// on refresh les villes au cas ou le deplacement fait partir/arriver une unite de/dans une ville
-			Session.board.refreshUnitsInCity(moveToPerform.unitUID);
+			try{
+				trace("--------");
+				trace("moveIsDone");
+				
+				var moves:Array = timers.get(e.currentTarget) as Array;
+				var moveToPerform:Move = moves.shift() as Move;
+				
+				timers.remove(e.currentTarget);
+				
+				// refresh de la case dont on part : suppression du move dans case.recordedMoves et dans unit.moves
+				var caseToRefresh:Case = Session.map[moveToPerform.getX()][moveToPerform.getY()] as Case;		
+				caseToRefresh.forceRefresh();
+				
+				trace("efface le pion ancien");
+				
+				// efface le 'pion' de la case
+				BoardDrawer.getInstance().refreshUnits(caseToRefresh);
+				
+				// on recupere le suivant
+				var newCurrentMove:Move = moves[0] as Move;
+				
+				// on ecoute le nouveau move si son timeTo n'est pas illimité
+				if(newCurrentMove.timeTo != -1)
+					addTimer(moves);
+				
+				
+				// refresh de la nouvelle case active : ajout de l'unité sur la case
+				var newCaseToRefresh:Case = Session.map[newCurrentMove.getX()][newCurrentMove.getY()] as Case;
+				newCaseToRefresh.forceRefresh();
+	
+				trace("affiche le pion nouveau");
+	
+				// affiche le 'pion' de la case
+				BoardDrawer.getInstance().refreshUnits(newCaseToRefresh);
+				
+				// refresh du status de toutes les unites
+				GameManager.getInstance().refreshStatusOfAllUnitsInSession();
+				
+				// on refresh les villes au cas ou le deplacement fait partir/arriver une unite de/dans une ville
+				Session.board.refreshUnitsInCity(moveToPerform.unitUID);
+			}
+			catch(e:Error){
+				trace("error on moveIsDone");
+			}
 		}
 
 		// ============================================================================================
@@ -179,9 +184,10 @@ package com.uralys.tribes.core
 		public function refreshMoves(unit:Unit){
 			trace("-----");
 			trace("refreshMoves : " + unit.unitUID);
-			var nbIndexesToRemove:int = 0;
+			var nbIndexesToRemove:int = -1;
 			var now:Number = new Date().getTime();
 			trace("now : " + now);
+			trace("unit.endTime : " + unit.endTime);
 			
 			for each(var move:Move in unit.moves){
 				trace("move.timeTo : " + move.timeTo);
@@ -193,7 +199,7 @@ package com.uralys.tribes.core
 			}
 			
 			trace("nbIndexesToRemove : " + nbIndexesToRemove);
-			for(var i:int = 0; i < nbIndexesToRemove; i++)
+			for(var i:int = 0; i <= nbIndexesToRemove; i++)
 				unit.moves.removeItemAt(0);
 			
 			unit.currentCaseUID = (unit.moves.getItemAt(0) as Move).caseUID;

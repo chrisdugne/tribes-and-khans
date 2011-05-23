@@ -95,7 +95,7 @@ public class EntitiesConverter {
 		List<Unit> units = new ArrayList<Unit>();
 
 		for (UnitDTO unitDTO : playerDTO.getUnits()) {
-			units.add(convertUnitDTO(unitDTO, true, false));
+			units.add(convertUnitDTO(unitDTO, true, true, false));
 		}
 
 		player.setUnits(units);
@@ -159,9 +159,17 @@ public class EntitiesConverter {
 	// -----------------------------------------------------------------------------------//
 
 	/*
+	 * requireMoves : pour greffer les moves dans Unit.moves
+	 * requireLinkedGatherings : pour coller le Gathering dans chaque Move
+	 * requireLinkedMoveFromGathering : pour coller dans les moves le Move supplementaire qui correspond a celui du gathering
+	 * si requireLinkedMoveFromGathering est false, on recupere uniquement les moves enregistres par le joueur
+	 * si requireLinkedMoveFromGathering est true, on recupere tous les moves prevus pour cette unit, gathering/conflit compris
+	 * 
+	 * 
 	 * requireLinkedGatherings est forcement false si requireMoves est false
+	 * 
 	 */
-	public static Unit convertUnitDTO(UnitDTO unitDTO, boolean requireMoves, boolean requireLinkedGatherings) {
+	public static Unit convertUnitDTO(UnitDTO unitDTO, boolean requireMoves, boolean requireLinkedMoveFromGathering, boolean requireLinkedGatherings) {
 
 		if (unitDTO == null)
 			return null;
@@ -207,7 +215,7 @@ public class EntitiesConverter {
 				moves.add(move);
 			}
 			
-			if(unit.getGatheringUIDExpected() != null){
+			if(requireLinkedMoveFromGathering && unit.getGatheringUIDExpected() != null){
 				GatheringDTO gathering = (GatheringDTO) UniversalDAO.getInstance().getObjectDTO(unit.getGatheringUIDExpected(), GatheringDTO.class);
 				UnitDTO newUnit = (UnitDTO) UniversalDAO.getInstance().getObjectDTO(gathering.getNewUnitUID(), UnitDTO.class);
 				Move move = convertMoveDTO(newUnit.getMoves().get(0), requireLinkedGatherings);
@@ -257,7 +265,7 @@ public class EntitiesConverter {
 		List<Unit> units = new ArrayList<Unit>();
 
 		for (UnitDTO unitDTO : UniversalDAO.getInstance().getListDTO(unitUIDs, UnitDTO.class)) {
-			units.add(convertUnitDTO(unitDTO, false, false));
+			units.add(convertUnitDTO(unitDTO, false, false, false));
 		}
 
 		_case.setUnits(units);

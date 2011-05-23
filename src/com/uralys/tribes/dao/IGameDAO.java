@@ -42,11 +42,11 @@ public interface IGameDAO {
 	
 	public void createCity(City city, String playerUID);
 	
-	public String createMove(Move move, boolean requireLinks);
+	public String createMove(Move move);
 	public void setTimeToForMove(String moveUID, long timeTo);
-	public void setNewGatheringForMove(String moveUID, String gatheringUID);
+	public void setNewGatheringForMoveAndDeletePreviousGathering(String moveUID, String gatheringUID);
 	public void unvalidateMove(Move move);
-	public void deleteMove(String moveUID);
+	public void deleteMove(String moveUID, boolean keepGatheringBecauseItIsLinkedWithAnotherMoveNow);
 	public void deleteMoves(String unitUID);
 	
 	public void addUnitInGatheringAndSetNewArmy(String gatheringUID, String unitUID, String newUnitUID);

@@ -192,8 +192,14 @@ public class GameManager implements IGameManager {
 		gameDao.deleteUnits(uralysUID, unitUIDs);
 	}
 
+	//==================================================================================================//
+
 	public void deleteMove(String moveUID) {
-		gameDao.deleteMove(moveUID);
+		deleteMove(moveUID, false);
+	}
+	
+	private void deleteMove(String moveUID, boolean keepGatheringBecauseItIsLinkedWithAnotherMoveNow) {
+		gameDao.deleteMove(moveUID, keepGatheringBecauseItIsLinkedWithAnotherMoveNow);
 	}
 	
 	//==================================================================================================//
@@ -510,22 +516,22 @@ public class GameManager implements IGameManager {
 		if(topdebug)Utils.print("debut du loop dans les moves  | " + new Date());
 
 		boolean foundAGathering = false;
-		Move previousMove = null;
+		String previousMoveUID = null;
 		for(Move arrivalOnThisCaseMove : moves){
 
-			boolean requireLinks = true;
+			boolean moveIsToBeCreated = true;
 			
 			if(foundAGathering){
 				if(debug)Utils.print("foundAGathering yet => mouvement non appliqué");
 				currentUnitValue = 0;
 			}
 			
-			
 			arrivalOnThisCaseMove.setValue(currentUnitValue);
 			arrivalOnThisCaseMove.setUnitUID(unitArriving.getUnitUID());
 			arrivalOnThisCaseMove.setGathering(new Gathering(allyUID));
 			arrivalOnThisCaseMove.getGathering().getUnitUIDs().add(unitArriving.getUnitUID());
 
+			// on ajoute le move dans unitArriving.moves, car unitArriving sera mise dans datacontainer.objectsAltered pour flex
 			unitArriving.getMoves().add(arrivalOnThisCaseMove);
 			
 			if(debug){
@@ -667,26 +673,48 @@ public class GameManager implements IGameManager {
 									if(debug)Utils.print("recurring done : nbunits in existingGathering : " + existingGathering.getUnitUIDs().size());
 									
 								}
-								
+
 								if(debug)Utils.print(" - attribution des endTime sur les units, et du timeTo sur le recordedMove");
-								unitArriving.setEndTime(arrivalOnThisCaseMove.getTimeFrom());
-								unitRecorded.setEndTime(arrivalOnThisCaseMove.getTimeFrom());
-								gameDao.setTimeToForMove(recordedMove.getMoveUID(), arrivalOnThisCaseMove.getTimeFrom());
+
+								long timeOfTheMeeting; // c'est l'heure du croisement qui compte
+								if(arrivalOnThisCaseMove.getTimeFrom() < recordedMove.getTimeFrom())
+								{
+									// dans ce cas, on intercepte un move (on arrive avant lui)
+									// ce recorded move n'existe donc plus, puisque lorsquil arrivera on passera sur la newarmy
+									timeOfTheMeeting = recordedMove.getTimeFrom();
+									arrivalOnThisCaseMove.setTimeTo(timeOfTheMeeting);
+									previousMoveUID = getPreviousMove(recordedMove, datacontainer);
+									
+									deleteMove(recordedMove.getMoveUID(), true);
+								}
+								else
+								{
+									// dans ce cas on arrive apres le move intercepte
+									// donc le recordedMove existe jusqu'a ce qu'on arrive
+									// et le move ne doit surtout pas etre enregistre puisqu'on devient immediatement la newArmy avec son propre move. 
+									moveIsToBeCreated = false;
+									timeOfTheMeeting = arrivalOnThisCaseMove.getTimeFrom();
+									gameDao.setTimeToForMove(recordedMove.getMoveUID(), timeOfTheMeeting);
+								}
+
+								if(previousMoveUID != null){
+									if(debug)Utils.print(" - setGatheringForPreviousMove  " + previousMoveUID);
+									gameDao.setNewGatheringForMoveAndDeletePreviousGathering(previousMoveUID, existingGathering.getGatheringUID());
+								}
+								
+								unitRecorded.setEndTime(timeOfTheMeeting);
+								unitArriving.setEndTime(timeOfTheMeeting);
 
 								if(debug)Utils.print(" - creation de la nouvelle army");
 								// le move qui cree le gathering (arrivalOnThisCaseMove) devient le firstMove de notre newUnit
-								Unit newUnit = createNewArmy(unitArriving, unitRecorded, arrivalOnThisCaseMove, needReplaceNewArmy);
+								Unit newUnit = createNewArmy(unitArriving, unitRecorded, timeOfTheMeeting, arrivalOnThisCaseMove.getCaseUID(), allyUID, needReplaceNewArmy);
 
-								if(previousMove != null){
-									if(debug)Utils.print(" - setGatheringForPreviousMove  " + previousMove.getMoveUID());
-									gameDao.setNewGatheringForMove(previousMove.getMoveUID(), existingGathering.getGatheringUID());
-								}
 
 								if(debug)Utils.print(" - addUnitInGathering  " + unitArriving.getUnitUID());
 								// Note tres importante pour bien comprendre comment ca marche
 								// ici, existingGathering contient les 2 anciennes units du gathering qu'on est en train de defaire (3,1)
 								// or, existingGathering a ete recupere par le getCase tout au depart
-								// entre temps, on est passe par checkTATATAResetMoves qui fait un deleteMoves et donc qui a degage 
+								// entre temps, on est passe par 'check...ResetMoves' qui fait un deleteMoves et donc qui a degage 
 								// l'unite (unitToReplace)(3) de gathering.unitUIDs dans le datastore  (il n'y a plus que (1) dans le datastore)
 								// donc cette appel avec gameDao va bien rajouter unitArriving dans gathering.unitUIDs avec unitRecorded seulement (2,1)
 								gameDao.addUnitInGatheringAndSetNewArmy(existingGathering.getGatheringUID(), unitArriving.getUnitUID(), newUnit.getUnitUID());
@@ -694,12 +722,12 @@ public class GameManager implements IGameManager {
 								// les liens sur unit.move viennent detre fait par le createNewArmy.createUnit.placeUnit.createMove
 								//requireLinks = false;
 								
-								unitArriving.getMoves().add(arrivalOnThisCaseMove);
+								//unitArriving.getMoves().add(arrivalOnThisCaseMove);
 								unitArriving.setGatheringUIDExpected(existingGathering.getGatheringUID());
 								unitRecorded.setGatheringUIDExpected(existingGathering.getGatheringUID());
 								
 								if(debug)Utils.print(" - annulation des moves prevus de unitRecorded");
-								unitsToReplace.addAll(cancelRecordedMovesAndReturnAllUnitsToReplace(unitRecorded, arrivalOnThisCaseMove.getTimeFrom(), datacontainer));
+								unitsToReplace.addAll(cancelRecordedMovesAndReturnAllUnitsToReplace(unitRecorded, timeOfTheMeeting, datacontainer));
 								
 								updateUnit(unitArriving, null, false);
 								updateUnit(unitRecorded, null, false);
@@ -756,7 +784,8 @@ public class GameManager implements IGameManager {
 				_case.getRecordedMoves().add(arrivalOnThisCaseMove);
 			}
 			else{
-				gameDao.createMove(arrivalOnThisCaseMove, requireLinks);
+				if(moveIsToBeCreated)
+					gameDao.createMove(arrivalOnThisCaseMove);
 				
 				// le vieux move a ete vire de la case lors du checkAnd[...]ToBeReplaced qui a fait un deleteMoves 
 				// le nouveau move a ete greffe sur la case et sur l'unite à linstant lors du createMove
@@ -765,7 +794,7 @@ public class GameManager implements IGameManager {
 				datacontainer.objectsAltered.addCaseAltered(getCase(_case.getCaseUID()));
 			}
 		
-			previousMove = arrivalOnThisCaseMove;
+			previousMoveUID = arrivalOnThisCaseMove.getMoveUID();
 		} // fin du loop sur les moves 
 
 		// et enregistrer l'unite dans les datacontainer.unitsAltered
@@ -819,6 +848,25 @@ public class GameManager implements IGameManager {
 
 	}
 
+	private String getPreviousMove(Move move, DataContainer datacontainer) 
+	{
+		if(debug)Utils.print("getPreviousMove to move " + move.getMoveUID());
+		Unit unit = getUnit(move.getUnitUID(), datacontainer);
+		
+		String previousMoveUID = null;
+		for(Move moveInUnit : unit.getMoves())
+		{
+			if(move.getTimeFrom() == moveInUnit.getTimeTo())
+			{
+				previousMoveUID = moveInUnit.getMoveUID();
+				break;
+			}
+		}
+
+		if(debug)Utils.print("previousMoveUID : " + previousMoveUID);
+		return previousMoveUID;
+	}
+
 	/*
 	 *  
 	 * au depart on a :
@@ -849,9 +897,9 @@ public class GameManager implements IGameManager {
 		// A2, A3
 		Unit unitToReplace;
 		if(gathering.getUnitUIDs().get(0).equals(unitNotToReplaceUID))
-			unitToReplace = getUnit(gathering.getUnitUIDs().get(1), datacontainer);
+			unitToReplace = getUnit(gathering.getUnitUIDs().get(1), datacontainer, true);
 		else
-			unitToReplace = getUnit(gathering.getUnitUIDs().get(0), datacontainer);
+			unitToReplace = getUnit(gathering.getUnitUIDs().get(0), datacontainer, true);
 
 		unitToReplace.setGatheringUIDExpected(null);
 		unitToReplace.setConflictUIDExpected(null);
@@ -905,15 +953,15 @@ public class GameManager implements IGameManager {
 		return unitsToReplace;
 	}
 
-	private Unit createNewArmy(Unit unitArriving, Unit unitRecorded, Move firstMoveForNewUnit, boolean needReplaceNewArmy) {
+	private Unit createNewArmy(Unit unitArriving, Unit unitRecorded, long timeFrom, String caseUID, String allyUID, boolean needReplaceNewArmy) {
 		
 		// TODO : le ownerUID doit etre celui du plus haut placé des deux alliés
 		String ownerUID = unitArriving.getPlayerUID();
 
 		Unit newUnit = new Unit();
-		newUnit.setUnitUID(ownerUID+"_"+Utils.generatePassword(3)+"_"+firstMoveForNewUnit.getTimeFrom());
+		newUnit.setUnitUID(ownerUID+"_"+Utils.generatePassword(3)+"_"+timeFrom);
 		newUnit.setPlayerUID(ownerUID);
-		newUnit.setBeginTime(firstMoveForNewUnit.getTimeFrom());
+		newUnit.setBeginTime(timeFrom);
 		newUnit.setEndTime(-1);
 		newUnit.setStatus(unitArriving.getStatus());
 		newUnit.setSize(unitArriving.getSize() + unitRecorded.getSize());
@@ -923,11 +971,15 @@ public class GameManager implements IGameManager {
 		newUnit.setType(unitArriving.getType());
 		
 		ArrayList<Move> moves = new ArrayList<Move>();
+		Move firstMoveForNewUnit = new Move();
 		
-		firstMoveForNewUnit.setMoveUID(firstMoveForNewUnit.getTimeFrom()+"_"+TribesUtils.getX(firstMoveForNewUnit.getCaseUID())+"_"+TribesUtils.getY(firstMoveForNewUnit.getCaseUID())+"_"+newUnit.getUnitUID());
+		firstMoveForNewUnit.setMoveUID(timeFrom+"_"+TribesUtils.getX(caseUID)+"_"+TribesUtils.getY(caseUID)+"_"+newUnit.getUnitUID());
 		firstMoveForNewUnit.setUnitUID(newUnit.getUnitUID());
+		firstMoveForNewUnit.setCaseUID(caseUID);
+		firstMoveForNewUnit.setTimeFrom(timeFrom);
 		firstMoveForNewUnit.setTimeTo(-1);
 		firstMoveForNewUnit.setValue(newUnit.getValue());
+		firstMoveForNewUnit.getGathering().setAllyUID(allyUID);
 		firstMoveForNewUnit.getGathering().setUnitUIDs(new ArrayList<String>());
 		firstMoveForNewUnit.getGathering().getUnitUIDs().add(newUnit.getUnitUID());
 		
@@ -949,6 +1001,8 @@ public class GameManager implements IGameManager {
 		newUnit.setEquipments(equipments);
 		
 		createUnit(ownerUID, newUnit, null, needReplaceNewArmy);
+		gameDao.createMove(firstMoveForNewUnit);
+		
 		return newUnit;
 	}
 
@@ -1154,6 +1208,10 @@ public class GameManager implements IGameManager {
 //	}
 
 	private Unit getUnit(String unitUID, DataContainer datacontainer) {
+		return getUnit(unitUID, datacontainer, false);
+	}
+
+	private Unit getUnit(String unitUID, DataContainer datacontainer, boolean requireLinkedMoveFromGathering) {
 		if(debugLoop){
 			if(unitUID.equals("army1"))
 				return army1;
@@ -1166,13 +1224,13 @@ public class GameManager implements IGameManager {
 
 		if(datacontainer != null){
 			if(datacontainer.unitsLoaded.get(unitUID) == null){
-				datacontainer.unitsLoaded.put(unitUID, EntitiesConverter.convertUnitDTO(gameDao.getUnit(unitUID), true, true));
+				datacontainer.unitsLoaded.put(unitUID, EntitiesConverter.convertUnitDTO(gameDao.getUnit(unitUID), true, requireLinkedMoveFromGathering, true));
 			}
 			
 			return datacontainer.unitsLoaded.get(unitUID);
 		}
 		else
-			return EntitiesConverter.convertUnitDTO(gameDao.getUnit(unitUID), true, true);
+			return EntitiesConverter.convertUnitDTO(gameDao.getUnit(unitUID), true, requireLinkedMoveFromGathering, true);
 
 	}
 	

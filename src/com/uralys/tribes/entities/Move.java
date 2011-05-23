@@ -10,7 +10,7 @@ public class Move {
 	private long timeFrom;
 	private long timeTo;
 	private String unitUID;
-	private Gathering gathering;
+	private Gathering gathering = new Gathering();
 	private int value;
 	
 	//-----------------------------------------------------------------------------------//

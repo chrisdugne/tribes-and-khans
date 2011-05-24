@@ -6,15 +6,14 @@ package com.uralys.tribes.commons
 	import mx.collections.ArrayCollection;
 	
 	
-	public class Session{ 
+	public class Session { 
 		
 		import com.uralys.tribes.entities.UralysProfile;
 		import com.uralys.tribes.entities.Player;
-		import mx.core.FlexGlobals;
 
 		//=====================================================//
 		
-		[Bindable] public static var VERSION:String = "1.1.23";
+		[Bindable] public static var VERSION:String = "1.1.24";
 		[Bindable] public static var LOGGED_IN:Boolean = false; 
 		[Bindable] public static var CONNECTED_TO_FACEBOOK:Boolean = false;
 		
@@ -23,7 +22,7 @@ package com.uralys.tribes.commons
 		
 		//=====================================================//
 		
-		[Bindable] public static var APPLICATION_WIDTH:int;	
+		[Bindable] public static var APPLICATION_WIDTH:int = 0;	
 		
 		//=====================================================//
 
@@ -67,6 +66,11 @@ package com.uralys.tribes.commons
 
 		[Bindable] public static var COORDINATE_X:int;
 		[Bindable] public static var COORDINATE_Y:int;
+
+		[Bindable] public static var LEFT_LIMIT_LOADED:int;
+		[Bindable] public static var RIGHT_LIMIT_LOADED:int;
+		[Bindable] public static var TOP_LIMIT_LOADED:int;
+		[Bindable] public static var BOTTOM_LIMIT_LOADED:int;
 
 		[Bindable] public static var CURRENT_SELECTION_X:int;
 		[Bindable] public static var CURRENT_SELECTION_Y:int;

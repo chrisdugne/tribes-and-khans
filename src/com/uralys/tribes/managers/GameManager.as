@@ -456,8 +456,18 @@ package com.uralys.tribes.managers {
 
 		public function loadCases(centerX:int, centerY:int):void{
 			
-			trace("loadCases");
+			trace("loadCases center : [ " + centerX + " | " + centerY + " ]");
 			var caseUIDs:ArrayCollection = new ArrayCollection();
+			
+			Session.LEFT_LIMIT_LOADED =  (centerX - Numbers.NB_TILES_ON_EDGE_BY_LOADING/2) * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4); 
+			Session.RIGHT_LIMIT_LOADED =  (centerX - Numbers.NB_TILES_ON_EDGE_BY_LOADING/2 + Numbers.NB_TILES_ON_EDGE_BY_LOADING) * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4);
+			Session.TOP_LIMIT_LOADED = (centerY - Numbers.NB_TILES_ON_EDGE_BY_LOADING/2) * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2); 
+			Session.BOTTOM_LIMIT_LOADED = (centerY - Numbers.NB_TILES_ON_EDGE_BY_LOADING/2 + Numbers.NB_TILES_ON_EDGE_BY_LOADING) * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2); 
+			
+			trace("Session.LEFT_LIMIT_LOADED : " + Session.LEFT_LIMIT_LOADED);
+			trace("Session.RIGHT_LIMIT_LOADED : " + Session.RIGHT_LIMIT_LOADED);
+			trace("Session.TOP_LIMIT_LOADED : " + Session.TOP_LIMIT_LOADED);
+			trace("Session.BOTTOM_LIMIT_LOADED : " + Session.BOTTOM_LIMIT_LOADED);
 			
 			for(var i:int = 0; i < Numbers.NB_TILES_ON_EDGE_BY_LOADING; i++){
 				for(var j:int = 0; j < Numbers.NB_TILES_ON_EDGE_BY_LOADING; j++){

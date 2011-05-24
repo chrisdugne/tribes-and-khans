@@ -13,9 +13,6 @@
 	
 	<fx:Script>
 		<![CDATA[
-			import adobe.utils.CustomActions;
-			
-			import com.google.analytics.core.ga_internal;
 			import com.uralys.tribes.commons.Numbers;
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;
@@ -287,6 +284,16 @@
 				}
 				
 				if(autoMoveNotNeeded){
+					if(Session.MAP_WIDTH/2 - mapPositioner.x < Session.LEFT_LIMIT_LOADED
+					|| Session.MAP_WIDTH/2 - mapPositioner.x > Session.RIGHT_LIMIT_LOADED 
+					|| Session.MAP_HEIGHT/2 - mapPositioner.y < Session.TOP_LIMIT_LOADED 
+					|| Session.MAP_HEIGHT/2 - mapPositioner.y > Session.BOTTOM_LIMIT_LOADED){
+						trace("dragging is far");
+						var newCenterX:int = autoMove.xTo / (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4); 
+						var newCenterY:int = autoMove.yTo / (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2); 
+						GameManager.getInstance().loadCases(newCenterX, newCenterY);
+					}
+					
 					return;
 				}
 				
@@ -300,7 +307,7 @@
 				autoMove.duration = 6*(Math.abs(draggingStageXTo - draggingStageXFrom) + Math.abs(draggingStageYTo - draggingStageYFrom));
 				autoMove.xTo = mapPositioner.x + (draggingStageXTo - draggingStageXFrom)*3;
 				autoMove.yTo = mapPositioner.y + (draggingStageYTo - draggingStageYFrom)*3;
-
+				
 				if(autoMove.xTo > 0)
 					autoMove.xTo = 0;
 				if(autoMove.yTo > 0)
@@ -309,6 +316,16 @@
 					autoMove.xTo = limitLeft;
 				if(autoMove.yTo < limitUp)
 					autoMove.yTo = limitUp;
+				
+				if(Session.MAP_WIDTH/2 - autoMove.xTo < Session.LEFT_LIMIT_LOADED
+				|| Session.MAP_WIDTH/2 - autoMove.xTo > Session.RIGHT_LIMIT_LOADED 
+				|| Session.MAP_HEIGHT/2 - autoMove.yTo < Session.TOP_LIMIT_LOADED 
+				|| Session.MAP_HEIGHT/2 - autoMove.yTo > Session.BOTTOM_LIMIT_LOADED){
+					trace("automove will go to far");
+					var newCenterX:int = -autoMove.xTo / (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4); 
+					var newCenterY:int = -autoMove.yTo / (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2); 
+					GameManager.getInstance().loadCases(newCenterX, newCenterY);
+				}
 				
 				autoMove.play();
 			}

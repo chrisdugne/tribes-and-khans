@@ -93,9 +93,6 @@ package com.uralys.tribes.core
 		private function moveIsDone(e:TimerEvent):void{
 			
 			try{
-				trace("--------");
-				trace("moveIsDone");
-				
 				var moves:Array = timers.get(e.currentTarget) as Array;
 				var moveToPerform:Move = moves.shift() as Move;
 				
@@ -104,8 +101,6 @@ package com.uralys.tribes.core
 				// refresh de la case dont on part : suppression du move dans case.recordedMoves et dans unit.moves
 				var caseToRefresh:Case = Session.map[moveToPerform.getX()][moveToPerform.getY()] as Case;		
 				caseToRefresh.forceRefresh();
-				
-				trace("efface le pion ancien");
 				
 				// efface le 'pion' de la case
 				BoardDrawer.getInstance().refreshUnits(caseToRefresh);
@@ -121,8 +116,6 @@ package com.uralys.tribes.core
 				// refresh de la nouvelle case active : ajout de l'unité sur la case
 				var newCaseToRefresh:Case = Session.map[newCurrentMove.getX()][newCurrentMove.getY()] as Case;
 				newCaseToRefresh.forceRefresh();
-	
-				trace("affiche le pion nouveau");
 	
 				// affiche le 'pion' de la case
 				BoardDrawer.getInstance().refreshUnits(newCaseToRefresh);
@@ -182,29 +175,20 @@ package com.uralys.tribes.core
 		}
 
 		public function refreshMoves(unit:Unit){
-			trace("-----");
-			trace("refreshMoves : " + unit.unitUID);
 			var nbIndexesToRemove:int = -1;
 			var now:Number = new Date().getTime();
-			trace("now : " + now);
-			trace("unit.endTime : " + unit.endTime);
 			
 			for each(var move:Move in unit.moves){
-				trace("move.timeTo : " + move.timeTo);
-				
 				if(now > move.timeTo && move.timeTo != -1)
 					nbIndexesToRemove++;
 				else
 					break;
 			}
 			
-			trace("nbIndexesToRemove : " + nbIndexesToRemove);
 			for(var i:int = 0; i <= nbIndexesToRemove; i++)
 				unit.moves.removeItemAt(0);
 			
 			unit.currentCaseUID = (unit.moves.getItemAt(0) as Move).caseUID;
-			trace("unit.currentCaseUID : " + unit.currentCaseUID);
-			trace("-----");
 		}
 
 		public function resetPendingMoves(unit:Unit)

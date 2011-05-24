@@ -45,7 +45,7 @@ public interface IGameDAO {
 	public String createMove(Move move);
 	public void setTimeToForMove(String moveUID, long timeTo);
 	public void setNewGatheringForMoveAndDeletePreviousGathering(String moveUID, String gatheringUID);
-	public void unvalidateMove(Move move);
+	public void setValueForMove(String moveUID, int value);
 	public void deleteMove(String moveUID, boolean keepGatheringBecauseItIsLinkedWithAnotherMoveNow);
 	public void deleteMoves(String unitUID);
 	

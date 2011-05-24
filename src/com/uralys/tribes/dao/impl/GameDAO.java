@@ -450,12 +450,12 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	}
 	
 
-	public void unvalidateMove(Move move) {
+	public void setValueForMove(String moveUID, int value) {
 
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
-		MoveDTO moveDTO = pm.getObjectById(MoveDTO.class, move.getMoveUID());
+		MoveDTO moveDTO = pm.getObjectById(MoveDTO.class, moveUID);
 		
-		moveDTO.setValue(0);
+		moveDTO.setValue(value);
 		
 		pm.close();
 	}

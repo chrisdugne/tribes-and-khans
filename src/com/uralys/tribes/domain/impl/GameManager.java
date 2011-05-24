@@ -9,7 +9,6 @@ import com.uralys.tribes.dao.IGameDAO;
 import com.uralys.tribes.domain.IGameManager;
 import com.uralys.tribes.entities.Case;
 import com.uralys.tribes.entities.City;
-import com.uralys.tribes.entities.Conflict;
 import com.uralys.tribes.entities.DataContainer4UnitSaved;
 import com.uralys.tribes.entities.Equipment;
 import com.uralys.tribes.entities.Gathering;
@@ -76,20 +75,8 @@ public class GameManager implements IGameManager {
 		return getPlayer(uralysUID, null);
 	}
 	
-	private Player getPlayer(String uralysUID, DataContainer datacontainer) {
-		
-		if(debugLoop){
-			if(uralysUID.equals("player1"))
-				return player1;
-			if(uralysUID.equals("player2"))
-				return player2;
-			if(uralysUID.equals("player3"))
-				return player3;
-			
-			return null;			
-		}
-
-
+	private Player getPlayer(String uralysUID, DataContainer datacontainer) 
+	{
 		if(datacontainer != null){
 			if(datacontainer.playerAlreadyLoaded.get(uralysUID) == null){
 				datacontainer.playerAlreadyLoaded.put(uralysUID, EntitiesConverter.convertPlayerDTO(gameDao.getPlayer(uralysUID), false));
@@ -99,7 +86,6 @@ public class GameManager implements IGameManager {
 		}
 		else
 			return EntitiesConverter.convertPlayerDTO(gameDao.getPlayer(uralysUID), true);
-		
 	}
 
 	public void savePlayer(Player player) {
@@ -228,239 +214,6 @@ public class GameManager implements IGameManager {
 	}
 	
 	//==================================================================================================//
-	// nouvel algo pour le deplacement des unites
-
-	private static Case[][] board = new Case[100][100];
-	private static Unit army1;
-	private static Unit army2;
-	private static Unit army3;
-
-	private static Player player1;
-	private static Player player2;
-	private static Player player3;
-	private static boolean debugLoop = false;
-
-	public static void main(String[] args){
-
-		if(topdebug)Utils.print("entree dans placeUnit | " + new Date());
-		//-----------------------------------------------------------------------------------//
-		
-		debugLoop = true;
-		
-		GameManager game = new GameManager(null);
-
-		for(int i=0; i<100; i++){
-			for(int j=0; j<100; j++){
-				board[i][j] = new Case(i,j);
-			}
-		}
-
-		//-----------------------------------------------------------------------------------//
-
-		player1 = new Player();
-		player1.setUralysUID("player1");
-		player1.setAllyUID("alliance1");
-
-		//-----------------------------------------------------------------------------------//
-
-		player2 = new Player();
-		player2.setUralysUID("player2");
-		player2.setAllyUID("alliance2");
-
-		//-----------------------------------------------------------------------------------//
-
-		player3 = new Player();
-		player3.setUralysUID("player3");
-		player3.setAllyUID("alliance2");
-
-		//-----------------------------------------------------------------------------------//
-
-		army1 = new Unit();
-		army1.setUnitUID("army1");
-		army1.setValue(50);
-		army1.setType(Unit.ARMY);
-		army1.setPlayerUID(player1.getUralysUID());
-
-		//-----------------------------------------------------------------------------------//
-
-		army2 = new Unit();
-		army2.setUnitUID("army2");
-		army2.setValue(230);
-		army2.setType(Unit.ARMY);
-		army2.setPlayerUID(player2.getUralysUID());
-
-		//-----------------------------------------------------------------------------------//
-
-		army3 = new Unit();
-		army3.setUnitUID("army3");
-		army3.setValue(120);
-		army3.setType(Unit.ARMY);
-		army3.setPlayerUID(player3.getUralysUID());
-
-		//-----------------------------------------------------------------------------------//
-		// le joueur cree son mouvement pour army1
-		// le premier move est sur la case actuelle de l'unite, de 'now' ˆ 'now + temps_de_deplacement' 
-
-		ArrayList<Move> moves1 = new ArrayList<Move>();
-		
-//		NewMove move10 = new NewMove(1,0,0,1);
-//		move10.setMoveUID("move10");
-//		NewMove move11 = new NewMove(1,1,1,3);
-//		move11.setMoveUID("move11");
-//		NewMove move12 = new NewMove(1,2,3,5);
-//		move12.setMoveUID("move12");
-//		NewMove move13 = new NewMove(1,3,5,7);
-//		move13.setMoveUID("move13");
-//		NewMove move14 = new NewMove(2,3,7,9);
-//		move14.setMoveUID("move14");
-//		NewMove move15 = new NewMove(2,4,9,11);
-//		move15.setMoveUID("move15");
-//
-//		moves1.add(move10);
-//		moves1.add(move11);
-//		moves1.add(move12);
-//		moves1.add(move13);
-//		moves1.add(move14);
-//		moves1.add(move15);
-
-		Move move10 = new Move(3,3,0,1);
-		move10.setMoveUID("move10");
-		Move move11 = new Move(3,4,1,5);
-		move11.setMoveUID("move11");
-		Move move12 = new Move(3,5,5,7);
-		move12.setMoveUID("move12");
-		
-		moves1.add(move10);
-		moves1.add(move11);
-		moves1.add(move12);
-		
-		//-----------------------------------------------------------------------------------//
-		// le joueur cree son mouvement pour army2
-
-		ArrayList<Move> moves2 = new ArrayList<Move>();
-
-//		NewMove move20 = new NewMove(2,7,0,2);
-//		move20.setMoveUID("move20");
-//		NewMove move21 = new NewMove(2,6,2,4);
-//		move21.setMoveUID("move21");
-//		NewMove move22 = new NewMove(2,5,4,6);
-//		move22.setMoveUID("move22");
-//		NewMove move23 = new NewMove(2,4,6,8);
-//		move23.setMoveUID("move23");
-//		NewMove move24 = new NewMove(2,3,8,10);
-//		move24.setMoveUID("move24");
-//		NewMove move25 = new NewMove(2,2,10,12);
-//		move25.setMoveUID("move25");
-//
-//		moves2.add(move20);
-//		moves2.add(move21);
-//		moves2.add(move22);
-//		moves2.add(move23);
-//		moves2.add(move24);
-//		moves2.add(move25);
-		
-
-		Move move20 = new Move(4,4,0,1);
-		move20.setMoveUID("move20");
-		Move move21 = new Move(3,4,1,6);
-		move21.setMoveUID("move21");
-		Move move22 = new Move(2,4,6,8);
-		move22.setMoveUID("move22");
-		
-		moves2.add(move20);
-		moves2.add(move21);
-		moves2.add(move22);
-
-		//-----------------------------------------------------------------------------------//
-		// le joueur cree son mouvement pour army3
-
-		ArrayList<Move> moves3 = new ArrayList<Move>();
-
-//		NewMove move30 = new NewMove(7,6,-9,-7);
-//		move30.setMoveUID("move30");
-//		NewMove move31 = new NewMove(6,6,-7,-5);
-//		move31.setMoveUID("move31");
-//		NewMove move32 = new NewMove(5,6,-5,-3);
-//		move32.setMoveUID("move32");
-//		NewMove move33 = new NewMove(4,6,-3,-1);
-//		move33.setMoveUID("move33");
-//		NewMove move34 = new NewMove(3,6,-1,1);
-//		move34.setMoveUID("move34");
-//		NewMove move35 = new NewMove(2,6,1,3);
-//		move35.setMoveUID("move35");
-//		NewMove move36 = new NewMove(1,6,1,3);
-//		move36.setMoveUID("move36");
-//		NewMove move37 = new NewMove(0,6,1,3);
-//		move37.setMoveUID("move37");
-//
-//		moves3.add(move30);
-//		moves3.add(move31);
-//		moves3.add(move32);
-//		moves3.add(move33);
-//		moves3.add(move34);
-//		moves3.add(move35);
-//		moves3.add(move36);
-//		moves3.add(move37);
-
-
-		Move move30 = new Move(3,5,0,2);
-		move30.setMoveUID("move30");
-		Move move31 = new Move(3,4,2,7);
-		move31.setMoveUID("move31");
-		Move move32 = new Move(4,4,7,9);
-		move32.setMoveUID("move32");
-		
-		moves3.add(move30);
-		moves3.add(move31);
-		moves3.add(move32);
-		
-		//-----------------------------------------------------------------------------------//		game.placeUnit(army1, moves1, new ArrayList<Unit>(), null);
-		game.placeUnit(army2, moves2, new ArrayList<Unit>(), null);
-		game.placeUnit(army3, moves3, new ArrayList<Unit>(), null);
-
-		//-----------------------------------------------------------------------------------//
-		
-		if(debug)Utils.print("================================================");
-		if(debug)Utils.print("Affichage final des deplacements");
-		
-		printMove(army1);
-		printMove(army2);
-		printMove(army3);
-		if(debug)Utils.print("---");
-		printConflict(army1);
-		printConflict(army2);
-		printConflict(army3);
-		//-----------------------------------------------------------------------------------//
-
-	}
-
-
-	private static void printMove(Unit unit) {
-		if(debug)Utils.print("---");
-		if(debug)Utils.print("moves pour unit : " + unit.getUnitUID());
-		
-		for(Move move : unit.getMoves()){
-			int i = TribesUtils.getX(move.getCaseUID());
-			int j = TribesUtils.getY(move.getCaseUID());
-			if(debug)Utils.print("["+i+"]["+j+"] | value : " + move.getValue());
-		}
-	}
-	
-	private static void printConflict(Unit unit) {
-		if(debug)Utils.print("---");
-		if(debug)Utils.print((unit.getConflictUIDExpected() == null ? "aucun " : "") + "conflict pour unit : " + unit.getUnitUID());
-
-//		for(Conflict meeting : unit.getConflicts()){
-//			int i = getXFromCaseUID(meeting.getCaseUID());
-//			int j = getYFromCaseUID(meeting.getCaseUID());
-//			if(debug)Utils.print("["+i+"]["+j+"]");
-			
-//			for(Unit opponent : meeting.getUnits()){
-//				if(debug)Utils.print("unit : " + opponent.getUnitUID());			
-//			}
-			
-//		}
-	}
 	
 	/**
 	 * 02 mai 2011
@@ -470,7 +223,7 @@ public class GameManager implements IGameManager {
 	 * peut etre une solution : UNIFIER LES GROUPES DARMEES PAR ALLIANCE
 	 * il faut une hierarchie d'alliance, pour determiner qui controle la nouvelle armee par defaut
 	 * il faut plus tard pouvoir separer une armee en plusieurs si on les deplace (fixer chaque scission a 3 pour ne pas renouveler le probleme, comme ca larmee se divisera par 3, puis par 3 etc et ca sera accessible)
-	 * il faut pouvoir donner le control dune armee a qqun de lalliance.
+	 * il faut pouvoir donner le controle d'une armee ˆ qqun de l'alliance.
 	 * 
 	 */
 	// le premier Move est la case actuelle ou est posee l'unite avant son depart
@@ -486,8 +239,7 @@ public class GameManager implements IGameManager {
 		String allyUID = getPlayer(unitArriving.getPlayerUID(), datacontainer).getAllyUID();
 
 		if(debug){
-			System.out
-			.println("initial value : " + currentUnitValue);
+			Utils.print("initial value : " + currentUnitValue);
 			Utils.print("ally : " + allyUID);
 			Utils.print("moves to check and record");
 
@@ -517,8 +269,9 @@ public class GameManager implements IGameManager {
 
 		boolean foundAGathering = false;
 		String previousMoveUID = null;
-		for(Move arrivalOnThisCaseMove : moves){
-
+		
+		for(Move arrivalOnThisCaseMove : moves)
+		{
 			boolean moveIsToBeCreated = true;
 			
 			if(foundAGathering){
@@ -539,6 +292,7 @@ public class GameManager implements IGameManager {
 				int i = TribesUtils.getX(arrivalOnThisCaseMove.getCaseUID());
 				int j = TribesUtils.getY(arrivalOnThisCaseMove.getCaseUID());
 				Utils.print("passage par case ["+i+"]["+j+"], de ("+new Date(arrivalOnThisCaseMove.getTimeFrom())+") ˆ ("+new Date(arrivalOnThisCaseMove.getTimeTo())+")");
+				Utils.print("value : " + arrivalOnThisCaseMove.getValue());
 			}
 
 			Case _case = getCase(arrivalOnThisCaseMove.getCaseUID());
@@ -681,6 +435,7 @@ public class GameManager implements IGameManager {
 								{
 									// dans ce cas, on intercepte un move (on arrive avant lui)
 									// ce recorded move n'existe donc plus, puisque lorsquil arrivera on passera sur la newarmy
+									if(debug)Utils.print("  on arrive sur la case AVANT celui qu'on croise");
 									timeOfTheMeeting = recordedMove.getTimeFrom();
 									arrivalOnThisCaseMove.setTimeTo(timeOfTheMeeting);
 									previousMoveUID = getPreviousMove(recordedMove, datacontainer);
@@ -692,6 +447,7 @@ public class GameManager implements IGameManager {
 									// dans ce cas on arrive apres le move intercepte
 									// donc le recordedMove existe jusqu'a ce qu'on arrive
 									// et le move ne doit surtout pas etre enregistre puisqu'on devient immediatement la newArmy avec son propre move. 
+									if(debug)Utils.print("  on arrive sur la case APRES celui qu'on croise");
 									moveIsToBeCreated = false;
 									timeOfTheMeeting = arrivalOnThisCaseMove.getTimeFrom();
 									gameDao.setTimeToForMove(recordedMove.getMoveUID(), timeOfTheMeeting);
@@ -738,6 +494,45 @@ public class GameManager implements IGameManager {
 							}// endif croisement avec un ally de meme type
 						
 						} // endif croisement avec un ally
+						else
+						{
+							// croisement avec un ennemi !
+							// conflit
+							if(debug)Utils.print(" Conflit !!!");
+							int valueOfTheUnitMet = recordedMove.getValue();
+							if(debug)Utils.print("recordedMove.getValue() : " + recordedMove.getValue());
+							
+							if(valueOfTheUnitMet > currentUnitValue)
+							{
+								if(debug)Utils.print(" Combat perdu par l'unite qui arrive");
+								
+								currentUnitValue = 0;
+								double rateRemaining = (valueOfTheUnitMet - currentUnitValue)/(double)valueOfTheUnitMet;
+
+								if(debug)Utils.print(" valeur de l'unite restante : "+ ((int)(valueOfTheUnitMet*rateRemaining)));
+								
+								arrivalOnThisCaseMove.setValue(currentUnitValue);
+								unitArriving.setEndTime(arrivalOnThisCaseMove.getTimeFrom());
+								updateUnit(unitArriving, null, false);
+								moveIsToBeCreated = false;
+								
+								gameDao.setValueForMove(recordedMove.getMoveUID(), (int)(valueOfTheUnitMet*rateRemaining));
+							}
+							else if(currentUnitValue > valueOfTheUnitMet)
+							{
+								if(debug)Utils.print(" Combat gagne par l'unite qui arrive");
+								double rateRemaining = (currentUnitValue - valueOfTheUnitMet)/(double)currentUnitValue;
+								if(debug)Utils.print(" valeur de l'unite restante : "+ ((int)(currentUnitValue*rateRemaining)));
+								currentUnitValue = (int)(currentUnitValue*rateRemaining);
+								
+								Unit unitAlreadyOnTheCase = getUnit(existingGathering.getNewUnitUID(), datacontainer);	
+								gameDao.setValueForMove(recordedMove.getMoveUID(), 0);
+								unitAlreadyOnTheCase.setEndTime(arrivalOnThisCaseMove.getTimeFrom());
+								updateUnit(unitAlreadyOnTheCase, null, false);
+								
+							}
+							
+						} // endif croisement avec un ennemy
 						
 					}// endif croisement
 					else{
@@ -750,49 +545,21 @@ public class GameManager implements IGameManager {
 					}
 				}// fin du for sur les recordedMoves
 				
-				// les gatherings sont remplis
-				// si il y en a plus de 2 => combats.
-//				
-//				if(conflict.getGatherings().size() > 1){
-//
-//					Conflict conflict = new Conflict();
-//					conflict.setConflictUID(Utils.generateUID());
-//					conflict.setCaseUID(_case.getCaseUID());
-//					
-//					if(debug)Utils.print(" - plusieurs gatherings !! => conflit");
-//					
-//					int[] result = calculateFinalValue(conflict, unit, currentUnitValue, _case);
-//					currentUnitValue = result[1];
-//					if(result[0] < 0){
-//						// on a un Rassemblement
-//						// il faut effectuer le gathering
-//						
-//						
-//					}
-//					else{
-//						// on a un Conflit !
-//						unit.setConflictUIDExpected(conflict.getConflictUID());
-//					}
-//				}
 			}
 
 			//-----------------------------------------------------------------------------------//
 			// enregistrement du move dans les recordedMoves APRES check de ceux ci (sinon on va le checker avec lui meme)
 		
 			if(debug)Utils.print("recording move " + arrivalOnThisCaseMove.getMoveUID());
-			if(debugLoop){
-				_case.getRecordedMoves().add(arrivalOnThisCaseMove);
-			}
-			else{
-				if(moveIsToBeCreated)
-					gameDao.createMove(arrivalOnThisCaseMove);
-				
-				// le vieux move a ete vire de la case lors du checkAnd[...]ToBeReplaced qui a fait un deleteMoves 
-				// le nouveau move a ete greffe sur la case et sur l'unite ˆ linstant lors du createMove
-				// donc on peut enregistrer la case dans les datacontainer.casesAltered
-				if(debug)Utils.print("recording caseAltered " + _case.getCaseUID());
-				datacontainer.objectsAltered.addCaseAltered(getCase(_case.getCaseUID()));
-			}
+			if(debug)Utils.print("value : " + arrivalOnThisCaseMove.getValue());
+			if(moveIsToBeCreated)
+				gameDao.createMove(arrivalOnThisCaseMove);
+			
+			// le vieux move a ete vire de la case lors du checkAnd[...]ToBeReplaced qui a fait un deleteMoves 
+			// le nouveau move a ete greffe sur la case et sur l'unite ˆ linstant lors du createMove
+			// donc on peut enregistrer la case dans les datacontainer.casesAltered
+			if(debug)Utils.print("recording caseAltered " + _case.getCaseUID());
+			datacontainer.objectsAltered.addCaseAltered(getCase(_case.getCaseUID()));
 		
 			previousMoveUID = arrivalOnThisCaseMove.getMoveUID();
 		} // fin du loop sur les moves 
@@ -913,6 +680,7 @@ public class GameManager implements IGameManager {
 		Unit newArmy = getUnit(gathering.getNewUnitUID(), datacontainer);
 		newArmy.setEndTime(1);
 		updateUnit(newArmy, null, false);
+		datacontainer.objectsAltered.addUnitAltered(newArmy);
 		
 		// g2
 		if(newArmy.getGatheringUIDExpected() != null){
@@ -931,7 +699,7 @@ public class GameManager implements IGameManager {
 			if(debug)Utils.print("move " + move.getMoveUID());
 			if(move.getTimeFrom() > timeFromWhichMovesMustBeCancelled){
 				if(debug)Utils.print("isCancelled");
-				gameDao.unvalidateMove(move);
+				gameDao.setValueForMove(move.getMoveUID(), 0);
 				
 				if(move.getGathering().getUnitUIDs().size() > 1)
 				{
@@ -1032,40 +800,35 @@ public class GameManager implements IGameManager {
 		List<Unit> unitsToReplace = new ArrayList<Unit>();
 
 		// d'abord on regarde si il y avait un gathering de prevu
-		// si oui, il etait forcement plus loin puisqu'on vient de croiser une unit et qu'elle s'arrete forcement au gathering.
-//		if(unit.getGatheringUIDExpected() != null){
-//			if(debug)Utils.print("found a gathering expected !");
-//			Gathering gatheringExpected = EntitiesConverter.convertGatheringDTO(gameDao.getGathering(unit.getGatheringUIDExpected()));
-//			if(debug)Utils.print("gathering : " + gatheringExpected.getGatheringUID());
-//
-//			// on doit modifier ce gathering
-//			// il faut simplement que l'armee restante (la 2e) devienne gathering.newArmy
-//			// on met donc toutes les proprietes de l'armee restante dans gathering.newArmy
-//			// quant a notre unit, elle est enlevee de gathering.units
-//			// s'il n'y a pas d'autre gathering suivant, ou de conflit prevu sur cette case, on replace l'autre unit pour qu'elle suive le reste de son chemin
-//			
-//			Unit unitStaying;
-//			if(gatheringExpected.getUnitUIDs().get(0).equals(unit.getUnitUID()))
-//				unitStaying = getUnit(gatheringExpected.getUnitUIDs().get(1), datacontainer);
-//			else
-//				unitStaying = getUnit(gatheringExpected.getUnitUIDs().get(0), datacontainer);
-//			
-//			if(debug)Utils.print("unitStaying : " + unitStaying.getUnitUID());
-//			Unit newUnit = getUnit(gatheringExpected.getNewArmyUID(), datacontainer);
-//			transformUnitInNewUnit(unitStaying, newUnit);
-//			
-//			if(debug)Utils.print("removing the unit");
-//			gatheringExpected.remove(unit.getUnitUID());
-//			
-//			updateUnit(unitStaying, null, false);
-//			updateUnit(newUnit, null, false);
-//			
-//			if(newUnit.getGatheringUIDExpected() != null)
-//				unitsToReplace.add(unitStaying);
-//		}
+		if(unit.getGatheringUIDExpected() != null)
+		{
+			if(debug)Utils.print("found a gathering expected !");
+			Gathering gatheringExpected = EntitiesConverter.convertGatheringDTO(gameDao.getGathering(unit.getGatheringUIDExpected()));
+			if(debug)Utils.print("gathering : " + gatheringExpected.getGatheringUID());
+
+			Unit unitToReplace;
+			if(gatheringExpected.getUnitUIDs().get(0).equals(unit.getUnitUID()))
+				unitToReplace = getUnit(gatheringExpected.getUnitUIDs().get(1), datacontainer, true);
+			else
+				unitToReplace = getUnit(gatheringExpected.getUnitUIDs().get(0), datacontainer, true);
+			
+			unitToReplace.setEndTime(-1);
+			unitToReplace.setGatheringUIDExpected(null);
+			unitToReplace.setConflictUIDExpected(null);
+			updateUnit(unitToReplace, null, false);
+			
+			Unit newUnit = getUnit(gatheringExpected.getNewUnitUID(), datacontainer);
+			newUnit.setEndTime(1);
+			updateUnit(newUnit, null, false);
+			
+			// on supprime tous les moves (+ gathering, + case.recordedMove, + unit.move) de cette newUnit
+			gameDao.deleteMoves(newUnit.getUnitUID());
+			
+			if(debug)Utils.print("unitStaying : " + unitToReplace.getUnitUID());
+			unitsToReplace.add(unitToReplace);
+		}
 		
-		// enuite on regarde si il y avait un conflit de prevu
-		// si oui, il etait forcement plus loin puisqu'on vient de croiser cette unit et qu'elle s'arrete forcement au conflit.
+		// ensuite on regarde si il y avait un conflit de prevu
 //		if(unit.getConflictUIDExpected() != null)
 //		{
 //			if(debug)Utils.print("found a confict expected !");
@@ -1091,9 +854,10 @@ public class GameManager implements IGameManager {
 		gameDao.deleteMoves(unit.getUnitUID());
 
 		unit.setMoves(new ArrayList<Move>());
+		unit.setEndTime(-1);
 		unit.setGatheringUIDExpected(null);
 		unit.setConflictUIDExpected(null);
-		
+		updateUnit(unit, null, false);
 
 		return unitsToReplace;
 	}
@@ -1193,14 +957,7 @@ public class GameManager implements IGameManager {
 //	}
 
 	private Case getCase(String caseUID) {
-		if(debugLoop){
-						
-			return board[TribesUtils.getX(caseUID)][TribesUtils.getY(caseUID)];
-		}
-		else{
-			return EntitiesConverter.convertCaseDTO(gameDao.getCase(TribesUtils.getX(caseUID),TribesUtils.getY(caseUID)));
-		}
-		
+		return EntitiesConverter.convertCaseDTO(gameDao.getCase(TribesUtils.getX(caseUID),TribesUtils.getY(caseUID)));
 	}
 
 //	private boolean sameAlly(Unit unit, Unit opponent) {
@@ -1211,17 +968,8 @@ public class GameManager implements IGameManager {
 		return getUnit(unitUID, datacontainer, false);
 	}
 
-	private Unit getUnit(String unitUID, DataContainer datacontainer, boolean requireLinkedMoveFromGathering) {
-		if(debugLoop){
-			if(unitUID.equals("army1"))
-				return army1;
-			if(unitUID.equals("army2"))
-				return army2;
-			if(unitUID.equals("army3"))
-				return army3;
-
-		}
-
+	private Unit getUnit(String unitUID, DataContainer datacontainer, boolean requireLinkedMoveFromGathering) 
+	{
 		if(datacontainer != null){
 			if(datacontainer.unitsLoaded.get(unitUID) == null){
 				datacontainer.unitsLoaded.put(unitUID, EntitiesConverter.convertUnitDTO(gameDao.getUnit(unitUID), true, requireLinkedMoveFromGathering, true));
@@ -1236,115 +984,114 @@ public class GameManager implements IGameManager {
 	
 
 	//-----------------------------------------------------------------------------------//
+//	
+//	private int[] calculateFinalValue(Conflict meeting, Unit unitInspected, int currentUnitValue, Case _case, DataContainer datacontainer) {
+//
+//		// result[0] : conflict -1 ou 1 (il y a conflit ou non)
+//		// result[1] : currentUnitValue
+//		int[] result = new int[2];
+//		
+//		if(debug)Utils.print("------------------");
+//		if(topdebug)Utils.print("debut du calculateFinalValue  | " + new Date());
+//		if(debug)Utils.print("calculateFinalValue : unitInspected : " + unitInspected.getUnitUID());
+//		int allyIndexOfTheUnitInspected = -1;
+//		
+//		// --------   rassemblement sur la meme case par une alliance : pas de conflit
+//
+//		if(meeting.getGatherings().size() == 1){
+//			if(topdebug)Utils.print("fin du calculateFinalValue  | " + new Date());		
+//			if(debug)Utils.print("rassemblement sur la meme case par une alliance : pas de conflit");
+//			
+//			result[0] = -1;
+//			result[1] = currentUnitValue;
+//			return result;
+//		}
+//		
+//		// --------   calcul des valeurs des allies
+//
+//		int[] allyValues = new int[meeting.getGatherings().size()];
+//		
+//		int index = 0;
+//		for(Gathering ally : meeting.getGatherings()){
+//			int allyValue = 0;
+//
+//			for(String unitUID : ally.getUnitUIDs()){
+//				// si cest la unitInspected, sa valeur n'est pas encore enregistree dans le 'case.move' du conflit
+//				// donc on prend sa valeur ˆ l'entree de la case
+//				// sinon on recupere la valeur de larmee rencontree sur cette case
+//				if(unitUID.equals(unitInspected.getUnitUID())){
+//					if(debug)Utils.print("unitInspected value : " + currentUnitValue);
+//					allyValue += currentUnitValue;
+//				}
+//				else
+//					allyValue += getValueInTheRecordedMove(getUnit(unitUID, datacontainer), meeting.getCaseUID(), _case);
+//			}
+//			
+//			allyValues[index++] = allyValue;
+//			
+//		}
+//		
+//		// ---------  calculate the winner points remaining
+//		
+//		int firstAllyValue = 0;
+//		int secondAllyValue = 0;
+//		int indexOfBestAlly = -1;
+//		
+//		for(int i=0; i < meeting.getGatherings().size(); i++){
+//			if(allyValues[i] > firstAllyValue){
+//				int oldFirstValue = firstAllyValue;
+//				firstAllyValue = allyValues[i];
+//				
+//				if(oldFirstValue > secondAllyValue)
+//					secondAllyValue = oldFirstValue;
+//				
+//				indexOfBestAlly = i;
+//			}
+//			else if(allyValues[i] > secondAllyValue){
+//				secondAllyValue = allyValues[i];
+//			}
+//		}
+//		
+//		if(debug)Utils.print("firstAllyValue : " + firstAllyValue);
+//		if(debug)Utils.print("secondAllyValue : " + secondAllyValue);
+//
+//		//----------------------//
+//		
+//		if(indexOfBestAlly != allyIndexOfTheUnitInspected){	
+//
+//			result[0] = -1;
+//			result[1] = 0;
+//			return result;
+//		}
+//		else{
+//			
+//			if(debug)Utils.print("battle won ! (or draw if returns 0 :p)");
+//			double rateRemaining = (firstAllyValue - secondAllyValue)/(double)firstAllyValue;
+//			if(debug)Utils.print("rateRemaining : " + rateRemaining);
+//			if(debug)Utils.print("currentUnitValue returned : " + ((int)(currentUnitValue*rateRemaining)));
+//			
+//
+//			result[0] = -1;
+//			result[1] = (int)(currentUnitValue*rateRemaining);
+//			return result;
+//		}
+//			
+//		
+//	}
 	
-	@SuppressWarnings("unused")
-	private int[] calculateFinalValue(Conflict meeting, Unit unitInspected, int currentUnitValue, Case _case, DataContainer datacontainer) {
-
-		// result[0] : conflict -1 ou 1 (il y a conflit ou non)
-		// result[1] : currentUnitValue
-		int[] result = new int[2];
-		
-		if(debug)Utils.print("------------------");
-		if(topdebug)Utils.print("debut du calculateFinalValue  | " + new Date());
-		if(debug)Utils.print("calculateFinalValue : unitInspected : " + unitInspected.getUnitUID());
-		int allyIndexOfTheUnitInspected = -1;
-		
-		// --------   rassemblement sur la meme case par une alliance : pas de conflit
-
-		if(meeting.getGatherings().size() == 1){
-			if(topdebug)Utils.print("fin du calculateFinalValue  | " + new Date());		
-			if(debug)Utils.print("rassemblement sur la meme case par une alliance : pas de conflit");
-			
-			result[0] = -1;
-			result[1] = currentUnitValue;
-			return result;
-		}
-		
-		// --------   calcul des valeurs des allies
-
-		int[] allyValues = new int[meeting.getGatherings().size()];
-		
-		int index = 0;
-		for(Gathering ally : meeting.getGatherings()){
-			int allyValue = 0;
-
-			for(String unitUID : ally.getUnitUIDs()){
-				// si cest la unitInspected, sa valeur n'est pas encore enregistree dans le 'case.move' du conflit
-				// donc on prend sa valeur ˆ l'entree de la case
-				// sinon on recupere la valeur de larmee rencontree sur cette case
-				if(unitUID.equals(unitInspected.getUnitUID())){
-					if(debug)Utils.print("unitInspected value : " + currentUnitValue);
-					allyValue += currentUnitValue;
-				}
-				else
-					allyValue += getValueInTheRecordedMove(getUnit(unitUID, datacontainer), meeting.getCaseUID(), _case);
-			}
-			
-			allyValues[index++] = allyValue;
-			
-		}
-		
-		// ---------  calculate the winner points remaining
-		
-		int firstAllyValue = 0;
-		int secondAllyValue = 0;
-		int indexOfBestAlly = -1;
-		
-		for(int i=0; i < meeting.getGatherings().size(); i++){
-			if(allyValues[i] > firstAllyValue){
-				int oldFirstValue = firstAllyValue;
-				firstAllyValue = allyValues[i];
-				
-				if(oldFirstValue > secondAllyValue)
-					secondAllyValue = oldFirstValue;
-				
-				indexOfBestAlly = i;
-			}
-			else if(allyValues[i] > secondAllyValue){
-				secondAllyValue = allyValues[i];
-			}
-		}
-		
-		if(debug)Utils.print("firstAllyValue : " + firstAllyValue);
-		if(debug)Utils.print("secondAllyValue : " + secondAllyValue);
-
-		//----------------------//
-		
-		if(indexOfBestAlly != allyIndexOfTheUnitInspected){	
-
-			result[0] = -1;
-			result[1] = 0;
-			return result;
-		}
-		else{
-			
-			if(debug)Utils.print("battle won ! (or draw if returns 0 :p)");
-			double rateRemaining = (firstAllyValue - secondAllyValue)/(double)firstAllyValue;
-			if(debug)Utils.print("rateRemaining : " + rateRemaining);
-			if(debug)Utils.print("currentUnitValue returned : " + ((int)(currentUnitValue*rateRemaining)));
-			
-
-			result[0] = -1;
-			result[1] = (int)(currentUnitValue*rateRemaining);
-			return result;
-		}
-			
-		
-	}
-	
-	private int getValueInTheRecordedMove(Unit unit, String caseUID, Case _case) {
-		
-		for(Move move : _case.getRecordedMoves()){
-			if(move.getUnitUID().equals(unit.getUnitUID())){
-				if(debug)Utils.print("value of " + unit.getUnitUID() + " in this conflict : " + move.getValue());
-				return move.getValue();
-			}
-		}
-		
-		// never 
-		if(debug)Utils.print("??? I said NEVER !");
-		return -1;
-	}
+//	private int getValueInTheRecordedMove(Unit unit, Case _case) {
+//		
+//		for(Move move : _case.getRecordedMoves()){
+//			if(move.getUnitUID().equals(unit.getUnitUID())){
+//				if(debug)Utils.print("value of " + unit.getUnitUID() + " in this conflict : " + move.getValue());
+//				return move.getValue();
+//			}
+//		}
+//		
+//		// never 
+//		if(debug)Utils.print("??? I said NEVER !");
+//		return -1;
+//	}
 	
 	//==============================================================================================================//
 	

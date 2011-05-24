@@ -215,11 +215,24 @@ public class EntitiesConverter {
 				moves.add(move);
 			}
 			
-			if(requireLinkedMoveFromGathering && unit.getGatheringUIDExpected() != null){
+			if(requireLinkedMoveFromGathering && unit.getGatheringUIDExpected() != null)
+			{
 				GatheringDTO gathering = (GatheringDTO) UniversalDAO.getInstance().getObjectDTO(unit.getGatheringUIDExpected(), GatheringDTO.class);
 				UnitDTO newUnit = (UnitDTO) UniversalDAO.getInstance().getObjectDTO(gathering.getNewUnitUID(), UnitDTO.class);
-				Move move = convertMoveDTO(newUnit.getMoves().get(0), requireLinkedGatherings);
-				moves.add(move);
+				Move moveToAdd = convertMoveDTO(newUnit.getMoves().get(0), requireLinkedGatherings);
+				
+				int indexOfTheMoveToAdd = 0;
+				for(Move moveRecorded : moves){
+					indexOfTheMoveToAdd++;
+					if(moveRecorded.getTimeTo() == moveToAdd.getTimeFrom()){
+						break;
+					}
+				}
+				
+				if(indexOfTheMoveToAdd < moves.size())
+					moveToAdd.setTimeTo(moves.get(indexOfTheMoveToAdd).getTimeFrom());
+					
+				moves.add(indexOfTheMoveToAdd, moveToAdd);
 			}
 
 			unit.setMoves(moves);

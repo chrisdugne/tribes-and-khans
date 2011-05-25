@@ -9,6 +9,7 @@ import com.uralys.tribes.dao.IGameDAO;
 import com.uralys.tribes.domain.IGameManager;
 import com.uralys.tribes.entities.Case;
 import com.uralys.tribes.entities.City;
+import com.uralys.tribes.entities.Conflict;
 import com.uralys.tribes.entities.DataContainer4UnitSaved;
 import com.uralys.tribes.entities.Equipment;
 import com.uralys.tribes.entities.Gathering;
@@ -499,23 +500,21 @@ public class GameManager implements IGameManager {
 							// croisement avec un ennemi !
 							// conflit
 							if(debug)Utils.print(" Conflit !!!");
+							Unit unitAlreadyOnTheCase = getUnit(existingGathering.getNewUnitUID(), datacontainer);	
 							int valueOfTheUnitMet = recordedMove.getValue();
 							if(debug)Utils.print("recordedMove.getValue() : " + recordedMove.getValue());
+							
+							String conflictUID = gameDao.createConflict(_case.getCaseUID(), unitArriving.getUnitUID(), unitAlreadyOnTheCase.getUnitUID());
 							
 							if(valueOfTheUnitMet > currentUnitValue)
 							{
 								if(debug)Utils.print(" Combat perdu par l'unite qui arrive");
-								
-								currentUnitValue = 0;
 								double rateRemaining = (valueOfTheUnitMet - currentUnitValue)/(double)valueOfTheUnitMet;
-
 								if(debug)Utils.print(" valeur de l'unite restante : "+ ((int)(valueOfTheUnitMet*rateRemaining)));
-								
+
+								currentUnitValue = 0;
 								arrivalOnThisCaseMove.setValue(currentUnitValue);
 								unitArriving.setEndTime(arrivalOnThisCaseMove.getTimeFrom());
-								updateUnit(unitArriving, null, false);
-								moveIsToBeCreated = false;
-								
 								gameDao.setValueForMove(recordedMove.getMoveUID(), (int)(valueOfTheUnitMet*rateRemaining));
 							}
 							else if(currentUnitValue > valueOfTheUnitMet)
@@ -525,12 +524,15 @@ public class GameManager implements IGameManager {
 								if(debug)Utils.print(" valeur de l'unite restante : "+ ((int)(currentUnitValue*rateRemaining)));
 								currentUnitValue = (int)(currentUnitValue*rateRemaining);
 								
-								Unit unitAlreadyOnTheCase = getUnit(existingGathering.getNewUnitUID(), datacontainer);	
 								gameDao.setValueForMove(recordedMove.getMoveUID(), 0);
 								unitAlreadyOnTheCase.setEndTime(arrivalOnThisCaseMove.getTimeFrom());
-								updateUnit(unitAlreadyOnTheCase, null, false);
 								
 							}
+
+							unitArriving.setConflictUIDExpected(conflictUID);
+							unitAlreadyOnTheCase.setConflictUIDExpected(conflictUID);
+							updateUnit(unitArriving, null, false);
+							updateUnit(unitAlreadyOnTheCase, null, false);
 							
 						} // endif croisement avec un ennemy
 						
@@ -774,24 +776,6 @@ public class GameManager implements IGameManager {
 		return newUnit;
 	}
 
-//	private void storeNewGatheringInTheConflict(Conflict conflict, Gathering gatheringToRecord) {
-//
-//		boolean alreadyRecorded = false;
-//		for(Gathering gatheringRecorded : conflict.getGatherings())
-//		{
-//			if(gatheringRecorded.getGatheringUID().equals(gatheringToRecord.getGatheringUID())){
-//				alreadyRecorded = true;
-//				break;
-//			}
-//		}
-//		
-//		if(!alreadyRecorded)
-//		{
-//			if(debug)Utils.print("	croisement pendant le passage : enregistrement du meeting");
-//			conflict.getGatherings().add(gatheringToRecord);
-//		}
-//	}
-
 	// - verifie s'il y avait un gathering en aval
 	// et return la liste des armees ˆ replacer
 	private List<Unit> checkAndRecalculatePreviousGatheringsAndConflictsAndResetMovesAndReturnPreviousUnitsMetToBeReplaced(Unit unit, List<Unit> unitsMakingThisReplacing, DataContainer datacontainer) 
@@ -824,31 +808,30 @@ public class GameManager implements IGameManager {
 			// on supprime tous les moves (+ gathering, + case.recordedMove, + unit.move) de cette newUnit
 			gameDao.deleteMoves(newUnit.getUnitUID());
 			
-			if(debug)Utils.print("unitStaying : " + unitToReplace.getUnitUID());
+			if(debug)Utils.print("unitToReplace : " + unitToReplace.getUnitUID());
 			unitsToReplace.add(unitToReplace);
 		}
 		
 		// ensuite on regarde si il y avait un conflit de prevu
-//		if(unit.getConflictUIDExpected() != null)
-//		{
-//			if(debug)Utils.print("found a confict expected !");
-//			Conflict conflictExpected = EntitiesConverter.convertConflictDTO(gameDao.getConflict(unit.getConflictUIDExpected()));
-//			if(debug)Utils.print("conflict : " + conflictExpected.getConflictUID());
-//		
-//			for(Gathering gathering : conflictExpected.getGatherings())
-//			{
-//				if(debug)Utils.print("found a gathering in a conflict");
-//				for(String opponentOrAllyUID : gathering.getUnitUIDs())
-//				{
-//					if(debug)Utils.print("unit : " + opponentOrAllyUID);
-////					if(!opponentOrAlly.equals(unit) && !contains(unitsMakingThisReplacing, opponentOrAlly.getUnitUID()))
-////					{
-////						if(debug)Utils.print("unit : " + opponentOrAlly.getUnitUID());
-////						unitsToReplace.add(opponentOrAlly);
-////					}
-//				}
-//			}
-//		}
+		if(unit.getConflictUIDExpected() != null)
+		{
+			if(debug)Utils.print("found a confict expected !");
+			Conflict conflictExpected = EntitiesConverter.convertConflictDTO(gameDao.getConflict(unit.getConflictUIDExpected()));
+			if(debug)Utils.print("conflict : " + conflictExpected.getConflictUID());
+		
+			Unit unitToReplace;
+			if(conflictExpected.getUnits().get(0).getUnitUID().equals(unit.getUnitUID()))
+				unitToReplace = conflictExpected.getUnits().get(1);
+			else
+				unitToReplace = conflictExpected.getUnits().get(0);
+
+			if(debug)Utils.print("unitToReplace : " + unitToReplace.getUnitUID());
+			unitToReplace.setEndTime(-1);
+			unitToReplace.setGatheringUIDExpected(null);
+			unitToReplace.setConflictUIDExpected(null);
+			updateUnit(unitToReplace, null, false);
+			
+		}
 
 		// on supprime tous les moves (+ gathering, + case.recordedMove, + unit.move)
 		gameDao.deleteMoves(unit.getUnitUID());
@@ -862,55 +845,6 @@ public class GameManager implements IGameManager {
 		return unitsToReplace;
 	}
 
-	
-	// DEPRECATED : car le probleme ne change pas : il faut recalculer les recordedMoves !!!!!
-	// a reflechir pour fair une systeme par reference, la recursion aurait lieu uniquement au calcul des values lors des conflits
-//	/**
-//	 * on ne change pas la reference 
-//	 * comme ca la newUnit est toujours liee au gathering1 et appartient ˆ gathering2.units
-//	 * donc on modifie tous les champs de newUnit
-//	 * 
-//	 * le begintime ne change pas.
-//	 * le endtime ne change pas.
-//	 * le gatheringUIDExpected ne change pas.
-//	 * le conflictUIDExpected ne change pas.
-//	 * 
-//	 * @param unit
-//	 * @param newUnit
-//	 */
-//	private void transformUnitInNewUnit(Unit unit, Unit newUnit) {
-//		
-//		newUnit.setType(unit.getType());
-//		newUnit.setSize(unit.getSize());
-//		newUnit.setValue(unit.getValue());
-//		newUnit.setSpeed(unit.getSpeed());
-//		newUnit.setStatus(unit.getStatus());
-//
-//		newUnit.setGold(unit.getGold());
-//		newUnit.setIron(unit.getIron());
-//		newUnit.setWheat(unit.getWheat());
-//		newUnit.setWood(unit.getWood());
-//
-//		newUnit.setPlayerUID(unit.getPlayerUID());
-//		
-//		newUnit.setMoves(unit.getMoves());
-//		newUnit.setEquipments(newUnit.getEquipments());
-//		
-//	}
-
-//	private void removeUnitFromNewArmy(Unit unitToRemove, Unit newArmy) 
-//	{
-//		newArmy.setValue(newArmy.getValue() - unitToRemove.getValue());
-//		newArmy.setGold(newArmy.getGold() - unitToRemove.getGold());
-//		newArmy.setIron(newArmy.getIron() - unitToRemove.getIron());
-//		newArmy.setWheat(newArmy.getWheat() - unitToRemove.getWheat());
-//		newArmy.setWood(newArmy.getWood() - unitToRemove.getWood());
-//		newArmy.set(newArmy.get - unitToRemove.get);
-//		newArmy.set(newArmy.get - unitToRemove.get);
-//		newArmy.set(newArmy.get - unitToRemove.get);
-//		
-//	}
-
 	private boolean contains(List<Unit> unitsMakingThisReplacing, String unitUID) {
 		
 		List<String> unitUIDsMakingThisReplacing = new ArrayList<String>();
@@ -922,47 +856,9 @@ public class GameManager implements IGameManager {
 		return unitUIDsMakingThisReplacing.contains(unitUID);
 	}
 
-//
-//	private void removeConflictForUnit(Unit unit, String conflictUID) {
-//		int indexToRemove = -1;
-//
-//		for(NewConflict conflict : unit.getConflicts()){
-//			if(conflict.getConflictUID().equals(conflictUID)){
-//				indexToRemove = unit.getConflicts().indexOf(conflict);
-//				break;
-//			}
-//		}
-//
-//		if(indexToRemove >= 0){
-//			if(debug)Utils.print("remove conflict " + unit.getConflicts().get(indexToRemove).getConflictUID());
-//			unit.getConflicts().remove(indexToRemove);
-//		}
-//	}
-
-//	private void removeMoveFromRecordedMoves(int i, int j, String moveUID) {
-//		Case _case = getCase(i,j);
-//		int indexToRemove = -1;
-//
-//		for(Move recordedMove : _case.getRecordedMoves()){
-//			if(recordedMove.getMoveUID().equals(moveUID)){
-//				indexToRemove = _case.getRecordedMoves().indexOf(recordedMove);
-//				break;
-//			}
-//		}
-//
-//		if(indexToRemove >= 0){
-//			if(debug)Utils.print("remove move " + _case.getRecordedMoves().get(indexToRemove).getMoveUID());
-//			_case.getRecordedMoves().remove(indexToRemove);
-//		}
-//	}
-
 	private Case getCase(String caseUID) {
 		return EntitiesConverter.convertCaseDTO(gameDao.getCase(TribesUtils.getX(caseUID),TribesUtils.getY(caseUID)));
 	}
-
-//	private boolean sameAlly(Unit unit, Unit opponent) {
-//		return unit.getPlayer().getAllyUID().equals(opponent.getPlayer().getAllyUID());
-//	}
 
 	private Unit getUnit(String unitUID, DataContainer datacontainer) {
 		return getUnit(unitUID, datacontainer, false);
@@ -983,116 +879,6 @@ public class GameManager implements IGameManager {
 	}
 	
 
-	//-----------------------------------------------------------------------------------//
-//	
-//	private int[] calculateFinalValue(Conflict meeting, Unit unitInspected, int currentUnitValue, Case _case, DataContainer datacontainer) {
-//
-//		// result[0] : conflict -1 ou 1 (il y a conflit ou non)
-//		// result[1] : currentUnitValue
-//		int[] result = new int[2];
-//		
-//		if(debug)Utils.print("------------------");
-//		if(topdebug)Utils.print("debut du calculateFinalValue  | " + new Date());
-//		if(debug)Utils.print("calculateFinalValue : unitInspected : " + unitInspected.getUnitUID());
-//		int allyIndexOfTheUnitInspected = -1;
-//		
-//		// --------   rassemblement sur la meme case par une alliance : pas de conflit
-//
-//		if(meeting.getGatherings().size() == 1){
-//			if(topdebug)Utils.print("fin du calculateFinalValue  | " + new Date());		
-//			if(debug)Utils.print("rassemblement sur la meme case par une alliance : pas de conflit");
-//			
-//			result[0] = -1;
-//			result[1] = currentUnitValue;
-//			return result;
-//		}
-//		
-//		// --------   calcul des valeurs des allies
-//
-//		int[] allyValues = new int[meeting.getGatherings().size()];
-//		
-//		int index = 0;
-//		for(Gathering ally : meeting.getGatherings()){
-//			int allyValue = 0;
-//
-//			for(String unitUID : ally.getUnitUIDs()){
-//				// si cest la unitInspected, sa valeur n'est pas encore enregistree dans le 'case.move' du conflit
-//				// donc on prend sa valeur ˆ l'entree de la case
-//				// sinon on recupere la valeur de larmee rencontree sur cette case
-//				if(unitUID.equals(unitInspected.getUnitUID())){
-//					if(debug)Utils.print("unitInspected value : " + currentUnitValue);
-//					allyValue += currentUnitValue;
-//				}
-//				else
-//					allyValue += getValueInTheRecordedMove(getUnit(unitUID, datacontainer), meeting.getCaseUID(), _case);
-//			}
-//			
-//			allyValues[index++] = allyValue;
-//			
-//		}
-//		
-//		// ---------  calculate the winner points remaining
-//		
-//		int firstAllyValue = 0;
-//		int secondAllyValue = 0;
-//		int indexOfBestAlly = -1;
-//		
-//		for(int i=0; i < meeting.getGatherings().size(); i++){
-//			if(allyValues[i] > firstAllyValue){
-//				int oldFirstValue = firstAllyValue;
-//				firstAllyValue = allyValues[i];
-//				
-//				if(oldFirstValue > secondAllyValue)
-//					secondAllyValue = oldFirstValue;
-//				
-//				indexOfBestAlly = i;
-//			}
-//			else if(allyValues[i] > secondAllyValue){
-//				secondAllyValue = allyValues[i];
-//			}
-//		}
-//		
-//		if(debug)Utils.print("firstAllyValue : " + firstAllyValue);
-//		if(debug)Utils.print("secondAllyValue : " + secondAllyValue);
-//
-//		//----------------------//
-//		
-//		if(indexOfBestAlly != allyIndexOfTheUnitInspected){	
-//
-//			result[0] = -1;
-//			result[1] = 0;
-//			return result;
-//		}
-//		else{
-//			
-//			if(debug)Utils.print("battle won ! (or draw if returns 0 :p)");
-//			double rateRemaining = (firstAllyValue - secondAllyValue)/(double)firstAllyValue;
-//			if(debug)Utils.print("rateRemaining : " + rateRemaining);
-//			if(debug)Utils.print("currentUnitValue returned : " + ((int)(currentUnitValue*rateRemaining)));
-//			
-//
-//			result[0] = -1;
-//			result[1] = (int)(currentUnitValue*rateRemaining);
-//			return result;
-//		}
-//			
-//		
-//	}
-	
-//	private int getValueInTheRecordedMove(Unit unit, Case _case) {
-//		
-//		for(Move move : _case.getRecordedMoves()){
-//			if(move.getUnitUID().equals(unit.getUnitUID())){
-//				if(debug)Utils.print("value of " + unit.getUnitUID() + " in this conflict : " + move.getValue());
-//				return move.getValue();
-//			}
-//		}
-//		
-//		// never 
-//		if(debug)Utils.print("??? I said NEVER !");
-//		return -1;
-//	}
-	
 	//==============================================================================================================//
 	
 	private class DataContainer{

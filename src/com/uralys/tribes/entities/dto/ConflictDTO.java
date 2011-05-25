@@ -26,11 +26,8 @@ public class ConflictDTO {
 	@Extension(vendorName = "datanucleus", key = "gae.pk-name", value = "true")
 	private String conflictUID;
 
-	private long timeFrom;
-	private long timeTo;
-
 	private String caseUID;
-	private List<String> gatheringUIDs = new ArrayList<String>();
+	private List<String> unitUIDs = new ArrayList<String>();
 
 	// -----------------------------------------------------------------------------------//
 
@@ -40,22 +37,6 @@ public class ConflictDTO {
 
 	public void setKey(String key) {
 		this.key = key;
-	}
-
-	public long getTimeFrom() {
-		return timeFrom;
-	}
-
-	public void setTimeFrom(long timeFrom) {
-		this.timeFrom = timeFrom;
-	}
-
-	public long getTimeTo() {
-		return timeTo;
-	}
-
-	public void setTimeTo(long timeTo) {
-		this.timeTo = timeTo;
 	}
 
 	public String getConflictUID() {
@@ -74,19 +55,18 @@ public class ConflictDTO {
 		this.caseUID = caseUID;
 	}
 
-	public List<String> getGatheringUIDs() {
-		return gatheringUIDs;
+	public List<String> getUnitUIDs() {
+		return unitUIDs;
 	}
 
-	public void setGatheringUIDs(List<String> gatheringUIDs) {
-		this.gatheringUIDs = gatheringUIDs;
+	public void setUnitUIDs(List<String> unitUIDs) {
+		this.unitUIDs = unitUIDs;
 	}
 
 	// -----------------------------------------------------------------------------------//
 
-	public List<GatheringDTO> getGatherings() {
-		return UniversalDAO.getInstance().getListDTO(gatheringUIDs,
-				GatheringDTO.class);
+	public List<UnitDTO> getUnits() {
+		return UniversalDAO.getInstance().getListDTO(unitUIDs, UnitDTO.class);
 	}
 
 }

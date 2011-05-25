@@ -353,18 +353,16 @@ public class EntitiesConverter {
 		Conflict conflict = new Conflict();
 		conflict.setConflictUID(conflictDTO.getConflictUID());
 		conflict.setCaseUID(conflictDTO.getCaseUID());
-		conflict.setTimeFrom(conflictDTO.getTimeFrom());
-		conflict.setTimeTo(conflictDTO.getTimeTo());
 
 		// -----------------------------------------------------------------------------------//
 
-		List<Gathering> gatherings = new ArrayList<Gathering>();
+		List<Unit> units = new ArrayList<Unit>();
 
-		for (GatheringDTO gatheringDTO : conflictDTO.getGatherings()) {
-			gatherings.add(convertGatheringDTO(gatheringDTO));
+		for (UnitDTO unitDTO : conflictDTO.getUnits()) {
+			units.add(convertUnitDTO(unitDTO, true, false, false));
 		}
 
-		conflict.setGatherings(gatherings);
+		conflict.setUnits(units);
 
 		// ------------------------------------------------------------------------------------//
 

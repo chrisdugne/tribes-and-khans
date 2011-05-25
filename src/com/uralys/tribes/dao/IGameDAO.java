@@ -54,4 +54,6 @@ public interface IGameDAO {
 	public ConflictDTO getConflict(String conflictUID);
 	public GatheringDTO getGathering(String gatheringUID);
 	
+	public String createConflict(String caseUID, String unitUID, String unitUID2);
+	
 }

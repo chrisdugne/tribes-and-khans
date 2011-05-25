@@ -9,21 +9,11 @@ public class Conflict {
 
 	private String conflictUID;
 
-	private long timeFrom;
-	private long timeTo;
-
 	private String caseUID;
-	private List<Gathering> gatherings = new ArrayList<Gathering>();
+	private List<Unit> units = new ArrayList<Unit>();
 	
 	//-----------------------------------------------------------------------------------//
 
-
-	public List<Gathering> getGatherings() {
-		return gatherings;
-	}
-	public void setGatherings(List<Gathering> gatherings) {
-		this.gatherings = gatherings;
-	}
 	public String getConflictUID() {
 		return conflictUID;
 	}
@@ -36,17 +26,11 @@ public class Conflict {
 	public void setCaseUID(String caseUID) {
 		this.caseUID = caseUID;
 	}
-	public long getTimeFrom() {
-		return timeFrom;
+	public List<Unit> getUnits() {
+		return units;
 	}
-	public void setTimeFrom(long timeFrom) {
-		this.timeFrom = timeFrom;
-	}
-	public long getTimeTo() {
-		return timeTo;
-	}
-	public void setTimeTo(long timeTo) {
-		this.timeTo = timeTo;
+	public void setUnits(List<Unit> units) {
+		this.units = units;
 	}
 	
 }

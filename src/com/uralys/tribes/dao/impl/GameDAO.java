@@ -611,6 +611,30 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		return pm.getObjectById(GatheringDTO.class, gatheringUID);
 	}
 
+	public String createConflict(String caseUID, String unitUID, String unitUID2) {
+
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		ConflictDTO conflictDTO = new ConflictDTO(); 
+		
+		String conflictUID = Utils.generateUID();
+		Key key = KeyFactory.createKey(ConflictDTO.class.getSimpleName(), conflictUID);
+		
+		conflictDTO.setKey(KeyFactory.keyToString(key));
+		conflictDTO.setConflictUID(conflictUID);
+		conflictDTO.setCaseUID(caseUID);
+		
+		List<String> unitUIDs = new ArrayList<String>();
+		unitUIDs.add(unitUID);
+		unitUIDs.add(unitUID2);
+		
+		conflictDTO.setUnitUIDs(unitUIDs);
+		
+		pm.makePersistent(conflictDTO);
+		pm.close();
+		
+		return conflictUID;
+	}
+
 	//==================================================================================================//
 	// PRIVATE METHODS
 	

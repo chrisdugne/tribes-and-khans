@@ -125,6 +125,8 @@ package com.uralys.tribes.entities
 		public var army:Unit;
 		public var merchants:Unit;
 		public var imageUnit:Image;
+		public var imageGround:Image;
+		public var imageHouses:ArrayCollection = new ArrayCollection();
 		public var refreshAlreadyHappened:Boolean = false;
 		
 		public function tryRefresh():Boolean{
@@ -192,7 +194,7 @@ package com.uralys.tribes.entities
 					// move perimé
 					trace("move périmé : " + move.moveUID);
 					
-					if(unitInPlayer == null){
+					if(unit.ownerStatus == Unit.PLAYER){
 						// on refresh unit dans Session.player.units : on enleve ce move terminé
 						var indexToRemove:int = -1;
 						for each (var moveInUnit:Move in unit.moves)
@@ -203,7 +205,8 @@ package com.uralys.tribes.entities
 							}
 						}
 						
-						unit.moves.removeItemAt(indexToRemove);
+						if(indexToRemove >= 0)
+							unit.moves.removeItemAt(indexToRemove);
 					}
 					
 					// on stock le move a supprimer de recordedMoves pour le supprimer apres cette boucle.

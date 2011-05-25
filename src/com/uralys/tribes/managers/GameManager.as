@@ -457,6 +457,8 @@ package com.uralys.tribes.managers {
 		public function loadCases(centerX:int, centerY:int):void{
 			
 			trace("loadCases center : [ " + centerX + " | " + centerY + " ]");
+			Session.WAIT_FOR_SERVER = true;
+			
 			var caseUIDs:ArrayCollection = new ArrayCollection();
 			
 			Session.LEFT_LIMIT_LOADED =  (centerX - Numbers.NB_TILES_ON_EDGE_BY_LOADING/2) * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4); 
@@ -529,6 +531,12 @@ package com.uralys.tribes.managers {
 		private function casesLoaded(event:ResultEvent):void{
 			trace("casesLoaded");
 			
+			//------------------------------------------------//
+			
+			Session.board.mapPositioner.removeAllElements();
+			
+			//------------------------------------------------//
+
 			Session.CASES_LOADED = event.result as ArrayCollection;
 			
 			//------------------------------------------------//

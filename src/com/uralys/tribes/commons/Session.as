@@ -13,7 +13,7 @@ package com.uralys.tribes.commons
 
 		//=====================================================//
 		
-		[Bindable] public static var VERSION:String = "1.1.24";
+		[Bindable] public static var VERSION:String = "1.1.25";
 		[Bindable] public static var LOGGED_IN:Boolean = false; 
 		[Bindable] public static var CONNECTED_TO_FACEBOOK:Boolean = false;
 		
@@ -40,8 +40,6 @@ package com.uralys.tribes.commons
 		[Bindable] public static var player:Player;
 		
 		//=====================================================//
-		// liste des currentgames
-		public static var GAMES_PLAYING:ArrayCollection = new ArrayCollection();
 		
 		// liste de tous les items
 		public static var ITEMS:ArrayCollection = new ArrayCollection();
@@ -50,16 +48,9 @@ package com.uralys.tribes.commons
 		public static var CASES_LOADED:ArrayCollection = new ArrayCollection();
 		
 		//=====================================================//
-		// Home : boolean pour charger la premiere liste des current games
-		[Bindable] public static var firstHomeLoadingDone:Boolean = false;
-		
-		//=====================================================//
 		// Board
 		
 		[Bindable] public static var board:Board;
-
-		// pour que le tour soit bien sauvegarde avant de faire le refresh games+profil
-		[Bindable] public static var TURN_SAVING_DONE:Boolean = true;
 
 		// pour savoir si on click pour un deplacement de troupes
 		//[Bindable] public static var CURRENT_SELECTION_IS_ARMY:Boolean = false;
@@ -85,15 +76,6 @@ package com.uralys.tribes.commons
 		
 		// contient toutes les unitUID
 		public static var allUnits:ArrayCollection = new ArrayCollection();
-		
-		//=====================================================//
-		// GameDetailsRenderer
-		
-		//couleur en session
-		[Bindable] public static var gameColor:Number;
-		
-		//temps quil reste avant la fin du tour
-		[Bindable] public static var remainingTime:String;
 		
 		//=====================================================//
 		// BoardDrawer

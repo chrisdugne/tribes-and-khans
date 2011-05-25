@@ -289,9 +289,15 @@
 					|| Session.MAP_HEIGHT/2 - mapPositioner.y < Session.TOP_LIMIT_LOADED 
 					|| Session.MAP_HEIGHT/2 - mapPositioner.y > Session.BOTTOM_LIMIT_LOADED){
 						trace("dragging is far");
-						var newCenterX:int = autoMove.xTo / (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4); 
-						var newCenterY:int = autoMove.yTo / (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2); 
-						GameManager.getInstance().loadCases(newCenterX, newCenterY);
+						trace("mapPositioner.x : " + mapPositioner.x);
+						trace("mapPositioner.y : " + mapPositioner.y);
+						trace("Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4 : " + (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4));
+						trace("Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2 : " + (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2));
+						
+						Session.centerX = (Session.MAP_WIDTH/2 - mapPositioner.x) / (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4); 
+						Session.centerY = (Session.MAP_HEIGHT/2 - mapPositioner.y) / (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2);
+						
+						GameManager.getInstance().loadCases(Session.centerX, Session.centerY);
 					}
 					
 					return;
@@ -322,9 +328,9 @@
 				|| Session.MAP_HEIGHT/2 - autoMove.yTo < Session.TOP_LIMIT_LOADED 
 				|| Session.MAP_HEIGHT/2 - autoMove.yTo > Session.BOTTOM_LIMIT_LOADED){
 					trace("automove will go to far");
-					var newCenterX:int = -autoMove.xTo / (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4); 
-					var newCenterY:int = -autoMove.yTo / (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2); 
-					GameManager.getInstance().loadCases(newCenterX, newCenterY);
+					Session.centerX = (Session.MAP_WIDTH/2 - autoMove.xTo) / (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4); 
+					Session.centerY = (Session.MAP_HEIGHT/2 - autoMove.yTo) / (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2); 
+					GameManager.getInstance().loadCases(Session.centerX, Session.centerY);
 				}
 				
 				autoMove.play();

@@ -125,6 +125,13 @@ package com.uralys.tribes.core
 				
 				// on refresh les villes au cas ou le deplacement fait partir/arriver une unite de/dans une ville
 				Session.board.refreshUnitsInCity(moveToPerform.unitUID);
+				
+				// on refresh les moves si ils sont affiches
+				if(Session.MOVE_A_UNIT){
+					BoardDrawer.getInstance().removeAllUnitMovesImages();
+					Session.board.onUnitClick();
+				}
+				
 			}
 			catch(e:Error){
 				trace("error on moveIsDone");
@@ -222,7 +229,7 @@ package com.uralys.tribes.core
 				movesPending.addItem(newMove);
 				
 				// refresh highlight images et rajoute les listeners sur les moves actifs
-				BoardDrawer.getInstance().addMoveImages(newMove, lastMove.getX(), lastMove.getY());
+				BoardDrawer.getInstance().addMoveImages(newMove, lastMove.getX(), lastMove.getY(), false);
 				return true;
 			}
 			

@@ -47,50 +47,27 @@ package com.uralys.tribes.core
 		
 		public function clickOnCase(_case:Case):void{
 			
-			//----------------------------------//
+			var thereIsACity:Boolean = false;
+			var thereIsAMerchantThatCanBuildACityHere:Boolean = false;
+			
+			if(_case.city != null 
+			&& _case.city.cityUID != "new")
+				thereIsACity = true;
 
-			if(_case.city == null 
-				|| _case.city.cityUID == "new")
-				return;
-
-			//----------------------------------//
-
-			var cityInPlayerList:City = null;
+			if(_case.merchants != null
+			&& _case.merchants.mayBuildAcity())
+				thereIsAMerchantThatCanBuildACityHere = true;
 			
-			for each(var city:City in Session.player.cities){
-				if(city.cityUID == _case.city.cityUID){
-					cityInPlayerList = city;
-					break;
-				}
-			}
-			
-			if(cityInPlayerList == null)
-				return;
-			
-			//----------------------------------//
-			
-			clickOnCity(cityInPlayerList);
+			if(thereIsACity)
+				clickOnCity(_case.city);
+			else if(thereIsAMerchantThatCanBuildACityHere)
+				Session.board.showBuildCity(_case.merchants);
 		}
 		
 		
 		public function clickOnHouse(city:City):void
 		{
-			var cityInPlayerList:City = null;
-			
-			for each(var cityInSessionDotPlayer:City in Session.player.cities)
-			{
-				if(cityInSessionDotPlayer.cityUID == city.cityUID){
-					cityInPlayerList = cityInSessionDotPlayer;
-					break;
-				}
-			}
-			
-			if(cityInPlayerList == null)
-				return;
-			
-			//----------------------------------//
-			
-			clickOnCity(cityInPlayerList);				
+			clickOnCity(city);				
 		}
 
 		private function clickOnCity(city:City):void
@@ -98,10 +75,7 @@ package com.uralys.tribes.core
 			if(Session.MOVE_A_UNIT)
 				return;
 			
-			if(city.merchant != null || city.army != null)
-				Session.board.showEnterCity(city);
-			else
-				Session.board.clickOnCity(city);
+			Session.board.showEnterCity(city);
 		}
 			
 //		public function clickOnBoard(event:MouseEvent):void{

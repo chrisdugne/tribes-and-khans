@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" 
+		 width="370"
+		 height="100" 
+		 alpha="0.8">
+		
+		<s:Rect left="0" right="0" top="0" bottom="0" radiusX="5" radiusY="5">
+			<s:fill>
+				<s:SolidColor color="#000000"/>
+			</s:fill>
+		</s:Rect>
+		<fx:Script>
+			<![CDATA[
+				import com.uralys.tribes.commons.Session;
+				import com.uralys.tribes.commons.Translations;
+				import com.uralys.tribes.managers.GameManager;
+				
+				[Bindable] public var type:int;
+				
+				private function changeName():void
+				{
+					if(type == 1) // change player name
+					{
+						Session.player.name = nameInput.text;
+						Session.board.hideChangeName.play();
+						GameManager.getInstance().changeName();
+					}	
+					else if(type == 2) // change city name
+					{
+						Session.board.selectedCity.name = nameInput.text;
+						Session.board.hideCityChangeName.play();
+						GameManager.getInstance().changeCityName(nameInput.text);
+					}	
+				}	
+				
+			]]>
+		</fx:Script>
+		
+		<s:VGroup width="100%" 
+				  horizontalAlign="center">
+			<mx:Spacer width="30"/>
+			<mx:Grid>
+				<mx:GridRow >
+					<mx:GridItem >
+						<s:Label text="{Translations.NEWNAME.getItemAt(Session.LANGUAGE)} : " color="#ffffff"/>
+					</mx:GridItem>
+					<mx:GridItem>
+						<s:TextInput id="nameInput"
+									 text="{type == 1 ? Session.player.name : Session.board.selectedCity.name}"
+									 enter="changeName();"
+									 width="200"/>
+					</mx:GridItem>
+				</mx:GridRow>
+			</mx:Grid>
+			<s:Button label="{Translations.OK.getItemAt(Session.LANGUAGE)}" 
+					  click="{changeName();}"
+					  />
+		</s:VGroup>
+	</s:Group>

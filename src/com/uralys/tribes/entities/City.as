@@ -26,6 +26,9 @@ package com.uralys.tribes.entities
 		protected var _equipmentStock:ArrayCollection = new ArrayCollection();
 		protected var _smiths:ArrayCollection = new ArrayCollection();
 		
+		protected var _beginTime:Number;
+		protected var _endTime:Number;
+		
 		//---------------------------------------------------------------------------//
 		
 		public function get cityUID():String {
@@ -155,6 +158,27 @@ package com.uralys.tribes.entities
 		public function set smiths(o:ArrayCollection):void {
 			_smiths = o;
 		}
+		
+		public function get beginTime():Number
+		{
+			return _beginTime;
+		}
+		
+		public function set beginTime(value:Number):void
+		{
+			_beginTime = value;
+		}
+		
+		public function get endTime():Number
+		{
+			return _endTime;
+		}
+		
+		public function set endTime(value:Number):void
+		{
+			_endTime = value;
+		}
+		
 	
 		
 		//===============================================================================================//

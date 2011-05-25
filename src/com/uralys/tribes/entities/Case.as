@@ -141,16 +141,11 @@ package com.uralys.tribes.entities
 			var now:Number = new Date().getTime();
 			var recordedMovesToDelete:ArrayCollection = new ArrayCollection();
 			
-			if(recordedMoves != null && recordedMoves.length > 0){
-				trace("**");
-				trace("refreshing moves for " + _caseUID);
-			}
-			
 			army = null;
 			merchants = null;
 				
-			for each(var move:Move in recordedMoves){
-				
+			for each(var move:Move in recordedMoves)
+			{
 				var unitInPlayer:Unit = Session.player.getUnit(move.unitUID);
 				var unit:Unit = unitInPlayer == null ? getUnit(move.unitUID) : unitInPlayer;
 				
@@ -166,16 +161,9 @@ package com.uralys.tribes.entities
 					GameManager.getInstance().registerUnitInSession(unit);
 				}
 				
-				trace("unit : " + unit.unitUID);
-				trace("unit.status : " + unit.status);
-				trace("move.timeFrom : " + move.timeFrom);
-				trace("move.timeTo : " + move.timeTo);
-				trace("now : " + now);
 				
 				if(unit.status != Unit.DESTROYED && move.timeFrom <= now && (move.timeTo > now || move.timeTo == -1))
 				{
-					trace("move actif : " + move.moveUID);
-					
 					// c'est le move actif, on recupere les unites qui sont sur la case
 					foundUnitsOnThisCase = true;
 					
@@ -192,7 +180,6 @@ package com.uralys.tribes.entities
 				}
 				else if(move.timeTo != -1 && move.timeTo < now){
 					// move perimé
-					trace("move périmé : " + move.moveUID);
 					
 					if(unit.ownerStatus == Unit.PLAYER){
 						// on refresh unit dans Session.player.units : on enleve ce move terminé

@@ -186,6 +186,7 @@ public final class ImageContainer
 	[Bindable] public static var ARMY_PLAYER:Bitmap;
 	[Bindable] public static var ARMY_ALLY:Bitmap;
 	[Bindable] public static var ARMY_ENNEMY:Bitmap;
+	[Bindable] public static var EDIT:Bitmap;
 
 	//   ======================================================================//
 
@@ -222,7 +223,8 @@ public final class ImageContainer
 		 "webresources/images/persos/marchand_rouge.png",
 		 "webresources/images/persos/guerrier_vert.png",
 		 "webresources/images/persos/guerrier_bleu.png",
-		 "webresources/images/persos/guerrier_rouge.png"
+		 "webresources/images/persos/guerrier_rouge.png",
+		 "webresources/images/edit.png"
 		 ])
 	
 	public static function loadImages():void{
@@ -305,10 +307,13 @@ public final class ImageContainer
 			case 21:
 				ARMY_ENNEMY = event.currentTarget.content;
 				break;
+			case 22:
+				EDIT = event.currentTarget.content;
+				break;
 		}
 		
 		currentImage++;
-		if(currentImage < 22)
+		if(currentImage < 23)
 			loadNextImage();
 	}
 

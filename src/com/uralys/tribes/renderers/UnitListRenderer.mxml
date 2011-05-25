@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:ItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+				xmlns:s="library://ns.adobe.com/flex/spark" 
+				xmlns:mx="library://ns.adobe.com/flex/mx" 
+				autoDrawBackground="true"
+				useHandCursor="true"
+				buttonMode="true"
+				click="onClick(event)">
+	
+	<s:states>
+		<s:State name="normal" />
+		<s:State name="hovered" />
+		<s:State name="selected" />
+	</s:states>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.uralys.tribes.commons.Numbers;
+			import com.uralys.utils.Utils;
+			
+			import mx.events.ItemClickEvent;
+			
+			[Bindable] private var color:Number = 0x1111ee;
+			[Bindable] private var colorHovered:Number = 0x1111ee;
+			[Bindable] private var colorSelected:Number = 0x2211cc;
+			
+			private function onClick(event:MouseEvent):void{
+				
+				var e:ItemClickEvent = new ItemClickEvent(ItemClickEvent.ITEM_CLICK, true);
+				
+				e.item = data;
+				e.index = itemIndex;
+				
+				dispatchEvent(e);
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:transitions>
+		<mx:Transition fromState="*" toState="hovered">
+			<s:Animate target="{groupDetails}" duration="200">
+				<s:SimpleMotionPath property="width" />
+			</s:Animate>
+		</mx:Transition>
+		<mx:Transition fromState="hovered" toState="*">
+			<s:Animate target="{groupDetails}" duration="200" >
+				<s:SimpleMotionPath property="width" />
+			</s:Animate>
+		</mx:Transition>
+		<mx:Transition fromState="selected" toState="*">
+			<s:Animate target="{groupDetails}" duration="200" >
+				<s:SimpleMotionPath property="width" />
+			</s:Animate>
+		</mx:Transition>
+	</s:transitions>
+	
+	<s:Group id="groupDetails" height="33" width="300" width.hovered="320" width.selected="320">
+		<s:Rect id="backgroundRect" left="0" right="0" top="0" bottom="0"  >
+			<s:fill>
+				<s:BitmapFill source="{ImageContainer.CITY_BUTTON_CENTER}" fillMode="repeat"/>
+			</s:fill>
+		</s:Rect>
+
+		<s:HGroup width="100%" verticalAlign="middle">
+			<mx:Image source="{ImageContainer.CITY_BUTTON_LEFT}"/>
+			<mx:Image source="{data.type == 1 ? ImageContainer.WARRIOR1 : ImageContainer.MERCHANT1}"/>
+			<s:Label id="labelName" 
+					 color="#000000" 
+					 left="10" 
+					 verticalCenter="2"
+					 text="{data.size}"
+					 />
+			<mx:Spacer width="120%"/>
+			<s:Label id="labelCase" 
+					 color="#000000" 
+					 left="10" 
+					 verticalCenter="2"
+					 text="[ {Utils.getXFromCaseUID(data.currentCaseUID)} , {Utils.getYFromCaseUID(data.currentCaseUID)} ]"
+					 />
+			<mx:Image source="{ImageContainer.CITY_BUTTON_RIGHT}"/>
+		</s:HGroup>
+	</s:Group>
+	
+</s:ItemRenderer>

@@ -18,11 +18,9 @@
 			import com.uralys.tribes.commons.Translations;
 			import com.uralys.tribes.entities.Unit;
 			
-			[Bindable] private var color:Number = 0x11ee11;
-			[Bindable] private var colorHovered:Number = 0x11ee11;
-			[Bindable] private var colorSelected:Number = 0x22cc11;
-
 			[Bindable] public var merchant:Unit;
+			[Bindable] private var colorPlayer:Number = 0x11ee11;
+			[Bindable] private var colorEnnemy:Number = 0xee11ee;
 			
 		]]>
 	</fx:Script>
@@ -48,7 +46,7 @@
 	<s:Group id="groupDetails" height="180" width="160" width.hovered="170" width.selected="170">
 		<s:Rect left="0" right="0" top="0" bottom="0" radiusX="5" radiusY="5">
 			<s:fill>
-				<s:SolidColor color="{color}" color.hovered="{colorHovered}" color.selected="{colorSelected}" alpha="0.6"/>
+				<s:SolidColor color="{merchant.ownerStatus == Unit.PLAYER ? colorPlayer : colorEnnemy}" alpha="0.4"/>
 			</s:fill>
 		</s:Rect>
 		<s:HGroup width="100%">
@@ -63,10 +61,12 @@
 			<s:Label color="#FFFFFF" 
 					 left="20" 
 					 verticalCenter="2"
-					 text="{merchant.size}"/>
+					 text="{merchant.size}"
+					 visible="{merchant.ownerStatus == Unit.PLAYER}"/>
 		</s:HGroup>
 		<s:VGroup horizontalAlign="center" verticalAlign="middle"
-				  y="60">
+				  y="60"
+				  visible="{merchant.ownerStatus == Unit.PLAYER}">
 			
 			<s:HGroup horizontalAlign="center" verticalAlign="middle">
 				

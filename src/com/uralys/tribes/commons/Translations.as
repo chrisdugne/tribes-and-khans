@@ -164,6 +164,12 @@ public class Translations{
 									"players"]);
 
 	[Bindable]
+	public static var PLAYER:ArrayCollection = new ArrayCollection(
+									["joueur",
+									"player",
+									"player"]);
+
+	[Bindable]
 	public static var TURN:ArrayCollection = new ArrayCollection(
 									["tour",
 									"turn",
@@ -250,6 +256,12 @@ public class Translations{
 									["Mes Villes",
 									"My cities",
 									"My cities"]);
+
+	[Bindable]
+	public static var MY_UNITS:ArrayCollection = new ArrayCollection(
+									["Mes unités",
+									"My units",
+									"My units"]);
 
 	[Bindable]
 	public static var OTHER_CITIES:ArrayCollection = new ArrayCollection(
@@ -420,6 +432,18 @@ public class Translations{
 									["Villes",
 									"Cities",
 									"Cities"]);
+
+	[Bindable]
+	public static var CITY:ArrayCollection = new ArrayCollection(
+									["Ville",
+									"Citie",
+									"Citie"]);
+
+	[Bindable]
+	public static var READY:ArrayCollection = new ArrayCollection(
+									["Pret à ",
+									"ready at",
+									"ready at"]);
 
 	[Bindable]
 	public static var BUYING:ArrayCollection = new ArrayCollection(
@@ -614,6 +638,11 @@ public class Translations{
 									["Ok",
 									"Ok",
 									"Ok"]);
+	[Bindable]
+	public static var NEWNAME:ArrayCollection = new ArrayCollection(
+									["Nouveau nom",
+									"New name",
+									"New name"]);
 	
 	[Bindable]
 	public static var DELETE:ArrayCollection = new ArrayCollection(

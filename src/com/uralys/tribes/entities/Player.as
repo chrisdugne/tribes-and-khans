@@ -12,7 +12,7 @@ package com.uralys.tribes.entities
 		private var _nbLands:int;
 		private var _lastStep:Number;
 		private var _cities:ArrayCollection;
-		private var _units:ArrayCollection;
+		private var _units:ArrayCollection = new ArrayCollection();
 		private var _conflicts:ArrayCollection = new ArrayCollection();
 		
 		public function Player(){}

@@ -13,7 +13,7 @@ package com.uralys.tribes.commons
 
 		//=====================================================//
 		
-		[Bindable] public static var VERSION:String = "1.1.25";
+		[Bindable] public static var VERSION:String = "1.1.26";
 		[Bindable] public static var LOGGED_IN:Boolean = false; 
 		[Bindable] public static var CONNECTED_TO_FACEBOOK:Boolean = false;
 		
@@ -83,6 +83,9 @@ package com.uralys.tribes.commons
 		// les coordonnees de la case qui est au centre du dernier chargement de cases
 		public static  var centerX:int;
 		public static  var centerY:int;
+
+		// permet d'afficher ou de cacher les bar de progression sur les moves
+		[Bindable] public static  var showMovesProgress:Boolean = true;
 		
 		// Session.map[i][j] = case i,j 
 		public static var map:Array;

@@ -461,19 +461,14 @@ package com.uralys.tribes.managers {
 			
 			var caseUIDs:ArrayCollection = new ArrayCollection();
 			
-			Session.LEFT_LIMIT_LOADED =  (centerX - Numbers.NB_TILES_ON_EDGE_BY_LOADING/2) * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4); 
-			Session.RIGHT_LIMIT_LOADED =  (centerX - Numbers.NB_TILES_ON_EDGE_BY_LOADING/2 + Numbers.NB_TILES_ON_EDGE_BY_LOADING) * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4);
-			Session.TOP_LIMIT_LOADED = (centerY - Numbers.NB_TILES_ON_EDGE_BY_LOADING/2) * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2); 
-			Session.BOTTOM_LIMIT_LOADED = (centerY - Numbers.NB_TILES_ON_EDGE_BY_LOADING/2 + Numbers.NB_TILES_ON_EDGE_BY_LOADING) * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2); 
+			Session.LEFT_LIMIT_LOADED  	 = (centerX - Numbers.NB_HORIZONTAL_TILES_BY_LOADING/2) * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4); 
+			Session.RIGHT_LIMIT_LOADED	 = (centerX + Numbers.NB_HORIZONTAL_TILES_BY_LOADING/2) * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4);
+			Session.TOP_LIMIT_LOADED 	 = (centerY - Numbers.NB_VERTICAL_TILES_BY_LOADING/2) * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2); 
+			Session.BOTTOM_LIMIT_LOADED	 = (centerY + Numbers.NB_VERTICAL_TILES_BY_LOADING/2) * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2); 
 			
-			trace("Session.LEFT_LIMIT_LOADED : " + Session.LEFT_LIMIT_LOADED);
-			trace("Session.RIGHT_LIMIT_LOADED : " + Session.RIGHT_LIMIT_LOADED);
-			trace("Session.TOP_LIMIT_LOADED : " + Session.TOP_LIMIT_LOADED);
-			trace("Session.BOTTOM_LIMIT_LOADED : " + Session.BOTTOM_LIMIT_LOADED);
-			
-			for(var i:int = 0; i < Numbers.NB_TILES_ON_EDGE_BY_LOADING; i++){
-				for(var j:int = 0; j < Numbers.NB_TILES_ON_EDGE_BY_LOADING; j++){
-					caseUIDs.addItem("case_"+(centerX-Numbers.NB_TILES_ON_EDGE_BY_LOADING/2+i)+"_"+(centerY-Numbers.NB_TILES_ON_EDGE_BY_LOADING/2+j));
+			for(var i:int = 0; i < Numbers.NB_HORIZONTAL_TILES_BY_LOADING; i++){
+				for(var j:int = 0; j < Numbers.NB_VERTICAL_TILES_BY_LOADING; j++){
+					caseUIDs.addItem("case_"+(centerX-Numbers.NB_HORIZONTAL_TILES_BY_LOADING/2+i)+"_"+(centerY-Numbers.NB_VERTICAL_TILES_BY_LOADING/2+j));
 				}
 			}
 			
@@ -493,6 +488,14 @@ package com.uralys.tribes.managers {
 
 		public function deleteUnits (unitUIDs:ArrayCollection):void{
 			getGameWrapper().deleteUnits(Session.player.uralysUID, unitUIDs);
+		}
+
+		public function changeName():void{
+			getGameWrapper().changeName(Session.player.uralysUID, Session.player.name);			
+		}
+
+		public function changeCityName(newName:String):void{
+			getGameWrapper().changeCityName(Session.board.selectedCity.cityUID, newName);			
 		}
 
 		//--------------------------------------------------------------------------------//
@@ -528,6 +531,7 @@ package com.uralys.tribes.managers {
 			loginForceSteps();
 		}
 		
+		
 		private function casesLoaded(event:ResultEvent):void{
 			trace("casesLoaded");
 			
@@ -538,16 +542,18 @@ package com.uralys.tribes.managers {
 			//------------------------------------------------//
 
 			Session.CASES_LOADED = event.result as ArrayCollection;
+			trace("received : " + Session.CASES_LOADED.length + " cases");
 			
 			//------------------------------------------------//
 			// init du tableau 29x29
 			
 			Session.map = [];
-			var offset:int = Numbers.NB_TILES_ON_EDGE_BY_LOADING/2;
+			var horizontalOffset:int = Numbers.NB_HORIZONTAL_TILES_BY_LOADING/2;
+			var verticalOffset:int = Numbers.NB_VERTICAL_TILES_BY_LOADING/2;
 			
-			for(var i:int=Session.centerX-offset; i < Session.centerX+offset; i++){
+			for(var i:int=Session.centerX-horizontalOffset; i < Session.centerX+horizontalOffset; i++){
 				Session.map[i] = [];
-				for(var j:int=Session.centerY-offset; j < Session.centerY+offset; j++){
+				for(var j:int=Session.centerY-verticalOffset; j < Session.centerY+verticalOffset; j++){
 					Session.map[i][j] = new Case(i,j);
 				}
 			}

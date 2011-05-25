@@ -35,13 +35,6 @@
 
 				//----------------------------------------------------------//
 
-				protected function cityNameInputHandler(event:KeyboardEvent):void	{
-					city.name = cityNameInput.text;
-					BoardDrawer.getInstance().redrawTexts();
-				}
-				
-				//-------------------------------------------------------------------------//
-				
 				protected function wheatWorkersCheck(newNumber:int):void	{
 					
 					var peopleAdded:int = newNumber - city.peopleCreatingWheat;
@@ -256,6 +249,7 @@
 				}
 				
 				protected function sellAllWheat():void	{
+					city.goldEarned -= (int)(city.wheatSold * Numbers.WHEAT_PRICE_SELL);
 					city.wheatSold = city.wheat;
 					city.goldEarned += (int)(city.wheatSold*Numbers.WHEAT_PRICE_SELL);
 				}
@@ -273,6 +267,7 @@
 				}
 				
 				protected function sellAllWood():void	{
+					city.goldEarned -= (int)(city.woodSold * Numbers.WOOD_PRICE_SELL);
 					city.woodSold = city.wood;
 					city.goldEarned += (int)(city.woodSold*Numbers.WOOD_PRICE_SELL);
 				}
@@ -289,6 +284,7 @@
 				}
 				
 				protected function sellAllIron():void	{
+					city.goldEarned -= (int)(city.ironSold * Numbers.IRON_PRICE_SELL);
 					city.ironSold = city.iron;
 					city.goldEarned += (int)(city.ironSold*Numbers.IRON_PRICE_SELL);
 				}
@@ -306,6 +302,7 @@
 				}
 				
 				protected function sellAllBows():void	{
+					city.goldEarned -= (int)(city.bowsSold * Numbers.BOW_PRICE_SELL);
 					city.bowsSold = city.bowStock;
 					city.goldEarned += (int)(city.bowsSold*Numbers.BOW_PRICE_SELL);
 				}
@@ -323,6 +320,7 @@
 				}
 				
 				protected function sellAllSwords():void	{
+					city.goldEarned -= (int)(city.swordsSold * Numbers.SWORD_PRICE_SELL);
 					city.swordsSold = city.swordStock;
 					city.goldEarned += (int)(city.swordsSold*Numbers.SWORD_PRICE_SELL);
 				}
@@ -340,6 +338,7 @@
 				}
 				
 				protected function sellAllArmors():void	{
+					city.goldEarned -= (int)(city.armorsSold * Numbers.ARMOR_PRICE_SELL);
 					city.armorsSold = city.armorStock;
 					city.goldEarned += (int)(city.armorsSold*Numbers.ARMOR_PRICE_SELL);
 				}
@@ -985,12 +984,6 @@
 							city.armyRaised = 0;
 						}
 					}
-					
-					
-					trace("city.armyReleased : " + city.armyReleased);
-					trace("city.armyRaised : " + city.armyRaised);
-					
-					
 				}
 				
 				//-------------------------------------------------------------------------//
@@ -1046,10 +1039,6 @@
 							city.armyRaised = 0;
 						}
 					}
-					
-					
-					// on refresh le drawing au board
-					BoardDrawer.getInstance().refreshMerchantOnBoard(city.merchant);
 				}
 				
 				
@@ -1300,7 +1289,7 @@
 
 		<s:VGroup width="100%" horizontalAlign="center">
 			
-			<s:TextInput id="cityNameInput" text="{city.name}" keyUp="cityNameInputHandler(event)"/>
+			<s:Label id="cityNameInput" text="{city.name}" fontSize="25"/>
 			<mx:Spacer height="10"/>
 			<s:HGroup horizontalAlign="center" verticalAlign="middle">
 				<s:Label text="Population"/>
@@ -1334,7 +1323,7 @@
 				<s:Label text="{city.iron}" styleName="numberLabel"/>
 
 				<mx:Spacer width="15"/>
-				<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
+				<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
 				<mx:Spacer width="10"/>
 				<s:Label text="{city.gold}" styleName="numberLabel"/>
 				
@@ -1460,7 +1449,7 @@
 				
 				<s:NavigatorContent label="{Translations.MARKET.getItemAt(Session.LANGUAGE)}">
 					<s:HGroup width="100%" height="100%" horizontalAlign="center">
-						<s:TabBar id="tabsMarket" dataProvider="{viewstackMarket}" skinClass="spark.skins.spark.TabBarSkin"/>
+						<s:TabBar id="tabsMarket" dataProvider="{viewstackMarket}"/>
 						
 						<mx:ViewStack id="viewstackMarket" width="650" height="100%">
 							
@@ -1469,7 +1458,7 @@
 							
 							<s:NavigatorContent label="{Translations.BUYING.getItemAt(Session.LANGUAGE)}" width="650">
 								<s:Button label="{Translations.BUY.getItemAt(Session.LANGUAGE)}" left="-130" bottom="0" click="buy()"/>
-								<s:VGroup>
+								<s:VGroup left="-60">
 									<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle"
 											 width="520">
 										<mx:GridRow >
@@ -1486,16 +1475,18 @@
 										</mx:GridRow>
 									</mx:Grid>
 									<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle"
-											 maxHeight="180" width="500">
+											 maxHeight="180" width="540">
 										<mx:GridRow>
 											<mx:GridItem horizontalAlign="center">
 												<mx:Image toolTip="{Translations.WHEAT.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WHEAT}"/>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 												<s:Label text="{Numbers.WHEAT_PRICE_BUY}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
 											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+											<mx:GridItem horizontalAlign="center" 
+														 verticalAlign="middle"
+														 minWidth="220">
 												<renderers:SpecialNumStepper id="wheatMarketStepper"
 																			 data="{city.wheatBought}"
 																			 step="{1}"
@@ -1504,7 +1495,7 @@
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 												<s:Label text="{city.wheatBought*Numbers.WHEAT_PRICE_BUY}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
 											</mx:GridItem>
 										</mx:GridRow>
 										<mx:GridRow >
@@ -1513,7 +1504,7 @@
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 												<s:Label text="{Numbers.WOOD_PRICE_BUY}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 												<renderers:SpecialNumStepper id="woodMarketStepper"
@@ -1524,7 +1515,7 @@
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 												<s:Label text="{(int)(city.woodBought*Numbers.WOOD_PRICE_BUY)}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
 											</mx:GridItem>
 										</mx:GridRow>
 										<mx:GridRow >
@@ -1533,7 +1524,7 @@
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 												<s:Label text="{Numbers.IRON_PRICE_BUY}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 												<renderers:SpecialNumStepper id="ironMarketStepper"
@@ -1544,7 +1535,7 @@
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<s:Label text="{city.ironBought*Numbers.IRON_PRICE_BUY}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
 											</mx:GridItem>
 										</mx:GridRow>
 										<mx:GridRow>
@@ -1553,7 +1544,7 @@
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 												<s:Label text="{Numbers.BOW_PRICE_BUY}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 												<renderers:SpecialNumStepper id="bowsMarketStepper"
@@ -1564,7 +1555,7 @@
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 												<s:Label text="{city.bowsBought*Numbers.BOW_PRICE_BUY}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
 											</mx:GridItem>
 										</mx:GridRow>
 										<mx:GridRow>
@@ -1573,7 +1564,7 @@
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 												<s:Label text="{Numbers.SWORD_PRICE_BUY}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 												<renderers:SpecialNumStepper id="swordsMarketStepper"
@@ -1584,7 +1575,7 @@
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 												<s:Label text="{city.swordsBought*Numbers.SWORD_PRICE_BUY}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
 											</mx:GridItem>
 										</mx:GridRow>
 										<mx:GridRow>
@@ -1593,7 +1584,7 @@
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 												<s:Label text="{Numbers.ARMOR_PRICE_BUY}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 												<renderers:SpecialNumStepper id="armorsMarketStepper"
@@ -1604,7 +1595,7 @@
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 												<s:Label text="{city.armorsBought*Numbers.ARMOR_PRICE_BUY}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
 											</mx:GridItem>
 										</mx:GridRow>
 									</mx:Grid>
@@ -1623,7 +1614,7 @@
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 												<s:Label text="{city.goldSpent}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
 											</mx:GridItem>
 											<mx:GridItem/>
 										</mx:GridRow>
@@ -1636,7 +1627,7 @@
 							
 							<s:NavigatorContent label="{Translations.SELLING.getItemAt(Session.LANGUAGE)}" width="650">
 								<s:Button label="{Translations.SELL.getItemAt(Session.LANGUAGE)}" left="-130" bottom="0" click="sell()"/>
-								<s:VGroup>
+								<s:VGroup left="-60">
 									<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle"
 											 width="520">
 										<mx:GridRow >
@@ -1653,16 +1644,18 @@
 										</mx:GridRow>
 									</mx:Grid>
 									<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle"
-											 maxHeight="180" width="520">
+											 maxHeight="180" width="540">
 										<mx:GridRow >
 											<mx:GridItem horizontalAlign="center">
 												<mx:Image toolTip="{Translations.WHEAT.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WHEAT}"/>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 												<s:Label text="{Numbers.WHEAT_PRICE_SELL}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
 											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+											<mx:GridItem horizontalAlign="center" 
+														 verticalAlign="middle"
+														 minWidth="220">
 												<renderers:SpecialNumStepper id="wheatMarketSellStepper"
 																			 data="{city.wheatSold}"
 																			 step="{1}"
@@ -1671,7 +1664,7 @@
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 												<s:Label text="{(int)(city.wheatSold*Numbers.WHEAT_PRICE_SELL)}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
 											</mx:GridItem>
 										</mx:GridRow>
 										<mx:GridRow >
@@ -1680,7 +1673,7 @@
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 												<s:Label text="{Numbers.WOOD_PRICE_SELL}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 												<renderers:SpecialNumStepper id="woodMarketSellStepper"
@@ -1691,7 +1684,7 @@
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 												<s:Label text="{city.woodSold*Numbers.WOOD_PRICE_SELL}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
 											</mx:GridItem>
 										</mx:GridRow>
 										<mx:GridRow >
@@ -1700,7 +1693,7 @@
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 												<s:Label text="{Numbers.IRON_PRICE_SELL}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 												<renderers:SpecialNumStepper id="ironMarketSellStepper"
@@ -1711,7 +1704,7 @@
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 												<s:Label text="{(int)(city.ironSold*Numbers.IRON_PRICE_SELL)}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
 											</mx:GridItem>
 										</mx:GridRow>
 										<mx:GridRow>
@@ -1720,7 +1713,7 @@
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 												<s:Label text="{Numbers.BOW_PRICE_SELL}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 												<renderers:SpecialNumStepper id="bowsMarketSellStepper"
@@ -1731,7 +1724,7 @@
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 												<s:Label text="{city.bowsSold*Numbers.BOW_PRICE_SELL}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
 											</mx:GridItem>
 										</mx:GridRow>
 										<mx:GridRow>
@@ -1740,7 +1733,7 @@
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 												<s:Label text="{Numbers.SWORD_PRICE_SELL}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 												<renderers:SpecialNumStepper id="swordsMarketSellStepper"
@@ -1751,7 +1744,7 @@
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 												<s:Label text="{city.swordsSold*Numbers.SWORD_PRICE_SELL}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
 											</mx:GridItem>
 										</mx:GridRow>
 										<mx:GridRow>
@@ -1760,7 +1753,7 @@
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 												<s:Label text="{Numbers.ARMOR_PRICE_SELL}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 												<renderers:SpecialNumStepper id="armorsMarketSellStepper"
@@ -1771,7 +1764,7 @@
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 												<s:Label text="{city.armorsSold*Numbers.ARMOR_PRICE_SELL}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
 											</mx:GridItem>
 										</mx:GridRow>
 									</mx:Grid>
@@ -1790,7 +1783,7 @@
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 												<s:Label text="{city.goldEarned}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
 											</mx:GridItem>
 											<mx:GridItem/>
 										</mx:GridRow>

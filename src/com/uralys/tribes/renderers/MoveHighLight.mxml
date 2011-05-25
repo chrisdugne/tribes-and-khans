@@ -3,40 +3,76 @@
 			xmlns:mx="library://ns.adobe.com/flex/mx"  
 			xmlns:s="library://ns.adobe.com/flex/spark" 
 			width="{Numbers.LAND_WIDTH}" height="{Numbers.LAND_HEIGHT}"
-			mouseEnabled="false">
+			mouseEnabled="false"
+			creationComplete="init()">
 
-	<fx:Declarations>
-		<s:State name="normal" id="normalState"/>	
-		<s:State name="showTooltip" id="showTooltipState"/>	
-	</fx:Declarations>
-	
 	<fx:Script>
 		<![CDATA[
 			import com.uralys.tribes.commons.Numbers;
+			import com.uralys.tribes.commons.Session;
+			import com.uralys.tribes.commons.Translations;
 			import com.uralys.tribes.entities.Move;
 			import com.uralys.utils.Utils;
 			
-			[Bindable] public var _move:Move;
+			import flash.events.TimerEvent;
+			import flash.utils.Timer;
+			
+			[Bindable] public var _move:Move;	
+			[Bindable] public var displayProgress:Boolean;	
+			
+			
+			public var timer:Timer = new Timer( 1000 );
+			
+			public function init():void
+			{			
+				if(displayProgress){
+					timer.addEventListener( TimerEvent.TIMER, updateProgress );
+					timer.start();
+					updateProgress(null);
+				}
+			}
+			
+			public function stopTimer():void{
+				timer.stop();
+			}
+			
+			protected function updateProgress( timerEvent:TimerEvent ):void
+			{
+				trace("---------");
+				trace("update progress");
+				
+				var millisRemaining:Number = getMillisRemaining();
+				var millisSpent:Number = Numbers.BASE_TIME_PER_MOVE_MILLIS - millisRemaining;
+				trace("millisRemaining : " + millisRemaining);
+				
+				var minutes:int = millisRemaining/60/1000;
+				var secs:int = (millisRemaining-minutes*60*1000)/1000;
+
+				trace("minutes : " + minutes);
+				trace("secs : " + secs);
+				
+				this.progress.setProgress( millisSpent, Numbers.BASE_TIME_PER_MOVE_MILLIS );
+				this.progress.label = minutes+": "+(secs>9 ? "" : "0")+secs;
+			}
+			
+			protected function getMillisRemaining():Number
+			{
+				var now:Number = new Date().getTime();
+				return _move.timeTo - now;
+			}
 
 		]]>
 	</fx:Script>
 	
 	<mx:Image source="{ImageContainer.getImage(ImageContainer.HIGHLIGHT_VERT)}"
 			  mouseEnabled="false"/>
-	
-	<s:Button id="deleteButton" label="x" right="0" top="0" width="20"/>
-	<s:Button id="showTooltipButton"
-			  right="15"
-			  top="0"
-			  width="20"
-			  label.normal="s"
-			  label.showTooltip="h"
-			  click.normal="{currentState = showTooltipState.name}"
-			  click.showTooltip="{currentState = normalState.name}"
-			  />
-	<s:VGroup excludeFrom="normal" bottom="0"
-			  mouseEnabled="false">
-		<s:Label text="timefrom : {_move.timeFrom}"/>
-		<s:Label text="timeto : {_move.timeTo}"/>
-	</s:VGroup>
+	<mx:ProgressBar id="progress"
+					width="45"
+					right="0" top="0"
+					minimum="100" 
+					maximum="100" 
+					mode="manual"
+					label="--:--" 
+					visible="{displayProgress &amp;&amp; Session.showMovesProgress}"
+					labelPlacement="top"/>
 </s:Group>

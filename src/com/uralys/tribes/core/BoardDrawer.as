@@ -97,20 +97,21 @@ package com.uralys.tribes.core
 		 */ 
 		public function refreshDisplay():void{
 			
-			var offset:int = Numbers.NB_TILES_ON_EDGE_BY_LOADING/2;
+			var horizontalOffset:int = Numbers.NB_HORIZONTAL_TILES_BY_LOADING/2;
+			var verticalOffset:int = Numbers.NB_VERTICAL_TILES_BY_LOADING/2;
 			
 			// draw city grounds
-			for(var j:int=Session.centerY-offset; j < Session.centerY+offset; j++){
-				for(var i:int=Session.centerX-offset; i < Session.centerX+offset; i++){
+			for(var j:int=Session.centerY-verticalOffset; j < Session.centerY+verticalOffset; j++){
+				for(var i:int=Session.centerX-horizontalOffset; i < Session.centerX+horizontalOffset; i++){
 					var _case:Case = Session.map[i][j];
 					if(_case.type == 1)
 						drawCase(_case); 
 				}
 			}
 			
-			for(var j:int=Session.centerY-offset; j < Session.centerY+offset; j++)
+			for(var j:int=Session.centerY-verticalOffset; j < Session.centerY+verticalOffset; j++)
 			{
-				for(var i:int=Session.centerX-offset; i < Session.centerX+offset; i++)
+				for(var i:int=Session.centerX-horizontalOffset; i < Session.centerX+horizontalOffset; i++)
 				{
 					var _case:Case = Session.map[i][j];
 					if(_case.type == 1)
@@ -118,7 +119,7 @@ package com.uralys.tribes.core
 				}
 
 				// draw forests grounds
-				for(var i:int=Session.centerX-offset; i < Session.centerX+offset; i++)
+				for(var i:int=Session.centerX-horizontalOffset; i < Session.centerX+horizontalOffset; i++)
 				{
 					var _case:Case = Session.map[i][j];
 					if(_case.type == 0){
@@ -127,7 +128,7 @@ package com.uralys.tribes.core
 				}
 
 				// draw units
-				for(var i:int=Session.centerX-offset; i < Session.centerX+offset; i++)
+				for(var i:int=Session.centerX-horizontalOffset; i < Session.centerX+horizontalOffset; i++)
 				{
 					var _case:Case = Session.map[i][j];
 					refreshUnits(_case);
@@ -139,7 +140,6 @@ package com.uralys.tribes.core
 		
 
 		private function drawCase(_case:Case):void{
-
 			var image:Image = new Image();
 			var placeForet:Boolean = false;
 			
@@ -173,6 +173,7 @@ package com.uralys.tribes.core
 					break;
 				case 1:
 					//city
+					trace("draw case " + _case.caseUID + " | type : " + _case.type);
 					image.source = ImageContainer.SOL_VILLE;
 					break;
 			}
@@ -225,7 +226,7 @@ package com.uralys.tribes.core
 			else if(_case.merchants && _case.merchants.status != Unit.TO_BE_CREATED){
 				imageUnit = new Image();
 
-				switch(_case.army.ownerStatus){
+				switch(_case.merchants.ownerStatus){
 					case Unit.PLAYER:
 						imageUnit.source = ImageContainer.getImage(ImageContainer.MERCHANT_PLAYER);
 						break;
@@ -252,7 +253,6 @@ package com.uralys.tribes.core
 		
 		
 		public function drawCity(city:City):void{
-			
 			var angle:int = 0;
 			var distanceAuCentre:int = 0;
 			var insideCircle:Boolean = true;
@@ -277,7 +277,7 @@ package com.uralys.tribes.core
 				
 				
 				var cityPx:int = city.x * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4) + Numbers.LAND_WIDTH/2;
-				var cityPy:int = city.x * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2) + Numbers.LAND_HEIGHT/2;
+				var cityPy:int = city.y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2) + Numbers.LAND_HEIGHT/2;
 				
 				image.x = (cityPx - image.width - 10) + (Math.cos(angle)*(distanceAuCentre/2));
 				image.y = (cityPy - image.height - 10) + (Math.sin(angle)*(distanceAuCentre/2));
@@ -298,8 +298,6 @@ package com.uralys.tribes.core
 			images.sortKeys(new SortField(null, true));
 			
 			for each(var image:Image in images.values()){
-				//var num:int = Utils.random(images.length) - 1;
-				//boardImages.addElement(images.removeItemAt(num) as Image);
 				Session.board.mapPositioner.addElement(image);
 			}
 		}
@@ -324,311 +322,6 @@ package com.uralys.tribes.core
 		}
 		
 		//==================================================================================================//
-		
-//			
-//		public function redrawAllEntities():void{
-//			
-//			try{
-//				board.mapTiles.removeAllElements();
-//				board.boardEntities.removeAllElements();
-//				board.boardImages.removeAllElements();
-//				board.boardTexts.removeAllElements();
-//			}catch(e:Error){}
-//			
-//			drawMap();
-//			drawConflicts();
-//			
-////			for each (var player:Player in game.players){
-////				
-////				// il faudra revoir ca pour les alliances
-////				var isOpponent:Boolean = Session.player.uralysUID != player.uralysUID;
-////				
-////				//-----------------------------------------------------------------------------------------//
-////				// cities
-////				
-////				for each (var city:City in player.cities){
-////					drawCity(city, isOpponent);
-////				}
-////
-////				//-----------------------------------------------------------------------------------------//
-////				// armies
-////
-////				for each (var army:Unit in player.units){					
-////					drawArmy(army, isOpponent);
-////				}
-////
-////				//-----------------------------------------------------------------------------------------//
-////				// lands
-////				
-////				for each (var land:int in player.lands){
-////					drawLand(land, isOpponent);					
-////				}
-////			}
-//		}
-//
-//		//=====================================================================================//
-//		
-//		public function drawConflicts():void{
-//			for each(var conflict:Conflict in Session.player.conflicts){
-//				var image:Image = new Image();
-//				
-//				image.source = ImageContainer.CONFLIT;
-//					
-//				image.x = conflict.x-25;
-//				image.y = conflict.y-25;
-//				
-//				board.mapTiles.addElement(image);
-//			}
-//				
-//		}
-//		
-//		
-//		public function drawMap():void{
-//			
-//			//------------------------------------------------//
-//			// init du tableau 29x29
-//			
-//			Session.map = [];
-//			
-//			for(var i:int=0; i < board.mapPositioner.width/Numbers.LAND_WIDTH; i++){
-//				Session.map[i] = [];
-//				for(var j:int=0; j < board.mapPositioner.height/Numbers.LAND_HEIGHT; j++){
-//					Session.map[i][j] = Numbers.NOTHING;
-//				}
-//			}
-//			
-			//------------------------------------------------//
-			// city floors
-			
-//			for each (var player:Player in game.players){
-//				for each (var city:City in player.cities){
-//					
-//					// de 0 a 29
-//					var cityLandXmin:int = Math.floor((city.x - city.radius)/Numbers.LAND_WIDTH);	
-//					var cityLandXmax:int = Math.floor((city.x + city.radius)/Numbers.LAND_WIDTH);	
-//					var cityLandYmin:int = Math.floor((city.y - city.radius)/Numbers.LAND_HEIGHT);	
-//					var cityLandYmax:int = Math.floor((city.y + city.radius)/Numbers.LAND_HEIGHT);
-//					
-//					
-//					for(var i:int=cityLandXmin; i <= cityLandXmax; i++){
-//						for(var j:int=cityLandYmin; j <= cityLandYmax; j++){
-//							
-//							var image:Image = new Image();
-//							image.source = ImageContainer.SOL_VILLE;
-//							
-//							image.x = i * Numbers.LAND_WIDTH;
-//							image.y = j * Numbers.LAND_HEIGHT;
-//							
-//							Session.map[i][j] = Numbers.PLAIN;
-//							
-//							board.mapTiles.addElement(image);
-//						}
-//					}
-//				}
-//			}
-			
-			//------------------------------------------------//
-			// lacs (3x3 cases)
-//			
-//			var lacsX:Array = [8, 18, 8, 18];
-//			var lacsY:Array = [8, 8, 18, 18];
-//			
-//			for(i = 0; i < lacsX.length; i++){
-//				var image:Image = new Image();
-//				
-//				switch(Utils.random(2)){
-//					case 1:
-//						image.source = ImageContainer.LAC1;
-//						break;
-//					case 2:
-//						image.source = ImageContainer.LAC2;
-//						break;
-//					
-//				}
-//				
-//				image.x = lacsX[i] * Numbers.LAND_WIDTH;
-//				image.y = lacsY[i] * Numbers.LAND_HEIGHT;
-//				
-//				// 3x3 cases en lac
-//				for(var k:int = 0; k < 3; k++){
-//					for(var l:int = 0; l < 3; l++){
-//						Session.map[lacsX[i] + k][lacsY[i] + l] = Numbers.LAKE;
-//					}
-//				}
-//				
-//				board.mapTiles.addElement(image);
-//			}
-//			
-//			//------------------------------------------------//
-//			// rochers (2x2 cases)
-//			
-//			var rocsX:Array = [9, 19, 9, 19];
-//			var rocsY:Array = [2, 2, 27, 27];
-//			
-//			for(i = 0; i < lacsX.length; i++){
-//				var image:Image = new Image();
-//				
-//				switch(Utils.random(2)){
-//					case 1:
-//						image.source = ImageContainer.ROCHE1;
-//						break;
-//					case 2:
-//						image.source = ImageContainer.ROCHE2;
-//						break;
-//					
-//				}
-//				
-//				image.x = rocsX[i] * Numbers.LAND_WIDTH;
-//				image.y = rocsY[i] * Numbers.LAND_HEIGHT;
-//				
-//				// 3x3 cases en lac
-//				for(var k:int = 0; k < 2; k++){
-//					for(var l:int = 0; l < 2; l++){
-//						Session.map[rocsX[i] + k][rocsY[i] + l] = Numbers.ROCK;
-//					}
-//				}
-//				
-//				board.mapTiles.addElement(image);
-//			}
-//			
-//			//------------------------------------------------//
-//			// forests
-//			
-//			for(var i:int=0; i < board.mapPositioner.width/Numbers.LAND_WIDTH; i++){
-//				for(var j:int=0; j < board.mapPositioner.height/Numbers.LAND_HEIGHT; j++){
-//					if(Session.map[i][j] == Numbers.NOTHING){
-//						var image:Image = new Image();
-//						switch(Utils.random(2)){
-//							case 1:
-//								image.source = ImageContainer.FORET1;
-//								break;
-//							case 2:
-//								image.source = ImageContainer.FORET2;
-//								break;
-//							
-//						}
-//						
-//						image.x = i * Numbers.LAND_WIDTH - 35;
-//						image.y = j * Numbers.LAND_HEIGHT - 35;
-//						
-//						board.mapTiles.addElement(image);
-//					}
-//				}
-//			}
-//			
-//		}
-
-		//=====================================================================================//
-
-		public function redrawTexts():void{
-//			
-//			try{
-//				board.boardTexts.removeAllElements();
-//			}catch(e:Error){}
-			
-//			for each (var player:Player in game.players){
-//				
-//				var isOpponent:Boolean = Session.player.uralysUID != player.uralysUID;
-//				if(!isOpponent)
-//					player = Session.player; // toutes les modifs sont a jour dans Session.currentPlayer, et non dans 'game'
-//				
-//				//-----------------------------------------------------------------------------------------//
-//				// cities
-//				
-//				for each (var city:City in player.cities){
-//					drawCityText(city, isOpponent);
-//				}
-//				
-//			}
-		}
-	
-		//==================================================================================================//
-		
-
-		//==================================================================================================//
-//			
-//		public function drawCity(city:City, isOpponent:Boolean):void{
-//			
-//			if(isOpponent)
-//				return;
-//			
-//			if(Session.DRAW_DETAILS){
-//				var cityCircle:Ellipse;
-//				cityCircle = new Ellipse();
-//				cityCircle.width = city.radius*2;
-//				cityCircle.height = city.radius*2;
-//				cityCircle.x = city.x - cityCircle.width/2;
-//				cityCircle.y = city.y - cityCircle.height/2;
-//				
-//				cityCircle.fill = new SolidColor(isOpponent ? Numbers.YELLOW : Numbers.BLUE);
-//				
-//				board.boardEntities.addElement(cityCircle);
-//			}
-//			
-//			var cityMiniCircle:Rect;
-//			cityMiniCircle = new Rect();
-//			cityMiniCircle.width = city.radius*2/10;
-//			cityMiniCircle.height = city.radius*2/10;
-//			cityMiniCircle.x = (city.x - cityCircle.width/2)/15;
-//			cityMiniCircle.y = (city.y - cityCircle.height/2)/15;
-//			
-//			
-//			cityMiniCircle.fill = new SolidColor(isOpponent ? Numbers.RED : Numbers.BLUE);
-//			
-//			board.minimap.addElement(cityMiniCircle);
-//			
-//			//------------------------------------------------------------//
-//			
-//			if(Session.DRAW_TEXTS){
-//				drawCityText(city, isOpponent);
-//			}
-//			
-//			//------------------------------------------------------------//
-//			
-//			if(Session.DRAW_IMAGES){
-//				var angle:int = 0;
-//				var distanceAuCentre:int = 0;
-//				var insideCircle:Boolean = true;
-//				
-//				var images:Map = new Map();
-//				
-//				while(insideCircle){
-//					var image:Image = new Image();
-//					
-//					switch(Utils.random(3)){
-//						case 1:
-//							image.source = ImageContainer.HOUSE1;
-//							break;
-//						case 2:
-//							image.source = ImageContainer.HOUSE2;
-//							break;
-//						case 3:
-//							image.source = ImageContainer.HOUSE3;
-//							break;
-//						
-//					}
-//					
-//					image.x = (city.x - image.width - 10) + (Math.cos(angle)*(distanceAuCentre/2));
-//					image.y = (city.y - image.height - 10) + (Math.sin(angle)*(distanceAuCentre/2));
-//					
-//					if(distanceAuCentre > city.radius*2)
-//						insideCircle = false;
-//					else{
-//						images.put(image.y, image);
-//						distanceAuCentre = angle/360 * 25;
-//						angle += distanceAuCentre > 50 ? (distanceAuCentre > 100 ? 10 : 20) : 40;
-//					}
-//				}
-//
-//				images.sortKeys(new SortField(null, true));
-//				
-//				for each(var image:Image in images.values()){
-//					//var num:int = Utils.random(images.length) - 1;
-//					//boardImages.addElement(images.removeItemAt(num) as Image);
-//					board.boardImages.addElement(image);
-//				}
-//			}
-//		}
 
 		private function drawCityText(city:City, isOpponent:Boolean):void{
 			var name:Label = new Label();
@@ -637,96 +330,6 @@ package com.uralys.tribes.core
 			name.y = city.y - city.radius - 20; 
 			
 //			board.boardTexts.addElement(name);
-		}
-
-		//==================================================================================================//
-
-		public function drawArmy(army:Unit, isOpponent:Boolean):void{
-			
-			if(Session.DRAW_DETAILS){
-				
-				// army
-//				var armyCircle:Ellipse;
-//				armyCircle = new Ellipse();
-//				armyCircle.width = army.radius*2;
-//				armyCircle.height = army.radius*2;
-//				armyCircle.x = army.x - armyCircle.width/2;
-//				armyCircle.y = army.y - armyCircle.height/2;
-//				
-//				armyCircle.fill = new SolidColor(isOpponent ? Numbers.RED : Numbers.WHITE);
-//				army.armyCircle = armyCircle;
-//				
-//				board.boardEntities.addElement(armyCircle);
-			}
-			
-//			var armyMiniCircle:Ellipse;
-//			armyMiniCircle = new Ellipse();
-//			armyMiniCircle.width = army.radius*2/4;
-//			armyMiniCircle.height = army.radius*2/4;
-//			armyMiniCircle.x = (army.currentCase.x - army.radius/2)/15;
-//			armyMiniCircle.y = (army.currentCase.y - army.radius/2)/15;
-//			
-//			
-//			armyMiniCircle.fill = new SolidColor(isOpponent ? Numbers.RED : Numbers.BLUE);
-//			
-//			Session.board.minimap.addElement(armyMiniCircle);
-			
-			//------------------------------------------------------------//
-//			
-//			if(Session.DRAW_TEXTS){
-//				
-//			}
-			
-			//------------------------------------------------------------//
-			
-//			if(Session.DRAW_IMAGES){
-//				drawArmyImages(army.currentCase.x, army.currentCase.y, army.radius, 1);
-//			}
-		}
-		
-		//==================================================================================================//
-
-		public function drawMerchant(merchant:Unit, isOpponent:Boolean):void{
-			
-//			if(Session.DRAW_DETAILS){
-//				
-//				// army
-//				var merchantCircle:Ellipse;
-//				merchantCircle = new Ellipse();
-//				merchantCircle.width = merchant.radius*2;
-//				merchantCircle.height = merchant.radius*2;
-//				merchantCircle.x = merchant.x - merchantCircle.width/2;
-//				merchantCircle.y = merchant.y - merchantCircle.height/2;
-//				
-//				merchantCircle.fill = new SolidColor(isOpponent ? Numbers.BLACK : Numbers.YELLOW);
-//				merchant.armyCircle = merchantCircle;
-//				
-//				board.boardEntities.addElement(merchantCircle);
-//			}
-			
-//			var merchantMiniCircle:Ellipse;
-//			merchantMiniCircle = new Ellipse();
-//			merchantMiniCircle.width = merchant.radius*2/4;
-//			merchantMiniCircle.height = merchant.radius*2/4;
-//			merchantMiniCircle.x = (merchant.currentCase.x - merchant.radius/2)/15;
-//			merchantMiniCircle.y = (merchant.currentCase.y - merchant.radius/2)/15;
-//			
-//			
-//			merchantMiniCircle.fill = new SolidColor(isOpponent ? Numbers.RED : Numbers.BLUE);
-//			
-//			Session.board.minimap.addElement(merchantMiniCircle);
-		
-			//------------------------------------------------------------//
-//			
-//			if(Session.DRAW_TEXTS){
-//				
-//			}
-			
-			//------------------------------------------------------------//
-			
-//			if(Session.DRAW_IMAGES){
-//				drawArmyImages(merchant.currentCase.x, merchant.currentCase.y, merchant.radius, 2);
-//			}
 		}
 
 		//==================================================================================================//
@@ -814,31 +417,17 @@ package com.uralys.tribes.core
 
 		}
 
-		public function refreshArmyOnBoard(army:Unit):void{
-			try{
-				//board.boardEntities.removeElement(army.armyCircle);
-			}catch(e:Error){}
-			
-			drawArmy(army, false);
-		}
-
-		public function refreshMerchantOnBoard(merchant:Unit):void{
-			try{
-				//board.boardEntities.removeElement(merchant.armyCircle);
-			}catch(e:Error){}
-			
-			drawMerchant(merchant, false);
-		}
 
 		//==================================================================================================//
 		
-		public function addMoveImages(move:com.uralys.tribes.entities.Move, xPreviousMove:int, yPreviousMove:int):void{
+		public function addMoveImages(move:com.uralys.tribes.entities.Move, xPreviousMove:int, yPreviousMove:int, displayProgress:Boolean):void{
 			
 			//------------------------------------------------------//
 
 			var moveHighlight:MoveHighLight = new MoveHighLight();
 			moveHighlight.x = Utils.getXOnBoard(Utils.getXFromCaseUID(move.caseUID));
 			moveHighlight.y = Utils.getYOnBoard(Utils.getYFromCaseUID(move.caseUID));
+			moveHighlight.displayProgress = displayProgress;
 			moveHighlight._move = move;
 			
 			currentUnitMoveHighLights.addItem(moveHighlight);
@@ -858,11 +447,15 @@ package com.uralys.tribes.core
 			}
 		}
 		
-		public function removeAllUnitMovesImages():void{
-			for each(var moveHighLight:MoveHighLight in currentUnitMoveHighLights){
+		public function removeAllUnitMovesImages():void
+		{
+			for each(var moveHighLight:MoveHighLight in currentUnitMoveHighLights)
+			{
+				moveHighLight.stopTimer();
 				Session.board.highlighters.removeElement(moveHighLight);
 				Session.board.highlighters.graphics.clear();
 			}	
+			
 			currentUnitMoveHighLights = new ArrayCollection();
 		}
 		

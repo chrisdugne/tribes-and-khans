@@ -60,7 +60,8 @@
 					 text="{Translations.ARMY.getItemAt(Session.LANGUAGE)} {army.status == Unit.TO_BE_CREATED || army.isModified ? Translations.NOT_VALIDATED.getItemAt(Session.LANGUAGE) : ''}"/>
 		</s:HGroup>
 		<s:HGroup width="100%"
-				  y="30">
+				  y="30"
+				  visible="{army.ownerStatus == Unit.PLAYER}">
 			<mx:Image source="{ImageContainer.WARRIOR1}"/>
 			<s:Label color="#FFFFFF" 
 					 left="20" 
@@ -72,7 +73,8 @@
 					 verticalCenter="2"
 					 text="{army.value} pts"/>
 		</s:HGroup>
-		<s:HGroup y="60">
+		<s:HGroup y="60"
+				  visible="{army.ownerStatus == Unit.PLAYER}">
 			<mx:Image source="{ImageContainer.BOW}" width="25"/>
 			<s:Label color="#FFFFFF" 
 					 verticalCenter="2"

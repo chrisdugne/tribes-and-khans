@@ -18,7 +18,7 @@ package com.uralys.tribes.entities
 
 		public function initNewMove(unitUID:String, i:int, j:int, __timeFrom:Number = -1, __timeTo:Number = -1):void{
 			_timeFrom = __timeFrom == -1 ? new Date().getTime() : __timeFrom;
-			_moveUID = "NEW_"+timeFrom+"_"+i+"_"+j+"_"+unitUID;
+			_moveUID = "NEW_"+timeFrom+"_"+i+"_"+j+"_"+unitUID; // a noter que le timeFrom vaut 'now' ici, mais ca sert a rien
 			_caseUID = "case_"+i+"_"+j;
 			_unitUID = unitUID;
 			_timeTo = __timeTo;

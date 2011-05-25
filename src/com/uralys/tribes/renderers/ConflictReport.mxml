@@ -120,6 +120,8 @@
 					 verticalCenter="2"
 					 text="{ennemyArmors}"/>
 		</s:HGroup>
+		<!--
 		<s:Button label="{Translations.REPLAY.getItemAt(Session.LANGUAGE)}" click="{BoardDrawer.getInstance().displayConflict(conflict)}"/>
+		-->
 	</s:VGroup>
 </s:Group>

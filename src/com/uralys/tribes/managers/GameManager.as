@@ -564,7 +564,7 @@ package com.uralys.tribes.managers {
 			// ce qui va rafraichir les moves des units sur chaque case
 			// et remplir Session.movesToDelete
 			// et Session.allUnits
-			
+			// on affecte dans le forceRefresh le _move du actif sur la case. (ca suppose 1 seul pion visible par case) 
 			
 			for each(var _case:Case in Session.CASES_LOADED){
 				Session.map[_case.x][_case.y] = _case;
@@ -573,8 +573,13 @@ package com.uralys.tribes.managers {
 
 			//------------------------------------------------//
 			
+			// on enregistre tous les timers pour les moves des unites du plateau
 			UnitMover.getInstance().refreshTimers();
+			
+			// on affiche tout, et on affecte les images aux pions des cases
 			BoardDrawer.getInstance().refreshDisplay();
+			
+			// on refresh l'etat des armees dans les villes
 			Session.board.refreshUnitsInCity();
 			
 			// on supprime maintenant tous les Session.movesToDelete

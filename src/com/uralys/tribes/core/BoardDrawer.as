@@ -14,6 +14,7 @@ package com.uralys.tribes.core
 	import com.uralys.tribes.managers.GameManager;
 	import com.uralys.tribes.pages.Board;
 	import com.uralys.tribes.renderers.MoveHighLight;
+	import com.uralys.tribes.renderers.Pawn;
 	import com.uralys.utils.Map;
 	import com.uralys.utils.Utils;
 	
@@ -199,12 +200,10 @@ package com.uralys.tribes.core
 		
 		public function refreshUnits(_case:Case):void
 		{
-			if(_case.imageUnit != null){
-				try{
-					Session.board.mapPositioner.removeElement(_case.imageUnit);	
-				}
-				catch(e:Error){trace("error");}
+			try{
+				Session.board.mapPositioner.removeElement(_case.pawn);	
 			}
+			catch(e:Error){}
 			
 			var imageUnit:Image;
 			
@@ -242,13 +241,13 @@ package com.uralys.tribes.core
 				return; // no unit
 			}
 			
-			imageUnit.x = _case.x * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4) + 15;
-			imageUnit.y = _case.y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2) - 10;
+			_case.pawn.x = _case.x * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4) + 15;
+			_case.pawn.y = _case.y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2) - 10;
 			imageUnit.mouseEnabled = false;
 			
-			_case.imageUnit = imageUnit; 
+			_case.pawn.addElement(imageUnit);
 			
-			Session.board.mapPositioner.addElement(imageUnit);
+			Session.board.mapPositioner.addElement(_case.pawn);
 		}
 		
 		
@@ -323,63 +322,15 @@ package com.uralys.tribes.core
 		
 		//==================================================================================================//
 
-		private function drawCityText(city:City, isOpponent:Boolean):void{
-			var name:Label = new Label();
-			name.text = city.name;
-			name.x = city.x - city.radius - 20; 
-			name.y = city.y - city.radius - 20; 
-			
-//			board.boardTexts.addElement(name);
-		}
+//		private function drawCityText(city:City, isOpponent:Boolean):void{
+//			var name:Label = new Label();
+//			name.text = city.name;
+//			name.x = city.x - city.radius - 20; 
+//			name.y = city.y - city.radius - 20; 
+//		}
 
 		//==================================================================================================//
 		
-		// type : 1 army | 2 merchant
-		// return la liste des images de la troupe (Array)
-		private function drawArmyImages(x:int, y:int, radius:int, type:int):Array{
-			var angle:int = 0;
-			var distanceAuCentre:int = 0;
-			var insideCircle:Boolean = true;
-			
-			var images:Map = new Map();
-			
-			while(insideCircle){
-				var image:Image = new Image();
-				
-				switch(Utils.random(2)){
-					case 1:
-						image.source = type == 1 ? ImageContainer.WARRIOR1 : ImageContainer.MERCHANT1;
-						break;
-					case 2:
-						image.source = type == 1 ? ImageContainer.WARRIOR2 : ImageContainer.MERCHANT2;
-						break;
-				}
-				
-				image.x = (x - image.width - 15) + (Math.cos(angle)*(distanceAuCentre/2));
-				image.y = (y - image.height - 17) + (Math.sin(angle)*(distanceAuCentre/2));
-				
-				if(distanceAuCentre > radius*2)
-					insideCircle = false;
-				else{
-					images.put(image.y, image);
-					distanceAuCentre = angle/360 * 20;
-					angle += distanceAuCentre > 50 ? (distanceAuCentre > 100 ? 10 : 20) : 40;
-				}
-			}
-			
-			images.sortKeys(new SortField(null, true));
-			
-			for each(var image:Image in images.values()){
-				//var num:int = Utils.random(images.length) - 1;
-				//boardImages.addElement(images.removeItemAt(num) as Image);
-//				board.boardImages.addElement(image);
-			}
-			
-			return images.values().toArray();
-		}
-		
-		//==================================================================================================//
-
 		public function drawLand(land:int, isOpponent:Boolean):void{
 			
 			var i:int = land;
@@ -427,8 +378,6 @@ package com.uralys.tribes.core
 			var moveHighlight:MoveHighLight = new MoveHighLight();
 			moveHighlight.x = Utils.getXOnBoard(Utils.getXFromCaseUID(move.caseUID));
 			moveHighlight.y = Utils.getYOnBoard(Utils.getYFromCaseUID(move.caseUID));
-			moveHighlight.displayProgress = displayProgress;
-			moveHighlight._move = move;
 			
 			currentUnitMoveHighLights.addItem(moveHighlight);
 			Session.board.highlighters.addElement(moveHighlight);
@@ -451,7 +400,6 @@ package com.uralys.tribes.core
 		{
 			for each(var moveHighLight:MoveHighLight in currentUnitMoveHighLights)
 			{
-				moveHighLight.stopTimer();
 				Session.board.highlighters.removeElement(moveHighLight);
 				Session.board.highlighters.graphics.clear();
 			}	
@@ -558,90 +506,90 @@ package com.uralys.tribes.core
 		// old replay
 		
 		
-		private var conflictInDisplay:Conflict;
-		private var moves:ArrayCollection;
-		private var imagesForTheReplay:ArrayCollection;
+//		private var conflictInDisplay:Conflict;
+//		private var moves:ArrayCollection;
+//		private var imagesForTheReplay:ArrayCollection;
 		
-		public function displayConflict(conflict:Conflict):void{
-			
-			conflictInDisplay = conflict;
-			
-			FlexGlobals.topLevelApplication.hideconflicts.addEventListener(EffectEvent.EFFECT_END, windowClosed);
-			FlexGlobals.topLevelApplication.hideconflicts.play();
-		}
+//		public function displayConflict(conflict:Conflict):void{
+//			
+//			conflictInDisplay = conflict;
+//			
+//			FlexGlobals.topLevelApplication.hideconflicts.addEventListener(EffectEvent.EFFECT_END, windowClosed);
+//			FlexGlobals.topLevelApplication.hideconflicts.play();
+//		}
 		
-		protected function windowClosed(event:EffectEvent):void{
-			FlexGlobals.topLevelApplication.hideconflicts.removeEventListener(EffectEvent.EFFECT_END, windowClosed);
-			
-			var mover:spark.effects.Move = new spark.effects.Move();
-			mover.target = Session.board.mapPositioner;
-			mover.xTo = 250 - conflictInDisplay.x;
-			mover.yTo = 250 - conflictInDisplay.y;
-			mover.duration = 800;
-			mover.addEventListener(EffectEvent.EFFECT_END, boardPlaced);
-			mover.play();
-		}
+//		protected function windowClosed(event:EffectEvent):void{
+//			FlexGlobals.topLevelApplication.hideconflicts.removeEventListener(EffectEvent.EFFECT_END, windowClosed);
+//			
+//			var mover:spark.effects.Move = new spark.effects.Move();
+//			mover.target = Session.board.mapPositioner;
+//			mover.xTo = 250 - conflictInDisplay.x;
+//			mover.yTo = 250 - conflictInDisplay.y;
+//			mover.duration = 800;
+//			mover.addEventListener(EffectEvent.EFFECT_END, boardPlaced);
+//			mover.play();
+//		}
 
-		protected function boardPlaced(event:EffectEvent):void{
-			
-			moves = new ArrayCollection();
-			imagesForTheReplay = new ArrayCollection();
-			
-			for each(var moveConflict:MoveConflict in conflictInDisplay.moveAllies){
-				moves.addItem(moveArmyOnConflict(moveConflict, conflictInDisplay.x, conflictInDisplay.y));
-			}
-			
-			for each(var moveConflict:MoveConflict in conflictInDisplay.moveEnnemies){
-				moves.addItem(moveArmyOnConflict(moveConflict, conflictInDisplay.x, conflictInDisplay.y));
-			}
-			
-			// recupere le dernier move (on part de la fin et on chope le premier non null (null = armyStanding : pas de move))
-			var i:int = 1;
-			var lastMove:com.uralys.tribes.entities.Move = null;
-			while(lastMove == null){
-				lastMove = moves.getItemAt(moves.length-i) as com.uralys.tribes.entities.Move;
-				i++;
-			}
-			
-			//attend la fin du dernier move
-			lastMove.addEventListener(EffectEvent.EFFECT_END, moveConflictDone);
-		}
+//		protected function boardPlaced(event:EffectEvent):void{
+//			
+//			moves = new ArrayCollection();
+//			imagesForTheReplay = new ArrayCollection();
+//			
+//			for each(var moveConflict:MoveConflict in conflictInDisplay.moveAllies){
+//				moves.addItem(moveArmyOnConflict(moveConflict, conflictInDisplay.x, conflictInDisplay.y));
+//			}
+//			
+//			for each(var moveConflict:MoveConflict in conflictInDisplay.moveEnnemies){
+//				moves.addItem(moveArmyOnConflict(moveConflict, conflictInDisplay.x, conflictInDisplay.y));
+//			}
+//			
+//			// recupere le dernier move (on part de la fin et on chope le premier non null (null = armyStanding : pas de move))
+//			var i:int = 1;
+//			var lastMove:com.uralys.tribes.entities.Move = null;
+//			while(lastMove == null){
+//				lastMove = moves.getItemAt(moves.length-i) as com.uralys.tribes.entities.Move;
+//				i++;
+//			}
+//			
+//			//attend la fin du dernier move
+//			lastMove.addEventListener(EffectEvent.EFFECT_END, moveConflictDone);
+//		}
 
-		private function moveArmyOnConflict(moveConflict:MoveConflict, xTo:int, yTo:int):spark.effects.Move{
-			
-			var radius:int =  Math.sqrt(moveConflict.armySize)/2 + 2;
-			var images:Array = drawArmyImages(moveConflict.xFrom, moveConflict.yFrom, radius, 1);
-			
-			for(var i:int=0; i<images.length; i++){
-				imagesForTheReplay.addItem(images[i]);
-			}
-			
-			if(!moveConflict.armyStanding){
-				var mover:spark.effects.Move = new spark.effects.Move();
-				mover.targets = images;
-				mover.xFrom = moveConflict.xFrom;
-				mover.yFrom = moveConflict.yFrom;
-				mover.xTo = xTo-12;
-				mover.yTo = yTo-12;
-				mover.duration = 2000;
-				
-				mover.play();
-				return mover;
-			}
-			else
-				return null;
-		}
-		
-		
-		protected function moveConflictDone(event:EffectEvent):void{
-			
-			for each(var image:Image in imagesForTheReplay){
-				image.visible = false;
-				image = null;
-			}
-			
-			FlexGlobals.topLevelApplication.showconflicts.play();
-		}
+//		private function moveArmyOnConflict(moveConflict:MoveConflict, xTo:int, yTo:int):spark.effects.Move{
+//			
+//			var radius:int =  Math.sqrt(moveConflict.armySize)/2 + 2;
+//			var images:Array = drawArmyImages(moveConflict.xFrom, moveConflict.yFrom, radius, 1);
+//			
+//			for(var i:int=0; i<images.length; i++){
+//				imagesForTheReplay.addItem(images[i]);
+//			}
+//			
+//			if(!moveConflict.armyStanding){
+//				var mover:spark.effects.Move = new spark.effects.Move();
+//				mover.targets = images;
+//				mover.xFrom = moveConflict.xFrom;
+//				mover.yFrom = moveConflict.yFrom;
+//				mover.xTo = xTo-12;
+//				mover.yTo = yTo-12;
+//				mover.duration = 2000;
+//				
+//				mover.play();
+//				return mover;
+//			}
+//			else
+//				return null;
+//		}
+//		
+//		
+//		protected function moveConflictDone(event:EffectEvent):void{
+//			
+//			for each(var image:Image in imagesForTheReplay){
+//				image.visible = false;
+//				image = null;
+//			}
+//			
+//			FlexGlobals.topLevelApplication.showconflicts.play();
+//		}
 		
 	}
 }

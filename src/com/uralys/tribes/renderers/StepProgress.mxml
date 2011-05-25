@@ -18,12 +18,9 @@
 			import mx.controls.Alert;
 			import mx.core.FlexGlobals;
 			
-			public var timer:Timer = new Timer( 1000 );
-			
 			public function init():void
 			{			
-				this.timer.addEventListener( TimerEvent.TIMER, updateProgress );
-				this.timer.start();
+				Session.timer.addEventListener( TimerEvent.TIMER, updateProgress );
 			}
 			
 			protected function updateProgress( timerEvent:TimerEvent ):void

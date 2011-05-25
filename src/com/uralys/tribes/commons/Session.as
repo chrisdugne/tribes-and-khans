@@ -3,6 +3,8 @@ package com.uralys.tribes.commons
 	import com.uralys.tribes.entities.Case;
 	import com.uralys.tribes.pages.Board;
 	
+	import flash.utils.Timer;
+	
 	import mx.collections.ArrayCollection;
 	
 	
@@ -13,7 +15,7 @@ package com.uralys.tribes.commons
 
 		//=====================================================//
 		
-		[Bindable] public static var VERSION:String = "1.1.26";
+		[Bindable] public static var VERSION:String = "1.1.27";
 		[Bindable] public static var LOGGED_IN:Boolean = false; 
 		[Bindable] public static var CONNECTED_TO_FACEBOOK:Boolean = false;
 		
@@ -51,6 +53,8 @@ package com.uralys.tribes.commons
 		// Board
 		
 		[Bindable] public static var board:Board;
+
+		public static var timer:Timer = new Timer( 1000 );
 
 		// pour savoir si on click pour un deplacement de troupes
 		//[Bindable] public static var CURRENT_SELECTION_IS_ARMY:Boolean = false;

@@ -62,6 +62,7 @@
 
 			protected function init():void{
 
+				Session.timer.start();
 				timer = new Timer(41,1);
 				timer.addEventListener(TimerEvent.TIMER_COMPLETE, moveStoppedDuringDragging);
 
@@ -805,13 +806,17 @@
 											 click="selectedUnit = Session.CURRENT_CASE_SELECTED.merchants; onUnitClick();"/>
 			</s:NavigatorContent>
 		</mx:ViewStack>
+		<s:CheckBox id="checkbox"
+					selected="@{Session.showMovesProgress}" 
+					label="{Translations.SHOW_PROGRESS_BARS.getItemAt(Session.LANGUAGE)}"
+					x="{viewstack.x}"
+					bottom="34"/>
 
 		<s:VGroup top="150" right="95"
 				  excludeFrom="classic">
 			<s:Label text="{Translations.WAY_SELECTION.getItemAt(Session.LANGUAGE)}"/>
 			<s:Button label="Done" click="{validateUnitMoves(false)}" visible="{selectedUnit != null}" enabled="{newMoveAdded}"/>
 			<s:Button label="Cancel" click="{validateUnitMoves(true)}" visible="{selectedUnit != null}"/>
-			<s:CheckBox selected="@{Session.showMovesProgress}"/>
 		</s:VGroup>
 		
 		<s:VGroup id="buildCityForm"

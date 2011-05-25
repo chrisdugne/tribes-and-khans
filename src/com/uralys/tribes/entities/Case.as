@@ -3,6 +3,7 @@ package com.uralys.tribes.entities
 	import com.uralys.tribes.commons.Session;
 	import com.uralys.tribes.core.UnitMover;
 	import com.uralys.tribes.managers.GameManager;
+	import com.uralys.tribes.renderers.Pawn;
 	
 	import mx.collections.ArrayCollection;
 	import mx.controls.Image;
@@ -124,7 +125,7 @@ package com.uralys.tribes.entities
 		
 		public var army:Unit;
 		public var merchants:Unit;
-		public var imageUnit:Image;
+		public var pawn:Pawn = new Pawn();
 		public var imageGround:Image;
 		public var imageHouses:ArrayCollection = new ArrayCollection();
 		public var refreshAlreadyHappened:Boolean = false;
@@ -176,6 +177,7 @@ package com.uralys.tribes.entities
 							break;
 					}
 					
+					pawn._move = move;
 					unit.isModified = false;
 				}
 				else if(move.timeTo != -1 && move.timeTo < now){
@@ -210,6 +212,9 @@ package com.uralys.tribes.entities
 			// on degage les move perimes des recordedMoves de la case
 			for each (var moveToRemoveFromRecordedMoves:Move in recordedMovesToDelete)
 				recordedMoves.removeItemAt(recordedMoves.getItemIndex(moveToRemoveFromRecordedMoves));
+			
+			if(pawn._move != null)
+				pawn.refreshProgress();
 			
 			refreshAlreadyHappened = true;
 			return foundUnitsOnThisCase;

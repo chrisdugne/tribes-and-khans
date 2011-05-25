@@ -88,10 +88,12 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	
 	//-----------------------------------------------------------------------//
 
-	private void createCity(City cityFromFlex, String playerUID, PersistenceManager pm, int numplayer) {
+	private void createCity(City cityFromFlex, String playerUID, PersistenceManager pm, int numplayer) 
+	{
 		PlayerDTO player = pm.getObjectById(PlayerDTO.class, playerUID);
 		
 		CityDTO city = new CityDTO();
+		long now = new Date().getTime();
 
 		String cityUID = Utils.generateUID();
 
@@ -105,12 +107,33 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		city.setWood(cityFromFlex == null ? 200 : cityFromFlex.getWood());
 		city.setIron(cityFromFlex == null ? 200 : cityFromFlex.getIron());
 		city.setGold(cityFromFlex == null ? 100 : cityFromFlex.getGold());
+		city.setBeginTime(cityFromFlex == null ? now : cityFromFlex.getBeginTime());
+		city.setEndTime(-1);
 		city.setPeopleCreatingWheat(0);
 		city.setPeopleCreatingWood(0);
 		city.setPeopleCreatingIron(0);
 
-		city.setX(cityFromFlex == null ? getInitialCityX(numplayer) : cityFromFlex.getX());
-		city.setY(cityFromFlex == null ? getInitialCityY(numplayer) : cityFromFlex.getY());
+		int cityX = 0; 
+		int cityY = 0; 
+			
+		if(cityFromFlex == null){
+			boolean caseFound = false;
+			
+			while(!caseFound){
+				cityX = getInitialCityX(numplayer);
+				cityY = getInitialCityY(numplayer);
+				
+				if(getCase(cityX, cityY).getType() != Case.CITY)
+					caseFound = true;
+			}
+		}
+		else{
+			cityX = cityFromFlex.getX();
+			cityY = cityFromFlex.getY();
+		}
+		
+		city.setX(cityX);
+		city.setY(cityY);
 		
 		//--------------------------------------//
 		// init Equipment
@@ -173,12 +196,34 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		return _case;
 	}
 
+	
+	//==================================================================================================//
+	/*
+	
+	nbplayers/10 = colonne
+	nbplayers/100 = ligne
+	
+	x = 100 + colonne*20 ˆ 120 + colonne*20
+	y = 100 + ligne*20 ˆ 120 + ligne*20
+	
+	01-10  random [(100-120),(100-120)]
+	11-20  random [(120-140),(100-120)]
+	21-30  random [(140-160),(100-120)]
+	...
+	
+	*/
 	private int getInitialCityX(int numplayer) {
-		return 200 + 10*numplayer;
+		int column = numplayer/10;
+		int randomX = Utils.random(20);
+		
+		return 100 + randomX + 20*column;
 	}
 
 	private int getInitialCityY(int numplayer) {
-		return 200 + 10*numplayer;
+		int line = numplayer/100;
+		int randomY = Utils.random(20);
+
+		return 100 + randomY + 20*line;
 	}
 	
 	//==================================================================================================//
@@ -633,6 +678,24 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		pm.close();
 		
 		return conflictUID;
+	}
+
+	public void changeName(String uralysUID, String newName) 
+	{
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		PlayerDTO playerDTO = pm.getObjectById(PlayerDTO.class, uralysUID);
+		
+		playerDTO.setName(newName);
+		pm.close();
+	}
+	
+	public void changeCityName(String cityUID, String newName) 
+	{
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		CityDTO cityDTO = pm.getObjectById(CityDTO.class, cityUID);
+		
+		cityDTO.setName(newName);
+		pm.close();
 	}
 
 	//==================================================================================================//

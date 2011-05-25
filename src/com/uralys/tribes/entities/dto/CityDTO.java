@@ -29,6 +29,9 @@ public class CityDTO {
 	@Persistent private String name;
 	@Persistent private int population;
 	
+	@Persistent private long beginTime;
+	@Persistent private long endTime;
+	
 	@Persistent private int wheat;
 	@Persistent private int peopleCreatingWheat;
 	@Persistent private int wood;
@@ -124,6 +127,18 @@ public class CityDTO {
 	}
 	public void setGold(Integer gold) {
 		this.gold = gold;
+	}
+	public long getBeginTime() {
+		return beginTime;
+	}
+	public void setBeginTime(long beginTime) {
+		this.beginTime = beginTime;
+	}
+	public long getEndTime() {
+		return endTime;
+	}
+	public void setEndTime(long endTime) {
+		this.endTime = endTime;
 	}
 	
 	//-----------------------------------------------------------------------------------//

@@ -8,6 +8,9 @@ public class City {
 	private String cityUID;
 	private String name;
 	
+	private long beginTime;
+	private long endTime;
+
 	private int population;
 	
 	private int wheat;
@@ -135,6 +138,22 @@ public class City {
 	}
 	public void setGold(int gold) {
 		this.gold = gold;
+	}
+
+	public long getBeginTime() {
+		return beginTime;
+	}
+
+	public void setBeginTime(long beginTime) {
+		this.beginTime = beginTime;
+	}
+
+	public long getEndTime() {
+		return endTime;
+	}
+
+	public void setEndTime(long endTime) {
+		this.endTime = endTime;
 	}
 
 	

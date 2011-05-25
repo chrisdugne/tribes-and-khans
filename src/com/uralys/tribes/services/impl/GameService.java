@@ -104,4 +104,13 @@ public class GameService implements IGameService {
 	}
 
 	// -----------------------------------------------------------------------------------//
+
+	public void changeName(String uralysUID, String newName) {
+		gameManager.changeName(uralysUID, newName);
+	}
+
+	public void changeCityName(String cityUID, String newName) {
+		gameManager.changeCityName(cityUID, newName);
+	}
+
 }

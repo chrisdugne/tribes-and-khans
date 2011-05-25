@@ -128,6 +128,8 @@ public class EntitiesConverter {
 		city.setX(cityDTO.getX());
 		city.setY(cityDTO.getY());
 		city.setGold(cityDTO.getGold());
+		city.setBeginTime(cityDTO.getBeginTime());
+		city.setEndTime(cityDTO.getEndTime());
 
 		if(requireFullData){
 			// ---------------------------------//

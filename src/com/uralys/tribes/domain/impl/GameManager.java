@@ -205,13 +205,23 @@ public class GameManager implements IGameManager {
 
 	public List<Case> loadCases(List<String> caseUIDs) {
 		List<Case> cases = new ArrayList<Case>();
-
+	
 		List<CaseDTO> casesLoaded = gameDao.loadCases(caseUIDs);
 		for(CaseDTO caseDTO : casesLoaded){
 			cases.add(EntitiesConverter.convertCaseDTO(caseDTO));
 		}
 
 		return cases;
+	}
+
+	//==================================================================================================//
+
+	public void changeName(String uralysUID, String newName) {
+		gameDao.changeName(uralysUID, newName);
+	}
+	
+	public void changeCityName(String cityUID, String newName) {
+		gameDao.changeCityName(cityUID, newName);
 	}
 	
 	//==================================================================================================//
@@ -887,4 +897,5 @@ public class GameManager implements IGameManager {
 			private HashMap<String, Player> playerAlreadyLoaded = new HashMap<String, Player>();
 			private DataContainer4UnitSaved objectsAltered = new DataContainer4UnitSaved();
 	}
+
 }

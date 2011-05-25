@@ -24,4 +24,7 @@ public interface IGameService {
 	
 	public List<Item> loadItems();
 	public List<Case> loadCases(List<String> caseUIDs);
+	
+	public void changeName(String uralysUID, String newName);
+	public void changeCityName(String cityUID, String newName);
 }

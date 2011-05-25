@@ -56,4 +56,7 @@ public interface IGameDAO {
 	
 	public String createConflict(String caseUID, String unitUID, String unitUID2);
 	
+	public void changeName(String uralysUID, String newName);
+	public void changeCityName(String cityUID, String newName);
+	
 }

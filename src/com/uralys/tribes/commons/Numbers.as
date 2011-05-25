@@ -21,8 +21,8 @@ package com.uralys.tribes.commons
 		[Bindable]
 		public static var BASE_TIME_PER_MOVE:int = 20;
 		[Bindable]
-		//public static var BASE_TIME_PER_MOVE_MILLIS:int = 20*60*1000;
-		public static var BASE_TIME_PER_MOVE_MILLIS:int = 5*1000*3;
+		public static var BASE_TIME_PER_MOVE_MILLIS:int = 20*60*1000;
+		//public static var BASE_TIME_PER_MOVE_MILLIS:int = 5*1000*3;
 	
 		[Bindable]
 		public static var NB_HORIZONTAL_TILES_BY_LOADING:int = 18; 

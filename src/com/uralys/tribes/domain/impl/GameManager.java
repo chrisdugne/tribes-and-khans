@@ -72,6 +72,37 @@ public class GameManager implements IGameManager {
 		return gameDao.createPlayer(uralysUID, email);			
 	}
 	
+	//==================================================================================================//
+	
+	public String buildCity(City city, String uralysUID){
+		return gameDao.createCity(city, uralysUID);
+	}
+	
+	public void saveCity(City city){
+		updateCity(city, false);
+	}
+	
+	private void updateCity(City city, boolean saveResources)
+	{
+		gameDao.updateCityResources(city, saveResources);
+
+		//----------------------------------------//
+		// Forge
+
+		for(Smith smith : city.getSmiths()){
+			gameDao.updateSmith(smith.getSmithUID(), smith.getPeople());				
+		}
+
+		//----------------------------------------//
+		// Equipment stock
+
+		for(Equipment stock : city.getEquipmentStock()){
+			gameDao.updateStock(stock.getEquimentUID(), stock.getSize());	
+		}
+	}
+	
+	//==================================================================================================//
+
 	public Player getPlayer(String uralysUID) {
 		return getPlayer(uralysUID, null);
 	}
@@ -89,6 +120,8 @@ public class GameManager implements IGameManager {
 			return EntitiesConverter.convertPlayerDTO(gameDao.getPlayer(uralysUID), true);
 	}
 
+	//==================================================================================================//
+
 	public void savePlayer(Player player) {
 		if(debug)Utils.print("-------------------------------------------------");
 		if(debug)Utils.print("Save turn pour joueur : " + player.getName());
@@ -99,28 +132,9 @@ public class GameManager implements IGameManager {
 		if(debug)Utils.print("--------------------");
 		if(debug)Utils.print("Saving cities");
 
-		for(City city : player.getCities()){
-
-			if(city.getCityUID().equals("new")){
-				gameDao.createCity(city, player.getUralysUID());
-			}
-			else{
-				gameDao.updateCityResources(city);
-
-				//----------------------------------------//
-				// Forge
-				
-				for(Smith smith : city.getSmiths()){
-					gameDao.updateSmith(smith.getSmithUID(), smith.getPeople());				
-				}
-
-				//----------------------------------------//
-				// Equipment stock
-				
-				for(Equipment stock : city.getEquipmentStock()){
-					gameDao.updateStock(stock.getEquimentUID(), stock.getSize());	
-				}
-			}
+		for(City city : player.getCities())
+		{
+			updateCity(city, true);
 		}
 		
 		//----------------------------------------------------------------//
@@ -203,10 +217,10 @@ public class GameManager implements IGameManager {
 
 	//==================================================================================================//
 
-	public List<Case> loadCases(List<String> caseUIDs) {
+	public List<Case> loadCases(int[] groups) {
 		List<Case> cases = new ArrayList<Case>();
 	
-		List<CaseDTO> casesLoaded = gameDao.loadCases(caseUIDs);
+		List<CaseDTO> casesLoaded = gameDao.loadCases(groups);
 		for(CaseDTO caseDTO : casesLoaded){
 			cases.add(EntitiesConverter.convertCaseDTO(caseDTO));
 		}

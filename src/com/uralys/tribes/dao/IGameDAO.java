@@ -22,11 +22,11 @@ public interface IGameDAO {
 	
 	//==================================================================================================//
 	public List<ItemDTO> loadItems();
-	public List<CaseDTO> loadCases(List<String> caseUIDs);
+	public List<CaseDTO> loadCases(int[] groups);
 	public CaseDTO getCase(int i, int j);
 	
 	public void updatePlayer(Player player);
-	public void updateCityResources(City city);
+	public void updateCityResources(City city, boolean saveResources);
 	public void updateSmith(String smithUID, int people);
 	public void updateStock(String equipmentUID, int size);
 
@@ -40,7 +40,7 @@ public interface IGameDAO {
 	public void deleteUnit(String uralysUID, String unitUID);
 	public UnitDTO getUnit(String unitUID);
 	
-	public void createCity(City city, String playerUID);
+	public String createCity(City city, String playerUID);
 	
 	public String createMove(Move move);
 	public void setTimeToForMove(String moveUID, long timeTo);

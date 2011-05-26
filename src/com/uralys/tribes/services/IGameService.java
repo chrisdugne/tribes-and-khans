@@ -3,6 +3,7 @@ package com.uralys.tribes.services;
 import java.util.List;
 
 import com.uralys.tribes.entities.Case;
+import com.uralys.tribes.entities.City;
 import com.uralys.tribes.entities.DataContainer4UnitSaved;
 import com.uralys.tribes.entities.Item;
 import com.uralys.tribes.entities.Player;
@@ -14,6 +15,8 @@ public interface IGameService {
 	public Player getPlayer(String uralysUID);
 
 	public void savePlayer(Player player);
+	public String buildCity(City city, String uralysUID);
+	public void saveCity(City city);
 	public void deleteUnit(String uralysUID, String unitUID);
 	public void deleteUnits(String uralysUID, List<String> unitsUID);
 	public void deleteMove(String moveUID);
@@ -23,7 +26,7 @@ public interface IGameService {
 
 	
 	public List<Item> loadItems();
-	public List<Case> loadCases(List<String> caseUIDs);
+	public List<Case> loadCases(int[] groups);
 	
 	public void changeName(String uralysUID, String newName);
 	public void changeCityName(String cityUID, String newName);

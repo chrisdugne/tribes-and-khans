@@ -26,6 +26,7 @@ public class CaseDTO {
     @Extension(vendorName="datanucleus", key="gae.pk-name", value="true")
 	private String caseUID;
 	
+	@Persistent private int groupeCase;
 	@Persistent private int x;
 	@Persistent private int y;
 	
@@ -74,6 +75,12 @@ public class CaseDTO {
 	}
 	public void setCaseUID(String caseUID) {
 		this.caseUID = caseUID;
+	}
+	public int getGroupCase() {
+		return groupeCase;
+	}
+	public void setGroupCase(int groupeCase) {
+		this.groupeCase = groupeCase;
 	}
 	public Integer getType() {
 		return type;

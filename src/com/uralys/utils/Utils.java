@@ -135,8 +135,6 @@ public class Utils {
 	public static int nbMinutesSpentSince(Long time) {
 		return (int)((double)(new Date().getTime()-time)/(1000*60));
 	}
-	
-	
 	//======================================================================================//
 	
 	

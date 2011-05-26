@@ -16,6 +16,7 @@ public class Case {
 
 	private String caseUID;
 
+	private int group;
 	private int x;
 	private int y;
 	
@@ -99,6 +100,14 @@ public class Case {
 
 	public void setLandOwner(Player landOwner) {
 		this.landOwner = landOwner;
+	}
+
+	public int getGroup() {
+		return group;
+	}
+
+	public void setGroup(int group) {
+		this.group = group;
 	}
 	
 	//-----------------------------------------------------------------------------------//

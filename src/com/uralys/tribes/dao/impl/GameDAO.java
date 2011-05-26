@@ -1,6 +1,7 @@
 package com.uralys.tribes.dao.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -29,6 +30,7 @@ import com.uralys.tribes.entities.dto.PlayerDTO;
 import com.uralys.tribes.entities.dto.ServerDataDTO;
 import com.uralys.tribes.entities.dto.SmithDTO;
 import com.uralys.tribes.entities.dto.UnitDTO;
+import com.uralys.tribes.utils.TribesUtils;
 import com.uralys.utils.Utils;
 
 public class GameDAO  extends MainDAO implements IGameDAO {
@@ -88,7 +90,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	
 	//-----------------------------------------------------------------------//
 
-	private void createCity(City cityFromFlex, String playerUID, PersistenceManager pm, int numplayer) 
+	private String createCity(City cityFromFlex, String playerUID, PersistenceManager pm, int numplayer) 
 	{
 		PlayerDTO player = pm.getObjectById(PlayerDTO.class, playerUID);
 		
@@ -175,19 +177,30 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		//--------------------------------------//
 
 		player.getCityUIDs().add(cityUID);
+		
+		return cityUID;
 	}
 
-	private CaseDTO createCase(int x, int y, String cityUID, int type, String landOwnerUID, PersistenceManager pm) {
-		
+
+	/*
+	 * 0-404 * 0-404 = 27*27 groups
+	 * 15*15*27*27 = 405*405
+	 * 
+	 */
+	private CaseDTO createCase(int x, int y, String cityUID, int type, String landOwnerUID, PersistenceManager pm) 
+	{
 		CaseDTO _case = new CaseDTO();
 
 		String caseUID = "case_"+x+"_"+y;
+		int group = TribesUtils.getGroup(x,y); 
+		
 		Key key = KeyFactory.createKey(CaseDTO.class.getSimpleName(), caseUID);
 
 		_case.setKey(KeyFactory.keyToString(key));
 		_case.setCaseUID(caseUID);
 		_case.setX(x);
 		_case.setY(y);
+		_case.setGroupCase(group);
 		_case.setCityUID(cityUID);
 		_case.setLandOwnerUID(landOwnerUID);
 		_case.setType(type);
@@ -195,8 +208,8 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		pm.makePersistent(_case);
 		return _case;
 	}
-
 	
+
 	//==================================================================================================//
 	/*
 	
@@ -232,8 +245,21 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		return UniversalDAO.getInstance().getListDTO(ItemDTO.class, 1, 100);
 	}
 
-	public List<CaseDTO> loadCases(List<String> caseUIDs) {
-		return UniversalDAO.getInstance().getListDTO(caseUIDs, CaseDTO.class);
+	@SuppressWarnings("unchecked")
+	public List<CaseDTO> loadCases(int[] groups) {
+
+		List<CaseDTO> result = new ArrayList<CaseDTO>();
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		
+		for(int group : groups){
+			if(debug)Utils.print("loadCases : " + group); 
+			Query query = pm.newQuery("select from " + CaseDTO.class.getName() + " where groupeCase == :group");
+
+			if(debug)Utils.print(query.toString()); 
+			result.addAll((Collection<? extends CaseDTO>) query.execute(group));
+		}
+		
+		return result;
 	}
 
 	public CaseDTO getCase(int i, int j) {
@@ -262,22 +288,24 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		pm.close();
 	}
 	
-	public void updateCityResources(City city){
-		
+	public void updateCityResources(City city, boolean saveResources)
+	{
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		CityDTO cityDTO = pm.getObjectById(CityDTO.class, city.getCityUID());
-		
-		cityDTO.setName(city.getName());
-		cityDTO.setWheat(city.getWheat());
-		cityDTO.setWood(city.getWood());
-		cityDTO.setIron(city.getIron());
-		cityDTO.setGold(city.getGold());
-		
+
+		if(saveResources){
+			cityDTO.setWheat(city.getWheat());
+			cityDTO.setWood(city.getWood());
+			cityDTO.setIron(city.getIron());
+			cityDTO.setGold(city.getGold());
+			
+			cityDTO.setPopulation(city.getPopulation());
+		}
+
 		cityDTO.setPeopleCreatingWheat(city.getPeopleCreatingWheat());
 		cityDTO.setPeopleCreatingWood(city.getPeopleCreatingWood());
 		cityDTO.setPeopleCreatingIron(city.getPeopleCreatingIron());
 		
-		cityDTO.setPopulation(city.getPopulation());
 		
 		pm.close();
 	}
@@ -301,10 +329,9 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	
 	//==================================================================================================//
 
-	public void createCity(City city, String playerUID){
+	public String createCity(City city, String playerUID){
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
-		createCity(city, playerUID, pm, -1);
-		pm.close();
+		return createCity(city, playerUID, pm, -1);
 	}
 
 	public void createUnit(Unit unit, String cityUID){

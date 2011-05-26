@@ -256,6 +256,7 @@ public class EntitiesConverter {
 
 		_case.setCaseUID(caseDTO.getCaseUID());
 		_case.setX(caseDTO.getX());
+		_case.setGroup(caseDTO.getGroupCase());
 		_case.setY(caseDTO.getY());
 		_case.setType(caseDTO.getType());
 

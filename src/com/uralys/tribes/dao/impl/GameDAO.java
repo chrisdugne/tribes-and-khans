@@ -61,6 +61,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		playerDTO.setName("New Player");
 		playerDTO.setAllyUID(uralysUID);
 		playerDTO.setNbLands(7);
+		playerDTO.setNbConnections(0);
 		
 		long now = new Date().getTime();
 		long timeSpentMillis = now - Constants.SERVER_START;
@@ -79,7 +80,10 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	public PlayerDTO getPlayer(String uralysUID) {
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		try{
-			return pm.getObjectById(PlayerDTO.class, uralysUID);
+			PlayerDTO player = pm.getObjectById(PlayerDTO.class, uralysUID);
+			player.setNbConnections(player.getNbConnections()+1);
+			pm.close();
+			return player;
 		}
 		catch(Exception e){
 			// no Player !!

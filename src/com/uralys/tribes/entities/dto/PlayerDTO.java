@@ -26,6 +26,7 @@ public class PlayerDTO {
 	private String uralysUID;
 	
 	@Persistent private String name;
+	@Persistent private int nbConnections;
 	
 	@Persistent private String allyUID; 
 	@Persistent private int nbLands; 
@@ -84,6 +85,12 @@ public class PlayerDTO {
 	}
 	public void setUnitUIDs(List<String> unitUIDs) {
 		this.unitUIDs = unitUIDs;
+	}
+	public int getNbConnections() {
+		return nbConnections;
+	}
+	public void setNbConnections(int nbConnections) {
+		this.nbConnections = nbConnections;
 	}
 	public Long getLastStep() {
 		return lastStep;

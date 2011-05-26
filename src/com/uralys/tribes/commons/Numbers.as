@@ -25,8 +25,8 @@ package com.uralys.tribes.commons
 		//public static var BASE_TIME_PER_MOVE_MILLIS:int = 5*1000*3;
 	
 		[Bindable]
-		public static var NB_HORIZONTAL_TILES_BY_LOADING:int = 18; 
-		public static var NB_VERTICAL_TILES_BY_LOADING:int = 24; 
+		public static var NB_HORIZONTAL_TILES_BY_LOADING:int = 30; 
+		public static var NB_VERTICAL_TILES_BY_LOADING:int = 30; 
 
 		// une ville se construit en 12h
 		[Bindable]

@@ -483,7 +483,7 @@ package com.uralys.tribes.managers {
 			
 			loadCasesResponder.addEventListener("result", casesLoaded);
 			loadCasesResponder.token = getGameWrapper().loadCases(groups);
-			
+   			
 		}
 
 		public function savePlayer():void{

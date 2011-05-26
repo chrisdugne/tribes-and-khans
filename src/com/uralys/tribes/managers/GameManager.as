@@ -85,9 +85,10 @@ package com.uralys.tribes.managers {
 			BoardDrawer.getInstance().refreshMap(city.x, city.y);
 		}
 		
-		public function saveStep(loginCatchUp:Boolean = false){
-			for each(var city:City in Session.player.cities){
-				
+		public function saveStep(loginCatchUp:Boolean = false)
+		{
+			for each(var city:City in Session.player.cities)
+			{
 				city.wheat += city.wheatEarned - city.wheatSpent;
 				city.wood += city.woodEarned - city.woodSpent;
 				city.iron += city.ironEarned - city.ironSpent;
@@ -102,43 +103,7 @@ package com.uralys.tribes.managers {
 				var armyRaised:int = city.armyRaised - city.armyReleased;
 				city.population = calculatePopulation(city.population, starvation, armyRaised);
 
-				for each(var equipment:Equipment in city.equipmentStock){
-					switch(equipment.item.name){
-						case "bow" :
-							equipment.size = city.bowStock
-											+ city.bowsRestored
-											- city.bowsEquiped
-											+ city.bowWorkers * equipment.item.peopleRequired;
-							
-							break;
-						case "sword" :
-							equipment.size = city.swordStock
-											+ city.swordsRestored
-											- city.swordsEquiped
-											+ city.swordWorkers * equipment.item.peopleRequired;
-							break;
-						case "armor" :
-							equipment.size = city.armorStock
-											+ city.armorsRestored
-											- city.armorsEquiped
-											+ city.armorWorkers * equipment.item.peopleRequired;
-							break;
-					}
-				}
-				
-				for each(var smith:Smith in city.smiths){
-					switch(smith.item.name){
-						case "bow" :
-							smith.people = city.bowWorkers;
-							break;
-						case "sword" :
-							smith.people = city.swordWorkers;
-							break;
-						case "armor" :
-							smith.people = city.armorWorkers;
-							break;
-					}
-				}
+				refreshCitySmithsAndEquipments(city);
 				
 				city.reset();
 				refreshCity(city, starvation);
@@ -150,7 +115,54 @@ package com.uralys.tribes.managers {
 				savePlayer();
 		}
 		
+		
+		private function refreshCitySmithsAndEquipments(city:City):void
+		{
+			for each(var equipment:Equipment in city.equipmentStock)
+			{
+				switch(equipment.item.name)
+				{
+					case "bow" :
+						equipment.size = city.bowStock
+						+ city.bowsRestored
+						- city.bowsEquiped
+						+ city.bowWorkers * equipment.item.peopleRequired;
+						
+						break;
+					case "sword" :
+						equipment.size = city.swordStock
+						+ city.swordsRestored
+						- city.swordsEquiped
+						+ city.swordWorkers * equipment.item.peopleRequired;
+						break;
+					case "armor" :
+						equipment.size = city.armorStock
+						+ city.armorsRestored
+						- city.armorsEquiped
+						+ city.armorWorkers * equipment.item.peopleRequired;
+						break;
+				}
+			}
+			
+			for each(var smith:Smith in city.smiths)
+			{
+				switch(smith.item.name){
+					case "bow" :
+						smith.people = city.bowWorkers;
+						break;
+					case "sword" :
+						smith.people = city.swordWorkers;
+						break;
+					case "armor" :
+						smith.people = city.armorWorkers;
+						break;
+				}
+			}
+		}
+		
+		
 		//-------------------------------------------------------------------------//
+		
 		
 		
 		public function createUnit(unit:Unit, cityUID):void
@@ -304,8 +316,8 @@ package com.uralys.tribes.managers {
 		
 		//-------------------------------------------------------------------------------//
 		
-		public function refreshCity(city:City, starvation:Boolean):void{
-			
+		public function refreshCity(city:City, starvation:Boolean):void
+		{
 			// recuperation des stocks de la forge
 			for each(var equipment:Equipment in city.equipmentStock){
 				switch(equipment.item.name){
@@ -454,9 +466,12 @@ package com.uralys.tribes.managers {
 			gameWrapper.loadItems();
 		} 
 
-		public function loadCases(centerX:int, centerY:int):void{
-			
+		public function loadCases(centerX:int, centerY:int):void
+		{
 			trace("loadCases center : [ " + centerX + " | " + centerY + " ]");
+			var groups:Array = Utils.getGroups(centerX, centerY);
+			trace(groups);
+			
 			Session.WAIT_FOR_SERVER = true;
 			
 			var caseUIDs:ArrayCollection = new ArrayCollection();
@@ -466,19 +481,12 @@ package com.uralys.tribes.managers {
 			Session.TOP_LIMIT_LOADED 	 = (centerY - Numbers.NB_VERTICAL_TILES_BY_LOADING/2) * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2); 
 			Session.BOTTOM_LIMIT_LOADED	 = (centerY + Numbers.NB_VERTICAL_TILES_BY_LOADING/2) * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2); 
 			
-			for(var i:int = 0; i < Numbers.NB_HORIZONTAL_TILES_BY_LOADING; i++){
-				for(var j:int = 0; j < Numbers.NB_VERTICAL_TILES_BY_LOADING; j++){
-					caseUIDs.addItem("case_"+(centerX-Numbers.NB_HORIZONTAL_TILES_BY_LOADING/2+i)+"_"+(centerY-Numbers.NB_VERTICAL_TILES_BY_LOADING/2+j));
-				}
-			}
-			
 			loadCasesResponder.addEventListener("result", casesLoaded);
-			loadCasesResponder.token = getGameWrapper().loadCases(caseUIDs);
+			loadCasesResponder.token = getGameWrapper().loadCases(groups);
 			
 		}
 
 		public function savePlayer():void{
-			trace("gameWrapper.savePlayer");
 			savePlayerResponder.token = getGameWrapper().savePlayer(Session.player);
 		}
 
@@ -497,7 +505,23 @@ package com.uralys.tribes.managers {
 		public function changeCityName(newName:String):void{
 			getGameWrapper().changeCityName(Session.board.selectedCity.cityUID, newName);			
 		}
+		
+		public function saveCity(city:City):void
+		{
+			refreshCitySmithsAndEquipments(city);
+			getGameWrapper().saveCity(city);			
+		}
 
+		public function buildCity(city:City):void
+		{
+			refreshCitySmithsAndEquipments(city);
+			cityBeingSaved = city;
+			
+			var gameWrapper:RemoteObject = getGameWrapper();
+			gameWrapper.saveCity.addEventListener("result", citySaved);
+			gameWrapper.saveCity(city, Session.player.uralysUID);	
+		}
+		
 		//--------------------------------------------------------------------------------//
 		// pour que les appels AMF se fassent 1 par 1, on utilise le deleteNextMove, qui est appele à chaque 'moveDeleted'
 		// (je ne peux pas appeler en meme temps gameWrapper.deleteMove plusieurs fois)
@@ -660,6 +684,11 @@ package com.uralys.tribes.managers {
 				deleteNextMove(movesBeingDeleted.shift());
 			else
 				Session.movesToDelete = new ArrayCollection();
+		}
+
+		private var cityBeingSaved:City;
+		private function citySaved(event:ResultEvent):void{
+			cityBeingSaved.cityUID = event.result as String;
 		}
 	}
 }

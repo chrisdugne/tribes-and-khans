@@ -548,8 +548,8 @@ package com.uralys.tribes.entities
 		//---------------------------------------------------------------//
 
 		
-		public function reset():void{
-			
+		public function reset():void
+		{
 			woodSpent = 0;
 			ironSpent = 0;
 			wheatSpent = 0;

@@ -169,6 +169,47 @@ public class Utils
 		}
 		
 		
+		
+		/*
+		* 0-404 * 0-404 = 27*27 groups
+		* 15*15*27*27 = 405*405
+		* 
+		*/
+		public static function getGroups(x:int, y:int):Array{
+			
+			var result:Array = [];
+			
+			// groupes de 15*15 sur un damier de 405*405
+			// 27*27 groupes
+			var groupX:int = x/15;
+			var groupY:int = y/15;
+			var group = groupX + groupY*27;
+			
+			// north : -1
+			// south : +1
+			// west : -1
+			// east : +1
+			var east_west:int = -1; // init : west
+			var north_south:int = 1; // init : south
+			var regionOnTheGroup:int;
+			
+			if(x - groupX*15 < 8){
+				east_west = 1; // east
+			}
+
+			if(y - groupY*15 < 8){
+				north_south = -1; // north
+			}
+			
+			result = [group, 
+					  group + east_west, 
+					  group + (27*north_south), 
+					  group + (27*north_south) + east_west]; 
+			
+			return result;
+		}
+		
+		
 		/**
 		 * Creates a sprite object out of bitmapData.
 		 * The returned sprite can will cover all non transparent areas of the

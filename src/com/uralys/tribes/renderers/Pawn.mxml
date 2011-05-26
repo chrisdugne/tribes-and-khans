@@ -22,7 +22,7 @@
 			{			
 				Session.timer.removeEventListener( TimerEvent.TIMER, updateProgress );
 				
-				if(_move.timeTo != -1){
+				if(_move != null && _move.timeTo != -1){
 					Session.timer.addEventListener( TimerEvent.TIMER, updateProgress );
 					updateProgress(null);
 				}
@@ -61,6 +61,6 @@
 					maximum="100" 
 					mode="manual"
 					label="--:--" 
-					visible="{Session.showMovesProgress &amp;&amp; _move.timeTo != -1}"
+					visible="{Session.showMovesProgress &amp;&amp; _move != null &amp;&amp; _move.timeTo != -1}"
 					labelPlacement="top"/>
 </s:Group>

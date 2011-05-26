@@ -137,13 +137,16 @@ package com.uralys.tribes.entities
 			return false;
 		}
 
-		public function forceRefresh(globalRefresh:Boolean = false):Boolean{
+		public function forceRefresh(globalRefresh:Boolean = false):Boolean
+		{
 			var foundUnitsOnThisCase:Boolean = false;
 			var now:Number = new Date().getTime();
 			var recordedMovesToDelete:ArrayCollection = new ArrayCollection();
 			
 			army = null;
 			merchants = null;
+			pawn._move = null;
+			pawn.refreshProgress();
 				
 			for each(var move:Move in recordedMoves)
 			{
@@ -213,8 +216,8 @@ package com.uralys.tribes.entities
 			for each (var moveToRemoveFromRecordedMoves:Move in recordedMovesToDelete)
 				recordedMoves.removeItemAt(recordedMoves.getItemIndex(moveToRemoveFromRecordedMoves));
 			
-			if(pawn._move != null)
-				pawn.refreshProgress();
+			// cette fois ci si le move actif a ete trouve, on set le timer
+			pawn.refreshProgress();
 			
 			refreshAlreadyHappened = true;
 			return foundUnitsOnThisCase;

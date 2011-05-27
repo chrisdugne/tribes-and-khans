@@ -53,12 +53,17 @@ public class GameService implements IGameService {
 		}
 	}
 
-	public String buildCity(City city, String uralysUID){
+	public DataContainer4UnitSaved buildCity(City city, Unit merchant, String uralysUID){
 		try {
-			return gameManager.buildCity(city, uralysUID);
+			String cityUID = gameManager.buildCity(city, uralysUID);
+			deleteUnit(uralysUID, merchant.getUnitUID());
+			DataContainer4UnitSaved container = new DataContainer4UnitSaved();
+			container.setCityUID(cityUID);
+			container.addCaseAltered(gameManager.getCase(city.getX(), city.getY()));
+			return container;
 		} catch (Exception e) {
 			e.printStackTrace();
-			return "";
+			return null;
 		}
 	}
 

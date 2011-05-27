@@ -129,6 +129,13 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 				cityX = getInitialCityX(numplayer);
 				cityY = getInitialCityY(numplayer);
 				
+				if(Math.abs(cityX-cityY)%2 !=0){
+					// la difference entre x et y n'est pas paire
+					// c'est une 'non case' : un hexagone intermediaire qui ne fait pas partie du plateau
+					// on prend la case d'a coté
+					cityY++;
+				}
+				
 				if(getCase(cityX, cityY).getType() != Case.CITY)
 					caseFound = true;
 			}
@@ -170,17 +177,18 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		//--------------------------------------//
 		// creation des cases autour de la ville
 
-		createCase(city.getX(), city.getY(), cityUID, Case.CITY, playerUID, pm);
-		createCase(city.getX()-1, city.getY()-1, null, Case.FOREST, playerUID, pm);
-		createCase(city.getX()-1, city.getY()+1, null, Case.FOREST, playerUID, pm);
-		createCase(city.getX(), city.getY()-2, null, Case.FOREST, playerUID, pm);
-		createCase(city.getX(), city.getY()+2, null, Case.FOREST, playerUID, pm);
-		createCase(city.getX()+1, city.getY()-1, null, Case.FOREST, playerUID, pm);
-		createCase(city.getX()+1, city.getY()+1, null, Case.FOREST, playerUID, pm);
+		createOrRefreshCase(city.getX(), city.getY(), cityUID, Case.CITY, playerUID, pm);
+		createOrRefreshCase(city.getX()-1, city.getY()-1, null, Case.FOREST, playerUID, pm);
+		createOrRefreshCase(city.getX()-1, city.getY()+1, null, Case.FOREST, playerUID, pm);
+		createOrRefreshCase(city.getX(), city.getY()-2, null, Case.FOREST, playerUID, pm);
+		createOrRefreshCase(city.getX(), city.getY()+2, null, Case.FOREST, playerUID, pm);
+		createOrRefreshCase(city.getX()+1, city.getY()-1, null, Case.FOREST, playerUID, pm);
+		createOrRefreshCase(city.getX()+1, city.getY()+1, null, Case.FOREST, playerUID, pm);
 		
 		//--------------------------------------//
 
 		player.getCityUIDs().add(cityUID);
+		pm.close();
 		
 		return cityUID;
 	}
@@ -256,10 +264,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		
 		for(int group : groups){
-			if(debug)Utils.print("loadCases : " + group); 
 			Query query = pm.newQuery("select from " + CaseDTO.class.getName() + " where groupeCase == :group");
-
-			if(debug)Utils.print(query.toString()); 
 			result.addAll((Collection<? extends CaseDTO>) query.execute(group));
 		}
 		
@@ -273,6 +278,19 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		}
 		catch(JDOObjectNotFoundException e){
 			return createCase(i, j, null, Case.FOREST, null, pm);
+		}
+	}
+
+	private void createOrRefreshCase(int x, int y, String cityUID, int type, String landOwnerUID, PersistenceManager pm) 
+	{
+		try{
+			CaseDTO caseDTO = pm.getObjectById(CaseDTO.class, "case_"+x+"_"+y);
+			caseDTO.setLandOwnerUID(landOwnerUID);
+			caseDTO.setType(type);
+			caseDTO.setCityUID(cityUID);
+		}
+		catch(JDOObjectNotFoundException e){
+			createCase(x, y, cityUID, type, landOwnerUID, pm);
 		}
 	}
 
@@ -335,7 +353,9 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 
 	public String createCity(City city, String playerUID){
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
-		return createCity(city, playerUID, pm, -1);
+		String cityUID = createCity(city, playerUID, pm, -1);
+		pm.close();
+		return cityUID;
 	}
 
 	public void createUnit(Unit unit, String cityUID){
@@ -398,8 +418,8 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		return pm.getObjectById(UnitDTO.class, unitUID);
 	}
 	
-	public void updateUnit(Unit unit, String cityUID){
-		
+	public void updateUnit(Unit unit, String cityUID)
+	{
 		if(debug)Utils.print("dao.updateUnit, unit.getEndTime() : " + unit.getEndTime());
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		UnitDTO unitDTO = pm.getObjectById(UnitDTO.class, unit.getUnitUID());

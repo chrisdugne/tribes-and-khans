@@ -84,6 +84,9 @@ public class GameManager implements IGameManager {
 	
 	private void updateCity(City city, boolean saveResources)
 	{
+		if(city.getBeginTime() > new Date().getTime())
+			return;
+		
 		gameDao.updateCityResources(city, saveResources);
 
 		//----------------------------------------//
@@ -175,6 +178,10 @@ public class GameManager implements IGameManager {
 		
 		DataContainer datacontainer = new DataContainer();
 
+		if(unit.getEndTime() < new Date().getTime() && unit.getEndTime() != -1){
+			needReplacing = false;
+		}
+		
 		if(needReplacing){
 			if(debug)Utils.print("placing the unit");
 			placeUnit(unit, unit.getMoves(), new ArrayList<Unit>(), datacontainer);
@@ -880,6 +887,10 @@ public class GameManager implements IGameManager {
 		return unitUIDsMakingThisReplacing.contains(unitUID);
 	}
 
+	public Case getCase(int x, int y) {
+		return EntitiesConverter.convertCaseDTO(gameDao.getCase(x,y));
+	}
+	
 	private Case getCase(String caseUID) {
 		return EntitiesConverter.convertCaseDTO(gameDao.getCase(TribesUtils.getX(caseUID),TribesUtils.getY(caseUID)));
 	}

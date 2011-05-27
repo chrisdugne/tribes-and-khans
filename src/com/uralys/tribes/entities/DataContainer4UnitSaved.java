@@ -11,6 +11,7 @@ public class DataContainer4UnitSaved {
 
 	private List<Case> casesAltered = new ArrayList<Case>();
 	private List<Unit> unitsAltered = new ArrayList<Unit>();
+	private String cityUID;
 
 	//------------------------------------------------------------------------------------------//
 
@@ -28,6 +29,14 @@ public class DataContainer4UnitSaved {
 
 	public void setCasesAltered(List<Case> casesAltered) {
 		this.casesAltered = casesAltered;
+	}
+	
+	public String getCityUID() {
+		return cityUID;
+	}
+	
+	public void setCityUID(String cityBuildUID) {
+		this.cityUID = cityBuildUID;
 	}
 	
 	

@@ -27,6 +27,7 @@ public interface IGameManager {
 	
 	public List<Item> loadItems();
 	public List<Case> loadCases(int[] groups);
+	public Case getCase(int x, int y);
 	
 	public void changeName(String uralysUID, String newName);
 	public void changeCityName(String cityUID, String newName);

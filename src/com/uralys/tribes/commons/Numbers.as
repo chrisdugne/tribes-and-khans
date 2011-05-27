@@ -6,8 +6,7 @@ package com.uralys.tribes.commons
 	public class Numbers{
 
 	
-		// Sun Mar 27 02:17:11 UTC 2011
-		public static var SERVER_START:Number = 1301192231153;
+		public static var SERVER_START:Number = 1306434887434;
 	
 		// step toutes les 10 minutes
 		[Bindable]
@@ -21,8 +20,7 @@ package com.uralys.tribes.commons
 		[Bindable]
 		public static var BASE_TIME_PER_MOVE:int = 20;
 		[Bindable]
-		public static var BASE_TIME_PER_MOVE_MILLIS:int = 20*60*1000;
-		//public static var BASE_TIME_PER_MOVE_MILLIS:int = 5*1000*3;
+		public static var BASE_TIME_PER_MOVE_MILLIS:int = Session.isLocal ? 5*1000*3 : 20*60*1000;
 	
 		[Bindable]
 		public static var NB_HORIZONTAL_TILES_BY_LOADING:int = 30; 
@@ -83,6 +81,7 @@ package com.uralys.tribes.commons
 		[Bindable] public static var SWORD_PRICE_SELL:Number = 27;
 		[Bindable] public static var ARMOR_PRICE_SELL:Number = 45;
 		
+		[Bindable] public static var CITY_MERCHANT_BASE:Number = 350;
 		[Bindable] public static var CITY_WHEAT_BASE_PRICE:Number = 1000;
 		[Bindable] public static var CITY_IRON_BASE_PRICE:Number = 10000;
 		[Bindable] public static var CITY_WOOD_BASE_PRICE:Number = 10000;

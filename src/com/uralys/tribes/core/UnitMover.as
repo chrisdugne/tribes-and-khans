@@ -132,6 +132,10 @@ package com.uralys.tribes.core
 					Session.board.onUnitClick();
 				}
 				
+				// l'unité a bougé : au cas ou on enleve le 'build here'
+				Session.board.buildCityForm.visible = false;
+				Session.board.buildCityForm.includeInLayout = false;
+				
 			}
 			catch(e:Error){
 				trace("error on moveIsDone");

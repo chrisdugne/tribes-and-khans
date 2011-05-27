@@ -15,7 +15,7 @@ package com.uralys.tribes.commons
 
 		//=====================================================//
 		
-		[Bindable] public static var VERSION:String = "1.1.31";
+		[Bindable] public static var VERSION:String = "1.1.32";
 		[Bindable] public static var LOGGED_IN:Boolean = false; 
 		[Bindable] public static var CONNECTED_TO_FACEBOOK:Boolean = false;
 		
@@ -84,9 +84,9 @@ package com.uralys.tribes.commons
 		//=====================================================//
 		// BoardDrawer
 		
-		// les coordonnees de la case qui est au centre du dernier chargement de cases
-		public static  var centerX:int;
-		public static  var centerY:int;
+		// les coordonnees de la case qui est tout en haut à gauche du dernier chargement de cases
+		public static  var firstCaseX:int;
+		public static  var firstCaseY:int;
 
 		// permet d'afficher ou de cacher les bar de progression sur les moves
 		[Bindable] public static  var showMovesProgress:Boolean = true;

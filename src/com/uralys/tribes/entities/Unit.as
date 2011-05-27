@@ -273,6 +273,7 @@ package com.uralys.tribes.entities
 		public function mayBuildAcity():Boolean{
 			trace('mayBuildAcity ? ' + type);
 			return type == 2 
+				&& size >= 250
 				&& wheat >= Numbers.CITY_WHEAT_BASE_PRICE + size
 				&& wood >= Numbers.CITY_WOOD_BASE_PRICE + size * 10
 				&& iron >= Numbers.CITY_IRON_BASE_PRICE + size * 10

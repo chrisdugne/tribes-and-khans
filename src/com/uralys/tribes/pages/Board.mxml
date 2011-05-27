@@ -113,10 +113,10 @@
 				|| y < Session.TOP_LIMIT_LOADED 
 				|| y > Session.BOTTOM_LIMIT_LOADED)
 				{
-					Session.centerX = x / (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4); 
-					Session.centerY = y / (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2);
+					var centerX:int = x / (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4); 
+					var centerY:int = y / (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2);
 					
-					GameManager.getInstance().loadCases(Session.centerX, Session.centerY);
+					GameManager.getInstance().loadCases(centerX, centerY);
 				}
 			}
 			
@@ -475,13 +475,19 @@
 				city.iron = selectedUnit.iron - (Numbers.CITY_IRON_BASE_PRICE + selectedUnit.size * 10);
 				city.population = selectedUnit.size;
 				
-				city.x = Utils.getXFromCaseUID(selectedUnit.currentCaseUID);
-				city.y = Utils.getYFromCaseUID(selectedUnit.currentCaseUID);
+				city.x = Utils.getXFromCaseUID(Session.CURRENT_CASE_SELECTED.caseUID);
+				city.y = Utils.getYFromCaseUID(Session.CURRENT_CASE_SELECTED.caseUID);
 				
 				city.beginTime = new Date().getTime() + Numbers.TIME_TO_BUILD_A_CITY;
 				
-				Session.player.units.removeItemAt(Session.player.units.getItemIndex(selectedUnit));
-				BoardDrawer.getInstance().removeArmyFromBoard(selectedUnit);
+				try{
+					Session.player.units.removeItemAt(Session.player.units.getItemIndex(selectedUnit));	
+				}
+				catch(e:Error){
+					// cest qd on reclick sur buildcity une deuxieme fois : index -1 outofbounds
+					// todo : empecher l'affichage du bouton build bordel
+					return;
+				}
 				BoardDrawer.getInstance().drawCity(city);
 				
 				Session.player.cities.addItem(city);
@@ -496,11 +502,13 @@
 				selectedUnit.armors = 0;
 				selectedUnit.bows = 0;
 				selectedUnit.swords = 0;
+				selectedUnit.endTime = 1;
 				selectedUnit.status = Unit.DESTROYED;
 				
 				Session.map[city.x][city.y].forceRefresh();
 				
-				GameManager.getInstance().buildCity(city);
+				trace("build city on ["+city.x+"]["+city.y+"]");
+				GameManager.getInstance().buildCity(city, selectedUnit);
 			}
 
 			//-----------------------------------------------------------//

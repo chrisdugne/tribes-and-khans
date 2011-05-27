@@ -87,8 +87,6 @@ package com.uralys.tribes.core
 		*/
 		public function refreshMap(centerX:int, centerY:int):void{
 			Session.WAIT_FOR_SERVER = true;
-			Session.centerX = centerX;
-			Session.centerY = centerY;
 			
 			GameManager.getInstance().loadCases(centerX,centerY);
 		}
@@ -96,42 +94,39 @@ package com.uralys.tribes.core
 		/**
 		 * Lorsque les cases sont chargees, on refresh tout les display
 		 */ 
-		public function refreshDisplay():void{
-			
-			var horizontalOffset:int = Numbers.NB_HORIZONTAL_TILES_BY_LOADING/2;
-			var verticalOffset:int = Numbers.NB_VERTICAL_TILES_BY_LOADING/2;
-			
+		public function refreshDisplay():void
+		{
 			// draw city grounds
-			for(var j:int=Session.centerY-verticalOffset; j < Session.centerY+verticalOffset; j++){
-				for(var i:int=Session.centerX-horizontalOffset; i < Session.centerX+horizontalOffset; i++){
-					var _case:Case = Session.map[i][j];
+			for(var j:int=0; j < Numbers.NB_VERTICAL_TILES_BY_LOADING; j++){
+				for(var i:int=0; i < Numbers.NB_HORIZONTAL_TILES_BY_LOADING; i++){
+					var _case:Case = Session.map[Session.firstCaseX+i][Session.firstCaseY+j];
 					if(_case.type == 1)
 						drawCase(_case); 
 				}
 			}
 			
-			for(var j:int=Session.centerY-verticalOffset; j < Session.centerY+verticalOffset; j++)
+			for(var j:int=0; j < Numbers.NB_VERTICAL_TILES_BY_LOADING; j++)
 			{
-				for(var i:int=Session.centerX-horizontalOffset; i < Session.centerX+horizontalOffset; i++)
+				for(var i:int=0; i < Numbers.NB_HORIZONTAL_TILES_BY_LOADING; i++)
 				{
-					var _case:Case = Session.map[i][j];
+					var _case:Case = Session.map[Session.firstCaseX+i][Session.firstCaseY+j];
 					if(_case.type == 1)
 						drawCity(_case.city);
 				}
 
 				// draw forests grounds
-				for(var i:int=Session.centerX-horizontalOffset; i < Session.centerX+horizontalOffset; i++)
+				for(var i:int=0; i < Numbers.NB_HORIZONTAL_TILES_BY_LOADING; i++)
 				{
-					var _case:Case = Session.map[i][j];
+					var _case:Case = Session.map[Session.firstCaseX+i][Session.firstCaseY+j];
 					if(_case.type == 0){
 						drawCase(_case);
 					}
 				}
 
 				// draw units
-				for(var i:int=Session.centerX-horizontalOffset; i < Session.centerX+horizontalOffset; i++)
+				for(var i:int=0; i < Numbers.NB_HORIZONTAL_TILES_BY_LOADING; i++)
 				{
-					var _case:Case = Session.map[i][j];
+					var _case:Case = Session.map[Session.firstCaseX+i][Session.firstCaseY+j];
 					refreshUnits(_case);
 				}
 			}
@@ -356,21 +351,6 @@ package com.uralys.tribes.core
 
 		//==================================================================================================//
 
-		public function removeArmyFromBoard(army:Unit):void{
-			try{
-				//if(army.armyCircle)board.boardEntities.removeElement(army.armyCircle);
-				//if(army.lineTo)board.boardEntities.removeElement(army.lineTo);	
-				//if(army.ellipseTo)board.boardEntities.removeElement(army.ellipseTo);	
-				//if(army.tmpLandSquare)board.boardEntities.removeElement(army.tmpLandSquare);
-//				board.boardEntities.redrawRequested = true;
-
-			}catch(e:Error){trace(e.message);}
-
-		}
-
-
-		//==================================================================================================//
-		
 		public function addMoveImages(move:com.uralys.tribes.entities.Move, xPreviousMove:int, yPreviousMove:int, displayProgress:Boolean):void{
 			
 			//------------------------------------------------------//

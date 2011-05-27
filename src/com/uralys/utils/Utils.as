@@ -189,12 +189,12 @@ public class Utils
 			// south : +1
 			// west : -1
 			// east : +1
-			var east_west:int = -1; // init : west
+			var east_west:int = 1; // init : east
 			var north_south:int = 1; // init : south
 			var regionOnTheGroup:int;
 			
 			if(x - groupX*15 < 8){
-				east_west = 1; // east
+				east_west = -1; // west
 			}
 
 			if(y - groupY*15 < 8){

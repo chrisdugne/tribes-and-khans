@@ -442,8 +442,8 @@ public class Translations{
 	[Bindable]
 	public static var CITY:ArrayCollection = new ArrayCollection(
 									["Ville",
-									"Citie",
-									"Citie"]);
+									"City",
+									"City"]);
 
 	[Bindable]
 	public static var READY:ArrayCollection = new ArrayCollection(
@@ -516,6 +516,12 @@ public class Translations{
 									["Nb marchands",
 									"Nb merchants",
 									"Nb merchants"]);
+
+	[Bindable]
+	public static var MINIMUM:ArrayCollection = new ArrayCollection(
+									["Min.",
+									"Min.",
+									"Min."]);
 
 	[Bindable]
 	public static var CONFLICT:ArrayCollection = new ArrayCollection(

@@ -35,6 +35,7 @@ package com.uralys.tribes.entities
 		protected var _caseUID:String;
 		protected var _x:int;
 		protected var _y:int;
+		protected var _group:int;
 		protected var _recordedMoves:ArrayCollection = new ArrayCollection();
 		protected var _units:ArrayCollection;
 		protected var _type:int; // type = -1 pour les 'non-cases'
@@ -90,6 +91,14 @@ package com.uralys.tribes.entities
 		
 		public function set type(o:int):void {
 			_type = o;
+		}
+		
+		public function get group():int {
+			return _group;
+		}
+		
+		public function set group(o:int):void {
+			_group = o;
 		}
 		
 		public function get city():City {

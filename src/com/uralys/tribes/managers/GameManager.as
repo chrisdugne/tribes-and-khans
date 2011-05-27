@@ -468,9 +468,16 @@ package com.uralys.tribes.managers {
 
 		public function loadCases(centerX:int, centerY:int):void
 		{
-			trace("loadCases center : [ " + centerX + " | " + centerY + " ]");
 			var groups:Array = Utils.getGroups(centerX, centerY);
+			groups.sort(Array.NUMERIC);
+			
+			Session.firstCaseX = (groups[0]%27) * 15; // modulo 27
+			Session.firstCaseY = ((int)(groups[0]/27)) * 15; // divisé par 27
+			
+			trace("loadCases center : [ " + centerX + " | " + centerY + " ]");
 			trace(groups);
+			trace("Session.firstCaseX : " + Session.firstCaseX);
+			trace("Session.firstCaseY : " + Session.firstCaseY);
 			
 			Session.WAIT_FOR_SERVER = true;
 			
@@ -512,14 +519,16 @@ package com.uralys.tribes.managers {
 			getGameWrapper().saveCity(city);			
 		}
 
-		public function buildCity(city:City):void
+		public function buildCity(city:City, merchant:Unit):void
 		{
 			refreshCitySmithsAndEquipments(city);
+			
+			currentUnitBeingSaved = merchant;
 			cityBeingSaved = city;
 			
 			var gameWrapper:RemoteObject = getGameWrapper();
-			gameWrapper.saveCity.addEventListener("result", citySaved);
-			gameWrapper.saveCity(city, Session.player.uralysUID);	
+			gameWrapper.buildCity.addEventListener("result", unitSaved);
+			gameWrapper.buildCity(city, merchant, Session.player.uralysUID);	
 		}
 		
 		//--------------------------------------------------------------------------------//
@@ -556,7 +565,8 @@ package com.uralys.tribes.managers {
 		}
 		
 		
-		private function casesLoaded(event:ResultEvent):void{
+		private function casesLoaded(event:ResultEvent):void
+		{
 			trace("casesLoaded");
 			
 			//------------------------------------------------//
@@ -569,16 +579,16 @@ package com.uralys.tribes.managers {
 			trace("received : " + Session.CASES_LOADED.length + " cases");
 			
 			//------------------------------------------------//
-			// init du tableau 29x29
+			// init du tableau
 			
 			Session.map = [];
-			var horizontalOffset:int = Numbers.NB_HORIZONTAL_TILES_BY_LOADING/2;
-			var verticalOffset:int = Numbers.NB_VERTICAL_TILES_BY_LOADING/2;
 			
-			for(var i:int=Session.centerX-horizontalOffset; i < Session.centerX+horizontalOffset; i++){
-				Session.map[i] = [];
-				for(var j:int=Session.centerY-verticalOffset; j < Session.centerY+verticalOffset; j++){
-					Session.map[i][j] = new Case(i,j);
+			for(var i:int=0; i < Numbers.NB_HORIZONTAL_TILES_BY_LOADING; i++)
+			{
+				Session.map[Session.firstCaseX+i] = [];
+				for(var j:int=0; j < Numbers.NB_VERTICAL_TILES_BY_LOADING; j++)
+				{
+					Session.map[Session.firstCaseX+i][Session.firstCaseY+j] = new Case(Session.firstCaseX+i,Session.firstCaseY+j);
 				}
 			}
 
@@ -590,7 +600,8 @@ package com.uralys.tribes.managers {
 			// et Session.allUnits
 			// on affecte dans le forceRefresh le _move du actif sur la case. (ca suppose 1 seul pion visible par case) 
 			
-			for each(var _case:Case in Session.CASES_LOADED){
+			for each(var _case:Case in Session.CASES_LOADED)
+			{
 				Session.map[_case.x][_case.y] = _case;
 				(Session.map[_case.x][_case.y] as Case).forceRefresh(true);
 			}
@@ -611,6 +622,7 @@ package com.uralys.tribes.managers {
 		}
 		
 		private var currentUnitBeingSaved:Unit;
+		private var cityBeingSaved:City;
 		private function unitSaved(event:ResultEvent):void
 		{
 			trace("--------");
@@ -624,6 +636,11 @@ package com.uralys.tribes.managers {
 
 				var casesAltered:ArrayCollection = event.result.casesAltered;
 				var unitsAltered:ArrayCollection = event.result.unitsAltered;
+
+				if(cityBeingSaved != null){
+					cityBeingSaved.cityUID = event.result.cityUID as String;
+					cityBeingSaved = null;
+				}
 
 				for each(var unitAltered:Unit in unitsAltered)
 				{
@@ -684,11 +701,6 @@ package com.uralys.tribes.managers {
 				deleteNextMove(movesBeingDeleted.shift());
 			else
 				Session.movesToDelete = new ArrayCollection();
-		}
-
-		private var cityBeingSaved:City;
-		private function citySaved(event:ResultEvent):void{
-			cityBeingSaved.cityUID = event.result as String;
 		}
 	}
 }

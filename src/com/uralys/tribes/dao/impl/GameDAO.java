@@ -188,7 +188,6 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		//--------------------------------------//
 
 		player.getCityUIDs().add(cityUID);
-		pm.close();
 		
 		return cityUID;
 	}

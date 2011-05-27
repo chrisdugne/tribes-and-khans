@@ -25,7 +25,12 @@ public class GameService implements IGameService {
 	// =========================================================================//
 
 	public String createPlayer(String uralysUID, String email) {
-		return gameManager.createPlayer(uralysUID, email);
+		try {
+			return gameManager.createPlayer(uralysUID, email);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	public Player getPlayer(String uralysUID) {

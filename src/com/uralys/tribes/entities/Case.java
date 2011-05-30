@@ -24,7 +24,10 @@ public class Case {
 	private List<Unit> units;
 	private int type;
 	private City city;
+	
 	private Player landOwner;
+	private Player challenger;
+	private long timeFromChallenging;
 
 	//-----------------------------------------------------------------------------------//
 
@@ -100,6 +103,22 @@ public class Case {
 
 	public void setLandOwner(Player landOwner) {
 		this.landOwner = landOwner;
+	}
+
+	public Player getChallenger() {
+		return challenger;
+	}
+
+	public void setChallenger(Player challenger) {
+		this.challenger = challenger;
+	}
+
+	public long getTimeFromChallenging() {
+		return timeFromChallenging;
+	}
+
+	public void setTimeFromChallenging(long timeFromChallenging) {
+		this.timeFromChallenging = timeFromChallenging;
 	}
 
 	public int getGroup() {

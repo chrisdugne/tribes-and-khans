@@ -48,6 +48,9 @@ public interface IGameDAO {
 	public void setValueForMove(String moveUID, int value);
 	public void deleteMove(String moveUID, boolean keepGatheringBecauseItIsLinkedWithAnotherMoveNow);
 	public void deleteMoves(String unitUID);
+
+	public void resetChallenger(String caseUID);
+	public void tryToSetChallenger(Unit unitArriving, long timeFromChallenging);
 	
 	public void addUnitInGatheringAndSetNewArmy(String gatheringUID, String unitUID, String newUnitUID);
 	

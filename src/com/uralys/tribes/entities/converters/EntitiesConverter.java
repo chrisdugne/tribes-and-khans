@@ -194,6 +194,7 @@ public class EntitiesConverter {
 		unit.setEndTime(unitDTO.getEndTime());
 		unit.setGatheringUIDExpected(unitDTO.getGatheringUIDExpected());
 		unit.setConflictUIDExpected(unitDTO.getConflictUIDExpected());
+		unit.setFinalCaseUIDExpected(unitDTO.getFinalCaseUIDExpected());
 
 		// -----------------------------------------------------------------------------------//
 
@@ -261,7 +262,10 @@ public class EntitiesConverter {
 		_case.setType(caseDTO.getType());
 
 		_case.setCity(convertCityDTO(caseDTO.getCity(), false));
+
 		_case.setLandOwner(convertPlayerDTO(caseDTO.getLandOwner(), false));
+		_case.setChallenger(convertPlayerDTO(caseDTO.getChallenger(), false));
+		_case.setTimeFromChallenging(caseDTO.getTimeFromChallenging());
 
 		// -----------------------------------------------------------------------------------//
 

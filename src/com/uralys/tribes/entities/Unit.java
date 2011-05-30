@@ -38,6 +38,7 @@ public class Unit {
 
 	private String gatheringUIDExpected;
 	private String conflictUIDExpected;
+	private String finalCaseUIDExpected;
 	
 	private List<Move> moves = new ArrayList<Move>();
 	private List<Equipment> equipments = new ArrayList<Equipment>();
@@ -157,6 +158,14 @@ public class Unit {
 		this.beginTime = beginTime;
 	}
 	
+	public String getFinalCaseUIDExpected() {
+		return finalCaseUIDExpected;
+	}
+
+	public void setFinalCaseUIDExpected(String finalCaseUIDExpected) {
+		this.finalCaseUIDExpected = finalCaseUIDExpected;
+	}
+
 	public long getEndTime() {
 		return endTime;
 	}

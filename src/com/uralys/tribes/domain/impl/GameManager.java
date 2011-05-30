@@ -258,8 +258,7 @@ public class GameManager implements IGameManager {
 	 * il faut pouvoir donner le controle d'une armee à qqun de l'alliance.
 	 * 
 	 */
-	// le premier Move est la case actuelle ou est posee l'unite avant son depart
-	// donc le premier waySafe est bien = true
+	// le premier Move est la case actuelle où est posée l'unité avant son départ
 	private List<Unit> placeUnit(Unit unitArriving, List<Move> moves, List<Unit> unitsMakingThisReplacing, DataContainer datacontainer) {
 		
 		if(topdebug)Utils.print("entree dans placeUnit | " + new Date());
@@ -292,7 +291,7 @@ public class GameManager implements IGameManager {
 		List<Unit> unitsReplacedByThisPlacement = new ArrayList<Unit>();
 
 		if(debug)Utils.print("****");
-		List<Unit> previousUnitsMet = checkAndRecalculatePreviousGatheringsAndConflictsAndResetMovesAndReturnPreviousUnitsMetToBeReplaced(unitArriving, unitsMakingThisReplacing, datacontainer);
+		List<Unit> previousUnitsMet = resetPreviousMeetings(unitArriving, unitsMakingThisReplacing, datacontainer);
 		if(debug)Utils.print("****");
 
 		ArrayList<Unit> unitsToReplace = new ArrayList<Unit>();
@@ -301,6 +300,7 @@ public class GameManager implements IGameManager {
 
 		boolean foundAGathering = false;
 		String previousMoveUID = null;
+		long timeFromChallenging = -1;
 		
 		for(Move arrivalOnThisCaseMove : moves)
 		{
@@ -328,6 +328,10 @@ public class GameManager implements IGameManager {
 			}
 
 			Case _case = getCase(arrivalOnThisCaseMove.getCaseUID());
+			if(!foundAGathering){
+				unitArriving.setFinalCaseUIDExpected(_case.getCaseUID());
+				timeFromChallenging = arrivalOnThisCaseMove.getTimeFrom();
+			}
 			
 			//-----------------------------------------------------------------------------------//
 
@@ -502,7 +506,7 @@ public class GameManager implements IGameManager {
 								// Note tres importante pour bien comprendre comment ca marche
 								// ici, existingGathering contient les 2 anciennes units du gathering qu'on est en train de defaire (3,1)
 								// or, existingGathering a ete recupere par le getCase tout au depart
-								// entre temps, on est passe par 'check...ResetMoves' qui fait un deleteMoves et donc qui a degage 
+								// entre temps, on est passe par 'resetPreviousMeetings' qui fait un deleteMoves et donc qui a degage 
 								// l'unite (unitToReplace)(3) de gathering.unitUIDs dans le datastore  (il n'y a plus que (1) dans le datastore)
 								// donc cette appel avec gameDao va bien rajouter unitArriving dans gathering.unitUIDs avec unitRecorded seulement (2,1)
 								gameDao.addUnitInGatheringAndSetNewArmy(existingGathering.getGatheringUID(), unitArriving.getUnitUID(), newUnit.getUnitUID());
@@ -517,7 +521,6 @@ public class GameManager implements IGameManager {
 								if(debug)Utils.print(" - annulation des moves prevus de unitRecorded");
 								unitsToReplace.addAll(cancelRecordedMovesAndReturnAllUnitsToReplace(unitRecorded, timeOfTheMeeting, datacontainer));
 								
-								updateUnit(unitArriving, null, false);
 								updateUnit(unitRecorded, null, false);
 
 								datacontainer.objectsAltered.addUnitAltered(newUnit);
@@ -562,7 +565,6 @@ public class GameManager implements IGameManager {
 
 							unitArriving.setConflictUIDExpected(conflictUID);
 							unitAlreadyOnTheCase.setConflictUIDExpected(conflictUID);
-							updateUnit(unitArriving, null, false);
 							updateUnit(unitAlreadyOnTheCase, null, false);
 							
 						} // endif croisement avec un ennemy
@@ -588,7 +590,7 @@ public class GameManager implements IGameManager {
 			if(moveIsToBeCreated)
 				gameDao.createMove(arrivalOnThisCaseMove);
 			
-			// le vieux move a ete vire de la case lors du checkAnd[...]ToBeReplaced qui a fait un deleteMoves 
+			// le vieux move a ete vire de la case lors du resetPreviousMeetings qui a fait un deleteMoves 
 			// le nouveau move a ete greffe sur la case et sur l'unite à linstant lors du createMove
 			// donc on peut enregistrer la case dans les datacontainer.casesAltered
 			if(debug)Utils.print("recording caseAltered " + _case.getCaseUID());
@@ -596,6 +598,12 @@ public class GameManager implements IGameManager {
 		
 			previousMoveUID = arrivalOnThisCaseMove.getMoveUID();
 		} // fin du loop sur les moves 
+
+		// on enregistre tous les parametres modifiés sur notre unitArriving
+		updateUnit(unitArriving, null, false);
+		
+		// on set le nouveau challenger sur la case finale, si elle touche le royaume
+		gameDao.tryToSetChallenger(unitArriving, timeFromChallenging);
 
 		// et enregistrer l'unite dans les datacontainer.unitsAltered
 		datacontainer.objectsAltered.addUnitAltered(unitArriving);
@@ -809,9 +817,9 @@ public class GameManager implements IGameManager {
 
 	// - verifie s'il y avait un gathering en aval
 	// et return la liste des armees à replacer
-	private List<Unit> checkAndRecalculatePreviousGatheringsAndConflictsAndResetMovesAndReturnPreviousUnitsMetToBeReplaced(Unit unit, List<Unit> unitsMakingThisReplacing, DataContainer datacontainer) 
+	private List<Unit> resetPreviousMeetings(Unit unit, List<Unit> unitsMakingThisReplacing, DataContainer datacontainer) 
 	{
-		if(debug)Utils.print("checkAndRecalculatePreviousGatheringsAndConflictsAndMovesAndReturnPreviousOpponentsToBeReplaced for unit " + unit.getUnitUID());
+		if(debug)Utils.print("resetPreviousMeetings for unit " + unit.getUnitUID());
 		List<Unit> unitsToReplace = new ArrayList<Unit>();
 
 		// d'abord on regarde si il y avait un gathering de prevu
@@ -863,6 +871,9 @@ public class GameManager implements IGameManager {
 			updateUnit(unitToReplace, null, false);
 			
 		}
+		
+		// on degage le challenger(cette unité) de la case finale calculée precedemment pour cette unité
+		gameDao.resetChallenger(unit.getFinalCaseUIDExpected());
 
 		// on supprime tous les moves (+ gathering, + case.recordedMove, + unit.move)
 		gameDao.deleteMoves(unit.getUnitUID());
@@ -875,6 +886,7 @@ public class GameManager implements IGameManager {
 
 		return unitsToReplace;
 	}
+
 
 	private boolean contains(List<Unit> unitsMakingThisReplacing, String unitUID) {
 		

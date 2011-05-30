@@ -6,4 +6,7 @@ public class Constants {
 	
 	// temps en minutes entre chaque step de resources
 	public final static long SERVER_STEP = 10;
+
+	// temps en minutes requis de presence sur une case pour recuperer une contree
+	public final static long LAND_TIME = 60;
 }

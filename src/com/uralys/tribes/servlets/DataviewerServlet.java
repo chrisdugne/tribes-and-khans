@@ -448,8 +448,9 @@ public class DataviewerServlet extends HttpServlet {
 			}
 			table += "</tr>";
 
-			for(Object o : list){
-				
+
+			for(Object o : list)
+			{
 				Field[] fields = o.getClass().getDeclaredFields();
 				fields[1].setAccessible(true);
 				String objectUID = "";

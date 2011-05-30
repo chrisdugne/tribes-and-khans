@@ -214,6 +214,8 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		_case.setGroupCase(group);
 		_case.setCityUID(cityUID);
 		_case.setLandOwnerUID(landOwnerUID);
+		_case.setChallengerUID(null);
+		_case.setTimeFromChallenging(-1);
 		_case.setType(type);
 
 		pm.makePersistent(_case);
@@ -257,16 +259,31 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<CaseDTO> loadCases(int[] groups) {
+	public List<CaseDTO> loadCases(int[] groups) 
+	{
+		long now = new Date().getTime();
 
 		List<CaseDTO> result = new ArrayList<CaseDTO>();
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		
 		for(int group : groups){
-			Query query = pm.newQuery("select from " + CaseDTO.class.getName() + " where groupeCase == :group");
-			result.addAll((Collection<? extends CaseDTO>) query.execute(group));
+			Query query = pm.newQuery("select from " + CaseDTO.class.getName() + " where groupCase == :group");
+			Collection<? extends CaseDTO> cases = (Collection<? extends CaseDTO>) query.execute(group);
+			
+			for(CaseDTO _case : cases){
+				if(_case.getChallengerUID() != null){
+					if(now - _case.getTimeFromChallenging() > Constants.LAND_TIME*1000){
+						_case.setLandOwnerUID(_case.getChallengerUID());
+						_case.setChallengerUID(null);
+						_case.setTimeFromChallenging(-1);
+					}
+				}
+			}
+			
+			result.addAll(cases);
 		}
 		
+		pm.close();
 		return result;
 	}
 
@@ -439,6 +456,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 
 		unitDTO.setGatheringUIDExpected(unit.getGatheringUIDExpected());
 		unitDTO.setConflictUIDExpected(unit.getConflictUIDExpected());
+		unitDTO.setFinalCaseUIDExpected(unit.getFinalCaseUIDExpected());
 		unitDTO.setBeginTime(unit.getBeginTime());
 		unitDTO.setEndTime(unit.getEndTime());
 
@@ -748,6 +766,46 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		pm.close();
 	}
 
+	public void resetChallenger(String caseUID){
+
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		CaseDTO _case = pm.getObjectById(CaseDTO.class, caseUID);
+		
+		_case.setChallengerUID(null);
+		_case.setTimeFromChallenging(-1);
+		
+		pm.close();
+	}
+	
+	public void tryToSetChallenger(Unit unit, long timeFromChallenging)
+	{
+		int x = TribesUtils.getX(unit.getFinalCaseUIDExpected());
+		int y = TribesUtils.getY(unit.getFinalCaseUIDExpected());
+
+		CaseDTO finalCase;
+		
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		try{
+			finalCase = pm.getObjectById(CaseDTO.class, "case_"+x+"_"+y);
+		}
+		catch(JDOObjectNotFoundException e){
+			finalCase = createCase(x, y, null, Case.FOREST, null, pm);
+		}
+		
+		if(unit.getPlayerUID().equals(getCase(x-1, y-1).getLandOwner())
+		|| unit.getPlayerUID().equals(getCase(x-1, y+1).getLandOwner())
+		|| unit.getPlayerUID().equals(getCase(x, y-2).getLandOwner())
+		|| unit.getPlayerUID().equals(getCase(x, y+2).getLandOwner())
+		|| unit.getPlayerUID().equals(getCase(x+1, y-1).getLandOwner())
+		|| unit.getPlayerUID().equals(getCase(x+1, y+1).getLandOwner()))
+		{
+			finalCase.setChallengerUID(unit.getPlayerUID());
+			finalCase.setTimeFromChallenging(timeFromChallenging);
+		}
+		
+		pm.close();
+	}
+	
 	//==================================================================================================//
 	// PRIVATE METHODS
 	

@@ -26,13 +26,16 @@ public class CaseDTO {
     @Extension(vendorName="datanucleus", key="gae.pk-name", value="true")
 	private String caseUID;
 	
-	@Persistent private int groupeCase;
+	@Persistent private int groupCase;
 	@Persistent private int x;
 	@Persistent private int y;
 	
 	@Persistent private Integer type;
 	@Persistent private String cityUID;
+
 	@Persistent private String landOwnerUID;
+	@Persistent private String challengerUID;
+	@Persistent private long timeFromChallenging;
 	
 	@Persistent private List<String> moveUIDs = new ArrayList<String>();
 	
@@ -77,10 +80,22 @@ public class CaseDTO {
 		this.caseUID = caseUID;
 	}
 	public int getGroupCase() {
-		return groupeCase;
+		return groupCase;
 	}
-	public void setGroupCase(int groupeCase) {
-		this.groupeCase = groupeCase;
+	public void setGroupCase(int groupCase) {
+		this.groupCase = groupCase;
+	}
+	public String getChallengerUID() {
+		return challengerUID;
+	}
+	public void setChallengerUID(String challengerUID) {
+		this.challengerUID = challengerUID;
+	}
+	public long getTimeFromChallenging() {
+		return timeFromChallenging;
+	}
+	public void setTimeFromChallenging(long timeFromChallenging) {
+		this.timeFromChallenging = timeFromChallenging;
 	}
 	public Integer getType() {
 		return type;
@@ -111,6 +126,10 @@ public class CaseDTO {
 
 	public PlayerDTO getLandOwner() {
 		return (PlayerDTO) UniversalDAO.getInstance().getObjectDTO(landOwnerUID, PlayerDTO.class);
+	}
+
+	public PlayerDTO getChallenger() {
+		return (PlayerDTO) UniversalDAO.getInstance().getObjectDTO(challengerUID, PlayerDTO.class);
 	}
 		
 	//-----------------------------------------------------------------------------------//

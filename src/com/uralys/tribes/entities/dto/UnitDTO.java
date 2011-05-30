@@ -33,6 +33,7 @@ public class UnitDTO {
 
 	@Persistent private String gatheringUIDExpected;
 	@Persistent private String conflictUIDExpected;
+	@Persistent private String finalCaseUIDExpected;
 
 	@Persistent private int type;
 	@Persistent private String playerUID;
@@ -134,6 +135,12 @@ public class UnitDTO {
 	}
 	public void setConflictUIDExpected(String conflictUIDExpected) {
 		this.conflictUIDExpected = conflictUIDExpected;
+	}
+	public String getFinalCaseUIDExpected() {
+		return finalCaseUIDExpected;
+	}
+	public void setFinalCaseUIDExpected(String finalCaseUIDExpected) {
+		this.finalCaseUIDExpected = finalCaseUIDExpected;
 	}
 	public String getPlayerUID() {
 		return playerUID;

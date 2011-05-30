@@ -15,7 +15,7 @@ package com.uralys.tribes.commons
 
 		//=====================================================//
 		
-		[Bindable] public static var VERSION:String = "1.1.33";
+		[Bindable] public static var VERSION:String = "1.1.34";
 		[Bindable] public static var LOGGED_IN:Boolean = false; 
 		[Bindable] public static var CONNECTED_TO_FACEBOOK:Boolean = false;
 		
@@ -89,7 +89,10 @@ package com.uralys.tribes.commons
 		public static  var firstCaseY:int;
 
 		// permet d'afficher ou de cacher les bar de progression sur les moves
-		[Bindable] public static  var showMovesProgress:Boolean = true;
+		[Bindable] public static  var SHOW_MOVES_PROGRESS_BARS:Boolean = true;
+
+		// permet d'afficher ou de cacher les contrees et frontieres
+		[Bindable] public static  var LANDS_VISIBLE:Boolean = true;
 		
 		// Session.map[i][j] = case i,j 
 		public static var map:Array;

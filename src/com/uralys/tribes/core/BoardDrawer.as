@@ -97,9 +97,12 @@ package com.uralys.tribes.core
 		public function refreshDisplay():void
 		{
 			// draw city grounds
-			for(var j:int=0; j < Numbers.NB_VERTICAL_TILES_BY_LOADING; j++){
-				for(var i:int=0; i < Numbers.NB_HORIZONTAL_TILES_BY_LOADING; i++){
+			for(var j:int=0; j < Numbers.NB_VERTICAL_TILES_BY_LOADING; j++)
+			{
+				for(var i:int=0; i < Numbers.NB_HORIZONTAL_TILES_BY_LOADING; i++)
+				{
 					var _case:Case = Session.map[Session.firstCaseX+i][Session.firstCaseY+j];
+					
 					if(_case.type == 1)
 						drawCase(_case); 
 				}
@@ -110,6 +113,7 @@ package com.uralys.tribes.core
 				for(var i:int=0; i < Numbers.NB_HORIZONTAL_TILES_BY_LOADING; i++)
 				{
 					var _case:Case = Session.map[Session.firstCaseX+i][Session.firstCaseY+j];
+					
 					if(_case.type == 1)
 						drawCity(_case.city);
 				}
@@ -118,6 +122,7 @@ package com.uralys.tribes.core
 				for(var i:int=0; i < Numbers.NB_HORIZONTAL_TILES_BY_LOADING; i++)
 				{
 					var _case:Case = Session.map[Session.firstCaseX+i][Session.firstCaseY+j];
+					
 					if(_case.type == 0){
 						drawCase(_case);
 					}
@@ -127,7 +132,27 @@ package com.uralys.tribes.core
 				for(var i:int=0; i < Numbers.NB_HORIZONTAL_TILES_BY_LOADING; i++)
 				{
 					var _case:Case = Session.map[Session.firstCaseX+i][Session.firstCaseY+j];
+					
+					if(_case.caseUID.indexOf("case_") == -1)
+						continue;
+					
 					refreshUnits(_case);
+				}
+			}
+			
+			
+			for(var j:int=0; j < Numbers.NB_VERTICAL_TILES_BY_LOADING; j++)
+			{
+				// draw lands
+				for(var i:int=0; i < Numbers.NB_HORIZONTAL_TILES_BY_LOADING; i++)
+				{
+					var _case:Case = Session.map[Session.firstCaseX+i][Session.firstCaseY+j];
+					
+					if(_case.caseUID.indexOf("case_") == -1)
+						continue;
+
+					
+					drawLandAndBounds(_case);
 				}
 			}
 			
@@ -169,7 +194,6 @@ package com.uralys.tribes.core
 					break;
 				case 1:
 					//city
-					trace("draw case " + _case.caseUID + " | type : " + _case.type);
 					image.source = ImageContainer.SOL_VILLE;
 					break;
 			}
@@ -246,7 +270,8 @@ package com.uralys.tribes.core
 		}
 		
 		
-		public function drawCity(city:City):void{
+		public function drawCity(city:City):void
+		{
 			var angle:int = 0;
 			var distanceAuCentre:int = 0;
 			var insideCircle:Boolean = true;
@@ -293,6 +318,121 @@ package com.uralys.tribes.core
 			
 			for each(var image:Image in images.values()){
 				Session.board.mapPositioner.addElement(image);
+			}
+		}
+		
+		//------------------------------------------------------------------------------------//
+		
+		private function drawLandAndBounds(_case:Case):void
+		{
+			if(_case.landOwner != null)
+			{
+				var image:Image = new Image();
+				
+				image.x = _case.x * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4);
+				image.y = _case.y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2);
+				
+				if(_case.landOwner.playerUID == Session.player.playerUID)
+					image.source = ImageContainer.getImage(ImageContainer.HIGHLIGHT_VERT);
+				else
+					image.source = ImageContainer.getImage(ImageContainer.HIGHLIGHT_ROUGE);
+				
+				Session.board.landLayer.addElement(image);
+				
+				//----------------//
+				// frontier NO	
+				
+				if(Session.map[_case.x - 1][_case.y - 1] == null 
+				|| Session.map[_case.x - 1][_case.y - 1].landOwner == null
+				|| Session.map[_case.x - 1][_case.y - 1].landOwner.playerUID != Session.player.playerUID)
+				{
+					var imageNO:Image = new Image();
+					imageNO.x = _case.x * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4);
+					imageNO.y = _case.y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2);
+					imageNO.source = ImageContainer.getImage(ImageContainer.FRONTIER_NO);
+					
+					Session.board.landLayer.addElement(imageNO);
+				}
+				
+				//----------------//
+				// frontier SO	
+				
+				if(Session.map[_case.x - 1][_case.y + 1] == null
+				|| Session.map[_case.x - 1][_case.y + 1].landOwner == null
+				|| Session.map[_case.x - 1][_case.y + 1].landOwner.playerUID != Session.player.playerUID)
+				{
+					var imageSO:Image = new Image();
+					imageSO.x = _case.x * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4);
+					imageSO.y = _case.y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2);
+					imageSO.source = ImageContainer.getImage(ImageContainer.FRONTIER_SO);
+					
+					Session.board.landLayer.addElement(imageSO);
+					
+				}
+				
+				//----------------//
+				// frontier N
+				
+				if(Session.map[_case.x][_case.y - 2] == null 
+				|| Session.map[_case.x][_case.y - 2].landOwner == null
+				|| Session.map[_case.x][_case.y - 2].landOwner.playerUID != Session.player.playerUID)
+				{
+					var imageN:Image = new Image();
+					imageN.x = _case.x * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4);
+					imageN.y = _case.y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2);
+					imageN.source = ImageContainer.getImage(ImageContainer.FRONTIER_N);
+					
+					Session.board.landLayer.addElement(imageN);
+				}
+				
+				//----------------//
+				// frontier S
+				
+				if(Session.map[_case.x][_case.y + 2] == null 
+				|| Session.map[_case.x][_case.y + 2].landOwner == null
+				|| Session.map[_case.x][_case.y + 2].landOwner.playerUID != Session.player.playerUID)
+				{
+					var imageS:Image = new Image();
+					imageS.x = _case.x * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4);
+					imageS.y = _case.y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2);
+					imageS.source = ImageContainer.getImage(ImageContainer.FRONTIER_S);
+					
+					Session.board.landLayer.addElement(imageS);
+					
+				}
+				
+				//----------------//
+				// frontier NE
+				
+				if(Session.map[_case.x + 1][_case.y - 1] == null 
+				|| Session.map[_case.x + 1][_case.y - 1].landOwner == null
+				|| Session.map[_case.x + 1][_case.y - 1].landOwner.playerUID != Session.player.playerUID)
+				{
+					var imageNE:Image = new Image();
+					imageNE.x = _case.x * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4);
+					imageNE.y = _case.y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2);
+					imageNE.source = ImageContainer.getImage(ImageContainer.FRONTIER_NE);
+					
+					Session.board.landLayer.addElement(imageNE);
+					
+				}
+				
+				//----------------//
+				// frontier SE
+				
+				if(Session.map[_case.x + 1][_case.y + 1] == null 
+				|| Session.map[_case.x + 1][_case.y + 1].landOwner == null
+				|| Session.map[_case.x + 1][_case.y + 1].landOwner.playerUID != Session.player.playerUID)
+				{
+					var imageSE:Image = new Image();
+					imageSE.x = _case.x * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4);
+					imageSE.y = _case.y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2);
+					imageSE.source = ImageContainer.getImage(ImageContainer.FRONTIER_SE);
+					
+					Session.board.landLayer.addElement(imageSE);
+					
+				}
+				
 			}
 		}
 		

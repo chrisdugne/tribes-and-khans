@@ -820,9 +820,14 @@
 											 click="selectedUnit = Session.CURRENT_CASE_SELECTED.merchants; onUnitClick();"/>
 			</s:NavigatorContent>
 		</mx:ViewStack>
-		<s:CheckBox id="checkbox"
-					selected="@{Session.showMovesProgress}" 
-					label="{Translations.SHOW_PROGRESS_BARS.getItemAt(Session.LANGUAGE)}"
+		<s:CheckBox id="checkboxBars"
+					selected="@{Session.LANDS_VISIBLE}" 
+					label="{Translations.LANDS.getItemAt(Session.LANGUAGE)}"
+					x="{viewstack.x}"
+					bottom="49"/>
+		<s:CheckBox id="checkboxLands"
+					selected="@{Session.SHOW_MOVES_PROGRESS_BARS}" 
+					label="{Translations.PROGRESS_BARS.getItemAt(Session.LANGUAGE)}"
 					x="{viewstack.x}"
 					bottom="34"/>
 
@@ -904,6 +909,15 @@
 						  mouseDown="mouseDown(event)"
 						  mouseMove="mouseMove(event)"
 						  mouseUp="mouseUp(event)"/>
+					<s:Group id="landLayer"
+							 visible="{Session.LANDS_VISIBLE}"
+							 width="{Numbers.LAND_WIDTH*400}"
+							 height="{Numbers.LAND_HEIGHT*400}"
+							 x="{mapPositioner.x}"
+							 y="{mapPositioner.y}"
+							 mouseEnabled="false"
+							 mouseChildren="false"
+							 mouseEnabledWhereTransparent="false"/>
 					<s:Group id="highlighters"
 							 width="{Numbers.LAND_WIDTH*400}"
 							 height="{Numbers.LAND_HEIGHT*400}"

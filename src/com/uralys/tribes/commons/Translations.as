@@ -77,10 +77,16 @@ public class Translations{
 									"Unit way edition"]);
 
 	[Bindable]
-	public static var SHOW_PROGRESS_BARS:ArrayCollection = new ArrayCollection(
-									["Barres de temps",
-									"Progress bars",
-									"Progress bars"]);
+	public static var PROGRESS_BARS:ArrayCollection = new ArrayCollection(
+									["Montrer les barres de temps",
+									"Show the progress bars",
+									"Show the progress bars"]);
+
+	[Bindable]
+	public static var LANDS:ArrayCollection = new ArrayCollection(
+									["Montrer les contrées",
+									"Show the lands",
+									"Show the lands"]);
 
 	[Bindable]
 	public static var YOUR_GAMES:ArrayCollection = new ArrayCollection(

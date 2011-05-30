@@ -61,6 +61,6 @@
 					maximum="100" 
 					mode="manual"
 					label="--:--" 
-					visible="{Session.showMovesProgress &amp;&amp; _move != null &amp;&amp; _move.timeTo != -1}"
+					visible="{Session.SHOW_MOVES_PROGRESS_BARS &amp;&amp; _move != null &amp;&amp; _move.timeTo != -1}"
 					labelPlacement="top"/>
 </s:Group>

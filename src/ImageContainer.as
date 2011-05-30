@@ -187,6 +187,12 @@ public final class ImageContainer
 	[Bindable] public static var ARMY_ALLY:Bitmap;
 	[Bindable] public static var ARMY_ENNEMY:Bitmap;
 	[Bindable] public static var EDIT:Bitmap;
+	[Bindable] public static var FRONTIER_N:Bitmap;
+	[Bindable] public static var FRONTIER_NE:Bitmap;
+	[Bindable] public static var FRONTIER_NO:Bitmap;
+	[Bindable] public static var FRONTIER_S:Bitmap;
+	[Bindable] public static var FRONTIER_SE:Bitmap;
+	[Bindable] public static var FRONTIER_SO:Bitmap;
 
 	//   ======================================================================//
 
@@ -224,7 +230,13 @@ public final class ImageContainer
 		 "webresources/images/persos/guerrier_vert.png",
 		 "webresources/images/persos/guerrier_bleu.png",
 		 "webresources/images/persos/guerrier_rouge.png",
-		 "webresources/images/edit.png"
+		 "webresources/images/edit.png",
+		 "webresources/images/map/frontier_n.png",
+		 "webresources/images/map/frontier_ne.png",
+		 "webresources/images/map/frontier_no.png",
+		 "webresources/images/map/frontier_s.png",
+		 "webresources/images/map/frontier_se.png",
+		 "webresources/images/map/frontier_so.png"
 		 ])
 	
 	public static function loadImages():void{
@@ -310,10 +322,28 @@ public final class ImageContainer
 			case 22:
 				EDIT = event.currentTarget.content;
 				break;
+			case 23:
+				FRONTIER_N = event.currentTarget.content;
+				break;
+			case 24:
+				FRONTIER_NE = event.currentTarget.content;
+				break;
+			case 25:
+				FRONTIER_NO = event.currentTarget.content;
+				break;
+			case 26:
+				FRONTIER_S = event.currentTarget.content;
+				break;
+			case 27:
+				FRONTIER_SE = event.currentTarget.content;
+				break;
+			case 28:
+				FRONTIER_SO = event.currentTarget.content;
+				break;
 		}
 		
 		currentImage++;
-		if(currentImage < 23)
+		if(currentImage < 29)
 			loadNextImage();
 	}
 

@@ -212,7 +212,8 @@ public class GameManager implements IGameManager {
 	
 	//==================================================================================================//
 
-	public List<Item> loadItems() {
+	public List<Item> loadItems() 
+	{
 		List<Item> items = new ArrayList<Item>();
 
 		for(ItemDTO itemDTO : gameDao.loadItems()){
@@ -224,7 +225,8 @@ public class GameManager implements IGameManager {
 
 	//==================================================================================================//
 
-	public List<Case> loadCases(int[] groups) {
+	public List<Case> loadCases(int[] groups) 
+	{
 		List<Case> cases = new ArrayList<Case>();
 	
 		List<CaseDTO> casesLoaded = gameDao.loadCases(groups);
@@ -259,8 +261,8 @@ public class GameManager implements IGameManager {
 	 * 
 	 */
 	// le premier Move est la case actuelle où est posée l'unité avant son départ
-	private List<Unit> placeUnit(Unit unitArriving, List<Move> moves, List<Unit> unitsMakingThisReplacing, DataContainer datacontainer) {
-		
+	private List<Unit> placeUnit(Unit unitArriving, List<Move> moves, List<Unit> unitsMakingThisReplacing, DataContainer datacontainer)
+	{
 		if(topdebug)Utils.print("entree dans placeUnit | " + new Date());
 		
 		if(debug)Utils.print("---------------------------------------");
@@ -603,7 +605,11 @@ public class GameManager implements IGameManager {
 		updateUnit(unitArriving, null, false);
 		
 		// on set le nouveau challenger sur la case finale, si elle touche le royaume
-		gameDao.tryToSetChallenger(unitArriving, timeFromChallenging);
+		CaseDTO finalCase = gameDao.tryToSetChallenger(unitArriving, timeFromChallenging);
+		if(finalCase != null){
+			// refresh la derniere case dans 'objectsAltered' pour set challenger et timeFromChallenging
+			datacontainer.objectsAltered.addCaseAltered(EntitiesConverter.convertCaseDTO(finalCase));
+		}
 
 		// et enregistrer l'unite dans les datacontainer.unitsAltered
 		datacontainer.objectsAltered.addUnitAltered(unitArriving);

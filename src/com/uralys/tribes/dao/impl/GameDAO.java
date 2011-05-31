@@ -270,12 +270,13 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			Query query = pm.newQuery("select from " + CaseDTO.class.getName() + " where groupCase == :group");
 			Collection<? extends CaseDTO> cases = (Collection<? extends CaseDTO>) query.execute(group);
 			
-			for(CaseDTO _case : cases){
-				if(_case.getChallengerUID() != null){
-					if(now - _case.getTimeFromChallenging() > Constants.LAND_TIME*1000){
-						_case.setLandOwnerUID(_case.getChallengerUID());
-						_case.setChallengerUID(null);
-						_case.setTimeFromChallenging(-1);
+			for(CaseDTO _case : cases)
+			{
+				if(_case.getChallengerUID() != null)
+				{
+					if(now - _case.getTimeFromChallenging() > Constants.LAND_TIME*1000)
+					{
+						newLandOwner(_case.getCaseUID());
 					}
 				}
 			}
@@ -286,6 +287,22 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		pm.close();
 		return result;
 	}
+
+	private void newLandOwner(String caseUID) 
+	{
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		CaseDTO _case = pm.getObjectById(CaseDTO.class, caseUID);
+		decreaseLandsCount(_case.getLandOwnerUID());
+		increaseLandsCount(_case.getChallengerUID());
+		
+		_case.setLandOwnerUID(_case.getChallengerUID());
+		_case.setChallengerUID(null);
+		_case.setTimeFromChallenging(-1);
+		
+		pm.close();
+	}
+	
+	//==================================================================================================//
 
 	public CaseDTO getCase(int i, int j) {
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
@@ -312,8 +329,36 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 
 	//==================================================================================================//
 	
-	public void updatePlayer(Player player){
+	private void increaseLandsCount(String playerUID)
+	{
+		if(playerUID == null)
+			return;
 
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		PlayerDTO playerDTO = pm.getObjectById(PlayerDTO.class, playerUID);
+	
+		playerDTO.setNbLands(playerDTO.getNbLands() + 1);
+
+		pm.close();
+	}
+	
+	private void decreaseLandsCount(String playerUID)
+	{
+		if(playerUID == null)
+			return;
+		
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		PlayerDTO playerDTO = pm.getObjectById(PlayerDTO.class, playerUID);
+		
+		playerDTO.setNbLands(playerDTO.getNbLands() - 1);
+		
+		pm.close();
+	}
+
+	//==================================================================================================//
+
+	public void updatePlayer(Player player)
+	{
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		PlayerDTO playerDTO = pm.getObjectById(PlayerDTO.class, player.getUralysUID());
 	
@@ -321,7 +366,6 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		long timeSpentMillis = now - Constants.SERVER_START;
 		
 		playerDTO.setLastStep(timeSpentMillis/(Constants.SERVER_STEP*60*1000));
-		playerDTO.setNbLands(player.getNbLands());
 
 		pm.close();
 	}
@@ -766,8 +810,11 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		pm.close();
 	}
 
-	public void resetChallenger(String caseUID){
-
+	public void resetChallenger(String caseUID)
+	{
+		if(caseUID == null) // lorsqu'on cree une armee, finalCaseUIDExpected n'existe pas encore, pas besoin de reset du coup
+			return;
+		
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		CaseDTO _case = pm.getObjectById(CaseDTO.class, caseUID);
 		
@@ -777,33 +824,43 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		pm.close();
 	}
 	
-	public void tryToSetChallenger(Unit unit, long timeFromChallenging)
+	public CaseDTO tryToSetChallenger(Unit unit, long timeFromChallenging)
 	{
+		if(debug)Utils.print("tryToSetChallenger");
+
 		int x = TribesUtils.getX(unit.getFinalCaseUIDExpected());
 		int y = TribesUtils.getY(unit.getFinalCaseUIDExpected());
 
-		CaseDTO finalCase;
+		CaseDTO finalCase = null;
 		
-		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
-		try{
-			finalCase = pm.getObjectById(CaseDTO.class, "case_"+x+"_"+y);
-		}
-		catch(JDOObjectNotFoundException e){
-			finalCase = createCase(x, y, null, Case.FOREST, null, pm);
-		}
-		
-		if(unit.getPlayerUID().equals(getCase(x-1, y-1).getLandOwner())
-		|| unit.getPlayerUID().equals(getCase(x-1, y+1).getLandOwner())
-		|| unit.getPlayerUID().equals(getCase(x, y-2).getLandOwner())
-		|| unit.getPlayerUID().equals(getCase(x, y+2).getLandOwner())
-		|| unit.getPlayerUID().equals(getCase(x+1, y-1).getLandOwner())
-		|| unit.getPlayerUID().equals(getCase(x+1, y+1).getLandOwner()))
+		// TODO : on peut optimiser ici et ne pas faire ˆ chaque fois les 6 getCases
+		if(unit.getPlayerUID().equals(getCase(x-1, y-1).getLandOwnerUID())
+		|| unit.getPlayerUID().equals(getCase(x-1, y+1).getLandOwnerUID())
+		|| unit.getPlayerUID().equals(getCase(x, y-2).getLandOwnerUID())
+		|| unit.getPlayerUID().equals(getCase(x, y+2).getLandOwnerUID())
+		|| unit.getPlayerUID().equals(getCase(x+1, y-1).getLandOwnerUID())
+		|| unit.getPlayerUID().equals(getCase(x+1, y+1).getLandOwnerUID()))
 		{
+
+			PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+			try{
+				finalCase = pm.getObjectById(CaseDTO.class, "case_"+x+"_"+y);
+			}
+			catch(JDOObjectNotFoundException e){
+				finalCase = createCase(x, y, null, Case.FOREST, null, pm);
+			}
+			
+			// le challenger possede deja cette contree
+			if(finalCase.getLandOwnerUID() != null && finalCase.getLandOwnerUID().equals(unit.getPlayerUID()))
+				return null;
+			
+			if(debug)Utils.print("finalCase : " + finalCase.getCaseUID());
 			finalCase.setChallengerUID(unit.getPlayerUID());
 			finalCase.setTimeFromChallenging(timeFromChallenging);
+			pm.close();
 		}
-		
-		pm.close();
+
+		return finalCase;
 	}
 	
 	//==================================================================================================//

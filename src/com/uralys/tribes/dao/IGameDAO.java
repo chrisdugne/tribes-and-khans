@@ -50,7 +50,7 @@ public interface IGameDAO {
 	public void deleteMoves(String unitUID);
 
 	public void resetChallenger(String caseUID);
-	public void tryToSetChallenger(Unit unitArriving, long timeFromChallenging);
+	public CaseDTO tryToSetChallenger(Unit unitArriving, long timeFromChallenging);
 	
 	public void addUnitInGatheringAndSetNewArmy(String gatheringUID, String unitUID, String newUnitUID);
 	

@@ -134,7 +134,6 @@
 		<mx:Image id="usButton" source="{ImageContainer.US_FLAG}" click="us()" visible="{Session.LANGUAGE != 2}" width="25"/>
 		
 		<buttons:VolumeOnButton id="soundOnButton" click="music()" 
-								visible="{Session.player.musicOn}"
 								width="25"
 								height="20"/>
 		

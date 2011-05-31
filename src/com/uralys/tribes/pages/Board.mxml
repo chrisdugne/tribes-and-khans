@@ -829,9 +829,10 @@
 											 click="selectedUnit = Session.CURRENT_CASE_SELECTED.merchants; onUnitClick();"/>
 			</s:NavigatorContent>
 		</mx:ViewStack>
-		<s:Label visible="{Session.CURRENT_CASE_SELECTED.pawn.status = Pawn.CONQUERING_LAND}"
+		<s:Label visible="{Session.CURRENT_CASE_SELECTED != null &amp;&amp; Session.CURRENT_CASE_SELECTED.pawn.status == Pawn.CONQUERING_LAND}"
 				 text="{Translations.CONQUERING_LAND.getItemAt(Session.LANGUAGE)}"
-				 bottom="200"/>
+				 bottom="200"
+				 right="15"/>
 		
 		<s:CheckBox id="checkboxBars"
 					selected="@{Session.LANDS_VISIBLE}" 

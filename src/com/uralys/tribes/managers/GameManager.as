@@ -78,7 +78,7 @@ package com.uralys.tribes.managers {
 		
 			// enregistre le statut lors du dernier step a rattrapper
 			if(nbStepsMissed > 0)
-				saveStep(false);
+				saveStep(true);
 
 			
 			var city:City = Session.player.cities.getItemAt(0) as City;

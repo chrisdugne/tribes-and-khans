@@ -71,6 +71,12 @@ public class GameManager implements IGameManager {
 	public String createPlayer(String uralysUID, String email) {
 		return gameDao.createPlayer(uralysUID, email);			
 	}
+
+	// =========================================================================//
+
+	public void changeMusicOn(String uralysUID, boolean musicOn) {
+		gameDao.changeMusicOn(uralysUID, musicOn);
+	}
 	
 	//==================================================================================================//
 	

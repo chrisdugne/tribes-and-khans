@@ -61,5 +61,6 @@ public interface IGameDAO {
 	
 	public void changeName(String uralysUID, String newName);
 	public void changeCityName(String cityUID, String newName);
+	public void changeMusicOn(String uralysUID, boolean musicOn);
 	
 }

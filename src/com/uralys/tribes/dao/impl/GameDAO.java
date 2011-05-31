@@ -62,6 +62,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		playerDTO.setAllyUID(uralysUID);
 		playerDTO.setNbLands(7);
 		playerDTO.setNbConnections(0);
+		playerDTO.setMusicOn(true);
 		
 		long now = new Date().getTime();
 		long timeSpentMillis = now - Constants.SERVER_START;
@@ -274,7 +275,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			{
 				if(_case.getChallengerUID() != null)
 				{
-					if(now - _case.getTimeFromChallenging() > Constants.LAND_TIME*1000)
+					if(now - _case.getTimeFromChallenging() > Constants.LAND_TIME*60*1000)
 					{
 						newLandOwner(_case.getCaseUID());
 					}
@@ -357,16 +358,28 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 
 	//==================================================================================================//
 
+	public void changeMusicOn(String uralysUID, boolean musicOn)
+	{
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		PlayerDTO playerDTO = pm.getObjectById(PlayerDTO.class, uralysUID);
+	
+		playerDTO.setMusicOn(musicOn);
+
+		pm.close();
+	}
+	
+	//==================================================================================================//
+	
 	public void updatePlayer(Player player)
 	{
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		PlayerDTO playerDTO = pm.getObjectById(PlayerDTO.class, player.getUralysUID());
-	
+		
 		long now = new Date().getTime();
 		long timeSpentMillis = now - Constants.SERVER_START;
 		
 		playerDTO.setLastStep(timeSpentMillis/(Constants.SERVER_STEP*60*1000));
-
+		
 		pm.close();
 	}
 	

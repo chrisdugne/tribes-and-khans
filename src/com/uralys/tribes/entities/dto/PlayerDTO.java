@@ -30,6 +30,7 @@ public class PlayerDTO {
 	
 	@Persistent private String allyUID; 
 	@Persistent private int nbLands; 
+	@Persistent private boolean musicOn; 
 	@Persistent private List<String> cityUIDs = new ArrayList<String>();
 	@Persistent private List<String> unitUIDs = new ArrayList<String>();
 	@Persistent private List<String> meetingsUIDs = new ArrayList<String>();
@@ -49,6 +50,12 @@ public class PlayerDTO {
 	}
 	public void setKey(String key) {
 		this.key = key;
+	}
+	public boolean isMusicOn() {
+		return musicOn;
+	}
+	public void setMusicOn(boolean musicOn) {
+		this.musicOn = musicOn;
 	}
 	public String getName() {
 		return name;

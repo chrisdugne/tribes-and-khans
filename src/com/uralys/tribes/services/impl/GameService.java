@@ -24,6 +24,13 @@ public class GameService implements IGameService {
 
 	// =========================================================================//
 
+	public void changeMusicOn(String uralysUID, boolean musicOn) {
+		gameManager.changeMusicOn(uralysUID, musicOn);
+	}
+
+	//==================================================================================================//
+	
+
 	public String createPlayer(String uralysUID, String email) {
 		try {
 			return gameManager.createPlayer(uralysUID, email);

@@ -11,6 +11,7 @@ import com.uralys.tribes.entities.Unit;
 
 public interface IGameService {
 
+	public void changeMusicOn(String uralysUID, boolean musicOn);
 	public String createPlayer(String uralysUID, String email);
 	public Player getPlayer(String uralysUID);
 

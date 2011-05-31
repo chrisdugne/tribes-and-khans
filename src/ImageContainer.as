@@ -11,7 +11,7 @@ public final class ImageContainer
 {
 	//   ======================================================================//
 	
-	[Embed(source="resources/embed/loading.swf")]
+	[ Embed(source="resources/embed/greenBar.swf") ]  
 	[Bindable] public static var LOADING:Class;
 	
 	//   ======================================================================//

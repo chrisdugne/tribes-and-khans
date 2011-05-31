@@ -73,19 +73,19 @@ package com.uralys.tribes.managers {
 			
 			trace(nbStepsMissed + " missed");
 			for(var i:int = 0; i < nbStepsMissed-1; i++){
-				saveStep(true);
+				saveStep(false,true);
 			}
 		
 			// enregistre le statut lors du dernier step a rattrapper
 			if(nbStepsMissed > 0)
-				saveStep();
+				saveStep(false);
 
 			
 			var city:City = Session.player.cities.getItemAt(0) as City;
 			BoardDrawer.getInstance().refreshMap(city.x, city.y);
 		}
 		
-		public function saveStep(loginCatchUp:Boolean = false)
+		public function saveStep(needRefreshOfTheCity:Boolean, loginCatchUp:Boolean = false)
 		{
 			for each(var city:City in Session.player.cities)
 			{
@@ -111,8 +111,12 @@ package com.uralys.tribes.managers {
 			
 			(Session.player.cities.getItemAt(0) as City).gold += Session.player.nbLands;
 			
-			if(!loginCatchUp)
+			if(!loginCatchUp){
 				savePlayer();
+			}
+			
+			if(needRefreshOfTheCity)
+				Session.board.refreshBoard(city);
 		}
 		
 		
@@ -665,11 +669,17 @@ package com.uralys.tribes.managers {
 				for each(var caseAltered:Case in casesAltered)
 				{
 					trace("caseAltered : " + caseAltered.caseUID);
+					if(caseAltered.challenger != null)
+						trace("challengerUID : " + caseAltered.challenger.playerUID);
+					trace("timeFromChallenging : " + caseAltered.timeFromChallenging);
 					try{
 						var caseInSession:Case = (Session.map[caseAltered.x][caseAltered.y] as Case);
 						
-						if(caseInSession != null)
+						if(caseInSession != null){
 							Session.map[caseAltered.x][caseAltered.y].recordedMoves = caseAltered.recordedMoves;
+							Session.map[caseAltered.x][caseAltered.y].challenger = caseAltered.challenger;
+							Session.map[caseAltered.x][caseAltered.y].timeFromChallenging = caseAltered.timeFromChallenging;
+						}
 						else
 							Session.map[caseAltered.x][caseAltered.y] = caseAltered;
 						

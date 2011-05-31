@@ -169,7 +169,12 @@
 			// set params est appelee avant creationComplete (init())
 			public function set params(args:Array):void
 			{
-				this.selectedCity = Session.player.cities.getItemAt(0) as City;
+				refreshBoard(Session.player.cities.getItemAt(0) as City);
+			}
+			
+			public function refreshBoard(city:City):void
+			{
+				this.selectedCity = city;
 				GameManager.getInstance().refreshCity(selectedCity, false);
 				
 				var unitUIDsToDelete:ArrayCollection = new ArrayCollection();
@@ -179,9 +184,10 @@
 					if(!unitIsPrepared)
 						unitUIDsToDelete.addItem(unit.unitUID);
 				}
-
+				
 				GameManager.getInstance().deleteUnits(unitUIDsToDelete);
 			}
+			
 			
 			//-----------------------------------------------------------//
 			
@@ -824,12 +830,12 @@
 					selected="@{Session.LANDS_VISIBLE}" 
 					label="{Translations.LANDS.getItemAt(Session.LANGUAGE)}"
 					x="{viewstack.x}"
-					bottom="49"/>
+					bottom="70"/>
 		<s:CheckBox id="checkboxLands"
 					selected="@{Session.SHOW_MOVES_PROGRESS_BARS}" 
 					label="{Translations.PROGRESS_BARS.getItemAt(Session.LANGUAGE)}"
 					x="{viewstack.x}"
-					bottom="34"/>
+					bottom="44"/>
 
 		<s:VGroup top="150" right="95"
 				  excludeFrom="classic">
@@ -857,15 +863,6 @@
 		</s:HGroup>
 
 		<!-- =============================================================================================== -->
-		<!--
-		<s:HGroup width="100%" horizontalAlign="center" bottom="35">
-			<s:CheckBox id="checkBoxDetails" label="{Translations.DETAILS.getItemAt(Session.LANGUAGE)}" selected="true" skinClass="spark.skins.spark.CheckBoxSkin"/>
-			<mx:Spacer width="45"/>			
-			<s:CheckBox id="checkBoxImages" label="{Translations.IMAGES.getItemAt(Session.LANGUAGE)}" selected="true" skinClass="spark.skins.spark.CheckBoxSkin"/>
-			<mx:Spacer width="45"/>			
-			<s:CheckBox id="checkBoxTexts" label="{Translations.TEXTS.getItemAt(Session.LANGUAGE)}" selected="true" skinClass="spark.skins.spark.CheckBoxSkin"/>
-		</s:HGroup>
-		-->
 		<!--
 		<s:HGroup width="200" height="200" horizontalAlign="center"
 				  bottom="45"
@@ -911,6 +908,14 @@
 						  mouseUp="mouseUp(event)"/>
 					<s:Group id="landLayer"
 							 visible="{Session.LANDS_VISIBLE}"
+							 width="{Numbers.LAND_WIDTH*400}"
+							 height="{Numbers.LAND_HEIGHT*400}"
+							 x="{mapPositioner.x}"
+							 y="{mapPositioner.y}"
+							 mouseEnabled="false"
+							 mouseChildren="false"
+							 mouseEnabledWhereTransparent="false"/>
+					<s:Group id="pawnLayer"
 							 width="{Numbers.LAND_WIDTH*400}"
 							 height="{Numbers.LAND_HEIGHT*400}"
 							 x="{mapPositioner.x}"

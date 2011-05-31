@@ -49,7 +49,7 @@
 			}
 
 			protected function nextStep():void{
-				GameManager.getInstance().saveStep();
+				GameManager.getInstance().saveStep(true);
 				
 				// message 'resources recues'
 				FlexGlobals.topLevelApplication.message(Translations.RESOURCES_UPDATED.getItemAt(Session.LANGUAGE), 3);

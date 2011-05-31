@@ -127,7 +127,11 @@ package com.uralys.tribes.core
 						drawCase(_case);
 					}
 				}
+				
+			}
 
+			for(var j:int=0; j < Numbers.NB_VERTICAL_TILES_BY_LOADING; j++)
+			{
 				// draw units
 				for(var i:int=0; i < Numbers.NB_HORIZONTAL_TILES_BY_LOADING; i++)
 				{
@@ -139,8 +143,15 @@ package com.uralys.tribes.core
 					refreshUnits(_case);
 				}
 			}
-			
-			
+
+			redrawAllLands();
+			Session.WAIT_FOR_SERVER = false;
+		}
+		
+		public function redrawAllLands():void
+		{
+			Session.board.landLayer.removeAllElements();
+				
 			for(var j:int=0; j < Numbers.NB_VERTICAL_TILES_BY_LOADING; j++)
 			{
 				// draw lands
@@ -150,16 +161,14 @@ package com.uralys.tribes.core
 					
 					if(_case.caseUID.indexOf("case_") == -1)
 						continue;
-
+					
 					
 					drawLandAndBounds(_case);
 				}
 			}
-			
-			Session.WAIT_FOR_SERVER = false;
 		}
-		
 
+			
 		private function drawCase(_case:Case):void{
 			var image:Image = new Image();
 			var placeForet:Boolean = false;
@@ -220,7 +229,7 @@ package com.uralys.tribes.core
 		public function refreshUnits(_case:Case):void
 		{
 			try{
-				Session.board.mapPositioner.removeElement(_case.pawn);	
+				Session.board.pawnLayer.removeElement(_case.pawn);	
 			}
 			catch(e:Error){}
 			
@@ -266,7 +275,7 @@ package com.uralys.tribes.core
 			
 			_case.pawn.addElement(imageUnit);
 			
-			Session.board.mapPositioner.addElement(_case.pawn);
+			Session.board.pawnLayer.addElement(_case.pawn);
 		}
 		
 		

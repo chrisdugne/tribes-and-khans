@@ -12,15 +12,14 @@ package com.uralys.tribes.commons
 		[Bindable]
 		public static var TIME_PER_STEP:int = 10;
 	
-		// nb de cases par heures pour la vitesse de base
 		[Bindable]
 		public static var BASE_SPEED:int = 3;
 	
-		// temps de deplacement de base (en minutes) (pour une vitesse de base de 3 cases par heure)
+		// temps de deplacement de base (pour une vitesse de base de 3 cases par heure)
 		[Bindable]
-		public static var BASE_TIME_PER_MOVE:int = 20;
+		public static var BASE_TIME_PER_MOVE_MILLIS:int = Session.isLocal ? 1000*3 : 20*60*1000;
 		[Bindable]
-		public static var BASE_TIME_PER_MOVE_MILLIS:int = Session.isLocal ? 5*1000*3 : 20*60*1000;
+		public static var BASE_TIME_FOR_LAND_CONQUEST_MILLIS:int = Session.isLocal ? 1000*3 : 60*60*1000;
 	
 		[Bindable]
 		public static var NB_HORIZONTAL_TILES_BY_LOADING:int = 30; 

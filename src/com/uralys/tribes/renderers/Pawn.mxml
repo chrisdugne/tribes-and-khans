@@ -10,47 +10,88 @@
 			import com.uralys.tribes.commons.Numbers;
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;
+			import com.uralys.tribes.core.BoardDrawer;
+			import com.uralys.tribes.entities.Case;
 			import com.uralys.tribes.entities.Move;
+			import com.uralys.tribes.skins.ClassicProgressBarSkin;
+			import com.uralys.tribes.skins.ConqueringLandProgressBarSkin;
+			import com.uralys.tribes.skins.CustomProgressTrackSkin;
 			import com.uralys.utils.Utils;
 			
 			import flash.events.TimerEvent;
 			import flash.utils.Timer;
 			
-			[Bindable] public var _move:Move;	
+			import mx.skins.spark.ProgressBarTrackSkin;
+			
+			[Bindable] public var timeTo:Number;	
+			[Bindable] public var status:int;	
+			[Bindable] public var _case:Case;	
+			
+			//----------------------------------------------------------------------------------//
+
+			[Bindable] public static var CLASSIC:int = 1;
+			[Bindable] public static var CONQUERING_LAND:int = 2;
+			
+			//----------------------------------------------------------------------------------//
 			
 			public function refreshProgress():void
 			{			
 				Session.timer.removeEventListener( TimerEvent.TIMER, updateProgress );
 				
-				if(_move != null && _move.timeTo != -1){
+				if(timeTo != -1){
 					Session.timer.addEventListener( TimerEvent.TIMER, updateProgress );
+					
 					updateProgress(null);
 				}
 			}
 			
 			protected function updateProgress( timerEvent:TimerEvent ):void
 			{
-				
 				var millisRemaining:Number = getMillisRemaining();
 				
 				if(millisRemaining < 0)
 					Session.timer.removeEventListener( TimerEvent.TIMER, updateProgress );
 				
-				var millisSpent:Number = Numbers.BASE_TIME_PER_MOVE_MILLIS - millisRemaining;
+				var millisSpent:Number = getBaseTime() - millisRemaining;
 				
 				var minutes:int = millisRemaining/60/1000;
 				var secs:int = (millisRemaining-minutes*60*1000)/1000;
 
-				progress.setProgress( millisSpent, Numbers.BASE_TIME_PER_MOVE_MILLIS );
+				progress.setProgress( millisSpent, getBaseTime() );
 				progress.label = minutes+": "+(secs>9 ? "" : "0")+secs;
+				
+				if(status == CONQUERING_LAND && millisSpent > getBaseTime())
+					landIsTaken();
+			}
+			
+			protected function landIsTaken():void
+			{
+				timeTo = -1;
+
+				if(_case.landOwner != null && Session.player.playerUID == _case.landOwner.playerUID)
+					Session.player.nbLands--;
+				else if(Session.player.playerUID == _case.challenger.playerUID)
+					Session.player.nbLands++;
+
+				_case.landOwner = _case.challenger;
+				_case.timeFromChallenging = -1;
+				_case.challenger = null;
+				BoardDrawer.getInstance().redrawAllLands();
 			}
 			
 			protected function getMillisRemaining():Number
 			{
 				var now:Number = new Date().getTime();
-				return _move.timeTo - now;
+				return timeTo - now;
 			}
 
+			protected function getBaseTime():Number
+			{
+				if(status == CLASSIC)
+					return Numbers.BASE_TIME_PER_MOVE_MILLIS;
+				else // CONQUERING_LAND
+					return Numbers.BASE_TIME_FOR_LAND_CONQUEST_MILLIS;
+			}
 		]]>
 	</fx:Script>
 	
@@ -60,7 +101,9 @@
 					minimum="100" 
 					maximum="100" 
 					mode="manual"
+					trackSkin="{CustomProgressTrackSkin}"
+					barSkin="{status == CONQUERING_LAND ? ConqueringLandProgressBarSkin : ClassicProgressBarSkin}"
 					label="--:--" 
-					visible="{Session.SHOW_MOVES_PROGRESS_BARS &amp;&amp; _move != null &amp;&amp; _move.timeTo != -1}"
+					visible="{Session.SHOW_MOVES_PROGRESS_BARS &amp;&amp; timeTo != -1}"
 					labelPlacement="top"/>
 </s:Group>

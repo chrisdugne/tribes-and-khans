@@ -1,5 +1,6 @@
 package com.uralys.tribes.entities
 {
+	import com.uralys.tribes.commons.Numbers;
 	import com.uralys.tribes.commons.Session;
 	import com.uralys.tribes.core.UnitMover;
 	import com.uralys.tribes.managers.GameManager;
@@ -41,10 +42,32 @@ package com.uralys.tribes.entities
 		protected var _type:int; // type = -1 pour les 'non-cases'
 		protected var _city:City;
 		protected var _landOwner:Player;
+		protected var _challenger:Player;
+		protected var _timeFromChallenging:Number;
 		
 		//--------------------------------------------------------------//
 		
 		
+		public function get timeFromChallenging():Number
+		{
+			return _timeFromChallenging;
+		}
+
+		public function set timeFromChallenging(value:Number):void
+		{
+			_timeFromChallenging = value;
+		}
+
+		public function get challenger():Player
+		{
+			return _challenger;
+		}
+
+		public function set challenger(value:Player):void
+		{
+			_challenger = value;
+		}
+
 		public function get caseUID():String {
 			return _caseUID;
 		}
@@ -154,7 +177,7 @@ package com.uralys.tribes.entities
 			
 			army = null;
 			merchants = null;
-			pawn._move = null;
+			pawn.timeTo = -1;
 			pawn.refreshProgress();
 				
 			for each(var move:Move in recordedMoves)
@@ -189,7 +212,7 @@ package com.uralys.tribes.entities
 							break;
 					}
 					
-					pawn._move = move;
+					pawn.timeTo = move.timeTo;
 					unit.isModified = false;
 				}
 				else if(move.timeTo != -1 && move.timeTo < now){
@@ -226,6 +249,15 @@ package com.uralys.tribes.entities
 				recordedMoves.removeItemAt(recordedMoves.getItemIndex(moveToRemoveFromRecordedMoves));
 			
 			// cette fois ci si le move actif a ete trouve, on set le timer
+			if(_challenger != null){
+				trace("found a challenger try to refresh case " + caseUID);
+				pawn.status = Pawn.CONQUERING_LAND;
+				pawn.timeTo = _timeFromChallenging + Numbers.BASE_TIME_FOR_LAND_CONQUEST_MILLIS;
+			}
+			else
+				pawn.status = Pawn.CLASSIC;
+			
+			pawn._case = this;
 			pawn.refreshProgress();
 			
 			refreshAlreadyHappened = true;

@@ -738,7 +738,11 @@ public class Translations{
 									["Créateur",
 									"Creator",
 									"Creator"]);
-	
+	[Bindable]
+	public static var CONQUERING_LAND:ArrayCollection = new ArrayCollection(
+									["En train de conquérir une nouvelle contrée",
+									"Conquering a new land",
+									"Conquering a new land"]);
 	
 	//-----------------------------------------------------------------------------------//
 

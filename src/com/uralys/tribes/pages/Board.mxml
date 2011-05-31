@@ -30,8 +30,11 @@
 			import com.uralys.tribes.entities.Smith;
 			import com.uralys.tribes.entities.Unit;
 			import com.uralys.tribes.managers.GameManager;
+			import com.uralys.tribes.renderers.Pawn;
 			import com.uralys.tribes.windows.ReportsWindow;
 			import com.uralys.utils.Utils;
+			
+			import flash.sampler.getInvocationCount;
 			
 			import mx.collections.ArrayCollection;
 			import mx.containers.TitleWindow;
@@ -826,6 +829,10 @@
 											 click="selectedUnit = Session.CURRENT_CASE_SELECTED.merchants; onUnitClick();"/>
 			</s:NavigatorContent>
 		</mx:ViewStack>
+		<s:Label visible="{Session.CURRENT_CASE_SELECTED.pawn.status = Pawn.CONQUERING_LAND}"
+				 text="{Translations.CONQUERING_LAND.getItemAt(Session.LANGUAGE)}"
+				 bottom="200"/>
+		
 		<s:CheckBox id="checkboxBars"
 					selected="@{Session.LANDS_VISIBLE}" 
 					label="{Translations.LANDS.getItemAt(Session.LANGUAGE)}"

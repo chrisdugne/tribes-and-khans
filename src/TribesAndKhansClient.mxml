@@ -5,7 +5,7 @@
 			   xmlns:windows="com.uralys.tribes.windows.*"
 			   preloader="com.uralys.tribes.preload.CustomPreloader"
 			   frameRate="24"
-			   creationComplete="init()">
+			   creationComplete="init()" xmlns:buttons="com.uralys.tribes.components.buttons.*">
 	
 	<fx:Declarations>
 		<s:Move id="hidedisplaymessage" target="{displayMessage}" yTo="-50"/>
@@ -22,6 +22,7 @@
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;
 			import com.uralys.tribes.core.Pager;
+			import com.uralys.tribes.core.MusicPlayer;
 			import com.uralys.tribes.managers.AccountManager;
 			import com.uralys.tribes.pages.Login;
 			
@@ -38,6 +39,7 @@
 				Pager.getInstance().goToPage(Login);
 				
 				ImageContainer.loadImages();
+				MusicPlayer.getInstance().initMusic();
 				
 				
 				var sharedObject:SharedObject = SharedObject.getLocal(Names.SHARED_OBJECT_NAME);
@@ -109,6 +111,13 @@
 				
 			}
 			
+			private function music():void {
+				MusicPlayer.getInstance().switchState();
+				
+				if(Session.LOGGED_IN)
+					AccountManager.getInstance().changeMusicOn(Session.uralysProfile.uralysUID, Session.player.musicOn);
+			}
+			
 			//-----------------------------------------------------------------------//
 			
 		]]>
@@ -123,7 +132,12 @@
 		<mx:Image id="frenchButton" source="{ImageContainer.FR_FLAG}" click="french()" visible="{Session.LANGUAGE != 0}" width="25"/>
 		<mx:Image id="englishButton" source="{ImageContainer.EN_FLAG}" click="english()" visible="{Session.LANGUAGE != 1}" width="25"/>
 		<mx:Image id="usButton" source="{ImageContainer.US_FLAG}" click="us()" visible="{Session.LANGUAGE != 2}" width="25"/>
-
+		
+		<buttons:VolumeOnButton id="soundOnButton" click="music()" 
+								visible="{Session.player.musicOn}"
+								width="25"
+								height="20"/>
+		
 		<mx:Spacer width="100%"/>
 		<s:Label text="{Session.player ? Translations.LOG_AS.getItemAt(Session.LANGUAGE) + ' : '+ Session.uralysProfile.email : Translations.LOG_IN.getItemAt(Session.LANGUAGE)}"
 				 color="#222299"/>

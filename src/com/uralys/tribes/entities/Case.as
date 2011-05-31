@@ -180,6 +180,8 @@ package com.uralys.tribes.entities
 			pawn.timeTo = -1;
 			pawn.refreshProgress();
 				
+			trace("forceRefresh " + caseUID);
+			
 			for each(var move:Move in recordedMoves)
 			{
 				var unitInPlayer:Unit = Session.player.getUnit(move.unitUID);
@@ -251,10 +253,21 @@ package com.uralys.tribes.entities
 			for each (var moveToRemoveFromRecordedMoves:Move in recordedMovesToDelete)
 				recordedMoves.removeItemAt(recordedMoves.getItemIndex(moveToRemoveFromRecordedMoves));
 			
+			if(_challenger != null){
+				trace("_challenger " + _challenger.playerUID);
+				if(army)
+					trace(army.ownerStatus);
+				if(merchants)
+					trace(merchants.ownerStatus);
+			}
+			else
+				trace("_challenger is null");
+				
 			// cette fois ci si le move actif a ete trouve, on set le timer (si c'est bien une unité du joueur)
 			if(_challenger != null 
-			&& ((army != null && army.status == Unit.PLAYER) || (merchants != null && merchants.status == Unit.PLAYER)))
+			&& ((army != null && army.ownerStatus == Unit.PLAYER) || (merchants != null && merchants.ownerStatus == Unit.PLAYER)))
 			{
+				trace("_challenger");
 				pawn.status = Pawn.CONQUERING_LAND;
 				pawn.timeTo = _timeFromChallenging + Numbers.BASE_TIME_FOR_LAND_CONQUEST_MILLIS;
 			}

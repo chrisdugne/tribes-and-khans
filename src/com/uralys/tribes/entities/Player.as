@@ -8,6 +8,7 @@ package com.uralys.tribes.entities
 	{
 		private var _uralysUID:String;
 		private var _name:String;
+		private var _musicOn:Boolean;
 		private var _allyUID:String;
 		private var _nbLands:int;
 		private var _lastStep:Number;
@@ -19,6 +20,16 @@ package com.uralys.tribes.entities
 
 		//-------------------------------------------------------//
 		
+		public function get musicOn():Boolean
+		{
+			return _musicOn;
+		}
+
+		public function set musicOn(value:Boolean):void
+		{
+			_musicOn = value;
+		}
+
 		public function get name():String
 		{
 			return _name;

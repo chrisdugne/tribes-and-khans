@@ -36,6 +36,7 @@ package com.uralys.tribes.entities
 		private var _endTime:Number;
 		private var _gatheringUIDExpected:String;
 		private var _conflictUIDExpected:String;
+		private var _finalCaseUIDExpected:String;
 		
 		private var _status:int;
 		private var _currentCaseUID:String;
@@ -232,6 +233,16 @@ package com.uralys.tribes.entities
 		public function set conflictUIDExpected(value:String):void
 		{
 			_conflictUIDExpected = value;
+		}
+		
+		public function get finalCaseUIDExpected():String
+		{
+			return _finalCaseUIDExpected;
+		}
+		
+		public function set finalCaseUIDExpected(value:String):void
+		{
+			_finalCaseUIDExpected = value;
 		}
 		
 		//==========================================================================//

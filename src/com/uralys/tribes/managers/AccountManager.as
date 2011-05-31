@@ -8,6 +8,8 @@ package com.uralys.tribes.managers {
 	import com.uralys.tribes.entities.UralysProfile;
 	import com.uralys.tribes.pages.Board;
 	
+	import flash.sampler.getGetterInvocationCount;
+	
 	import mx.collections.ArrayCollection;
 	import mx.core.FlexGlobals;
 	import mx.rpc.events.FaultEvent;
@@ -71,6 +73,10 @@ package com.uralys.tribes.managers {
 		
 		public function changeLanguage(uralysUID:String, language:int):void{
 			accountWrapper.changeLanguage(uralysUID, language);
+		}
+		
+		public function changeMusicOn(uralysUID:String, musicOn:Boolean):void{
+			gameWrapper.changeMusicOn(uralysUID, musicOn);
 		}
 
 		//============================================================================================//

@@ -19,7 +19,7 @@ package com.uralys.tribes.commons
 		[Bindable]
 		public static var BASE_TIME_PER_MOVE_MILLIS:int = Session.isLocal ? 1000*3 : 20*60*1000;
 		[Bindable]
-		public static var BASE_TIME_FOR_LAND_CONQUEST_MILLIS:int = Session.isLocal ? 1000*3 : 60*60*1000;
+		public static var BASE_TIME_FOR_LAND_CONQUEST_MILLIS:int = Session.isLocal ? 60*60*1000 : 60*60*1000;
 	
 		[Bindable]
 		public static var NB_HORIZONTAL_TILES_BY_LOADING:int = 30; 

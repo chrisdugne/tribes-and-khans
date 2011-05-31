@@ -353,7 +353,7 @@ package com.uralys.tribes.core
 				
 				if(Session.map[_case.x - 1][_case.y - 1] == null 
 				|| Session.map[_case.x - 1][_case.y - 1].landOwner == null
-				|| Session.map[_case.x - 1][_case.y - 1].landOwner.playerUID != Session.player.playerUID)
+				|| Session.map[_case.x - 1][_case.y - 1].landOwner.playerUID != _case.landOwner.playerUID)
 				{
 					var imageNO:Image = new Image();
 					imageNO.x = _case.x * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4);
@@ -368,7 +368,7 @@ package com.uralys.tribes.core
 				
 				if(Session.map[_case.x - 1][_case.y + 1] == null
 				|| Session.map[_case.x - 1][_case.y + 1].landOwner == null
-				|| Session.map[_case.x - 1][_case.y + 1].landOwner.playerUID != Session.player.playerUID)
+				|| Session.map[_case.x - 1][_case.y + 1].landOwner.playerUID != _case.landOwner.playerUID)
 				{
 					var imageSO:Image = new Image();
 					imageSO.x = _case.x * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4);
@@ -384,7 +384,7 @@ package com.uralys.tribes.core
 				
 				if(Session.map[_case.x][_case.y - 2] == null 
 				|| Session.map[_case.x][_case.y - 2].landOwner == null
-				|| Session.map[_case.x][_case.y - 2].landOwner.playerUID != Session.player.playerUID)
+				|| Session.map[_case.x][_case.y - 2].landOwner.playerUID != _case.landOwner.playerUID)
 				{
 					var imageN:Image = new Image();
 					imageN.x = _case.x * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4);
@@ -399,7 +399,7 @@ package com.uralys.tribes.core
 				
 				if(Session.map[_case.x][_case.y + 2] == null 
 				|| Session.map[_case.x][_case.y + 2].landOwner == null
-				|| Session.map[_case.x][_case.y + 2].landOwner.playerUID != Session.player.playerUID)
+				|| Session.map[_case.x][_case.y + 2].landOwner.playerUID != _case.landOwner.playerUID)
 				{
 					var imageS:Image = new Image();
 					imageS.x = _case.x * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4);
@@ -415,7 +415,7 @@ package com.uralys.tribes.core
 				
 				if(Session.map[_case.x + 1][_case.y - 1] == null 
 				|| Session.map[_case.x + 1][_case.y - 1].landOwner == null
-				|| Session.map[_case.x + 1][_case.y - 1].landOwner.playerUID != Session.player.playerUID)
+				|| Session.map[_case.x + 1][_case.y - 1].landOwner.playerUID != _case.landOwner.playerUID)
 				{
 					var imageNE:Image = new Image();
 					imageNE.x = _case.x * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4);
@@ -431,7 +431,7 @@ package com.uralys.tribes.core
 				
 				if(Session.map[_case.x + 1][_case.y + 1] == null 
 				|| Session.map[_case.x + 1][_case.y + 1].landOwner == null
-				|| Session.map[_case.x + 1][_case.y + 1].landOwner.playerUID != Session.player.playerUID)
+				|| Session.map[_case.x + 1][_case.y + 1].landOwner.playerUID != _case.landOwner.playerUID)
 				{
 					var imageSE:Image = new Image();
 					imageSE.x = _case.x * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4);
@@ -536,100 +536,6 @@ package com.uralys.tribes.core
 			currentUnitMoveHighLights = new ArrayCollection();
 		}
 		
-		
-		//==================================================================================================//
-		
-		var selectedArmyCircle:Ellipse = new Ellipse();
-		public function drawArmySelection(army:Unit):void{
-//			
-//			removeArmySelection();
-//			
-//			Session.CURRENT_SELECTION_IS_ARMY = true;
-//			
-//			selectedArmyCircle = new Ellipse();
-//			selectedArmyCircle.width = army.radius*2 + 10;
-//			selectedArmyCircle.height = army.radius*2 + 10;
-//			selectedArmyCircle.x = army.currentCase.x - selectedArmyCircle.width/2;
-//			selectedArmyCircle.y = army.currentCase.y - selectedArmyCircle.height/2;
-//			
-//			selectedArmyCircle.stroke = new SolidColorStroke(army.type == 1 ? Numbers.WHITE : Numbers.YELLOW);
-			
-//			board.boardEntities.addElement(selectedArmyCircle);
-		}
-
-		public function removeArmySelection():void{
-			try{
-//				Session.CURRENT_SELECTION_IS_ARMY = false;
-//				board.boardEntities.removeElement(selectedArmyCircle);
-			}
-			catch(e:Error){}
-		}
-
-		//==================================================================================================//
-
-		// verifie si la case est accessible pour etre rajoutee aux contrees
-		public function testLand(armyMoved:Unit):void{
-			
-//			if(armyMoved.type == 2)
-//				return;
-//			
-//			var boardX:int = armyMoved.lineTo.xTo;
-//			var boardY:int = armyMoved.lineTo.yTo;
-//
-//			try{
-//				board.boardEntities.removeElement(armyMoved.tmpLandSquare);	
-//			}catch(error:Error){}
-//			
-//			var landX:int = Math.floor(boardX/Numbers.LAND_WIDTH);	
-//			var landY:int = Math.floor(boardY/Numbers.LAND_HEIGHT);
-//			
-//			armyMoved.landExpected = landY*30+landX;
-//			var landIsAccessible:Boolean = false;
-//			var landIsExpectedYet:Boolean = false;
-//			
-//			
-//			// contree deja prevue comme conquise par une autre armee ce tour ci
-//			for each(var army:Unit in Session.player.units){
-//				if(army.unitUID != armyMoved.unitUID
-//				&& army.landExpected == armyMoved.landExpected){
-//					landIsExpectedYet = true;
-//					break;
-//				}
-//			}
-//			
-			
-			// cest deja une contree enregistree
-			//if(Session.player.lands.contains(armyMoved.landExpected))
-			//	landIsExpectedYet = true;
-			
-			// si les tests precedents sont ok, on regarde si la contree touche le royaume
-//			if(!landIsExpectedYet){
-//			
-//				for each(var land:int in Session.player.lands){
-//					if(land == armyMoved.landExpected+1
-//					|| land == armyMoved.landExpected-1
-//					|| land == armyMoved.landExpected-30
-//					|| land == armyMoved.landExpected+30){
-//						landIsAccessible = true;
-//						break;
-//					}
-//				}
-//			}
-			
-//			if(landIsAccessible){
-//				armyMoved.tmpLandSquare = new Rect();
-//				armyMoved.tmpLandSquare.width = Numbers.LAND_WIDTH;
-//				armyMoved.tmpLandSquare.height = Numbers.LAND_HEIGHT;
-//				armyMoved.tmpLandSquare.x = landX*Numbers.LAND_WIDTH;
-//				armyMoved.tmpLandSquare.y = landY*Numbers.LAND_HEIGHT;
-//				armyMoved.tmpLandSquare.fill = new SolidColor(Numbers.BLUE);
-//				armyMoved.tmpLandSquare.alpha = 0.12;
-//				
-//				board.boardEntities.addElement(armyMoved.tmpLandSquare);
-//			}
-//			else
-//				armyMoved.landExpected = -1;
-		}
 		
 		//==================================================================================================//
 		// old replay

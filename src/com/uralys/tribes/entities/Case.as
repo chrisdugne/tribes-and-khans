@@ -212,7 +212,10 @@ package com.uralys.tribes.entities
 							break;
 					}
 					
-					pawn.timeTo = move.timeTo;
+					if(unit.ownerStatus == Unit.PLAYER){
+						pawn.timeTo = move.timeTo;
+					}
+					
 					unit.isModified = false;
 				}
 				else if(move.timeTo != -1 && move.timeTo < now){
@@ -248,9 +251,10 @@ package com.uralys.tribes.entities
 			for each (var moveToRemoveFromRecordedMoves:Move in recordedMovesToDelete)
 				recordedMoves.removeItemAt(recordedMoves.getItemIndex(moveToRemoveFromRecordedMoves));
 			
-			// cette fois ci si le move actif a ete trouve, on set le timer
-			if(_challenger != null){
-				trace("found a challenger try to refresh case " + caseUID);
+			// cette fois ci si le move actif a ete trouve, on set le timer (si c'est bien une unité du joueur)
+			if(_challenger != null 
+			&& ((army != null && army.status == Unit.PLAYER) || (merchants != null && merchants.status == Unit.PLAYER)))
+			{
 				pawn.status = Pawn.CONQUERING_LAND;
 				pawn.timeTo = _timeFromChallenging + Numbers.BASE_TIME_FOR_LAND_CONQUEST_MILLIS;
 			}

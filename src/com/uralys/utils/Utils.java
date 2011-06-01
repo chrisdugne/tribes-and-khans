@@ -217,7 +217,7 @@ public class Utils {
 	}
 
 
-	public final static boolean local = false;
+	public final static boolean local = true;
 	private static final Logger log = Logger.getLogger(Utils.class.getName());
 	
 	public static void print(String string) {

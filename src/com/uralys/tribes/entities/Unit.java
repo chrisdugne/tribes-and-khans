@@ -37,7 +37,6 @@ public class Unit {
 	private long endTime;
 
 	private String gatheringUIDExpected;
-	private String conflictUIDExpected;
 	private String finalCaseUIDExpected;
 	
 	private List<Move> moves = new ArrayList<Move>();
@@ -183,14 +182,6 @@ public class Unit {
 
 	public void setGatheringUIDExpected(String gatheringUIDExpected) {
 		this.gatheringUIDExpected = gatheringUIDExpected;
-	}
-
-	public String getConflictUIDExpected() {
-		return conflictUIDExpected;
-	}
-
-	public void setConflictUIDExpected(String conflictUIDExpected) {
-		this.conflictUIDExpected = conflictUIDExpected;
 	}
 
 	public boolean equals(Unit unit){

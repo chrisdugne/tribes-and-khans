@@ -32,7 +32,6 @@ public class UnitDTO {
 	@Persistent private long endTime;
 
 	@Persistent private String gatheringUIDExpected;
-	@Persistent private String conflictUIDExpected;
 	@Persistent private String finalCaseUIDExpected;
 
 	@Persistent private int type;
@@ -129,12 +128,6 @@ public class UnitDTO {
 	}
 	public void setGatheringUIDExpected(String gatheringUIDExpected) {
 		this.gatheringUIDExpected = gatheringUIDExpected;
-	}
-	public String getConflictUIDExpected() {
-		return conflictUIDExpected;
-	}
-	public void setConflictUIDExpected(String conflictUIDExpected) {
-		this.conflictUIDExpected = conflictUIDExpected;
 	}
 	public String getFinalCaseUIDExpected() {
 		return finalCaseUIDExpected;

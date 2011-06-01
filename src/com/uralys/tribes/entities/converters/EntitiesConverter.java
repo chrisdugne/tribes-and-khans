@@ -193,7 +193,6 @@ public class EntitiesConverter {
 		unit.setBeginTime(unitDTO.getBeginTime());
 		unit.setEndTime(unitDTO.getEndTime());
 		unit.setGatheringUIDExpected(unitDTO.getGatheringUIDExpected());
-		unit.setConflictUIDExpected(unitDTO.getConflictUIDExpected());
 		unit.setFinalCaseUIDExpected(unitDTO.getFinalCaseUIDExpected());
 
 		// -----------------------------------------------------------------------------------//

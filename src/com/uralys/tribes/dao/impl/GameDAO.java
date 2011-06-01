@@ -46,8 +46,8 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	//-----------------------------------------------------------------------//
 
 
-	public String createPlayer(String uralysUID, String email) {
-
+	public String createPlayer(String uralysUID, String email)
+	{
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		ServerDataDTO serverData = pm.getObjectById(ServerDataDTO.class, "serverData");
 		serverData.setNbPlayers(serverData.getNbPlayers()+1);
@@ -60,7 +60,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		playerDTO.setUralysUID(uralysUID);
 		playerDTO.setName("New Player");
 		playerDTO.setAllyUID(uralysUID);
-		playerDTO.setNbLands(7);
+		playerDTO.setNbLands(1);
 		playerDTO.setNbConnections(0);
 		playerDTO.setMusicOn(true);
 		
@@ -137,7 +137,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 					cityY++;
 				}
 				
-				if(getCase(cityX, cityY).getType() != Case.CITY)
+				if(getCase(cityX, cityY).getLandOwnerUID() == null)
 					caseFound = true;
 			}
 		}
@@ -179,12 +179,12 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		// creation des cases autour de la ville
 
 		createOrRefreshCase(city.getX(), city.getY(), cityUID, Case.CITY, playerUID, pm);
-		createOrRefreshCase(city.getX()-1, city.getY()-1, null, Case.FOREST, playerUID, pm);
-		createOrRefreshCase(city.getX()-1, city.getY()+1, null, Case.FOREST, playerUID, pm);
-		createOrRefreshCase(city.getX(), city.getY()-2, null, Case.FOREST, playerUID, pm);
-		createOrRefreshCase(city.getX(), city.getY()+2, null, Case.FOREST, playerUID, pm);
-		createOrRefreshCase(city.getX()+1, city.getY()-1, null, Case.FOREST, playerUID, pm);
-		createOrRefreshCase(city.getX()+1, city.getY()+1, null, Case.FOREST, playerUID, pm);
+//		createOrRefreshCase(city.getX()-1, city.getY()-1, null, Case.FOREST, playerUID, pm);
+//		createOrRefreshCase(city.getX()-1, city.getY()+1, null, Case.FOREST, playerUID, pm);
+//		createOrRefreshCase(city.getX(), city.getY()-2, null, Case.FOREST, playerUID, pm);
+//		createOrRefreshCase(city.getX(), city.getY()+2, null, Case.FOREST, playerUID, pm);
+//		createOrRefreshCase(city.getX()+1, city.getY()-1, null, Case.FOREST, playerUID, pm);
+//		createOrRefreshCase(city.getX()+1, city.getY()+1, null, Case.FOREST, playerUID, pm);
 		
 		//--------------------------------------//
 
@@ -512,7 +512,6 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		unitDTO.setGold(unit.getGold());
 
 		unitDTO.setGatheringUIDExpected(unit.getGatheringUIDExpected());
-		unitDTO.setConflictUIDExpected(unit.getConflictUIDExpected());
 		unitDTO.setFinalCaseUIDExpected(unit.getFinalCaseUIDExpected());
 		unitDTO.setBeginTime(unit.getBeginTime());
 		unitDTO.setEndTime(unit.getEndTime());
@@ -559,7 +558,16 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 
 		for(String unitUID : toDeleteUnitUIDs){
 			if(debug)Utils.print("delete unit : " + unitUID);
-			UnitDTO unitDTO = pm.getObjectById(UnitDTO.class, unitUID);
+			
+			UnitDTO unitDTO;
+			
+			try{
+				unitDTO = pm.getObjectById(UnitDTO.class, unitUID);
+			}
+			catch(Exception e){
+				// unit already deleted previously
+				continue;
+			}
 			
 			if(unitDTO.getEquipmentUIDs().size() > 0){
 				Query query = pm.newQuery("select from " + EquipmentDTO.class.getName() + " where :uids.contains(key)");

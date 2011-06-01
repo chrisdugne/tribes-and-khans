@@ -55,9 +55,9 @@ package com.uralys.tribes.preload
 			txtBox.textColor=0x000000;  
 			txtFormat= new TextFormat();  
 			txtFormat.font="Arial";  
-			//background color of preloader   
+			//background color of preloader  
 			bgSprite.graphics.beginFill(0xffffff);  
-			bgSprite.graphics.drawRect(0,0,200,200)  
+			bgSprite.graphics.drawRect(0,0,200,200)   
 			bgSprite.graphics.endFill();  
 		}  
 		
@@ -101,9 +101,15 @@ package com.uralys.tribes.preload
 				txtBox.text='Loading Tribes and Khans...'+Math.round(currlen/2)+"%";  
 				txtBox.setTextFormat(txtFormat);  
 			}  
-			if(currlen==200){  
+			if(currlen>=200){  
 				timer.stop();  
-				dispatchEvent( new Event( Event.COMPLETE ) );  
+				try{
+					dispatchEvent( new Event( Event.COMPLETE ) );	
+				}  
+				catch(e:Error){
+					trace("catch error at currlen = " + currlen);
+					trace(e);
+				}
 			}   
 			
 		}  

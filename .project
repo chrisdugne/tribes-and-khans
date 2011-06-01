@@ -19,7 +19,12 @@
 		<link>
 			<name>bin-debug</name>
 			<type>2</type>
-			<location>/Users/mad/Projects/Java/TribesAndKhans/war/webresources/flex</location>
+			<location>/Users/mad/Projects/Java/TribesAndKhans/war/webresources/flex.debug</location>
+		</link>
+		<link>
+			<name>bin-release</name>
+			<type>2</type>
+			<location>/Users/mad/Projects/Java/TribesAndKhans/war/webresources/flex.release</location>
 		</link>
 	</linkedResources>
 </projectDescription>

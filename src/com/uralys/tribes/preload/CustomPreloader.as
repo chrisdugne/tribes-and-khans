@@ -13,14 +13,14 @@ package com.uralys.tribes.preload
 	import flash.utils.Timer;
 	
 	import mx.events.FlexEvent;
-	import mx.preloaders.DownloadProgressBar;
+	import mx.preloaders.SparkDownloadProgressBar;
 
 	/*######################################################################### 
 	Class created for http://askmeflash.com  
 	get answers to all your flash, flex, FMS problems at askmeflash.com its free 
 	Flash developers website http://askmeflash.com 
 	##########################################################################*/  
-	public class CustomPreloader extends DownloadProgressBar {  
+	public class CustomPreloader extends SparkDownloadProgressBar {  
 		private var timer:Timer;  
 		//progress bar   
 		private var pBar:Sprite= new Sprite();  
@@ -69,7 +69,7 @@ package com.uralys.tribes.preload
 			var centerX:Number=(this.stage.stageWidth - 475) / 2;  
 			var centerY:Number=(this.stage.stageHeight - 153) / 2;  
 			pBar.x = centerX;  
-			pBar.y = centerY;  
+			pBar.y = centerY;   
 			
 			txtBox.x=centerX+6;  
 			txtBox.y=centerY-14; 
@@ -101,15 +101,9 @@ package com.uralys.tribes.preload
 				txtBox.text='Loading Tribes and Khans...'+Math.round(currlen/2)+"%";  
 				txtBox.setTextFormat(txtFormat);  
 			}  
-			if(currlen>=200){  
+			if(currlen==200){  
 				timer.stop();  
-				try{
-					dispatchEvent( new Event( Event.COMPLETE ) );	
-				}  
-				catch(e:Error){
-					trace("catch error at currlen = " + currlen);
-					trace(e);
-				}
+				dispatchEvent( new Event( Event.COMPLETE ) );	
 			}   
 			
 		}  

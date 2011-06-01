@@ -2019,8 +2019,8 @@
 										  click="deleteMerchant()"
 										  visible="{city.merchant != null}"
 										  excludeFrom="recordingUnit"/>
-								<mx:ProgressBar indeterminate="true"
-												includeIn="recordingUnit"/>
+								<mx:SWFLoader source="{ImageContainer.LOADING}" 
+											  includeIn="recordingUnit"/>
 								
 								<renderers:MerchantsRenderer merchant="{city.merchant}" visible="{city.merchant != null}"/>
 							</s:VGroup>
@@ -2203,8 +2203,9 @@
 									  click="deleteArmy()"
 									  visible="{city.army != null}"
 									  excludeFrom="recordingUnit"/>
-							<mx:ProgressBar indeterminate="true"
-											includeIn="recordingUnit"/>
+							<mx:SWFLoader source="{ImageContainer.LOADING}" 
+										  includeIn="recordingUnit"/>
+							
 							<renderers:ArmyRenderer army="{city.army}" visible="{city.army != null}"/>
 						</s:VGroup>
 						<mx:Grid verticalGap="10" 

@@ -261,6 +261,7 @@ package com.uralys.tribes.managers {
 			var now:Number = new Date().getTime();
 			
 			trace("prepareUnitForClientSide : " + unit.unitUID);
+			trace("unit.playerUID : " + unit.playerUID);
 			trace("unit.endTime : " + unit.endTime);
 			trace("now : " + now);
 			
@@ -465,6 +466,7 @@ package com.uralys.tribes.managers {
 		
 		public function loadItems():void
 		{
+			Session.WAIT_FOR_SERVER = true;
 			var gameWrapper:RemoteObject = getGameWrapper();
 			gameWrapper.loadItems.addEventListener("result", itemsLoaded);
 			gameWrapper.loadItems();
@@ -472,6 +474,8 @@ package com.uralys.tribes.managers {
 
 		public function loadCases(centerX:int, centerY:int):void
 		{
+			Session.WAIT_FOR_SERVER = true;
+			
 			var groups:Array = Utils.getGroups(centerX, centerY);
 			groups.sort(Array.NUMERIC);
 			
@@ -482,8 +486,6 @@ package com.uralys.tribes.managers {
 			trace(groups);
 			trace("Session.firstCaseX : " + Session.firstCaseX);
 			trace("Session.firstCaseY : " + Session.firstCaseY);
-			
-			Session.WAIT_FOR_SERVER = true;
 			
 			var caseUIDs:ArrayCollection = new ArrayCollection();
 			
@@ -649,11 +651,13 @@ package com.uralys.tribes.managers {
 				for each(var unitAltered:Unit in unitsAltered)
 				{
 					trace("unitAltered : " + unitAltered.unitUID);
-					prepareUnitForClientSide(unitAltered);
+					var unitIsAlive:Boolean = prepareUnitForClientSide(unitAltered);
+					if(!unitIsAlive)
+						continue;
 					
 					var unitInPlayer:Unit = Session.player.getUnit(unitAltered.unitUID);
 					
-					if(unitInPlayer == null)
+					if(unitInPlayer == null && unitAltered.playerUID == Session.player.playerUID && unitAltered.status != Unit.DESTROYED)
 						Session.player.units.addItem(unitAltered);
 					else{
 						Session.player.refreshUnit(unitAltered);

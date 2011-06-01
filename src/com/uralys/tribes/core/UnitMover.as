@@ -186,20 +186,27 @@ package com.uralys.tribes.core
 		}
 
 		public function refreshMoves(unit:Unit){
+			trace("refreshMoves");
 			var nbIndexesToRemove:int = -1;
 			var now:Number = new Date().getTime();
 			
+			trace(now);
+
 			for each(var move:Move in unit.moves){
+				trace(move.timeTo);
 				if(now > move.timeTo && move.timeTo != -1)
 					nbIndexesToRemove++;
 				else
 					break;
 			}
 			
+			trace(nbIndexesToRemove);
+			
 			for(var i:int = 0; i <= nbIndexesToRemove; i++)
 				unit.moves.removeItemAt(0);
 			
 			unit.currentCaseUID = (unit.moves.getItemAt(0) as Move).caseUID;
+			trace(unit.currentCaseUID);
 		}
 
 		public function resetPendingMoves(unit:Unit)

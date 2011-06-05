@@ -108,6 +108,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 
 		city.setKey(KeyFactory.keyToString(key));
 		city.setCityUID(cityUID);
+		city.setOwnerUID(playerUID);
 		city.setName(cityFromFlex == null ? "Ville de " + player.getName() : "Nouvelle Ville");
 		city.setPopulation(cityFromFlex == null ? 1000 : cityFromFlex.getPopulation());
 		city.setWheat(cityFromFlex == null ? 400 : cityFromFlex.getWheat());
@@ -119,6 +120,8 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		city.setPeopleCreatingWheat(0);
 		city.setPeopleCreatingWood(0);
 		city.setPeopleCreatingIron(0);
+		city.setTimeToChangeOwner(-1l);
+		city.setNextOwnerUID(null);
 
 		int cityX = 0; 
 		int cityY = 0; 
@@ -647,6 +650,52 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		
 		pm.close();
 	}
+	
+	//========================================================================================//
+
+	public void setNewCityOwner(String cityUID, String newOwnerUID, long timeToChangeOwner)
+	{
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		CityDTO cityDTO = pm.getObjectById(CityDTO.class, cityUID);
+		PlayerDTO playerDTO = pm.getObjectById(PlayerDTO.class, newOwnerUID);
+
+		cityDTO.setTimeToChangeOwner(timeToChangeOwner);
+		cityDTO.setNextOwnerUID(newOwnerUID);
+		playerDTO.getCityBeingOwnedUIDs().add(cityDTO.getCityUID());
+		
+		pm.close();
+	}
+	
+	public void checkCityOwner(String cityUID)
+	{
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		CityDTO cityDTO = pm.getObjectById(CityDTO.class, cityUID);
+
+		if(debug)Utils.print("cityDTO.getTimeToChangeOwner() : " + cityDTO.getTimeToChangeOwner());
+		if(debug)Utils.print("now : " + new Date().getTime());
+		
+		if(cityDTO.getTimeToChangeOwner() != -1 && cityDTO.getTimeToChangeOwner() < new Date().getTime())
+		{
+			// changing owner !
+			PlayerDTO previousOwner = pm.getObjectById(PlayerDTO.class, cityDTO.getOwnerUID());
+			previousOwner.getCityUIDs().remove(cityUID);
+			
+			PlayerDTO newOwner = pm.getObjectById(PlayerDTO.class, cityDTO.getNextOwnerUID());
+			newOwner.getCityUIDs().add(cityUID);
+			newOwner.getCityBeingOwnedUIDs().remove(cityUID);
+			
+			cityDTO.setNextOwnerUID(null);
+			cityDTO.setOwnerUID(newOwner.getUralysUID());
+			cityDTO.setTimeToChangeOwner(-1L);
+
+			CaseDTO _case = pm.getObjectById(CaseDTO.class, "case_"+cityDTO.getX()+"_"+cityDTO.getY());
+			_case.setLandOwnerUID(newOwner.getUralysUID());
+		}
+		
+		pm.close();
+	}
+
+	//========================================================================================//
 
 	public void setNewGatheringForMoveAndDeletePreviousGathering(String moveUID, String gatheringUID)
 	{

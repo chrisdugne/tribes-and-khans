@@ -6,6 +6,7 @@ import java.util.List;
 public class City {
 
 	private String cityUID;
+	private String ownerUID;
 	private String name;
 	
 	private long beginTime;
@@ -154,6 +155,14 @@ public class City {
 
 	public void setEndTime(long endTime) {
 		this.endTime = endTime;
+	}
+
+	public String getOwnerUID() {
+		return ownerUID;
+	}
+
+	public void setOwnerUID(String ownerUID) {
+		this.ownerUID = ownerUID;
 	}
 
 	

@@ -72,9 +72,8 @@ public class EntitiesConverter {
 		// -----------------------------------------------------------------------------------//
 
 		List<City> cities = new ArrayList<City>();
-
+		
 		for (CityDTO cityDTO : playerDTO.getCities()) {
-			System.out.println("city : " + cityDTO.getCityUID());
 			cities.add(convertCityDTO(cityDTO, true));
 		}
 
@@ -109,14 +108,15 @@ public class EntitiesConverter {
 
 	// -----------------------------------------------------------------------------------//
 
-	public static City convertCityDTO(CityDTO cityDTO, boolean requireFullData) {
-
+	public static City convertCityDTO(CityDTO cityDTO, boolean requireFullData) 
+	{
 		if (cityDTO == null)
 			return null;
 
 		City city = new City();
 
 		city.setCityUID(cityDTO.getCityUID());
+		city.setOwnerUID(cityDTO.getOwnerUID());
 		city.setIron(cityDTO.getIron());
 		city.setPeopleCreatingIron(cityDTO.getPeopleCreatingIron());
 		city.setName(cityDTO.getName());
@@ -171,8 +171,8 @@ public class EntitiesConverter {
 	 * requireLinkedGatherings est forcement false si requireMoves est false
 	 * 
 	 */
-	public static Unit convertUnitDTO(UnitDTO unitDTO, boolean requireMoves, boolean requireLinkedMoveFromGathering, boolean requireLinkedGatherings) {
-
+	public static Unit convertUnitDTO(UnitDTO unitDTO, boolean requireMoves, boolean requireLinkedMoveFromGathering, boolean requireLinkedGatherings) 
+	{
 		if (unitDTO == null)
 			return null;
 
@@ -284,7 +284,7 @@ public class EntitiesConverter {
 		List<Unit> units = new ArrayList<Unit>();
 
 		for (UnitDTO unitDTO : UniversalDAO.getInstance().getListDTO(unitUIDs, UnitDTO.class)) {
-			units.add(convertUnitDTO(unitDTO, false, false, false));
+			units.add(convertUnitDTO(unitDTO, true, false, false));
 		}
 
 		_case.setUnits(units);

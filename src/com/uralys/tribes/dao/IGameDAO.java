@@ -41,6 +41,8 @@ public interface IGameDAO {
 	public UnitDTO getUnit(String unitUID);
 	
 	public String createCity(City city, String playerUID);
+	public void setNewCityOwner(String cityUID, String newOwnerUID, long timeToChangeOwner);
+	public void checkCityOwner(String cityUID);
 	
 	public String createMove(Move move);
 	public void setTimeToForMove(String moveUID, long timeTo);

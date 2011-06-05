@@ -14,7 +14,7 @@ import com.uralys.tribes.dao.impl.UniversalDAO;
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 public class PlayerDTO {
-
+ 
 
     @PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
@@ -32,6 +32,7 @@ public class PlayerDTO {
 	@Persistent private int nbLands; 
 	@Persistent private boolean musicOn; 
 	@Persistent private List<String> cityUIDs = new ArrayList<String>();
+	@Persistent private List<String> cityBeingOwnedUIDs = new ArrayList<String>();
 	@Persistent private List<String> unitUIDs = new ArrayList<String>();
 	@Persistent private List<String> meetingsUIDs = new ArrayList<String>();
 
@@ -68,6 +69,12 @@ public class PlayerDTO {
 	}
 	public void setCityUIDs(List<String> cityUIDs) {
 		this.cityUIDs = cityUIDs;
+	}
+	public List<String> getCityBeingOwnedUIDs() {
+		return cityBeingOwnedUIDs;
+	}
+	public void setCityBeingOwnedUIDs(List<String> cityBeingOwnedUIDs) {
+		this.cityBeingOwnedUIDs = cityBeingOwnedUIDs;
 	}
 	public List<String> getMeetingsUIDs() {
 		return meetingsUIDs;

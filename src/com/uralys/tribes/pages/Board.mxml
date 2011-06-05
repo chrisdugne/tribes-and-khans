@@ -13,6 +13,7 @@
 	
 	<fx:Script>
 		<![CDATA[
+			import com.google.analytics.core.ga_internal;
 			import com.uralys.tribes.commons.Numbers;
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;
@@ -389,7 +390,12 @@
 			private function initBoard():void{
 				
 				if(selectedCity == null){
-					FlexGlobals.topLevelApplication.message('GAME OVER ON THIS SERVER', 7);					
+					FlexGlobals.topLevelApplication.message('GAME OVER ON THIS SERVER', 700);
+					Session.GAME_OVER = true;
+					
+					selectedCity = new City();
+					selectedCity.x = 100;
+					selectedCity.y = 100;
 				}
 				
 				//------------------------------------------------------------//

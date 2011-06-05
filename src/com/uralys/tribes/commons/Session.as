@@ -8,14 +8,14 @@ package com.uralys.tribes.commons
 	import mx.collections.ArrayCollection;
 	
 	
-	public class Session { 
-		
+	public class Session 
+	{ 
 		import com.uralys.tribes.entities.UralysProfile;
 		import com.uralys.tribes.entities.Player;
 
 		//=====================================================//
 		
-		[Bindable] public static var VERSION:String = "1.1.43";
+		[Bindable] public static var VERSION:String = "1.1.45";
 		[Bindable] public static var LOGGED_IN:Boolean = false; 
 		[Bindable] public static var CONNECTED_TO_FACEBOOK:Boolean = false;
 		
@@ -35,6 +35,7 @@ package com.uralys.tribes.commons
 		
 		[Bindable] public static var WAIT_FOR_SERVER:Boolean = false;
 		[Bindable] public static var WAIT_FOR_CONNECTION:Boolean = false; 
+		[Bindable] public static var GAME_OVER:Boolean = false;
 		
 		//=====================================================//
 		

@@ -567,7 +567,12 @@ package com.uralys.tribes.managers {
 		private function itemsLoaded(event:ResultEvent):void{
 			Session.ITEMS = event.result as ArrayCollection;
 			Numbers.loadItemData();
-			loginForceSteps();
+			
+			if(Session.GAME_OVER){
+				BoardDrawer.getInstance().refreshMap(100, 100);
+			}
+			else
+				loginForceSteps();
 		}
 		
 		

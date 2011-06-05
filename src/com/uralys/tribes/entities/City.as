@@ -11,6 +11,7 @@ package com.uralys.tribes.entities
 		//---------------------------------------------------------------------------//
 
 		protected var _cityUID:String;
+		protected var _ownerUID:String;
 		protected var _forgeUID:String;
 		protected var _name:String;
 		protected var _population:int;
@@ -45,6 +46,14 @@ package com.uralys.tribes.entities
 	
 		public function set forgeUID(o:String):void {
 			_forgeUID = o;
+		}
+
+		public function get ownerUID():String {
+			return _ownerUID;
+		}
+	
+		public function set ownerUID(o:String):void {
+			_ownerUID = o;
 		}
 	
 		public function get name():String {

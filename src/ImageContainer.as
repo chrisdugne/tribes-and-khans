@@ -134,6 +134,16 @@ public final class ImageContainer
 
 	//   ======================================================================//
 
+	[Bindable] public static var FRONTIER_N:Bitmap;
+	[Bindable] public static var FRONTIER_NE:Bitmap;
+	[Bindable] public static var FRONTIER_NO:Bitmap;
+	[Bindable] public static var FRONTIER_S:Bitmap;
+	[Bindable] public static var FRONTIER_SE:Bitmap;
+	[Bindable] public static var FRONTIER_SO:Bitmap;
+	[Bindable] public static var HIGHLIGHT_BLEU:Bitmap;
+	[Bindable] public static var HIGHLIGHT_BLANC:Bitmap;
+	[Bindable] public static var HIGHLIGHT_VERT:Bitmap;
+	[Bindable] public static var HIGHLIGHT_ROUGE:Bitmap;
 	[Bindable] public static var LOGO:Bitmap;
 	[Bindable] public static var GROUPE_PERSO:Bitmap;
 	[Bindable] public static var FERMIER:Bitmap;
@@ -146,10 +156,6 @@ public final class ImageContainer
 	[Bindable] public static var MAP_BORDER_BOTTOM:Bitmap;
 	[Bindable] public static var MAP_BORDER_LEFT:Bitmap;
 	[Bindable] public static var MAP_BORDER_RIGHT:Bitmap;
-	[Bindable] public static var HIGHLIGHT_BLEU:Bitmap;
-	[Bindable] public static var HIGHLIGHT_BLANC:Bitmap;
-	[Bindable] public static var HIGHLIGHT_VERT:Bitmap;
-	[Bindable] public static var HIGHLIGHT_ROUGE:Bitmap;
 	[Bindable] public static var MERCHANT_PLAYER:Bitmap;
 	[Bindable] public static var MERCHANT_ALLY:Bitmap;
 	[Bindable] public static var MERCHANT_ENNEMY:Bitmap;
@@ -157,12 +163,6 @@ public final class ImageContainer
 	[Bindable] public static var ARMY_ALLY:Bitmap;
 	[Bindable] public static var ARMY_ENNEMY:Bitmap;
 	[Bindable] public static var EDIT:Bitmap;
-	[Bindable] public static var FRONTIER_N:Bitmap;
-	[Bindable] public static var FRONTIER_NE:Bitmap;
-	[Bindable] public static var FRONTIER_NO:Bitmap;
-	[Bindable] public static var FRONTIER_S:Bitmap;
-	[Bindable] public static var FRONTIER_SE:Bitmap;
-	[Bindable] public static var FRONTIER_SO:Bitmap;
 
 	//   ======================================================================//
 
@@ -178,7 +178,18 @@ public final class ImageContainer
 	private static var currentImage:int = 0;
 	
 	public static var images:ArrayCollection = new ArrayCollection(
-		["webresources/images/logo.png",
+		[
+		 "webresources/images/map/frontier_n.png",
+		 "webresources/images/map/frontier_ne.png",
+		 "webresources/images/map/frontier_no.png",
+		 "webresources/images/map/frontier_s.png",
+		 "webresources/images/map/frontier_se.png",
+		 "webresources/images/map/frontier_so.png",
+		 "webresources/images/map/highlight_bleu.png",
+		 "webresources/images/map/highlight_blanc.png",
+		 "webresources/images/map/highlight_vert.png",
+		 "webresources/images/map/highlight_rouge.png",
+		 "webresources/images/logo.png",
 		 "webresources/images/persos/persos.png",
 		 "webresources/images/persos/fermier.png",
 		 "webresources/images/persos/marchand.png",
@@ -190,23 +201,13 @@ public final class ImageContainer
 		 "webresources/images/map/border-bottom.png",
 		 "webresources/images/map/border-left.png",
 		 "webresources/images/map/border-right.png",
-		 "webresources/images/map/highlight_bleu.png",
-		 "webresources/images/map/highlight_blanc.png",
-		 "webresources/images/map/highlight_vert.png",
-		 "webresources/images/map/highlight_rouge.png",
 		 "webresources/images/persos/marchand_vert.png",
 		 "webresources/images/persos/marchand_bleu.png",
 		 "webresources/images/persos/marchand_rouge.png",
 		 "webresources/images/persos/guerrier_vert.png",
 		 "webresources/images/persos/guerrier_bleu.png",
 		 "webresources/images/persos/guerrier_rouge.png",
-		 "webresources/images/edit.png",
-		 "webresources/images/map/frontier_n.png",
-		 "webresources/images/map/frontier_ne.png",
-		 "webresources/images/map/frontier_no.png",
-		 "webresources/images/map/frontier_s.png",
-		 "webresources/images/map/frontier_se.png",
-		 "webresources/images/map/frontier_so.png"
+		 "webresources/images/edit.png"
 		 ])
 	
 	public static function loadImages():void{
@@ -224,91 +225,91 @@ public final class ImageContainer
 	private static function onComplete(event:Event):void {
 		switch(currentImage){
 			case 0:
-				LOGO = event.currentTarget.content;
-				break;
-			case 1:
-				GROUPE_PERSO = event.currentTarget.content;
-				break;
-			case 2:
-				FERMIER = event.currentTarget.content;
-				break;
-			case 3:
-				MARCHAND = event.currentTarget.content;
-				break;
-			case 4:
-				MARCHANDE = event.currentTarget.content;
-				break;
-			case 5:
-				GUERRIER = event.currentTarget.content;
-				break;
-			case 6:
-				FORGERON = event.currentTarget.content;
-				break;
-			case 7:
-				MINI_LOGO = event.currentTarget.content;
-				break;
-			case 8:
-				MAP_BORDER_TOP = event.currentTarget.content;
-				break;
-			case 9:
-				MAP_BORDER_BOTTOM = event.currentTarget.content;
-				break;
-			case 10:
-				MAP_BORDER_LEFT = event.currentTarget.content;
-				break;
-			case 11:
-				MAP_BORDER_RIGHT = event.currentTarget.content;
-				break;
-			case 12:
-				HIGHLIGHT_BLEU = event.currentTarget.content;
-				break;
-			case 13:
-				HIGHLIGHT_BLANC = event.currentTarget.content;
-				break;
-			case 14:
-				HIGHLIGHT_VERT = event.currentTarget.content;
-				break;
-			case 15:
-				HIGHLIGHT_ROUGE = event.currentTarget.content;
-				break;
-			case 16:
-				MERCHANT_PLAYER = event.currentTarget.content;
-				break;
-			case 17:
-				MERCHANT_ALLY = event.currentTarget.content;
-				break;
-			case 18:
-				MERCHANT_ENNEMY = event.currentTarget.content;
-				break;
-			case 19:
-				ARMY_PLAYER = event.currentTarget.content;
-				break;
-			case 20:
-				ARMY_ALLY = event.currentTarget.content;
-				break;
-			case 21:
-				ARMY_ENNEMY = event.currentTarget.content;
-				break;
-			case 22:
-				EDIT = event.currentTarget.content;
-				break;
-			case 23:
 				FRONTIER_N = event.currentTarget.content;
 				break;
-			case 24:
+			case 1:
 				FRONTIER_NE = event.currentTarget.content;
 				break;
-			case 25:
+			case 2:
 				FRONTIER_NO = event.currentTarget.content;
 				break;
-			case 26:
+			case 3:
 				FRONTIER_S = event.currentTarget.content;
 				break;
-			case 27:
+			case 4:
 				FRONTIER_SE = event.currentTarget.content;
 				break;
-			case 28:
+			case 5:
 				FRONTIER_SO = event.currentTarget.content;
+				break;
+			case 6:
+				HIGHLIGHT_BLEU = event.currentTarget.content;
+				break;
+			case 7:
+				HIGHLIGHT_BLANC = event.currentTarget.content;
+				break;
+			case 8:
+				HIGHLIGHT_VERT = event.currentTarget.content;
+				break;
+			case 9:
+				HIGHLIGHT_ROUGE = event.currentTarget.content;
+				break;
+			case 10:
+				LOGO = event.currentTarget.content;
+				break;
+			case 11:
+				GROUPE_PERSO = event.currentTarget.content;
+				break;
+			case 12:
+				FERMIER = event.currentTarget.content;
+				break;
+			case 13:
+				MARCHAND = event.currentTarget.content;
+				break;
+			case 14:
+				MARCHANDE = event.currentTarget.content;
+				break;
+			case 15:
+				GUERRIER = event.currentTarget.content;
+				break;
+			case 16:
+				FORGERON = event.currentTarget.content;
+				break;
+			case 17:
+				MINI_LOGO = event.currentTarget.content;
+				break;
+			case 18:
+				MAP_BORDER_TOP = event.currentTarget.content;
+				break;
+			case 19:
+				MAP_BORDER_BOTTOM = event.currentTarget.content;
+				break;
+			case 20:
+				MAP_BORDER_LEFT = event.currentTarget.content;
+				break;
+			case 21:
+				MAP_BORDER_RIGHT = event.currentTarget.content;
+				break;
+			case 22:
+				MERCHANT_PLAYER = event.currentTarget.content;
+				break;
+			case 23:
+				MERCHANT_ALLY = event.currentTarget.content;
+				break;
+			case 24:
+				MERCHANT_ENNEMY = event.currentTarget.content;
+				break;
+			case 25:
+				ARMY_PLAYER = event.currentTarget.content;
+				break;
+			case 26:
+				ARMY_ALLY = event.currentTarget.content;
+				break;
+			case 27:
+				ARMY_ENNEMY = event.currentTarget.content;
+				break;
+			case 28:
+				EDIT = event.currentTarget.content;
 				break;
 		}
 		

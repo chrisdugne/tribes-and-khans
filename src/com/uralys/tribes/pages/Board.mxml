@@ -49,7 +49,6 @@
 			import mx.graphics.SolidColor;
 			import mx.graphics.SolidColorStroke;
 			import mx.managers.CursorManager;
-			import mx.managers.PopUpManager;
 			import mx.utils.ObjectUtil;
 			
 			import spark.components.supportClasses.ItemRenderer;
@@ -877,7 +876,9 @@
 		
 		<!-- =============================================================================================== -->
 		
+		<!--
 		<s:Button label="{Translations.CONFLICT.getItemAt(Session.LANGUAGE)}s" click="{FlexGlobals.topLevelApplication.showconflicts.play()}" right="10"/>
+		-->
 		<s:HGroup width="100%" horizontalAlign="center" paddingTop="5">
 			<s:Label text="X : {Session.COORDINATE_X}"/>
 			<mx:Spacer width="200"/>

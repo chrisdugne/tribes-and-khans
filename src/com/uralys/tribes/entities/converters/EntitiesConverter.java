@@ -188,7 +188,7 @@ public class EntitiesConverter {
 		unit.setWood(unitDTO.getWood());
 
 		unit.setType(unitDTO.getType());
-		unit.setPlayerUID(unitDTO.getPlayerUID());
+		unit.setPlayer(convertPlayerDTO(unitDTO.getPlayer(), false));
 
 		unit.setBeginTime(unitDTO.getBeginTime());
 		unit.setEndTime(unitDTO.getEndTime());

@@ -297,7 +297,7 @@ public class GameManager implements IGameManager {
 		if(debug)Utils.print("place unit " + unitArriving.getUnitUID());
 		
 		int currentUnitValue = unitArriving.getValue();
-		String allyUIDOfUnitArriving = getPlayer(unitArriving.getPlayerUID(), datacontainer).getAllyUID();
+		String allyUIDOfUnitArriving = getPlayer(unitArriving.getPlayer().getUralysUID(), datacontainer).getAllyUID();
 
 		if(debug){
 			Utils.print("initial value : " + currentUnitValue);
@@ -494,7 +494,7 @@ public class GameManager implements IGameManager {
 										
 									}
 									
-									ownerUIDOfTheNewUnit = unitArriving.getPlayerUID();
+									ownerUIDOfTheNewUnit = unitArriving.getPlayer().getUralysUID();
 									allyUIDOfTheNewUnit = allyUIDOfUnitArriving;
 									statusOfTheNewUnit = unitArriving.getStatus();
 									valueOfTheNewUnit = unitArriving.getValue() + unitRecorded.getValue();
@@ -539,8 +539,8 @@ public class GameManager implements IGameManager {
 									currentUnitValue = 0;
 									arrivalOnThisCaseMove.setValue(currentUnitValue);
 									
-									winnerUID = unitRecorded.getPlayerUID();
-									allyUIDOfTheNewUnit = getPlayer(unitRecorded.getPlayerUID(), datacontainer).getAllyUID();
+									winnerUID = unitRecorded.getPlayer().getUralysUID();
+									allyUIDOfTheNewUnit = getPlayer(unitRecorded.getPlayer().getUralysUID(), datacontainer).getAllyUID();
 									valueOfTheUnitRemaining = (int)(valueOfTheEnnemy*rateRemaining);
 									sizeOfTheNewUnit = (int)(unitRecorded.getSize()*rateRemaining);
 									
@@ -557,13 +557,13 @@ public class GameManager implements IGameManager {
 									if(debug)Utils.print(" valeur de l'unite restante : "+ ((int)(currentUnitValue*rateRemaining)));
 									currentUnitValue = (int)(currentUnitValue*rateRemaining);
 									
-									winnerUID = unitArriving.getPlayerUID();
+									winnerUID = unitArriving.getPlayer().getUralysUID();
 									allyUIDOfTheNewUnit = allyUIDOfUnitArriving;
 									valueOfTheUnitRemaining = currentUnitValue;
 									sizeOfTheNewUnit = (int)(unitArriving.getSize()*rateRemaining);
 									
 									if(attackACity)
-										gameDao.setNewCityOwner(_case.getCity().getCityUID(), unitArriving.getPlayerUID(), arrivalOnThisCaseMove.getTimeFrom());
+										gameDao.setNewCityOwner(_case.getCity().getCityUID(), unitArriving.getPlayer().getUralysUID(), arrivalOnThisCaseMove.getTimeFrom());
 								}
 								else{
 									// draw : no newArmy
@@ -662,7 +662,7 @@ public class GameManager implements IGameManager {
 						else{
 							if(debug)Utils.print("	pas de croisement avec ce passage");
 							if(attackACity)
-								gameDao.setNewCityOwner(_case.getCity().getCityUID(), unitArriving.getPlayerUID(), arrivalOnThisCaseMove.getTimeFrom());
+								gameDao.setNewCityOwner(_case.getCity().getCityUID(), unitArriving.getPlayer().getUralysUID(), arrivalOnThisCaseMove.getTimeFrom());
 						}
 						
 						if(foundAMeeting){
@@ -672,7 +672,7 @@ public class GameManager implements IGameManager {
 					}// fin du for sur les recordedMoves
 				} // end if at least 1 recordedMove exists 
 				else if(attackACity){
-					gameDao.setNewCityOwner(_case.getCity().getCityUID(), unitArriving.getPlayerUID(), arrivalOnThisCaseMove.getTimeFrom());
+					gameDao.setNewCityOwner(_case.getCity().getCityUID(), unitArriving.getPlayer().getUralysUID(), arrivalOnThisCaseMove.getTimeFrom());
 				}
 				
 			} // end if currentUnitValue == 0
@@ -876,7 +876,7 @@ public class GameManager implements IGameManager {
 	{
 		Unit newUnit = new Unit();
 		newUnit.setUnitUID(ownerUID+"_"+Utils.generatePassword(3)+"_"+timeFrom);
-		newUnit.setPlayerUID(ownerUID);
+		newUnit.getPlayer().setUralysUID(ownerUID);
 		newUnit.setBeginTime(timeFrom);
 		newUnit.setEndTime(-1);
 		newUnit.setStatus(status);

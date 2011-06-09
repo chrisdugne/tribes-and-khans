@@ -18,12 +18,18 @@ public class Unit {
 	public final static int MERCHANT = 2;
 	
 	//-----------------------------------------------------------------------------------//
-
+	
+	public Unit(){
+		player = new Player();
+	}
+	
+	//-----------------------------------------------------------------------------------//
+	
 	private String unitUID;
 	private int value;
 	private int status = FREE;
 	private int type;
-	private String playerUID;
+	private Player player;
 
 	private int size;
 	private int speed;
@@ -44,6 +50,14 @@ public class Unit {
 
 	//-----------------------------------------------------------------------------------//
 	
+	
+	public Player getPlayer() {
+		return player;
+	}
+	
+	public void setPlayer(Player player) {
+		this.player = player;
+	}
 	
 	public String getUnitUID() {
 		return unitUID;
@@ -83,14 +97,6 @@ public class Unit {
 
 	public void setType(int type) {
 		this.type = type;
-	}
-
-	public String getPlayerUID() {
-		return playerUID;
-	}
-
-	public void setPlayerUID(String playerUID) {
-		this.playerUID = playerUID;
 	}
 
 	public int getSize() {

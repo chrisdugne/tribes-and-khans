@@ -144,6 +144,12 @@ public class UnitDTO {
 
 	//-----------------------------------------------------------------------------------//
 
+	public PlayerDTO getPlayer() {
+		return (PlayerDTO) UniversalDAO.getInstance().getObjectDTO(playerUID, PlayerDTO.class);
+	}
+	
+	//-----------------------------------------------------------------------------------//
+
 	public List<EquipmentDTO> getEquipments() {
 		return UniversalDAO.getInstance().getListDTO(equipmentUIDs, EquipmentDTO.class);
 	}

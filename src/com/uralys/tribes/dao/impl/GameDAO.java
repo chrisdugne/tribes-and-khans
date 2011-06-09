@@ -442,7 +442,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 
 		unitDTO.setKey(KeyFactory.keyToString(key));
 		unitDTO.setUnitUID(unit.getUnitUID());
-		unitDTO.setPlayerUID(unit.getPlayerUID());
+		unitDTO.setPlayerUID(unit.getPlayer().getUralysUID());
 		unitDTO.setSize(unit.getSize());
 		unitDTO.setSpeed(unit.getSpeed());
 		unitDTO.setWheat(unit.getWheat());
@@ -904,12 +904,12 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		CaseDTO finalCase = null;
 		
 		// TODO : on peut optimiser ici et ne pas faire ˆ chaque fois les 6 getCases
-		if(unit.getPlayerUID().equals(getCase(x-1, y-1).getLandOwnerUID())
-		|| unit.getPlayerUID().equals(getCase(x-1, y+1).getLandOwnerUID())
-		|| unit.getPlayerUID().equals(getCase(x, y-2).getLandOwnerUID())
-		|| unit.getPlayerUID().equals(getCase(x, y+2).getLandOwnerUID())
-		|| unit.getPlayerUID().equals(getCase(x+1, y-1).getLandOwnerUID())
-		|| unit.getPlayerUID().equals(getCase(x+1, y+1).getLandOwnerUID()))
+		if(unit.getPlayer().getUralysUID().equals(getCase(x-1, y-1).getLandOwnerUID())
+		|| unit.getPlayer().getUralysUID().equals(getCase(x-1, y+1).getLandOwnerUID())
+		|| unit.getPlayer().getUralysUID().equals(getCase(x, y-2).getLandOwnerUID())
+		|| unit.getPlayer().getUralysUID().equals(getCase(x, y+2).getLandOwnerUID())
+		|| unit.getPlayer().getUralysUID().equals(getCase(x+1, y-1).getLandOwnerUID())
+		|| unit.getPlayer().getUralysUID().equals(getCase(x+1, y+1).getLandOwnerUID()))
 		{
 
 			PersistenceManager pm = PMF.getInstance().getPersistenceManager();
@@ -921,11 +921,11 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			}
 			
 			// le challenger possede deja cette contree
-			if(finalCase.getLandOwnerUID() != null && finalCase.getLandOwnerUID().equals(unit.getPlayerUID()))
+			if(finalCase.getLandOwnerUID() != null && finalCase.getLandOwnerUID().equals(unit.getPlayer().getUralysUID()))
 				return null;
 			
 			if(debug)Utils.print("finalCase : " + finalCase.getCaseUID());
-			finalCase.setChallengerUID(unit.getPlayerUID());
+			finalCase.setChallengerUID(unit.getPlayer().getUralysUID());
 			finalCase.setTimeFromChallenging(timeFromChallenging);
 			pm.close();
 		}

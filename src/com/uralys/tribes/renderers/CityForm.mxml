@@ -1064,7 +1064,7 @@
 					newUnit.size = 0; 
 					newUnit.speed = type == 1 ? Numbers.ARMY_BASE_SPEED : Numbers.MERCHANT_BASE_SPEED;
 					newUnit.type = type;
-					newUnit.playerUID = Session.player.playerUID;
+					newUnit.player = Session.player;
 					
 					newUnit.moves = new ArrayCollection();
 					var moveInCity:Move = new Move();

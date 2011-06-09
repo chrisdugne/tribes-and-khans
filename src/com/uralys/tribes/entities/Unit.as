@@ -40,7 +40,7 @@ package com.uralys.tribes.entities
 		
 		private var _status:int;
 		private var _currentCaseUID:String;
-		private var _playerUID:String;
+		private var _player:Player;
 		
 		protected var _unitUID:String;
 		protected var _size:int;
@@ -186,13 +186,13 @@ package com.uralys.tribes.entities
 			_status = o;
 		}
 		
-		public function get playerUID():String {
-			return _playerUID;
+		public function get player():Player {
+			return _player;
 		}
 		
-		public function set playerUID(o:String):void {
+		public function set player(o:Player):void {
 			isModified = true;
-			_playerUID = o;
+			_player = o;
 		}
 		
 		public function get beginTime():Number

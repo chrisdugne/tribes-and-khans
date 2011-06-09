@@ -261,7 +261,7 @@ package com.uralys.tribes.managers {
 			var now:Number = new Date().getTime();
 			
 			trace("prepareUnitForClientSide : " + unit.unitUID);
-			trace("unit.playerUID : " + unit.playerUID);
+			trace("unit.playerUID : " + unit.player.playerUID);
 			trace("unit.endTime : " + unit.endTime);
 			trace("now : " + now);
 			
@@ -662,7 +662,7 @@ package com.uralys.tribes.managers {
 					
 					var unitInPlayer:Unit = Session.player.getUnit(unitAltered.unitUID);
 					
-					if(unitInPlayer == null && unitAltered.playerUID == Session.player.playerUID && unitAltered.status != Unit.DESTROYED)
+					if(unitInPlayer == null && unitAltered.player.playerUID == Session.player.playerUID && unitAltered.status != Unit.DESTROYED)
 						Session.player.units.addItem(unitAltered);
 					else{
 						Session.player.refreshUnit(unitAltered);

@@ -64,6 +64,8 @@
 					mode="manual"
 					label="{Translations.REMAINING_TIME.getItemAt(Session.LANGUAGE)}    --:--" 
 					labelPlacement="top"/>
+	<!--
 	<mx:Button label="plop" y="9" click="nextStep()" visible="{Session.isLocal}"/>
-
+	-->
+	
 </s:Group>

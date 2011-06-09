@@ -3,8 +3,9 @@
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
 		 xmlns:mx="library://ns.adobe.com/flex/mx" 
 		 xmlns:renderers="com.uralys.tribes.renderers.*"
+		 xmlns:windows="com.uralys.tribes.windows.*" 
 		 width="100%" height="100%"
-		 creationComplete="init()" xmlns:windows="com.uralys.tribes.windows.*" >
+		 creationComplete="init()" >
 	
 	<fx:Declarations>
 		<s:State name="classic"/>
@@ -13,7 +14,6 @@
 	
 	<fx:Script>
 		<![CDATA[
-			import com.google.analytics.core.ga_internal;
 			import com.uralys.tribes.commons.Numbers;
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;
@@ -796,7 +796,7 @@
 				  horizontalAlign="center"
 				  paddingTop="5">
 			<s:HGroup>
-				<s:Label text="{Translations.CITY.getItemAt(Session.LANGUAGE)} : {selectedCity.name}"
+				<s:Label text="{Translations.CITY.getItemAt(Session.LANGUAGE)} : {Session.CURRENT_CASE_SELECTED.city.name} ({Session.CURRENT_CASE_SELECTED.city.population})"
 						  click="if(Session.player.playerUID == Session.CURRENT_CASE_SELECTED.landOwner.playerUID)showCityChangeName.play()"/>
 				<mx:Image source="{ImageContainer.getImage(ImageContainer.EDIT)}"
 					  click="showCityChangeName.play()"

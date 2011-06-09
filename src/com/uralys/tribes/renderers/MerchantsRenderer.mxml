@@ -20,7 +20,7 @@
 			
 			[Bindable] public var merchant:Unit;
 			[Bindable] private var colorPlayer:Number = 0x11ee11;
-			[Bindable] private var colorEnnemy:Number = 0xee11ee;
+			[Bindable] private var colorEnnemy:Number = 0xee1111;
 			
 		]]>
 	</fx:Script>

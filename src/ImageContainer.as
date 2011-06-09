@@ -210,7 +210,9 @@ public final class ImageContainer
 		 "webresources/images/edit.png"
 		 ])
 	
+	public static var IMAGES_LOADED:Boolean = false;
 	public static function loadImages():void{
+		IMAGES_LOADED = false;
 		loadNextImage();
 	}
 
@@ -222,7 +224,8 @@ public final class ImageContainer
 		
 	}
 	
-	private static function onComplete(event:Event):void {
+	private static function onComplete(event:Event):void 
+	{
 		switch(currentImage){
 			case 0:
 				FRONTIER_N = event.currentTarget.content;
@@ -316,6 +319,8 @@ public final class ImageContainer
 		currentImage++;
 		if(currentImage < 29)
 			loadNextImage();
+		else
+			IMAGES_LOADED = true;
 	}
 
 	

@@ -34,13 +34,12 @@
 				
 				Session.APPLICATION_WIDTH = FlexGlobals.topLevelApplication.width;
 				
-				initBlazeDS();
-				Pager.getInstance().window = window;
-				Pager.getInstance().goToPage(Login);
-				
 				ImageContainer.loadImages();
 				MusicPlayer.getInstance().initMusic();
 				
+				initBlazeDS();
+				Pager.getInstance().window = window;
+				Pager.getInstance().goToPage(Login);
 				
 				var sharedObject:SharedObject = SharedObject.getLocal(Names.SHARED_OBJECT_NAME);
 				Session.LANGUAGE = sharedObject.data.lastLanguage;

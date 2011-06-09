@@ -67,6 +67,12 @@ public class Translations{
 									["Aller sur le forum",
 									"Go to the forum",
 									"Go to the forum"]);
+
+	[Bindable]
+	public static var LOADING_IMAGES:ArrayCollection = new ArrayCollection(
+									["Téléchargement des images. Merci de patienter",
+									"Downloading images. Please wait.",
+									"Downloading images. Please wait."]);
 	
 	//-----------------------------------------------------------------------------------//
 

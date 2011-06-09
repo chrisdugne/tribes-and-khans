@@ -3,6 +3,7 @@ package com.uralys.tribes.core
 	import com.dncompute.graphics.GraphicsUtil;
 	import com.uralys.tribes.commons.Numbers;
 	import com.uralys.tribes.commons.Session;
+	import com.uralys.tribes.commons.Translations;
 	import com.uralys.tribes.entities.Case;
 	import com.uralys.tribes.entities.City;
 	import com.uralys.tribes.entities.Conflict;
@@ -20,7 +21,9 @@ package com.uralys.tribes.core
 	
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
+	import flash.events.TimerEvent;
 	import flash.geom.Point;
+	import flash.utils.Timer;
 	
 	import mx.collections.ArrayCollection;
 	import mx.collections.SortField;
@@ -94,8 +97,20 @@ package com.uralys.tribes.core
 		/**
 		 * Lorsque les cases sont chargees, on refresh tout les display
 		 */ 
-		public function refreshDisplay():void
+		private var timer:Timer = new Timer(1000,1);
+		public function refreshDisplay(event:TimerEvent = null):void
 		{
+			if(!ImageContainer.IMAGES_LOADED){
+				FlexGlobals.topLevelApplication.message(Translations.LOADING_IMAGES.getItemAt(Session.LANGUAGE));
+				timer.addEventListener(TimerEvent.TIMER_COMPLETE, refreshDisplay);
+				timer.start();
+				return;
+			}
+			else if(timer.running){
+				timer.removeEventListener(TimerEvent.TIMER_COMPLETE, refreshDisplay);
+				timer.stop();
+			}
+			
 			// draw city grounds
 			for(var j:int=0; j < Numbers.NB_VERTICAL_TILES_BY_LOADING; j++)
 			{

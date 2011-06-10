@@ -92,6 +92,18 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		}
 	}
 
+	//-----------------------------------------------------------------------//
+
+	public CityDTO createNewFirstCity(String playerUID)
+	{
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		ServerDataDTO serverData = pm.getObjectById(ServerDataDTO.class, "serverData");
+		
+		String cityUID = createCity(null, playerUID, pm, serverData.getNbPlayers());
+		CityDTO newCity = pm.getObjectById(CityDTO.class, cityUID);
+		pm.close();
+		return newCity;
+	}
 	
 	//-----------------------------------------------------------------------//
 

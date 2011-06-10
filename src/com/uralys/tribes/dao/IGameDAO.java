@@ -7,6 +7,7 @@ import com.uralys.tribes.entities.Move;
 import com.uralys.tribes.entities.Player;
 import com.uralys.tribes.entities.Unit;
 import com.uralys.tribes.entities.dto.CaseDTO;
+import com.uralys.tribes.entities.dto.CityDTO;
 import com.uralys.tribes.entities.dto.ConflictDTO;
 import com.uralys.tribes.entities.dto.GatheringDTO;
 import com.uralys.tribes.entities.dto.ItemDTO;
@@ -41,6 +42,7 @@ public interface IGameDAO {
 	public UnitDTO getUnit(String unitUID);
 	
 	public String createCity(City city, String playerUID);
+	public CityDTO createNewFirstCity(String playerUID);
 	public void setNewCityOwner(String cityUID, String newOwnerUID, long timeToChangeOwner);
 	public void checkCityOwner(String cityUID);
 	

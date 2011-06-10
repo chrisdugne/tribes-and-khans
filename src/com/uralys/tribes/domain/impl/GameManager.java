@@ -136,7 +136,13 @@ public class GameManager implements IGameManager {
 				checkCityOwners(cityUIDs);
 			}
 			
-			return EntitiesConverter.convertPlayerDTO(playerDTO, true);
+			Player player = EntitiesConverter.convertPlayerDTO(playerDTO, true);
+
+			if(player.getCities().size() == 0){
+				player.getCities().add(EntitiesConverter.convertCityDTO(gameDao.createNewFirstCity(uralysUID), true));
+			}
+			
+			return player;
 		}
 	}
 

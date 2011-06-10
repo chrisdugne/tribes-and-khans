@@ -12,7 +12,7 @@
 				import com.uralys.tribes.commons.Translations;
 				import com.uralys.tribes.core.BoardDrawer;
 				import com.uralys.tribes.entities.City;
-				import com.uralys.tribes.entities.Equipment;
+				import com.uralys.tribes.entities.Equipment; 
 				import com.uralys.tribes.entities.Item;
 				import com.uralys.tribes.entities.Move;
 				import com.uralys.tribes.entities.Smith;

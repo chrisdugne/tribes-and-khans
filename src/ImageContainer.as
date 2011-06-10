@@ -163,6 +163,7 @@ public final class ImageContainer
 	[Bindable] public static var ARMY_ALLY:Bitmap;
 	[Bindable] public static var ARMY_ENNEMY:Bitmap;
 	[Bindable] public static var EDIT:Bitmap;
+	[Bindable] public static var VILLE:Bitmap;
 
 	//   ======================================================================//
 
@@ -207,7 +208,8 @@ public final class ImageContainer
 		 "webresources/images/persos/guerrier_vert.png",
 		 "webresources/images/persos/guerrier_bleu.png",
 		 "webresources/images/persos/guerrier_rouge.png",
-		 "webresources/images/edit.png"
+		 "webresources/images/edit.png",
+		 "webresources/images/map/ville-moyenne.png"
 		 ])
 	
 	public static var IMAGES_LOADED:Boolean = false;
@@ -314,10 +316,13 @@ public final class ImageContainer
 			case 28:
 				EDIT = event.currentTarget.content;
 				break;
+			case 29:
+				VILLE = event.currentTarget.content;
+				break;
 		}
 		
 		currentImage++;
-		if(currentImage < 29)
+		if(currentImage < 30)
 			loadNextImage();
 		else
 			IMAGES_LOADED = true;

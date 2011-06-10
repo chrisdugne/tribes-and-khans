@@ -293,8 +293,21 @@ package com.uralys.tribes.core
 			Session.board.pawnLayer.addElement(_case.pawn);
 		}
 		
-		
 		public function drawCity(city:City):void
+		{
+			var image:Image = new Image();
+			image.source = ImageContainer.getImage(ImageContainer.VILLE);
+			
+			var cityPx:int = city.x * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4);
+			var cityPy:int = city.y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2);
+			
+			image.x = cityPx;
+			image.y = cityPy;
+			
+			Session.board.pawnLayer.addElement(image);
+		}
+		
+		public function drawCity2(city:City):void
 		{
 			var angle:int = 0;
 			var distanceAuCentre:int = 0;

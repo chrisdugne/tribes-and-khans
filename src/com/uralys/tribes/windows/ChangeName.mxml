@@ -30,6 +30,7 @@
 					else if(type == 2) // change city name
 					{
 						Session.board.selectedCity.name = nameInput.text;
+						Session.CURRENT_CASE_SELECTED.city.name = nameInput.text;
 						Session.board.hideCityChangeName.play();
 						GameManager.getInstance().changeCityName(nameInput.text);
 					}	

@@ -78,10 +78,15 @@ package com.uralys.tribes.preload
 			bgSprite.height=this.stage.stageHeight;  
 			this.addChild(pBar);  
 		}  
+		
 		public function initCompleteEventHandler(event: Event):void{
-			trace("initCompleteEventHandler");
 			progress=100*multiplier;
-			timer.stop();  
+			timer.stop();
+			
+			while(currlen<progress){
+				drawProgress(null);
+			}
+			
 			dispatchEvent( new Event( Event.COMPLETE ) );	
 		}
 		
@@ -92,7 +97,6 @@ package com.uralys.tribes.preload
 			if(progress!=(100*multiplier)){
 				progress=multiplier*Number(event.target.loaderInfo.bytesLoaded/event.target.loaderInfo.bytesTotal*100);
 			}
-			trace("progress : " + progress);
 		}  
 		private var  currlen:Number=0;  
 		public function drawProgress(event: Event):void{  

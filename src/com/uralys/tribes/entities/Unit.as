@@ -16,6 +16,7 @@ package com.uralys.tribes.entities
 		public static const INTERCEPTED:int = 1;
 		public static const FREE:int = 2;
 		public static const DESTROYED:int = 3;
+		public static const FUTURE:int = 4;
 		
 		//==========================================================================//
 		

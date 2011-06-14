@@ -362,7 +362,6 @@ package com.uralys.tribes.core
 		
 		private function drawLandAndBounds(_case:Case):void
 		{
-			trace("drawLandAndBounds " + _case.caseUID);
 			if(_case.landOwner != null)
 			{
 				var image:Image = new Image();

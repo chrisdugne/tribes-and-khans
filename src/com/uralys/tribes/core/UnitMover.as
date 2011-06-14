@@ -2,7 +2,9 @@ package com.uralys.tribes.core
 {
 	import com.uralys.tribes.commons.Numbers;
 	import com.uralys.tribes.commons.Session;
+	import com.uralys.tribes.commons.Translations;
 	import com.uralys.tribes.entities.Case;
+	import com.uralys.tribes.entities.City;
 	import com.uralys.tribes.entities.Move;
 	import com.uralys.tribes.entities.Unit;
 	import com.uralys.tribes.managers.GameManager;
@@ -186,27 +188,20 @@ package com.uralys.tribes.core
 		}
 
 		public function refreshMoves(unit:Unit){
-			trace("refreshMoves");
 			var nbIndexesToRemove:int = -1;
 			var now:Number = new Date().getTime();
 			
-			trace(now);
-
 			for each(var move:Move in unit.moves){
-				trace(move.timeTo);
 				if(now > move.timeTo && move.timeTo != -1)
 					nbIndexesToRemove++;
 				else
 					break;
 			}
 			
-			trace(nbIndexesToRemove);
-			
 			for(var i:int = 0; i <= nbIndexesToRemove; i++)
 				unit.moves.removeItemAt(0);
 			
 			unit.currentCaseUID = (unit.moves.getItemAt(0) as Move).caseUID;
-			trace(unit.currentCaseUID);
 		}
 
 		public function resetPendingMoves(unit:Unit)
@@ -217,10 +212,28 @@ package com.uralys.tribes.core
 			// manipulation d'une unite : initialisation du deplacement
 			var lastMove:com.uralys.tribes.entities.Move = unit.moves.getItemAt(unit.moves.length-1) as com.uralys.tribes.entities.Move;
 			movesPending.addItem(lastMove);
+			
+			lastMoveIsInCity = false;
+			
+			try{
+				// si l'unite VA dans une ville et que la finalCase n'est PAS cette ville (sinon nouveau depart depuis la ville)
+				if(unit.finalCaseUIDExpected != (Session.map[lastMove.getX()][lastMove.getY()] as Case).caseUID
+				&& (Session.map[lastMove.getX()][lastMove.getY()] as Case).city != null)
+				{
+					lastMoveIsInCity = true;
+				}
+			}
+			catch(e:Error){}
 		}
 
+		private var lastMoveIsInCity:Boolean = false;
 		public function recordMove(unit:Unit):Boolean
 		{
+			if(lastMoveIsInCity){
+				FlexGlobals.topLevelApplication.message(Translations.CITY_STOP.getItemAt(Session.LANGUAGE));
+				return true;
+			}
+			
 			var lastMove:com.uralys.tribes.entities.Move = movesPending.getItemAt(movesPending.length-1) as com.uralys.tribes.entities.Move;
 			var lastMoveX:int = Utils.getXFromCaseUID(lastMove.caseUID);
 			var lastMoveY:int = Utils.getYFromCaseUID(lastMove.caseUID);
@@ -228,8 +241,8 @@ package com.uralys.tribes.core
 			var distance:int = Math.abs(lastMoveX - Session.COORDINATE_X) + Math.abs(lastMoveY - Session.COORDINATE_Y);
 			
 			if(distance > 2 || lastMoveY == Session.COORDINATE_Y){
-				FlexGlobals.topLevelApplication.message("distance trop longue, choisir une case à cote du dernier deplacement");
-				return false;
+				FlexGlobals.topLevelApplication.message(Translations.TOO_LONG.getItemAt(Session.LANGUAGE));
+				return true;
 			}
 			else if(Math.abs(lastMoveX - Session.COORDINATE_X) + Math.abs(lastMoveY - Session.COORDINATE_Y) > 0){
 				
@@ -241,6 +254,14 @@ package com.uralys.tribes.core
 				
 				// refresh highlight images et rajoute les listeners sur les moves actifs
 				BoardDrawer.getInstance().addMoveImages(newMove, lastMove.getX(), lastMove.getY(), false);
+				
+				try{
+					if((Session.map[Session.COORDINATE_X][Session.COORDINATE_Y] as Case).city != null){
+						lastMoveIsInCity = true;
+					}
+				}
+				catch(e:Error){}
+				
 				return true;
 			}
 			

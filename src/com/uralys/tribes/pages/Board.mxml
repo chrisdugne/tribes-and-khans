@@ -127,8 +127,8 @@
 			
 			// click sur une armee dans la barre laterale
 			// ou dans la liste sous 'enter city'
-			public function onUnitClick():void{
-				
+			public function onUnitClick():void
+			{
 				if(selectedUnit.status == Unit.TO_BE_CREATED)
 					return;
 
@@ -181,11 +181,32 @@
 				GameManager.getInstance().refreshCity(selectedCity, false);
 				
 				var unitUIDsToDelete:ArrayCollection = new ArrayCollection();
+				var uidsToRemove:ArrayCollection = new ArrayCollection();
 				for each(var unit:Unit in Session.player.units)
 				{
 					var unitIsPrepared:Boolean = GameManager.getInstance().prepareUnitForClientSide(unit);
-					if(!unitIsPrepared)
-						unitUIDsToDelete.addItem(unit.unitUID);
+					
+					if(!unitIsPrepared){
+						if(unit.status == Unit.DESTROYED)
+							unitUIDsToDelete.addItem(unit.unitUID);
+
+						uidsToRemove.addItem(unit.unitUID);
+					}
+				}
+				
+				for each(var unitToRemoveUID:String in uidsToRemove){
+					trace("removing : " + unitToRemoveUID);
+					var indexToRremove:int = -1;
+					
+					for each(var unit:Unit in Session.player.units){
+						if(unit.unitUID == unitToRemoveUID){
+							indexToRremove = Session.player.units.getItemIndex(unit);
+							break;
+						}
+					}
+					
+					if(indexToRremove >= 0)
+						Session.player.units.removeItemAt(indexToRremove);
 				}
 				
 				GameManager.getInstance().deleteUnits(unitUIDsToDelete);

@@ -81,6 +81,16 @@ public class Translations{
 									["Edition du chemin de l'unité",
 									"Unit way edition",
 									"Unit way edition"]);
+	[Bindable]
+	public static var TOO_LONG:ArrayCollection = new ArrayCollection(
+									["Distance trop longue, choisir une case à cote du dernier deplacement",
+									"Too long way, choose a cell next to your last move",
+									"Too long way, choose a cell next to your last move"]);
+	[Bindable]
+	public static var CITY_STOP:ArrayCollection = new ArrayCollection(
+									["Arret dans une ville",
+									"Stop by a city",
+									"Stop by a city"]);
 
 	[Bindable]
 	public static var PROGRESS_BARS:ArrayCollection = new ArrayCollection(

@@ -270,6 +270,12 @@ package com.uralys.tribes.managers {
 				unit.status = Unit.DESTROYED;
 				return false;
 			}
+
+			if(unit.beginTime > now)
+			{
+				unit.status = Unit.FUTURE;
+				return false;
+			}
 			
 			if(unit.type == 1)
 			{
@@ -564,7 +570,8 @@ package com.uralys.tribes.managers {
 		//  RESULTS FROM SERVER	
 		
 		
-		private function itemsLoaded(event:ResultEvent):void{
+		private function itemsLoaded(event:ResultEvent):void
+		{
 			Session.ITEMS = event.result as ArrayCollection;
 			Numbers.loadItemData();
 			

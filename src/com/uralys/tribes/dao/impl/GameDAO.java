@@ -49,6 +49,14 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	public String createPlayer(String uralysUID, String email)
 	{
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		
+		try{
+			PlayerDTO playerDTOinDatastore = pm.getObjectById(PlayerDTO.class, uralysUID);
+			if(playerDTOinDatastore != null)
+				return uralysUID;
+		}
+		catch (Exception e) {}
+		
 		ServerDataDTO serverData = pm.getObjectById(ServerDataDTO.class, "serverData");
 		serverData.setNbPlayers(serverData.getNbPlayers()+1);
 
@@ -409,12 +417,21 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			cityDTO.setIron(city.getIron());
 			cityDTO.setGold(city.getGold());
 			
-			cityDTO.setPopulation(city.getPopulation());
+			// securite si il y a eu un pb 
+			int population = city.getPopulation();
+			if(population < 0)
+				population = 0;
+			else if(population > 12000)
+				population = 12000;
+			
+			cityDTO.setPopulation(population);
+			cityDTO.setPeopleCreatingWheat(city.getPeopleCreatingWheat() < 0 ? 0 : city.getPeopleCreatingWheat());
 		}
 
-		cityDTO.setPeopleCreatingWheat(city.getPeopleCreatingWheat());
-		cityDTO.setPeopleCreatingWood(city.getPeopleCreatingWood());
-		cityDTO.setPeopleCreatingIron(city.getPeopleCreatingIron());
+		// securite si il y a eu un pb et data < 0
+		cityDTO.setPeopleCreatingWheat(city.getPeopleCreatingWheat() < 0 ? 0 : city.getPeopleCreatingWheat());
+		cityDTO.setPeopleCreatingWood(city.getPeopleCreatingWood() < 0 ? 0 : city.getPeopleCreatingWood());
+		cityDTO.setPeopleCreatingIron(city.getPeopleCreatingIron() < 0 ? 0 : city.getPeopleCreatingIron());
 		
 		
 		pm.close();
@@ -902,6 +919,13 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		
 		_case.setChallengerUID(null);
 		_case.setTimeFromChallenging(-1);
+		
+		CityDTO city = _case.getCity();
+		if(city != null){
+			CityDTO _city = pm.getObjectById(CityDTO.class, city.getCityUID());
+			_city.setNextOwnerUID(null);
+			_city.setTimeToChangeOwner(-1l);
+		}
 		
 		pm.close();
 	}

@@ -35,7 +35,7 @@ public class GameService implements IGameService {
 		try {
 			return gameManager.createPlayer(uralysUID, email);
 		} catch (Exception e) {
-			e.printStackTrace();
+			e.printStackTrace(System.out);
 			return null;
 		}
 	}
@@ -44,7 +44,7 @@ public class GameService implements IGameService {
 		try {
 			return gameManager.getPlayer(uralysUID);
 		} catch (Exception e) {
-			e.printStackTrace();
+			e.printStackTrace(System.out);
 			return null;
 		}
 	}
@@ -53,7 +53,7 @@ public class GameService implements IGameService {
 		try {
 			gameManager.savePlayer(player);
 		} catch (Exception e) {
-			e.printStackTrace();
+			e.printStackTrace(System.out);
 		}
 	}
 	
@@ -61,7 +61,7 @@ public class GameService implements IGameService {
 		try {
 			gameManager.saveCity(city);
 		} catch (Exception e) {
-			e.printStackTrace();
+			e.printStackTrace(System.out);
 		}
 	}
 
@@ -74,7 +74,7 @@ public class GameService implements IGameService {
 			container.addCaseAltered(gameManager.getCase(city.getX(), city.getY()));
 			return container;
 		} catch (Exception e) {
-			e.printStackTrace();
+			e.printStackTrace(System.out);
 			return null;
 		}
 	}

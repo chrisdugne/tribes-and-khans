@@ -55,7 +55,7 @@ public class EntitiesConverter {
 
 	public static Player convertPlayerDTO(PlayerDTO playerDTO, boolean requireFullData) {
 
-		if (playerDTO == null)
+		if(playerDTO == null)
 			return null;
 
 		Player player = new Player();
@@ -219,22 +219,39 @@ public class EntitiesConverter {
 			
 			if(requireLinkedMoveFromGathering && unit.getGatheringUIDExpected() != null)
 			{
-				GatheringDTO gathering = (GatheringDTO) UniversalDAO.getInstance().getObjectDTO(unit.getGatheringUIDExpected(), GatheringDTO.class);
-				UnitDTO newUnit = (UnitDTO) UniversalDAO.getInstance().getObjectDTO(gathering.getNewUnitUID(), UnitDTO.class);
-				Move moveToAdd = convertMoveDTO(newUnit.getMoves().get(0), requireLinkedGatherings);
+				GatheringDTO gathering = null;
 				
-				int indexOfTheMoveToAdd = 0;
-				for(Move moveRecorded : moves){
-					indexOfTheMoveToAdd++;
-					if(moveRecorded.getTimeTo() == moveToAdd.getTimeFrom()){
-						break;
-					}
+				try{
+					gathering = (GatheringDTO) UniversalDAO.getInstance().getObjectDTO(unit.getGatheringUIDExpected(), GatheringDTO.class);
+				}
+				catch (Exception e) {
+					// ce cas semble survenir pour certaines unites endTime<now qui ont ete en conflit
+					// elles ont un getGatheringUIDExpected, mais le gathering a ŽtŽ supprimŽ ?
+					// bref comme elles sont perimes de toute facon, on n'a pas besoin du 'moveToAdd' (qui n'existe pas de toute maniere)
 				}
 				
-				if(indexOfTheMoveToAdd < moves.size())
-					moveToAdd.setTimeTo(moves.get(indexOfTheMoveToAdd).getTimeFrom());
+				if(gathering != null)
+				{
+					UnitDTO newUnit = (UnitDTO) UniversalDAO.getInstance().getObjectDTO(gathering.getNewUnitUID(), UnitDTO.class);
 					
-				moves.add(indexOfTheMoveToAdd, moveToAdd);
+					if(newUnit != null){
+						Move moveToAdd = convertMoveDTO(newUnit.getMoves().get(0), requireLinkedGatherings);
+						
+						int indexOfTheMoveToAdd = 0;
+						for(Move moveRecorded : moves){
+							indexOfTheMoveToAdd++;
+							if(moveRecorded.getTimeTo() == moveToAdd.getTimeFrom()){
+								break;
+							}
+						}
+						
+						if(indexOfTheMoveToAdd < moves.size())
+							moveToAdd.setTimeTo(moves.get(indexOfTheMoveToAdd).getTimeFrom());
+						
+						moves.add(indexOfTheMoveToAdd, moveToAdd);					
+					}
+					//else : pas de newUnit pour ce gathering => il y a eu un conflit qui se termine en DRAW : autodestruction des 2 armees
+				}
 			}
 
 			unit.setMoves(moves);

@@ -942,17 +942,21 @@ public class GameManager implements IGameManager {
 			updateUnit(unitToReplace, null, false);
 			
 			Unit newUnit = getUnit(gatheringExpected.getNewUnitUID(), datacontainer);
-			newUnit.setEndTime(1);
-			updateUnit(newUnit, null, false);
+			if(newUnit != null){
+				newUnit.setEndTime(1);
+				updateUnit(newUnit, null, false);
+				
+				// on supprime tous les moves (+ gathering, + case.recordedMove, + unit.move) de cette newUnit
+				gameDao.deleteMoves(newUnit.getUnitUID());
+			}
 			
-			// on supprime tous les moves (+ gathering, + case.recordedMove, + unit.move) de cette newUnit
-			gameDao.deleteMoves(newUnit.getUnitUID());
 			
 			if(debug)Utils.print("unitToReplace : " + unitToReplace.getUnitUID());
 			unitsToReplace.add(unitToReplace);
 		}
 		
 		// on degage le challenger(cette unité) de la case finale calculée precedemment pour cette unité
+		// on supprime la prise de la ville s'il y en avait une d'enregistrée
 		gameDao.resetChallenger(unit.getFinalCaseUIDExpected());
 
 		// on supprime tous les moves (+ gathering, + case.recordedMove, + unit.move)
@@ -992,6 +996,9 @@ public class GameManager implements IGameManager {
 
 	private Unit getUnit(String unitUID, DataContainer datacontainer, boolean requireLinkedMoveFromGathering) 
 	{
+		if(unitUID == null)
+			return null;
+		
 		if(datacontainer != null){
 			if(datacontainer.unitsLoaded.get(unitUID) == null){
 				datacontainer.unitsLoaded.put(unitUID, EntitiesConverter.convertUnitDTO(gameDao.getUnit(unitUID), true, requireLinkedMoveFromGathering, true));

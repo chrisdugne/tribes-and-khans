@@ -7,12 +7,14 @@
 	
 		<fx:Script>
 			<![CDATA[
+				//----------------------------------------------------------//
+				
 				import com.uralys.tribes.commons.Numbers;
 				import com.uralys.tribes.commons.Session;
 				import com.uralys.tribes.commons.Translations;
 				import com.uralys.tribes.core.BoardDrawer;
 				import com.uralys.tribes.entities.City;
-				import com.uralys.tribes.entities.Equipment; 
+				import com.uralys.tribes.entities.Equipment;
 				import com.uralys.tribes.entities.Item;
 				import com.uralys.tribes.entities.Move;
 				import com.uralys.tribes.entities.Smith;
@@ -35,71 +37,53 @@
 
 				//----------------------------------------------------------//
 
-				protected function wheatWorkersCheck(newNumber:int):void	{
-					
-					var peopleAdded:int = newNumber - city.peopleCreatingWheat;
+				protected function wheatWorkersCheck(event:Event):void	
+				{
+					var peopleAdded:int = wheatWorkersSlider.value - city.peopleCreatingWheat;
 					
 					if(city.unemployed < peopleAdded)
-						newNumber = city.peopleCreatingWheat + city.unemployed;
+						wheatWorkersSlider.value = city.peopleCreatingWheat + city.unemployed;
 					
-					city.peopleCreatingWheat = newNumber;
+					city.peopleCreatingWheat = wheatWorkersSlider.value;
 					
 					city.wheatEarned = Numbers.WHEAT_EARNING_COEFF * city.peopleCreatingWheat;
-					wheatWorkersStepper.data = city.peopleCreatingWheat;
 				}
 
-				protected function  addAllUnemployedToWheat():void	{
-					city.peopleCreatingWheat += city.unemployed;
-					city.wheatEarned = Numbers.WHEAT_EARNING_COEFF * city.peopleCreatingWheat;
-				}
-				
-				
-				protected function pickUpPeopleInPeopleCreatingWheat(peopleToPickUp:int):void	{
+				protected function pickUpPeopleInPeopleCreatingWheat(peopleToPickUp:int):void{
 					var peopleRequired:int = peopleToPickUp - city.unemployed;
-					wheatWorkersCheck(city.peopleCreatingWheat - peopleRequired);
+					wheatWorkersSlider.value = city.peopleCreatingWheat - peopleRequired;
+					wheatWorkersCheck(null);
 				}
 				
 
 				//-------------------------------------------------------------------------//
 
-				protected function woodWorkersCheck(newNumber:int):void	{
+				protected function woodWorkersCheck(event:Event):void	{
 					
-					var peopleAdded:int = newNumber - city.peopleCreatingWood;
+					var peopleAdded:int = woodWorkersSlider.value - city.peopleCreatingWood;
 					
 					if(city.unemployed < peopleAdded)
-						newNumber = city.peopleCreatingWood + city.unemployed;
+						woodWorkersSlider.value = city.peopleCreatingWood + city.unemployed;
 					
-					city.peopleCreatingWood = newNumber;
+					city.peopleCreatingWood = woodWorkersSlider.value;
 					
-					city.woodEarned = Numbers.WOOD_EARNING_COEFF * city.peopleCreatingWood;
-					woodWorkersStepper.data = city.peopleCreatingWood;
-				}
-				
-				protected function  addAllUnemployedToWood():void	{
-					city.peopleCreatingWood += city.unemployed;
 					city.woodEarned = Numbers.WOOD_EARNING_COEFF * city.peopleCreatingWood;
 				}
 				
 				//-------------------------------------------------------------------------//
 				
-				protected function ironWorkersCheck(newNumber:int):void	{
+				protected function ironWorkersCheck(event:Event):void	{
 				
-					var peopleAdded:int = newNumber - city.peopleCreatingIron;
+					var peopleAdded:int = ironWorkersSlider.value - city.peopleCreatingIron;
 					
 					if(city.unemployed < peopleAdded)
-						newNumber = city.peopleCreatingIron + city.unemployed;
+						ironWorkersSlider.value = city.peopleCreatingIron + city.unemployed;
 					
-					city.peopleCreatingIron = newNumber;
+					city.peopleCreatingIron = ironWorkersSlider.value;
 					
 					city.ironEarned = Numbers.IRON_EARNING_COEFF * city.peopleCreatingIron;
-					ironWorkersStepper.data = city.peopleCreatingIron;
 				}
 
-				protected function  addAllUnemployedToIron():void	{
-					city.peopleCreatingIron += city.unemployed;
-					city.ironEarned = Numbers.IRON_EARNING_COEFF * city.peopleCreatingIron;
-				}
-				
 
 				//-------------------------------------------------------------------------//
 				// Market - Achat
@@ -1366,12 +1350,16 @@
 								<mx:GridItem horizontalAlign="center">
 									<mx:Image toolTip="{Translations.WHEAT.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WHEAT}"/>
 								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
-									<renderers:SpecialNumStepper id="wheatWorkersStepper"
-																 data="{city.peopleCreatingWheat}"
-																 step="{1/Numbers.WHEAT_EARNING_COEFF + 1}"
-																 check="wheatWorkersCheck"
-																 wantMax="addAllUnemployedToWheat"/>
+								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+									<s:HGroup verticalAlign="middle">
+										<s:Label text="{city.peopleCreatingWheat}" styleName="numberLabel"/>
+										<s:HSlider id="wheatWorkersSlider"
+													liveDragging="true" 
+													change="wheatWorkersCheck(event)"
+													value="{city.peopleCreatingWheat}"
+													maximum="{city.population}"
+													snapInterval="1"/>
+									</s:HGroup>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 									<s:Label text="+ {city.wheatEarned}" color="{Numbers.GREEN}"/>
@@ -1382,16 +1370,20 @@
 							</mx:GridRow>
 							<mx:GridRow >
 								<mx:GridItem horizontalAlign="center">
-									<mx:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}" click="addAllUnemployedToWood()"/>
-								</mx:GridItem>
-								<mx:GridItem>
-									<renderers:SpecialNumStepper id="woodWorkersStepper"
-																 data="{city.peopleCreatingWood}"
-																 step="{1/Numbers.WOOD_EARNING_COEFF + 1}"
-																 check="woodWorkersCheck"
-																 wantMax="addAllUnemployedToWood"/>
+									<mx:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+									<s:HGroup verticalAlign="middle">
+										<s:Label text="{city.peopleCreatingWood}" styleName="numberLabel"/>
+										<s:HSlider id="woodWorkersSlider"
+												   liveDragging="true" 
+												   change="woodWorkersCheck(event)"
+												   value="{city.peopleCreatingWood}"
+												   maximum="{city.population}"
+												   snapInterval="1"/>
+									</s:HGroup>
+								</mx:GridItem>
+								<mx:GridItem horizontalAlign="center" verticalAlign="middle"> 
 									<s:Label text="+ {city.woodEarned}" color="{Numbers.GREEN}"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
@@ -1402,12 +1394,16 @@
 								<mx:GridItem horizontalAlign="center">
 									<mx:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}"/>
 								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
-									<renderers:SpecialNumStepper id="ironWorkersStepper"
-																 data="{city.peopleCreatingIron}"
-																 step="{1/Numbers.IRON_EARNING_COEFF + 1}"
-																 check="ironWorkersCheck"
-																 wantMax="addAllUnemployedToIron"/>
+								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+									<s:HGroup verticalAlign="middle">
+										<s:Label text="{city.peopleCreatingIron}" styleName="numberLabel"/>
+										<s:HSlider id="ironWorkersSlider"
+												   liveDragging="true" 
+												   change="ironWorkersCheck(event)"
+												   value="{city.peopleCreatingIron}"
+												   maximum="{city.population}"
+												   snapInterval="1"/>
+									</s:HGroup>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 									<s:Label text="+ {city.ironEarned}" color="{Numbers.GREEN}"/>

@@ -175,10 +175,10 @@
 				refreshBoard(Session.player.cities.getItemAt(0) as City);
 			}
 			
-			public function refreshBoard(city:City):void
+			public function refreshBoard(city:City = null):void
 			{
-				this.selectedCity = city;
-				GameManager.getInstance().refreshCity(selectedCity, false);
+				if(city != null)
+					this.selectedCity = city;
 				
 				var unitUIDsToDelete:ArrayCollection = new ArrayCollection();
 				var uidsToRemove:ArrayCollection = new ArrayCollection();
@@ -492,8 +492,9 @@
 						break;
 					}
 				}
-					
-				GameManager.getInstance().refreshCity(selectedCity, false);
+				
+				// on calcule si ce n'a pas été fait avant
+				GameManager.getInstance().calculateCityData(false, selectedCity, false);
 				
 				enterCityForm.includeInLayout = true;
 				enterCityForm.visible = true;				
@@ -561,7 +562,13 @@
 			}
 			
 			private function backToMain():void
-			{
+			{				
+				if(selectedCity.merchant != null)
+					GameManager.getInstance().validateMerchants(selectedCity);
+
+				if(selectedCity.army != null)
+					GameManager.getInstance().validateArmy(selectedCity);
+				
 				GameManager.getInstance().saveCity(selectedCity);
 				hideCity.play();
 				comeBack.play();

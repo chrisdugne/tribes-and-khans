@@ -102,6 +102,8 @@
 												 + city.bowWorkers
 												 + city.swordWorkers
 												 + city.armorWorkers
+												 + city.armyRaised
+												 - city.armyReleased
 												 , city.population);
 				}
 				
@@ -413,9 +415,9 @@
 
 				private function updateSmithsProgressBar():void	{
 					smithsProgressBar.setProgress(city.bowWorkers
-						+ city.swordWorkers
-						+ city.armorWorkers
-						, city.availableAsSmith);
+												+ city.swordWorkers
+												+ city.armorWorkers
+												, city.availableAsSmith);
 				}
 				
 				//-------------------------------------------------------------------------//
@@ -445,10 +447,10 @@
 				// merchants
 
 				
-				protected function wheatMerchantCheck(newNumber:int):void{
-					
+				protected function wheatMerchantCheck(event:Event):void
+				{
 					var previousNbWheat:int = city.merchant.wheat;
-					var newNbWheat:int = newNumber;
+					var newNbWheat:int = wheatMerchantSlider.value;
 					
 					if(newNbWheat > previousNbWheat){
 						// on ajoute du ble a la caravane
@@ -469,17 +471,12 @@
 					}
 					
 					city.merchant.wheat = newNbWheat;
-					wheatMerchantStepper.data = city.merchant.wheat;
-				}
-				
-				protected function addAllWheatToMerchant():void{
-					city.merchant.wheat += city.wheat;
-					city.wheat = 0;
+					wheatMerchantSlider.value = city.merchant.wheat;
 				}
 				
 				
-				protected function woodMerchantCheck(newNumber:int):void{
-					
+				protected function woodMerchantCheck(newNumber:int):void
+				{
 					var previousNbWood:int = city.merchant.wood;
 					var newNbWood:int = newNumber;
 					
@@ -510,8 +507,8 @@
 					city.wood = 0;
 				}
 				
-				protected function ironMerchantCheck(newNumber:int):void{
-					
+				protected function ironMerchantCheck(newNumber:int):void
+				{
 					var previousNbIron:int = city.merchant.iron;
 					var newNbIron:int = newNumber;
 					
@@ -542,8 +539,8 @@
 					city.iron = 0;
 				}
 				
-				protected function goldMerchantCheck(newNumber:int):void{
-					
+				protected function goldMerchantCheck(newNumber:int):void
+				{
 					var previousNbGold:int = city.merchant.gold;
 					var newNbGold:int = newNumber;
 					
@@ -574,8 +571,8 @@
 					city.gold = 0;
 				}
 				
-				protected function bowsMerchantCheck(newNumber:int):void{
-					
+				protected function bowsMerchantCheck(newNumber:int):void
+				{
 					var previousNbBows:int = city.merchant.bows;
 					var newNbBows:int = newNumber;
 					
@@ -674,8 +671,8 @@
 				//-------------------------------------------------------------------------//
 				// armies
 				
-				protected function bowsArmyCheck(newNumber:int):void{
-					
+				protected function bowsArmyCheck(newNumber:int):void
+				{
 					var previousNbBows:int = city.army.bows;
 					var newNbBows:int = newNumber;
 					
@@ -719,8 +716,8 @@
 					bowsArmyCheck(city.army.bows + city.bowStock);
 				}
 				
-				protected function swordsArmyCheck(newNumber:int):void{
-					
+				protected function swordsArmyCheck(newNumber:int):void
+				{
 					var previousNbSwords:int = city.army.swords;
 					var newNbSwords:int = newNumber;
 					
@@ -764,8 +761,8 @@
 					swordsArmyCheck(city.army.swords + city.swordStock);
 				}
 				
-				protected function armorsArmyCheck(newNumber:int):void{
-					
+				protected function armorsArmyCheck(newNumber:int):void
+				{
 					var previousNbArmors:int = city.army.armors;
 					var newNbArmors:int = newNumber;
 					
@@ -815,7 +812,8 @@
 					armyCheck(city.army.size + city.unemployed);
 				}
 				
-				protected function armyCheck(newNumber:int):void	{
+				protected function armyCheck(newNumber:int):void	
+				{
 					trace("armycheck : " + newNumber);
 					var previousArmySize:int = city.army.size;
 					var newArmySize:int = newNumber;
@@ -870,36 +868,21 @@
 				
 				//-------------------------------------------------------------------------//
 
-				protected function addAllUnemployedToMerchants():void	{
-					merchantsCheck(city.merchant.size + city.unemployed);
-				}
-				
-				protected function merchantsCheck(newNumber:int):void	{
-					
+				protected function merchantsCheck(event:Event):void
+				{
 					var previousMerchantSize:int = city.merchant.size;
-					var newMerchantSize:int = newNumber;
+					var peopleAdded:int = merchantsSlider.value - previousMerchantSize;
 					
-					// caravan : min 50, max : population
-					if(newMerchantSize < 50)
-						newMerchantSize = 50;
-					
-					var peopleAddedWithStepper:int = newMerchantSize - previousMerchantSize;
-
-					if(city.unemployed < peopleAddedWithStepper)
-					{
-						// on rajoute le nombre de unemployed necessaire
-						pickUpPeopleInPeopleCreatingWheat(peopleAddedWithStepper - city.unemployed);
-						
-						// unemployed est maintenant au moins pile ce qu'il faut
-						newMerchantSize = previousMerchantSize + city.unemployed;
+					if(city.unemployed < peopleAdded){
+						merchantsSlider.value = previousMerchantSize + city.unemployed;
+						peopleAdded = merchantsSlider.value - previousMerchantSize;
 					}
 					
-					city.merchant.size = newMerchantSize;
-					merchantsStepper.data = city.merchant.size;
+					city.merchant.size = merchantsSlider.value;
 					
-					if(newMerchantSize > previousMerchantSize){
+					if(city.merchant.size > previousMerchantSize){
 						// on ajoute des gens dans une caravane
-						var nbPeopleAdded:int =  newMerchantSize - previousMerchantSize;
+						var nbPeopleAdded:int =  city.merchant.size - previousMerchantSize;
 						
 						if(city.armyReleased > nbPeopleAdded){
 							city.armyReleased -= nbPeopleAdded;
@@ -911,7 +894,7 @@
 					}
 					else{
 						// on enleve des gens de la caravane
-						var nbPeopleRemoved:int = previousMerchantSize - newMerchantSize;
+						var nbPeopleRemoved:int = previousMerchantSize - city.merchant.size;
 						
 						if(city.armyRaised > nbPeopleRemoved){
 							city.armyRaised -= nbPeopleRemoved;
@@ -928,22 +911,17 @@
 				//-------------------------------------------------------------------------//
 				// Armies - Merchants
 				
-				protected function newUnit(type:int):Unit{
-					
+				protected function newUnit(type:int):Unit
+				{
 					if(city.unemployed < 50){
-						
-						pickUpPeopleInPeopleCreatingWheat(50);
-						
-						if(city.unemployed < 50){
-							FlexGlobals.topLevelApplication.message(Translations.FREE_PEOPLE.getItemAt(Session.LANGUAGE));
-							return null;
-						}
+						FlexGlobals.topLevelApplication.message(Translations.FREE_PEOPLE.getItemAt(Session.LANGUAGE));
+						return null;
 					}
 					
 					var newUnit:Unit = new Unit();
 					newUnit.initNewUnit(city.x, city.y);
 					
-					newUnit.size = 0; 
+					newUnit.size = 50; 
 					newUnit.speed = type == 1 ? Numbers.ARMY_BASE_SPEED : Numbers.MERCHANT_BASE_SPEED;
 					newUnit.type = type;
 					newUnit.player = Session.player;
@@ -967,29 +945,18 @@
 				protected function validateArmy():void
 				{
 					currentState = recordingUnitState.name;
-					
-					if(city.army.status == Unit.TO_BE_CREATED)
-						GameManager.getInstance().createUnit(city.army, city.cityUID);
-					else
-						GameManager.getInstance().updateUnit(city.army, city.cityUID);
-
-					BoardDrawer.getInstance().refreshUnits(Session.CURRENT_CASE_SELECTED);
+					GameManager.getInstance().validateArmy(city);
 				}
 
 				protected function validateMerchant():void
 				{
 					currentState = recordingUnitState.name;
+					GameManager.getInstance().validateMerchants(city);
 					
-					if(city.merchant.status == Unit.TO_BE_CREATED)
-						GameManager.getInstance().createUnit(city.merchant, city.cityUID);
-					else
-						GameManager.getInstance().updateUnit(city.merchant, city.cityUID);
-					
-					BoardDrawer.getInstance().refreshUnits(Session.CURRENT_CASE_SELECTED);
 				}
 
-				protected function newArmy():void{
-					
+				protected function newArmy():void
+				{
 					var newArmy:Unit = newUnit(1);
 					
 					if(newArmy == null)
@@ -998,7 +965,6 @@
 
 					city.army = newArmy;
 					armyCheck(50);
-					
 				}
 
 				protected function deleteArmy():void
@@ -1080,23 +1046,21 @@
 					GameManager.getInstance().deleteUnit(city.army);
 					
 					city.army = null;
-					
-					
 				}
 				
-				
-				protected function newMerchants():void{
-					
+				protected function newMerchants():void
+				{
 					var newMerchant:Unit = newUnit(2);
 					if(newMerchant == null)
 						return;
 					
 					city.merchant = newMerchant;
-					merchantsCheck(50);
+					
+					merchantsCheck(null);
 				}
 
-				protected function deleteMerchant():void{
-					
+				protected function deleteMerchant():void
+				{
 					trace("delete merchant" + city.merchant.unitUID);
 					
 					if(city.merchant.status != Unit.TO_BE_CREATED){
@@ -2119,12 +2083,20 @@
 									<mx:GridItem >
 										<s:Label text="{Translations.NB_CARAVAN.getItemAt(Session.LANGUAGE)}" />
 									</mx:GridItem>
-									<mx:GridItem>
-										<renderers:SpecialNumStepper id="merchantsStepper"
-																	 data="{city.merchant.size}"
-																	 step="{1}"
-																	 check="merchantsCheck"
-																	 wantMax="addAllUnemployedToMerchants"/>
+									<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+										<s:HGroup verticalAlign="middle">
+											<s:Label text="{city.merchant.size}" 
+													 styleName="numberLabel" 
+													 textAlign="right"
+													 minWidth="60"/>
+											<s:HSlider id="merchantsSlider"
+													   liveDragging="true" 
+													   change="merchantsCheck(event)"
+													   value="{city.merchant.size}"
+													   minimum="50"
+													   maximum="{city.population - city.population/10}"
+													   snapInterval="1"/>
+										</s:HGroup>
 									</mx:GridItem>
 									<mx:GridItem/>
 								</mx:GridRow>
@@ -2156,12 +2128,20 @@
 											<mx:GridItem horizontalAlign="center">
 												<mx:Image toolTip="{Translations.WHEAT.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WHEAT}" width="25" height="25"/>
 											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center">
-												<renderers:SpecialNumStepper id="wheatMerchantStepper"
-																			 data="{city.merchant.wheat}"
-																			 step="{1}"
-																			 check="wheatMerchantCheck"
-																			 wantMax="addAllWheatToMerchant"/>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:HGroup verticalAlign="middle">
+													<s:Label text="{city.merchant.wheat}" 
+															 styleName="numberLabel" 
+															 textAlign="right"
+															 minWidth="60"/>
+													<s:HSlider id="wheatMerchantSlider"
+															   liveDragging="true" 
+															   change="wheatMerchantCheck(event)"
+															   value="{city.merchant.wheat}"
+															   minimum="50"
+															   maximum="{city.wheat + city.merchant.wheat}"
+															   snapInterval="1"/>
+												</s:HGroup>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<s:Label text="{city.wheat}" />

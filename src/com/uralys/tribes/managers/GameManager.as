@@ -85,7 +85,7 @@ package com.uralys.tribes.managers {
 			BoardDrawer.getInstance().refreshMap(city.x, city.y);
 		}
 		
-		public function saveStep(needRefreshOfTheCity:Boolean, loginCatchUp:Boolean = false)
+		public function saveStep(needRefreshBoard:Boolean, loginCatchUp:Boolean = false)
 		{
 			for each(var city:City in Session.player.cities)
 			{
@@ -106,7 +106,7 @@ package com.uralys.tribes.managers {
 				refreshCitySmithsAndEquipments(city);
 				
 				city.reset();
-				refreshCity(city, starvation);
+				calculateCityData(true, city, starvation);
 			}
 			
 			(Session.player.cities.getItemAt(0) as City).gold += Session.player.nbLands;
@@ -115,8 +115,8 @@ package com.uralys.tribes.managers {
 				savePlayer();
 			}
 			
-			if(needRefreshOfTheCity)
-				Session.board.refreshBoard(city);
+			if(needRefreshBoard)
+				Session.board.refreshBoard();
 		}
 		
 		
@@ -327,8 +327,11 @@ package com.uralys.tribes.managers {
 		
 		//-------------------------------------------------------------------------------//
 		
-		public function refreshCity(city:City, starvation:Boolean):void
+		public function calculateCityData(forceCalculation:Boolean, city:City, starvation:Boolean):void
 		{
+			if(!forceCalculation && city.calculationDone)
+				return;
+			
 			// recuperation des stocks de la forge
 			for each(var equipment:Equipment in city.equipmentStock){
 				switch(equipment.item.name){
@@ -346,8 +349,8 @@ package com.uralys.tribes.managers {
 			
 			// recuperations des workers pour chaque item de la forge
 			// et verification si on peut laisser autant de smith (si les stocks sont suffisants)
-			for each(var smith:Smith in city.smiths){
-				
+			for each(var smith:Smith in city.smiths)
+			{
 				switch(smith.item.name){
 					case "bow" :
 						city.bowWorkers = -1;
@@ -418,7 +421,7 @@ package com.uralys.tribes.managers {
 
 			
 			city.wheatSpent = city.population * Numbers.FEED_COEFF;
-			city.wheatSpent += city.unitsToFeed;
+			city.wheatSpent += city.unitsToFeed * Numbers.FEED_COEFF;
 			
 			city.refreshUnemployed();
 			city.peopleCreatingWheat += city.unemployed;
@@ -429,6 +432,7 @@ package com.uralys.tribes.managers {
 			city.woodEarned = Numbers.WOOD_EARNING_COEFF * city.peopleCreatingWood;
 			city.ironEarned = Numbers.IRON_EARNING_COEFF * city.peopleCreatingIron;
 			
+			city.calculationDone = true;
 		}
 		
 		
@@ -463,6 +467,26 @@ package com.uralys.tribes.managers {
 				populationEvolution /= 10;
 			
 			return population + populationEvolution - armyRaised;
+		}
+		
+		public function validateMerchants(city:City):void
+		{
+			if(city.merchant.status == Unit.TO_BE_CREATED)
+				createUnit(city.merchant, city.cityUID);
+			else
+				updateUnit(city.merchant, city.cityUID);
+			
+			BoardDrawer.getInstance().refreshUnits(Session.CURRENT_CASE_SELECTED);
+		}
+		
+		public function validateArmy(city:City):void
+		{
+			if(city.army.status == Unit.TO_BE_CREATED)
+				createUnit(city.army, city.cityUID);
+			else
+				updateUnit(city.army, city.cityUID);
+			
+			BoardDrawer.getInstance().refreshUnits(Session.CURRENT_CASE_SELECTED);
 		}
 		
 		//============================================================================================//
@@ -525,6 +549,7 @@ package com.uralys.tribes.managers {
 			getGameWrapper().changeCityName(Session.board.selectedCity.cityUID, newName);			
 		}
 		
+
 		public function saveCity(city:City):void
 		{
 			refreshCitySmithsAndEquipments(city);

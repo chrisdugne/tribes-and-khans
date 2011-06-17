@@ -8,6 +8,8 @@ package com.uralys.tribes.entities
 	public class City
 	{	
 		
+		public var calculationDone:Boolean = false;
+
 		//---------------------------------------------------------------------------//
 
 		protected var _cityUID:String;
@@ -220,6 +222,7 @@ package com.uralys.tribes.entities
 		public function set armyRaised(o:int):void{
 			_armyRaised = o;
 			refreshUnemployed();
+			refreshAvailableAsSmith();
 		}
 
 		public function get armyReleased():int{
@@ -229,6 +232,7 @@ package com.uralys.tribes.entities
 		public function set armyReleased(o:int):void{
 			_armyReleased = o;
 			refreshUnemployed();
+			refreshAvailableAsSmith();
 		}
 
 		public function get unemployed():int{
@@ -267,7 +271,9 @@ package com.uralys.tribes.entities
 		{
 			availableAsSmith = population - peopleCreatingWheat
 										  - peopleCreatingWood
-										  - peopleCreatingIron;
+										  - peopleCreatingIron
+										  - armyRaised
+										  + armyReleased;
 		}
 		
 		//---------------------------------------------------------------//

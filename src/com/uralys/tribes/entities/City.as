@@ -112,6 +112,7 @@ package com.uralys.tribes.entities
 		public function set peopleCreatingWheat(o:int):void {
 			_peopleCreatingWheat = o;
 			refreshUnemployed();
+			refreshAvailableAsSmith();
 		}
 	
 		public function get peopleCreatingWood():int {
@@ -121,6 +122,7 @@ package com.uralys.tribes.entities
 		public function set peopleCreatingWood(o:int):void {
 			_peopleCreatingWood = o;
 			refreshUnemployed();
+			refreshAvailableAsSmith();
 		}
 	
 		public function get peopleCreatingIron():int {
@@ -130,6 +132,7 @@ package com.uralys.tribes.entities
 		public function set peopleCreatingIron(o:int):void {
 			_peopleCreatingIron = o;
 			refreshUnemployed();
+			refreshAvailableAsSmith();
 		}
 	
 		public function get x():int {
@@ -197,6 +200,7 @@ package com.uralys.tribes.entities
 		public var merchant:Unit;
 		public var army:Unit;
 		protected var _unemployed:int;
+		protected var _availableAsSmith:int;
 		protected var _armiesToFeed:int;
 		protected var _armyRaised:int;
 		protected var _armyReleased:int;
@@ -249,6 +253,21 @@ package com.uralys.tribes.entities
 							- armyRaised
 							+ armyReleased
 							- nbSmiths;
+		}
+
+		public function get availableAsSmith():int{
+			return _availableAsSmith;
+		}
+
+		public function set availableAsSmith(o:int):void{
+			_availableAsSmith = o;
+		}
+		
+		public function refreshAvailableAsSmith():void
+		{
+			availableAsSmith = population - peopleCreatingWheat
+										  - peopleCreatingWood
+										  - peopleCreatingIron;
 		}
 		
 		//---------------------------------------------------------------//

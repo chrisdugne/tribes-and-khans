@@ -92,8 +92,8 @@ package com.uralys.tribes.core
 		
 		// ============================================================================================
 		
-		private function moveIsDone(e:TimerEvent):void{
-			
+		private function moveIsDone(e:TimerEvent):void
+		{
 			try{
 				var moves:Array = timers.get(e.currentTarget) as Array;
 				var moveToPerform:Move = moves.shift() as Move;
@@ -149,7 +149,8 @@ package com.uralys.tribes.core
 		private var movesPending:ArrayCollection;
 		private var moveBeginsNow:Boolean;
 		
-		public function validatePendingMoves(unit:Unit){
+		public function validatePendingMoves(unit:Unit)
+		{
 			var previousMove:com.uralys.tribes.entities.Move = movesPending.getItemAt(0) as com.uralys.tribes.entities.Move;
 
 			movesPending.removeItemAt(0);
@@ -187,7 +188,8 @@ package com.uralys.tribes.core
 			
 		}
 
-		public function refreshMoves(unit:Unit){
+		public function refreshMoves(unit:Unit)
+		{
 			var nbIndexesToRemove:int = -1;
 			var now:Number = new Date().getTime();
 			

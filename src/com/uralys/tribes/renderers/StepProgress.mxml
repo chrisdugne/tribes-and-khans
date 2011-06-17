@@ -11,6 +11,7 @@
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;
 			import com.uralys.tribes.managers.GameManager;
+			import com.uralys.tribes.skins.WorkersProgressBarSkin;
 			
 			import flash.events.TimerEvent;
 			import flash.utils.Timer;
@@ -62,6 +63,8 @@
 					minimum="100" 
 					maximum="100" 
 					mode="manual"
+					trackHeight="15"
+					barSkin="{WorkersProgressBarSkin}"
 					label="{Translations.REMAINING_TIME.getItemAt(Session.LANGUAGE)}    --:--" 
 					labelPlacement="top"/>
 	<!--

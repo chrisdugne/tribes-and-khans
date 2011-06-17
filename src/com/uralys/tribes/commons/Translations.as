@@ -354,6 +354,18 @@ public class Translations{
 									"Workers"]);
 
 	[Bindable]
+	public static var SMITHS:ArrayCollection = new ArrayCollection(
+									["Forgerons",
+									"Smiths",
+									"Smiths"]);
+
+	[Bindable]
+	public static var AVAILABLE_SMITHS:ArrayCollection = new ArrayCollection(
+									["Disponibles",
+									"Available",
+									"Available"]);
+
+	[Bindable]
 	public static var HARVEST:ArrayCollection = new ArrayCollection(
 									["Récolte",
 									"Harvest",

@@ -8,7 +8,7 @@
 		<fx:Script>
 			<![CDATA[
 				//----------------------------------------------------------//
-				
+
 				import com.uralys.tribes.commons.Numbers;
 				import com.uralys.tribes.commons.Session;
 				import com.uralys.tribes.commons.Translations;
@@ -20,6 +20,8 @@
 				import com.uralys.tribes.entities.Smith;
 				import com.uralys.tribes.entities.Unit;
 				import com.uralys.tribes.managers.GameManager;
+				import com.uralys.tribes.skins.WorkersProgressBarSkin;
+				import com.uralys.tribes.skins.WorkersProgressTrackSkin;
 				import com.uralys.tribes.tooltips.ForgeToolTip;
 				import com.uralys.tribes.tooltips.MerchantToolTip;
 				import com.uralys.utils.Utils;
@@ -33,7 +35,8 @@
 				
 				//----------------------------------------------------------//
 				
-				[Bindable] public var city:City;
+				[Bindable]
+				public var city:City;
 
 				//----------------------------------------------------------//
 
@@ -47,6 +50,8 @@
 					city.peopleCreatingWheat = wheatWorkersSlider.value;
 					
 					city.wheatEarned = Numbers.WHEAT_EARNING_COEFF * city.peopleCreatingWheat;
+					
+					updateWorkersProgressBar();
 				}
 
 				protected function pickUpPeopleInPeopleCreatingWheat(peopleToPickUp:int):void{
@@ -68,6 +73,8 @@
 					city.peopleCreatingWood = woodWorkersSlider.value;
 					
 					city.woodEarned = Numbers.WOOD_EARNING_COEFF * city.peopleCreatingWood;
+					
+					updateWorkersProgressBar();
 				}
 				
 				//-------------------------------------------------------------------------//
@@ -82,16 +89,30 @@
 					city.peopleCreatingIron = ironWorkersSlider.value;
 					
 					city.ironEarned = Numbers.IRON_EARNING_COEFF * city.peopleCreatingIron;
+					
+					updateWorkersProgressBar();
 				}
 
+				//-------------------------------------------------------------------------//
 
+				private function updateWorkersProgressBar():void	{
+					workersProgressBar.setProgress(city.peopleCreatingWheat 
+												 + city.peopleCreatingWood
+												 + city.peopleCreatingIron
+												 + city.bowWorkers
+												 + city.swordWorkers
+												 + city.armorWorkers
+												 , city.population);
+				}
+				
 				//-------------------------------------------------------------------------//
 				// Market - Achat
 				
-				protected function wheatMarketBuyCheck(newNumber:int):void	{
-					
+				protected function wheatMarketBuyCheck(event:Event):void
+				{
 					city.goldSpent -= (int)(city.wheatBought * Numbers.WHEAT_PRICE_BUY);
-					city.wheatBought = newNumber;
+					city.wheatBought = wheatMarketSlider.value;
+
 					
 					if((city.gold-city.goldSpent)/Numbers.WHEAT_PRICE_BUY < city.wheatBought)
 						city.wheatBought = (city.gold-city.goldSpent)/Numbers.WHEAT_PRICE_BUY;
@@ -99,17 +120,10 @@
 					city.goldSpent += (int)(city.wheatBought * Numbers.WHEAT_PRICE_BUY);
 				}
 				
-				protected function spendAllMoneyForWheat():void	{
-					var newWheatBought:int = (city.gold-city.goldSpent)/Numbers.WHEAT_PRICE_BUY;
-					city.wheatBought += newWheatBought;
-					city.goldSpent += (int)(newWheatBought*Numbers.WHEAT_PRICE_BUY);
-				}
-				
-				
-				protected function woodMarketBuyCheck(newNumber:int):void	{
-					
+				protected function woodMarketBuyCheck(event:Event):void	
+				{
 					city.goldSpent -= (int)(city.woodBought * Numbers.WOOD_PRICE_BUY);
-					city.woodBought = newNumber;
+					city.woodBought = woodMarketSlider.value;
 					
 					if((city.gold-city.goldSpent)/Numbers.WOOD_PRICE_BUY < city.woodBought)
 						city.woodBought = (city.gold-city.goldSpent)/Numbers.WOOD_PRICE_BUY;
@@ -117,17 +131,10 @@
 					city.goldSpent += (int)(city.woodBought * Numbers.WOOD_PRICE_BUY);
 				}
 				
-				protected function spendAllMoneyForWood():void	{
-					var newWoodBought:int = (city.gold-city.goldSpent)/Numbers.WOOD_PRICE_BUY;
-					city.woodBought += newWoodBought;
-					city.goldSpent += (int)(newWoodBought*Numbers.WOOD_PRICE_BUY);
-				}
-				
-				
-				protected function ironMarketBuyCheck(newNumber:int):void	{
-					
+				protected function ironMarketBuyCheck(event:Event):void	
+				{
 					city.goldSpent -= (int)(city.ironBought * Numbers.IRON_PRICE_BUY);
-					city.ironBought = newNumber;
+					city.ironBought = ironMarketSlider.value;
 					
 					if((city.gold-city.goldSpent)/Numbers.IRON_PRICE_BUY < city.ironBought)
 						city.ironBought = (city.gold-city.goldSpent)/Numbers.IRON_PRICE_BUY;
@@ -136,54 +143,32 @@
 				}
 				
 				
-				protected function spendAllMoneyForIron():void	{
-					var newIronBought:int = (city.gold-city.goldSpent)/Numbers.IRON_PRICE_BUY;
-					city.ironBought += newIronBought;
-					city.goldSpent += (int)(newIronBought*Numbers.IRON_PRICE_BUY);
-				}
-				
-				
-				
-				protected function bowsMarketBuyCheck(newNumber:int):void	{
-					
+				protected function bowsMarketBuyCheck(event:Event):void	
+				{
 					city.goldSpent -= (int)(city.bowsBought * Numbers.BOW_PRICE_BUY);
-					city.bowsBought = newNumber;
+					city.bowsBought = bowsMarketSlider.value;
 					
 					if((city.gold-city.goldSpent)/Numbers.BOW_PRICE_BUY < city.bowsBought)
 						city.bowsBought = (city.gold-city.goldSpent)/Numbers.BOW_PRICE_BUY;
-					
+
 					city.goldSpent += (int)(city.bowsBought * Numbers.BOW_PRICE_BUY);
 				}
 				
-				protected function spendAllMoneyForBows():void	{
-					var newBowsBought:int = (city.gold-city.goldSpent)/Numbers.BOW_PRICE_BUY;
-					city.bowsBought += newBowsBought;
-					city.goldSpent += (int)(newBowsBought*Numbers.BOW_PRICE_BUY);
-				}
-				
-				
-				protected function swordsMarketBuyCheck(newNumber:int):void	{
-					
+				protected function swordsMarketBuyCheck(event:Event):void	
+				{
 					city.goldSpent -= (int)(city.swordsBought * Numbers.SWORD_PRICE_BUY);
-					city.swordsBought = newNumber;
+					city.swordsBought = swordsMarketSlider.value;
 					
 					if((city.gold-city.goldSpent)/Numbers.SWORD_PRICE_BUY < city.swordsBought)
 						city.swordsBought = (city.gold-city.goldSpent)/Numbers.SWORD_PRICE_BUY;
-					
+
 					city.goldSpent += (int)(city.swordsBought * Numbers.SWORD_PRICE_BUY);
 				}
 				
-				protected function spendAllMoneyForSwords():void	{
-					var newSwordsBought:int = (city.gold-city.goldSpent)/Numbers.SWORD_PRICE_BUY;
-					city.swordsBought += newSwordsBought;
-					city.goldSpent += (int)(newSwordsBought*Numbers.SWORD_PRICE_BUY);
-				}
-				
-				
-				protected function armorsMarketBuyCheck(newNumber:int):void	{
-					
+				protected function armorsMarketBuyCheck(event:Event):void	
+				{
 					city.goldSpent -= (int)(city.armorsBought * Numbers.ARMOR_PRICE_BUY);
-					city.armorsBought = newNumber;
+					city.armorsBought = armorsMarketSlider.value;
 					
 					if((city.gold-city.goldSpent)/Numbers.ARMOR_PRICE_BUY < city.armorsBought)
 						city.armorsBought = (city.gold-city.goldSpent)/Numbers.ARMOR_PRICE_BUY;
@@ -191,14 +176,9 @@
 					city.goldSpent += (int)(city.armorsBought * Numbers.ARMOR_PRICE_BUY);
 				}
 				
-				protected function spendAllMoneyForArmors():void{
-					var newArmorsBought:int = (city.gold-city.goldSpent)/Numbers.ARMOR_PRICE_BUY;
-					city.armorsBought += newArmorsBought;
-					city.goldSpent += (int)(newArmorsBought*Numbers.ARMOR_PRICE_BUY);
-				}
 				
-				
-				protected function buy():void{
+				protected function buy():void
+				{
 					city.gold -= city.goldSpent;
 					
 					city.wheat += city.wheatBought;
@@ -215,16 +195,18 @@
 					city.bowsBought = 0;
 					city.swordsBought = 0;
 					city.armorsBought = 0;
+					
+					GameManager.getInstance().saveCity(city);
 				}
 				
 				//-------------------------------------------------------------------------//
 				// Market - Vente
 				
 				
-				protected function wheatMarketSellCheck(newNumber:int):void	{
-					
+				protected function wheatMarketSellCheck(event:Event):void	
+				{
 					city.goldEarned -= (int)(city.wheatSold * Numbers.WHEAT_PRICE_SELL);
-					city.wheatSold = newNumber;
+					city.wheatSold = wheatMarketSellSlider.value;
 					
 					if((city.wheat-city.wheatSold) < 0)
 						city.wheatSold = city.wheat;
@@ -232,17 +214,11 @@
 					city.goldEarned += (int)(city.wheatSold * Numbers.WHEAT_PRICE_SELL);
 				}
 				
-				protected function sellAllWheat():void	{
-					city.goldEarned -= (int)(city.wheatSold * Numbers.WHEAT_PRICE_SELL);
-					city.wheatSold = city.wheat;
-					city.goldEarned += (int)(city.wheatSold*Numbers.WHEAT_PRICE_SELL);
-				}
-
 				
-				protected function woodMarketSellCheck(newNumber:int):void	{
-					
+				protected function woodMarketSellCheck(event:Event):void	
+				{
 					city.goldEarned -= (int)(city.woodSold * Numbers.WOOD_PRICE_SELL);
-					city.woodSold = newNumber;
+					city.woodSold = woodMarketSellSlider.value;
 					
 					if((city.wood-city.woodSold) < 0)
 						city.woodSold = city.wood;
@@ -250,16 +226,11 @@
 					city.goldEarned += (int)(city.woodSold * Numbers.WOOD_PRICE_SELL);
 				}
 				
-				protected function sellAllWood():void	{
-					city.goldEarned -= (int)(city.woodSold * Numbers.WOOD_PRICE_SELL);
-					city.woodSold = city.wood;
-					city.goldEarned += (int)(city.woodSold*Numbers.WOOD_PRICE_SELL);
-				}
 				
-				protected function ironMarketSellCheck(newNumber:int):void	{
-					
+				protected function ironMarketSellCheck(event:Event):void	
+				{
 					city.goldEarned -= (int)(city.ironSold * Numbers.IRON_PRICE_SELL);
-					city.ironSold = newNumber;
+					city.ironSold = ironMarketSellSlider.value;
 					
 					if((city.iron-city.ironSold) < 0)
 						city.ironSold = city.iron;
@@ -267,17 +238,10 @@
 					city.goldEarned += (int)(city.ironSold * Numbers.IRON_PRICE_SELL);
 				}
 				
-				protected function sellAllIron():void	{
-					city.goldEarned -= (int)(city.ironSold * Numbers.IRON_PRICE_SELL);
-					city.ironSold = city.iron;
-					city.goldEarned += (int)(city.ironSold*Numbers.IRON_PRICE_SELL);
-				}
-				
-				
-				protected function bowsMarketSellCheck(newNumber:int):void	{
-					
+				protected function bowsMarketSellCheck(event:Event):void	
+				{
 					city.goldEarned -= (int)(city.bowsSold * Numbers.BOW_PRICE_SELL);
-					city.bowsSold = newNumber;
+					city.bowsSold = bowsMarketSellSlider.value;
 					
 					if((city.bowStock-city.bowsSold) < 0)
 						city.bowsSold = city.bowStock;
@@ -285,17 +249,10 @@
 					city.goldEarned += (int)(city.bowsSold * Numbers.BOW_PRICE_SELL);
 				}
 				
-				protected function sellAllBows():void	{
-					city.goldEarned -= (int)(city.bowsSold * Numbers.BOW_PRICE_SELL);
-					city.bowsSold = city.bowStock;
-					city.goldEarned += (int)(city.bowsSold*Numbers.BOW_PRICE_SELL);
-				}
-				
-				
-				protected function swordsMarketSellCheck(newNumber:int):void	{
-					
+				protected function swordsMarketSellCheck(event:Event):void	
+				{
 					city.goldEarned -= (int)(city.swordsSold * Numbers.SWORD_PRICE_SELL);
-					city.swordsSold = newNumber;
+					city.swordsSold = swordsMarketSellSlider.value;
 					
 					if((city.swordStock-city.swordsSold) < 0)
 						city.swordsSold = city.swordStock;
@@ -303,17 +260,11 @@
 					city.goldEarned += (int)(city.swordsSold * Numbers.SWORD_PRICE_SELL);
 				}
 				
-				protected function sellAllSwords():void	{
-					city.goldEarned -= (int)(city.swordsSold * Numbers.SWORD_PRICE_SELL);
-					city.swordsSold = city.swordStock;
-					city.goldEarned += (int)(city.swordsSold*Numbers.SWORD_PRICE_SELL);
-				}
-
 				
-				protected function armorsMarketSellCheck(newNumber:int):void	{
-					
+				protected function armorsMarketSellCheck(event:Event):void	
+				{
 					city.goldEarned -= (int)(city.armorsSold * Numbers.ARMOR_PRICE_SELL);
-					city.armorsSold = newNumber;
+					city.armorsSold = armorsMarketSellSlider.value;
 					
 					if((city.armorStock-city.armorsSold) < 0)
 						city.armorsSold = city.armorStock;
@@ -321,14 +272,9 @@
 					city.goldEarned += (int)(city.armorsSold * Numbers.ARMOR_PRICE_SELL);
 				}
 				
-				protected function sellAllArmors():void	{
-					city.goldEarned -= (int)(city.armorsSold * Numbers.ARMOR_PRICE_SELL);
-					city.armorsSold = city.armorStock;
-					city.goldEarned += (int)(city.armorsSold*Numbers.ARMOR_PRICE_SELL);
-				}
 				
-				
-				protected function sell():void{
+				protected function sell():void
+				{
 					city.gold += city.goldEarned;
 					
 					city.wheat -= city.wheatSold;
@@ -345,6 +291,9 @@
 					city.bowsSold = 0;
 					city.swordsSold = 0;
 					city.armorsSold = 0;
+					
+					
+					GameManager.getInstance().saveCity(city);
 				}
 				
 				//-------------------------------------------------------------------------//
@@ -368,19 +317,21 @@
 						}
 					}
 				}
-
-				protected function bowWorkersCheck(newNumber:int):void{
-					
+				
+				//----------------------------------------------------------------//
+				
+				protected function bowWorkersCheck(event:Event):void
+				{
 					// on enleve le precedent debit de ressources 
 					city.woodSpent -= city.bowWorkers * Numbers.BOW_WOOD;
 					city.ironSpent -= city.bowWorkers * Numbers.BOW_IRON;
 					
-					var peopleAdded:int = newNumber - city.bowWorkers;
+					var peopleAdded:int = bowWorkersSlider.value - city.bowWorkers;
 					
 					if(city.unemployed < peopleAdded)
-						newNumber = city.bowWorkers + city.unemployed;
+						bowWorkersSlider.value = city.bowWorkers + city.unemployed;
 					
-					city.bowWorkers = newNumber;
+					city.bowWorkers = bowWorkersSlider.value;
 					
 					var woodAvailable:int = city.wood - city.woodSpent;
 					var ironAvailable:int = city.iron - city.ironSpent;
@@ -395,45 +346,23 @@
 							
 					
 					registerNewForgeWorkers("bow", city.bowWorkers);
+					
+					updateSmithsProgressBar();
 				}
 				
 				
-				protected function  addAllUnemployedToBow():void	{
-					
-					// on enleve le precedent debit de ressources 
-					city.woodSpent -= city.bowWorkers * Numbers.BOW_WOOD;
-					city.ironSpent -= city.bowWorkers * Numbers.BOW_IRON;
-					
-					city.bowWorkers += city.unemployed;
-
-					var woodAvailable:int = city.wood - city.woodSpent;
-					var ironAvailable:int = city.iron - city.ironSpent;
-					
-					// la depense en bois pour les arcs est plus grande que le stock de bois
-					if(Numbers.BOW_WOOD * city.bowWorkers > woodAvailable)
-						city.bowWorkers = Math.floor(woodAvailable/Numbers.BOW_WOOD);
-					
-					// la depense en fer pour les arcs est plus grande que le stock de fer
-					if(Numbers.BOW_IRON * city.bowWorkers > ironAvailable)
-						city.bowWorkers = Math.floor(ironAvailable/Numbers.BOW_IRON);
-					
-					
-					registerNewForgeWorkers("bow", city.bowWorkers);
-					
-				}
-				
-				protected function swordWorkersCheck(newNumber:int):void{
-				
+				protected function swordWorkersCheck(event:Event):void
+				{
 					// on enleve le precedent debit de ressources 
 					city.woodSpent -= city.swordWorkers * Numbers.SWORD_WOOD;
 					city.ironSpent -= city.swordWorkers * Numbers.SWORD_IRON;
 					
-					var peopleAdded:int = newNumber - city.swordWorkers;
+					var peopleAdded:int = swordWorkersSlider.value - city.swordWorkers;
 					
 					if(city.unemployed < peopleAdded)
-						newNumber = city.swordWorkers + city.unemployed;
+						swordWorkersSlider.value = city.swordWorkers + city.unemployed;
 					
-					city.swordWorkers = newNumber;
+					city.swordWorkers = swordWorkersSlider.value;
 							
 					var woodAvailable:int = city.wood - city.woodSpent;
 					var ironAvailable:int = city.iron - city.ironSpent;
@@ -447,42 +376,22 @@
 						city.swordWorkers = Math.floor(ironAvailable/Numbers.SWORD_IRON);
 
 					registerNewForgeWorkers("sword", city.swordWorkers);
+					
+					updateSmithsProgressBar();
 				}
 				
-				protected function  addAllUnemployedToSword():void	{
-					
-					// on enleve le precedent debit de ressources 
-					city.woodSpent -= city.swordWorkers * Numbers.SWORD_WOOD;
-					city.ironSpent -= city.swordWorkers * Numbers.SWORD_IRON;
-
-					city.swordWorkers += city.unemployed;
-					
-					var woodAvailable:int = city.wood - city.woodSpent;
-					var ironAvailable:int = city.iron - city.ironSpent;
-					
-					// la depense en bois pour les epees est plus grande que le stock de bois
-					if(Numbers.SWORD_WOOD * city.swordWorkers > woodAvailable)
-						city.swordWorkers = Math.floor(woodAvailable/Numbers.SWORD_WOOD);
-					
-					// la depense en fer pour les epees est plus grande que le stock de fer
-					if(Numbers.SWORD_IRON * city.swordWorkers > ironAvailable)
-						city.swordWorkers = Math.floor(ironAvailable/Numbers.SWORD_IRON);
-
-					registerNewForgeWorkers("sword", city.swordWorkers);
-				}
-				
-				protected function armorWorkersCheck(newNumber:int):void{
-					
+				protected function armorWorkersCheck(event:Event):void
+				{
 					// on enleve le precedent debit de ressources 
 					city.woodSpent -= city.armorWorkers * Numbers.ARMOR_WOOD;
 					city.ironSpent -= city.armorWorkers * Numbers.ARMOR_IRON;
 					
-					var peopleAdded:int = newNumber - city.armorWorkers;
+					var peopleAdded:int = armorWorkersSlider.value - city.armorWorkers;
 					
 					if(city.unemployed < peopleAdded)
-						newNumber = city.armorWorkers + city.unemployed;
+						armorWorkersSlider.value = city.armorWorkers + city.unemployed;
 					
-					city.armorWorkers = newNumber;
+					city.armorWorkers = armorWorkersSlider.value;
 					
 					var woodAvailable:int = city.wood - city.woodSpent;
 					var ironAvailable:int = city.iron - city.ironSpent;
@@ -496,35 +405,24 @@
 						city.armorWorkers = Math.floor(ironAvailable/Numbers.ARMOR_IRON);
 					
 					registerNewForgeWorkers("armor", city.armorWorkers);
+					
+					updateSmithsProgressBar();
 				}
 				
-				protected function  addAllUnemployedToArmor():void	{
-					
-					// on enleve le precedent debit de ressources 
-					city.woodSpent -= city.armorWorkers * Numbers.ARMOR_WOOD;
-					city.ironSpent -= city.armorWorkers * Numbers.ARMOR_IRON;
-					
-					city.armorWorkers += city.unemployed;
-					
-					var woodAvailable:int = city.wood - city.woodSpent;
-					var ironAvailable:int = city.iron - city.ironSpent;
-					
-					
-					// la depense en bois pour les armures est plus grande que le stock de bois
-					if(Numbers.ARMOR_WOOD * city.armorWorkers > woodAvailable)
-						city.armorWorkers = Math.floor(woodAvailable/Numbers.ARMOR_WOOD) ;
-					
-					// la depense en fer pour les armures est plus grande que le stock de fer
-					if(Numbers.ARMOR_IRON * city.armorWorkers > ironAvailable)
-						city.armorWorkers = Math.floor(ironAvailable/Numbers.ARMOR_IRON);
-					
-					registerNewForgeWorkers("armor", city.armorWorkers);
+				//-------------------------------------------------------------------------//
+
+				private function updateSmithsProgressBar():void	{
+					smithsProgressBar.setProgress(city.bowWorkers
+						+ city.swordWorkers
+						+ city.armorWorkers
+						, city.availableAsSmith);
 				}
 				
-				//---------------------------------//
+				//-------------------------------------------------------------------------//
 				// toolTip creation pour la forge
 				
-				private function onCreateForgeToolTip(e:ToolTipEvent, itemName:String, woodCost:int, ironCost:int):void {
+				private function onCreateForgeToolTip(e:ToolTipEvent, itemName:String, woodCost:int, ironCost:int):void 
+				{
 					var toolTip:ForgeToolTip = new ForgeToolTip();
 					toolTip.itemName = itemName;
 					toolTip.woodCost = woodCost;
@@ -1284,11 +1182,6 @@
 						 color="{city.armyReleased - city.armyRaised >= 0 ? Numbers.GREEN : Numbers.RED} "/>
 				
 				<mx:Image width="30" height="30" toolTip="{Translations.ARMY_POPULATION.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.QUESTION}"/>
-				
-				<mx:Spacer width="35"/>
-				<s:Label text="{Translations.UNEMPLOYED.getItemAt(Session.LANGUAGE)}"/>
-				<mx:Spacer width="20"/>
-				<s:Label text="{city.unemployed}" styleName="numberLabel" color="{city.unemployed >= 0 ? 0x1111ee : 0xCC0000}"/>
 			</s:HGroup>
 			<s:HGroup horizontalAlign="center" verticalAlign="middle">
 				
@@ -1326,476 +1219,158 @@
 			<mx:Spacer height="15"/>
 			<s:TabBar id="tabs" dataProvider="{viewstack}" skinClass="spark.skins.spark.TabBarSkin"/>
 				
-			<mx:ViewStack id="viewstack" width="650">
+			<mx:ViewStack id="viewstack" width="650" height="100%">
 				
 				<!-- =============================================================================================== -->
 				<!-- Resources Tab -->
 				
-				<s:NavigatorContent label="{Translations.RESOURCES.getItemAt(Session.LANGUAGE)}">
+				<s:NavigatorContent label="{Translations.RESOURCES.getItemAt(Session.LANGUAGE)}"
+									show="{updateWorkersProgressBar()}">
 					<s:HGroup width="100%" horizontalAlign="center">
-						<mx:Grid verticalGap="10" horizontalGap="55" horizontalAlign="center" verticalAlign="middle">
-							<mx:GridRow >
-								<mx:GridItem/>
-								<mx:GridItem horizontalAlign="center" width="100">
-									<s:Label text="{Translations.WORKERS.getItemAt(Session.LANGUAGE)}" />
-								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
-									<s:Label text="{Translations.HARVEST.getItemAt(Session.LANGUAGE)}"/>
-								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
-									<s:Label text="{Translations.SPENDING.getItemAt(Session.LANGUAGE)}"/>
-								</mx:GridItem>
-							</mx:GridRow>
-							<mx:GridRow>
-								<mx:GridItem horizontalAlign="center">
-									<mx:Image toolTip="{Translations.WHEAT.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WHEAT}"/>
-								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-									<s:HGroup verticalAlign="middle">
-										<s:Label text="{city.peopleCreatingWheat}" styleName="numberLabel"/>
-										<s:HSlider id="wheatWorkersSlider"
-													liveDragging="true" 
-													change="wheatWorkersCheck(event)"
-													value="{city.peopleCreatingWheat}"
-													maximum="{city.population}"
-													snapInterval="1"/>
-									</s:HGroup>
-								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-									<s:Label text="+ {city.wheatEarned}" color="{Numbers.GREEN}"/>
-								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-									<s:Label text="- {city.wheatSpent}"  color="{city.wheatSpent > 0 ? Numbers.RED : Numbers.GREEN}"/>
-								</mx:GridItem>
-							</mx:GridRow>
-							<mx:GridRow >
-								<mx:GridItem horizontalAlign="center">
-									<mx:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}"/>
-								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-									<s:HGroup verticalAlign="middle">
-										<s:Label text="{city.peopleCreatingWood}" styleName="numberLabel"/>
-										<s:HSlider id="woodWorkersSlider"
-												   liveDragging="true" 
-												   change="woodWorkersCheck(event)"
-												   value="{city.peopleCreatingWood}"
-												   maximum="{city.population}"
-												   snapInterval="1"/>
-									</s:HGroup>
-								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center" verticalAlign="middle"> 
-									<s:Label text="+ {city.woodEarned}" color="{Numbers.GREEN}"/>
-								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-									<s:Label text="- {city.woodSpent}" color="{city.woodSpent > 0 ? Numbers.RED : Numbers.GREEN}"/>
-								</mx:GridItem>
-							</mx:GridRow>
-							<mx:GridRow >
-								<mx:GridItem horizontalAlign="center">
-									<mx:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}"/>
-								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-									<s:HGroup verticalAlign="middle">
-										<s:Label text="{city.peopleCreatingIron}" styleName="numberLabel"/>
-										<s:HSlider id="ironWorkersSlider"
-												   liveDragging="true" 
-												   change="ironWorkersCheck(event)"
-												   value="{city.peopleCreatingIron}"
-												   maximum="{city.population}"
-												   snapInterval="1"/>
-									</s:HGroup>
-								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-									<s:Label text="+ {city.ironEarned}" color="{Numbers.GREEN}"/>
-								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-									<s:Label text="- {city.ironSpent}" color="{city.ironSpent > 0 ? Numbers.RED : Numbers.GREEN}"/>
-								</mx:GridItem>
-							</mx:GridRow>
-							<mx:GridRow>
-								<mx:GridItem colSpan="4">
-									<mx:HRule width="100%"/>
-								</mx:GridItem>
-							</mx:GridRow >
-							<mx:GridRow >
-								<mx:GridItem/>
-								<mx:GridItem horizontalAlign="center">
-									<s:Label text="Total" />
-								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
-									<s:Label text="{city.peopleCreatingWheat + city.peopleCreatingWood + city.peopleCreatingIron}" />
-								</mx:GridItem>
-							</mx:GridRow>
-							<mx:GridRow>
-								<mx:GridItem horizontalAlign="center"
-											 colSpan="5"
-											 color="{Numbers.RED}">
-									<s:Label text="{Translations.STARVATION.getItemAt(Session.LANGUAGE)}"
-											 visible="{city.wheat + city.wheatEarned - city.wheatSpent &lt; 0}"
-											 includeInLayout="{city.wheat + city.wheatEarned - city.wheatSpent &lt; 0}"/>
-								</mx:GridItem>
-							</mx:GridRow>
-						</mx:Grid>
-					</s:HGroup>
-					
-				</s:NavigatorContent>
-				
-				<!-- =============================================================================================== -->
-				<!-- Marche -->
-				
-				<s:NavigatorContent label="{Translations.MARKET.getItemAt(Session.LANGUAGE)}">
-					<s:HGroup width="100%" height="100%" horizontalAlign="center">
-						<s:TabBar id="tabsMarket" dataProvider="{viewstackMarket}"/>
-						
-						<mx:ViewStack id="viewstackMarket" width="650" height="100%">
-							
-							<!-- =============================================================================================== -->
-							<!-- Achat -->
-							
-							<s:NavigatorContent label="{Translations.BUYING.getItemAt(Session.LANGUAGE)}" width="650">
-								<s:Button label="{Translations.BUY.getItemAt(Session.LANGUAGE)}" left="-130" bottom="0" click="buy()"/>
-								<s:VGroup left="-60">
-									<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle"
-											 width="520">
-										<mx:GridRow >
-											<mx:GridItem minWidth="60"/>
-											<mx:GridItem horizontalAlign="center" minWidth="80">
-												<s:Label text="{Translations.UNIT_COST.getItemAt(Session.LANGUAGE)}" />
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center" minWidth="160">
-												<s:Label text="{Translations.QUANTITY.getItemAt(Session.LANGUAGE)}"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center" minWidth="80">
-												<s:Label text="{Translations.PRICE_TO_PAY.getItemAt(Session.LANGUAGE)}"/>
-											</mx:GridItem>
-										</mx:GridRow>
-									</mx:Grid>
-									<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle"
-											 maxHeight="180" width="540">
-										<mx:GridRow>
-											<mx:GridItem horizontalAlign="center">
-												<mx:Image toolTip="{Translations.WHEAT.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WHEAT}"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-												<s:Label text="{Numbers.WHEAT_PRICE_BUY}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center" 
-														 verticalAlign="middle"
-														 minWidth="220">
-												<renderers:SpecialNumStepper id="wheatMarketStepper"
-																			 data="{city.wheatBought}"
-																			 step="{1}"
-																			 check="wheatMarketBuyCheck"
-																			 wantMax="spendAllMoneyForWheat"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-												<s:Label text="{city.wheatBought*Numbers.WHEAT_PRICE_BUY}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
-											</mx:GridItem>
-										</mx:GridRow>
-										<mx:GridRow >
-											<mx:GridItem horizontalAlign="center">
-												<mx:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-												<s:Label text="{Numbers.WOOD_PRICE_BUY}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-												<renderers:SpecialNumStepper id="woodMarketStepper"
-																			 data="{city.woodBought}"
-																			 step="{1}"
-																			 check="woodMarketBuyCheck"
-																			 wantMax="spendAllMoneyForWood"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-												<s:Label text="{(int)(city.woodBought*Numbers.WOOD_PRICE_BUY)}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
-											</mx:GridItem>
-										</mx:GridRow>
-										<mx:GridRow >
-											<mx:GridItem horizontalAlign="center">
-												<mx:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-												<s:Label text="{Numbers.IRON_PRICE_BUY}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-												<renderers:SpecialNumStepper id="ironMarketStepper"
-																			 data="{city.ironBought}"
-																			 step="{1}"
-																			 check="ironMarketBuyCheck"
-																			 wantMax="spendAllMoneyForIron"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center">
-												<s:Label text="{city.ironBought*Numbers.IRON_PRICE_BUY}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
-											</mx:GridItem>
-										</mx:GridRow>
-										<mx:GridRow>
-											<mx:GridItem horizontalAlign="center">
-												<mx:Image toolTip="{Translations.BOW.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.BOW}"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-												<s:Label text="{Numbers.BOW_PRICE_BUY}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-												<renderers:SpecialNumStepper id="bowsMarketStepper"
-																			 data="{city.bowsBought}"
-																			 step="{1}"
-																			 check="bowsMarketBuyCheck"
-																			 wantMax="spendAllMoneyForBows"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-												<s:Label text="{city.bowsBought*Numbers.BOW_PRICE_BUY}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
-											</mx:GridItem>
-										</mx:GridRow>
-										<mx:GridRow>
-											<mx:GridItem horizontalAlign="center">
-												<mx:Image toolTip="{Translations.SWORD.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.SWORD}"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-												<s:Label text="{Numbers.SWORD_PRICE_BUY}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-												<renderers:SpecialNumStepper id="swordsMarketStepper"
-																			 data="{city.swordsBought}"
-																			 step="{1}"
-																			 check="swordsMarketBuyCheck"
-																			 wantMax="spendAllMoneyForSwords"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-												<s:Label text="{city.swordsBought*Numbers.SWORD_PRICE_BUY}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
-											</mx:GridItem>
-										</mx:GridRow>
-										<mx:GridRow>
-											<mx:GridItem horizontalAlign="center">
-												<mx:Image toolTip="{Translations.ARMOR.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.ARMOR}"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-												<s:Label text="{Numbers.ARMOR_PRICE_BUY}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-												<renderers:SpecialNumStepper id="armorsMarketStepper"
-																			 data="{city.armorsBought}"
-																			 step="{1}"
-																			 check="armorsMarketBuyCheck"
-																			 wantMax="spendAllMoneyForArmors"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-												<s:Label text="{city.armorsBought*Numbers.ARMOR_PRICE_BUY}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
-											</mx:GridItem>
-										</mx:GridRow>
-									</mx:Grid>
-									<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle"
-											 width="500">
-										<mx:GridRow>
-											<mx:GridItem colSpan="4">
-												<mx:HRule width="100%"/>
-											</mx:GridItem>
-										</mx:GridRow >
-										<mx:GridRow >
-											<mx:GridItem/>
-											<mx:GridItem/>
-											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-												<s:Label text="{Translations.TOTAL_SPENDING.getItemAt(Session.LANGUAGE)} : " minWidth="150"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-												<s:Label text="{city.goldSpent}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
-											</mx:GridItem>
-											<mx:GridItem/>
-										</mx:GridRow>
-									</mx:Grid>
-								</s:VGroup>
-							</s:NavigatorContent>
-							
-							<!-- =============================================================================================== -->
-							<!-- Vente -->
-							
-							<s:NavigatorContent label="{Translations.SELLING.getItemAt(Session.LANGUAGE)}" width="650">
-								<s:Button label="{Translations.SELL.getItemAt(Session.LANGUAGE)}" left="-130" bottom="0" click="sell()"/>
-								<s:VGroup left="-60">
-									<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle"
-											 width="520">
-										<mx:GridRow >
-											<mx:GridItem minWidth="70"/>
-											<mx:GridItem horizontalAlign="center" minWidth="80">
-												<s:Label text="{Translations.UNIT_COST.getItemAt(Session.LANGUAGE)}" />
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center" minWidth="160">
-												<s:Label text="{Translations.QUANTITY.getItemAt(Session.LANGUAGE)}"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center" minWidth="80">
-												<s:Label text="{Translations.PROFIT.getItemAt(Session.LANGUAGE)}"/>
-											</mx:GridItem>
-										</mx:GridRow>
-									</mx:Grid>
-									<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle"
-											 maxHeight="180" width="540">
-										<mx:GridRow >
-											<mx:GridItem horizontalAlign="center">
-												<mx:Image toolTip="{Translations.WHEAT.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WHEAT}"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-												<s:Label text="{Numbers.WHEAT_PRICE_SELL}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center" 
-														 verticalAlign="middle"
-														 minWidth="220">
-												<renderers:SpecialNumStepper id="wheatMarketSellStepper"
-																			 data="{city.wheatSold}"
-																			 step="{1}"
-																			 check="wheatMarketSellCheck"
-																			 wantMax="sellAllWheat"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-												<s:Label text="{(int)(city.wheatSold*Numbers.WHEAT_PRICE_SELL)}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
-											</mx:GridItem>
-										</mx:GridRow>
-										<mx:GridRow >
-											<mx:GridItem horizontalAlign="center">
-												<mx:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-												<s:Label text="{Numbers.WOOD_PRICE_SELL}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-												<renderers:SpecialNumStepper id="woodMarketSellStepper"
-																			 data="{city.woodSold}"
-																			 step="{1}"
-																			 check="woodMarketSellCheck"
-																			 wantMax="sellAllWood"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-												<s:Label text="{city.woodSold*Numbers.WOOD_PRICE_SELL}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
-											</mx:GridItem>
-										</mx:GridRow>
-										<mx:GridRow >
-											<mx:GridItem horizontalAlign="center">
-												<mx:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-												<s:Label text="{Numbers.IRON_PRICE_SELL}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-												<renderers:SpecialNumStepper id="ironMarketSellStepper"
-																			 data="{city.ironSold}"
-																			 step="{1}"
-																			 check="ironMarketSellCheck"
-																			 wantMax="sellAllIron"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-												<s:Label text="{(int)(city.ironSold*Numbers.IRON_PRICE_SELL)}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
-											</mx:GridItem>
-										</mx:GridRow>
-										<mx:GridRow>
-											<mx:GridItem horizontalAlign="center">
-												<mx:Image toolTip="{Translations.BOW.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.BOW}"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-												<s:Label text="{Numbers.BOW_PRICE_SELL}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-												<renderers:SpecialNumStepper id="bowsMarketSellStepper"
-																			 data="{city.bowsSold}"
-																			 step="{1}"
-																			 check="bowsMarketSellCheck"
-																			 wantMax="sellAllBows"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-												<s:Label text="{city.bowsSold*Numbers.BOW_PRICE_SELL}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
-											</mx:GridItem>
-										</mx:GridRow>
-										<mx:GridRow>
-											<mx:GridItem horizontalAlign="center">
-												<mx:Image toolTip="{Translations.SWORD.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.SWORD}"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-												<s:Label text="{Numbers.SWORD_PRICE_SELL}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-												<renderers:SpecialNumStepper id="swordsMarketSellStepper"
-																			 data="{city.swordsSold}"
-																			 step="{1}"
-																			 check="swordsMarketSellCheck"
-																			 wantMax="sellAllSwords"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-												<s:Label text="{city.swordsSold*Numbers.SWORD_PRICE_SELL}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
-											</mx:GridItem>
-										</mx:GridRow>
-										<mx:GridRow>
-											<mx:GridItem horizontalAlign="center">
-												<mx:Image toolTip="{Translations.ARMOR.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.ARMOR}"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-												<s:Label text="{Numbers.ARMOR_PRICE_SELL}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-												<renderers:SpecialNumStepper id="armorsMarketSellStepper"
-																			 data="{city.armorsSold}"
-																			 step="{1}"
-																			 check="armorsMarketSellCheck"
-																			 wantMax="sellAllArmors"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-												<s:Label text="{city.armorsSold*Numbers.ARMOR_PRICE_SELL}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
-											</mx:GridItem>
-										</mx:GridRow>
-									</mx:Grid>
-									<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle"
-											 width="520">
-										<mx:GridRow>
-											<mx:GridItem colSpan="4">
-												<mx:HRule width="100%"/>
-											</mx:GridItem>
-										</mx:GridRow >
-										<mx:GridRow >
-											<mx:GridItem/>
-											<mx:GridItem/>
-											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-												<s:Label text="{Translations.TOTAL_PROFIT.getItemAt(Session.LANGUAGE)} : " minWidth="150"/>
-											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-												<s:Label text="{city.goldEarned}" styleName="numberLabel"/>
-												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
-											</mx:GridItem>
-											<mx:GridItem/>
-										</mx:GridRow>
-									</mx:Grid>
-								</s:VGroup>
-							</s:NavigatorContent>
-						</mx:ViewStack>
+						<s:VGroup  width="100%">
+							<mx:Grid verticalGap="10" horizontalGap="55" horizontalAlign="center" verticalAlign="middle">
+								<mx:GridRow >
+									<mx:GridItem/>
+									<mx:GridItem horizontalAlign="center" width="100">
+										<s:Label text="{Translations.WORKERS.getItemAt(Session.LANGUAGE)}" />
+									</mx:GridItem>
+									<mx:GridItem horizontalAlign="center">
+										<s:Label text="{Translations.HARVEST.getItemAt(Session.LANGUAGE)}"/>
+									</mx:GridItem>
+									<mx:GridItem horizontalAlign="center">
+										<s:Label text="{Translations.SPENDING.getItemAt(Session.LANGUAGE)}"/>
+									</mx:GridItem>
+								</mx:GridRow>
+								<mx:GridRow>
+									<mx:GridItem horizontalAlign="center">
+										<mx:Image toolTip="{Translations.WHEAT.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WHEAT}"/>
+									</mx:GridItem>
+									<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+										<s:HGroup verticalAlign="middle">
+											<s:Label text="{city.peopleCreatingWheat}"
+													 styleName="numberLabel" 
+													 textAlign="right"
+													 minWidth="60"/>
+											<s:HSlider id="wheatWorkersSlider"
+														liveDragging="true" 
+														change="wheatWorkersCheck(event)"
+														value="{city.peopleCreatingWheat}"
+														maximum="{city.population}"
+														snapInterval="1"/>
+										</s:HGroup>
+									</mx:GridItem>
+									<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+										<s:Label text="+ {city.wheatEarned}" color="{Numbers.GREEN}"/>
+									</mx:GridItem>
+									<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+										<s:Label text="- {city.wheatSpent}"  color="{city.wheatSpent > 0 ? Numbers.RED : Numbers.GREEN}"/>
+									</mx:GridItem>
+								</mx:GridRow>
+								<mx:GridRow >
+									<mx:GridItem horizontalAlign="center">
+										<mx:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}"/>
+									</mx:GridItem>
+									<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+										<s:HGroup verticalAlign="middle">
+											<s:Label text="{city.peopleCreatingWood}"
+													 styleName="numberLabel" 
+													 textAlign="right"
+													 minWidth="60"/>
+											<s:HSlider id="woodWorkersSlider"
+													   liveDragging="true" 
+													   change="woodWorkersCheck(event)"
+													   value="{city.peopleCreatingWood}"
+													   maximum="{city.population}"
+													   snapInterval="1"/>
+										</s:HGroup>
+									</mx:GridItem>
+									<mx:GridItem horizontalAlign="center" verticalAlign="middle"> 
+										<s:Label text="+ {city.woodEarned}" color="{Numbers.GREEN}"/>
+									</mx:GridItem>
+									<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+										<s:Label text="- {city.woodSpent}" color="{city.woodSpent > 0 ? Numbers.RED : Numbers.GREEN}"/>
+									</mx:GridItem>
+								</mx:GridRow>
+								<mx:GridRow >
+									<mx:GridItem horizontalAlign="center">
+										<mx:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}"/>
+									</mx:GridItem>
+									<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+										<s:HGroup verticalAlign="middle">
+											<s:Label text="{city.peopleCreatingIron}"
+													 styleName="numberLabel" 
+													 textAlign="right"
+													 minWidth="60"/>
+											<s:HSlider id="ironWorkersSlider"
+													   liveDragging="true" 
+													   change="ironWorkersCheck(event)"
+													   value="{city.peopleCreatingIron}"
+													   maximum="{city.population}"
+													   snapInterval="1"/>
+										</s:HGroup>
+									</mx:GridItem>
+									<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+										<s:Label text="+ {city.ironEarned}" color="{Numbers.GREEN}"/>
+									</mx:GridItem>
+									<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+										<s:Label text="- {city.ironSpent}" color="{city.ironSpent > 0 ? Numbers.RED : Numbers.GREEN}"/>
+									</mx:GridItem>
+								</mx:GridRow>
+								<mx:GridRow>
+									<mx:GridItem colSpan="4">
+										<mx:HRule width="100%"/>
+									</mx:GridItem>
+								</mx:GridRow >
+							</mx:Grid>
 
+							<mx:Spacer height="10"/>
+							<s:HGroup width="100%" horizontalAlign="center" bottom="0"
+									  includeInLayout="{city.wheat + city.wheatEarned - city.wheatSpent &lt; 0}">
+								<s:Label text="{Translations.STARVATION.getItemAt(Session.LANGUAGE)}"
+										 visible="{city.wheat + city.wheatEarned - city.wheatSpent &lt; 0}"
+										 color="{Numbers.RED}"/>
+							</s:HGroup>
+							
+							<s:HGroup width="100%" horizontalAlign="center" bottom="0"
+									  verticalAlign="middle"
+									  includeInLayout="{city.wheat + city.wheatEarned - city.wheatSpent &gt;= 0}">
+								<s:Label text="{Translations.WORKERS.getItemAt(Session.LANGUAGE)}"/>
+								<mx:Spacer width="10"/>
+								<s:Label text="{city.peopleCreatingWheat + city.peopleCreatingWood + city.peopleCreatingIron}"
+										 styleName="numberLabel" 
+										 textAlign="right"
+										 minWidth="60"/>
+								<mx:Spacer width="10"/>
+								<s:VGroup>
+									<mx:Spacer height="11"/>
+									<mx:ProgressBar width="250"
+													height="100%"
+													label="" 
+													id="workersProgressBar"
+													mode="manual"
+													barSkin="{WorkersProgressBarSkin}"
+													trackSkin="{WorkersProgressTrackSkin}"
+													trackHeight="18"
+													creationComplete="{updateWorkersProgressBar()}"/>
+								</s:VGroup>
+								<mx:Spacer width="10"/>
+								<s:Label text="{city.unemployed}"
+										 styleName="numberLabel" 
+										 textAlign="right"
+										 minWidth="60"/>
+								<mx:Spacer width="10"/>
+								<s:Label text="{Translations.UNEMPLOYED.getItemAt(Session.LANGUAGE)}" />
+							</s:HGroup>
+						</s:VGroup>
 					</s:HGroup>
-				</s:NavigatorContent>
-				
+				</s:NavigatorContent> 
+
 				
 				<!-- =============================================================================================== -->
 				<!-- Forge Tab -->
 				
-				<s:NavigatorContent label="{Translations.FORGE.getItemAt(Session.LANGUAGE)}">
+				<s:NavigatorContent label="{Translations.FORGE.getItemAt(Session.LANGUAGE)}"
+									show="{updateSmithsProgressBar()}">
 					<s:VGroup width="100%" horizontalAlign="center">
 						<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle">
 						  <mx:GridRow >
@@ -1816,12 +1391,19 @@
 											toolTipCreate="{onCreateForgeToolTip(event, Translations.BOW.getItemAt(Session.LANGUAGE) as String, Numbers.BOW_WOOD, Numbers.BOW_IRON)}"
 											source="{ImageContainer.BOW}"/>
 							  </mx:GridItem>
-							  <mx:GridItem horizontalAlign="center">
-								  <renderers:SpecialNumStepper id="bowWorkersStepper"
-															   data="{city.bowWorkers}"
-															   step="{1}"
-															   check="bowWorkersCheck"
-															   wantMax="addAllUnemployedToBow"/>
+							  <mx:GridItem horizontalAlign="center" verticalAlign="middle">
+								  <s:HGroup verticalAlign="middle">
+									  <s:Label text="{city.bowWorkers}" 
+											   styleName="numberLabel" 
+											   textAlign="right"
+											   minWidth="60"/>
+									  <s:HSlider id="bowWorkersSlider"
+												 liveDragging="true" 
+												 change="bowWorkersCheck(event)"
+												 value="{city.bowWorkers}"
+												 maximum="{city.availableAsSmith}"
+												 snapInterval="1"/>
+								  </s:HGroup>
 							  </mx:GridItem>
 							  <mx:GridItem horizontalAlign="center">
 								  <s:Label text="{Numbers.BOW_WOOD * city.bowWorkers}" styleName="numberLabel"/>
@@ -1836,12 +1418,19 @@
 											  toolTipCreate="{onCreateForgeToolTip(event, Translations.SWORD.getItemAt(Session.LANGUAGE) as String, Numbers.SWORD_WOOD, Numbers.SWORD_IRON)}"
 											  source="{ImageContainer.SWORD}"/>
 								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
-									<renderers:SpecialNumStepper id="swordWorkersStepper"
-																 data="{city.swordWorkers}"
-																 step="{1}"
-																 check="swordWorkersCheck"
-																 wantMax="addAllUnemployedToSword"/>
+								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+									<s:HGroup verticalAlign="middle">
+										<s:Label text="{city.swordWorkers}" 
+												 styleName="numberLabel" 
+												 textAlign="right"
+												 minWidth="60"/>
+										<s:HSlider id="swordWorkersSlider"
+												   liveDragging="true" 
+												   change="swordWorkersCheck(event)"
+												   value="{city.swordWorkers}"
+												   maximum="{city.availableAsSmith}"
+												   snapInterval="1"/>
+									</s:HGroup>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
 									<s:Label text="{Numbers.SWORD_WOOD * city.swordWorkers}" styleName="numberLabel"/>
@@ -1856,12 +1445,19 @@
 											  toolTipCreate="{onCreateForgeToolTip(event, Translations.ARMOR.getItemAt(Session.LANGUAGE) as String, Numbers.ARMOR_WOOD, Numbers.ARMOR_IRON)}"
 											  source="{ImageContainer.ARMOR}"/>
 								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
-									<renderers:SpecialNumStepper id="armorWorkersStepper"
-																 data="{city.armorWorkers}"
-																 step="{1}"
-																 check="armorWorkersCheck"
-																 wantMax="addAllUnemployedToArmor"/>
+								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+									<s:HGroup verticalAlign="middle">
+										<s:Label text="{city.armorWorkers}" 
+												 styleName="numberLabel" 
+												 textAlign="right"
+												 minWidth="60"/>
+										<s:HSlider id="armorWorkersSlider"
+												   liveDragging="true" 
+												   change="armorWorkersCheck(event)"
+												   value="{city.armorWorkers}"
+												   maximum="{city.availableAsSmith}"
+												   snapInterval="1"/>
+									</s:HGroup>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
 									<s:Label text="{Numbers.ARMOR_WOOD * city.armorWorkers}" styleName="numberLabel"/>
@@ -1876,11 +1472,9 @@
 							</mx:GridItem>
 						</mx:GridRow >
 						<mx:GridRow >
+							<mx:GridItem/>
 							<mx:GridItem horizontalAlign="center">
-								<s:Label text="Total" />
-							</mx:GridItem>
-							<mx:GridItem horizontalAlign="center">
-								<s:Label text="{city.bowWorkers + city.swordWorkers + city.armorWorkers}" />
+								<s:Label text="{Translations.TOTAL_SPENDING.getItemAt(Session.LANGUAGE)}"/>
 							</mx:GridItem>
 							<mx:GridItem horizontalAlign="center">
 								<s:Label text="{Numbers.SWORD_WOOD * city.swordWorkers 
@@ -1896,6 +1490,34 @@
 							</mx:GridItem>
 						</mx:GridRow>
 					  </mx:Grid>
+						
+						<s:HGroup width="100%" horizontalAlign="center" bottom="0"
+								  verticalAlign="middle">
+							<s:Label text="{Translations.SMITHS.getItemAt(Session.LANGUAGE)}"/>
+							<mx:Spacer width="10"/>
+							<s:Label text="{city.bowWorkers + city.swordWorkers + city.armorWorkers}"
+									 textAlign="right"
+									 minWidth="40"/>
+							<mx:Spacer width="4"/>
+							<s:VGroup>
+								<mx:Spacer height="12"/>
+								<mx:ProgressBar width="250"
+												height="100%"
+												label="" 
+												id="smithsProgressBar"
+												mode="manual"
+												barSkin="{WorkersProgressBarSkin}"
+												trackSkin="{WorkersProgressTrackSkin}"
+												trackHeight="18"
+												creationComplete="{updateSmithsProgressBar()}"/>
+							</s:VGroup>
+							<mx:Spacer width="4"/>
+							<s:Label text="{city.unemployed}"
+									 textAlign="right"
+									 minWidth="40"/>
+							<mx:Spacer width="4"/>
+							<s:Label text="{Translations.UNEMPLOYED.getItemAt(Session.LANGUAGE)}" />
+						</s:HGroup>
 					</s:VGroup>
 				</s:NavigatorContent>
 				
@@ -1990,6 +1612,473 @@
 					</s:VGroup>
 				</s:NavigatorContent>
 				
+				<!-- =============================================================================================== -->
+				<!-- Marche -->
+				
+				<s:NavigatorContent label="{Translations.MARKET.getItemAt(Session.LANGUAGE)}">
+					<s:HGroup width="100%" height="100%" horizontalAlign="center">
+						<s:TabBar id="tabsMarket" dataProvider="{viewstackMarket}"/>
+						
+						<mx:ViewStack id="viewstackMarket" width="650" height="100%">
+							
+							<!-- =============================================================================================== -->
+							<!-- Achat -->
+							
+							<s:NavigatorContent label="{Translations.BUYING.getItemAt(Session.LANGUAGE)}" width="650">
+								<s:Button label="{Translations.BUY.getItemAt(Session.LANGUAGE)}" left="-130" bottom="0" click="buy()"/>
+								<s:VGroup left="-60">
+									<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle"
+											 width="520">
+										<mx:GridRow >
+											<mx:GridItem minWidth="60"/>
+											<mx:GridItem horizontalAlign="center" minWidth="60">
+												<s:Label text="{Translations.UNIT_COST.getItemAt(Session.LANGUAGE)}" />
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" minWidth="160">
+												<s:Label text="{Translations.QUANTITY.getItemAt(Session.LANGUAGE)}"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" minWidth="60">
+												<s:Label text="{Translations.PRICE_TO_PAY.getItemAt(Session.LANGUAGE)}"/>
+											</mx:GridItem>
+										</mx:GridRow>
+									</mx:Grid>
+									<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle"
+											 maxHeight="180" width="540">
+										<mx:GridRow>
+											<mx:GridItem horizontalAlign="center">
+												<mx:Image toolTip="{Translations.WHEAT.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WHEAT}"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{Numbers.WHEAT_PRICE_BUY}" styleName="numberLabel"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:HGroup verticalAlign="middle">
+													<s:Label text="{city.wheatBought}" 
+															 styleName="numberLabel" 
+															 textAlign="right"
+															 minWidth="60"/>
+													<s:HSlider id="wheatMarketSlider"
+															   liveDragging="true" 
+															   change="wheatMarketBuyCheck(event)"
+															   value="{city.wheatBought}"
+															   maximum="{city.gold/Numbers.WHEAT_PRICE_BUY}"
+															   snapInterval="1"/>
+												</s:HGroup>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{city.wheatBought*Numbers.WHEAT_PRICE_BUY}" 
+														 styleName="numberLabel" 
+														 textAlign="right"
+														 minWidth="60"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
+											</mx:GridItem>
+										</mx:GridRow>
+										<mx:GridRow >
+											<mx:GridItem horizontalAlign="center">
+												<mx:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{Numbers.WOOD_PRICE_BUY}" styleName="numberLabel"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:HGroup verticalAlign="middle">
+													<s:Label text="{city.woodBought}" 
+															 styleName="numberLabel" 
+															 textAlign="right"
+															 minWidth="60"/>
+													<s:HSlider id="woodMarketSlider"
+															   liveDragging="true" 
+															   change="woodMarketBuyCheck(event)"
+															   value="{city.woodBought}"
+															   maximum="{city.gold/Numbers.WOOD_PRICE_BUY}"
+															   snapInterval="1"/>
+												</s:HGroup>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{(int)(city.woodBought*Numbers.WOOD_PRICE_BUY)}" 
+														 styleName="numberLabel" 
+														 textAlign="right"
+														 minWidth="60"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
+											</mx:GridItem>
+										</mx:GridRow>
+										<mx:GridRow >
+											<mx:GridItem horizontalAlign="center">
+												<mx:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{Numbers.IRON_PRICE_BUY}" styleName="numberLabel"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:HGroup verticalAlign="middle">
+													<s:Label text="{city.ironBought}" 
+															 styleName="numberLabel" 
+															 textAlign="right"
+															 minWidth="60"/>
+													<s:HSlider id="ironMarketSlider"
+															   liveDragging="true" 
+															   change="ironMarketBuyCheck(event)"
+															   value="{city.ironBought}"
+															   maximum="{city.gold/Numbers.IRON_PRICE_BUY}"
+															   snapInterval="1"/>
+												</s:HGroup>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center">
+												<s:Label text="{city.ironBought*Numbers.IRON_PRICE_BUY}" 
+														 styleName="numberLabel" 
+														 textAlign="right"
+														 minWidth="60"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
+											</mx:GridItem>
+										</mx:GridRow>
+										<mx:GridRow>
+											<mx:GridItem horizontalAlign="center">
+												<mx:Image toolTip="{Translations.BOW.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.BOW}"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{Numbers.BOW_PRICE_BUY}" styleName="numberLabel"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:HGroup verticalAlign="middle">
+													<s:Label text="{city.bowsBought}" 
+															 styleName="numberLabel" 
+															 textAlign="right"
+															 minWidth="60"/>
+													<s:HSlider id="bowsMarketSlider"
+															   liveDragging="true" 
+															   change="bowsMarketBuyCheck(event)"
+															   value="{city.bowsBought}"
+															   maximum="{city.gold/Numbers.BOW_PRICE_BUY}"
+															   snapInterval="1"/>
+												</s:HGroup>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{city.bowsBought*Numbers.BOW_PRICE_BUY}" 
+														 styleName="numberLabel" 
+														 textAlign="right"
+														 minWidth="60"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
+											</mx:GridItem>
+										</mx:GridRow>
+										<mx:GridRow>
+											<mx:GridItem horizontalAlign="center">
+												<mx:Image toolTip="{Translations.SWORD.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.SWORD}"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{Numbers.SWORD_PRICE_BUY}" 
+														 styleName="numberLabel" 
+														 textAlign="right"
+														 minWidth="60"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:HGroup verticalAlign="middle">
+													<s:Label text="{city.swordsBought}" 
+															 styleName="numberLabel" 
+															 textAlign="right"
+															 minWidth="60"/>
+													<s:HSlider id="swordsMarketSlider"
+															   liveDragging="true" 
+															   change="swordsMarketBuyCheck(event)"
+															   value="{city.swordsBought}"
+															   maximum="{city.gold/Numbers.SWORD_PRICE_BUY}"
+															   snapInterval="1"/>
+												</s:HGroup>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{city.swordsBought*Numbers.SWORD_PRICE_BUY}" styleName="numberLabel"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
+											</mx:GridItem>
+										</mx:GridRow>
+										<mx:GridRow>
+											<mx:GridItem horizontalAlign="center">
+												<mx:Image toolTip="{Translations.ARMOR.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.ARMOR}"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{Numbers.ARMOR_PRICE_BUY}" styleName="numberLabel"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:HGroup verticalAlign="middle">
+													<s:Label text="{city.armorsBought}" 
+															 styleName="numberLabel" 
+															 textAlign="right"
+															 minWidth="60"/>
+													<s:HSlider id="armorsMarketSlider"
+															   liveDragging="true" 
+															   change="armorsMarketBuyCheck(event)"
+															   value="{city.armorsBought}"
+															   maximum="{city.gold/Numbers.ARMOR_PRICE_BUY}"
+															   snapInterval="1"/>
+												</s:HGroup>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{city.armorsBought*Numbers.ARMOR_PRICE_BUY}" 
+														 styleName="numberLabel" 
+														 textAlign="right"
+														 minWidth="60"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
+											</mx:GridItem>
+										</mx:GridRow>
+									</mx:Grid>
+									<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle"
+											 width="500">
+										<mx:GridRow>
+											<mx:GridItem colSpan="4">
+												<mx:HRule width="100%"/>
+											</mx:GridItem>
+										</mx:GridRow >
+										<mx:GridRow >
+											<mx:GridItem/>
+											<mx:GridItem/>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{Translations.TOTAL_SPENDING.getItemAt(Session.LANGUAGE)} : " minWidth="150"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{city.goldSpent}" styleName="numberLabel"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
+											</mx:GridItem>
+											<mx:GridItem/>
+										</mx:GridRow>
+									</mx:Grid>
+								</s:VGroup>
+							</s:NavigatorContent>
+							
+							<!-- =============================================================================================== -->
+							<!-- Vente -->
+							
+							<s:NavigatorContent label="{Translations.SELLING.getItemAt(Session.LANGUAGE)}" width="650">
+								<s:Button label="{Translations.SELL.getItemAt(Session.LANGUAGE)}" left="-130" bottom="0" click="sell()"/>
+								<s:VGroup left="-60">
+									<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle"
+											 width="520">
+										<mx:GridRow >
+											<mx:GridItem minWidth="35"/>
+											<mx:GridItem horizontalAlign="center" minWidth="60">
+												<s:Label text="{Translations.UNIT_COST.getItemAt(Session.LANGUAGE)}" />
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" minWidth="180">
+												<s:Label text="{Translations.QUANTITY.getItemAt(Session.LANGUAGE)}"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" minWidth="100">
+												<s:Label text="{Translations.PROFIT.getItemAt(Session.LANGUAGE)}"/>
+											</mx:GridItem>
+										</mx:GridRow>
+									</mx:Grid>
+									<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle"
+											 maxHeight="180" width="540">
+										<mx:GridRow >
+											<mx:GridItem horizontalAlign="center">
+												<mx:Image toolTip="{Translations.WHEAT.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WHEAT}"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{Numbers.WHEAT_PRICE_SELL}" styleName="numberLabel" textAlign="right"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:HGroup verticalAlign="middle">
+													<s:Label text="{city.wheatSold}" 
+															 styleName="numberLabel" 
+															 textAlign="right"
+															 minWidth="60"/>
+													<s:HSlider id="wheatMarketSellSlider"
+															   liveDragging="true" 
+															   change="wheatMarketSellCheck(event)"
+															   value="{city.wheatSold}"
+															   maximum="{city.wheat}"
+															   snapInterval="1"/>
+												</s:HGroup>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{(int)(city.wheatSold*Numbers.WHEAT_PRICE_SELL)}" 
+														 styleName="numberLabel" 
+														 textAlign="right"
+														 minWidth="60"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
+											</mx:GridItem>
+										</mx:GridRow>
+										<mx:GridRow >
+											<mx:GridItem horizontalAlign="center">
+												<mx:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{Numbers.WOOD_PRICE_SELL}" styleName="numberLabel"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:HGroup verticalAlign="middle">
+													<s:Label text="{city.woodSold}" 
+															 styleName="numberLabel" 
+															 textAlign="right"
+															 minWidth="60"/>
+													<s:HSlider id="woodMarketSellSlider"
+															   liveDragging="true" 
+															   change="woodMarketSellCheck(event)"
+															   value="{city.woodSold}"
+															   maximum="{city.wood}"
+															   snapInterval="1"/>
+												</s:HGroup>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{city.woodSold*Numbers.WOOD_PRICE_SELL}" 
+														 styleName="numberLabel" 
+														 textAlign="right"
+														 minWidth="60"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
+											</mx:GridItem>
+										</mx:GridRow>
+										<mx:GridRow >
+											<mx:GridItem horizontalAlign="center">
+												<mx:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{Numbers.IRON_PRICE_SELL}" styleName="numberLabel"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:HGroup verticalAlign="middle">
+													<s:Label text="{city.ironSold}" 
+															 styleName="numberLabel" 
+															 textAlign="right"
+															 minWidth="60"/>
+													<s:HSlider id="ironMarketSellSlider"
+															   liveDragging="true" 
+															   change="ironMarketSellCheck(event)"
+															   value="{city.ironSold}"
+															   maximum="{city.iron}"
+															   snapInterval="1"/>
+												</s:HGroup>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{(int)(city.ironSold*Numbers.IRON_PRICE_SELL)}" 
+														 styleName="numberLabel" 
+														 textAlign="right"
+														 minWidth="60"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
+											</mx:GridItem>
+										</mx:GridRow>
+										<mx:GridRow>
+											<mx:GridItem horizontalAlign="center">
+												<mx:Image toolTip="{Translations.BOW.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.BOW}"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{Numbers.BOW_PRICE_SELL}" styleName="numberLabel"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:HGroup verticalAlign="middle">
+													<s:Label text="{city.bowsSold}" 
+															 styleName="numberLabel" 
+															 textAlign="right"
+															 minWidth="60"/>
+													<s:HSlider id="bowsMarketSellSlider"
+															   liveDragging="true" 
+															   change="bowsMarketSellCheck(event)"
+															   value="{city.bowsSold}"
+															   maximum="{city.bowStock}"
+															   snapInterval="1"/>
+												</s:HGroup>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{city.bowsSold*Numbers.BOW_PRICE_SELL}" 
+														 styleName="numberLabel" 
+														 textAlign="right"
+														 minWidth="60"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
+											</mx:GridItem>
+										</mx:GridRow>
+										<mx:GridRow>
+											<mx:GridItem horizontalAlign="center">
+												<mx:Image toolTip="{Translations.SWORD.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.SWORD}"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{Numbers.SWORD_PRICE_SELL}" styleName="numberLabel"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:HGroup verticalAlign="middle">
+													<s:Label text="{city.swordsSold}" 
+															 styleName="numberLabel" 
+															 textAlign="right"
+															 minWidth="60"/>
+													<s:HSlider id="swordsMarketSellSlider"
+															   liveDragging="true" 
+															   change="swordsMarketSellCheck(event)"
+															   value="{city.swordsSold}"
+															   maximum="{city.swordStock}"
+															   snapInterval="1"/>
+												</s:HGroup>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{city.swordsSold*Numbers.SWORD_PRICE_SELL}" 
+														 styleName="numberLabel" 
+														 textAlign="right"
+														 minWidth="60"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
+											</mx:GridItem>
+										</mx:GridRow>
+										<mx:GridRow>
+											<mx:GridItem horizontalAlign="center">
+												<mx:Image toolTip="{Translations.ARMOR.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.ARMOR}"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{Numbers.ARMOR_PRICE_SELL}" styleName="numberLabel"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:HGroup verticalAlign="middle">
+													<s:Label text="{city.armorsSold}" 
+															 styleName="numberLabel" 
+															 textAlign="right"
+															 minWidth="60"/>
+													<s:HSlider id="armorsMarketSellSlider"
+															   liveDragging="true" 
+															   change="armorsMarketSellCheck(event)"
+															   value="{city.armorsSold}"
+															   maximum="{city.armorStock}"
+															   snapInterval="1"/>
+												</s:HGroup>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{city.armorsSold*Numbers.ARMOR_PRICE_SELL}" 
+														 styleName="numberLabel" 
+														 textAlign="right"
+														 minWidth="60"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
+											</mx:GridItem>
+										</mx:GridRow>
+									</mx:Grid>
+									<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle"
+											 width="520">
+										<mx:GridRow>
+											<mx:GridItem colSpan="4">
+												<mx:HRule width="100%"/>
+											</mx:GridItem>
+										</mx:GridRow >
+										<mx:GridRow >
+											<mx:GridItem/>
+											<mx:GridItem/>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{Translations.TOTAL_PROFIT.getItemAt(Session.LANGUAGE)} : " minWidth="150"/>
+											</mx:GridItem>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:Label text="{city.goldEarned}" styleName="numberLabel"/>
+												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
+											</mx:GridItem>
+											<mx:GridItem/>
+										</mx:GridRow>
+									</mx:Grid>
+								</s:VGroup>
+							</s:NavigatorContent>
+						</mx:ViewStack>
+						
+					</s:HGroup>
+				</s:NavigatorContent>
+								
 				<!-- =============================================================================================== -->
 				<!-- Merchants Tab -->
 				

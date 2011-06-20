@@ -406,17 +406,17 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		pm.close();
 	}
 	
-	public void updateCityResources(City city, boolean saveResources)
+	public void updateCityResources(City city, boolean newStep)
 	{
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		CityDTO cityDTO = pm.getObjectById(CityDTO.class, city.getCityUID());
 
-		if(saveResources){
-			cityDTO.setWheat(city.getWheat());
-			cityDTO.setWood(city.getWood());
-			cityDTO.setIron(city.getIron());
-			cityDTO.setGold(city.getGold());
+		cityDTO.setWheat(city.getWheat());
+		cityDTO.setWood(city.getWood());
+		cityDTO.setIron(city.getIron());
+		cityDTO.setGold(city.getGold());
 			
+		if(newStep){
 			// securite si il y a eu un pb 
 			int population = city.getPopulation();
 			if(population < 0)

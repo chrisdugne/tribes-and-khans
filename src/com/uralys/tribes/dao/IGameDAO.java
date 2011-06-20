@@ -27,7 +27,7 @@ public interface IGameDAO {
 	public CaseDTO getCase(int i, int j);
 	
 	public void updatePlayer(Player player);
-	public void updateCityResources(City city, boolean saveResources);
+	public void updateCityResources(City city, boolean newStep);
 	public void updateSmith(String smithUID, int people);
 	public void updateStock(String equipmentUID, int size);
 

@@ -88,12 +88,12 @@ public class GameManager implements IGameManager {
 		updateCity(city, false);
 	}
 	
-	private void updateCity(City city, boolean saveResources)
+	private void updateCity(City city, boolean newStep)
 	{
 		if(city.getBeginTime() > new Date().getTime())
 			return;
 		
-		gameDao.updateCityResources(city, saveResources);
+		gameDao.updateCityResources(city, newStep);
 
 		//----------------------------------------//
 		// Forge
@@ -334,7 +334,7 @@ public class GameManager implements IGameManager {
 
 		if(topdebug)Utils.print("debut du loop dans les moves  | " + new Date());
 
-		boolean foundAMeeting = false;
+		boolean foundAGathering = false;
 		String previousMoveUID = null;
 		long timeFromChallenging = -1;
 		
@@ -345,7 +345,7 @@ public class GameManager implements IGameManager {
 			if(debug)Utils.print("arrivalOnThisCaseMove : " + arrivalOnThisCaseMove.getMoveUID());
 			boolean moveIsToBeCreated = true;
 			
-			if(foundAMeeting){
+			if(foundAGathering){
 				if(debug)Utils.print("foundAMeeting yet => mouvement non appliqué");
 				currentUnitValue = 0;
 			}
@@ -367,7 +367,7 @@ public class GameManager implements IGameManager {
 			}
 
 			Case _case = getCase(arrivalOnThisCaseMove.getCaseUID());
-			if(!foundAMeeting){
+			if(!foundAGathering){
 				unitArriving.setFinalCaseUIDExpected(_case.getCaseUID());
 				timeFromChallenging = arrivalOnThisCaseMove.getTimeFrom();
 			}
@@ -461,7 +461,7 @@ public class GameManager implements IGameManager {
 						if(meetingHappens)
 						{
 							if(debug)Utils.print(" - meetingHappens !");
-							foundAMeeting = true;
+							foundAGathering = true;
 							Gathering existingGathering = recordedMove.getGathering();
 							Unit unitRecorded = getUnit(unitRecordedUID, datacontainer);
 							
@@ -483,6 +483,7 @@ public class GameManager implements IGameManager {
 								
 								if(unitRecorded.getType() != unitArriving.getType()){
 									if(debug)Utils.print("  les unités sont de types differents : pas de gathering");
+									foundAGathering = false;
 								}
 								else{
 									
@@ -586,83 +587,83 @@ public class GameManager implements IGameManager {
 								
 							} // endif croisement avec un ennemy
 							
-							
-							if(debug)Utils.print(" - attribution des endTime sur les units, et du timeTo sur le recordedMove");
-							
-							long timeOfTheMeeting; // c'est l'heure du croisement qui compte
-							if(arrivalOnThisCaseMove.getTimeFrom() < recordedMove.getTimeFrom())
-							{
-								// dans ce cas, on intercepte un move (on arrive avant lui)
-								// ce recorded move n'existe donc plus, puisque lorsquil arrivera on passera sur la newarmy
-								if(debug)Utils.print("  on arrive sur la case AVANT celui qu'on croise");
-								timeOfTheMeeting = recordedMove.getTimeFrom();
-								arrivalOnThisCaseMove.setTimeTo(timeOfTheMeeting);
-								previousMoveUID = getPreviousMove(recordedMove, datacontainer);
+							if(foundAGathering){
+								if(debug)Utils.print(" - attribution des endTime sur les units, et du timeTo sur le recordedMove");
 								
-								deleteMove(recordedMove.getMoveUID(), true);
-							}
-							else
-							{
-								// dans ce cas on arrive apres le move intercepte
-								// donc le recordedMove existe jusqu'a ce qu'on arrive
-								// et le move ne doit surtout pas etre enregistre puisqu'on devient immediatement la newArmy avec son propre move. 
-								if(debug)Utils.print("  on arrive sur la case APRES celui qu'on croise");
-								moveIsToBeCreated = false;
-								timeOfTheMeeting = arrivalOnThisCaseMove.getTimeFrom();
-								gameDao.setTimeToForMove(recordedMove.getMoveUID(), timeOfTheMeeting);
-							}
+								long timeOfTheMeeting; // c'est l'heure du croisement qui compte
+								if(arrivalOnThisCaseMove.getTimeFrom() < recordedMove.getTimeFrom())
+								{
+									// dans ce cas, on intercepte un move (on arrive avant lui)
+									// ce recorded move n'existe donc plus, puisque lorsquil arrivera on passera sur la newarmy
+									if(debug)Utils.print("  on arrive sur la case AVANT celui qu'on croise");
+									timeOfTheMeeting = recordedMove.getTimeFrom();
+									arrivalOnThisCaseMove.setTimeTo(timeOfTheMeeting);
+									previousMoveUID = getPreviousMove(recordedMove, datacontainer);
+									
+									deleteMove(recordedMove.getMoveUID(), true);
+								}
+								else
+								{
+									// dans ce cas on arrive apres le move intercepte
+									// donc le recordedMove existe jusqu'a ce qu'on arrive
+									// et le move ne doit surtout pas etre enregistre puisqu'on devient immediatement la newArmy avec son propre move. 
+									if(debug)Utils.print("  on arrive sur la case APRES celui qu'on croise");
+									moveIsToBeCreated = false;
+									timeOfTheMeeting = arrivalOnThisCaseMove.getTimeFrom();
+									gameDao.setTimeToForMove(recordedMove.getMoveUID(), timeOfTheMeeting);
+								}
+								
+								if(previousMoveUID != null){
+									if(debug)Utils.print(" - setGatheringForPreviousMove  " + previousMoveUID);
+									gameDao.setNewGatheringForMoveAndDeletePreviousGathering(previousMoveUID, existingGathering.getGatheringUID());
+								}
+								
+								unitRecorded.setEndTime(timeOfTheMeeting);
+								unitArriving.setEndTime(timeOfTheMeeting);
+								
+								if(debug)Utils.print(" - creation de la nouvelle army");
+								// le move qui cree le gathering (arrivalOnThisCaseMove) devient le firstMove de notre newUnit
+								
+								Unit newUnit = null;
+								if(ownerUIDOfTheNewUnit != null)
+									newUnit = createNewArmy(ownerUIDOfTheNewUnit, 
+											statusOfTheNewUnit, 
+											sizeOfTheNewUnit, 
+											valueOfTheNewUnit, 
+											speedOfTheNewUnit, 
+											typeOfTheNewUnit, 
+											equipmentsOfTheNewUnit, 
+											timeOfTheMeeting, 
+											arrivalOnThisCaseMove.getCaseUID(), 
+											allyUIDOfTheNewUnit, 
+											needReplaceNewArmy);
+								
+								if(debug)Utils.print(" - addUnitInGathering  " + unitArriving.getUnitUID());
+								// Note tres importante pour bien comprendre comment ca marche
+								// ici, existingGathering contient les 2 anciennes units du gathering qu'on est en train de defaire (3,1)
+								// or, existingGathering a ete recupere par le getCase tout au depart
+								// entre temps, on est passe par 'resetPreviousMeetings' qui fait un deleteMoves et donc qui a degage 
+								// l'unite (unitToReplace)(3) de gathering.unitUIDs dans le datastore  (il n'y a plus que (1) dans le datastore)
+								// donc cette appel avec gameDao va bien rajouter unitArriving dans gathering.unitUIDs avec unitRecorded seulement (2,1)
+								gameDao.addUnitInGatheringAndSetNewArmy(existingGathering.getGatheringUID(), unitArriving.getUnitUID(), newUnit == null ? null : newUnit.getUnitUID());
+								
+								// les liens sur unit.move viennent detre fait par le createNewArmy.createUnit.placeUnit.createMove
+								//requireLinks = false;
+								
+								//unitArriving.getMoves().add(arrivalOnThisCaseMove);
+								unitArriving.setGatheringUIDExpected(existingGathering.getGatheringUID());
+								unitRecorded.setGatheringUIDExpected(existingGathering.getGatheringUID());
+								
+								if(debug)Utils.print(" - annulation des moves prevus de unitRecorded");
+								unitsToReplace.addAll(cancelRecordedMovesAndReturnAllUnitsToReplace(unitRecorded, timeOfTheMeeting, datacontainer));
+								
+								updateUnit(unitRecorded, null, false);
+								
+								if(newUnit != null)
+									datacontainer.objectsAltered.addUnitAltered(newUnit);
+								datacontainer.objectsAltered.addUnitAltered(unitRecorded);
 							
-							if(previousMoveUID != null){
-								if(debug)Utils.print(" - setGatheringForPreviousMove  " + previousMoveUID);
-								gameDao.setNewGatheringForMoveAndDeletePreviousGathering(previousMoveUID, existingGathering.getGatheringUID());
-							}
-							
-							unitRecorded.setEndTime(timeOfTheMeeting);
-							unitArriving.setEndTime(timeOfTheMeeting);
-							
-							if(debug)Utils.print(" - creation de la nouvelle army");
-							// le move qui cree le gathering (arrivalOnThisCaseMove) devient le firstMove de notre newUnit
-							
-							Unit newUnit = null;
-							if(ownerUIDOfTheNewUnit != null)
-								newUnit = createNewArmy(ownerUIDOfTheNewUnit, 
-										statusOfTheNewUnit, 
-										sizeOfTheNewUnit, 
-										valueOfTheNewUnit, 
-										speedOfTheNewUnit, 
-										typeOfTheNewUnit, 
-										equipmentsOfTheNewUnit, 
-										timeOfTheMeeting, 
-										arrivalOnThisCaseMove.getCaseUID(), 
-										allyUIDOfTheNewUnit, 
-										needReplaceNewArmy);
-							
-							if(debug)Utils.print(" - addUnitInGathering  " + unitArriving.getUnitUID());
-							// Note tres importante pour bien comprendre comment ca marche
-							// ici, existingGathering contient les 2 anciennes units du gathering qu'on est en train de defaire (3,1)
-							// or, existingGathering a ete recupere par le getCase tout au depart
-							// entre temps, on est passe par 'resetPreviousMeetings' qui fait un deleteMoves et donc qui a degage 
-							// l'unite (unitToReplace)(3) de gathering.unitUIDs dans le datastore  (il n'y a plus que (1) dans le datastore)
-							// donc cette appel avec gameDao va bien rajouter unitArriving dans gathering.unitUIDs avec unitRecorded seulement (2,1)
-							gameDao.addUnitInGatheringAndSetNewArmy(existingGathering.getGatheringUID(), unitArriving.getUnitUID(), newUnit == null ? null : newUnit.getUnitUID());
-							
-							// les liens sur unit.move viennent detre fait par le createNewArmy.createUnit.placeUnit.createMove
-							//requireLinks = false;
-							
-							//unitArriving.getMoves().add(arrivalOnThisCaseMove);
-							unitArriving.setGatheringUIDExpected(existingGathering.getGatheringUID());
-							unitRecorded.setGatheringUIDExpected(existingGathering.getGatheringUID());
-							
-							if(debug)Utils.print(" - annulation des moves prevus de unitRecorded");
-							unitsToReplace.addAll(cancelRecordedMovesAndReturnAllUnitsToReplace(unitRecorded, timeOfTheMeeting, datacontainer));
-							
-							updateUnit(unitRecorded, null, false);
-							
-							if(newUnit != null)
-								datacontainer.objectsAltered.addUnitAltered(newUnit);
-							datacontainer.objectsAltered.addUnitAltered(unitRecorded);
-							
-							
+							} // endif foundAGathering
 							
 						}// endif croisement
 						else{
@@ -671,8 +672,8 @@ public class GameManager implements IGameManager {
 								gameDao.setNewCityOwner(_case.getCity().getCityUID(), unitArriving.getPlayer().getUralysUID(), arrivalOnThisCaseMove.getTimeFrom());
 						}
 						
-						if(foundAMeeting){
-							if(debug)Utils.print("	FOUND A MEETING : BREAK");
+						if(foundAGathering){
+							if(debug)Utils.print("	FOUND A GATHERING : BREAK");
 							break;
 						}
 					}// fin du for sur les recordedMoves
@@ -704,10 +705,12 @@ public class GameManager implements IGameManager {
 		updateUnit(unitArriving, null, false);
 		
 		// on set le nouveau challenger sur la case finale, si elle touche le royaume
-		CaseDTO finalCase = gameDao.tryToSetChallenger(unitArriving, timeFromChallenging);
-		if(finalCase != null){
-			// refresh la derniere case dans 'objectsAltered' pour set challenger et timeFromChallenging
-			datacontainer.objectsAltered.addCaseAltered(EntitiesConverter.convertCaseDTO(finalCase));
+		if(unitArriving.getType() == Unit.ARMY){
+			CaseDTO finalCase = gameDao.tryToSetChallenger(unitArriving, timeFromChallenging);
+			if(finalCase != null){
+				// refresh la derniere case dans 'objectsAltered' pour set challenger et timeFromChallenging
+				datacontainer.objectsAltered.addCaseAltered(EntitiesConverter.convertCaseDTO(finalCase));
+			}
 		}
 
 		// et enregistrer l'unite dans les datacontainer.unitsAltered

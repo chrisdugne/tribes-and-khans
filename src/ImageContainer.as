@@ -27,6 +27,9 @@ public final class ImageContainer
 	
 	//   ======================================================================//
 
+	[Embed(source="resources/embed/icons/volume.png")]
+	[Bindable] public static var HP:Class;
+
 	[Embed(source="resources/embed/buttons/ville-left.png")]
 	[Bindable] public static var CITY_BUTTON_LEFT:Class;
 
@@ -56,7 +59,7 @@ public final class ImageContainer
 	[Bindable] public static var CROSS:Class;
 
 	[Embed(source="resources/embed/icons/check.png")]
-	[Bindable] public static var CHECK:Class;
+	[Bindable] public static var CHECK:Class;  
 
 	//   ======================================================================//
 
@@ -128,6 +131,9 @@ public final class ImageContainer
 	
 	[Embed(source="resources/embed/question-mark.png")]
 	[Bindable] public static var QUESTION:Class;
+	
+	[Embed(source="resources/embed/resizeHandler.png")]
+	[Bindable] public static var RESIZER:Class;
 
 //	[Embed(source="resources/embed/conflit.png")]
 //	[Bindable] public static var CONFLIT:Class;
@@ -164,6 +170,11 @@ public final class ImageContainer
 	[Bindable] public static var ARMY_ENNEMY:Bitmap;
 	[Bindable] public static var EDIT:Bitmap;
 	[Bindable] public static var VILLE:Bitmap;
+	[Bindable] public static var FLEX:Bitmap;
+	[Bindable] public static var APPENGINE:Bitmap;
+	[Bindable] public static var ICONS:Bitmap;
+	[Bindable] public static var FONTS:Bitmap;
+	[Bindable] public static var URALYS_MINI_LOGO:Bitmap;
 
 	//   ======================================================================//
 
@@ -191,7 +202,7 @@ public final class ImageContainer
 		 "webresources/images/map/highlight_vert.png",
 		 "webresources/images/map/highlight_rouge.png",
 		 "webresources/images/logo.png",
-		 "webresources/images/persos/persos.png",
+		 "webresources/images/persos/personnages.png",
 		 "webresources/images/persos/fermier.png",
 		 "webresources/images/persos/marchand.png",
 		 "webresources/images/persos/marchande.png",
@@ -209,7 +220,13 @@ public final class ImageContainer
 		 "webresources/images/persos/guerrier_bleu.png",
 		 "webresources/images/persos/guerrier_rouge.png",
 		 "webresources/images/edit.png",
-		 "webresources/images/map/ville-moyenne.png"
+		 "webresources/images/map/ville-moyenne.png",
+		 "webresources/images/logos/flex.png",
+		 "webresources/images/logos/appengine.png",
+		 "webresources/images/logos/icons.png",
+		 "webresources/images/logos/fonts.png",
+		 "webresources/images/logos/uralysminilogo.png"
+		 
 		 ])
 	
 	public static var IMAGES_LOADED:Boolean = false;
@@ -319,10 +336,26 @@ public final class ImageContainer
 			case 29:
 				VILLE = event.currentTarget.content;
 				break;
+			case 30:
+				FLEX = event.currentTarget.content;
+				break;
+			case 31:
+				APPENGINE = event.currentTarget.content;
+				break;
+			case 32:
+				ICONS = event.currentTarget.content;
+				break;
+			case 33:
+				FONTS = event.currentTarget.content;
+				break;
+			case 34:
+				URALYS_MINI_LOGO = event.currentTarget.content;
+				break;
 		}
 		
+		
 		currentImage++;
-		if(currentImage < 30)
+		if(currentImage < 35)
 			loadNextImage();
 		else
 			IMAGES_LOADED = true;

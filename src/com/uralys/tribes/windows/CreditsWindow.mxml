@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<windows:ResizableTitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
+							  xmlns:s="library://ns.adobe.com/flex/spark" 
+							  xmlns:mx="library://ns.adobe.com/flex/mx" 
+							  xmlns:windows="com.uralys.tribes.windows.*"
+							  skinClass="com.uralys.tribes.skins.WindowSkin"
+							  close="{closeWindow()}"
+							  width="720"
+							  height="620"
+							  backgroundAlpha="0.8"
+							  cornerRadius="20"
+							  backgroundColor="#000000">
+		
+		<!--  ================================================================================================== -->
+		
+		<fx:Script>
+			<![CDATA[
+				//-----------------------------------------------------------------//
+
+				import com.uralys.tribes.commons.Session;
+				import com.uralys.tribes.commons.Translations;
+				
+				import mx.managers.PopUpManager;
+				
+				//-----------------------------------------------------------------//
+				
+				public function closeWindow():void{
+					PopUpManager.removePopUp(this);
+				}
+				//-----------------------------------------------------------------//
+			]]>
+		</fx:Script>
+		
+		<s:Group width="100%" height="100%">
+			<s:VGroup horizontalAlign="center" width="100%"
+					  gap="10"
+					  paddingTop="10"
+					  paddingBottom="10"
+					  paddingLeft="30"
+					  paddingRight="30">
+				
+				
+				<s:Label text="{Translations.CREATOR.getItemAt(Session.LANGUAGE)}" 
+						 styleName="bigGreen2Style"/>
+				<mx:Image source="{ImageContainer.URALYS_MINI_LOGO}"
+						  click="navigateToURL(new URLRequest('http://www.uralys.com'),'_new');"
+						  buttonMode="true"
+						  useHandCursor="true"/>		
+				
+				<mx:Spacer height="17"/>
+				
+				
+				<s:Label text="{Translations.GRAPHISTS.getItemAt(Session.LANGUAGE)}"
+						 styleName="bigGreen2Style"/>
+				
+				<s:HGroup width="100%" horizontalAlign="center">
+					<s:Label text="Charles Dautel" styleName="littleWhiteStyle"
+							 click="navigateToURL(new URLRequest('http://www.charlesdautel.fr '),'_new');"
+							 buttonMode="true"
+							 useHandCursor="true"/>		
+					<mx:Spacer width="100"/>
+					<s:Label text="Thomas Pasquier" styleName="littleWhiteStyle"
+							 click="navigateToURL(new URLRequest('http://www.taomas.org'),'_new');"
+							 buttonMode="true"
+							 useHandCursor="true"/>		
+				</s:HGroup>
+						  
+				<mx:Spacer height="17"/>
+				
+				
+				<s:Label text="{Translations.TOOLS.getItemAt(Session.LANGUAGE)}"
+						 styleName="bigGreen2Style"/>
+				
+				<s:HGroup width="100%" horizontalAlign="center">
+					<s:VGroup horizontalAlign="center">
+						<mx:Image source="{ImageContainer.FLEX}" 
+								  click="navigateToURL(new URLRequest('http://www.adobe.com/fr/products/flex/?sdid=GYTRB'),'_new');"
+								  buttonMode="true"
+								  useHandCursor="true"/>		
+						<s:Label text="Flex 4" styleName="littleWhiteStyle"/>
+					</s:VGroup>
+					
+					<mx:Spacer width="100"/>
+					
+					<s:VGroup horizontalAlign="center">
+						<mx:Image source="{ImageContainer.APPENGINE}" 
+								  click="navigateToURL(new URLRequest('http://code.google.com/appengine/'),'_new');"
+								  buttonMode="true"
+								  useHandCursor="true"/>		
+						<s:Label text="App Engine" styleName="littleWhiteStyle"/>
+					</s:VGroup>
+				</s:HGroup>
+				
+				
+				<mx:Spacer height="17"/>
+				
+				
+				<s:Label text="{Translations.RESOURCES.getItemAt(Session.LANGUAGE)}" styleName="normalGreen2Style"/>
+				
+				<s:HGroup width="100%" horizontalAlign="center">
+					<mx:Image source="{ImageContainer.ICONS}" 
+							  click="navigateToURL(new URLRequest('http://icons.mysitemyway.com/'),'_new');"
+							  buttonMode="true"
+							  useHandCursor="true"/>		
+					<mx:Image source="{ImageContainer.FONTS}" 
+							  click="navigateToURL(new URLRequest('http://www.1001freefonts.com/'),'_new');"
+							  buttonMode="true"
+							  useHandCursor="true"/>		
+				</s:HGroup>
+				
+				<mx:Spacer height="17"/>
+				
+				
+				<s:Label x="{Session.LANGUAGE == 0 ? 300 : 325}" y="420" text="{Translations.MUSIC.getItemAt(Session.LANGUAGE)}" styleName="bigGreen2Style"/>
+				<s:Label x="75" y="455" text="For a film - Utopian Hedonism (2011)" styleName="bigWhiteStyle"
+						 click="navigateToURL(new URLRequest('http://soundcloud.com/utopian-hedonism/'),'_new');"
+						 buttonMode="true"
+						 useHandCursor="true"/>		
+			</s:VGroup>	
+		</s:Group>
+	
+</windows:ResizableTitleWindow>

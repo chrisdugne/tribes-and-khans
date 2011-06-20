@@ -55,7 +55,7 @@
 		</mx:Transition>
 	</s:transitions>
 	
-	<s:Group id="groupDetails" height="33" width="300" width.hovered="320" width.selected="320">
+	<s:Group id="groupDetails" height="33" width="230" width.hovered="240" width.selected="240">
 		<s:Rect id="backgroundRect" left="0" right="0" top="0" bottom="0"  >
 			<s:fill>
 				<s:BitmapFill source="{ImageContainer.CITY_BUTTON_CENTER}" fillMode="repeat"/>

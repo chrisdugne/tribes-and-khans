@@ -475,10 +475,10 @@
 				}
 				
 				
-				protected function woodMerchantCheck(newNumber:int):void
+				protected function woodMerchantCheck(event:Event):void
 				{
 					var previousNbWood:int = city.merchant.wood;
-					var newNbWood:int = newNumber;
+					var newNbWood:int = woodMerchantSlider.value;
 					
 					if(newNbWood > previousNbWood){
 						// on ajoute du bois a la caravane
@@ -499,18 +499,14 @@
 					}
 					
 					city.merchant.wood = newNbWood;
-					woodMerchantStepper.data = city.merchant.wood;
+					woodMerchantSlider.value = city.merchant.wood;
 				}
 				
-				protected function addAllWoodToMerchant():void{
-					city.merchant.wood += city.wood;
-					city.wood = 0;
-				}
 				
-				protected function ironMerchantCheck(newNumber:int):void
+				protected function ironMerchantCheck(event:Event):void
 				{
 					var previousNbIron:int = city.merchant.iron;
-					var newNbIron:int = newNumber;
+					var newNbIron:int = ironMerchantSlider.value;
 					
 					if(newNbIron > previousNbIron){
 						// on ajoute du fer a la caravane
@@ -531,18 +527,13 @@
 					}
 					
 					city.merchant.iron = newNbIron;
-					ironMerchantStepper.data = city.merchant.iron;
+					ironMerchantSlider.value = city.merchant.iron;
 				}
 				
-				protected function addAllIronToMerchant():void{
-					city.merchant.iron += city.iron;
-					city.iron = 0;
-				}
-				
-				protected function goldMerchantCheck(newNumber:int):void
+				protected function goldMerchantCheck(event:Event):void
 				{
 					var previousNbGold:int = city.merchant.gold;
-					var newNbGold:int = newNumber;
+					var newNbGold:int = goldMerchantSlider.value;
 					
 					if(newNbGold > previousNbGold){
 						// on ajoute du fer a la caravane
@@ -563,18 +554,14 @@
 					}
 					
 					city.merchant.gold = newNbGold;
-					goldMerchantStepper.data = city.merchant.gold;
+					goldMerchantSlider.value = city.merchant.gold;
 				}
 				
-				protected function addAllGoldToMerchant():void{
-					city.merchant.gold += city.gold;
-					city.gold = 0;
-				}
 				
-				protected function bowsMerchantCheck(newNumber:int):void
+				protected function bowsMerchantCheck(event:Event):void
 				{
 					var previousNbBows:int = city.merchant.bows;
-					var newNbBows:int = newNumber;
+					var newNbBows:int = bowsMerchantSlider.value;
 					
 					if(newNbBows > previousNbBows){
 						// on ajoute des arcs a la caravane
@@ -595,18 +582,14 @@
 					}
 					
 					city.merchant.bows = newNbBows;
-					bowsMerchantStepper.data = city.merchant.bows;
+					bowsMerchantSlider.value = city.merchant.bows;
 				}
 				
-				protected function addAllBowsToMerchant():void{
-					city.merchant.bows += city.bowStock;
-					city.bowStock = 0;
-				}
 				
-				protected function swordsMerchantCheck(newNumber:int):void{
-					
+				protected function swordsMerchantCheck(event:Event):void
+				{
 					var previousNbSwords:int = city.merchant.swords;
-					var newNbSwords:int = newNumber;
+					var newNbSwords:int = swordsMerchantSlider.value;
 					
 					if(newNbSwords > previousNbSwords){
 						// on ajoute des epees a la caravane
@@ -627,19 +610,13 @@
 					}
 					
 					city.merchant.swords = newNbSwords;
-					swordsMerchantStepper.data = city.merchant.swords;
+					swordsMerchantSlider.value = city.merchant.swords;
 				}
 				
-				protected function addAllSwordsToMerchant():void{
-					city.merchant.swords += city.swordStock;
-					city.swordStock = 0;
-				}
-				
-				
-				protected function armorsMerchantCheck(newNumber:int):void{
-					
+				protected function armorsMerchantCheck(event:Event):void
+				{
 					var previousNbArmors:int = city.merchant.armors;
-					var newNbArmors:int = newNumber;
+					var newNbArmors:int = armorsMerchantSlider.value;
 					
 					if(newNbArmors > previousNbArmors){
 						// on ajoute des armures a la caravane
@@ -660,21 +637,17 @@
 					}
 					
 					city.merchant.armors = newNbArmors;
-					armorsMerchantStepper.data = city.merchant.armors;
+					armorsMerchantSlider.value = city.merchant.armors;
 				}
 				
-				protected function addAllArmorsToMerchant():void{
-					city.merchant.armors += city.armorStock;
-					city.armorStock = 0;
-				}
 				
 				//-------------------------------------------------------------------------//
 				// armies
 				
-				protected function bowsArmyCheck(newNumber:int):void
+				protected function bowsArmyCheck(event:Event):void
 				{
 					var previousNbBows:int = city.army.bows;
-					var newNbBows:int = newNumber;
+					var newNbBows:int = bowsArmySlider.value;
 					
 					if(newNbBows > previousNbBows){
 						// on ajoute des arcs a l'armee
@@ -709,17 +682,13 @@
 					}
 					
 					city.army.bows = newNbBows;
-					bowsArmyStepper.data = city.army.bows;
+					bowsArmySlider.value = city.army.bows;
 				}
 				
-				protected function addAllBowsToArmy():void{
-					bowsArmyCheck(city.army.bows + city.bowStock);
-				}
-				
-				protected function swordsArmyCheck(newNumber:int):void
+				protected function swordsArmyCheck(event:Event):void
 				{
 					var previousNbSwords:int = city.army.swords;
-					var newNbSwords:int = newNumber;
+					var newNbSwords:int = swordsArmySlider.value;
 					
 					if(newNbSwords > previousNbSwords){
 						// on ajoute des epees a l'armee
@@ -754,17 +723,13 @@
 					}
 					
 					city.army.swords = newNbSwords;	
-					swordsArmyStepper.data = city.army.swords;
+					swordsArmySlider.value = city.army.swords;
 				}
 				
-				protected function addAllSwordsToArmy():void{
-					swordsArmyCheck(city.army.swords + city.swordStock);
-				}
-				
-				protected function armorsArmyCheck(newNumber:int):void
+				protected function armorsArmyCheck(event:Event):void
 				{
 					var previousNbArmors:int = city.army.armors;
-					var newNbArmors:int = newNumber;
+					var newNbArmors:int = armorsArmySlider.value;
 					
 					if(newNbArmors > previousNbArmors){
 						// on ajoute des epees a l'armee
@@ -799,50 +764,19 @@
 					}
 					
 					city.army.armors = newNbArmors;
-					armorsArmyStepper.data = city.army.armors;
-				}
-				
-				protected function addAllArmorsToArmy():void{
-					armorsArmyCheck(city.army.armors + city.armorStock);
+					armorsArmySlider.value = city.army.armors;
 				}
 				
 				//-------------------------------------------------------------------------//
 				
-				protected function addAllUnemployedToArmy():void	{
-					armyCheck(city.army.size + city.unemployed);
-				}
-				
-				protected function armyCheck(newNumber:int):void	
+				protected function armyCheck(event:Event):void	
 				{
-					trace("armycheck : " + newNumber);
 					var previousArmySize:int = city.army.size;
-					var newArmySize:int = newNumber;
+					city.army.size = armySlider.value;
 					
-					// caravan : min 50, max : population
-					if(newArmySize < 50)
-						newArmySize = 50;
-					
-					var peopleAddedWithStepper:int = newArmySize - previousArmySize;
-					
-					if(city.unemployed < peopleAddedWithStepper)
-					{
-						// on rajoute le nombre de unemployed necessaire
-						pickUpPeopleInPeopleCreatingWheat(peopleAddedWithStepper - city.unemployed);
-						
-						// unemployed est maintenant au moins pile ce qu'il faut
-						newArmySize = previousArmySize + city.unemployed;
-					}
-					
-					city.army.size = newArmySize;
-					armyStepper.data = city.army.size;
-					
-					trace("newArmySize : " + newArmySize);
-					trace("city.armyReleased : " + city.armyReleased);
-					trace("city.armyRaised : " + city.armyRaised);
-					
-					if(newArmySize > previousArmySize){
+					if(city.army.size > previousArmySize){
 						// on ajoute des gens dans une armee
-						var nbPeopleAdded:int =  newArmySize - previousArmySize;
+						var nbPeopleAdded:int =  city.army.size - previousArmySize;
 						
 						if(city.armyReleased > nbPeopleAdded){
 							city.armyReleased -= nbPeopleAdded;
@@ -854,7 +788,7 @@
 					}
 					else{
 						// on enleve des gens de l'armee
-						var nbPeopleRemoved:int = previousArmySize - newArmySize;
+						var nbPeopleRemoved:int = previousArmySize - city.army.size;
 						
 						if(city.armyRaised > nbPeopleRemoved){
 							city.armyRaised -= nbPeopleRemoved;
@@ -871,13 +805,6 @@
 				protected function merchantsCheck(event:Event):void
 				{
 					var previousMerchantSize:int = city.merchant.size;
-					var peopleAdded:int = merchantsSlider.value - previousMerchantSize;
-					
-					if(city.unemployed < peopleAdded){
-						merchantsSlider.value = previousMerchantSize + city.unemployed;
-						peopleAdded = merchantsSlider.value - previousMerchantSize;
-					}
-					
 					city.merchant.size = merchantsSlider.value;
 					
 					if(city.merchant.size > previousMerchantSize){
@@ -921,7 +848,7 @@
 					var newUnit:Unit = new Unit();
 					newUnit.initNewUnit(city.x, city.y);
 					
-					newUnit.size = 50; 
+					newUnit.size = 0; 
 					newUnit.speed = type == 1 ? Numbers.ARMY_BASE_SPEED : Numbers.MERCHANT_BASE_SPEED;
 					newUnit.type = type;
 					newUnit.player = Session.player;
@@ -958,13 +885,13 @@
 				protected function newArmy():void
 				{
 					var newArmy:Unit = newUnit(1);
-					
 					if(newArmy == null)
 						return;
 
-
 					city.army = newArmy;
-					armyCheck(50);
+
+					armySlider.value = 50;
+					armyCheck(null);
 				}
 
 				protected function deleteArmy():void
@@ -978,7 +905,9 @@
 					}
 					else{
 						// pour une armee nouvelle, la pop n'a pas bouge, on reajuste armyRaised et armyReleased par contre
-						
+						trace("city.armyRaised : " + city.armyRaised);
+						trace("city.armyReleased : " + city.armyReleased);
+						trace("city.army.size : " + city.army.size);
 						if(city.armyRaised >= city.army.size){
 							city.armyRaised -= city.army.size;
 						}
@@ -986,7 +915,10 @@
 							city.armyReleased += city.army.size - city.armyRaised;
 							city.armyRaised = 0;
 						}
-						
+						trace("---");
+						trace("city.armyRaised : " + city.armyRaised);
+						trace("city.armyReleased : " + city.armyReleased);
+						trace("city.army.size : " + city.army.size);
 					}
 					
 					// on remet les armements dans les stocks de la ville
@@ -1056,6 +988,7 @@
 					
 					city.merchant = newMerchant;
 					
+					merchantsSlider.value = 50;
 					merchantsCheck(null);
 				}
 
@@ -1128,8 +1061,8 @@
 		</fx:Declarations>
 	
 		<mx:Image source="{ImageContainer.FERMIER}" x="950" y="-70" visible="{viewstack.selectedIndex == 0}" hideEffect="fader" showEffect="shower"/>
-		<mx:Image source="{ImageContainer.MARCHANDE}" x="1000" y="-70" visible="{viewstack.selectedIndex == 1}" hideEffect="fader" showEffect="shower"/>
-		<mx:Image source="{ImageContainer.FORGERON}" x="950" y="-70" visible="{viewstack.selectedIndex == 2 || viewstack.selectedIndex == 3}" hideEffect="fader" showEffect="shower"/>
+		<mx:Image source="{ImageContainer.FORGERON}" x="950" y="-70" visible="{viewstack.selectedIndex == 1 || viewstack.selectedIndex == 2}" hideEffect="fader" showEffect="shower"/>
+		<mx:Image source="{ImageContainer.MARCHANDE}" x="1000" y="-70" visible="{viewstack.selectedIndex == 3}" hideEffect="fader" showEffect="shower"/>
 		<mx:Image source="{ImageContainer.MARCHAND}" x="950" y="-70" visible="{viewstack.selectedIndex == 4}" hideEffect="fader" showEffect="shower"/>
 		<mx:Image source="{ImageContainer.GUERRIER}" x="950" y="-70" visible="{viewstack.selectedIndex == 5}" hideEffect="fader" showEffect="shower"/>
 
@@ -1216,6 +1149,7 @@
 													 textAlign="right"
 													 minWidth="60"/>
 											<s:HSlider id="wheatWorkersSlider"
+													   showDataTip="false"
 														liveDragging="true" 
 														change="wheatWorkersCheck(event)"
 														value="{city.peopleCreatingWheat}"
@@ -1241,6 +1175,7 @@
 													 textAlign="right"
 													 minWidth="60"/>
 											<s:HSlider id="woodWorkersSlider"
+													   showDataTip="false"
 													   liveDragging="true" 
 													   change="woodWorkersCheck(event)"
 													   value="{city.peopleCreatingWood}"
@@ -1266,6 +1201,7 @@
 													 textAlign="right"
 													 minWidth="60"/>
 											<s:HSlider id="ironWorkersSlider"
+													   showDataTip="false"
 													   liveDragging="true" 
 													   change="ironWorkersCheck(event)"
 													   value="{city.peopleCreatingIron}"
@@ -1362,6 +1298,7 @@
 											   textAlign="right"
 											   minWidth="60"/>
 									  <s:HSlider id="bowWorkersSlider"
+												 showDataTip="false"
 												 liveDragging="true" 
 												 change="bowWorkersCheck(event)"
 												 value="{city.bowWorkers}"
@@ -1389,6 +1326,7 @@
 												 textAlign="right"
 												 minWidth="60"/>
 										<s:HSlider id="swordWorkersSlider"
+												   showDataTip="false"
 												   liveDragging="true" 
 												   change="swordWorkersCheck(event)"
 												   value="{city.swordWorkers}"
@@ -1416,6 +1354,7 @@
 												 textAlign="right"
 												 minWidth="60"/>
 										<s:HSlider id="armorWorkersSlider"
+												   showDataTip="false"
 												   liveDragging="true" 
 												   change="armorWorkersCheck(event)"
 												   value="{city.armorWorkers}"
@@ -1623,6 +1562,7 @@
 															 textAlign="right"
 															 minWidth="60"/>
 													<s:HSlider id="wheatMarketSlider"
+															   showDataTip="false"
 															   liveDragging="true" 
 															   change="wheatMarketBuyCheck(event)"
 															   value="{city.wheatBought}"
@@ -1653,6 +1593,7 @@
 															 textAlign="right"
 															 minWidth="60"/>
 													<s:HSlider id="woodMarketSlider"
+															   showDataTip="false"
 															   liveDragging="true" 
 															   change="woodMarketBuyCheck(event)"
 															   value="{city.woodBought}"
@@ -1683,6 +1624,7 @@
 															 textAlign="right"
 															 minWidth="60"/>
 													<s:HSlider id="ironMarketSlider"
+															   showDataTip="false"
 															   liveDragging="true" 
 															   change="ironMarketBuyCheck(event)"
 															   value="{city.ironBought}"
@@ -1713,6 +1655,7 @@
 															 textAlign="right"
 															 minWidth="60"/>
 													<s:HSlider id="bowsMarketSlider"
+															   showDataTip="false"
 															   liveDragging="true" 
 															   change="bowsMarketBuyCheck(event)"
 															   value="{city.bowsBought}"
@@ -1746,6 +1689,7 @@
 															 textAlign="right"
 															 minWidth="60"/>
 													<s:HSlider id="swordsMarketSlider"
+															   showDataTip="false"
 															   liveDragging="true" 
 															   change="swordsMarketBuyCheck(event)"
 															   value="{city.swordsBought}"
@@ -1773,6 +1717,7 @@
 															 textAlign="right"
 															 minWidth="60"/>
 													<s:HSlider id="armorsMarketSlider"
+															   showDataTip="false"
 															   liveDragging="true" 
 															   change="armorsMarketBuyCheck(event)"
 															   value="{city.armorsBought}"
@@ -1850,6 +1795,7 @@
 															 textAlign="right"
 															 minWidth="60"/>
 													<s:HSlider id="wheatMarketSellSlider"
+															   showDataTip="false"
 															   liveDragging="true" 
 															   change="wheatMarketSellCheck(event)"
 															   value="{city.wheatSold}"
@@ -1880,6 +1826,7 @@
 															 textAlign="right"
 															 minWidth="60"/>
 													<s:HSlider id="woodMarketSellSlider"
+															   showDataTip="false"
 															   liveDragging="true" 
 															   change="woodMarketSellCheck(event)"
 															   value="{city.woodSold}"
@@ -1910,6 +1857,7 @@
 															 textAlign="right"
 															 minWidth="60"/>
 													<s:HSlider id="ironMarketSellSlider"
+															   showDataTip="false"
 															   liveDragging="true" 
 															   change="ironMarketSellCheck(event)"
 															   value="{city.ironSold}"
@@ -1940,6 +1888,7 @@
 															 textAlign="right"
 															 minWidth="60"/>
 													<s:HSlider id="bowsMarketSellSlider"
+															   showDataTip="false"
 															   liveDragging="true" 
 															   change="bowsMarketSellCheck(event)"
 															   value="{city.bowsSold}"
@@ -1970,6 +1919,7 @@
 															 textAlign="right"
 															 minWidth="60"/>
 													<s:HSlider id="swordsMarketSellSlider"
+															   showDataTip="false"
 															   liveDragging="true" 
 															   change="swordsMarketSellCheck(event)"
 															   value="{city.swordsSold}"
@@ -2000,6 +1950,7 @@
 															 textAlign="right"
 															 minWidth="60"/>
 													<s:HSlider id="armorsMarketSellSlider"
+															   showDataTip="false"
 															   liveDragging="true" 
 															   change="armorsMarketSellCheck(event)"
 															   value="{city.armorsSold}"
@@ -2089,12 +2040,14 @@
 													 styleName="numberLabel" 
 													 textAlign="right"
 													 minWidth="60"/>
+											<mx:Image source="{ImageContainer.MERCHANT1}"/>
 											<s:HSlider id="merchantsSlider"
+													   showDataTip="false"
 													   liveDragging="true" 
 													   change="merchantsCheck(event)"
 													   value="{city.merchant.size}"
 													   minimum="50"
-													   maximum="{city.population - city.population/10}"
+													   maximum="{city.unemployed + city.merchant.size}"
 													   snapInterval="1"/>
 										</s:HGroup>
 									</mx:GridItem>
@@ -2135,10 +2088,10 @@
 															 textAlign="right"
 															 minWidth="60"/>
 													<s:HSlider id="wheatMerchantSlider"
+															   showDataTip="false"
 															   liveDragging="true" 
 															   change="wheatMerchantCheck(event)"
 															   value="{city.merchant.wheat}"
-															   minimum="50"
 															   maximum="{city.wheat + city.merchant.wheat}"
 															   snapInterval="1"/>
 												</s:HGroup>
@@ -2151,12 +2104,20 @@
 											<mx:GridItem horizontalAlign="center">
 												<mx:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}" width="25" height="25"/>
 											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center">
-												<renderers:SpecialNumStepper id="woodMerchantStepper"
-																			 data="{city.merchant.wood}"
-																			 step="{1}"
-																			 check="woodMerchantCheck"
-																			 wantMax="addAllWoodToMerchant"/>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:HGroup verticalAlign="middle">
+													<s:Label text="{city.merchant.wood}" 
+															 styleName="numberLabel" 
+															 textAlign="right"
+															 minWidth="60"/>
+													<s:HSlider id="woodMerchantSlider"
+															   showDataTip="false"
+															   liveDragging="true" 
+															   change="woodMerchantCheck(event)"
+															   value="{city.merchant.wood}"
+															   maximum="{city.wood + city.merchant.wood}"
+															   snapInterval="1"/>
+												</s:HGroup>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<s:Label text="{city.wood}" />
@@ -2166,12 +2127,20 @@
 											<mx:GridItem horizontalAlign="center">
 												<mx:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}" width="25" height="25"/>
 											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center">
-												<renderers:SpecialNumStepper id="ironMerchantStepper"
-																			 data="{city.merchant.iron}"
-																			 step="{1}"
-																			 check="ironMerchantCheck"
-																			 wantMax="addAllIronToMerchant"/>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:HGroup verticalAlign="middle">
+													<s:Label text="{city.merchant.iron}" 
+															 styleName="numberLabel" 
+															 textAlign="right"
+															 minWidth="60"/>
+													<s:HSlider id="ironMerchantSlider"
+															   showDataTip="false"
+															   liveDragging="true" 
+															   change="ironMerchantCheck(event)"
+															   value="{city.merchant.iron}"
+															   maximum="{city.iron + city.merchant.iron}"
+															   snapInterval="1"/>
+												</s:HGroup>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<s:Label text="{city.iron}" />
@@ -2181,12 +2150,20 @@
 											<mx:GridItem horizontalAlign="center">
 												<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
 											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center">
-												<renderers:SpecialNumStepper id="goldMerchantStepper"
-																			 data="{city.merchant.gold}"
-																			 step="{1}"
-																			 check="goldMerchantCheck"
-																			 wantMax="addAllGoldToMerchant"/>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:HGroup verticalAlign="middle">
+													<s:Label text="{city.merchant.gold}" 
+															 styleName="numberLabel" 
+															 textAlign="right"
+															 minWidth="60"/>
+													<s:HSlider id="goldMerchantSlider"
+															   showDataTip="false"
+															   liveDragging="true" 
+															   change="goldMerchantCheck(event)"
+															   value="{city.merchant.gold}"
+															   maximum="{city.gold + city.merchant.gold}"
+															   snapInterval="1"/>
+												</s:HGroup>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<s:Label text="{city.gold}" />
@@ -2196,12 +2173,20 @@
 											<mx:GridItem horizontalAlign="center">
 												<mx:Image toolTip="{Translations.BOW.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.BOW}" width="25" height="25"/>
 											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center">
-												<renderers:SpecialNumStepper id="bowsMerchantStepper"
-																			 data="{city.merchant.bows}"
-																			 step="{1}"
-																			 check="bowsMerchantCheck"
-																			 wantMax="addAllBowsToMerchant"/>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:HGroup verticalAlign="middle">
+													<s:Label text="{city.merchant.bows}" 
+															 styleName="numberLabel" 
+															 textAlign="right"
+															 minWidth="60"/>
+													<s:HSlider id="bowsMerchantSlider"
+															   showDataTip="false"
+															   liveDragging="true" 
+															   change="bowsMerchantCheck(event)"
+															   value="{city.merchant.bows}"
+															   maximum="{city.bowStock + city.merchant.bows}"
+															   snapInterval="1"/>
+												</s:HGroup>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<s:Label text="{city.bowStock}" />
@@ -2211,12 +2196,20 @@
 											<mx:GridItem horizontalAlign="center">
 												<mx:Image toolTip="{Translations.SWORD.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.SWORD}" width="25" height="25"/>
 											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center">
-												<renderers:SpecialNumStepper id="swordsMerchantStepper"
-																			 data="{city.merchant.swords}"
-																			 step="{1}"
-																			 check="swordsMerchantCheck"
-																			 wantMax="addAllSwordsToMerchant"/>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:HGroup verticalAlign="middle">
+													<s:Label text="{city.merchant.swords}" 
+															 styleName="numberLabel" 
+															 textAlign="right"
+															 minWidth="60"/>
+													<s:HSlider id="swordsMerchantSlider"
+															   showDataTip="false"
+															   liveDragging="true" 
+															   change="swordsMerchantCheck(event)"
+															   value="{city.merchant.swords}"
+															   maximum="{city.swordStock + city.merchant.swords}"
+															   snapInterval="1"/>
+												</s:HGroup>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<s:Label text="{city.swordStock}" />
@@ -2226,12 +2219,20 @@
 											<mx:GridItem horizontalAlign="center">
 												<mx:Image toolTip="{Translations.ARMOR.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.ARMOR}" width="25" height="25"/>
 											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center">
-												<renderers:SpecialNumStepper id="armorsMerchantStepper"
-																			 data="{city.merchant.armors}"
-																			 step="{1}"
-																			 check="armorsMerchantCheck"
-																			 wantMax="addAllArmorsToMerchant"/>
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+												<s:HGroup verticalAlign="middle">
+													<s:Label text="{city.merchant.armors}" 
+															 styleName="numberLabel" 
+															 textAlign="right"
+															 minWidth="60"/>
+													<s:HSlider id="armorsMerchantSlider"
+															   showDataTip="false"
+															   liveDragging="true" 
+															   change="armorsMerchantCheck(event)"
+															   value="{city.merchant.armors}"
+															   maximum="{city.armorStock + city.merchant.armors}"
+															   snapInterval="1"/>
+												</s:HGroup>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center">
 												<s:Label text="{city.armorStock}" />
@@ -2282,12 +2283,22 @@
 								<mx:GridItem >
 									<s:Label text="{Translations.NB_ARMY.getItemAt(Session.LANGUAGE)}" />
 								</mx:GridItem>
-								<mx:GridItem>
-									<renderers:SpecialNumStepper id="armyStepper"
-																 data="{city.army.size}"
-																 step="{1}"
-																 check="armyCheck"
-																 wantMax="addAllUnemployedToArmy"/>
+								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+									<s:HGroup verticalAlign="middle">
+										<s:Label text="{city.army.size}" 
+												 styleName="numberLabel" 
+												 textAlign="right"
+												 minWidth="60"/>
+										<mx:Image source="{ImageContainer.WARRIOR1}"/>
+										<s:HSlider id="armySlider"
+												   showDataTip="false"
+												   liveDragging="true" 
+												   change="armyCheck(event)"
+												   value="{city.army.size}"
+												   minimum="50"
+												   maximum="{city.unemployed + city.army.size}"
+												   snapInterval="1"/>
+									</s:HGroup>
 								</mx:GridItem>
 								<mx:GridItem/>
 							</mx:GridRow>
@@ -2309,12 +2320,20 @@
 								<mx:GridItem horizontalAlign="center">
 									<mx:Image toolTip="{Translations.BOW.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.BOW}"/>
 								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
-									<renderers:SpecialNumStepper id="bowsArmyStepper"
-																 data="{city.army.bows}"
-																 step="{1}"
-																 check="bowsArmyCheck"
-																 wantMax="addAllBowsToArmy"/>
+								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+									<s:HGroup verticalAlign="middle">
+										<s:Label text="{city.army.bows}" 
+												 styleName="numberLabel" 
+												 textAlign="right"
+												 minWidth="60"/>
+										<s:HSlider id="bowsArmySlider"
+												   showDataTip="false"
+												   liveDragging="true" 
+												   change="bowsArmyCheck(event)"
+												   value="{city.army.bows}"
+												   maximum="{city.bowStock + city.army.bows}"
+												   snapInterval="1"/>
+									</s:HGroup>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
 									<s:Label text="{city.bowStock + city.bowsRestored - city.bowsEquiped}" />
@@ -2324,12 +2343,20 @@
 								<mx:GridItem horizontalAlign="center">
 									<mx:Image toolTip="{Translations.SWORD.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.SWORD}"/>
 								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
-									<renderers:SpecialNumStepper id="swordsArmyStepper"
-																 data="{city.army.swords}"
-																 step="{1}"
-																 check="swordsArmyCheck"
-																 wantMax="addAllSwordsToArmy"/>
+								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+									<s:HGroup verticalAlign="middle">
+										<s:Label text="{city.army.swords}" 
+												 styleName="numberLabel" 
+												 textAlign="right"
+												 minWidth="60"/>
+										<s:HSlider id="swordsArmySlider"
+												   showDataTip="false"
+												   liveDragging="true" 
+												   change="swordsArmyCheck(event)"
+												   value="{city.army.swords}"
+												   maximum="{city.swordStock + city.army.swords}"
+												   snapInterval="1"/>
+									</s:HGroup>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
 									<s:Label text="{city.swordStock + city.swordsRestored - city.swordsEquiped}" />
@@ -2339,12 +2366,20 @@
 								<mx:GridItem horizontalAlign="center">
 									<mx:Image toolTip="{Translations.ARMOR.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.ARMOR}"/>
 								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
-									<renderers:SpecialNumStepper id="armorsArmyStepper"
-																 data="{city.army.armors}"
-																 step="{1}"
-																 check="armorsArmyCheck"
-																 wantMax="addAllArmorsToArmy"/>
+								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+									<s:HGroup verticalAlign="middle">
+										<s:Label text="{city.army.armors}" 
+												 styleName="numberLabel" 
+												 textAlign="right"
+												 minWidth="60"/>
+										<s:HSlider id="armorsArmySlider"
+												   showDataTip="false"
+												   liveDragging="true" 
+												   change="armorsArmyCheck(event)"
+												   value="{city.army.armors}"
+												   maximum="{city.armorStock + city.army.armors}"
+												   snapInterval="1"/>
+									</s:HGroup>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
 									<s:Label text="{city.armorStock + city.armorsRestored - city.armorsEquiped}" />

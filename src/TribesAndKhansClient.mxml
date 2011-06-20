@@ -21,12 +21,15 @@
 			import com.uralys.tribes.commons.Names;
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;
-			import com.uralys.tribes.core.Pager;
 			import com.uralys.tribes.core.MusicPlayer;
+			import com.uralys.tribes.core.Pager;
 			import com.uralys.tribes.managers.AccountManager;
-			import com.uralys.tribes.pages.Login;
+			import com.uralys.tribes.pages.Home;
+			import com.uralys.tribes.windows.CreditsWindow;
+			import com.uralys.tribes.windows.LoginWindow;
 			
 			import mx.core.FlexGlobals;
+			import mx.managers.PopUpManager;
 			
 			private function init():void{
 				if(url == "http://localhost:8888/webresources/flex.debug/TribesAndKhansClient.swf")
@@ -39,7 +42,7 @@
 				
 				initBlazeDS();
 				Pager.getInstance().window = window;
-				Pager.getInstance().goToPage(Login);
+				Pager.getInstance().goToPage(Home);
 				
 				var sharedObject:SharedObject = SharedObject.getLocal(Names.SHARED_OBJECT_NAME);
 				Session.LANGUAGE = sharedObject.data.lastLanguage;
@@ -118,6 +121,32 @@
 			}
 			
 			//-----------------------------------------------------------------------//
+
+			public var loginWindow:LoginWindow = new LoginWindow();
+			private function openLoginWindow():void 
+			{
+				if(Session.player){
+					return;
+				}	
+				
+				loginWindow.closeWindow();
+					
+				PopUpManager.addPopUp(loginWindow, this, false);
+				PopUpManager.centerPopUp(loginWindow);
+				
+			}
+			
+			//-----------------------------------------------------------------------//
+
+			public var creditsWindow:CreditsWindow = new CreditsWindow();
+			private function openCreditsWindow():void 
+			{
+				creditsWindow.closeWindow();
+					
+				PopUpManager.addPopUp(creditsWindow, this, false);
+				PopUpManager.centerPopUp(creditsWindow);
+				
+			}
 			
 		]]>
 	</fx:Script>
@@ -127,20 +156,27 @@
 	</s:HGroup>
 		
 	<!-- header -->
-	<s:HGroup width="100%" paddingLeft="5" paddingRight="5" paddingBottom="-20">
+	<s:HGroup width="100%" paddingLeft="10" paddingRight="10" paddingBottom="-20"
+			  height="20"
+			  verticalAlign="top">
 		<mx:Image id="frenchButton" source="{ImageContainer.FR_FLAG}" click="french()" visible="{Session.LANGUAGE != 0}" width="25"/>
 		<mx:Image id="englishButton" source="{ImageContainer.EN_FLAG}" click="english()" visible="{Session.LANGUAGE != 1}" width="25"/>
 		<mx:Image id="usButton" source="{ImageContainer.US_FLAG}" click="us()" visible="{Session.LANGUAGE != 2}" width="25"/>
 		
-		<buttons:VolumeOnButton id="soundOnButton" click="music()" 
-								width="25"
-								height="20"/>
+		<mx:Image id="soundOnButton" source="{ImageContainer.HP}" click="{music()}"/>
+		<s:Label text="{MusicPlayer.volume &gt; 0 ? 'On' : 'Off'}" click="{music()}"/>
+		<s:HSlider id="volumeSlider" 
+				   maximum="100" 
+				   showDataTip="false"
+				   value="{MusicPlayer.volume * 100}" 
+				   change="{MusicPlayer.getInstance().changeVolume()}"
+				   height="20"/>
 		
 		<mx:Spacer width="100%"/>
 		<s:Label text="{Session.player ? Translations.LOG_AS.getItemAt(Session.LANGUAGE) + ' : '+ Session.uralysProfile.email : Translations.LOG_IN.getItemAt(Session.LANGUAGE)}"
-				 color="#222299"/>
+				 color="#000000"
+				 click="{openLoginWindow()}"/>
 	</s:HGroup>	
-	<mx:HRule width="100%" chromeColor="#222299" top="20"/>
 	
 	
 	<!-- content -->
@@ -148,17 +184,21 @@
 	
 	
 	<!-- footer -->
-	<mx:HRule width="100%" chromeColor="#222299" bottom="30"/>
 	<s:HGroup width="100%" horizontalAlign="center" bottom="0">
-		<mx:Image source="../images/logos/uralysminilogo.png" 
-				  click="navigateToURL(new URLRequest('http://www.uralys.com'), '_new');"/>
+		<s:Label text="Uralys"
+				  click="navigateToURL(new URLRequest('http://www.uralys.com'), '_new');"
+				  color="#000000"/>
+		<mx:Spacer width="10%"/>
+		<s:Label text="Credits"
+				  click="openCreditsWindow()"
+				  color="#000000"/>
 		<mx:Spacer width="10%"/>
 		<s:Label text="{Translations.GO_TO_FORUM.getItemAt(Session.LANGUAGE)}"
 				 click="navigateToURL(new URLRequest('http://www.uralys.com/forumTAK'), '_new');"
-				 color="#222299"/>
+				 color="#000000"/>
 		<mx:Spacer width="20%"/>
 		<s:Label text=" Tribes And Khans 2011   -    version {Session.VERSION}" 
-				 color="#222299"/>
+				 color="#000000"/>
 	</s:HGroup>	
 	
 	<!-- ========================================================================== -->

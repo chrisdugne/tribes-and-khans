@@ -9,23 +9,32 @@ import flash.media.SoundChannel;
 import flash.media.SoundTransform;
 import flash.net.URLRequest;
 
+import mx.core.FlexGlobals;
+
 /**
 The MusicPlayer manages the sounds
 */
 public class MusicPlayer
 {		
+		//=====================================================================================//
+
 		private static var instance : MusicPlayer = new MusicPlayer(); 
 	
 		public static function getInstance():MusicPlayer{
 			return instance;
 		}
 
+		//=====================================================================================//
+		
 		public function MusicPlayer(){}
 
 		//=====================================================================================//
+
+		[Bindable]
+		public static var volume:Number = 1;
 		
+		private var volumeRecorded:Number;
 		private var music:Sound;
-		private var volume:int = 1;
 		private var channel:SoundChannel;
 		private var soundTransform:SoundTransform = new SoundTransform();
 		
@@ -46,7 +55,7 @@ public class MusicPlayer
 		}
 
 		public function switchState():void{
-			if(volume == 1){
+			if(volume > 0){
 				volume = 0;
 				soundTransform.volume = 0;
 				channel.soundTransform = soundTransform;
@@ -55,8 +64,8 @@ public class MusicPlayer
 					Session.player.musicOn = false;
 			}
 			else{
-				volume = 1;
-				soundTransform.volume = 1;
+				volume = volumeRecorded;
+				soundTransform.volume = volumeRecorded;
 				channel.soundTransform = soundTransform;	
 				
 				if(Session.LOGGED_IN)
@@ -64,9 +73,9 @@ public class MusicPlayer
 			}
 		}
 
-		public function playMusic():void{
-			
-			soundTransform.volume = volume;
+		public function playMusic():void
+		{	
+			soundTransform.volume = volumeRecorded;
 			
 			channel = music.play();
 			channel.soundTransform = soundTransform;
@@ -76,6 +85,18 @@ public class MusicPlayer
 
 		private function nextMusic(event:Event):void{			
 			playMusic();
+		}
+
+		public function changeVolume():void
+		{
+			var pourcentageValue:int = FlexGlobals.topLevelApplication.volumeSlider.value;
+			
+			volumeRecorded = pourcentageValue/100;
+			if(volume > 0){
+				volume = pourcentageValue/100;
+				soundTransform.volume = volume;
+				channel.soundTransform = soundTransform;
+			}
 		}
 }
 

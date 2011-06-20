@@ -34,9 +34,9 @@ public class Translations{
 
 	[Bindable]
 	public static var LOG_IN:ArrayCollection = new ArrayCollection(
-									["Connectez vous !",
-									"Please log in",
-									"Please log in"]);
+									["Se connecter",
+									"Sign in",
+									"Sign in"]);
 
 	[Bindable]
 	public static var LOG_AS:ArrayCollection = new ArrayCollection(
@@ -763,9 +763,21 @@ public class Translations{
 									"Music"]);
 	[Bindable]
 	public static var CREATOR:ArrayCollection = new ArrayCollection(
-									["Créateur",
-									"Creator",
-									"Creator"]);
+									["Conception et réalisation",
+									"Design and development",
+									"Design and development"]);
+
+	[Bindable]
+	public static var GRAPHISTS:ArrayCollection = new ArrayCollection(
+									["Graphistes",
+									"Graphists",
+									"Graphists"]);
+
+	[Bindable]
+	public static var TOOLS:ArrayCollection = new ArrayCollection(
+									["Outils",
+									"Tools",
+									"Tools"]);
 	[Bindable]
 	public static var CONQUERING_LAND:ArrayCollection = new ArrayCollection(
 									["En train de conquérir une nouvelle contrée",

@@ -5,7 +5,8 @@
 			   xmlns:windows="com.uralys.tribes.windows.*"
 			   preloader="com.uralys.tribes.preload.CustomPreloader"
 			   frameRate="24"
-			   creationComplete="init()" xmlns:buttons="com.uralys.tribes.components.buttons.*">
+			   creationComplete="init()" 
+			   xmlns:components="com.uralys.tribes.components.*">
 	
 	<fx:Declarations>
 		<s:Move id="hidedisplaymessage" target="{displayMessage}" yTo="-50"/>
@@ -18,6 +19,8 @@
 	
 	<fx:Script>
 		<![CDATA[
+			//-----------------------------------------------------------------------//
+			
 			import com.uralys.tribes.commons.Names;
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;
@@ -30,6 +33,8 @@
 			
 			import mx.core.FlexGlobals;
 			import mx.managers.PopUpManager;
+			
+			//-----------------------------------------------------------------------//
 			
 			private function init():void{
 				if(url == "http://localhost:8888/webresources/flex.debug/TribesAndKhansClient.swf")
@@ -47,6 +52,8 @@
 				var sharedObject:SharedObject = SharedObject.getLocal(Names.SHARED_OBJECT_NAME);
 				Session.LANGUAGE = sharedObject.data.lastLanguage;
 			}
+			
+			//-----------------------------------------------------------------------//
 
 			// parfois le mapping flex-java n'est pas fait au premier appel, mais au 2e seulement..
 			// donc on force le mapping a l'avance pour que ca marche des le premier appel
@@ -148,12 +155,21 @@
 				
 			}
 			
+			//-----------------------------------------------------------------------//
 		]]>
 	</fx:Script>
 	
-	<s:HGroup width="100%" horizontalAlign="center">
-		<mx:Image source="../images/fond.jpg" width="100%" height="100%" alpha="0.45"/>
+	<s:HGroup horizontalAlign="center" width="100%" height="100%">
+		<components:ClippedImage id="background" width="100%" height="100%"
+								 source="{ImageContainer.BACKGROUND}"/>
 	</s:HGroup>
+	<s:Group width="100%" height="{background.height-40}" top="20">
+		<s:Rect left="0" right="0" top="0" bottom="0" alpha="0.3">
+			<s:fill>
+				<s:SolidColor color="#000000"/>
+			</s:fill>
+		</s:Rect>
+	</s:Group>	
 		
 	<!-- header -->
 	<s:HGroup width="100%" paddingLeft="10" paddingRight="10" paddingBottom="-20"
@@ -164,7 +180,10 @@
 		<mx:Image id="usButton" source="{ImageContainer.US_FLAG}" click="us()" visible="{Session.LANGUAGE != 2}" width="25"/>
 		
 		<mx:Image id="soundOnButton" source="{ImageContainer.HP}" click="{music()}"/>
-		<s:Label text="{MusicPlayer.volume &gt; 0 ? 'On' : 'Off'}" click="{music()}"/>
+		<s:Label text="{MusicPlayer.volume &gt; 0 ? 'On' : 'Off'}" click="{music()}"
+				 id="labelVolume"
+				 mouseOver="{labelVolume.setStyle('color', '#ffffff')}"
+				 mouseOut="{labelVolume.setStyle('color', '#000000')}"/>
 		<s:HSlider id="volumeSlider" 
 				   maximum="100" 
 				   showDataTip="false"
@@ -174,8 +193,11 @@
 		
 		<mx:Spacer width="100%"/>
 		<s:Label text="{Session.player ? Translations.LOG_AS.getItemAt(Session.LANGUAGE) + ' : '+ Session.uralysProfile.email : Translations.LOG_IN.getItemAt(Session.LANGUAGE)}"
+				 id="labelLogin"
 				 color="#000000"
-				 click="{openLoginWindow()}"/>
+				 click="{openLoginWindow()}"
+				 mouseOver="{labelLogin.setStyle('color', '#ffffff')}"
+				 mouseOut="{labelLogin.setStyle('color', '#000000')}"/>
 	</s:HGroup>	
 	
 	
@@ -186,19 +208,32 @@
 	<!-- footer -->
 	<s:HGroup width="100%" horizontalAlign="center" bottom="0">
 		<s:Label text="Uralys"
+				 id="labelUralys"
 				  click="navigateToURL(new URLRequest('http://www.uralys.com'), '_new');"
-				  color="#000000"/>
+				  color="#000000"
+				  mouseOver="{labelUralys.setStyle('color', '#ffffff')}"
+				  mouseOut="{labelUralys.setStyle('color', '#000000')}"/>
 		<mx:Spacer width="10%"/>
 		<s:Label text="Credits"
+				 id="labelCredits"
 				  click="openCreditsWindow()"
-				  color="#000000"/>
+				  color="#000000"
+				  mouseOver="{labelCredits.setStyle('color', '#ffffff')}"
+				  mouseOut="{labelCredits.setStyle('color', '#000000')}"/>
 		<mx:Spacer width="10%"/>
 		<s:Label text="{Translations.GO_TO_FORUM.getItemAt(Session.LANGUAGE)}"
+				 id="labelForum"
 				 click="navigateToURL(new URLRequest('http://www.uralys.com/forumTAK'), '_new');"
-				 color="#000000"/>
+				 color="#000000"
+				 mouseOver="{labelForum.setStyle('color', '#ffffff')}"
+				 mouseOut="{labelForum.setStyle('color', '#000000')}"/>
 		<mx:Spacer width="20%"/>
 		<s:Label text=" Tribes And Khans 2011   -    version {Session.VERSION}" 
-				 color="#000000"/>
+				 id="labelTitle"
+				 color="#000000"
+				 click="navigateToURL(new URLRequest('http://tribes-and-khans.tumblr.com'), '_new');"
+				 mouseOver="{labelTitle.setStyle('color', '#ffffff')}"
+				 mouseOut="{labelTitle.setStyle('color', '#000000')}"/>
 	</s:HGroup>	
 	
 	<!-- ========================================================================== -->

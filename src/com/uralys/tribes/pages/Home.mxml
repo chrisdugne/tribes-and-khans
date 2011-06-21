@@ -10,17 +10,17 @@
 		]]>
 	</fx:Script>
 	
-	<!-- problem de load des skins....declaration des entites qui posent probleme plus loin ici, apres ca marche... -->
-	
+	<!-- problem de load des skins....declaration des entites qui posent probleme plus loin ici, apres ca marche... 
 	<s:Scroller/>
 	<s:List visible="false"/>
+	-->
 	
 	<!-- ========================================================================================================== -->
 	
 	<s:HGroup width="100%" horizontalAlign="center" y="5">
 		<mx:Image source="{ImageContainer.LOGO}"/>
 	</s:HGroup>
-	<s:HGroup width="100%" horizontalAlign="center" y="200">
+	<s:HGroup width="100%" horizontalAlign="center" bottom="100">
 		<mx:Image source="{ImageContainer.GROUPE_PERSO}"/>
 	</s:HGroup>
 </s:Group>

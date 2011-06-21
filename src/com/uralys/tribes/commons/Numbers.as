@@ -31,17 +31,17 @@ package com.uralys.tribes.commons
 	
 		// Main data  ==============================================================
 		// Colors			[Bindable]
-		public static var GREEN:Number = 0x009933;
+		public static var GREEN:Number = 0x395E3E;
 		[Bindable]
-		public static var BLUE:Number = 0x3399FF;
+		public static var BLUE:Number = 0x2B40C4;
 		[Bindable]
-		public static var RED:Number = 0xCC0000;
+		public static var RED:Number = 0xA80F0F;
 		[Bindable]
 		public static var BLACK:Number = 0x000000;
 		[Bindable]
 		public static var WHITE:Number = 0xFFFFFF;
 		[Bindable]
-		public static var YELLOW:Number = 0xFFFF66;
+		public static var YELLOW:Number = 0xC4BC45;
 	
 		//==================================================================================================//
 		// game COEFF

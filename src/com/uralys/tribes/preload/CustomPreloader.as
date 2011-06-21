@@ -20,7 +20,9 @@ package com.uralys.tribes.preload
 	get answers to all your flash, flex, FMS problems at askmeflash.com its free 
 	Flash developers website http://askmeflash.com 
 	##########################################################################*/  
-	public class CustomPreloader extends SparkDownloadProgressBar {  
+	public class CustomPreloader extends SparkDownloadProgressBar 
+	{  
+		private var READY_TO_GO:Boolean = false;  
 		private var timer:Timer;  
 		//progress bar   
 		private var pBar:Sprite= new Sprite();  
@@ -81,13 +83,8 @@ package com.uralys.tribes.preload
 		
 		public function initCompleteEventHandler(event: Event):void{
 			progress=100*multiplier;
-			timer.stop();
 			
-			while(currlen<progress){
-				drawProgress(null);
-			}
-			
-			dispatchEvent( new Event( Event.COMPLETE ) );	
+			READY_TO_GO = true;
 		}
 		
 		private var progress:Number; 
@@ -103,12 +100,18 @@ package com.uralys.tribes.preload
 			//change the mask color to the color of your background  
 			if(currlen<progress){  
 				currlen+=1;  
+				if(READY_TO_GO)
+					currlen+=1;
 				maskBar.graphics.beginFill(0x0000ff);  
 				maskBar.graphics.drawRect(0,0,currlen+10,200);  
 				maskBar.graphics.endFill();  
 				txtBox.text='Loading Tribes and Khans...'+Math.round(currlen/2)+"%";  
 				txtBox.setTextFormat(txtFormat);  
-			}  
+			} 
+			else if(READY_TO_GO){
+				timer.stop();
+				dispatchEvent( new Event( Event.COMPLETE ) );	
+			}
 		}  
 		
 	}  

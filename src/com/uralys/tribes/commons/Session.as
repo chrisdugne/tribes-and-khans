@@ -10,12 +10,14 @@ package com.uralys.tribes.commons
 	
 	public class Session 
 	{ 
+		//=====================================================//
+
 		import com.uralys.tribes.entities.UralysProfile;
 		import com.uralys.tribes.entities.Player;
 
 		//=====================================================//
 		
-		[Bindable] public static var VERSION:String = "1.1.68";
+		[Bindable] public static var VERSION:String = "1.1.71";
 		[Bindable] public static var LOGGED_IN:Boolean = false; 
 		[Bindable] public static var CONNECTED_TO_FACEBOOK:Boolean = false;
 		

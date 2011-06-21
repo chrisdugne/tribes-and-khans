@@ -390,6 +390,12 @@ public class Translations{
 									"Resources"]);
 
 	[Bindable]
+	public static var LISTEN_NOW:ArrayCollection = new ArrayCollection(
+									["Ecouter sur Soundclound",
+									"Listen now on Soundcloud",
+									"Listen now on Soundcloud"]);
+
+	[Bindable]
 	public static var FORGE:ArrayCollection = new ArrayCollection(
 									["Forge",
 									"Forge",

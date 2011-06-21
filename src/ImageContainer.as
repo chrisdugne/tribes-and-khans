@@ -140,6 +140,7 @@ public final class ImageContainer
 
 	//   ======================================================================//
 
+	[Bindable] public static var BACKGROUND:Bitmap;
 	[Bindable] public static var FRONTIER_N:Bitmap;
 	[Bindable] public static var FRONTIER_NE:Bitmap;
 	[Bindable] public static var FRONTIER_NO:Bitmap;
@@ -175,6 +176,7 @@ public final class ImageContainer
 	[Bindable] public static var ICONS:Bitmap;
 	[Bindable] public static var FONTS:Bitmap;
 	[Bindable] public static var URALYS_MINI_LOGO:Bitmap;
+	[Bindable] public static var SOUNDCLOUD:Bitmap;
 
 	//   ======================================================================//
 
@@ -188,9 +190,10 @@ public final class ImageContainer
 	private static var loader:Loader;
 	private static var request:URLRequest;
 	private static var currentImage:int = 0;
-	
+		
 	public static var images:ArrayCollection = new ArrayCollection(
 		[
+		 "webresources/images/background/background.jpg",
 		 "webresources/images/map/frontier_n.png",
 		 "webresources/images/map/frontier_ne.png",
 		 "webresources/images/map/frontier_no.png",
@@ -225,9 +228,10 @@ public final class ImageContainer
 		 "webresources/images/logos/appengine.png",
 		 "webresources/images/logos/icons.png",
 		 "webresources/images/logos/fonts.png",
-		 "webresources/images/logos/uralysminilogo.png"
+		 "webresources/images/logos/uralysminilogo.png",
+		 "webresources/images/logos/soundcloud.png"
 		 
-		 ])
+		 ]);
 	
 	public static var IMAGES_LOADED:Boolean = false;
 	public static function loadImages():void{
@@ -245,117 +249,124 @@ public final class ImageContainer
 	
 	private static function onComplete(event:Event):void 
 	{
-		switch(currentImage){
+		switch(currentImage)
+		{
 			case 0:
-				FRONTIER_N = event.currentTarget.content;
+				BACKGROUND = event.currentTarget.content;
 				break;
 			case 1:
-				FRONTIER_NE = event.currentTarget.content;
+				FRONTIER_N = event.currentTarget.content;
 				break;
 			case 2:
-				FRONTIER_NO = event.currentTarget.content;
+				FRONTIER_NE = event.currentTarget.content;
 				break;
 			case 3:
-				FRONTIER_S = event.currentTarget.content;
+				FRONTIER_NO = event.currentTarget.content;
 				break;
 			case 4:
-				FRONTIER_SE = event.currentTarget.content;
+				FRONTIER_S = event.currentTarget.content;
 				break;
 			case 5:
-				FRONTIER_SO = event.currentTarget.content;
+				FRONTIER_SE = event.currentTarget.content;
 				break;
 			case 6:
-				HIGHLIGHT_BLEU = event.currentTarget.content;
+				FRONTIER_SO = event.currentTarget.content;
 				break;
 			case 7:
-				HIGHLIGHT_BLANC = event.currentTarget.content;
+				HIGHLIGHT_BLEU = event.currentTarget.content;
 				break;
 			case 8:
-				HIGHLIGHT_VERT = event.currentTarget.content;
+				HIGHLIGHT_BLANC = event.currentTarget.content;
 				break;
 			case 9:
-				HIGHLIGHT_ROUGE = event.currentTarget.content;
+				HIGHLIGHT_VERT = event.currentTarget.content;
 				break;
 			case 10:
-				LOGO = event.currentTarget.content;
+				HIGHLIGHT_ROUGE = event.currentTarget.content;
 				break;
 			case 11:
-				GROUPE_PERSO = event.currentTarget.content;
+				LOGO = event.currentTarget.content;
 				break;
 			case 12:
-				FERMIER = event.currentTarget.content;
+				GROUPE_PERSO = event.currentTarget.content;
 				break;
 			case 13:
-				MARCHAND = event.currentTarget.content;
+				FERMIER = event.currentTarget.content;
 				break;
 			case 14:
-				MARCHANDE = event.currentTarget.content;
+				MARCHAND = event.currentTarget.content;
 				break;
 			case 15:
-				GUERRIER = event.currentTarget.content;
+				MARCHANDE = event.currentTarget.content;
 				break;
 			case 16:
-				FORGERON = event.currentTarget.content;
+				GUERRIER = event.currentTarget.content;
 				break;
 			case 17:
-				MINI_LOGO = event.currentTarget.content;
+				FORGERON = event.currentTarget.content;
 				break;
 			case 18:
-				MAP_BORDER_TOP = event.currentTarget.content;
+				MINI_LOGO = event.currentTarget.content;
 				break;
 			case 19:
-				MAP_BORDER_BOTTOM = event.currentTarget.content;
+				MAP_BORDER_TOP = event.currentTarget.content;
 				break;
 			case 20:
-				MAP_BORDER_LEFT = event.currentTarget.content;
+				MAP_BORDER_BOTTOM = event.currentTarget.content;
 				break;
 			case 21:
-				MAP_BORDER_RIGHT = event.currentTarget.content;
+				MAP_BORDER_LEFT = event.currentTarget.content;
 				break;
 			case 22:
-				MERCHANT_PLAYER = event.currentTarget.content;
+				MAP_BORDER_RIGHT = event.currentTarget.content;
 				break;
 			case 23:
-				MERCHANT_ALLY = event.currentTarget.content;
+				MERCHANT_PLAYER = event.currentTarget.content;
 				break;
 			case 24:
-				MERCHANT_ENNEMY = event.currentTarget.content;
+				MERCHANT_ALLY = event.currentTarget.content;
 				break;
 			case 25:
-				ARMY_PLAYER = event.currentTarget.content;
+				MERCHANT_ENNEMY = event.currentTarget.content;
 				break;
 			case 26:
-				ARMY_ALLY = event.currentTarget.content;
+				ARMY_PLAYER = event.currentTarget.content;
 				break;
 			case 27:
-				ARMY_ENNEMY = event.currentTarget.content;
+				ARMY_ALLY = event.currentTarget.content;
 				break;
 			case 28:
-				EDIT = event.currentTarget.content;
+				ARMY_ENNEMY = event.currentTarget.content;
 				break;
 			case 29:
-				VILLE = event.currentTarget.content;
+				EDIT = event.currentTarget.content;
 				break;
 			case 30:
-				FLEX = event.currentTarget.content;
+				VILLE = event.currentTarget.content;
 				break;
 			case 31:
-				APPENGINE = event.currentTarget.content;
+				FLEX = event.currentTarget.content;
 				break;
 			case 32:
-				ICONS = event.currentTarget.content;
+				APPENGINE = event.currentTarget.content;
 				break;
 			case 33:
-				FONTS = event.currentTarget.content;
+				ICONS = event.currentTarget.content;
 				break;
 			case 34:
+				FONTS = event.currentTarget.content;
+				break;
+			case 35:
 				URALYS_MINI_LOGO = event.currentTarget.content;
+				break;
+			case 36:
+				SOUNDCLOUD = event.currentTarget.content;
 				break;
 		}
 		
-		
 		currentImage++;
-		if(currentImage < 35)
+		
+		if(currentImage < 37)
 			loadNextImage();
 		else
 			IMAGES_LOADED = true;

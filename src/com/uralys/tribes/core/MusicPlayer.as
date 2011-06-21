@@ -45,7 +45,7 @@ public class MusicPlayer
 	            music.load(request);
 				
 				//volume = Session.player.musicOn ? 1 : 0;
-				volume = 1
+				volume = 0.7;
 				playMusic();	
 			}
 			else{
@@ -75,7 +75,7 @@ public class MusicPlayer
 
 		public function playMusic():void
 		{	
-			soundTransform.volume = volumeRecorded;
+			soundTransform.volume = volume;
 			
 			channel = music.play();
 			channel.soundTransform = soundTransform;

@@ -5,8 +5,8 @@
 			   xmlns:windows="com.uralys.tribes.windows.*"
 			   skinClass="com.uralys.tribes.skins.WindowSkin"
 			   close="{closeWindow()}"
-			   width="520"
-			   height="170"
+			   width="540"
+			   height="180"
 			   backgroundAlpha="0.7"
 			   backgroundColor="#000000"
 			   cornerRadius="15"
@@ -135,6 +135,7 @@
 					</mx:GridItem>
 				</mx:GridRow>
 			</mx:Grid>
+			<mx:Spacer height="15"/>
 			<s:HGroup visible="{!Session.WAIT_FOR_CONNECTION}">
 				<mx:Spacer width="5"/>
 				<s:Button label="{Translations.CREATE_ACCOUNT.getItemAt(Session.LANGUAGE)}" 

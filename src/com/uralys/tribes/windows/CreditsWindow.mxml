@@ -47,8 +47,6 @@
 						  buttonMode="true"
 						  useHandCursor="true"/>		
 				
-				<mx:Spacer height="17"/>
-				
 				
 				<s:Label text="{Translations.GRAPHISTS.getItemAt(Session.LANGUAGE)}"
 						 styleName="bigGreen2Style"/>
@@ -65,8 +63,6 @@
 							 useHandCursor="true"/>		
 				</s:HGroup>
 						  
-				<mx:Spacer height="17"/>
-				
 				
 				<s:Label text="{Translations.TOOLS.getItemAt(Session.LANGUAGE)}"
 						 styleName="bigGreen2Style"/>
@@ -80,7 +76,7 @@
 						<s:Label text="Flex 4" styleName="littleWhiteStyle"/>
 					</s:VGroup>
 					
-					<mx:Spacer width="100"/>
+					<mx:Spacer width="7%"/>
 					
 					<s:VGroup horizontalAlign="center">
 						<mx:Image source="{ImageContainer.APPENGINE}" 
@@ -92,8 +88,6 @@
 				</s:HGroup>
 				
 				
-				<mx:Spacer height="17"/>
-				
 				
 				<s:Label text="{Translations.RESOURCES.getItemAt(Session.LANGUAGE)}" styleName="normalGreen2Style"/>
 				
@@ -102,20 +96,30 @@
 							  click="navigateToURL(new URLRequest('http://icons.mysitemyway.com/'),'_new');"
 							  buttonMode="true"
 							  useHandCursor="true"/>		
+					<mx:Spacer width="7%"/>
 					<mx:Image source="{ImageContainer.FONTS}" 
 							  click="navigateToURL(new URLRequest('http://www.1001freefonts.com/'),'_new');"
 							  buttonMode="true"
 							  useHandCursor="true"/>		
 				</s:HGroup>
 				
-				<mx:Spacer height="17"/>
-				
 				
 				<s:Label x="{Session.LANGUAGE == 0 ? 300 : 325}" y="420" text="{Translations.MUSIC.getItemAt(Session.LANGUAGE)}" styleName="bigGreen2Style"/>
-				<s:Label x="75" y="455" text="For a film - Utopian Hedonism (2011)" styleName="bigWhiteStyle"
+				<s:Label x="75" y="455" text="Weightless Wavelength - Utopian Hedonism (2011)" 
+						 styleName="normalWhiteStyle"
 						 click="navigateToURL(new URLRequest('http://soundcloud.com/utopian-hedonism/'),'_new');"
 						 buttonMode="true"
-						 useHandCursor="true"/>		
+						 useHandCursor="true"/>
+				
+				<s:HGroup width="100%" horizontalAlign="center" verticalAlign="middle">
+					<mx:Image source="{ImageContainer.SOUNDCLOUD}" 
+							  click="navigateToURL(new URLRequest('http://soundcloud.com/utopian-hedonism/'),'_new');"
+							  buttonMode="true"
+							  useHandCursor="true"/>
+					<s:Label text="{Translations.LISTEN_NOW.getItemAt(Session.LANGUAGE)}"
+							 styleName="littleWhiteStyle"/>
+					
+				</s:HGroup>	
 			</s:VGroup>	
 		</s:Group>
 	

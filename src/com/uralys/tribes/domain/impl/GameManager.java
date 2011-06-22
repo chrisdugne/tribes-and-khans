@@ -118,7 +118,8 @@ public class GameManager implements IGameManager {
 	
 	private Player getPlayer(String uralysUID, DataContainer datacontainer) 
 	{
-		if(datacontainer != null){
+		if(datacontainer != null)
+		{
 			if(datacontainer.playerAlreadyLoaded.get(uralysUID) == null){
 				datacontainer.playerAlreadyLoaded.put(uralysUID, EntitiesConverter.convertPlayerDTO(gameDao.getPlayer(uralysUID), false));
 			}
@@ -128,13 +129,14 @@ public class GameManager implements IGameManager {
 		else{
 			PlayerDTO playerDTO = gameDao.getPlayer(uralysUID);
 			
-			if(playerDTO != null){
-				List<String> cityUIDs = new ArrayList<String>();
-				cityUIDs.addAll(playerDTO.getCityUIDs());
-				cityUIDs.addAll(playerDTO.getCityBeingOwnedUIDs());
+			if(playerDTO == null)
+				return null;
 				
-				checkCityOwners(cityUIDs);
-			}
+			List<String> cityUIDs = new ArrayList<String>();
+			cityUIDs.addAll(playerDTO.getCityUIDs());
+			cityUIDs.addAll(playerDTO.getCityBeingOwnedUIDs());
+				
+			checkCityOwners(cityUIDs);
 			
 			Player player = EntitiesConverter.convertPlayerDTO(playerDTO, true);
 
@@ -381,8 +383,11 @@ public class GameManager implements IGameManager {
 				if(!(getPlayer(_case.getCity().getOwnerUID(), datacontainer).getAllyUID()).equals(allyUIDOfUnitArriving))
 				{
 					attackACity = true;
+					if(debug)Utils.print("attackACity !!");
 				}				
 			}
+			if(!attackACity)
+				if(debug)Utils.print("NOT attacking a city");
 			
 			//-----------------------------------------------------------------------------------//
 
@@ -403,6 +408,7 @@ public class GameManager implements IGameManager {
 					//	=> le premier qu'on trouve est celui du gathering
 					//	   les autres auront lieu APRES et donc ne compte PAS
 					//     donc on sort des qu'on a trouve un gathering
+					
 					for(Move recordedMove : _case.getRecordedMoves())
 					{
 						String unitRecordedUID = recordedMove.getUnitUID();

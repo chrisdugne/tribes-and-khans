@@ -115,7 +115,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	
 	//-----------------------------------------------------------------------//
 
-	private String createCity(City cityFromFlex, String playerUID, PersistenceManager pm, int numplayer) 
+	private String createCity(City cityFromFlex, String playerUID, PersistenceManager pm, int numPlayers) 
 	{
 		PlayerDTO player = pm.getObjectById(PlayerDTO.class, playerUID);
 		
@@ -146,12 +146,13 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		int cityX = 0; 
 		int cityY = 0; 
 			
-		if(cityFromFlex == null){
+		if(cityFromFlex == null)
+		{
 			boolean caseFound = false;
 			
 			while(!caseFound){
-				cityX = getInitialCityX(numplayer);
-				cityY = getInitialCityY(numplayer);
+				cityX = getInitialCityX(numPlayers);
+				cityY = getInitialCityY(numPlayers);
 				
 				if(Math.abs(cityX-cityY)%2 !=0){
 					// la difference entre x et y n'est pas paire
@@ -250,30 +251,47 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	//==================================================================================================//
 	/*
 	
-	nbplayers/10 = colonne
-	nbplayers/100 = ligne
+	nbplayers/3 = colonne
+	nbplayers/30 = ligne
 	
 	x = 100 + colonne*20 ˆ 120 + colonne*20
 	y = 100 + ligne*20 ˆ 120 + ligne*20
 	
-	01-10  random [(100-120),(100-120)]
-	11-20  random [(120-140),(100-120)]
-	21-30  random [(140-160),(100-120)]
-	...
+	line1
+	p1 random [(100-105),(100-105)]
+	p2 random [(110-115),(100-105)]
+	p3 random [(120-125),(100-105)]
+	p20 random [(290-295),(100-105)]
+	
+	line2
+	p21 random [(100-105),(110-115)]
+	p22 random [(110-115),(110-115)]
+	p23 random [(120-125),(110-115)]
+	p40 random [(290-295),(110-115)]
+
+	line20
+	p381 random [(100-105),(290-295)]
+	p382 random [(110-115),(290-295)]
+	p383 random [(120-125),(290-295)]
+	p400 random [(290-295),(290-295)]
+	 
+	400 joueurs
 	
 	*/
-	private int getInitialCityX(int numplayer) {
-		int column = numplayer/10;
-		int randomX = Utils.random(20);
+	
+	// 20 joueurs par colonnes et par ligne
+	private int getInitialCityX(int numPlayers) {
+		int column = numPlayers%20 ;
+		int randomX = Utils.random(5);
 		
-		return 100 + randomX + 20*column;
+		return 100 + randomX + column*10;
 	}
 
-	private int getInitialCityY(int numplayer) {
-		int line = numplayer/100;
-		int randomY = Utils.random(20);
+	private int getInitialCityY(int numPlayers) {
+		int line = numPlayers/20;
+		int randomY = Utils.random(5);
 
-		return 100 + randomY + 20*line;
+		return 100 + randomY + line*10;
 	}
 	
 	//==================================================================================================//

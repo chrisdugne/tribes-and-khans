@@ -95,7 +95,23 @@
 
 				//-------------------------------------------------------------------------//
 
-				private function updateWorkersProgressBar():void	{
+				public function updateWorkersProgressBar():void{
+					
+					trace("-----");
+					trace("updateWorkersProgressBar");
+
+					trace("city.peopleCreatingWheat : " + city.peopleCreatingWheat);
+					trace("city.peopleCreatingWood : " + city.peopleCreatingWood);
+					trace("city.peopleCreatingIron : " + city.peopleCreatingIron);
+					trace("city.bowWorkers : " + city.bowWorkers);
+					trace("city.swordWorkers : " + city.swordWorkers);
+					trace("city.armorWorkers : " + city.armorWorkers);
+					trace("city.armyRaised : " + city.armyRaised);
+					trace("city.armyReleased : " + city.armyReleased);
+					
+					trace("city.population : " + city.population);
+					
+					
 					workersProgressBar.setProgress(city.peopleCreatingWheat 
 												 + city.peopleCreatingWood
 												 + city.peopleCreatingIron
@@ -416,11 +432,14 @@
 				
 				//-------------------------------------------------------------------------//
 
-				private function updateSmithsProgressBar():void	{
-					smithsProgressBar.setProgress(city.bowWorkers
-												+ city.swordWorkers
-												+ city.armorWorkers
-												, city.availableAsSmith);
+				public function updateSmithsProgressBar():void	
+				{
+					if(smithsProgressBar != null){
+						smithsProgressBar.setProgress(city.bowWorkers
+													+ city.swordWorkers
+													+ city.armorWorkers
+													, city.availableAsSmith);
+					}
 				}
 				
 				//-------------------------------------------------------------------------//
@@ -1091,7 +1110,14 @@
 					  verticalAlign="middle">
 				<s:Label text="{Translations.WORKERS.getItemAt(Session.LANGUAGE)}"/>
 				<mx:Spacer width="10"/>
-				<s:Label text="{city.peopleCreatingWheat + city.peopleCreatingWood + city.peopleCreatingIron}"
+				<s:Label text="{city.peopleCreatingWheat 
+								 + city.peopleCreatingWood
+								 + city.peopleCreatingIron
+								 + city.bowWorkers
+								 + city.swordWorkers
+								 + city.armorWorkers
+								 + city.armyRaised
+								 - city.armyReleased}"
 						 styleName="numberLabel" 
 						 textAlign="right"
 						 minWidth="60"/>

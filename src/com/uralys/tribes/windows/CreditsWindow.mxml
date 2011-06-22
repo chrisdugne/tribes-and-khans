@@ -117,7 +117,10 @@
 							  buttonMode="true"
 							  useHandCursor="true"/>
 					<s:Label text="{Translations.LISTEN_NOW.getItemAt(Session.LANGUAGE)}"
-							 styleName="littleWhiteStyle"/>
+							 styleName="littleWhiteStyle"
+							 click="navigateToURL(new URLRequest('http://soundcloud.com/utopian-hedonism/'),'_new');"
+							 buttonMode="true"
+							 useHandCursor="true"/>
 					
 				</s:HGroup>	
 			</s:VGroup>	

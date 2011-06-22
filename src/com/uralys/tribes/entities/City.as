@@ -68,6 +68,7 @@ package com.uralys.tribes.entities
 	
 		public function get population():int {
 			refreshUnemployed();
+			refreshAvailableAsSmith();
 			return _population;
 		}
 	
@@ -244,19 +245,15 @@ package com.uralys.tribes.entities
 		}
 		
 		public function refreshUnemployed():void{
-			var nbSmiths:int = 0;
-			
-			for each(var smith:Smith in smiths){
-				nbSmiths += smith.people;
-			}
-			
 			unemployed = _population 
 							- peopleCreatingWheat 
 							- peopleCreatingWood 
 							- peopleCreatingIron 
+							- bowWorkers
+							- swordWorkers
+							- armorWorkers
 							- armyRaised
-							+ armyReleased
-							- nbSmiths;
+							+ armyReleased;
 		}
 
 		public function get availableAsSmith():int{
@@ -269,11 +266,11 @@ package com.uralys.tribes.entities
 		
 		public function refreshAvailableAsSmith():void
 		{
-			availableAsSmith = population - peopleCreatingWheat
-										  - peopleCreatingWood
-										  - peopleCreatingIron
-										  - armyRaised
-										  + armyReleased;
+			availableAsSmith = _population - peopleCreatingWheat
+										   - peopleCreatingWood
+										   - peopleCreatingIron
+										   - armyRaised
+										   + armyReleased;
 		}
 		
 		//---------------------------------------------------------------//

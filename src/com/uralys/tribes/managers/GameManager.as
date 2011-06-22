@@ -519,10 +519,10 @@ package com.uralys.tribes.managers {
 			
 			var caseUIDs:ArrayCollection = new ArrayCollection();
 			
-			Session.LEFT_LIMIT_LOADED  	 = (centerX - Numbers.NB_HORIZONTAL_TILES_BY_LOADING/2) * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4); 
-			Session.RIGHT_LIMIT_LOADED	 = (centerX + Numbers.NB_HORIZONTAL_TILES_BY_LOADING/2) * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4);
-			Session.TOP_LIMIT_LOADED 	 = (centerY - Numbers.NB_VERTICAL_TILES_BY_LOADING/2) * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2); 
-			Session.BOTTOM_LIMIT_LOADED	 = (centerY + Numbers.NB_VERTICAL_TILES_BY_LOADING/2) * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2); 
+			Session.LEFT_LIMIT_LOADED  	 = (centerX - Numbers.NB_HORIZONTAL_TILES_BY_LOADING/2) * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4) + Session.MAP_WIDTH; 
+			Session.RIGHT_LIMIT_LOADED	 = (centerX + Numbers.NB_HORIZONTAL_TILES_BY_LOADING/2) * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4) - Session.MAP_WIDTH;
+			Session.TOP_LIMIT_LOADED 	 = (centerY - Numbers.NB_VERTICAL_TILES_BY_LOADING/2) * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2) + Session.MAP_HEIGHT; 
+			Session.BOTTOM_LIMIT_LOADED	 = (centerY + Numbers.NB_VERTICAL_TILES_BY_LOADING/2) * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2) - Session.MAP_HEIGHT; 
 			
 			loadCasesResponder.addEventListener("result", casesLoaded);
 			loadCasesResponder.token = getGameWrapper().loadCases(groups);
@@ -552,7 +552,6 @@ package com.uralys.tribes.managers {
 
 		public function saveCity(city:City):void
 		{
-			refreshCitySmithsAndEquipments(city);
 			getGameWrapper().saveCity(city);			
 		}
 
@@ -615,6 +614,8 @@ package com.uralys.tribes.managers {
 			//------------------------------------------------//
 			
 			Session.board.mapPositioner.removeAllElements();
+			Session.board.pawnLayer.removeAllElements();
+			Session.board.landLayer.removeAllElements();
 			
 			//------------------------------------------------//
 

@@ -185,7 +185,6 @@ package com.uralys.tribes.core
 				previousMove = newMove;
 				moveBeginsNow = false;
 			}
-			
 		}
 
 		public function refreshMoves(unit:Unit)

@@ -8,7 +8,7 @@
 			   creationComplete="init()" 
 			   xmlns:components="com.uralys.tribes.components.*">
 	
-	<fx:Declarations>
+	<fx:Declarations> 
 		<s:Move id="hidedisplaymessage" target="{displayMessage}" yTo="-50"/>
 		<s:Move id="showdisplaymessage" target="{displayMessage}" yTo="0"/>
 		<s:Move id="hidereports" target="{reportsWindow}" yTo="-400"/>

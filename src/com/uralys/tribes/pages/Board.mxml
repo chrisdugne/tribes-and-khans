@@ -14,6 +14,8 @@
 	
 	<fx:Script>
 		<![CDATA[
+			//---------------------------------------------------------------------------------------//
+			
 			import com.uralys.tribes.commons.Numbers;
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;
@@ -110,7 +112,8 @@
 			
 			//---------------------------------------------------------------------------------------------------//
 
-			private function checkToLoadCases(x:int, y:int):void{
+			private function checkToLoadCases(x:int, y:int):void
+			{
 				if(x < Session.LEFT_LIMIT_LOADED
 				|| x > Session.RIGHT_LIMIT_LOADED 
 				|| y < Session.TOP_LIMIT_LOADED 
@@ -327,7 +330,8 @@
 				}
 			}
 			
-			protected function mouseUp(event:MouseEvent):void{
+			protected function mouseUp(event:MouseEvent):void
+			{
 				isDragging = false;
 				Mouse.show();
 				
@@ -504,7 +508,10 @@
 				
 			}
 			
-			private function enterCity(event:MouseEvent):void{
+			private function enterCity(event:MouseEvent):void
+			{
+				cityForm.updateWorkersProgressBar();
+				cityForm.updateSmithsProgressBar();
 				goLeft.play();
 				appearCity.play();
 			}
@@ -558,11 +565,7 @@
 
 			//-----------------------------------------------------------//
 
-			private function messageUnemployed():void{
-				FlexGlobals.topLevelApplication.message("Vous utilisez plus de travailleurs que vous n'avez de population !", 5);
-			}
-			
-			private function backToMain():void
+			private function saveCityAndGoBackToBoard():void
 			{				
 				if(selectedCity.merchant != null)
 					GameManager.getInstance().validateMerchants(selectedCity);
@@ -1036,7 +1039,7 @@
 			  includeInLayout="false">
 		<s:HGroup>
 			<s:Button label="&lt;-- Ok" 
-					  click="{selectedCity.unemployed >= 0 ? backToMain() : messageUnemployed()}"
+					  click="{saveCityAndGoBackToBoard()}"
 					  enabled="{cityForm.currentState != 'recordingUnit'}"/>
 			<mx:Spacer width="450"/>
 		</s:HGroup>

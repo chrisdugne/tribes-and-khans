@@ -25,6 +25,7 @@ package com.uralys.tribes.entities
 		// on ne peut pas le mettre dans le constructeur, car BlazeDS l'utilise aussi
 		public function initNewUnit(i:int = 0, j:int = 0):void{
 			_currentCaseUID = (Session.map[i][j] as Case).caseUID;
+			_finalCaseUIDExpected = _currentCaseUID;
 			_unitUID = Session.player.uralysUID+"_"+(Session.player.units.length+1)+"_"+(new Date().getTime());
 			_status = TO_BE_CREATED;
 			_beginTime = new Date().getTime();

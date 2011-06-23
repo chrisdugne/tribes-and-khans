@@ -184,6 +184,8 @@ package com.uralys.tribes.core
 				
 				previousMove = newMove;
 				moveBeginsNow = false;
+				
+				unit.finalCaseUIDExpected = newMove.caseUID;
 			}
 		}
 

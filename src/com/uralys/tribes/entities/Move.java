@@ -17,8 +17,8 @@ public class Move {
 
 	public Move(){}
 	
-	public Move(int i, int j, long timeFrom, long timeTo) {
-		
+	public Move(int i, int j, long timeFrom, long timeTo) 
+	{
 		this.timeFrom = timeFrom;
 		this.timeTo = timeTo;
 		this.caseUID = "case_"+i+"_"+j;

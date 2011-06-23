@@ -481,7 +481,8 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		return cityUID;
 	}
 
-	public void createUnit(Unit unit, String cityUID){
+	public void createUnit(Unit unit, String cityUID)
+	{
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		UnitDTO unitDTO = new UnitDTO(); 
 		
@@ -503,6 +504,8 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		unitDTO.setBeginTime(unit.getBeginTime());
 		unitDTO.setEndTime(-1);
 		
+		unitDTO.setFinalCaseUIDExpected(unit.getFinalCaseUIDExpected());
+		unitDTO.setGatheringUIDExpected(unit.getGatheringUIDExpected());
 
 		//--------------------------------------//
 		// init Equipment
@@ -708,7 +711,9 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 
 		cityDTO.setTimeToChangeOwner(timeToChangeOwner);
 		cityDTO.setNextOwnerUID(newOwnerUID);
-		playerDTO.getCityBeingOwnedUIDs().add(cityDTO.getCityUID());
+		
+		if(!playerDTO.getCityBeingOwnedUIDs().contains(cityDTO.getCityUID()))
+			playerDTO.getCityBeingOwnedUIDs().add(cityDTO.getCityUID());
 		
 		pm.close();
 	}
@@ -758,8 +763,8 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		pm.close();
 	}
 	
-	public String createMove(Move move) {
-		
+	public String createMove(Move move) 
+	{
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		MoveDTO moveDTO = new MoveDTO(); 
 		
@@ -929,8 +934,11 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 
 	public void resetChallenger(String caseUID)
 	{
-		if(caseUID == null) // lorsqu'on cree une armee, finalCaseUIDExpected n'existe pas encore, pas besoin de reset du coup
+		if(debug)Utils.print("resetChallenger : caseUID : " + caseUID);
+		if(caseUID == null){
+			if(debug)Utils.print("resetChallenger : caseUID is NULL");
 			return;
+		}
 		
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		CaseDTO _case = pm.getObjectById(CaseDTO.class, caseUID);
@@ -939,8 +947,17 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		_case.setTimeFromChallenging(-1);
 		
 		CityDTO city = _case.getCity();
+		if(debug)Utils.print("resetChallenger : city : " + city.getCityUID());
 		if(city != null){
 			CityDTO _city = pm.getObjectById(CityDTO.class, city.getCityUID());
+			if(debug)Utils.print("city.getNextOwnerUID() : " + city.getNextOwnerUID());
+			
+			if(city.getNextOwnerUID() != null){
+				if(debug)Utils.print("reset the attacker cityBeingOwnedUIDs");
+				PlayerDTO _attacker = pm.getObjectById(PlayerDTO.class, city.getNextOwnerUID());
+				_attacker.getCityBeingOwnedUIDs().remove(city.getCityUID());
+			}
+
 			_city.setNextOwnerUID(null);
 			_city.setTimeToChangeOwner(-1l);
 		}

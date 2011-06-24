@@ -187,6 +187,13 @@ package com.uralys.tribes.core
 				
 				unit.finalCaseUIDExpected = newMove.caseUID;
 			}
+			
+			trace("-------");
+			trace("validatePendingMoves ending ");
+			for each(var m:Move in unit.moves){
+				trace(m.caseUID);
+			}
+			trace("-------");
 		}
 
 		public function refreshMoves(unit:Unit)

@@ -265,17 +265,26 @@ package com.uralys.tribes.managers {
 			trace("unit.endTime : " + unit.endTime);
 			trace("now : " + now);
 			
-			if(unit.endTime != -1 && unit.endTime < now)
-			{
-				unit.status = Unit.DESTROYED;
-				return false;
-			}
-
 			if(unit.beginTime > now)
 			{
 				unit.status = Unit.FUTURE;
 				return false;
 			}
+
+			else if(unit.endTime != -1 && unit.endTime < now)
+			{
+				unit.status = Unit.DESTROYED;
+				return false;
+			}
+
+			else if(unit.endTime != -1 && unit.endTime - unit.beginTime > Numbers.BASE_TIME_PER_MOVE_MILLIS)
+			{
+				unit.status = Unit.INTERCEPTED;
+			}
+			
+			else
+				unit.status = Unit.FREE;
+
 			
 			if(unit.type == 1)
 			{
@@ -473,8 +482,15 @@ package com.uralys.tribes.managers {
 		{
 			if(city.merchant.status == Unit.TO_BE_CREATED)
 				createUnit(city.merchant, city.cityUID);
-			else
+			else{
+				if(city.merchant.moves.length == 1 && (city.merchant.moves.getItemAt(0) as Move).timeTo > 0)
+				{
+					// ici on a une caravane dans la ville qui est enregistrée dans un conflit
+					// on force le timeTo à -1 pour que l'algo qui va replacer l'autre unit du conflit trouve le recorded move et recalcule le conflit
+					(city.merchant.moves.getItemAt(0) as Move).timeTo = -1; 			
+				}
 				updateUnit(city.merchant, city.cityUID);
+			}
 			
 			BoardDrawer.getInstance().refreshUnits(Session.CURRENT_CASE_SELECTED);
 		}
@@ -483,8 +499,15 @@ package com.uralys.tribes.managers {
 		{
 			if(city.army.status == Unit.TO_BE_CREATED)
 				createUnit(city.army, city.cityUID);
-			else
+			else{
+				if(city.army.moves.length == 1 && (city.army.moves.getItemAt(0) as Move).timeTo > 0)
+				{
+					// ici on a une armee en defense qui est enregistrée dans un conflit
+					// on force le timeTo à -1 pour que l'algo qui va replacer l'autre unit du conflit trouve le recorded move et recalcule le conflit
+					(city.army.moves.getItemAt(0) as Move).timeTo = -1; 			
+				}
 				updateUnit(city.army, city.cityUID);
+			}
 			
 			BoardDrawer.getInstance().refreshUnits(Session.CURRENT_CASE_SELECTED);
 		}

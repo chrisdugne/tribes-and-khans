@@ -7,6 +7,8 @@
 
 	<fx:Script>
 		<![CDATA[
+			//----------------------------------------------------------------------------------//
+			
 			import com.uralys.tribes.commons.Numbers;
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;
@@ -22,6 +24,8 @@
 			import flash.utils.Timer;
 			
 			import mx.skins.spark.ProgressBarTrackSkin;
+			
+			//----------------------------------------------------------------------------------//
 			
 			[Bindable] public var timeTo:Number;	
 			[Bindable] public var status:int;	

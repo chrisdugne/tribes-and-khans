@@ -100,8 +100,8 @@ package com.uralys.tribes.managers {
 		}
 		
 		
-		private function resultLogin(event:ResultEvent):void{
-			
+		private function resultLogin(event:ResultEvent):void
+		{
 			Session.uralysProfile = event.result as UralysProfile;
 			Session.LANGUAGE = Session.uralysProfile.language;
 			
@@ -118,7 +118,8 @@ package com.uralys.tribes.managers {
 		//-------------------------------------------------------------------------//
 		// TribesAndKhansServer
 
-		public function playerCreated(event:ResultEvent):void{
+		public function playerCreated(event:ResultEvent):void
+		{
 			var uralysUID:String = event.result as String;
 			
 			if(!playerCreatedAutomatically)
@@ -129,7 +130,8 @@ package com.uralys.tribes.managers {
 		}
 		
 		private var playerCreatedAutomatically:Boolean = false;
-		public function receivedPlayer(event:ResultEvent):void{
+		public function receivedPlayer(event:ResultEvent):void
+		{
 			var player:Player = event.result as Player;
 			
 			if(player == null){

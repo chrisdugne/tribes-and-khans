@@ -65,8 +65,8 @@
 			
 			//----------------------------------------------------------//
 
-			protected function init():void{
-
+			protected function init():void
+			{
 				Session.timer.start();
 				timer = new Timer(41,1);
 				timer.addEventListener(TimerEvent.TIMER_COMPLETE, moveStoppedDuringDragging);
@@ -412,8 +412,8 @@
 			//==============================================================================================================//
 			// 	Game management
 			
-			private function initBoard():void{
-				
+			private function initBoard():void
+			{
 				if(selectedCity == null){
 					FlexGlobals.topLevelApplication.message('GAME OVER ON THIS SERVER', 700);
 					Session.GAME_OVER = true;
@@ -454,8 +454,8 @@
 			[Bindable]
 			private var newMoveAdded:Boolean = false;
 			
-			private function validateUnitMoves(cancel:Boolean):void{
-				
+			private function validateUnitMoves(cancel:Boolean):void
+			{
 				Session.MOVE_A_UNIT = false;
 				if(!cancel){
 					UnitMover.getInstance().validatePendingMoves(selectedUnit);					
@@ -471,8 +471,8 @@
 			
 			//----------------------------------------------------------------------------------------//
 			
-			public function showBuildCity(merchant:Unit):void{
-				
+			public function showBuildCity(merchant:Unit):void
+			{
 				if(Session.MOVE_A_UNIT){
 					return;
 				}
@@ -567,10 +567,13 @@
 
 			private function saveCityAndGoBackToBoard():void
 			{				
-				if(selectedCity.merchant != null)
+				// on force la validation du marchand si il existe et qu'il reste dans la ville
+				// si il est en mouvement, on ne peut pas l'editer donc pas besoin d'appeler le validateMerchants (qui casserait tout en placant le timeTo à -1) 
+				if(selectedCity.merchant != null && selectedCity.merchant.moves.length == 1)
 					GameManager.getInstance().validateMerchants(selectedCity);
 
-				if(selectedCity.army != null)
+				// IDEM pour army
+				if(selectedCity.army != null && selectedCity.army.moves.length == 1)
 					GameManager.getInstance().validateArmy(selectedCity);
 				
 				GameManager.getInstance().saveCity(selectedCity);

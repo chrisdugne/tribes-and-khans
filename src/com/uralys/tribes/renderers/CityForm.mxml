@@ -2037,7 +2037,8 @@
 								<s:Button label="{Translations.VALIDATE.getItemAt(Session.LANGUAGE)}" 
 										  click="validateMerchant()"
 										  visible="{city.merchant != null}"
-										  excludeFrom="recordingUnit"/>
+										  excludeFrom="recordingUnit"
+										  enabled="{city.merchant.moves.length == 1}"/>
 								<s:Button label="{Translations.DELETE.getItemAt(Session.LANGUAGE)}"
 										  click="deleteMerchant()"
 										  visible="{city.merchant != null}"
@@ -2071,7 +2072,8 @@
 													   value="{city.merchant.size}"
 													   minimum="50"
 													   maximum="{city.unemployed + city.merchant.size}"
-													   snapInterval="1"/>
+													   snapInterval="1"
+													   enabled="{city.merchant.moves.length == 1}"/>
 										</s:HGroup>
 									</mx:GridItem>
 									<mx:GridItem/>
@@ -2287,7 +2289,8 @@
 							<s:Button label="{Translations.VALIDATE.getItemAt(Session.LANGUAGE)}" 
 									  click="validateArmy()"
 									  visible="{city.army != null}"
-									  excludeFrom="recordingUnit"/>
+									  excludeFrom="recordingUnit"
+									  enabled="{city.merchant.moves.length == 1}"/>
 							<s:Button label="{Translations.DELETE.getItemAt(Session.LANGUAGE)}" 
 									  click="deleteArmy()"
 									  visible="{city.army != null}"
@@ -2320,7 +2323,8 @@
 												   value="{city.army.size}"
 												   minimum="50"
 												   maximum="{city.unemployed + city.army.size}"
-												   snapInterval="1"/>
+												   snapInterval="1"
+												   enabled="{city.army.moves.length == 1}"/>
 									</s:HGroup>
 								</mx:GridItem>
 								<mx:GridItem/>

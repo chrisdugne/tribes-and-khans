@@ -197,6 +197,8 @@ package com.uralys.tribes.entities
 					GameManager.getInstance().registerUnitInSession(unit);
 				}
 				
+				trace("move : " + move.moveUID);
+				trace("now : " + now);
 				
 				if(unit.status != Unit.DESTROYED && move.timeFrom <= now && (move.timeTo > now || move.timeTo == -1))
 				{
@@ -212,7 +214,8 @@ package com.uralys.tribes.entities
 							break;
 					}
 					
-					if(unit.ownerStatus == Unit.PLAYER){
+					if(unit.ownerStatus == Unit.PLAYER && unit.status == Unit.FREE){
+						trace("le move actif est en deplacement : set timeTo : " + move.timeTo);
 						pawn.timeTo = move.timeTo;
 					}
 					
@@ -255,6 +258,7 @@ package com.uralys.tribes.entities
 			if(_challenger != null 
 			&& ((army != null && army.ownerStatus == Unit.PLAYER) || (merchants != null && merchants.ownerStatus == Unit.PLAYER)))
 			{
+				trace("challenger : set timeTo : " + _timeFromChallenging + Numbers.BASE_TIME_FOR_LAND_CONQUEST_MILLIS);
 				pawn.status = Pawn.CONQUERING_LAND;
 				pawn.timeTo = _timeFromChallenging + Numbers.BASE_TIME_FOR_LAND_CONQUEST_MILLIS;
 			}

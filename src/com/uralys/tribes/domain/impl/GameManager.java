@@ -377,6 +377,7 @@ public class GameManager implements IGameManager {
 			//-----------------------------------------------------------------------------------//
 
 			boolean attackACity = false;
+			boolean defendACity = false;
 			
 			if(_case.getCity() != null)
 			{
@@ -384,7 +385,11 @@ public class GameManager implements IGameManager {
 				{
 					attackACity = true;
 					if(debug)Utils.print("attackACity !!");
-				}				
+				}
+				else{
+					defendACity = true;
+					if(debug)Utils.print("defendACity !!");
+				}
 			}
 			if(!attackACity)
 				if(debug)Utils.print("NOT attacking a city");
@@ -560,6 +565,9 @@ public class GameManager implements IGameManager {
 									}
 									
 									equipmentsOfTheNewUnit = unitRecorded.getEquipments();
+
+									if(defendACity)
+										gameDao.setNewCityOwner(_case.getCity().getCityUID(), unitRecorded.getPlayer().getUralysUID(), recordedMove.getTimeFrom());
 								}
 								else if(currentUnitValue > valueOfTheEnnemy)
 								{

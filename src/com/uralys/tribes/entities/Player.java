@@ -3,8 +3,8 @@ package com.uralys.tribes.entities;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Player {
-
+public class Player 
+{
 	private String uralysUID;
 
 	private String allyUID;

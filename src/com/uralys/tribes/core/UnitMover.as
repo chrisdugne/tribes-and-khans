@@ -82,6 +82,7 @@ package com.uralys.tribes.core
 			}
 			
 			var timeToWait:Number = firstMove.timeTo - new Date().getTime();
+			trace("listening move " + firstMove.moveUID);
 			
 			var t:Timer = new Timer(timeToWait, 1);
 			t.addEventListener(TimerEvent.TIMER_COMPLETE, moveIsDone);

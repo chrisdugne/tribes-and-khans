@@ -184,7 +184,8 @@ package com.uralys.tribes.core
 		}
 
 			
-		private function drawCase(_case:Case):void{
+		private function drawCase(_case:Case):void
+		{
 			var image:Image = new Image();
 			var placeForet:Boolean = false;
 			

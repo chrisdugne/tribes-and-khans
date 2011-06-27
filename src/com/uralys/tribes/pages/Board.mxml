@@ -79,7 +79,8 @@
 			
 			//---------------------------------------------------------------------------------------------------//
 			// click sur une ville dans la barre laterale
-			protected function onCityClick(event:ItemClickEvent):void{
+			protected function onCityClick(event:ItemClickEvent):void
+			{
 				var city:City = event.currentTarget.selectedItem;
 				mapPositioner.x = Session.MAP_WIDTH/2 
 									- city.x * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4) 
@@ -94,7 +95,8 @@
 			}
 			
 			// click sur une unité dans la barre laterale
-			protected function onMyUnitClick(event:ItemClickEvent):void{
+			protected function onMyUnitClick(event:ItemClickEvent):void
+			{
 				var unit:Unit = event.currentTarget.selectedItem;
 				mapPositioner.x = Session.MAP_WIDTH/2 
 									- Utils.getXFromCaseUID(unit.currentCaseUID) * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4) 
@@ -311,6 +313,19 @@
 				}
 			}
 			
+			protected function doubleClick(event:MouseEvent):void
+			{
+				mouseUp(event);
+				
+				if(Session.CURRENT_CASE_SELECTED.army != null)
+					selectedUnit = Session.CURRENT_CASE_SELECTED.army; 
+				else if(Session.CURRENT_CASE_SELECTED.merchants != null)
+					selectedUnit = Session.CURRENT_CASE_SELECTED.merchants; 
+				
+				if(selectedUnit != null)
+					onUnitClick();
+			}
+				
 			protected function mouseUp(event:MouseEvent):void
 			{
 				isDragging = false;
@@ -916,7 +931,9 @@
 						  height="{Numbers.LAND_HEIGHT*400}"
 						  mouseDown="mouseDown(event)"
 						  mouseMove="mouseMove(event)"
-						  mouseUp="mouseUp(event)"/>
+						  mouseUp="mouseUp(event)"
+						  doubleClick="doubleClick(event)"
+						  doubleClickEnabled="true"/>
 					<s:Group id="landLayer"
 							 visible="{Session.LANDS_VISIBLE}"
 							 width="{Numbers.LAND_WIDTH*400}"

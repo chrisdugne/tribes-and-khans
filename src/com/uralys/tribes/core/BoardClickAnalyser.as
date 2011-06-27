@@ -45,8 +45,8 @@ package com.uralys.tribes.core
 			Session.COORDINATE_Y = city.y;			
 		}
 		
-		public function clickOnCase(_case:Case):void{
-			
+		public function clickOnCase(_case:Case):void
+		{
 			var thereIsACity:Boolean = false;
 			var thereIsAMerchantThatCanBuildACityHere:Boolean = false;
 			

@@ -186,10 +186,12 @@ package com.uralys.tribes.entities
 				var unit:Unit = unitInPlayer == null ? getUnit(move.unitUID) : unitInPlayer;
 				
 				if(unitInPlayer != null){
+					trace("forceRefresh : " + move.unitUID + " is a Unit.PLAYER");
 					unit.ownerStatus = Unit.PLAYER;
 				}
 				else{
 					// plus tard, pour les ally, on va devoir checker si unit.playerUID est bien dans notre alliance.
+					trace("forceRefresh : " + move.unitUID + " is a Unit.ENNEMY");
 					unit.ownerStatus = Unit.ENNEMY;				
 				}
 				

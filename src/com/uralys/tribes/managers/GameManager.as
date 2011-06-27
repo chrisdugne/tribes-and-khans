@@ -265,25 +265,31 @@ package com.uralys.tribes.managers {
 			trace("unit.endTime : " + unit.endTime);
 			trace("now : " + now);
 			
-			if(unit.beginTime > now)
-			{
-				unit.status = Unit.FUTURE;
-				return false;
-			}
 
-			else if(unit.endTime != -1 && unit.endTime < now)
+			if(unit.endTime != -1 && unit.endTime < now)
 			{
 				unit.status = Unit.DESTROYED;
+				trace("Unit.DESTROYED");
 				return false;
 			}
 
-			else if(unit.endTime != -1 && unit.endTime - unit.beginTime > Numbers.BASE_TIME_PER_MOVE_MILLIS)
+			else if(unit.beginTime > now)
 			{
-				unit.status = Unit.INTERCEPTED;
+				unit.status = Unit.FUTURE;
+				trace("Unit.FUTURE");
+				return false;
 			}
+
+//			else if(unit.endTime != -1 && now - unit.endTime > Numbers.BASE_TIME_PER_MOVE_MILLIS)
+//			{
+//				trace("Unit.INTERCEPTED");
+//				unit.status = Unit.INTERCEPTED;
+//			}
 			
-			else
+			else{
+				trace("Unit.FREE");
 				unit.status = Unit.FREE;
+			}
 
 			
 			if(unit.type == 1)

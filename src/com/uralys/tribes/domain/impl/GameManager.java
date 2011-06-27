@@ -1022,7 +1022,7 @@ public class GameManager implements IGameManager {
 	}
 
 	public static void main(String[] args){
-		//-----------------------------------------------------------------------------------//		Utils.print(new Date((long)1309174342525l)+"");	}
+		//-----------------------------------------------------------------------------------//		Utils.print(new Date((long)1309186415276l)+"");	}
 
 	private boolean contains(List<Unit> unitsMakingThisReplacing, String unitUID) {
 		

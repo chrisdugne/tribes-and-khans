@@ -56,7 +56,7 @@ public class GameManager implements IGameManager {
 	public final static int IRON_EARNING_COEFF = 2;
 
 	public final static boolean debug = true;
-	public final static boolean topdebug = false;
+	public final static boolean topdebug = true;
 
 	//==================================================================================================//
 
@@ -136,11 +136,11 @@ public class GameManager implements IGameManager {
 			cityUIDs.addAll(playerDTO.getCityUIDs());
 			cityUIDs.addAll(playerDTO.getCityBeingOwnedUIDs());
 				
-			checkCityOwners(cityUIDs);
+			int nbCitiesChangingOwners = checkCityOwners(cityUIDs);
 			
 			Player player = EntitiesConverter.convertPlayerDTO(playerDTO, true);
 
-			if(player.getCities().size() == 0){
+			if(player.getCities().size() - nbCitiesChangingOwners == 0){
 				player.getCities().add(EntitiesConverter.convertCityDTO(gameDao.createNewFirstCity(uralysUID), true));
 			}
 			
@@ -148,14 +148,19 @@ public class GameManager implements IGameManager {
 		}
 	}
 
-	private void checkCityOwners(List<String> cityUIDs) 
+	private int checkCityOwners(List<String> cityUIDs) 
 	{
+		int nbCitiesChangingOwners = 0;
+		
 		if(debug)Utils.print("-------------------------------------------------");
 		if(debug)Utils.print("checkCityOwners");
 		for(String cityUID : cityUIDs){
 			if(debug)Utils.print("city : " + cityUID);
-			gameDao.checkCityOwner(cityUID);
+			if(gameDao.checkCityOwner(cityUID))
+				nbCitiesChangingOwners++;
 		}
+		
+		return nbCitiesChangingOwners;
 	}
 
 	//==================================================================================================//
@@ -580,6 +585,12 @@ public class GameManager implements IGameManager {
 									allyUIDOfTheNewUnit = allyUIDOfUnitArriving;
 									valueOfTheUnitRemaining = currentUnitValue;
 									sizeOfTheNewUnit = (int)(unitArriving.getSize()*rateRemaining);
+
+									for (Equipment equipment : unitArriving.getEquipments()) {
+										equipment.setSize((int)(equipment.getSize()*rateRemaining));
+									}
+									
+									equipmentsOfTheNewUnit = unitArriving.getEquipments();
 									
 									if(attackACity)
 										gameDao.setNewCityOwner(_case.getCity().getCityUID(), unitArriving.getPlayer().getUralysUID(), arrivalOnThisCaseMove.getTimeFrom());
@@ -960,13 +971,15 @@ public class GameManager implements IGameManager {
 			Gathering gatheringExpected = EntitiesConverter.convertGatheringDTO(gameDao.getGathering(unit.getGatheringUIDExpected()));
 			if(debug)Utils.print("gathering : " + gatheringExpected.getGatheringUID());
 			
-			for(Move moveExpected : movesExpected){
-				// on reset le timeTo du move correspndant a ce gathering (-1)
-				if(moveExpected.getGathering().getGatheringUID().equals(gatheringExpected.getGatheringUID())){
-					if(debug)Utils.print("found the move linked with this gathering : " + moveExpected.getMoveUID());
-					moveExpected.setTimeTo(-1);
-					break;
-				}
+			// si c'est un move sur une case (pas de deplacement), on force le timeTo à -1 pour le move correspondant à ce gathering
+			// en effet, si on etait dans un conflit, le timeTo n'est plus -1 mais est devenu le endTime de l'unité,
+			// donc on reset le timeTo pour qu'il s'enregistre de nouveau à -1 et que lorsquon replace l'autre unite du conflit, elle nous retrouve bien dans les recordedMoves pour recalculer le conflit
+			// par contre si il y a plus d'un movesExpected, alors le endTime correspond à la fin du deplacement, et non du endTime de l'unite : surtout ne pas mettre timeTo = -1 
+			if(movesExpected.size() == 1
+			&& movesExpected.get(0).getGathering().getGatheringUID().equals(gatheringExpected.getGatheringUID()))
+			{
+				if(debug)Utils.print("found the move linked with this gathering : " + movesExpected.get(0).getMoveUID());
+				movesExpected.get(0).setTimeTo(-1);
 			}
 
 			Unit unitToReplace;
@@ -1008,6 +1021,8 @@ public class GameManager implements IGameManager {
 		return unitsToReplace;
 	}
 
+	public static void main(String[] args){
+		//-----------------------------------------------------------------------------------//		Utils.print(new Date((long)1309174342525l)+"");	}
 
 	private boolean contains(List<Unit> unitsMakingThisReplacing, String unitUID) {
 		

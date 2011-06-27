@@ -718,8 +718,9 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		pm.close();
 	}
 	
-	public void checkCityOwner(String cityUID)
+	public boolean checkCityOwner(String cityUID)
 	{
+		boolean cityChangedOwner = false;
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		CityDTO cityDTO = pm.getObjectById(CityDTO.class, cityUID);
 
@@ -731,10 +732,12 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			// changing owner !
 			PlayerDTO previousOwner = pm.getObjectById(PlayerDTO.class, cityDTO.getOwnerUID());
 			previousOwner.getCityUIDs().remove(cityUID);
+			previousOwner.setNbLands(previousOwner.getNbLands() - 1);
 			
 			PlayerDTO newOwner = pm.getObjectById(PlayerDTO.class, cityDTO.getNextOwnerUID());
 			newOwner.getCityUIDs().add(cityUID);
 			newOwner.getCityBeingOwnedUIDs().remove(cityUID);
+			newOwner.setNbLands(newOwner.getNbLands() + 1);
 			
 			cityDTO.setNextOwnerUID(null);
 			cityDTO.setOwnerUID(newOwner.getUralysUID());
@@ -742,9 +745,13 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 
 			CaseDTO _case = pm.getObjectById(CaseDTO.class, "case_"+cityDTO.getX()+"_"+cityDTO.getY());
 			_case.setLandOwnerUID(newOwner.getUralysUID());
+			
+			cityChangedOwner = true;
 		}
 		
 		pm.close();
+		
+		return cityChangedOwner;
 	}
 
 	//========================================================================================//
@@ -825,9 +832,9 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	}
 
 		
-	public void deleteMove(String moveUID, boolean keepGatheringBecauseItIsLinkedWithAnotherMoveNow) {
+	public void deleteMove(String moveUID, boolean keepGatheringBecauseItIsLinkedWithAnotherMoveNow) 
+	{
 		try{
-
 			if(moveUID.contains("NEW"))
 				moveUID =  moveUID.substring(4);
 			
@@ -941,14 +948,22 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		}
 		
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
-		CaseDTO _case = pm.getObjectById(CaseDTO.class, caseUID);
+		CaseDTO _case;
+		
+		try{
+			_case = pm.getObjectById(CaseDTO.class, caseUID);
+		}
+		catch (Exception e) {
+			if(debug)Utils.print("la case n'existe pas : pas de challenger");
+			return;
+		}
 		
 		_case.setChallengerUID(null);
 		_case.setTimeFromChallenging(-1);
 		
 		CityDTO city = _case.getCity();
-		if(debug)Utils.print("resetChallenger : city : " + city.getCityUID());
 		if(city != null){
+			if(debug)Utils.print("resetChallenger : city : " + city.getCityUID());
 			CityDTO _city = pm.getObjectById(CityDTO.class, city.getCityUID());
 			if(debug)Utils.print("city.getNextOwnerUID() : " + city.getNextOwnerUID());
 			

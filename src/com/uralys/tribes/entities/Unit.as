@@ -324,6 +324,44 @@ package com.uralys.tribes.entities
 		public static const ENNEMY:int = 3;
 		
 		public var ownerStatus:int; //
+
+		//==========================================================================//
 		
+		public function get lastMove():Move
+		{
+			// manipulation d'une unite : initialisation du deplacement
+			var move:Move = moves.getItemAt(moves.length-1) as Move;
+			
+			// raison du test :
+			//		on test si le move est bien celui de l'unite, et non le move rajoute de la newUnit resultant du gathering avec une autre armee
+			// 		(auquel cas ce move ne compte pas dans le nouveau calcul du deplacement)
+			// comment on test : 
+			//		les moveUIDs de l'unite continennement unitUID, contrairement à newUnitUID
+			// resultat :
+			// 		si on trouve le move d'une newUnit, on prend celui d'avant (qui sera le move precedent le gathering et donc bien le dernier move de l'unite)
+			if(move.moveUID.indexOf(unitUID) == -1){
+				trace("move d'une future newUnit liée : on le zappe");
+				move = moves.getItemAt(moves.length-2) as Move;
+			}
+			
+			return move;
+		}
+		
+		
+		// memes commentaires que pour getLastMove
+		public function removeLastMove():void
+		{
+			var needToRemoveHiddenMove:Boolean = false;
+			var move:Move = moves.getItemAt(moves.length-1) as Move;
+			
+			if(move.moveUID.indexOf(unitUID) == -1){
+				trace("move d'une future newUnit liée : il faut aussi l'enlever");
+				needToRemoveHiddenMove = true;
+			}
+			
+			moves.removeItemAt(moves.length-1);
+			if(needToRemoveHiddenMove)
+				moves.removeItemAt(moves.length-1);
+		}
 	}
 }

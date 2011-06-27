@@ -545,8 +545,8 @@ package com.uralys.tribes.core
 
 		//==================================================================================================//
 
-		public function addMoveImages(move:com.uralys.tribes.entities.Move, xPreviousMove:int, yPreviousMove:int, displayProgress:Boolean):void{
-			
+		public function addMoveImages(move:com.uralys.tribes.entities.Move, xPreviousMove:int, yPreviousMove:int, displayProgress:Boolean):void
+		{
 			//------------------------------------------------------//
 
 			var moveHighlight:MoveHighLight = new MoveHighLight();

@@ -77,6 +77,12 @@ public class Translations{
 	//-----------------------------------------------------------------------------------//
 
 	[Bindable]
+	public static var VALIDATE_MODIFICATIONS:ArrayCollection = new ArrayCollection(
+									["Enregistrer les modifications",
+									"Save Changes",
+									"Save Changes"]);
+
+	[Bindable]
 	public static var WAY_SELECTION:ArrayCollection = new ArrayCollection(
 									["Edition du chemin de l'unité",
 									"Unit way edition",
@@ -460,6 +466,12 @@ public class Translations{
 									["Valider",
 									"Validate",
 									"Validate"]);
+
+	[Bindable]
+	public static var CANCEL:ArrayCollection = new ArrayCollection(
+									["Annuler",
+									"Cancel",
+									"Cancel"]);
 
 	[Bindable]
 	public static var NOT_VALIDATED:ArrayCollection = new ArrayCollection(

@@ -223,8 +223,8 @@ package com.uralys.tribes.managers {
 			}
 		}
 		
-		public function updateUnit(unit:Unit, cityUID:String = null):void{
-			
+		public function updateUnit(unit:Unit, cityUID:String = null):void
+		{
 			trace("gameManager.updateUnit : " + unit.unitUID);
 			
 			if(unit == null)
@@ -319,8 +319,8 @@ package com.uralys.tribes.managers {
 		 * et appelle ici pour les enregistrer au passage
 		 * ensuite on va faire un addTimer sur chacune des unites
 		 */
-		public function registerUnitInSession(unit:Unit):void{
-			
+		public function registerUnitInSession(unit:Unit):void
+		{
 			var foundInSession:Boolean = false;
 			
 			for each(var unitInSession:Unit in Session.allUnits){

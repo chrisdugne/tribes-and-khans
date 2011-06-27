@@ -95,23 +95,8 @@
 
 				//-------------------------------------------------------------------------//
 
-				public function updateWorkersProgressBar():void{
-					
-					trace("-----");
-					trace("updateWorkersProgressBar");
-
-					trace("city.peopleCreatingWheat : " + city.peopleCreatingWheat);
-					trace("city.peopleCreatingWood : " + city.peopleCreatingWood);
-					trace("city.peopleCreatingIron : " + city.peopleCreatingIron);
-					trace("city.bowWorkers : " + city.bowWorkers);
-					trace("city.swordWorkers : " + city.swordWorkers);
-					trace("city.armorWorkers : " + city.armorWorkers);
-					trace("city.armyRaised : " + city.armyRaised);
-					trace("city.armyReleased : " + city.armyReleased);
-					
-					trace("city.population : " + city.population);
-					
-					
+				public function updateWorkersProgressBar():void
+				{
 					workersProgressBar.setProgress(city.peopleCreatingWheat 
 												 + city.peopleCreatingWood
 												 + city.peopleCreatingIron
@@ -895,19 +880,6 @@
 					return newUnit;
 				}
 				
-				protected function validateArmy():void
-				{
-					currentState = recordingUnitState.name;
-					GameManager.getInstance().validateArmy(city);
-				}
-
-				protected function validateMerchant():void
-				{
-					currentState = recordingUnitState.name;
-					GameManager.getInstance().validateMerchants(city);
-					
-				}
-
 				protected function newArmy():void
 				{
 					var newArmy:Unit = newUnit(1);
@@ -1083,7 +1055,6 @@
 			<s:Fade id="shower" duration="1000" alphaFrom="0" alphaTo="1"/>
 			
 			<s:State name="normal" id="normalState"/>
-			<s:State name="recordingUnit" id="recordingUnitState"/>
 		</fx:Declarations>
 	
 		<mx:Image source="{ImageContainer.FERMIER}" x="950" y="-70" visible="{viewstack.selectedIndex == 0}" hideEffect="fader" showEffect="shower"/>
@@ -2034,17 +2005,9 @@
 											  toolTipCreate="{onCreateMerchantToolTip(event)}"
 											  source="{ImageContainer.QUESTION}"/>
 								</s:HGroup>
-								<s:Button label="{Translations.VALIDATE.getItemAt(Session.LANGUAGE)}" 
-										  click="validateMerchant()"
-										  visible="{city.merchant != null}"
-										  excludeFrom="recordingUnit"
-										  enabled="{city.merchant.moves.length == 1}"/>
 								<s:Button label="{Translations.DELETE.getItemAt(Session.LANGUAGE)}"
 										  click="deleteMerchant()"
-										  visible="{city.merchant != null}"
-										  excludeFrom="recordingUnit"/>
-								<mx:SWFLoader source="{ImageContainer.LOADING}" 
-											  includeIn="recordingUnit"/>
+										  visible="{city.merchant != null}"/>
 								
 								<renderers:MerchantsRenderer merchant="{city.merchant}" visible="{city.merchant != null}"/>
 							</s:VGroup>
@@ -2284,19 +2247,10 @@
 						<s:VGroup horizontalAlign="center">
 							<s:Button label="{Translations.NEW_ARMY.getItemAt(Session.LANGUAGE)}" 
 									  click="newArmy()"
-									  visible="{city.army == null}"
-									  excludeFrom="recordingUnit"/>
-							<s:Button label="{Translations.VALIDATE.getItemAt(Session.LANGUAGE)}" 
-									  click="validateArmy()"
-									  visible="{city.army != null}"
-									  excludeFrom="recordingUnit"
-									  enabled="{city.merchant.moves.length == 1}"/>
+									  visible="{city.army == null}"/>
 							<s:Button label="{Translations.DELETE.getItemAt(Session.LANGUAGE)}" 
 									  click="deleteArmy()"
-									  visible="{city.army != null}"
-									  excludeFrom="recordingUnit"/>
-							<mx:SWFLoader source="{ImageContainer.LOADING}" 
-										  includeIn="recordingUnit"/>
+									  visible="{city.army != null}"/>
 							
 							<renderers:ArmyRenderer army="{city.army}" visible="{city.army != null}"/>
 						</s:VGroup>

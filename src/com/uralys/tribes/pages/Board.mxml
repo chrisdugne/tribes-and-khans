@@ -68,8 +68,6 @@
 			protected function init():void
 			{
 				Session.timer.start();
-				timer = new Timer(41,1);
-				timer.addEventListener(TimerEvent.TIMER_COMPLETE, moveStoppedDuringDragging);
 
 				limitLeft = Session.MAP_WIDTH - mapPositioner.width;
 				limitUp = Session.MAP_HEIGHT - mapPositioner.height;
@@ -284,45 +282,28 @@
 			private var isDragging:Boolean = false;
 			private var draggingImageXFrom:int;
 			private var draggingImageYFrom:int;
-			private var draggingImageXTo:int;
-			private var draggingImageYTo:int;
-			private var draggingStageXFrom:int;
-			private var draggingStageYFrom:int;
-			private var draggingStageXTo:int;
-			private var draggingStageYTo:int;
 			private var limitLeft:int;
 			private var limitUp:int;
 			
-			protected function mouseDown(event:MouseEvent):void{
-
-				autoMoveNotNeeded = true;
-				autoMove.stop();
-				
+			protected function mouseDown(event:MouseEvent):void
+			{
 				isDragging = true;
 				draggingImageXFrom = event.currentTarget.mouseX; // le x de la souris sur le mapContainer
 				draggingImageYFrom = event.currentTarget.mouseY; // le y de la souris sur le mapContainer
-				draggingStageXFrom = event.stageX;
-				draggingStageYFrom = event.stageY;
 				
 				if(Session.MOVE_A_UNIT){
 					// manipulation d'une unite
 				}
 			}
 			
-			private var timer:Timer;
-			private var autoMoveNotNeeded:Boolean = true;
-			protected function mouseMove(event:MouseEvent):void{
-				
+			protected function mouseMove(event:MouseEvent):void
+			{
 				if(Session.MOVE_A_UNIT){
 					// manipulation d'une unite
 				}
 				
-				if(isDragging){
-					
-					timer.stop();
-					timer.reset();
-					timer.start();
-					autoMoveNotNeeded = false;
+				if(isDragging)
+				{
 					// on decale l'image du nombre de pixels du dernier mouvement
 					// donc elle suit bien la souris et event.localXY a bien lieu au meme endroit sur l'image apres chaque mouseMove
 					mapPositioner.x += (event.currentTarget.mouseX - draggingImageXFrom);
@@ -351,38 +332,7 @@
 					Session.CURRENT_CASE_SELECTED.tryRefresh();
 				}
 				
-				if(autoMoveNotNeeded){
-					checkToLoadCases(Session.MAP_WIDTH/2 - mapPositioner.x, Session.MAP_HEIGHT/2 - mapPositioner.y);
-					return;
-				}
-				
-				//--------------------------//
-				// stop dragging : automove
-				
-				
-				draggingStageXTo = event.stageX;
-				draggingStageYTo = event.stageY;
-				
-				autoMove.duration = 6*(Math.abs(draggingStageXTo - draggingStageXFrom) + Math.abs(draggingStageYTo - draggingStageYFrom));
-				autoMove.xTo = mapPositioner.x + (draggingStageXTo - draggingStageXFrom)*3;
-				autoMove.yTo = mapPositioner.y + (draggingStageYTo - draggingStageYFrom)*3;
-				
-				if(autoMove.xTo > 0)
-					autoMove.xTo = 0;
-				if(autoMove.yTo > 0)
-					autoMove.yTo = 0;
-				if(autoMove.xTo < limitLeft)
-					autoMove.xTo = limitLeft;
-				if(autoMove.yTo < limitUp)
-					autoMove.yTo = limitUp;
-				
-				
-				checkToLoadCases(Session.MAP_WIDTH/2 - autoMove.xTo, Session.MAP_HEIGHT/2 - autoMove.yTo);
-				autoMove.play();
-			}
-			
-			private function moveStoppedDuringDragging(event:TimerEvent):void{
-				autoMoveNotNeeded = true;
+				checkToLoadCases(Session.MAP_WIDTH/2 - mapPositioner.x, Session.MAP_HEIGHT/2 - mapPositioner.y);
 			}
 			
 			// ------------------------------------------------------------------------// 
@@ -397,9 +347,6 @@
 				mapPositioner.y = 250 - event.localY*15;
 				
 				isDragging = true;
-				
-				autoMoveNotNeeded = true;
-				autoMove.stop();
 			}
 
 			protected function mouseMoveMiniMap(event:MouseEvent):void{
@@ -567,14 +514,24 @@
 
 			private function saveCityAndGoBackToBoard():void
 			{				
+				trace("-----");
+				trace("saveCityAndGoBackToBoard");
 				// on force la validation du marchand si il existe et qu'il reste dans la ville
 				// si il est en mouvement, on ne peut pas l'editer donc pas besoin d'appeler le validateMerchants (qui casserait tout en placant le timeTo à -1) 
-				if(selectedCity.merchant != null && selectedCity.merchant.moves.length == 1)
+				if(selectedCity.merchant != null && selectedCity.merchant.moves.length == 1){
+					for each(var m:com.uralys.tribes.entities.Move in selectedCity.merchant.moves){
+						trace("selectedCity.merchant.move : " + m.moveUID);
+					}
 					GameManager.getInstance().validateMerchants(selectedCity);
+				}
 
 				// IDEM pour army
-				if(selectedCity.army != null && selectedCity.army.moves.length == 1)
+				if(selectedCity.army != null && selectedCity.army.moves.length == 1){
+					for each(var m:com.uralys.tribes.entities.Move in selectedCity.army.moves){
+						trace("selectedCity.army.move : " + m.moveUID);
+					}
 					GameManager.getInstance().validateArmy(selectedCity);
+				}
 				
 				GameManager.getInstance().saveCity(selectedCity);
 				hideCity.play();
@@ -749,10 +706,6 @@
 	</fx:Script>
 	
 	<fx:Declarations>
-		<mx:Move id="autoMove"
-				target="{mapPositioner}"
-				easingFunction="{Quadratic.easeOut}"/>
-		
 		<mx:Move id="goLeft"
 				 xTo="-1500"
 				 target="{main}"
@@ -896,8 +849,8 @@
 		<s:VGroup top="150" right="95"
 				  excludeFrom="classic">
 			<s:Label text="{Translations.WAY_SELECTION.getItemAt(Session.LANGUAGE)}"/>
-			<s:Button label="Done" click="{validateUnitMoves(false)}" visible="{selectedUnit != null}" enabled="{newMoveAdded}"/>
-			<s:Button label="Cancel" click="{validateUnitMoves(true)}" visible="{selectedUnit != null}"/>
+			<s:Button label="{Translations.VALIDATE.getItemAt(Session.LANGUAGE)}" click="{validateUnitMoves(false)}" visible="{selectedUnit != null}" enabled="{newMoveAdded}"/>
+			<s:Button label="{Translations.CANCEL.getItemAt(Session.LANGUAGE)}" click="{validateUnitMoves(true)}" visible="{selectedUnit != null}"/>
 		</s:VGroup>
 		
 		<s:VGroup id="buildCityForm"
@@ -1041,7 +994,7 @@
 			  x="1500"
 			  includeInLayout="false">
 		<s:HGroup>
-			<s:Button label="&lt;-- Ok" 
+			<s:Button label="&lt;-- {Translations.VALIDATE_MODIFICATIONS.getItemAt(Session.LANGUAGE)}" 
 					  click="{saveCityAndGoBackToBoard()}"
 					  enabled="{cityForm.currentState != 'recordingUnit'}"/>
 			<mx:Spacer width="450"/>

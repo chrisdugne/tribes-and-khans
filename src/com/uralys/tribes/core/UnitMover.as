@@ -152,11 +152,12 @@ package com.uralys.tribes.core
 		public function validatePendingMoves(unit:Unit)
 		{
 			var previousMove:com.uralys.tribes.entities.Move = movesPending.getItemAt(0) as com.uralys.tribes.entities.Move;
-
 			movesPending.removeItemAt(0);
+			unit.removeLastMove(); // movesPending commence à partir du lastMove deja. 
+			unit.moves.addItem(previousMove); // on met le bon lastMove (celui qui a ete trouve pour initialiser movesPending)
 			
-			for each(var newMove:Move in movesPending){
-				
+			for each(var newMove:Move in movesPending)
+			{
 				var timeFrom:Number;
 				
 				if(moveBeginsNow){
@@ -191,11 +192,14 @@ package com.uralys.tribes.core
 			trace("-------");
 			trace("validatePendingMoves ending ");
 			for each(var m:Move in unit.moves){
-				trace(m.caseUID);
+				trace(m.moveUID + " | timeTo : " + m.timeTo);
 			}
 			trace("-------");
 		}
 
+		/*
+		 * supprime les moves perimes de la liste
+		 */
 		public function refreshMoves(unit:Unit)
 		{
 			var nbIndexesToRemove:int = -1;
@@ -220,7 +224,7 @@ package com.uralys.tribes.core
 			moveBeginsNow = unit.moves.length == 1;
 			
 			// manipulation d'une unite : initialisation du deplacement
-			var lastMove:com.uralys.tribes.entities.Move = unit.moves.getItemAt(unit.moves.length-1) as com.uralys.tribes.entities.Move;
+			var lastMove:com.uralys.tribes.entities.Move = unit.lastMove;
 			movesPending.addItem(lastMove);
 			
 			lastMoveIsInCity = false;
@@ -234,6 +238,20 @@ package com.uralys.tribes.core
 				}
 			}
 			catch(e:Error){}
+			
+			
+			trace("-------");
+			trace("resetPendingMoves ending ");
+			trace("units.moves ");
+			for each(var m:Move in unit.moves){
+				trace(m.moveUID + " | timeTo : " + m.timeTo);
+			}
+			trace("-------");
+			trace("movesPending ");
+			for each(var m2:Move in movesPending){
+				trace(m2.moveUID + " | timeTo : " + m2.timeTo);
+			}
+			trace("-------");
 		}
 
 		private var lastMoveIsInCity:Boolean = false;
@@ -271,6 +289,20 @@ package com.uralys.tribes.core
 					}
 				}
 				catch(e:Error){}
+				
+				
+				trace("-------");
+				trace("recordMove ending ");
+				trace("units.moves ");
+				for each(var m:Move in unit.moves){
+					trace(m.moveUID + " | timeTo : " + m.timeTo);
+				}
+				trace("-------");
+				trace("movesPending ");
+				for each(var m2:Move in movesPending){
+					trace(m2.moveUID + " | timeTo : " + m2.timeTo);
+				}
+				trace("-------");
 				
 				return true;
 			}

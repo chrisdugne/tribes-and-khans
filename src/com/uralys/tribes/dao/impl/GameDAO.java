@@ -821,8 +821,8 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		return moveUID;
 	}
 	
-	public void deleteMoves(String unitUID) {
-
+	public void deleteMoves(String unitUID) 
+	{
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		UnitDTO unitDTO = pm.getObjectById(UnitDTO.class, unitUID);
 		

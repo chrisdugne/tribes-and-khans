@@ -65,10 +65,11 @@ public class GameService implements IGameService {
 		}
 	}
 
-	public DataContainer4UnitSaved buildCity(City city, Unit merchant, String uralysUID){
+	public DataContainer4UnitSaved buildCity(City city, Unit merchant, String uralysUID)
+	{
 		try {
 			String cityUID = gameManager.buildCity(city, uralysUID);
-			deleteUnit(uralysUID, merchant.getUnitUID());
+			deleteUnit(uralysUID, merchant);
 			DataContainer4UnitSaved container = new DataContainer4UnitSaved();
 			container.setCityUID(cityUID);
 			container.addCaseAltered(gameManager.getCase(city.getX(), city.getY()));
@@ -80,7 +81,8 @@ public class GameService implements IGameService {
 	}
 
 	public DataContainer4UnitSaved createUnit(String uralysUID, Unit unit,
-			String cityUID) {
+			String cityUID)
+	{
 		try {
 			return gameManager.createUnit(uralysUID, unit, cityUID, true);
 		} catch (Exception e) {
@@ -89,7 +91,8 @@ public class GameService implements IGameService {
 		}
 	}
 
-	public DataContainer4UnitSaved updateUnit(Unit unit, String cityUID) {
+	public DataContainer4UnitSaved updateUnit(Unit unit, String cityUID)
+	{
 		try {
 			return gameManager.updateUnit(unit, cityUID, true);
 		} catch (Exception e) {
@@ -98,9 +101,9 @@ public class GameService implements IGameService {
 		}
 	}
 
-	public void deleteUnit(String uralysUID, String unitUID) {
+	public void deleteUnit(String uralysUID, Unit unit) {
 		try {
-			gameManager.deleteUnit(uralysUID, unitUID);
+			gameManager.deleteUnit(uralysUID, unit);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

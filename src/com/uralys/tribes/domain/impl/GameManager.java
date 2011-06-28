@@ -232,8 +232,10 @@ public class GameManager implements IGameManager {
 		return datacontainer.objectsAltered;
 	}
 	
-	public void deleteUnit(String uralysUID, String unitUID){
-		gameDao.deleteUnit(uralysUID, unitUID);
+	public void deleteUnit(String uralysUID, Unit unit)
+	{
+		placeUnit(unit, new ArrayList<Move>(), new ArrayList<Unit>(), new DataContainer());
+		gameDao.deleteUnit(uralysUID, unit.getUnitUID());
 	}
 	
 	public void deleteUnits(String uralysUID, List<String> unitUIDs){

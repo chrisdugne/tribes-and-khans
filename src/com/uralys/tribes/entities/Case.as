@@ -185,27 +185,25 @@ package com.uralys.tribes.entities
 				var unitInPlayer:Unit = Session.player.getUnit(move.unitUID);
 				var unit:Unit = unitInPlayer == null ? getUnit(move.unitUID) : unitInPlayer;
 				
-				if(unitInPlayer != null){
-					trace("forceRefresh : " + move.unitUID + " is a Unit.PLAYER");
-					unit.ownerStatus = Unit.PLAYER;
-				}
-				else{
-					// plus tard, pour les ally, on va devoir checker si unit.playerUID est bien dans notre alliance.
-					trace("forceRefresh : " + move.unitUID + " is a Unit.ENNEMY");
-					unit.ownerStatus = Unit.ENNEMY;				
-				}
+				if(unit == null) // move futur
+					continue;
 				
 				if(globalRefresh){
 					GameManager.getInstance().registerUnitInSession(unit);
 				}
 				
-				trace("move : " + move.moveUID);
-				trace("now : " + now);
-				
 				if(unit.status != Unit.DESTROYED && move.timeFrom <= now && (move.timeTo > now || move.timeTo == -1))
 				{
 					// c'est le move actif, on recupere les unites qui sont sur la case
 					foundUnitsOnThisCase = true;
+					
+					if(unitInPlayer != null){
+						unit.ownerStatus = Unit.PLAYER;
+					}
+					else{
+						// plus tard, pour les ally, on va devoir checker si unit.playerUID est bien dans notre alliance.
+						unit.ownerStatus = Unit.ENNEMY;				
+					}
 					
 					switch(unit.type){
 						case 1:
@@ -217,7 +215,6 @@ package com.uralys.tribes.entities
 					}
 					
 					if(unit.ownerStatus == Unit.PLAYER && unit.status == Unit.FREE){
-						trace("le move actif est en deplacement : set timeTo : " + move.timeTo);
 						pawn.timeTo = move.timeTo;
 					}
 					
@@ -246,9 +243,6 @@ package com.uralys.tribes.entities
 					
 					// on stock le move dans la liste à supprimer
 					Session.movesToDelete.addItem(move);
-				}
-				else{
-					//move futur
 				}
 			}
 			

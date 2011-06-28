@@ -210,7 +210,7 @@ package com.uralys.tribes.managers {
 			gameWrapper.createUnit(Session.player.uralysUID, unit, cityUID);
 			currentUnitBeingSaved = unit;
 			
-			unit.status = Unit.FREE;
+			//unit.status = Unit.FREE;
 			
 			for each(var equipment:Equipment in unit.equipments){
 				if(equipment.equimentUID.indexOf("NEW_") != -1)
@@ -280,17 +280,6 @@ package com.uralys.tribes.managers {
 				return false;
 			}
 
-//			else if(unit.endTime != -1 && now - unit.endTime > Numbers.BASE_TIME_PER_MOVE_MILLIS)
-//			{
-//				trace("Unit.INTERCEPTED");
-//				unit.status = Unit.INTERCEPTED;
-//			}
-			
-			else{
-				trace("Unit.FREE");
-				unit.status = Unit.FREE;
-			}
-
 			
 			if(unit.type == 1)
 			{
@@ -314,6 +303,18 @@ package com.uralys.tribes.managers {
 			unit.ownerStatus = Unit.PLAYER;
 			unit.isModified = false;	
 			
+			// ici unit.isIntercepted a besoin que le currentCaseUID soit set.
+			if(unit.endTime != -1
+				&& unit.isIntercepted)
+			{
+				trace("Unit.INTERCEPTED");
+				unit.status = Unit.INTERCEPTED;
+			}
+				
+			else{
+				trace("Unit.FREE");
+				unit.status = Unit.FREE;
+			}
 			return true;
 		}
 		
@@ -562,8 +563,12 @@ package com.uralys.tribes.managers {
 			savePlayerResponder.token = getGameWrapper().savePlayer(Session.player);
 		}
 
-		public function deleteUnit (unit:Unit):void{
-			getGameWrapper().deleteUnit(Session.player.uralysUID, unit.unitUID);
+		public function deleteUnit (unit:Unit):void
+		{
+			if(unit.status == Unit.TO_BE_CREATED)
+				return;
+			
+			getGameWrapper().deleteUnit(Session.player.uralysUID, unit);
 		}
 
 		public function deleteUnits (unitUIDs:ArrayCollection):void{
@@ -756,7 +761,7 @@ package com.uralys.tribes.managers {
 						
 						Session.map[caseAltered.x][caseAltered.y].forceRefresh();
 					}
-					catch(e:Error){trace("not able to refresh this case");};
+					catch(e:Error){trace("----");trace(e.message);trace("----");trace("not able to refresh this case");};
 				}
 
 				refreshStatusOfAllUnitsInSession();

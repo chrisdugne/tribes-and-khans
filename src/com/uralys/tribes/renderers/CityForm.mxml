@@ -2250,7 +2250,8 @@
 									  visible="{city.army == null}"/>
 							<s:Button label="{Translations.DELETE.getItemAt(Session.LANGUAGE)}" 
 									  click="deleteArmy()"
-									  visible="{city.army != null}"/>
+									  visible="{city.army != null}"
+									  enabled="{city.army.moves.length == 1 || city.army.status == Unit.INTERCEPTED}"/>
 							
 							<renderers:ArmyRenderer army="{city.army}" visible="{city.army != null}"/>
 						</s:VGroup>
@@ -2278,7 +2279,7 @@
 												   minimum="50"
 												   maximum="{city.unemployed + city.army.size}"
 												   snapInterval="1"
-												   enabled="{city.army.moves.length == 1}"/>
+												   enabled="{city.army.moves.length == 1 || city.army.status == Unit.INTERCEPTED}"/>
 									</s:HGroup>
 								</mx:GridItem>
 								<mx:GridItem/>
@@ -2313,7 +2314,8 @@
 												   change="bowsArmyCheck(event)"
 												   value="{city.army.bows}"
 												   maximum="{city.bowStock + city.army.bows}"
-												   snapInterval="1"/>
+												   snapInterval="1"
+												   enabled="{city.army.moves.length == 1 || city.army.status == Unit.INTERCEPTED}"/>
 									</s:HGroup>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
@@ -2336,7 +2338,8 @@
 												   change="swordsArmyCheck(event)"
 												   value="{city.army.swords}"
 												   maximum="{city.swordStock + city.army.swords}"
-												   snapInterval="1"/>
+												   snapInterval="1"
+												   enabled="{city.army.moves.length == 1 || city.army.status == Unit.INTERCEPTED}"/>
 									</s:HGroup>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">
@@ -2359,7 +2362,8 @@
 												   change="armorsArmyCheck(event)"
 												   value="{city.army.armors}"
 												   maximum="{city.armorStock + city.army.armors}"
-												   snapInterval="1"/>
+												   snapInterval="1"
+												   enabled="{city.army.moves.length == 1 || city.army.status == Unit.INTERCEPTED}"/>
 									</s:HGroup>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center">

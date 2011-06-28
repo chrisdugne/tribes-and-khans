@@ -40,11 +40,6 @@
 			
 			public function refreshProgress():void
 			{			
-				try{
-					trace("Pawn.refreshProgress | timeTo : " + timeTo + " | case " + _case.caseUID);	
-				}
-				catch(e:Error){}
-				
 				Session.timer.removeEventListener( TimerEvent.TIMER, updateProgress );
 				
 				if(timeTo != -1){

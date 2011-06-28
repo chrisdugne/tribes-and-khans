@@ -533,7 +533,8 @@
 				trace("saveCityAndGoBackToBoard");
 				// on force la validation du marchand si il existe et qu'il reste dans la ville
 				// si il est en mouvement, on ne peut pas l'editer donc pas besoin d'appeler le validateMerchants (qui casserait tout en placant le timeTo à -1) 
-				if(selectedCity.merchant != null && selectedCity.merchant.moves.length == 1){
+				if(selectedCity.merchant != null 
+				&& (selectedCity.merchant.moves.length == 1 || selectedCity.merchant.status == Unit.INTERCEPTED)){
 					for each(var m:com.uralys.tribes.entities.Move in selectedCity.merchant.moves){
 						trace("selectedCity.merchant.move : " + m.moveUID);
 					}
@@ -541,7 +542,8 @@
 				}
 
 				// IDEM pour army
-				if(selectedCity.army != null && selectedCity.army.moves.length == 1){
+				if(selectedCity.army != null 
+				&& (selectedCity.army.moves.length == 1 || selectedCity.army.status == Unit.INTERCEPTED)){
 					for each(var m:com.uralys.tribes.entities.Move in selectedCity.army.moves){
 						trace("selectedCity.army.move : " + m.moveUID);
 					}

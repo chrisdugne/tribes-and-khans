@@ -327,6 +327,33 @@ package com.uralys.tribes.entities
 
 		//==========================================================================//
 		
+		// memes commentaires que pour getLastMove
+		// une interception c'est un conflit sur la case sur laquelle on est actuellement. On est Unit.FREE si le conflit est sur une case plus loin.
+		public function get isIntercepted():Boolean
+		{
+			var lastMove:Move = moves.getItemAt(moves.length-1) as Move;
+			
+			if(lastMove.caseUID != currentCaseUID){
+				trace("unité en mouvement : pas d'interception");
+				return false;
+			}
+			
+			var moveOfTheNewUnitResultingFromTheInterception:Move = null;
+			
+			if(lastMove.moveUID.indexOf(unitUID) == -1){
+				trace("move d'une future newUnit liée : on check la case pour savoir si cest une interception");
+				moveOfTheNewUnitResultingFromTheInterception = moves.getItemAt(moves.length-1) as Move;
+				lastMove = moves.getItemAt(moves.length-2) as Move;
+			}
+			
+			if(moveOfTheNewUnitResultingFromTheInterception == null)
+				return false;
+			else if(moveOfTheNewUnitResultingFromTheInterception.caseUID == lastMove.caseUID)
+				return true;
+			else
+				return false;
+		}
+		
 		public function get lastMove():Move
 		{
 			// manipulation d'une unite : initialisation du deplacement

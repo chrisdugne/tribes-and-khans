@@ -251,7 +251,7 @@ package com.uralys.tribes.core
 			
 			var imageUnit:Image;
 			
-			if(_case.army && _case.army.status != Unit.TO_BE_CREATED){
+			if(_case.army){
 				imageUnit = new Image();
 				
 				switch(_case.army.ownerStatus){
@@ -266,7 +266,7 @@ package com.uralys.tribes.core
 						break;
 				}
 			}
-			else if(_case.merchants && _case.merchants.status != Unit.TO_BE_CREATED){
+			else if(_case.merchants){
 				imageUnit = new Image();
 
 				switch(_case.merchants.ownerStatus){

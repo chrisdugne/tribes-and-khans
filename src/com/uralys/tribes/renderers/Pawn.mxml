@@ -7,14 +7,13 @@
 
 	<fx:Script>
 		<![CDATA[
-			//----------------------------------------------------------------------------------//
-			
 			import com.uralys.tribes.commons.Numbers;
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;
 			import com.uralys.tribes.core.BoardDrawer;
 			import com.uralys.tribes.entities.Case;
 			import com.uralys.tribes.entities.Move;
+			import com.uralys.tribes.entities.Unit;
 			import com.uralys.tribes.skins.ClassicProgressBarSkin;
 			import com.uralys.tribes.skins.ConqueringLandProgressBarSkin;
 			import com.uralys.tribes.skins.CustomProgressTrackSkin;
@@ -30,6 +29,7 @@
 			[Bindable] public var timeTo:Number;	
 			[Bindable] public var status:int;	
 			[Bindable] public var _case:Case;	
+			[Bindable] public var unit:Unit;
 			
 			//----------------------------------------------------------------------------------//
 
@@ -108,6 +108,6 @@
 					trackSkin="{CustomProgressTrackSkin}"
 					barSkin="{status == CONQUERING_LAND ? ConqueringLandProgressBarSkin : ClassicProgressBarSkin}"
 					label="--:--" 
-					visible="{Session.SHOW_MOVES_PROGRESS_BARS &amp;&amp; timeTo != -1}"
+					visible="{Session.SHOW_MOVES_PROGRESS_BARS &amp;&amp; timeTo != -1 &amp;&amp; unit.ownerStatus == Unit.PLAYER}"
 					labelPlacement="top"/>
 </s:Group>

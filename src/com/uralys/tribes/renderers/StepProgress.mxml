@@ -50,7 +50,7 @@
 			}
 
 			protected function nextStep():void{
-				GameManager.getInstance().saveStep(true);
+				GameManager.getInstance().saveStep();
 				
 				// message 'resources recues'
 				FlexGlobals.topLevelApplication.message(Translations.RESOURCES_UPDATED.getItemAt(Session.LANGUAGE), 3);
@@ -67,8 +67,6 @@
 					barSkin="{WorkersProgressBarSkin}"
 					label="{Translations.REMAINING_TIME.getItemAt(Session.LANGUAGE)}    --:--" 
 					labelPlacement="top"/>
-	<!--
 	<mx:Button label="plop" y="9" click="nextStep()" visible="{Session.isLocal}"/>
-	-->
 	
 </s:Group>

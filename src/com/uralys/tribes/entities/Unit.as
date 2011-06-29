@@ -13,7 +13,7 @@ package com.uralys.tribes.entities
 		//==========================================================================//
 				
 		public static const TO_BE_CREATED:int = -1;
-		public static const INTERCEPTED:int = 1;
+		public static const INTERCEPTED_ON_THIS_CASE:int = 1;
 		public static const FREE:int = 2;
 		public static const DESTROYED:int = 3;
 		public static const FUTURE:int = 4;
@@ -76,6 +76,7 @@ package com.uralys.tribes.entities
 		public function set size(o:int):void {
 			isModified = true;
 			_size = o;
+			refreshValue();
 		}
 	
 		public function get currentCaseUID():String {
@@ -96,10 +97,17 @@ package com.uralys.tribes.entities
 		}
 	
 		public function get value():int {
-			return size 
-				+ (bows > size ? size : bows) 
-				+ (swords > size ? size : swords) *2 
-				+ (armors > size ? size : armors) *3;
+			return _value;
+		}
+
+		public function refreshValue():void {
+			value = size 
+					+ (bows > size ? size : bows) 
+					+ (swords > size ? size : swords) *2 
+					+ (armors > size ? size : armors) *3;
+			
+			if(type == MERCHANT)
+				value = value/10;
 		}
 	
 		public function set value(o:int):void {
@@ -261,6 +269,7 @@ package com.uralys.tribes.entities
 		public function set bows(o:int):void{
 			isModified = true;
 			_bows = o;
+			refreshValue();
 		}
 
 		public function get swords():int{
@@ -270,6 +279,7 @@ package com.uralys.tribes.entities
 		public function set swords(o:int):void{
 			isModified = true;
 			_swords = o;
+			refreshValue();
 		}
 
 		public function get armors():int{
@@ -279,6 +289,7 @@ package com.uralys.tribes.entities
 		public function set armors(o:int):void{
 			isModified = true;
 			_armors = o;
+			refreshValue();
 		}
 
 		//==========================================================================//
@@ -329,9 +340,14 @@ package com.uralys.tribes.entities
 		
 		// memes commentaires que pour getLastMove
 		// une interception c'est un conflit sur la case sur laquelle on est actuellement. On est Unit.FREE si le conflit est sur une case plus loin.
-		public function get isIntercepted():Boolean
+		public function get isInterceptedOnThisCase():Boolean
 		{
+			trace("test isIntercepted");
+			trace("trace nbMoves : " + moves.length);
+			trace("currentCaseUID : " + currentCaseUID);
+			
 			var lastMove:Move = moves.getItemAt(moves.length-1) as Move;
+			trace("lastMove.caseUID : " + lastMove.caseUID);
 			
 			if(lastMove.caseUID != currentCaseUID){
 				trace("unité en mouvement : pas d'interception");
@@ -339,6 +355,7 @@ package com.uralys.tribes.entities
 			}
 			
 			var moveOfTheNewUnitResultingFromTheInterception:Move = null;
+			trace("lastMove.moveUID : " + lastMove.moveUID);
 			
 			if(lastMove.moveUID.indexOf(unitUID) == -1){
 				trace("move d'une future newUnit liée : on check la case pour savoir si cest une interception");
@@ -348,10 +365,14 @@ package com.uralys.tribes.entities
 			
 			if(moveOfTheNewUnitResultingFromTheInterception == null)
 				return false;
-			else if(moveOfTheNewUnitResultingFromTheInterception.caseUID == lastMove.caseUID)
+			else if(moveOfTheNewUnitResultingFromTheInterception.caseUID == lastMove.caseUID){
+				trace("moveOfTheNewUnitResultingFromTheInterception is on the same case : INTERCEPTED_ON_THIS_CASE");
 				return true;
-			else
+			}
+			else{
+				trace("moveOfTheNewUnitResultingFromTheInterception is NOT on the same case : NOT INTERCEPTED_ON_THIS_CASE");
 				return false;
+			}
 		}
 		
 		public function get lastMove():Move
@@ -389,6 +410,26 @@ package com.uralys.tribes.entities
 			moves.removeItemAt(moves.length-1);
 			if(needToRemoveHiddenMove)
 				moves.removeItemAt(moves.length-1);
+		}
+		
+		/*
+			à appeler avant tout update (car update = replace des unites)
+			les moves de l'unite vont etre recalcules.
+			donc on enleve le move de la newUnit si il existe (car dans ce cas il a ete rattache en tant que lastMove de l'unite)
+			et on declare le vrai lastMove comme etant move a fin indeterminee sur la derniere case
+		*/ 
+		public function refreshLastMoveBeforeReplacingUnit():void
+		{
+			var _realLastMove:Move = lastMove;
+			removeLastMove();
+			moves.addItem(_realLastMove);
+				
+			if(moves.length == 1 && (moves.getItemAt(0) as Move).timeTo > 0)
+			{
+				// ici on a une caravane dans la ville qui est enregistrée dans un conflit
+				// on force le timeTo à -1 pour que l'algo qui va replacer l'autre unit du conflit trouve le recorded move et recalcule le conflit
+				(moves.getItemAt(0) as Move).timeTo = -1; 			
+			}
 		}
 	}
 }

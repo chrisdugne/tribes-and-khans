@@ -138,10 +138,12 @@
 			<mx:Spacer height="15"/>
 			<s:HGroup visible="{!Session.WAIT_FOR_CONNECTION}">
 				<mx:Spacer width="5"/>
-				<s:Button label="{Translations.CREATE_ACCOUNT.getItemAt(Session.LANGUAGE)}" 
+				<s:Button label="{Translations.CREATE_ACCOUNT.getItemAt(Session.LANGUAGE)}"
+						  skinClass="com.uralys.tribes.skins.CustomButtonSkin"
 						  click="{createAccount()}"/>
 				<mx:Spacer width="50"/>
 				<s:Button label="{Translations.LOG_ME_IN.getItemAt(Session.LANGUAGE)}" 
+						  skinClass="com.uralys.tribes.skins.CustomButtonSkin"
 						  click="{login()}"/>
 			</s:HGroup>
 		</s:VGroup>

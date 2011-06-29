@@ -73,25 +73,37 @@ package com.uralys.tribes.managers {
 			
 			trace(nbStepsMissed + " missed");
 			for(var i:int = 0; i < nbStepsMissed-1; i++){
-				saveStep(false,true);
+				saveStep(true);
 			}
 		
 			// enregistre le statut lors du dernier step a rattrapper
-			if(nbStepsMissed > 0)
-				saveStep(true);
+			if(nbStepsMissed > 0){
+				saveStep();
+				Session.board.refreshUnits();
+			}
 
 			
 			var city:City = Session.player.cities.getItemAt(0) as City;
 			BoardDrawer.getInstance().refreshMap(city.x, city.y);
 		}
 		
-		public function saveStep(needRefreshBoard:Boolean, loginCatchUp:Boolean = false)
+		public function saveStep(loginCatchUp:Boolean = false)
 		{
 			for each(var city:City in Session.player.cities)
 			{
 				city.wheat += city.wheatEarned - city.wheatSpent;
 				city.wood += city.woodEarned - city.woodSpent;
 				city.iron += city.ironEarned - city.ironSpent;
+				
+				// petite correction, avec les arrondis on arrive parfois a etre negatif de peu. (a verifier)
+				// en tout cas on force le zero, sinon dans city.reset ca casse tout.
+				
+				if(city.wheat < 0)
+					city.wheat = 0;
+				if(city.wood < 0)
+					city.wood = 0;
+				if(city.iron < 0)
+					city.iron = 0;
 
 				var starvation:Boolean = false;
 				
@@ -114,9 +126,6 @@ package com.uralys.tribes.managers {
 			if(!loginCatchUp){
 				savePlayer();
 			}
-			
-			if(needRefreshBoard)
-				Session.board.refreshBoard();
 		}
 		
 		
@@ -259,7 +268,7 @@ package com.uralys.tribes.managers {
 		public function prepareUnitForClientSide(unit:Unit):Boolean
 		{
 			var now:Number = new Date().getTime();
-			
+			trace("------------------");
 			trace("prepareUnitForClientSide : " + unit.unitUID);
 			trace("unit.playerUID : " + unit.player.playerUID);
 			trace("unit.endTime : " + unit.endTime);
@@ -305,10 +314,10 @@ package com.uralys.tribes.managers {
 			
 			// ici unit.isIntercepted a besoin que le currentCaseUID soit set.
 			if(unit.endTime != -1
-				&& unit.isIntercepted)
+				&& unit.isInterceptedOnThisCase)
 			{
-				trace("Unit.INTERCEPTED");
-				unit.status = Unit.INTERCEPTED;
+				trace("Unit.INTERCEPTED_ON_THIS_CASE");
+				unit.status = Unit.INTERCEPTED_ON_THIS_CASE;
 			}
 				
 			else{
@@ -369,6 +378,12 @@ package com.uralys.tribes.managers {
 			{
 				switch(smith.item.name){
 					case "bow" :
+						trace("------");
+						trace("Bows");
+						trace("smith.people : " + smith.people);
+						trace("depense en bois : " + (Numbers.BOW_WOOD * smith.people) + " | city.wood : " + city.wood);
+						trace("depense en fer : " + (Numbers.BOW_IRON * smith.people) + " | city.iron : " + city.iron);
+						
 						city.bowWorkers = -1;
 						// la depense en bois pour les arcs est plus grande que le stock de bois
 						if(Numbers.BOW_WOOD * smith.people > city.wood)
@@ -378,12 +393,21 @@ package com.uralys.tribes.managers {
 						if(Numbers.BOW_IRON * smith.people > city.iron)
 							city.bowWorkers = Math.floor(city.iron/Numbers.BOW_IRON);
 						
+						trace("city.bowWorkers : " + city.bowWorkers);
 						
 						if(city.bowWorkers == -1) // stock suffisant
 							city.bowWorkers = smith.people;
 
+						trace("final : city.bowWorkers : " + city.bowWorkers);
+
 						break;
-					case "sword" :
+					case "sword" :						
+						trace("------");
+						trace("Swords");
+						trace("smith.people : " + smith.people);
+						trace("depense en bois : " + (Numbers.SWORD_WOOD * smith.people) + " | city.wood : " + city.wood);
+						trace("depense en fer : " + (Numbers.SWORD_IRON * smith.people) + " | city.iron : " + city.iron);
+						
 						city.swordWorkers = -1;
 						
 						// la depense en bois pour les epees est plus grande que le stock de bois
@@ -394,11 +418,21 @@ package com.uralys.tribes.managers {
 						if(Numbers.SWORD_IRON * smith.people > city.iron)
 							city.swordWorkers = Math.floor(city.iron/Numbers.SWORD_IRON);
 						
+						trace("city.swordWorkers : " + city.swordWorkers);
+						
 						if(city.swordWorkers == -1) // stock suffisant
 							city.swordWorkers = smith.people;
 						
+						trace("final : city.swordWorkers : " + city.swordWorkers);
+						
 						break;
-					case "armor" :
+					case "armor" :				
+						trace("------");
+						trace("Armors");
+						trace("smith.people : " + smith.people);
+						trace("depense en bois : " + (Numbers.ARMOR_WOOD * smith.people) + " | city.wood : " + city.wood);
+						trace("depense en fer : " + (Numbers.ARMOR_IRON * smith.people) + " | city.iron : " + city.iron);
+						
 						city.armorWorkers = -1;
 						
 						// la depense en bois pour les armoures est plus grande que le stock de bois
@@ -409,9 +443,11 @@ package com.uralys.tribes.managers {
 						if(Numbers.ARMOR_IRON * smith.people > city.iron)
 							city.armorWorkers = Math.floor(city.iron/Numbers.ARMOR_IRON);
 						
+						trace("city.armorWorkers : " + city.armorWorkers);
 						if(city.armorWorkers == -1) // stock suffisant
 							city.armorWorkers = smith.people;
 						
+						trace("final : city.armorWorkers : " + city.armorWorkers);
 						break;
 				}
 			}
@@ -490,12 +526,7 @@ package com.uralys.tribes.managers {
 			if(city.merchant.status == Unit.TO_BE_CREATED)
 				createUnit(city.merchant, city.cityUID);
 			else{
-				if(city.merchant.moves.length == 1 && (city.merchant.moves.getItemAt(0) as Move).timeTo > 0)
-				{
-					// ici on a une caravane dans la ville qui est enregistrée dans un conflit
-					// on force le timeTo à -1 pour que l'algo qui va replacer l'autre unit du conflit trouve le recorded move et recalcule le conflit
-					(city.merchant.moves.getItemAt(0) as Move).timeTo = -1; 			
-				}
+				city.merchant.refreshLastMoveBeforeReplacingUnit();
 				updateUnit(city.merchant, city.cityUID);
 			}
 			
@@ -507,12 +538,7 @@ package com.uralys.tribes.managers {
 			if(city.army.status == Unit.TO_BE_CREATED)
 				createUnit(city.army, city.cityUID);
 			else{
-				if(city.army.moves.length == 1 && (city.army.moves.getItemAt(0) as Move).timeTo > 0)
-				{
-					// ici on a une armee en defense qui est enregistrée dans un conflit
-					// on force le timeTo à -1 pour que l'algo qui va replacer l'autre unit du conflit trouve le recorded move et recalcule le conflit
-					(city.army.moves.getItemAt(0) as Move).timeTo = -1; 			
-				}
+				city.army.refreshLastMoveBeforeReplacingUnit();
 				updateUnit(city.army, city.cityUID);
 			}
 			
@@ -723,6 +749,9 @@ package com.uralys.tribes.managers {
 				for each(var unitAltered:Unit in unitsAltered)
 				{
 					trace("unitAltered : " + unitAltered.unitUID);
+					if(unitAltered.player.playerUID != Session.player.playerUID)
+						continue;
+					
 					var unitIsAlive:Boolean = prepareUnitForClientSide(unitAltered);
 					if(!unitIsAlive)
 						continue;

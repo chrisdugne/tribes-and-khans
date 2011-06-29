@@ -1147,7 +1147,8 @@
 			</s:HGroup>
 			
 			<mx:Spacer height="15"/>
-			<s:TabBar id="tabs" dataProvider="{viewstack}" skinClass="spark.skins.spark.TabBarSkin"/>
+			<s:TabBar id="tabs" dataProvider="{viewstack}"
+					  skinClass="com.uralys.tribes.skins.CustomTabBarSkin"/>
 				
 			<mx:ViewStack id="viewstack" width="650" height="100%">
 				
@@ -1190,10 +1191,14 @@
 									</s:HGroup>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-									<s:Label text="+ {city.wheatEarned}" color="{Numbers.GREEN}"/>
+									<s:Label text="+ {city.wheatEarned}" 
+											 styleName="numberLabel" 
+											 color="{Numbers.GREEN}"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-									<s:Label text="- {city.wheatSpent}"  color="{city.wheatSpent > 0 ? Numbers.RED : Numbers.GREEN}"/>
+									<s:Label text="- {city.wheatSpent}"  
+											 styleName="numberLabel" 
+											 color="{city.wheatSpent > 0 ? Numbers.RED : Numbers.GREEN}"/>
 								</mx:GridItem>
 							</mx:GridRow>
 							<mx:GridRow >
@@ -1216,10 +1221,14 @@
 									</s:HGroup>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center" verticalAlign="middle"> 
-									<s:Label text="+ {city.woodEarned}" color="{Numbers.GREEN}"/>
+									<s:Label text="+ {city.woodEarned}"
+											 styleName="numberLabel"  
+											 color="{Numbers.GREEN}"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-									<s:Label text="- {city.woodSpent}" color="{city.woodSpent > 0 ? Numbers.RED : Numbers.GREEN}"/>
+									<s:Label text="- {city.woodSpent}"
+											 styleName="numberLabel"  
+											 color="{city.woodSpent > 0 ? Numbers.RED : Numbers.GREEN}"/>
 								</mx:GridItem>
 							</mx:GridRow>
 							<mx:GridRow >
@@ -1242,10 +1251,14 @@
 									</s:HGroup>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-									<s:Label text="+ {city.ironEarned}" color="{Numbers.GREEN}"/>
+									<s:Label text="+ {city.ironEarned}"
+											 styleName="numberLabel" 
+											 color="{Numbers.GREEN}"/>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-									<s:Label text="- {city.ironSpent}" color="{city.ironSpent > 0 ? Numbers.RED : Numbers.GREEN}"/>
+									<s:Label text="- {city.ironSpent}"
+											 styleName="numberLabel"  
+											 color="{city.ironSpent > 0 ? Numbers.RED : Numbers.GREEN}"/>
 								</mx:GridItem>
 							</mx:GridRow>
 						</mx:Grid>
@@ -1300,10 +1313,10 @@
 												 snapInterval="1"/>
 								  </s:HGroup>
 							  </mx:GridItem>
-							  <mx:GridItem horizontalAlign="center">
+							  <mx:GridItem horizontalAlign="center" verticalAlign="middle">
 								  <s:Label text="{Numbers.BOW_WOOD * city.bowWorkers}" styleName="numberLabel"/>
 							  </mx:GridItem>
-							  <mx:GridItem horizontalAlign="center">
+							  <mx:GridItem horizontalAlign="center" verticalAlign="middle">
 								  <s:Label text="{Numbers.BOW_IRON * city.bowWorkers}" styleName="numberLabel"/>
 							  </mx:GridItem>
 						  </mx:GridRow>
@@ -1328,10 +1341,10 @@
 												   snapInterval="1"/>
 									</s:HGroup>
 								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
+								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 									<s:Label text="{Numbers.SWORD_WOOD * city.swordWorkers}" styleName="numberLabel"/>
 								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
+								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 									<s:Label text="{Numbers.SWORD_IRON * city.swordWorkers}" styleName="numberLabel"/>
 								</mx:GridItem>
 							</mx:GridRow>
@@ -1356,10 +1369,10 @@
 												   snapInterval="1"/>
 									</s:HGroup>
 								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
+								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 									<s:Label text="{Numbers.ARMOR_WOOD * city.armorWorkers}" styleName="numberLabel"/>
 								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
+								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 									<s:Label text="{Numbers.ARMOR_IRON * city.armorWorkers}" styleName="numberLabel"/>
 								</mx:GridItem>
 							</mx:GridRow>
@@ -1370,16 +1383,16 @@
 						</mx:GridRow >
 						<mx:GridRow >
 							<mx:GridItem/>
-							<mx:GridItem horizontalAlign="center">
+							<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 								<s:Label text="{Translations.TOTAL_SPENDING.getItemAt(Session.LANGUAGE)}"/>
 							</mx:GridItem>
-							<mx:GridItem horizontalAlign="center">
+							<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 								<s:Label text="{Numbers.SWORD_WOOD * city.swordWorkers 
 										 	   +Numbers.ARMOR_WOOD * city.armorWorkers
 										 	   +Numbers.BOW_WOOD * city.bowWorkers}" 
 										 		styleName="numberLabel"/>
 							</mx:GridItem>
-							<mx:GridItem horizontalAlign="center">
+							<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 								<s:Label text="{Numbers.SWORD_IRON * city.swordWorkers
 										 +Numbers.ARMOR_IRON * city.armorWorkers
 										 +Numbers.BOW_IRON * city.bowWorkers}" 
@@ -1389,7 +1402,8 @@
 					  </mx:Grid>
 						
 						<s:HGroup width="100%" horizontalAlign="center" bottom="0"
-								  verticalAlign="middle">
+								  verticalAlign="middle"
+								  visible="{city.unemployed + city.bowWorkers + city.swordWorkers + city.armorWorkers &gt; 0}">
 							<s:Label text="{Translations.SMITHS.getItemAt(Session.LANGUAGE)}"/>
 							<mx:Spacer width="10"/>
 							<s:Label text="{city.bowWorkers + city.swordWorkers + city.armorWorkers}"
@@ -1443,63 +1457,63 @@
 								</mx:GridItem>
 							</mx:GridRow>
 							<mx:GridRow >
-								<mx:GridItem horizontalAlign="center">
+								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 									<mx:Image toolTip="{Translations.BOW.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.BOW}"/>
 								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
+								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 									<s:Label text="{city.bowStock}" styleName="numberLabel"/>
 								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
+								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 									<s:Label text="+ {city.bowWorkers}" styleName="numberLabel"/>
 								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
+								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 									<s:Label text="{(city.bowsRestored - city.bowsEquiped >= 0 ? '+' : '-')} {Math.abs(city.bowsRestored - city.bowsEquiped)}" 
 											 styleName="numberLabel" 
 											 color="{city.bowsRestored - city.bowsEquiped >= 0 ? Numbers.GREEN : Numbers.RED}"/>
 								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
+								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 									<s:Label text="{(city.bowStock + city.bowWorkers + city.bowsRestored - city.bowsEquiped)}" 
 											 styleName="numberLabel" 
 											 color="{city.bowStock + city.bowWorkers + city.bowsRestored - city.bowsEquiped >= 0 ? Numbers.GREEN : Numbers.RED}"/>
 								</mx:GridItem>
 							</mx:GridRow>
 							<mx:GridRow >
-								<mx:GridItem horizontalAlign="center">
+								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 									<mx:Image toolTip="{Translations.SWORD.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.SWORD}"/>
 								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
+								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 									<s:Label text="{city.swordStock}" styleName="numberLabel"/>
 								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
+								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 									<s:Label text="+ {city.swordWorkers}" styleName="numberLabel"/>
 								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
+								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 									<s:Label text="{(city.swordsRestored - city.swordsEquiped >= 0 ? '+' : '-')} {Math.abs(city.swordsRestored - city.swordsEquiped)}" 
 											 styleName="numberLabel" 
 											 color="{city.swordsRestored - city.swordsEquiped >= 0 ? Numbers.GREEN : Numbers.RED}"/>
 								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
+								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 									<s:Label text="{(city.swordStock + city.swordWorkers + city.swordsRestored - city.swordsEquiped)}" 
 											 styleName="numberLabel" 
 											 color="{city.swordStock + city.swordWorkers + city.swordsRestored - city.swordsEquiped >= 0 ? Numbers.GREEN : Numbers.RED}"/>
 								</mx:GridItem>
 							</mx:GridRow>
 							<mx:GridRow >
-								<mx:GridItem horizontalAlign="center">
+								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 									<mx:Image toolTip="{Translations.ARMOR.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.ARMOR}"/>
 								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
+								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 									<s:Label text="{city.armorStock}" styleName="numberLabel"/>
 								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
+								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 									<s:Label text="+ {city.armorWorkers}" styleName="numberLabel"/>
 								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
+								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 									<s:Label text="{(city.armorsRestored - city.armorsEquiped >= 0 ? '+' : '-')} {Math.abs(city.armorsRestored - city.armorsEquiped)}" 
 											 styleName="numberLabel" 
 											 color="{city.armorsRestored - city.armorsEquiped >= 0 ? Numbers.GREEN : Numbers.RED}"/>
 								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
+								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 									<s:Label text="{(city.armorStock + city.armorWorkers + city.armorsRestored - city.armorsEquiped)}" 
 											 styleName="numberLabel" 
 											 color="{city.armorStock + city.armorWorkers + city.armorsRestored - city.armorsEquiped >= 0 ? Numbers.GREEN : Numbers.RED}"/>
@@ -1514,7 +1528,8 @@
 				
 				<s:NavigatorContent label="{Translations.MARKET.getItemAt(Session.LANGUAGE)}">
 					<s:HGroup width="100%" height="100%" horizontalAlign="center">
-						<s:TabBar id="tabsMarket" dataProvider="{viewstackMarket}"/>
+						<s:TabBar id="tabsMarket" dataProvider="{viewstackMarket}"
+								  skinClass="com.uralys.tribes.skins.CustomTabBarSkin"/>
 						
 						<mx:ViewStack id="viewstackMarket" width="650" height="100%">
 							
@@ -1522,7 +1537,7 @@
 							<!-- Achat -->
 							
 							<s:NavigatorContent label="{Translations.BUYING.getItemAt(Session.LANGUAGE)}" width="650">
-								<s:Button label="{Translations.BUY.getItemAt(Session.LANGUAGE)}" left="-130" bottom="0" click="buy()"/>
+								<s:Button label="{Translations.BUY.getItemAt(Session.LANGUAGE)}" left="-130" bottom="0" click="buy()" skinClass="com.uralys.tribes.skins.CustomButtonSkin"/>
 								<s:VGroup left="-60">
 									<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle"
 											 width="520">
@@ -1755,7 +1770,7 @@
 							<!-- Vente -->
 							
 							<s:NavigatorContent label="{Translations.SELLING.getItemAt(Session.LANGUAGE)}" width="650">
-								<s:Button label="{Translations.SELL.getItemAt(Session.LANGUAGE)}" left="-130" bottom="0" click="sell()"/>
+								<s:Button label="{Translations.SELL.getItemAt(Session.LANGUAGE)}" left="-130" bottom="0" click="sell()" skinClass="com.uralys.tribes.skins.CustomButtonSkin"/>
 								<s:VGroup left="-60">
 									<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle"
 											 width="520">
@@ -1999,6 +2014,7 @@
 								<s:HGroup width="200">
 									<s:Button label="{Translations.NEW_MERCHANTS.getItemAt(Session.LANGUAGE)}" 
 											  click="newMerchants()"
+											  skinClass="com.uralys.tribes.skins.CustomButtonSkin"
 											  visible="{city.merchant == null}"/>
 									<mx:Image width="30" height="30" 
 											  toolTip=" "
@@ -2006,8 +2022,10 @@
 											  source="{ImageContainer.QUESTION}"/>
 								</s:HGroup>
 								<s:Button label="{Translations.DELETE.getItemAt(Session.LANGUAGE)}"
+										  skinClass="com.uralys.tribes.skins.CustomButtonSkin"
 										  click="deleteMerchant()"
-										  visible="{city.merchant != null}"/>
+										  visible="{city.merchant != null}"
+										  enabled="{city.merchant.moves.length == 1 || city.merchant.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
 								
 								<renderers:MerchantsRenderer merchant="{city.merchant}" visible="{city.merchant != null}"/>
 							</s:VGroup>
@@ -2036,7 +2054,7 @@
 													   minimum="50"
 													   maximum="{city.unemployed + city.merchant.size}"
 													   snapInterval="1"
-													   enabled="{city.merchant.moves.length == 1}"/>
+													   enabled="{city.merchant.moves.length == 1 || city.merchant.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
 										</s:HGroup>
 									</mx:GridItem>
 									<mx:GridItem/>
@@ -2081,10 +2099,11 @@
 															   change="wheatMerchantCheck(event)"
 															   value="{city.merchant.wheat}"
 															   maximum="{city.wheat + city.merchant.wheat}"
-															   snapInterval="1"/>
+															   snapInterval="1"
+															   enabled="{city.merchant.moves.length == 1 || city.merchant.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
 												</s:HGroup>
 											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center">
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 												<s:Label text="{city.wheat}" />
 											</mx:GridItem>
 										</mx:GridRow>
@@ -2104,10 +2123,11 @@
 															   change="woodMerchantCheck(event)"
 															   value="{city.merchant.wood}"
 															   maximum="{city.wood + city.merchant.wood}"
-															   snapInterval="1"/>
+															   snapInterval="1"
+															   enabled="{city.merchant.moves.length == 1 || city.merchant.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
 												</s:HGroup>
 											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center">
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 												<s:Label text="{city.wood}" />
 											</mx:GridItem>
 										</mx:GridRow>
@@ -2127,10 +2147,11 @@
 															   change="ironMerchantCheck(event)"
 															   value="{city.merchant.iron}"
 															   maximum="{city.iron + city.merchant.iron}"
-															   snapInterval="1"/>
+															   snapInterval="1"
+															   enabled="{city.merchant.moves.length == 1 || city.merchant.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
 												</s:HGroup>
 											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center">
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 												<s:Label text="{city.iron}" />
 											</mx:GridItem>
 										</mx:GridRow>
@@ -2150,10 +2171,11 @@
 															   change="goldMerchantCheck(event)"
 															   value="{city.merchant.gold}"
 															   maximum="{city.gold + city.merchant.gold}"
-															   snapInterval="1"/>
+															   snapInterval="1"
+															   enabled="{city.merchant.moves.length == 1 || city.merchant.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
 												</s:HGroup>
 											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center">
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 												<s:Label text="{city.gold}" />
 											</mx:GridItem>
 										</mx:GridRow>
@@ -2173,10 +2195,11 @@
 															   change="bowsMerchantCheck(event)"
 															   value="{city.merchant.bows}"
 															   maximum="{city.bowStock + city.merchant.bows}"
-															   snapInterval="1"/>
+															   snapInterval="1"
+															   enabled="{city.merchant.moves.length == 1 || city.merchant.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
 												</s:HGroup>
 											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center">
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 												<s:Label text="{city.bowStock}" />
 											</mx:GridItem>
 										</mx:GridRow>
@@ -2196,10 +2219,11 @@
 															   change="swordsMerchantCheck(event)"
 															   value="{city.merchant.swords}"
 															   maximum="{city.swordStock + city.merchant.swords}"
-															   snapInterval="1"/>
+															   snapInterval="1"
+															   enabled="{city.merchant.moves.length == 1 || city.merchant.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
 												</s:HGroup>
 											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center">
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 												<s:Label text="{city.swordStock}" />
 											</mx:GridItem>
 										</mx:GridRow>
@@ -2219,10 +2243,11 @@
 															   change="armorsMerchantCheck(event)"
 															   value="{city.merchant.armors}"
 															   maximum="{city.armorStock + city.merchant.armors}"
-															   snapInterval="1"/>
+															   snapInterval="1"
+															   enabled="{city.merchant.moves.length == 1 || city.merchant.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
 												</s:HGroup>
 											</mx:GridItem>
-											<mx:GridItem horizontalAlign="center">
+											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 												<s:Label text="{city.armorStock}" />
 											</mx:GridItem>
 										</mx:GridRow>
@@ -2246,12 +2271,14 @@
 					<s:HGroup width="100%" horizontalAlign="center">
 						<s:VGroup horizontalAlign="center">
 							<s:Button label="{Translations.NEW_ARMY.getItemAt(Session.LANGUAGE)}" 
+									  skinClass="com.uralys.tribes.skins.CustomButtonSkin"
 									  click="newArmy()"
 									  visible="{city.army == null}"/>
 							<s:Button label="{Translations.DELETE.getItemAt(Session.LANGUAGE)}" 
+									  skinClass="com.uralys.tribes.skins.CustomButtonSkin"
 									  click="deleteArmy()"
 									  visible="{city.army != null}"
-									  enabled="{city.army.moves.length == 1 || city.army.status == Unit.INTERCEPTED}"/>
+									  enabled="{city.army.moves.length == 1 || city.army.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
 							
 							<renderers:ArmyRenderer army="{city.army}" visible="{city.army != null}"/>
 						</s:VGroup>
@@ -2279,7 +2306,7 @@
 												   minimum="50"
 												   maximum="{city.unemployed + city.army.size}"
 												   snapInterval="1"
-												   enabled="{city.army.moves.length == 1 || city.army.status == Unit.INTERCEPTED}"/>
+												   enabled="{city.army.moves.length == 1 || city.army.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
 									</s:HGroup>
 								</mx:GridItem>
 								<mx:GridItem/>
@@ -2313,12 +2340,12 @@
 												   liveDragging="true" 
 												   change="bowsArmyCheck(event)"
 												   value="{city.army.bows}"
-												   maximum="{city.bowStock + city.army.bows}"
+												   maximum="{city.bowStock + city.bowsRestored - city.bowsEquiped + city.army.bows}"
 												   snapInterval="1"
-												   enabled="{city.army.moves.length == 1 || city.army.status == Unit.INTERCEPTED}"/>
+												   enabled="{city.army.moves.length == 1 || city.army.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
 									</s:HGroup>
 								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
+								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 									<s:Label text="{city.bowStock + city.bowsRestored - city.bowsEquiped}" />
 								</mx:GridItem>
 							</mx:GridRow>
@@ -2337,12 +2364,12 @@
 												   liveDragging="true" 
 												   change="swordsArmyCheck(event)"
 												   value="{city.army.swords}"
-												   maximum="{city.swordStock + city.army.swords}"
+												   maximum="{city.swordStock + city.swordsRestored - city.swordsEquiped + city.army.swords}"
 												   snapInterval="1"
-												   enabled="{city.army.moves.length == 1 || city.army.status == Unit.INTERCEPTED}"/>
+												   enabled="{city.army.moves.length == 1 || city.army.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
 									</s:HGroup>
 								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
+								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 									<s:Label text="{city.swordStock + city.swordsRestored - city.swordsEquiped}" />
 								</mx:GridItem>
 							</mx:GridRow>
@@ -2361,12 +2388,12 @@
 												   liveDragging="true" 
 												   change="armorsArmyCheck(event)"
 												   value="{city.army.armors}"
-												   maximum="{city.armorStock + city.army.armors}"
+												   maximum="{city.armorStock + city.armorsRestored - city.armorsEquiped + city.army.armors}"
 												   snapInterval="1"
-												   enabled="{city.army.moves.length == 1 || city.army.status == Unit.INTERCEPTED}"/>
+												   enabled="{city.army.moves.length == 1 || city.army.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
 									</s:HGroup>
 								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
+								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 									<s:Label text="{city.armorStock + city.armorsRestored - city.armorsEquiped}" />
 								</mx:GridItem>
 							</mx:GridRow>

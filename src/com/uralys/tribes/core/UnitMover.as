@@ -162,10 +162,10 @@ package com.uralys.tribes.core
 				var timeFrom:Number;
 				
 				if(moveBeginsNow){
-					timeFrom = new Date().getTime() + Numbers.BASE_TIME_PER_MOVE_MILLIS * unit.speed/Numbers.BASE_SPEED;
+					timeFrom = new Date().getTime() + Numbers.BASE_TIME_PER_MOVE_MILLIS * Numbers.BASE_SPEED/unit.speed;
 				}
 				else{
-					timeFrom = previousMove.timeFrom + Numbers.BASE_TIME_PER_MOVE_MILLIS * unit.speed/Numbers.BASE_SPEED;
+					timeFrom = previousMove.timeFrom + Numbers.BASE_TIME_PER_MOVE_MILLIS * Numbers.BASE_SPEED/unit.speed;
 				}
 				
 				newMove.timeFrom = timeFrom;
@@ -189,13 +189,6 @@ package com.uralys.tribes.core
 				
 				unit.finalCaseUIDExpected = newMove.caseUID;
 			}
-			
-			trace("-------");
-			trace("validatePendingMoves ending ");
-			for each(var m:Move in unit.moves){
-				trace(m.moveUID + " | timeTo : " + m.timeTo);
-			}
-			trace("-------");
 		}
 
 		/*
@@ -240,19 +233,6 @@ package com.uralys.tribes.core
 			}
 			catch(e:Error){}
 			
-			
-			trace("-------");
-			trace("resetPendingMoves ending ");
-			trace("units.moves ");
-			for each(var m:Move in unit.moves){
-				trace(m.moveUID + " | timeTo : " + m.timeTo);
-			}
-			trace("-------");
-			trace("movesPending ");
-			for each(var m2:Move in movesPending){
-				trace(m2.moveUID + " | timeTo : " + m2.timeTo);
-			}
-			trace("-------");
 		}
 
 		private var lastMoveIsInCity:Boolean = false;
@@ -290,20 +270,6 @@ package com.uralys.tribes.core
 					}
 				}
 				catch(e:Error){}
-				
-				
-				trace("-------");
-				trace("recordMove ending ");
-				trace("units.moves ");
-				for each(var m:Move in unit.moves){
-					trace(m.moveUID + " | timeTo : " + m.timeTo);
-				}
-				trace("-------");
-				trace("movesPending ");
-				for each(var m2:Move in movesPending){
-					trace(m2.moveUID + " | timeTo : " + m2.timeTo);
-				}
-				trace("-------");
 				
 				return true;
 			}

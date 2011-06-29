@@ -188,6 +188,7 @@ package com.uralys.tribes.entities
 				if(unit == null) // move futur
 					continue;
 				
+				
 				if(globalRefresh){
 					GameManager.getInstance().registerUnitInSession(unit);
 				}
@@ -197,6 +198,8 @@ package com.uralys.tribes.entities
 					// c'est le move actif, on recupere les unites qui sont sur la case
 					foundUnitsOnThisCase = true;
 					
+					pawn.unit = unit;
+						
 					if(unitInPlayer != null){
 						unit.ownerStatus = Unit.PLAYER;
 					}

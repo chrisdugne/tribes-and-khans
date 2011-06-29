@@ -590,6 +590,13 @@ package com.uralys.tribes.entities
 			armyRaised = 0;
 			armyReleased = 0;
 			_armiesToFeed = 0;
+			
+			bowsRestored = 0;
+			bowsEquiped = 0;
+			swordsRestored = 0;
+			swordsEquiped = 0;
+			armorsRestored = 0;
+			armorsEquiped = 0;
 		}
 	}
 }

@@ -176,14 +176,12 @@
 			public function set params(args:Array):void
 			{
 				FlexGlobals.topLevelApplication.loginWindow.closeWindow();
-				refreshBoard(Session.player.cities.getItemAt(0) as City);
+				selectedCity = Session.player.cities.getItemAt(0) as City;
+				refreshUnits();
 			}
 			
-			public function refreshBoard(city:City = null):void
+			public function refreshUnits():void
 			{
-				if(city != null)
-					this.selectedCity = city;
-				
 				var unitUIDsToDelete:ArrayCollection = new ArrayCollection();
 				var uidsToRemove:ArrayCollection = new ArrayCollection();
 				for each(var unit:Unit in Session.player.units)
@@ -281,6 +279,7 @@
 			// ------------------------------------------------------------------------// 
 			// 		map scrolling
 			
+			private var mayDrag:Boolean = false;
 			private var isDragging:Boolean = false;
 			private var draggingImageXFrom:int;
 			private var draggingImageYFrom:int;
@@ -289,7 +288,7 @@
 			
 			protected function mouseDown(event:MouseEvent):void
 			{
-				isDragging = true;
+				mayDrag = true;
 				draggingImageXFrom = event.currentTarget.mouseX; // le x de la souris sur le mapContainer
 				draggingImageYFrom = event.currentTarget.mouseY; // le y de la souris sur le mapContainer
 				
@@ -300,6 +299,9 @@
 			
 			protected function mouseMove(event:MouseEvent):void
 			{
+				if(mayDrag)
+					isDragging = true;
+				
 				if(Session.MOVE_A_UNIT){
 					// manipulation d'une unite
 				}
@@ -328,15 +330,14 @@
 				
 			protected function mouseUp(event:MouseEvent):void
 			{
-				isDragging = false;
-				Mouse.show();
+				mayDrag = false;
 				
 				enterCityForm.visible = false;
 				enterCityForm.includeInLayout = false;
 				buildCityForm.visible = false;
 				buildCityForm.includeInLayout = false;
 				
-				if(Session.MOVE_A_UNIT){
+				if(!isDragging && Session.MOVE_A_UNIT){
 					newMoveAdded = UnitMover.getInstance().recordMove(selectedUnit);
 				}
 				else{
@@ -347,6 +348,8 @@
 					Session.CURRENT_CASE_SELECTED.tryRefresh();
 				}
 				
+				isDragging = false;
+				Mouse.show();
 				checkToLoadCases(Session.MAP_WIDTH/2 - mapPositioner.x, Session.MAP_HEIGHT/2 - mapPositioner.y);
 			}
 			
@@ -534,7 +537,7 @@
 				// on force la validation du marchand si il existe et qu'il reste dans la ville
 				// si il est en mouvement, on ne peut pas l'editer donc pas besoin d'appeler le validateMerchants (qui casserait tout en placant le timeTo à -1) 
 				if(selectedCity.merchant != null 
-				&& (selectedCity.merchant.moves.length == 1 || selectedCity.merchant.status == Unit.INTERCEPTED)){
+				&& (selectedCity.merchant.moves.length == 1 || selectedCity.merchant.status == Unit.INTERCEPTED_ON_THIS_CASE)){
 					for each(var m:com.uralys.tribes.entities.Move in selectedCity.merchant.moves){
 						trace("selectedCity.merchant.move : " + m.moveUID);
 					}
@@ -543,7 +546,7 @@
 
 				// IDEM pour army
 				if(selectedCity.army != null 
-				&& (selectedCity.army.moves.length == 1 || selectedCity.army.status == Unit.INTERCEPTED)){
+				&& (selectedCity.army.moves.length == 1 || selectedCity.army.status == Unit.INTERCEPTED_ON_THIS_CASE)){
 					for each(var m:com.uralys.tribes.entities.Move in selectedCity.army.moves){
 						trace("selectedCity.army.move : " + m.moveUID);
 					}
@@ -818,13 +821,15 @@
 			<s:Button label="{Translations.ENTER_CITY.getItemAt(Session.LANGUAGE)}" 
 					  id="enterCityButton"
 					  click="enterCity(event)"
+					  skinClass="com.uralys.tribes.skins.CustomButtonSkin"
 					  visible="{Session.player.playerUID == Session.CURRENT_CASE_SELECTED.landOwner.playerUID}"/>
 			<s:Label id="enterCityButtonAvailableLabel" visible="{!enterCityButton.enabled}"/>
 		</s:VGroup>
 
-		<s:TabBar id="tabs" dataProvider="{viewstack}" skinClass="spark.skins.spark.TabBarSkin"
+		<s:TabBar id="tabs" dataProvider="{viewstack}"
 				  top="210" right="135"
 				  excludeFrom="moveUnit"
+				  skinClass="com.uralys.tribes.skins.CustomTabBarSkin"
 				  visible="{Session.CURRENT_CASE_SELECTED != null 
 				  &amp;&amp; 
 				  			((Session.CURRENT_CASE_SELECTED.army !=null 
@@ -866,8 +871,8 @@
 		<s:VGroup top="150" right="95"
 				  excludeFrom="classic">
 			<s:Label text="{Translations.WAY_SELECTION.getItemAt(Session.LANGUAGE)}"/>
-			<s:Button label="{Translations.VALIDATE.getItemAt(Session.LANGUAGE)}" click="{validateUnitMoves(false)}" visible="{selectedUnit != null}" enabled="{newMoveAdded}"/>
-			<s:Button label="{Translations.CANCEL.getItemAt(Session.LANGUAGE)}" click="{validateUnitMoves(true)}" visible="{selectedUnit != null}"/>
+			<s:Button label="{Translations.VALIDATE.getItemAt(Session.LANGUAGE)}" click="{validateUnitMoves(false)}" visible="{selectedUnit != null}" enabled="{newMoveAdded}" skinClass="com.uralys.tribes.skins.CustomButtonSkin"/>
+			<s:Button label="{Translations.CANCEL.getItemAt(Session.LANGUAGE)}" click="{validateUnitMoves(true)}" visible="{selectedUnit != null}" skinClass="com.uralys.tribes.skins.CustomButtonSkin"/>
 		</s:VGroup>
 		
 		<s:VGroup id="buildCityForm"
@@ -875,7 +880,7 @@
 				  visible="false"
 				  includeInLayout="false"
 				  excludeFrom="moveUnit">
-			<s:Button label="{Translations.BUILD_HERE.getItemAt(Session.LANGUAGE)}" click="buildCity()"/>
+			<s:Button label="{Translations.BUILD_HERE.getItemAt(Session.LANGUAGE)}" click="buildCity()" skinClass="com.uralys.tribes.skins.CustomButtonSkin"/>
 		</s:VGroup>
 		
 		
@@ -1015,6 +1020,7 @@
 		<s:HGroup>
 			<s:Button label="&lt;-- {Translations.VALIDATE_MODIFICATIONS.getItemAt(Session.LANGUAGE)}" 
 					  click="{saveCityAndGoBackToBoard()}"
+					  skinClass="com.uralys.tribes.skins.CustomButtonSkin"
 					  enabled="{cityForm.currentState != 'recordingUnit'}"/>
 			<mx:Spacer width="450"/>
 		</s:HGroup>

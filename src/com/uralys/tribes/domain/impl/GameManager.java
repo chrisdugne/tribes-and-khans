@@ -312,6 +312,7 @@ public class GameManager implements IGameManager {
 		if(debug)Utils.print("place unit " + unitArriving.getUnitUID());
 		
 		int currentUnitValue = unitArriving.getValue();
+		
 		String allyUIDOfUnitArriving = getPlayer(unitArriving.getPlayer().getUralysUID(), datacontainer).getAllyUID();
 
 		if(debug){
@@ -543,21 +544,26 @@ public class GameManager implements IGameManager {
 								// conflit
 								if(debug)Utils.print(" Conflit !!!");
 								if(debug)Utils.print(" - trouvŽ un ennemy : unit " + unitRecordedUID);							
-								if(debug)Utils.print("valueOfTheEnnemy : " + recordedMove.getValue());
 								
 								int valueOfTheEnnemy = recordedMove.getValue();
 								
-								if(attackACity)
+								if(attackACity){
+									if(debug)Utils.print(" - bonus pour l'ennemy dans sa ville " + unitRecordedUID);	
 									valueOfTheEnnemy += _case.getCity().getPopulation()/10;
+								}
+								else if(defendACity){
+									if(debug)Utils.print(" - bonus pour la unitArriving dans sa ville " + unitRecordedUID);	
+									currentUnitValue += _case.getCity().getPopulation()/10;
+								}
 								
 								String winnerUID;
 								int valueOfTheUnitRemaining;
 								
 								if(valueOfTheEnnemy > currentUnitValue)
 								{
-									if(debug)Utils.print(" Combat perdu par l'unite qui arrive");
+									if(debug)Utils.print(" Combat perdu par l'unite qui arrive | currentUnitValue : " + currentUnitValue + " valueOfTheEnnemy | " + valueOfTheEnnemy);
 									double rateRemaining = (valueOfTheEnnemy - currentUnitValue)/(double)valueOfTheEnnemy;
-									if(debug)Utils.print(" valeur de l'unite restante : "+ ((int)(valueOfTheEnnemy*rateRemaining)));
+									if(debug)Utils.print("rateRemaining : "+rateRemaining+" | valeur de l'unite restante : "+ ((int)(valueOfTheEnnemy*rateRemaining)));
 									
 									currentUnitValue = 0;
 									arrivalOnThisCaseMove.setValue(currentUnitValue);
@@ -578,10 +584,10 @@ public class GameManager implements IGameManager {
 								}
 								else if(currentUnitValue > valueOfTheEnnemy)
 								{
-									if(debug)Utils.print(" Combat gagne par l'unite qui arrive");
+									if(debug)Utils.print(" Combat gagne par l'unite qui arrive | currentUnitValue : " + currentUnitValue + " valueOfTheEnnemy | " + valueOfTheEnnemy);
 									double rateRemaining = (currentUnitValue - valueOfTheEnnemy)/(double)currentUnitValue;
-									if(debug)Utils.print(" valeur de l'unite restante : "+ ((int)(currentUnitValue*rateRemaining)));
 									currentUnitValue = (int)(currentUnitValue*rateRemaining);
+									if(debug)Utils.print("rateRemaining : "+rateRemaining+" | valeur de l'unite restante : "+ currentUnitValue);
 									
 									winnerUID = unitArriving.getPlayer().getUralysUID();
 									allyUIDOfTheNewUnit = allyUIDOfUnitArriving;
@@ -674,7 +680,15 @@ public class GameManager implements IGameManager {
 								// les liens sur unit.move viennent detre fait par le createNewArmy.createUnit.placeUnit.createMove
 								//requireLinks = false;
 								
-								//unitArriving.getMoves().add(arrivalOnThisCaseMove);
+								// rajout du lastMove qui est celui de la newUnit resultante. 
+								// il n y aura pas de sauvegarde de ce move : uniquement pour MAJ l'objet Unit qui va etre renvoye ˆ Flex
+								// (selon que l'on place une unite ou replace une unite d'un gathering annule, notre unite Flex updated est soit unitArriving soit unitRecorded)
+								// ainsi la unit devient bien Unit.INTERCEPTED_ON_THIS_CASE lors du prepareUnit qui est appele lors du retour sur unitSaved
+								// et on a bien la recup du timer du move de l'interception. (tout ca pour ca, reflechir si cest utile)
+								unitArriving.getMoves().add(newUnit.getMoves().get(0));
+								unitRecorded.getMoves().add(newUnit.getMoves().get(0));
+								
+								// on set le gatheringExpectedUID (il sera sauvegarde lors du updateUnit)
 								unitArriving.setGatheringUIDExpected(existingGathering.getGatheringUID());
 								unitRecorded.setGatheringUIDExpected(existingGathering.getGatheringUID());
 								
@@ -1024,7 +1038,19 @@ public class GameManager implements IGameManager {
 	}
 
 	public static void main(String[] args){
-		//-----------------------------------------------------------------------------------//		Utils.print(new Date((long)1309186415276l)+"");	}
+		
+		//-----------------------------------------------------------------------------------//
+		Utils.print(new Date((long)1309353514543l)+"");		//-----------------------------------------------------------------------------------//
+		int valueOfTheEnnemy = 252;
+		int currentUnitValue = 221;
+		
+		double rateRemaining = (valueOfTheEnnemy - currentUnitValue)/(double)valueOfTheEnnemy;
+		Utils.print(" valeur de l'unite restante : "+ ((int)(valueOfTheEnnemy*rateRemaining)));
+		
+//		double rateRemaining = (currentUnitValue - valueOfTheEnnemy)/(double)currentUnitValue;
+//		Utils.print(" valeur de l'unite restante : "+ ((int)(currentUnitValue*rateRemaining)));
+//		currentUnitValue = (int)(currentUnitValue*rateRemaining);
+//		Utils.print(""+currentUnitValue);	}
 
 	private boolean contains(List<Unit> unitsMakingThisReplacing, String unitUID) {
 		

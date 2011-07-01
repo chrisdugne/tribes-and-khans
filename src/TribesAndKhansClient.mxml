@@ -38,7 +38,7 @@
 			
 			private function init():void
 			{
-				trace("Welcome to Tribes and Khans " + Session.VERSION);
+				trace("Welcome to Tribes and Khans ! version : " + Session.VERSION);
 				
 				if(url == "http://localhost:8888/webresources/flex.debug/TribesAndKhansClient.swf")
 					Session.isLocal = true;

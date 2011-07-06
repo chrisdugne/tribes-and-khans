@@ -480,6 +480,12 @@ public class Translations{
 									"Not validated !"]);
 
 	[Bindable]
+	public static var DELETE_LAST_MOVE:ArrayCollection = new ArrayCollection(
+									["Supprimer le dernier déplacement",
+									"Delete the last move",
+									"Delete the last move"]);
+
+	[Bindable]
 	public static var MUST_VALIDATE_UNIT:ArrayCollection = new ArrayCollection(
 									["Il faut d'abord valider cette unité !",
 									"You must validate this unit first !",
@@ -798,7 +804,7 @@ public class Translations{
 									"Tools"]);
 	[Bindable]
 	public static var CONQUERING_LAND:ArrayCollection = new ArrayCollection(
-									["En train de conquérir une nouvelle contrée",
+									["Conquiere une contrée",
 									"Conquering a new land",
 									"Conquering a new land"]);
 	

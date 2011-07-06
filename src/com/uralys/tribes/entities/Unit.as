@@ -397,7 +397,8 @@ package com.uralys.tribes.entities
 		
 		
 		// memes commentaires que pour getLastMove
-		public function removeLastMove():void
+		// retourne le dernier move reel de l'unité
+		public function removeLastMove():Move
 		{
 			var needToRemoveHiddenMove:Boolean = false;
 			var move:Move = moves.getItemAt(moves.length-1) as Move;
@@ -410,6 +411,8 @@ package com.uralys.tribes.entities
 			moves.removeItemAt(moves.length-1);
 			if(needToRemoveHiddenMove)
 				moves.removeItemAt(moves.length-1);
+			
+			return move;
 		}
 		
 		/*

@@ -152,6 +152,11 @@
 				Session.MOVE_A_UNIT = true;
 				currentState = "moveUnit";
 				
+				refreshCurrentMoves();
+			}
+			
+			private function refreshCurrentMoves():void
+			{
 				UnitMover.getInstance().refreshMoves(selectedUnit);
 				UnitMover.getInstance().resetPendingMoves(selectedUnit);
 				BoardDrawer.getInstance().removeAllUnitMovesImages();
@@ -167,7 +172,7 @@
 					
 					xPreviousMove = Utils.getXFromCaseUID(move.caseUID);
 					yPreviousMove = Utils.getYFromCaseUID(move.caseUID); 
-				}
+				}	
 			}
 			
 			//-----------------------------------------------------------//
@@ -178,6 +183,10 @@
 				FlexGlobals.topLevelApplication.loginWindow.closeWindow();
 				selectedCity = Session.player.cities.getItemAt(0) as City;
 				refreshUnits();
+				
+				if(Session.player.name == "New Player"){
+					showChangeName.play();
+				}
 			}
 			
 			public function refreshUnits():void
@@ -425,13 +434,34 @@
 				if(!cancel){
 					UnitMover.getInstance().validatePendingMoves(selectedUnit);					
 					GameManager.getInstance().updateUnit(selectedUnit);
+					
+				}
+				else if(removingMoves){
+					for(var i:int = movesBeingRemoved.length-1; i >= 0; i--){
+						selectedUnit.moves.addItem(movesBeingRemoved[i]);
+					}
+
+					movesBeingRemoved = [];
 				}
 
 				selectedUnit = null;
 				currentState = "classic";
 				newMoveAdded = false;
+				removingMoves = false;
 				
 				BoardDrawer.getInstance().removeAllUnitMovesImages();
+				
+			}
+
+			private var removingMoves:Boolean = false;
+			private var movesBeingRemoved:Array = [];
+			private function deleteLastMove():void
+			{
+				removingMoves = true;
+				newMoveAdded = true;
+				
+				movesBeingRemoved.push(selectedUnit.removeLastMove());
+				refreshCurrentMoves();
 			}
 			
 			//----------------------------------------------------------------------------------------//
@@ -855,7 +885,7 @@
 		<s:Label visible="{Session.CURRENT_CASE_SELECTED != null &amp;&amp; Session.CURRENT_CASE_SELECTED.pawn.status == Pawn.CONQUERING_LAND}"
 				 text="{Translations.CONQUERING_LAND.getItemAt(Session.LANGUAGE)}"
 				 bottom="200"
-				 right="15"/>
+				 right="95"/>
 		
 		<s:CheckBox id="checkboxBars"
 					selected="@{Session.LANDS_VISIBLE}" 
@@ -869,10 +899,15 @@
 					bottom="44"/>
 
 		<s:VGroup top="150" right="95"
-				  excludeFrom="classic">
+				  excludeFrom="classic"
+				  horizontalAlign="center">
 			<s:Label text="{Translations.WAY_SELECTION.getItemAt(Session.LANGUAGE)}"/>
 			<s:Button label="{Translations.VALIDATE.getItemAt(Session.LANGUAGE)}" click="{validateUnitMoves(false)}" visible="{selectedUnit != null}" enabled="{newMoveAdded}" skinClass="com.uralys.tribes.skins.CustomButtonSkin"/>
 			<s:Button label="{Translations.CANCEL.getItemAt(Session.LANGUAGE)}" click="{validateUnitMoves(true)}" visible="{selectedUnit != null}" skinClass="com.uralys.tribes.skins.CustomButtonSkin"/>
+			<s:Button label="{Translations.DELETE_LAST_MOVE.getItemAt(Session.LANGUAGE)}" 
+					  click="{deleteLastMove()}" 
+					  visible="{selectedUnit != null &amp;&amp; selectedUnit.moves.length &gt; 2}" 
+					  skinClass="com.uralys.tribes.skins.CustomButtonSkin"/>
 		</s:VGroup>
 		
 		<s:VGroup id="buildCityForm"

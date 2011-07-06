@@ -67,13 +67,13 @@ public class MusicPlayer
 				volume = volumeRecorded;
 				soundTransform.volume = volumeRecorded;
 				channel.soundTransform = soundTransform;	
-				
+				 
 				if(Session.LOGGED_IN)
 					Session.player.musicOn = true;
 			}
 		}
 
-		public function playMusic():void
+		public function playMusic():void 
 		{	
 			soundTransform.volume = volume;
 			

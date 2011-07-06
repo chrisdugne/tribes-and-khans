@@ -56,7 +56,7 @@ public class Pager
 		//======================================================================================//
 
 		public function goToPage(PageType:Class, ...args):void{
-			
+			trace("GO TO PAGE");
 			_currentPage = PageType;
 			var page = new PageType(); 
 			try{
@@ -64,6 +64,7 @@ public class Pager
 			}catch(e:Error){}
 				
 			
+			trace(_window == null);
 			_window.removeAllElements();
 			_window.addElement(page);
 			

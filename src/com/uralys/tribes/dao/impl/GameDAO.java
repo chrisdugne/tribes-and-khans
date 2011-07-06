@@ -129,7 +129,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		city.setKey(KeyFactory.keyToString(key));
 		city.setCityUID(cityUID);
 		city.setOwnerUID(playerUID);
-		city.setName(cityFromFlex == null ? "Ville de " + player.getName() : "Nouvelle Ville");
+		city.setName("Nouvelle ville");
 		city.setPopulation(cityFromFlex == null ? 1000 : cityFromFlex.getPopulation());
 		city.setWheat(cityFromFlex == null ? 400 : cityFromFlex.getWheat());
 		city.setWood(cityFromFlex == null ? 200 : cityFromFlex.getWood());

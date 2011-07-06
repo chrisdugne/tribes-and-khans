@@ -264,6 +264,9 @@ package com.uralys.tribes.core
 				// refresh highlight images et rajoute les listeners sur les moves actifs
 				BoardDrawer.getInstance().addMoveImages(newMove, lastMove.getX(), lastMove.getY(), false);
 				
+				// on ne peut plus enlever le dernier move, puisquon a rajoute des movesPendings
+				Session.REMOVING_MOVES_ENABLE = false
+				
 				try{
 					if((Session.map[Session.COORDINATE_X][Session.COORDINATE_Y] as Case).city != null){
 						lastMoveIsInCity = true;

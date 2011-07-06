@@ -17,7 +17,7 @@ package com.uralys.tribes.commons
 
 		//=====================================================//
 		
-		[Bindable] public static var VERSION:String = "1.1.77";
+		[Bindable] public static var VERSION:String = "1.1.78";
 		[Bindable] public static var LOGGED_IN:Boolean = false; 
 		[Bindable] public static var CONNECTED_TO_FACEBOOK:Boolean = false;
 		
@@ -75,6 +75,7 @@ package com.uralys.tribes.commons
 
 		[Bindable] public static var CURRENT_CASE_SELECTED:Case;
 		[Bindable] public static var MOVE_A_UNIT:Boolean;
+		[Bindable] public static var REMOVING_MOVES_ENABLE:Boolean;
 		
 		// cette liste est remplie par les case.refresh.
 		// une fois remplie, on peut appeler le GameManager.deleteMoves

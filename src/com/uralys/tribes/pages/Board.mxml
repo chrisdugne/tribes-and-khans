@@ -431,7 +431,12 @@
 			private function validateUnitMoves(cancel:Boolean):void
 			{
 				Session.MOVE_A_UNIT = false;
+				Session.REMOVING_MOVES_ENABLE = true;
+				
 				if(!cancel){
+					if(removingMoves)
+						selectedUnit.moves.getItemAt(selectedUnit.moves.length-1).timeTo = -1;
+					
 					UnitMover.getInstance().validatePendingMoves(selectedUnit);					
 					GameManager.getInstance().updateUnit(selectedUnit);
 					
@@ -905,8 +910,8 @@
 			<s:Button label="{Translations.VALIDATE.getItemAt(Session.LANGUAGE)}" click="{validateUnitMoves(false)}" visible="{selectedUnit != null}" enabled="{newMoveAdded}" skinClass="com.uralys.tribes.skins.CustomButtonSkin"/>
 			<s:Button label="{Translations.CANCEL.getItemAt(Session.LANGUAGE)}" click="{validateUnitMoves(true)}" visible="{selectedUnit != null}" skinClass="com.uralys.tribes.skins.CustomButtonSkin"/>
 			<s:Button label="{Translations.DELETE_LAST_MOVE.getItemAt(Session.LANGUAGE)}" 
-					  click="{deleteLastMove()}" 
-					  visible="{selectedUnit != null &amp;&amp; selectedUnit.moves.length &gt; 2}" 
+					  click="{deleteLastMove()}"
+					  enabled="{Session.REMOVING_MOVES_ENABLE &amp;&amp; selectedUnit != null &amp;&amp; selectedUnit.moves.length &gt; 2}" 
 					  skinClass="com.uralys.tribes.skins.CustomButtonSkin"/>
 		</s:VGroup>
 		

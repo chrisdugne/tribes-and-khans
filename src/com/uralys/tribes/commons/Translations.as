@@ -17,6 +17,17 @@ public class Translations{
 									["Profil Uralys créé. Bienvenue !",
 									"Uralys profile created. Welcome !",
 									"Uralys profile created. Welcome !"]);
+	[Bindable]
+	public static var HOW_TO_PLAY:ArrayCollection = new ArrayCollection(
+									["Comment jouer",
+									"How to play",
+									"How to play"]);
+
+	[Bindable]
+	public static var OPEN_TAB:ArrayCollection = new ArrayCollection(
+									["S'ouvre dans une autre onglet",
+									"Opens in a new tab",
+									"Opens in a new tab"]);
 	
 	[Bindable]
 	public static var CHECK_EMAIL:ArrayCollection = new ArrayCollection(

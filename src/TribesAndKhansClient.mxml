@@ -199,6 +199,21 @@
 				   change="{MusicPlayer.getInstance().changeVolume()}"
 				   height="20"/>
 		
+		<mx:Spacer width="10"/>
+		<s:Label text="{Translations.HOW_TO_PLAY.getItemAt(Session.LANGUAGE)}"
+				 id="labelHowTo"
+				 click="navigateToURL(new URLRequest('http://www.uralys.com/tribes-and-khans.'+ (Session.LANGUAGE == 0 ? 'fr' : 'en') +'.html'), '_new');"
+				 color="#000000"
+				 toolTip="{Translations.OPEN_TAB.getItemAt(Session.LANGUAGE)}"
+				 mouseOver="{labelHowTo.setStyle('color', '#ffffff')}"
+				 mouseOut="{labelHowTo.setStyle('color', '#000000')}"/>
+		<mx:Image source="{ImageContainer.QUESTION}" width="20" height="20"
+				  click="navigateToURL(new URLRequest('http://www.uralys.com/tribes-and-khans.'+ (Session.LANGUAGE == 0 ? 'fr' : 'en') +'.html'), '_new');"
+				  toolTip="{Translations.OPEN_TAB.getItemAt(Session.LANGUAGE)}"
+				  mouseOver="{labelHowTo.setStyle('color', '#ffffff')}"
+				  mouseOut="{labelHowTo.setStyle('color', '#000000')}"
+				  />
+		
 		<mx:Spacer width="100%"/>
 		<s:Label text="{Session.player ? Translations.LOG_AS.getItemAt(Session.LANGUAGE) + ' : '+ Session.uralysProfile.email : Translations.LOG_IN.getItemAt(Session.LANGUAGE)}"
 				 id="labelLogin"

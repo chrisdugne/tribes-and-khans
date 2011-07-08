@@ -10,6 +10,7 @@ import com.uralys.tribes.entities.Conflict;
 import com.uralys.tribes.entities.Equipment;
 import com.uralys.tribes.entities.Gathering;
 import com.uralys.tribes.entities.Item;
+import com.uralys.tribes.entities.Message;
 import com.uralys.tribes.entities.Move;
 import com.uralys.tribes.entities.MoveConflict;
 import com.uralys.tribes.entities.Player;
@@ -21,6 +22,7 @@ import com.uralys.tribes.entities.dto.ConflictDTO;
 import com.uralys.tribes.entities.dto.EquipmentDTO;
 import com.uralys.tribes.entities.dto.GatheringDTO;
 import com.uralys.tribes.entities.dto.ItemDTO;
+import com.uralys.tribes.entities.dto.MessageDTO;
 import com.uralys.tribes.entities.dto.MoveConflictDTO;
 import com.uralys.tribes.entities.dto.MoveDTO;
 import com.uralys.tribes.entities.dto.PlayerDTO;
@@ -101,11 +103,34 @@ public class EntitiesConverter {
 
 		// -----------------------------------------------------------------------------------//
 
+		List<Message> messages = new ArrayList<Message>();
+		
+		for (MessageDTO messageDTO : playerDTO.getMessages()) {
+			messages.add(convertMessageDTO(messageDTO));
+		}
+		
+		player.setMessages(messages);
+		
+		// -----------------------------------------------------------------------------------//
+
 		return player;
 
 		// -----------------------------------------------------------------------------------//
 	}
 
+	// -----------------------------------------------------------------------------------//
+
+	public static Message convertMessageDTO(MessageDTO messageDTO)
+	{
+		Message message = new Message();
+		
+		message.setMessageUID(messageDTO.getMessageUID());
+		message.setContent(messageDTO.getContent());
+		message.setSenderUID(messageDTO.getSenderUID());
+		
+		return message;
+	}
+	
 	// -----------------------------------------------------------------------------------//
 
 	public static City convertCityDTO(CityDTO cityDTO, boolean requireFullData) 

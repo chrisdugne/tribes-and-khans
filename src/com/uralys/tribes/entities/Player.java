@@ -14,6 +14,7 @@ public class Player
 	private List<Unit> units = new ArrayList<Unit>();
 	private int nbLands;
 	private List<Conflict> conflicts = new ArrayList<Conflict>();
+	private List<Message> messages = new ArrayList<Message>();
 
 	private long lastStep;
 	
@@ -27,6 +28,12 @@ public class Player
 	}
 	public String getName() {
 		return name;
+	}
+	public List<Message> getMessages() {
+		return messages;
+	}
+	public void setMessages(List<Message> messages) {
+		this.messages = messages;
 	}
 	public void setName(String name) {
 		this.name = name;

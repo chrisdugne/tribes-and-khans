@@ -38,7 +38,7 @@
 			
 			private function init():void
 			{
-				trace("Welcome to Tribes and Khans ! version : " + Session.VERSION);
+				trace("Welcome to Tribes and Khans | Version : " + Session.VERSION);
 				
 				if(url == "http://localhost:8888/webresources/flex.debug/TribesAndKhansClient.swf")
 					Session.isLocal = true;
@@ -59,6 +59,8 @@
 				
 				var sharedObject:SharedObject = SharedObject.getLocal(Names.SHARED_OBJECT_NAME);
 				Session.LANGUAGE = sharedObject.data.lastLanguage;
+				
+				openLoginWindow();
 			}
 			
 			//-----------------------------------------------------------------------//
@@ -90,7 +92,7 @@
 			public function message(message:String, time:int = 3):void {
 				displayMessage.message = message;
 				displayMessage.time = time;
-				displayMessage.showMessage();
+				displayMessage.showMessage(); 
 			}
 
 			public function showReports(report:String):void {
@@ -142,9 +144,9 @@
 			{
 				if(Session.player){
 					return;
-				}	
+				}
 				
-				loginWindow.closeWindow();
+				loginWindow.closeWindow(); 
 					
 				PopUpManager.addPopUp(loginWindow, this, false);
 				PopUpManager.centerPopUp(loginWindow);

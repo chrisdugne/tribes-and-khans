@@ -8,7 +8,7 @@ package com.uralys.tribes.commons
 	import mx.collections.ArrayCollection;
 	
 	
-	public class Session 
+	public class Session extends Object
 	{ 
 		//=====================================================//
 
@@ -17,7 +17,7 @@ package com.uralys.tribes.commons
 
 		//=====================================================//
 		
-		[Bindable] public static var VERSION:String = "1.1.78";
+		[Bindable] public static var VERSION:String = "1.1.79";
 		[Bindable] public static var LOGGED_IN:Boolean = false; 
 		[Bindable] public static var CONNECTED_TO_FACEBOOK:Boolean = false;
 		

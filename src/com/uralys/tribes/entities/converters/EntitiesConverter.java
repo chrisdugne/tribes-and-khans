@@ -33,8 +33,8 @@ public class EntitiesConverter {
 
 	// -----------------------------------------------------------------------------------//
 
-	public static Move convertMoveDTO(MoveDTO moveDTO, boolean requireLinkedGathering) {
-
+	public static Move convertMoveDTO(MoveDTO moveDTO, boolean requireLinkedGathering) 
+	{
 		if (moveDTO == null)
 			return null;
 
@@ -103,13 +103,23 @@ public class EntitiesConverter {
 
 		// -----------------------------------------------------------------------------------//
 
-		List<Message> messages = new ArrayList<Message>();
+		List<String> readMessages = new ArrayList<String>();
 		
-		for (MessageDTO messageDTO : playerDTO.getMessages()) {
-			messages.add(convertMessageDTO(messageDTO));
+		for (String message : playerDTO.getReadMessages()) {
+			readMessages.add(message);
 		}
 		
-		player.setMessages(messages);
+		player.setReadMessages(readMessages);
+		
+		// -----------------------------------------------------------------------------------//
+
+		List<String> newMessages = new ArrayList<String>();
+		
+		for (String message : playerDTO.getNewMessages()) {
+			newMessages.add(message);
+		}
+		
+		player.setNewMessages(newMessages);
 		
 		// -----------------------------------------------------------------------------------//
 
@@ -127,6 +137,8 @@ public class EntitiesConverter {
 		message.setMessageUID(messageDTO.getMessageUID());
 		message.setContent(messageDTO.getContent());
 		message.setSenderUID(messageDTO.getSenderUID());
+		message.setSenderName(messageDTO.getSenderName());
+		message.setStatus(messageDTO.getStatus());
 		
 		return message;
 	}

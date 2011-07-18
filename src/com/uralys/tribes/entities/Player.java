@@ -14,7 +14,8 @@ public class Player
 	private List<Unit> units = new ArrayList<Unit>();
 	private int nbLands;
 	private List<Conflict> conflicts = new ArrayList<Conflict>();
-	private List<Message> messages = new ArrayList<Message>();
+	private List<String> newMessages = new ArrayList<String>();
+	private List<String> readMessages = new ArrayList<String>();
 
 	private long lastStep;
 	
@@ -29,11 +30,17 @@ public class Player
 	public String getName() {
 		return name;
 	}
-	public List<Message> getMessages() {
-		return messages;
+	public List<String> getNewMessages() {
+		return newMessages;
 	}
-	public void setMessages(List<Message> messages) {
-		this.messages = messages;
+	public void setNewMessages(List<String> newMessages) {
+		this.newMessages = newMessages;
+	}
+	public List<String> getReadMessages() {
+		return readMessages;
+	}
+	public void setReadMessages(List<String> oldMessages) {
+		this.readMessages = oldMessages;
 	}
 	public void setName(String name) {
 		this.name = name;

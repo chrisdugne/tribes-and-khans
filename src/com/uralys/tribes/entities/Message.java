@@ -9,6 +9,8 @@ public class Message {
 	private String messageUID;
 	private Text content;
 	private String senderUID;
+	private String senderName;
+	private int status;
 
 	//-----------------------------------------------------------------------------------//
 
@@ -29,6 +31,18 @@ public class Message {
 	}
 	public void setSenderUID(String senderUID) {
 		this.senderUID = senderUID;
+	}
+	public String getSenderName() {
+		return senderName;
+	}
+	public void setSenderName(String senderName) {
+		this.senderName = senderName;
+	}
+	public int getStatus() {
+		return status;
+	}
+	public void setStatus(int status) {
+		this.status = status;
 	}
 	
 	//-----------------------------------------------------------------------------------//

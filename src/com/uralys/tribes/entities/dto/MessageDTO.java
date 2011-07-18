@@ -24,10 +24,24 @@ public class MessageDTO {
 	private String messageUID;
 	
 	@Persistent private Text content;
-	@Persistent String senderUID;
+	@Persistent private String senderUID;
+	@Persistent private String senderName;
+	@Persistent private int status;
 
 	//-----------------------------------------------------------------------------------//
 
+	public String getSenderName() {
+		return senderName;
+	}
+	public void setSenderName(String senderName) {
+		this.senderName = senderName;
+	}
+	public int getStatus() {
+		return status;
+	}
+	public void setStatus(int status) {
+		this.status = status;
+	}
 	public String getMessageUID() {
 		return messageUID;
 	}

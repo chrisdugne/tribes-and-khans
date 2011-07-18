@@ -12,6 +12,33 @@ public class Translations{
 
 	//-----------------------------------------------------------------------------------//
 
+	
+	[Bindable]
+	public static var G_MESSAGE:ArrayCollection = new ArrayCollection(
+									["Salut !\n" +
+										"Merci de tester le jeu !\n" +
+										"Des bugs sur la forge et les équipements ont été corrigés.\n" +
+										"Une messagerie est en cours de développement.\n\n" +
+										"Un forum a été mis en place, (lien tout en bas de la page)\n" +
+										"n'hésitez pas à donner votre avis, ou à remonter un bug !\n" +
+										"Bon jeu ;)",
+									"Hi !\n" +
+										"Thank you for testing !\n" +
+										"Bugs have been fixed about the smiths and the equipments.\n" +
+										"A message box is currently being developed.\n\n" +
+										"You may find a thegame forum (link on the bottom of this page)\n" +
+										"Do not hesitate to post your feelings or any bug you find !\n" +
+										"Good Game ;)",
+									"Hi !\n" +
+										"Thank you for testing !\n" +
+										"Bugs have been fixed about the smiths and the equipments.\n" +
+										"A message box is currently being developed.\n\n" +
+										"You may find a thegame forum (link on the bottom of this page)\n" +
+										"Do not hesitate to post your feelings or any bug you find !\n" +
+										"Good Game ;)"]);
+	
+	//-----------------------------------------------------------------------------------//
+
 	[Bindable]
 	public static var WELCOME:ArrayCollection = new ArrayCollection(
 									["Profil Uralys créé. Bienvenue !",

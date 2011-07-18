@@ -140,7 +140,6 @@ package com.uralys.tribes.managers {
 				gameWrapper.createPlayer(Session.uralysProfile.uralysUID, this.email);
 			}
 			else{
-				
 				Session.player = player;
 				finalizeLogin();
 			}

@@ -19,8 +19,6 @@
 	
 	<fx:Script>
 		<![CDATA[ 
-			//-----------------------------------------------------------------------//
-			
 			import com.uralys.tribes.commons.Names;
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;
@@ -29,6 +27,7 @@
 			import com.uralys.tribes.managers.AccountManager;
 			import com.uralys.tribes.pages.Home;
 			import com.uralys.tribes.windows.CreditsWindow;
+			import com.uralys.tribes.windows.GlobalMessageWindow;
 			import com.uralys.tribes.windows.LoginWindow;
 			
 			import mx.core.FlexGlobals;
@@ -61,6 +60,7 @@
 				Session.LANGUAGE = sharedObject.data.lastLanguage;
 				
 				openLoginWindow();
+				openGlobalMessageWindow();
 			}
 			
 			//-----------------------------------------------------------------------//
@@ -164,6 +164,18 @@
 				PopUpManager.centerPopUp(creditsWindow);
 				
 			}
+
+			//-----------------------------------------------------------------------//
+
+			public var globalMessageWindow:GlobalMessageWindow = new GlobalMessageWindow();
+			private function openGlobalMessageWindow():void 
+			{
+				globalMessageWindow.closeWindow();
+					
+				PopUpManager.addPopUp(globalMessageWindow, this, false);
+				PopUpManager.centerPopUp(globalMessageWindow);
+				globalMessageWindow.x = 30;
+			}
 			
 			//-----------------------------------------------------------------------//
 		]]>
@@ -248,7 +260,7 @@
 		<mx:Spacer width="10%"/>
 		<s:Label text="{Translations.GO_TO_FORUM.getItemAt(Session.LANGUAGE)}"
 				 id="labelForum"
-				 click="navigateToURL(new URLRequest('http://www.uralys.com/forumTAK'), '_new');"
+				 click="navigateToURL(new URLRequest('http://tribesandkhans.freeforums.org/'), '_new');"
 				 color="#000000"
 				 mouseOver="{labelForum.setStyle('color', '#ffffff')}"
 				 mouseOut="{labelForum.setStyle('color', '#000000')}"/>

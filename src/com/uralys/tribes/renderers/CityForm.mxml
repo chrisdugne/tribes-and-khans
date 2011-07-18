@@ -1839,7 +1839,10 @@
 															   liveDragging="true" 
 															   change="woodMarketSellCheck(event)"
 															   value="{city.woodSold}"
-															   maximum="{city.wood}"
+															   maximum="{city.wood
+																	   -(Numbers.SWORD_WOOD * city.swordWorkers 
+																	    +Numbers.ARMOR_WOOD * city.armorWorkers
+																	    +Numbers.BOW_WOOD * city.bowWorkers)}"
 															   snapInterval="1"/>
 												</s:HGroup>
 											</mx:GridItem>
@@ -1870,7 +1873,10 @@
 															   liveDragging="true" 
 															   change="ironMarketSellCheck(event)"
 															   value="{city.ironSold}"
-															   maximum="{city.iron}"
+															   maximum="{city.iron
+																		   -(Numbers.SWORD_IRON * city.swordWorkers 
+																		   +Numbers.ARMOR_IRON * city.armorWorkers
+																		   +Numbers.BOW_IRON * city.bowWorkers)}"
 															   snapInterval="1"/>
 												</s:HGroup>
 											</mx:GridItem>

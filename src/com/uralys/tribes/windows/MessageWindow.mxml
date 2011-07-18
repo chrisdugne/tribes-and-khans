@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<windows:ResizableTitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   xmlns:windows="com.uralys.tribes.windows.*"
+			   skinClass="com.uralys.tribes.skins.WindowSkin"
+			   close="{closeWindow()}"
+			   width="540"
+			   height="380"
+			   backgroundAlpha="0.7"
+			   backgroundColor="#000000"
+			   cornerRadius="15"
+			   >
+	
+	
+	<fx:Script>
+		<![CDATA[
+			import com.uralys.tribes.commons.Session;
+			
+			import mx.managers.PopUpManager;
+
+			//-----------------------------------------------------------------//
+
+			public function closeWindow():void{
+				PopUpManager.removePopUp(this);
+			}
+			//-----------------------------------------------------------------//
+			
+			protected function send():void
+			{
+				trace("sending to player " + Session.CURRENT_CASE_SELECTED.landOwner.playerUID);
+				trace(message.text);
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:Group width="100%" height="100%">
+		
+		<s:VGroup width="100%"
+				  horizontalAlign="center"
+				  paddingTop="15"
+				  paddingLeft="15"
+				  paddingRight="15"
+				  paddingBottom="15">
+			<s:Label text="Write a message to {Session.CURRENT_CASE_SELECTED.landOwner.name} ({400 - message.text.length})"
+					 color="#ffffff"/>
+			<s:TextArea id="message" maxChars="400"/>
+			<s:Button label="Send" click="send()"/>
+		</s:VGroup>
+	</s:Group>
+	
+</windows:ResizableTitleWindow>

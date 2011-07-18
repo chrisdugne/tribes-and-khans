@@ -14,8 +14,6 @@
 	
 	<fx:Script>
 		<![CDATA[
-			//---------------------------------------------------------------------------------------//
-			
 			import com.uralys.tribes.commons.Numbers;
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;
@@ -34,6 +32,7 @@
 			import com.uralys.tribes.entities.Unit;
 			import com.uralys.tribes.managers.GameManager;
 			import com.uralys.tribes.renderers.Pawn;
+			import com.uralys.tribes.windows.MessageWindow;
 			import com.uralys.tribes.windows.ReportsWindow;
 			import com.uralys.utils.Utils;
 			
@@ -51,6 +50,7 @@
 			import mx.graphics.SolidColor;
 			import mx.graphics.SolidColorStroke;
 			import mx.managers.CursorManager;
+			import mx.managers.PopUpManager;
 			import mx.utils.ObjectUtil;
 			
 			import spark.components.supportClasses.ItemRenderer;
@@ -499,7 +499,7 @@
 				}
 				
 				// on calcule si ce n'a pas été fait avant
-				GameManager.getInstance().calculateCityData(false, selectedCity, false);
+				GameManager.getInstance().calculateCityData(false, false, selectedCity, false);
 				
 				enterCityForm.includeInLayout = true;
 				enterCityForm.visible = true;				
@@ -591,6 +591,17 @@
 				GameManager.getInstance().saveCity(selectedCity);
 				hideCity.play();
 				comeBack.play();
+			}
+			
+			//-------------------------------------------------------------------------//
+			
+			public var messageWindow:MessageWindow = new MessageWindow();
+			private function openWriteMessage():void
+			{
+				messageWindow.closeWindow(); 
+				
+				PopUpManager.addPopUp(messageWindow, this, false);
+				PopUpManager.centerPopUp(messageWindow);
 			}
 //			
 //			private function saveTurn():void{
@@ -846,11 +857,10 @@
 					  visible="{Session.player.playerUID == Session.CURRENT_CASE_SELECTED.landOwner.playerUID}"/>
 			</s:HGroup>
 			<s:HGroup>
-				<s:Label text="{Translations.PLAYER.getItemAt(Session.LANGUAGE)} : {Session.player.playerUID == Session.CURRENT_CASE_SELECTED.landOwner.playerUID ? Session.player.name : Session.CURRENT_CASE_SELECTED.landOwner.name}"
-						  click="if(Session.player.playerUID == Session.CURRENT_CASE_SELECTED.landOwner.playerUID)showChangeName.play()"/>
+				<s:Label text="{Translations.PLAYER.getItemAt(Session.LANGUAGE)} : {Session.player.playerUID == Session.CURRENT_CASE_SELECTED.landOwner.playerUID ? Session.player.name : Session.CURRENT_CASE_SELECTED.landOwner.name}"/>
 				<mx:Image source="{ImageContainer.getImage(ImageContainer.EDIT)}"
-					  click="showChangeName.play()"
-					  visible="{Session.player.playerUID == Session.CURRENT_CASE_SELECTED.landOwner.playerUID}"/>
+					  click="openWriteMessage()"
+					  visible="{Session.player.playerUID != Session.CURRENT_CASE_SELECTED.landOwner.playerUID}"/>
 			</s:HGroup>
 			
 			<s:Button label="{Translations.ENTER_CITY.getItemAt(Session.LANGUAGE)}" 

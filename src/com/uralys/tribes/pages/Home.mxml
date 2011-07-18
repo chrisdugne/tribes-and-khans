@@ -10,11 +10,6 @@
 		]]>
 	</fx:Script>
 	
-	<!-- problem de load des skins....declaration des entites qui posent probleme plus loin ici, apres ca marche... 
-	<s:Scroller/>
-	<s:List visible="false"/>
-	-->
-	
 	<!-- ========================================================================================================== -->
 	
 	<s:HGroup width="100%" horizontalAlign="center" y="5">

@@ -15,6 +15,8 @@ package com.uralys.tribes.entities
 		private var _cities:ArrayCollection;
 		private var _units:ArrayCollection = new ArrayCollection();
 		private var _conflicts:ArrayCollection = new ArrayCollection();
+		private var _readMessages:ArrayCollection = new ArrayCollection();
+		private var _newMessages:ArrayCollection = new ArrayCollection();
 		
 		public function Player(){}
 
@@ -117,6 +119,26 @@ package com.uralys.tribes.entities
 		public function set conflicts(value:ArrayCollection):void
 		{
 			_conflicts = value;
+		}
+
+		public function get newMessages():ArrayCollection
+		{
+			return _newMessages;
+		}
+		
+		public function set newMessages(value:ArrayCollection):void
+		{
+			_newMessages = value;
+		}
+
+		public function get readMessages():ArrayCollection
+		{
+			return _readMessages;
+		}
+		
+		public function set readMessages(value:ArrayCollection):void
+		{
+			_readMessages = value;
 		}
 
 		//-------------------------------------------------------//

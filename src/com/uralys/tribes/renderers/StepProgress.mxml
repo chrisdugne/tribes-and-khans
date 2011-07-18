@@ -49,8 +49,10 @@
 				return millisRemainingUntilNextStep;
 			}
 
-			protected function nextStep():void{
-				GameManager.getInstance().saveStep();
+			protected function nextStep():void
+			{
+				if(Session.LOGGED_IN_FORCE_STEPS_DONE)
+					GameManager.getInstance().saveStep();
 				
 				// message 'resources recues'
 				FlexGlobals.topLevelApplication.message(Translations.RESOURCES_UPDATED.getItemAt(Session.LANGUAGE), 3);

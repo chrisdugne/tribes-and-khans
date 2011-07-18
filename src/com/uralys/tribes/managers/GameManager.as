@@ -85,6 +85,8 @@ package com.uralys.tribes.managers {
 			
 			var city:City = Session.player.cities.getItemAt(0) as City;
 			BoardDrawer.getInstance().refreshMap(city.x, city.y);
+			
+			Session.LOGGED_IN_FORCE_STEPS_DONE = true;
 		}
 		
 		public function saveStep(loginCatchUp:Boolean = false)
@@ -118,7 +120,7 @@ package com.uralys.tribes.managers {
 				refreshCitySmithsAndEquipments(city);
 				
 				city.reset();
-				calculateCityData(true, city, starvation);
+				calculateCityData(loginCatchUp, true, city, starvation);
 			}
 			
 			(Session.player.cities.getItemAt(0) as City).gold += Session.player.nbLands;
@@ -352,7 +354,7 @@ package com.uralys.tribes.managers {
 		
 		//-------------------------------------------------------------------------------//
 		
-		public function calculateCityData(forceCalculation:Boolean, city:City, starvation:Boolean):void
+		public function calculateCityData(loginCatchUp:Boolean, forceCalculation:Boolean, city:City, starvation:Boolean):void
 		{
 			if(!forceCalculation && city.calculationDone)
 				return;
@@ -398,6 +400,9 @@ package com.uralys.tribes.managers {
 						if(city.bowWorkers == -1) // stock suffisant
 							city.bowWorkers = smith.people;
 
+						if(loginCatchUp)
+							city.bowStock += city.bowWorkers;
+						
 						trace("final : city.bowWorkers : " + city.bowWorkers);
 
 						break;
@@ -423,6 +428,9 @@ package com.uralys.tribes.managers {
 						if(city.swordWorkers == -1) // stock suffisant
 							city.swordWorkers = smith.people;
 						
+						if(loginCatchUp)
+							city.swordStock += city.swordWorkers;
+						
 						trace("final : city.swordWorkers : " + city.swordWorkers);
 						
 						break;
@@ -446,6 +454,9 @@ package com.uralys.tribes.managers {
 						trace("city.armorWorkers : " + city.armorWorkers);
 						if(city.armorWorkers == -1) // stock suffisant
 							city.armorWorkers = smith.people;
+						
+						if(loginCatchUp)
+							city.armorStock += city.armorWorkers;
 						
 						trace("final : city.armorWorkers : " + city.armorWorkers);
 						break;

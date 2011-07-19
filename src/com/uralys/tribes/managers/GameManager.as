@@ -99,10 +99,8 @@ package com.uralys.tribes.managers {
 			// enregistre le statut lors du dernier step a rattrapper
 			if(nbStepsMissed > 0){
 				saveStep();
-				Session.board.refreshUnits();
 			}
 
-			
 			var city:City = Session.player.cities.getItemAt(0) as City;
 			BoardDrawer.getInstance().refreshMap(city.x, city.y);
 			
@@ -422,10 +420,8 @@ package com.uralys.tribes.managers {
 						if(city.bowWorkers == -1) // stock suffisant
 							city.bowWorkers = smith.people;
 
-						if(loginCatchUp){
-							trace("updating bowStock");
-							city.bowStock += city.bowWorkers;
-						}
+						trace("updating bowStock");
+						city.bowStock += city.bowWorkers;
 						
 						trace("final : city.bowWorkers : " + city.bowWorkers);
 						trace("final : city.bowStock : " + city.bowStock);
@@ -461,10 +457,8 @@ package com.uralys.tribes.managers {
 						if(city.swordWorkers == -1) // stock suffisant
 							city.swordWorkers = smith.people;
 						
-						if(loginCatchUp){
-							trace("updating swordStock");
-							city.swordStock += city.swordWorkers;
-						}
+						trace("updating swordStock");
+						city.swordStock += city.swordWorkers;
 						
 						trace("final : city.swordWorkers : " + city.swordWorkers);
 						trace("final : city.swordStock : " + city.swordStock);
@@ -499,10 +493,8 @@ package com.uralys.tribes.managers {
 						if(city.armorWorkers == -1) // stock suffisant
 							city.armorWorkers = smith.people;
 						
-						if(loginCatchUp){
-							trace("updating armorStock");
-							city.armorStock += city.armorWorkers;
-						}
+						trace("updating armorStock");
+						city.armorStock += city.armorWorkers;
 						
 						trace("final : city.armorWorkers : " + city.armorWorkers);
 						trace("final : city.armorStock : " + city.armorStock);

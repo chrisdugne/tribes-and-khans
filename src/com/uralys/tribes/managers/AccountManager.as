@@ -146,8 +146,8 @@ package com.uralys.tribes.managers {
 				
 		}
 
-		private function finalizeLogin():void{
-			
+		private function finalizeLogin():void
+		{
 			Session.WAIT_FOR_CONNECTION = false;
 			Session.WAIT_FOR_SERVER = false;
 			Session.LOGGED_IN = true;

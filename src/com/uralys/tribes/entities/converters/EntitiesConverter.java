@@ -55,8 +55,8 @@ public class EntitiesConverter {
 
 	// -----------------------------------------------------------------------------------//
 
-	public static Player convertPlayerDTO(PlayerDTO playerDTO, boolean requireFullData) {
-
+	public static Player convertPlayerDTO(PlayerDTO playerDTO, boolean requireFullData) 
+	{
 		if(playerDTO == null)
 			return null;
 
@@ -65,8 +65,11 @@ public class EntitiesConverter {
 		player.setUralysUID(playerDTO.getUralysUID());
 		player.setAllyUID(playerDTO.getAllyUID());
 		player.setName(playerDTO.getName());
-		player.setNbLands(playerDTO.getNbLands());
 		player.setLastStep(playerDTO.getLastStep());
+		player.setNbLands(playerDTO.getNbLands());
+		player.setNbArmies(playerDTO.getNbArmies());
+		player.setNbCities(playerDTO.getNbCities());
+		player.setNbPopulation(playerDTO.getNbPopulation());
 		
 		if(!requireFullData)
 			return player;

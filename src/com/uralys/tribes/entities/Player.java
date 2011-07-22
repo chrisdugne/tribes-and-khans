@@ -12,12 +12,16 @@ public class Player
 	
 	private List<City> cities = new ArrayList<City>();
 	private List<Unit> units = new ArrayList<Unit>();
-	private int nbLands;
 	private List<Conflict> conflicts = new ArrayList<Conflict>();
 	private List<String> newMessages = new ArrayList<String>();
 	private List<String> readMessages = new ArrayList<String>();
 
 	private long lastStep;
+
+	private Integer nbLands;
+	private Integer nbPopulation;
+	private Integer nbCities;
+	private Integer nbArmies;
 	
 	//-----------------------------------------------------------------------------------//
 
@@ -51,10 +55,10 @@ public class Player
 	public void setCities(List<City> cities) {
 		this.cities = cities;
 	}
-	public int getNbLands() {
+	public Integer getNbLands() {
 		return nbLands;
 	}
-	public void setNbLands(int nbLands) {
+	public void setNbLands(Integer nbLands) {
 		this.nbLands = nbLands;
 	}
 	public List<Conflict> getConflicts() {
@@ -74,6 +78,24 @@ public class Player
 	}
 	public void setUnits(List<Unit> units) {
 		this.units = units;
+	}
+	public Integer getNbPopulation() {
+		return nbPopulation;
+	}
+	public void setNbPopulation(Integer nbPopulation) {
+		this.nbPopulation = nbPopulation;
+	}
+	public Integer getNbCities() {
+		return nbCities;
+	}
+	public void setNbCities(Integer nbCities) {
+		this.nbCities = nbCities;
+	}
+	public Integer getNbArmies() {
+		return nbArmies;
+	}
+	public void setNbArmies(Integer nbArmies) {
+		this.nbArmies = nbArmies;
 	}
 	public long getLastStep() {
 		return lastStep;

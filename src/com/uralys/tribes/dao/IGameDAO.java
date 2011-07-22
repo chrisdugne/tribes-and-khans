@@ -27,6 +27,7 @@ public interface IGameDAO {
 	public CaseDTO getCase(int i, int j);
 	
 	public void updatePlayer(Player player);
+	public void updatePlayerPoints(Player player);
 	public void updateCityResources(City city, boolean newStep);
 	public void updateSmith(String smithUID, int people);
 	public void updateStock(String equipmentUID, int size);
@@ -44,7 +45,7 @@ public interface IGameDAO {
 	public String createCity(City city, String playerUID);
 	public CityDTO createNewFirstCity(String playerUID);
 	public void setNewCityOwner(String cityUID, String newOwnerUID, long timeToChangeOwner);
-	public boolean checkCityOwner(String cityUID);
+	public void checkCityOwner(String cityUID);
 	
 	public String createMove(Move move);
 	public void setTimeToForMove(String moveUID, long timeTo);

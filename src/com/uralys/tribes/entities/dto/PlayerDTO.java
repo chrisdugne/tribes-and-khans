@@ -26,10 +26,9 @@ public class PlayerDTO {
 	private String uralysUID;
 	
 	@Persistent private String name;
-	@Persistent private int nbConnections;
+	@Persistent private Integer nbConnections;
 	
 	@Persistent private String allyUID; 
-	@Persistent private int nbLands; 
 	@Persistent private boolean musicOn; 
 	@Persistent private List<String> cityUIDs = new ArrayList<String>();
 	@Persistent private List<String> cityBeingOwnedUIDs = new ArrayList<String>();
@@ -39,6 +38,11 @@ public class PlayerDTO {
 	@Persistent private List<String> newMessages = new ArrayList<String>();
 	@Persistent private List<String> readMessages = new ArrayList<String>();
 	@Persistent private Long lastStep;
+
+	@Persistent private Integer nbLands; 
+	@Persistent private Integer nbPopulation;
+	@Persistent private Integer nbCities;
+	@Persistent private Integer nbArmies;
 	
 	//-----------------------------------------------------------------------------------//
 
@@ -84,10 +88,10 @@ public class PlayerDTO {
 	public void setMeetingsUIDs(List<String> meetingsUIDs) {
 		this.meetingsUIDs = meetingsUIDs;
 	}
-	public int getNbLands() {
+	public Integer getNbLands() {
 		return nbLands;
 	}
-	public void setNbLands(int nbLands) {
+	public void setNbLands(Integer nbLands) {
 		this.nbLands = nbLands;
 	}
 	public String getAllyUID() {
@@ -102,10 +106,10 @@ public class PlayerDTO {
 	public void setUnitUIDs(List<String> unitUIDs) {
 		this.unitUIDs = unitUIDs;
 	}
-	public int getNbConnections() {
+	public Integer getNbConnections() {
 		return nbConnections;
 	}
-	public void setNbConnections(int nbConnections) {
+	public void setNbConnections(Integer nbConnections) {
 		this.nbConnections = nbConnections;
 	}
 	public Long getLastStep() {
@@ -119,6 +123,24 @@ public class PlayerDTO {
 	}
 	public void setNewMessages(List<String> newMessages) {
 		this.newMessages = newMessages;
+	}
+	public Integer getNbPopulation() {
+		return nbPopulation;
+	}
+	public void setNbPopulation(Integer nbPopulation) {
+		this.nbPopulation = nbPopulation;
+	}
+	public Integer getNbCities() {
+		return nbCities;
+	}
+	public void setNbCities(Integer nbCities) {
+		this.nbCities = nbCities;
+	}
+	public Integer getNbArmies() {
+		return nbArmies;
+	}
+	public void setNbArmies(Integer nbArmies) {
+		this.nbArmies = nbArmies;
 	}
 	public List<String> getReadMessages() {
 		return readMessages;

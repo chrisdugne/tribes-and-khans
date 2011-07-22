@@ -136,31 +136,44 @@ public class GameManager implements IGameManager {
 			cityUIDs.addAll(playerDTO.getCityUIDs());
 			cityUIDs.addAll(playerDTO.getCityBeingOwnedUIDs());
 				
-			int nbCitiesChangingOwners = checkCityOwners(cityUIDs);
-			
+			checkCityOwners(cityUIDs);
 			Player player = EntitiesConverter.convertPlayerDTO(playerDTO, true);
 
-			if(player.getCities().size() - nbCitiesChangingOwners == 0){
+			if(player.getCities().size() == 0){
 				player.getCities().add(EntitiesConverter.convertCityDTO(gameDao.createNewFirstCity(uralysUID), true));
 			}
 			
+			//------------------------------------//
+			
+			player.setNbCities(player.getCities().size());
+			
+			player.setNbPopulation(0);
+			for(City city : player.getCities()){
+				player.setNbPopulation(player.getNbPopulation() + city.getPopulation());
+			}
+
+			player.setNbArmies(0);
+			for(Unit unit : player.getUnits()){
+				if(unit.getType() == Unit.ARMY)
+					player.setNbArmies(player.getNbArmies() + unit.getSize());
+			}
+			
+			gameDao.updatePlayerPoints(player);
+			
+			//------------------------------------//
+
 			return player;
 		}
 	}
 
-	private int checkCityOwners(List<String> cityUIDs) 
+	private void checkCityOwners(List<String> cityUIDs) 
 	{
-		int nbCitiesChangingOwners = 0;
-		
 		if(debug)Utils.print("-------------------------------------------------");
 		if(debug)Utils.print("checkCityOwners");
 		for(String cityUID : cityUIDs){
 			if(debug)Utils.print("city : " + cityUID);
-			if(gameDao.checkCityOwner(cityUID))
-				nbCitiesChangingOwners++;
+			gameDao.checkCityOwner(cityUID);
 		}
-		
-		return nbCitiesChangingOwners;
 	}
 
 	//==================================================================================================//
@@ -986,53 +999,84 @@ public class GameManager implements IGameManager {
 			if(debug)Utils.print("found a gathering expected !");
 			Gathering gatheringExpected = EntitiesConverter.convertGatheringDTO(gameDao.getGathering(unit.getGatheringUIDExpected()));
 			if(debug)Utils.print("gathering : " + gatheringExpected.getGatheringUID());
+			if(debug)Utils.print("1");
 			
-			// si c'est un move sur une case (pas de deplacement), on force le timeTo à -1 pour le move correspondant à ce gathering
-			// en effet, si on etait dans un conflit, le timeTo n'est plus -1 mais est devenu le endTime de l'unité,
-			// donc on reset le timeTo pour qu'il s'enregistre de nouveau à -1 et que lorsquon replace l'autre unite du conflit, elle nous retrouve bien dans les recordedMoves pour recalculer le conflit
-			// par contre si il y a plus d'un movesExpected, alors le endTime correspond à la fin du deplacement, et non du endTime de l'unite : surtout ne pas mettre timeTo = -1 
-			if(movesExpected.size() == 1
-			&& movesExpected.get(0).getGathering().getGatheringUID().equals(gatheringExpected.getGatheringUID()))
-			{
-				if(debug)Utils.print("found the move linked with this gathering : " + movesExpected.get(0).getMoveUID());
-				movesExpected.get(0).setTimeTo(-1);
-			}
-
-			Unit unitToReplace;
-			if(gatheringExpected.getUnitUIDs().get(0).equals(unit.getUnitUID()))
-				unitToReplace = getUnit(gatheringExpected.getUnitUIDs().get(1), datacontainer, true);
-			else
-				unitToReplace = getUnit(gatheringExpected.getUnitUIDs().get(0), datacontainer, true);
-			
-			unitToReplace.setEndTime(-1);
-			unitToReplace.setGatheringUIDExpected(null);
-			updateUnit(unitToReplace, null, false);
-			
-			Unit newUnit = getUnit(gatheringExpected.getNewUnitUID(), datacontainer);
-			if(newUnit != null){
-				newUnit.setEndTime(1);
-				updateUnit(newUnit, null, false);
+			if(gatheringExpected.getUnitUIDs().size() == 1){
+				// ca arrive... a voir pourquoi, mais il y reste parfois un gatheringExpected alors que l'unité n'en a pas finalement
+				// toujours dans le cas d'une newArmy apres un gathering a priori
+				// ce bloc est donc un quickfix tout pourri, mais il va debloquer des unites bloquees..
+				// dans ce cas, il n'y a qu'une seule unité dans gatheringExpected.getUnitUIDs()
+				// on lui enleve le gathering_expected_uid
 				
-				// on supprime tous les moves (+ gathering, + case.recordedMove, + unit.move) de cette newUnit
-				gameDao.deleteMoves(newUnit.getUnitUID());
+				unit.setGatheringUIDExpected(null);
+				
+				// le final_case_expected est faux dans ce cas la...on le set a la case de depart
+				unit.setFinalCaseUIDExpected(movesExpected.get(0).getCaseUID());
+			}
+			else{
+				// si c'est un move sur une case (pas de deplacement), on force le timeTo à -1 pour le move correspondant à ce gathering
+				// en effet, si on etait dans un conflit, le timeTo n'est plus -1 mais est devenu le endTime de l'unité,
+				// donc on reset le timeTo pour qu'il s'enregistre de nouveau à -1 et que lorsquon replace l'autre unite du conflit, elle nous retrouve bien dans les recordedMoves pour recalculer le conflit
+				// par contre si il y a plus d'un movesExpected, alors le endTime correspond à la fin du deplacement, et non du endTime de l'unite : surtout ne pas mettre timeTo = -1 
+				if(movesExpected.size() == 1
+				&& movesExpected.get(0).getGathering().getGatheringUID().equals(gatheringExpected.getGatheringUID()))
+				{
+					if(debug)Utils.print("found the move linked with this gathering : " + movesExpected.get(0).getMoveUID());
+					movesExpected.get(0).setTimeTo(-1);
+				}
+				if(debug)Utils.print("2");
+
+				Unit unitToReplace;
+				if(gatheringExpected.getUnitUIDs().get(0).equals(unit.getUnitUID()))
+					unitToReplace = getUnit(gatheringExpected.getUnitUIDs().get(1), datacontainer, true);
+				else
+					unitToReplace = getUnit(gatheringExpected.getUnitUIDs().get(0), datacontainer, true);
+
+				if(debug)Utils.print("3");
+				
+				unitToReplace.setEndTime(-1);
+				unitToReplace.setGatheringUIDExpected(null);
+				updateUnit(unitToReplace, null, false);
+
+				if(debug)Utils.print("4");
+				
+				Unit newUnit = getUnit(gatheringExpected.getNewUnitUID(), datacontainer);
+				if(newUnit != null){
+					newUnit.setEndTime(1);
+					updateUnit(newUnit, null, false);
+					
+					// on supprime tous les moves (+ gathering, + case.recordedMove, + unit.move) de cette newUnit
+					gameDao.deleteMoves(newUnit.getUnitUID());
+				}
+				
+				if(debug)Utils.print("5");
+				
+				if(debug)Utils.print("unitToReplace : " + unitToReplace.getUnitUID());
+				unitsToReplace.add(unitToReplace);
+
+				if(debug)Utils.print("6");
 			}
 			
-			
-			if(debug)Utils.print("unitToReplace : " + unitToReplace.getUnitUID());
-			unitsToReplace.add(unitToReplace);
 		}
+		if(debug)Utils.print("7");
 		
 		// on degage le challenger(cette unité) de la case finale calculée precedemment pour cette unité
 		// on supprime la prise de la ville s'il y en avait une d'enregistrée
 		gameDao.resetChallenger(unit.getFinalCaseUIDExpected());
 
+		if(debug)Utils.print("8");
+
 		// on supprime tous les moves (+ gathering, + case.recordedMove, + unit.move)
 		gameDao.deleteMoves(unit.getUnitUID());
+
+		if(debug)Utils.print("9");
 
 		unit.setMoves(new ArrayList<Move>());
 		unit.setEndTime(-1);
 		unit.setGatheringUIDExpected(null);
 		updateUnit(unit, null, false);
+
+		if(debug)Utils.print("10");
 
 		return unitsToReplace;
 	}

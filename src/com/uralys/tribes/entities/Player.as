@@ -10,13 +10,17 @@ package com.uralys.tribes.entities
 		private var _name:String;
 		private var _musicOn:Boolean;
 		private var _allyUID:String;
-		private var _nbLands:int;
 		private var _lastStep:Number;
 		private var _cities:ArrayCollection;
 		private var _units:ArrayCollection = new ArrayCollection();
 		private var _conflicts:ArrayCollection = new ArrayCollection();
 		private var _readMessages:ArrayCollection = new ArrayCollection();
 		private var _newMessages:ArrayCollection = new ArrayCollection();
+
+		private var _nbLands:int;
+		private var _nbCities:int;
+		private var _nbArmies:int;
+		private var _nbPopulation:int;
 		
 		public function Player(){}
 
@@ -109,6 +113,36 @@ package com.uralys.tribes.entities
 		public function set nbLands(value:int):void
 		{
 			_nbLands = value;
+		}
+
+		public function get nbCities():int
+		{
+			return _nbCities;
+		}
+		
+		public function set nbCities(value:int):void
+		{
+			_nbCities = value;
+		}
+
+		public function get nbArmies():int
+		{
+			return _nbArmies;
+		}
+		
+		public function set nbArmies(value:int):void
+		{
+			_nbArmies = value;
+		}
+
+		public function get nbPopulation():int
+		{
+			return _nbPopulation;
+		}
+		
+		public function set nbPopulation(value:int):void
+		{
+			_nbPopulation = value;
 		}
 		
 		public function get conflicts():ArrayCollection

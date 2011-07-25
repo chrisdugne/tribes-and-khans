@@ -17,7 +17,7 @@ package com.uralys.tribes.commons
 
 		//=====================================================//
 		
-		[Bindable] public static var VERSION:String = "1.1.81";
+		[Bindable] public static var VERSION:String = "1.1.82";
 		[Bindable] public static var LOGGED_IN:Boolean = false; 
 		[Bindable] public static var CONNECTED_TO_FACEBOOK:Boolean = false;
 		
@@ -44,6 +44,13 @@ package com.uralys.tribes.commons
 		
 		[Bindable] public static var uralysProfile:UralysProfile;
 		[Bindable] public static var player:Player;
+		
+		//=====================================================//
+
+		[Bindable] public static var citiesBoard:ArrayCollection; 
+		[Bindable] public static var armiesBoard:ArrayCollection; 
+		[Bindable] public static var populationBoard:ArrayCollection; 
+		[Bindable] public static var landsBoard:ArrayCollection; 
 		
 		//=====================================================//
 		

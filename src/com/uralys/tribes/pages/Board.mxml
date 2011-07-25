@@ -908,7 +908,7 @@
 		
 		<s:CheckBox id="checkboxBars"
 					selected="@{Session.LANDS_VISIBLE}" 
-					label="{Translations.LANDS.getItemAt(Session.LANGUAGE)}"
+					label="{Translations.SHOW_LANDS.getItemAt(Session.LANGUAGE)}"
 					x="{viewstack.x}"
 					bottom="70"/>
 		<s:CheckBox id="checkboxLands"

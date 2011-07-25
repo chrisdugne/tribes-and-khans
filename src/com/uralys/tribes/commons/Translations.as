@@ -16,26 +16,23 @@ public class Translations{
 	[Bindable]
 	public static var G_MESSAGE:ArrayCollection = new ArrayCollection(
 									["Salut !\n" +
-										"Merci de tester le jeu !\n" +
-										"Des bugs sur la forge et les équipements ont été corrigés.\n" +
-										"Une messagerie est en cours de développement.\n\n" +
-										"Un forum a été mis en place, (lien tout en bas de la page)\n" +
-										"n'hésitez pas à donner votre avis, ou à remonter un bug !\n" +
-										"Bon jeu ;)",
+										"Merci de tester le jeu !\n\n" +
+										"Ca y est, les classements sont en place !!\n" +
+										"Ils vont se mettre à jour au fur et à mesure des connexions.\n\n" +
+										"La messagerie est en toujours en développement.\n\n" +
+										"Pensez au forum et bon jeu ;)",
 									"Hi !\n" +
 										"Thank you for testing !\n" +
-										"Bugs have been fixed about the smiths and the equipments.\n" +
-										"A message box is currently being developed.\n\n" +
-										"You may find a thegame forum (link on the bottom of this page)\n" +
-										"Do not hesitate to post your feelings or any bug you find !\n" +
-										"Good Game ;)",
+										"Here we are, boards are finally open !\n" +
+										"They'll be up to date within the connections.\n\n" +
+										"The message box is still being developed.\n\n" +
+										"Do not forget the forum, GG && HF ;)",
 									"Hi !\n" +
 										"Thank you for testing !\n" +
-										"Bugs have been fixed about the smiths and the equipments.\n" +
-										"A message box is currently being developed.\n\n" +
-										"You may find a thegame forum (link on the bottom of this page)\n" +
-										"Do not hesitate to post your feelings or any bug you find !\n" +
-										"Good Game ;)"]);
+										"Here we are, boards are finally open !\n" +
+										"They'll be up to date within the connections.\n\n" +
+										"The message box is still being developed.\n\n" +
+										"Do not forget the forum, GG && HF ;)"]);
 	
 	//-----------------------------------------------------------------------------------//
 
@@ -107,6 +104,12 @@ public class Translations{
 									"Go to the forum"]);
 
 	[Bindable]
+	public static var BOARDS:ArrayCollection = new ArrayCollection(
+									["Classements",
+									"Boards",
+									"Boards"]);
+
+	[Bindable]
 	public static var LOADING_IMAGES:ArrayCollection = new ArrayCollection(
 									["Téléchargement des images. Merci de patienter",
 									"Downloading images. Please wait.",
@@ -144,6 +147,11 @@ public class Translations{
 
 	[Bindable]
 	public static var LANDS:ArrayCollection = new ArrayCollection(
+									["Contrées",
+									"Lands",
+									"Lands"]);
+	[Bindable]
+	public static var SHOW_LANDS:ArrayCollection = new ArrayCollection(
 									["Montrer les contrées",
 									"Show the lands",
 									"Show the lands"]);
@@ -350,6 +358,12 @@ public class Translations{
 									"Armies/Merchants created this turn"]);
 	
 	[Bindable]
+	public static var POPULATION:ArrayCollection = new ArrayCollection(
+									["Population",
+									"Population",
+									"Population"]);
+
+	[Bindable]
 	public static var UNEMPLOYED:ArrayCollection = new ArrayCollection(
 									["Sans emploi",
 									"Unemployed",
@@ -492,6 +506,11 @@ public class Translations{
 									["Armée",
 									"Army",
 									"Army"]);
+	[Bindable]
+	public static var ARMIES:ArrayCollection = new ArrayCollection(
+									["Armées",
+									"Armies",
+									"Armies"]);
 
 	[Bindable]
 	public static var NEW_ARMY:ArrayCollection = new ArrayCollection(

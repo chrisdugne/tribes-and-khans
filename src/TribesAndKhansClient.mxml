@@ -26,6 +26,7 @@
 			import com.uralys.tribes.core.Pager;
 			import com.uralys.tribes.managers.AccountManager;
 			import com.uralys.tribes.pages.Home;
+			import com.uralys.tribes.windows.BoardsWindow;
 			import com.uralys.tribes.windows.CreditsWindow;
 			import com.uralys.tribes.windows.GlobalMessageWindow;
 			import com.uralys.tribes.windows.LoginWindow;
@@ -178,6 +179,17 @@
 			}
 			
 			//-----------------------------------------------------------------------//
+
+			public var boardsWindow:BoardsWindow = new BoardsWindow();
+			private function openBoardsWindow():void 
+			{
+				boardsWindow.closeWindow();
+					
+				PopUpManager.addPopUp(boardsWindow, this, false);
+				PopUpManager.centerPopUp(boardsWindow);
+			}
+			
+			//-----------------------------------------------------------------------//
 		]]>
 	</fx:Script>
 	
@@ -229,6 +241,14 @@
 				  />
 		
 		<mx:Spacer width="100%"/>
+		<s:Label text="{Translations.BOARDS.getItemAt(Session.LANGUAGE)}"
+				 id="labelBoards"
+				 color="#000000"
+				 click="{openBoardsWindow()}"
+				 mouseOver="{labelBoards.setStyle('color', '#ffffff')}"
+				 mouseOut="{labelBoards.setStyle('color', '#000000')}"/>
+		
+		<mx:Spacer width="30"/>
 		<s:Label text="{Session.player ? Translations.LOG_AS.getItemAt(Session.LANGUAGE) + ' : '+ Session.uralysProfile.email : Translations.LOG_IN.getItemAt(Session.LANGUAGE)}"
 				 id="labelLogin"
 				 color="#000000"

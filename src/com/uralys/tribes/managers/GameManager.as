@@ -635,13 +635,15 @@ package com.uralys.tribes.managers {
 			Session.TOP_LIMIT_LOADED 	 = (centerY - Numbers.NB_VERTICAL_TILES_BY_LOADING/2) * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2) + Session.MAP_HEIGHT; 
 			Session.BOTTOM_LIMIT_LOADED	 = (centerY + Numbers.NB_VERTICAL_TILES_BY_LOADING/2) * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2) - Session.MAP_HEIGHT; 
 			
+			var gameWrapper:RemoteObject = getGameWrapper();
 			loadCasesResponder.addEventListener("result", casesLoaded);
-			loadCasesResponder.token = getGameWrapper().loadCases(groups);
+			loadCasesResponder.token = gameWrapper.loadCases(groups);
    			
 		}
 
 		public function savePlayer():void{
-			savePlayerResponder.token = getGameWrapper().savePlayer(Session.player);
+			var gameWrapper:RemoteObject = getGameWrapper();
+			savePlayerResponder.token = gameWrapper.savePlayer(Session.player);
 		}
 
 		public function deleteUnit (unit:Unit):void
@@ -649,26 +651,32 @@ package com.uralys.tribes.managers {
 			if(unit.status == Unit.TO_BE_CREATED)
 				return;
 			
-			getGameWrapper().deleteUnit(Session.player.uralysUID, unit);
+			var gameWrapper:RemoteObject = getGameWrapper();
+			gameWrapper.deleteUnit(Session.player.uralysUID, unit);
 		}
 
 		public function deleteUnits (unitUIDs:ArrayCollection):void{
-			getGameWrapper().deleteUnits(Session.player.uralysUID, unitUIDs);
+			var gameWrapper:RemoteObject = getGameWrapper();
+			gameWrapper.deleteUnits(Session.player.uralysUID, unitUIDs);
 		}
 
 		public function changeName():void{
-			getGameWrapper().changeName(Session.player.uralysUID, Session.player.name);			
+			var gameWrapper:RemoteObject = getGameWrapper();
+			gameWrapper.changeName(Session.player.uralysUID, Session.player.name);			
 		}
 
 		public function changeCityName(newName:String):void{
-			getGameWrapper().changeCityName(Session.board.selectedCity.cityUID, newName);			
+			var gameWrapper:RemoteObject = getGameWrapper();
+			gameWrapper.changeCityName(Session.board.selectedCity.cityUID, newName);			
 		}
 		
 
 		public function saveCity(city:City):void
 		{
 			refreshCitySmithsAndEquipments(city, false);
-			getGameWrapper().saveCity(city);			
+			
+			var gameWrapper:RemoteObject = getGameWrapper();
+			gameWrapper.saveCity(city);			
 		}
 
 		public function buildCity(city:City, merchant:Unit):void
@@ -681,6 +689,78 @@ package com.uralys.tribes.managers {
 			var gameWrapper:RemoteObject = getGameWrapper();
 			gameWrapper.buildCity.addEventListener("result", unitSaved);
 			gameWrapper.buildCity(city, merchant, Session.player.uralysUID);	
+		}
+		
+		//----------------------------------------------------------------------//
+		
+		public function getCitiesBoard(forceRefresh:Boolean = false):void
+		{
+			if(!forceRefresh && Session.citiesBoard != null)
+				return;
+			
+			Session.WAIT_FOR_SERVER = true;
+			var gameWrapper:RemoteObject = getGameWrapper();
+			gameWrapper.getCitiesBoard.addEventListener("result", citiesBoardReceived);
+			gameWrapper.getCitiesBoard();
+		}
+	
+		public function getArmiesBoard(forceRefresh:Boolean = false):void
+		{
+			if(!forceRefresh && Session.armiesBoard != null)
+				return;
+			
+			Session.WAIT_FOR_SERVER = true;
+			var gameWrapper:RemoteObject = getGameWrapper();
+			gameWrapper.getArmiesBoard.addEventListener("result", armiesBoardReceived);
+			gameWrapper.getArmiesBoard();
+		}
+		
+		public function getPopulationBoard(forceRefresh:Boolean = false):void
+		{
+			if(!forceRefresh && Session.populationBoard != null)
+				return;
+			
+			Session.WAIT_FOR_SERVER = true;
+			var gameWrapper:RemoteObject = getGameWrapper();
+			gameWrapper.getArmiesBoard.addEventListener("result", populationBoardReceived);
+			gameWrapper.getArmiesBoard();
+		}
+		
+		public function getLandsBoard(forceRefresh:Boolean = false):void
+		{
+			if(!forceRefresh && Session.landsBoard != null)
+				return;
+			
+			Session.WAIT_FOR_SERVER = true;
+			var gameWrapper:RemoteObject = getGameWrapper();
+			gameWrapper.getLandsBoard.addEventListener("result", landsBoardReceived);
+			gameWrapper.getLandsBoard();
+		}
+		
+		//--------------------------------------------------------------------------------//
+		
+		private function citiesBoardReceived(event:ResultEvent):void
+		{
+			Session.WAIT_FOR_SERVER = false;
+			Session.citiesBoard = event.result as ArrayCollection;
+		}
+		
+		private function armiesBoardReceived(event:ResultEvent):void
+		{
+			Session.WAIT_FOR_SERVER = false;
+			Session.armiesBoard = event.result as ArrayCollection;
+		}
+		
+		private function populationBoardReceived(event:ResultEvent):void
+		{
+			Session.WAIT_FOR_SERVER = false;
+			Session.populationBoard = event.result as ArrayCollection;
+		}
+		
+		private function landsBoardReceived(event:ResultEvent):void
+		{
+			Session.WAIT_FOR_SERVER = false;
+			Session.landsBoard = event.result as ArrayCollection;
 		}
 		
 		//--------------------------------------------------------------------------------//

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<windows:ResizableTitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   xmlns:windows="com.uralys.tribes.windows.*"
+			   skinClass="com.uralys.tribes.skins.WindowSkin"
+			   close="{closeWindow()}"
+			   width="540"
+			   height="480"
+			   backgroundAlpha="0.7"
+			   backgroundColor="#000000"
+			   cornerRadius="15"
+			   creationComplete="{updateCitiesBoard()}"
+			   >
+	
+	
+	<fx:Script>
+		<![CDATA[
+			import com.uralys.tribes.commons.Session;
+			import com.uralys.tribes.commons.Translations;
+			import com.uralys.tribes.managers.GameManager;
+			
+			import mx.controls.SWFLoader;
+			import mx.managers.PopUpManager;
+
+			//-----------------------------------------------------------------//
+			
+			private var loadingFlash:SWFLoader;
+
+			//-----------------------------------------------------------------//
+			
+			public function closeWindow():void{
+				PopUpManager.removePopUp(this);
+			}
+			
+			//-----------------------------------------------------------------//
+			
+			private function updateCitiesBoard():void{
+				GameManager.getInstance().getCitiesBoard();
+			}
+
+			private function updateArmiesBoard():void{
+				GameManager.getInstance().getArmiesBoard();
+			}
+
+			private function updatePopulationBoard():void{
+				GameManager.getInstance().getPopulationBoard();
+			}
+
+			private function updateLandsBoard():void{
+				GameManager.getInstance().getLandsBoard();
+			}
+		]]>
+	</fx:Script>
+	
+	<s:Group width="100%" height="100%">
+		
+		<s:VGroup horizontalAlign="center" top="5" width="100%">
+			<mx:SWFLoader source="{ImageContainer.LOADING}" 
+						  visible="{Session.WAIT_FOR_SERVER}"/>
+			<s:TabBar id="tabs" dataProvider="{viewstack}"
+					  skinClass="com.uralys.tribes.skins.CustomTabBarSkin"/>
+		</s:VGroup>
+		
+		<mx:ViewStack id="viewstack" 
+					  width="100%" height="100%"
+					  paddingTop="55"
+					  paddingLeft="15"
+					  paddingRight="15"
+					  paddingBottom="15"
+					  >
+			
+			<s:NavigatorContent label="{Translations.CITIES.getItemAt(Session.LANGUAGE)}"
+								show="{updateCitiesBoard()}">
+				<s:HGroup width="100%" height="100%"
+						  horizontalAlign="center"
+						  verticalAlign="middle">
+					<s:List dataProvider="{Session.citiesBoard}"
+							height="100%"
+							width="80%"
+							itemRenderer="com.uralys.tribes.renderers.PlayerCitiesBoardRenderer"
+							skinClass="com.uralys.tribes.skins.CustomListSkin"/>
+				</s:HGroup>
+			</s:NavigatorContent>
+			<s:NavigatorContent label="{Translations.ARMIES.getItemAt(Session.LANGUAGE)}"
+								show="{updateArmiesBoard()}">
+				<s:HGroup width="100%" height="100%"
+						  horizontalAlign="center"
+						  verticalAlign="middle">
+					<s:List dataProvider="{Session.armiesBoard}"
+							height="100%"
+							width="80%"
+							itemRenderer="com.uralys.tribes.renderers.PlayerArmiesBoardRenderer"
+							skinClass="com.uralys.tribes.skins.CustomListSkin"/>
+				</s:HGroup>
+			</s:NavigatorContent>
+			<s:NavigatorContent label="{Translations.POPULATION.getItemAt(Session.LANGUAGE)}"
+								show="{updatePopulationBoard()}">
+				<s:HGroup width="100%" height="100%"
+						  horizontalAlign="center"
+						  verticalAlign="middle">
+					<s:List dataProvider="{Session.populationBoard}"
+							height="100%"
+							width="80%"
+							itemRenderer="com.uralys.tribes.renderers.PlayerPopulationBoardRenderer"
+							skinClass="com.uralys.tribes.skins.CustomListSkin"/>
+				</s:HGroup>
+			</s:NavigatorContent>
+			<s:NavigatorContent label="{Translations.LANDS.getItemAt(Session.LANGUAGE)}"
+								show="{updateLandsBoard()}">
+				<s:HGroup width="100%" height="100%"
+						  horizontalAlign="center"
+						  verticalAlign="middle">
+					<s:List dataProvider="{Session.landsBoard}"
+							height="100%"
+							width="80%"
+							itemRenderer="com.uralys.tribes.renderers.PlayerLandsBoardRenderer"
+							skinClass="com.uralys.tribes.skins.CustomListSkin"/>
+				</s:HGroup>
+			</s:NavigatorContent>
+		</mx:ViewStack>
+	</s:Group>
+	
+</windows:ResizableTitleWindow>

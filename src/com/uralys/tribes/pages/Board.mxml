@@ -196,12 +196,19 @@
 				for each(var unit:Unit in Session.player.units)
 				{
 					var unitIsPrepared:Boolean = GameManager.getInstance().prepareUnitForClientSide(unit);
+					trace("status : " + unit.status);
 					
 					if(!unitIsPrepared){
-						if(unit.status == Unit.DESTROYED)
+						trace("unit is not prepared");
+						if(unit.status == Unit.DESTROYED){
+							trace("unit is to be deleted");							
 							unitUIDsToDelete.addItem(unit.unitUID);
-
+						}
+						
 						uidsToRemove.addItem(unit.unitUID);
+					}
+					else{
+						trace(ObjectUtil.toString(unit));
 					}
 				}
 				

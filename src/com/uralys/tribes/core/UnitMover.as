@@ -196,6 +196,17 @@ package com.uralys.tribes.core
 		 */
 		public function refreshMoves(unit:Unit)
 		{
+			// hack ici arrive que des armees n'ont pas de move..
+			// a priori elles doivent encore exister, donc dans ce cas on leur rajoute un move sur la case courante
+			// peut etre qu'au contraire il faut supprimer la unit xD
+			// a surveiller !!!
+			if(unit.moves.length == 0){
+				var move:Move = new Move();
+				move.initNewMove(unit.unitUID, Utils.getXFromCaseUID(unit.finalCaseUIDExpected), Utils.getYFromCaseUID(unit.finalCaseUIDExpected));
+				unit.moves.addItem(move);
+			}
+			
+			
 			var nbIndexesToRemove:int = -1;
 			var now:Number = new Date().getTime();
 			

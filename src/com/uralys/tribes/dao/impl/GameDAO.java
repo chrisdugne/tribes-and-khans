@@ -421,6 +421,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		PlayerDTO playerDTO = pm.getObjectById(PlayerDTO.class, player.getUralysUID());
 		
 		playerDTO.setNbPopulation(player.getNbPopulation());
+		playerDTO.setNbCities(player.getNbCities());
 		playerDTO.setNbArmies(player.getNbArmies());
 		
 		pm.close();
@@ -1077,5 +1078,58 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	}
 	
 	//======================================================================================================//
+
+	@SuppressWarnings("unchecked")
+	public List<PlayerDTO> getCitiesBoard() 
+	{
+		Utils.print("dao : getCitiesBoard");
+		
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		Query q = pm.newQuery("select from " + PlayerDTO.class.getName());
+		
+		q.setOrdering("nbCities descending");
+		q.setRange(0,30);
+		
+		Utils.print(q.toString());
+		List<PlayerDTO> players = (List<PlayerDTO>) q.execute();
+		Utils.print(players.size() + " players");
+		
+		return players;
+	}
 	
+	@SuppressWarnings("unchecked")
+	public List<PlayerDTO> getLandsBoard() 
+	{
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		Query q = pm.newQuery("select from " + PlayerDTO.class.getName());
+		
+		q.setOrdering("nbLands descending");
+		q.setRange(0,30);
+		
+		return (List<PlayerDTO>) q.execute();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<PlayerDTO> getPopulationBoard() 
+	{
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		Query q = pm.newQuery("select from " + PlayerDTO.class.getName());
+		
+		q.setOrdering("nbPopulation descending");
+		q.setRange(0,30);
+		
+		return (List<PlayerDTO>) q.execute();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<PlayerDTO> getArmiesBoard() 
+	{
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		Query q = pm.newQuery("select from " + PlayerDTO.class.getName());
+		
+		q.setOrdering("nbArmies descending");
+		q.setRange(0,30);
+		
+		return (List<PlayerDTO>) q.execute();
+	}
 }

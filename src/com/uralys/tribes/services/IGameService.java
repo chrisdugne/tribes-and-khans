@@ -31,4 +31,9 @@ public interface IGameService {
 	
 	public void changeName(String uralysUID, String newName);
 	public void changeCityName(String cityUID, String newName);
+	
+	public List<Player> getCitiesBoard();
+	public List<Player> getLandsBoard();
+	public List<Player> getPopulationBoard(); 
+	public List<Player> getArmiesBoard();
 }

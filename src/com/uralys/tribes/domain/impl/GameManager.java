@@ -303,6 +303,60 @@ public class GameManager implements IGameManager {
 	}
 	
 	//==================================================================================================//
+
+	public List<Player> getCitiesBoard()
+	{
+		List<Player> players = new ArrayList<Player>();
+		
+		List<PlayerDTO> playersDTO = gameDao.getCitiesBoard();
+		for(PlayerDTO playerDTO : playersDTO){
+			Utils.print(playerDTO.getName());
+			players.add(EntitiesConverter.convertPlayerDTO(playerDTO, false));
+		}
+
+		Utils.print(players.size() + " players au final");
+		return players;
+	}
+	
+	public List<Player> getLandsBoard()
+	{
+		List<Player> players = new ArrayList<Player>();
+		
+		List<PlayerDTO> playersDTO = gameDao.getLandsBoard();
+		for(PlayerDTO playerDTO : playersDTO){
+			players.add(EntitiesConverter.convertPlayerDTO(playerDTO, false));
+		}
+
+		return players;
+	}
+	
+	public List<Player> getPopulationBoard()
+	{
+		List<Player> players = new ArrayList<Player>();
+		
+		List<PlayerDTO> playersDTO = gameDao.getPopulationBoard();
+		for(PlayerDTO playerDTO : playersDTO){
+			players.add(EntitiesConverter.convertPlayerDTO(playerDTO, false));
+		}
+
+		return players;
+		
+	}
+	
+	public List<Player> getArmiesBoard()
+	{
+		List<Player> players = new ArrayList<Player>();
+		
+		List<PlayerDTO> playersDTO = gameDao.getArmiesBoard();
+		for(PlayerDTO playerDTO : playersDTO){
+			players.add(EntitiesConverter.convertPlayerDTO(playerDTO, false));
+		}
+
+		return players;
+		
+	}
+	
+	//==================================================================================================//
 	
 	/**
 	 * 02 mai 2011

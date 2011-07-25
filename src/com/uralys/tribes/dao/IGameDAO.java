@@ -68,4 +68,8 @@ public interface IGameDAO {
 	public void changeCityName(String cityUID, String newName);
 	public void changeMusicOn(String uralysUID, boolean musicOn);
 	
+	public List<PlayerDTO> getCitiesBoard();
+	public List<PlayerDTO> getLandsBoard();
+	public List<PlayerDTO> getPopulationBoard(); 
+	public List<PlayerDTO> getArmiesBoard();
 }

@@ -150,4 +150,21 @@ public class GameService implements IGameService {
 		gameManager.changeCityName(cityUID, newName);
 	}
 
+	// -----------------------------------------------------------------------------------//
+	
+	public List<Player> getCitiesBoard(){
+		return gameManager.getCitiesBoard();
+	}
+	
+	public List<Player> getLandsBoard(){
+		return gameManager.getLandsBoard();
+	}
+	
+	public List<Player> getPopulationBoard(){
+		return gameManager.getPopulationBoard();
+	}
+	
+	public List<Player> getArmiesBoard(){
+		return gameManager.getArmiesBoard();
+	}
 }

@@ -1,3 +1,4 @@
+
 package com.uralys.utils
 {
 
@@ -7,6 +8,8 @@ import flash.display.BitmapData;
 import flash.display.Sprite;
 
 import mx.collections.ArrayCollection;
+import mx.collections.Sort;
+import mx.collections.SortField;
 
 public class Utils
 {
@@ -239,5 +242,26 @@ public class Utils
 			return _hitarea;
 		}
 		
+		
+		/*
+			To sort an ArrayCollection
+		*/
+		public static function sort(collection:ArrayCollection, field:String, descending:Boolean = true):ArrayCollection
+		{
+			/* Select on which field the list will be sorted on */
+			var dataSortField:SortField = new SortField();
+			dataSortField.name = field;
+			dataSortField.descending = descending;
+			
+			/* Create the Sort object and add the SortField object created earlier to the array of fields to sort on. */
+			var labelSort:Sort = new Sort();
+			labelSort.fields = [dataSortField];
+			
+			/* Set the ArrayCollection object's sort property to our custom sort, and refresh the ArrayCollection. */
+			collection.sort = labelSort;
+			collection.refresh();
+			
+			return collection;
+		}
 }
 }

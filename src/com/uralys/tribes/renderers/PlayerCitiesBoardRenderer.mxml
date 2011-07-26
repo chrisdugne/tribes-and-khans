@@ -11,10 +11,13 @@
 		]]>
 	</fx:Script>
 	
-	<s:HGroup width="100%" horizontalAlign="center">
+	<s:HGroup width="100%" horizontalAlign="center"
+			  paddingLeft="15"
+			  paddingRight="15"
+			  paddingBottom="4">
 		<s:Label text="{(data as Player).name}" color="#ffffff"/>
-		<mx:Spacer width="200"/>
-		<s:Label text="{(data as Player).nbCities} {Translations.CITIES.getItemAt(Session.LANGUAGE)}" color="#ffffff"/>
+		<mx:Spacer width="100%"/>
+		<s:Label text="{(data as Player).nbCities}" color="#ffffff"/>
 	</s:HGroup>
 	
 </s:ItemRenderer>

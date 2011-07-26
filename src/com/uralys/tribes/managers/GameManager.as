@@ -742,25 +742,25 @@ package com.uralys.tribes.managers {
 		private function citiesBoardReceived(event:ResultEvent):void
 		{
 			Session.WAIT_FOR_SERVER = false;
-			Session.citiesBoard = event.result as ArrayCollection;
+			Session.citiesBoard = Utils.sort(event.result as ArrayCollection, "nbCities");
 		}
 		
 		private function armiesBoardReceived(event:ResultEvent):void
 		{
 			Session.WAIT_FOR_SERVER = false;
-			Session.armiesBoard = event.result as ArrayCollection;
+			Session.armiesBoard = Utils.sort(event.result as ArrayCollection, "nbArmies");
 		}
 		
 		private function populationBoardReceived(event:ResultEvent):void
 		{
 			Session.WAIT_FOR_SERVER = false;
-			Session.populationBoard = event.result as ArrayCollection;
+			Session.populationBoard = Utils.sort(event.result as ArrayCollection, "nbPopulation");
 		}
 		
 		private function landsBoardReceived(event:ResultEvent):void
 		{
 			Session.WAIT_FOR_SERVER = false;
-			Session.landsBoard = event.result as ArrayCollection;
+			Session.landsBoard = Utils.sort(event.result as ArrayCollection, "nbLands");
 		}
 		
 		//--------------------------------------------------------------------------------//

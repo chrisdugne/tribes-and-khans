@@ -15,7 +15,11 @@
 			  paddingLeft="15"
 			  paddingRight="15"
 			  paddingBottom="4">
-		<s:Label text="{(data as Player).name}" color="#ffffff"/>
+		<s:Label text="{(data as Player).name}" 
+				 color="#ffffff"
+				 id="labelName"
+				 mouseOver="{labelName.setStyle('color', '#3333dd')}"
+				 mouseOut="{labelName.setStyle('color', '#ffffff')}"/>
 		<mx:Spacer width="100%"/>
 		<s:Label text="{(data as Player).nbPopulation}" color="#ffffff"/>
 	</s:HGroup>

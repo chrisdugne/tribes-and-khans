@@ -16,13 +16,12 @@
 	
 	<fx:Script>
 		<![CDATA[
-			//-----------------------------------------------------------------//
-
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;
 			import com.uralys.tribes.managers.GameManager;
 			
 			import mx.controls.SWFLoader;
+			import mx.core.FlexGlobals;
 			import mx.managers.PopUpManager;
 
 			//-----------------------------------------------------------------//
@@ -52,6 +51,25 @@
 			private function updateLandsBoard():void{
 				GameManager.getInstance().getLandsBoard();
 			}
+			
+			//----------------------------------------------------------------------------//
+			
+			protected function citiesList_doubleClickHandler(event:MouseEvent):void{
+				FlexGlobals.topLevelApplication.openPlayerProfileWindow(citiesList.selectedItem.playerUID);
+			}
+
+			protected function armiesList_doubleClickHandler(event:MouseEvent):void{
+				FlexGlobals.topLevelApplication.openPlayerProfileWindow(armiesList.selectedItem.playerUID);
+			}
+
+			protected function populationList_doubleClickHandler(event:MouseEvent):void{
+				FlexGlobals.topLevelApplication.openPlayerProfileWindow(populationList.selectedItem.playerUID);
+			}
+
+			protected function landsList_doubleClickHandler(event:MouseEvent):void{
+				FlexGlobals.topLevelApplication.openPlayerProfileWindow(landsList.selectedItem.playerUID);
+			}
+			
 		]]>
 	</fx:Script>
 	
@@ -78,8 +96,13 @@
 						  horizontalAlign="center"
 						  verticalAlign="middle">
 					<s:List dataProvider="{Session.citiesBoard}"
+							id="citiesList"
 							height="100%"
 							width="80%"
+							selectionColor="#000101"
+							rollOverColor="#000101"
+							doubleClick="citiesList_doubleClickHandler(event)"
+							doubleClickEnabled="true"
 							itemRenderer="com.uralys.tribes.renderers.PlayerCitiesBoardRenderer"
 							skinClass="com.uralys.tribes.skins.CustomListSkin"/>
 				</s:HGroup>
@@ -90,8 +113,13 @@
 						  horizontalAlign="center"
 						  verticalAlign="middle">
 					<s:List dataProvider="{Session.armiesBoard}"
+							id="armiesList"
 							height="100%"
 							width="80%"
+							selectionColor="#000101"
+							rollOverColor="#000101"
+							doubleClick="armiesList_doubleClickHandler(event)"
+							doubleClickEnabled="true"
 							itemRenderer="com.uralys.tribes.renderers.PlayerArmiesBoardRenderer"
 							skinClass="com.uralys.tribes.skins.CustomListSkin"/>
 				</s:HGroup>
@@ -102,8 +130,13 @@
 						  horizontalAlign="center"
 						  verticalAlign="middle">
 					<s:List dataProvider="{Session.populationBoard}"
+							id="populationList"
 							height="100%"
 							width="80%"
+							selectionColor="#000101"
+							rollOverColor="#000101"
+							doubleClick="populationList_doubleClickHandler(event)"
+							doubleClickEnabled="true"
 							itemRenderer="com.uralys.tribes.renderers.PlayerPopulationBoardRenderer"
 							skinClass="com.uralys.tribes.skins.CustomListSkin"/>
 				</s:HGroup>
@@ -114,8 +147,13 @@
 						  horizontalAlign="center"
 						  verticalAlign="middle">
 					<s:List dataProvider="{Session.landsBoard}"
+							id="landsList"
 							height="100%"
 							width="80%"
+							selectionColor="#000101"
+							rollOverColor="#000101"
+							doubleClick="landsList_doubleClickHandler(event)"
+							doubleClickEnabled="true"
 							itemRenderer="com.uralys.tribes.renderers.PlayerLandsBoardRenderer"
 							skinClass="com.uralys.tribes.skins.CustomListSkin"/>
 				</s:HGroup>

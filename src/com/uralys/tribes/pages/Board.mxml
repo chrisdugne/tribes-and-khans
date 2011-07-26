@@ -78,8 +78,8 @@
 			}
 			
 			//---------------------------------------------------------------------------------------------------//
-			// click sur une ville dans la barre laterale
-			protected function onCityClick(event:ItemClickEvent):void
+			// click sur une ville dans la barre laterale ou dans la page du profile
+			public function onCityClick(event:ItemClickEvent):void
 			{
 				var city:City = event.currentTarget.selectedItem;
 				mapPositioner.x = Session.MAP_WIDTH/2 
@@ -94,10 +94,12 @@
 				return;
 			}
 			
-			// click sur une unité dans la barre laterale
-			protected function onMyUnitClick(event:ItemClickEvent):void
+			// click sur une unité dans la barre laterale ou dans la page du profile
+			public function onMyUnitClick(event:ItemClickEvent):void
 			{
 				var unit:Unit = event.currentTarget.selectedItem;
+				unit.currentCaseUID = (unit.moves.getItemAt(0) as com.uralys.tribes.entities.Move).caseUID;
+				
 				mapPositioner.x = Session.MAP_WIDTH/2 
 									- Utils.getXFromCaseUID(unit.currentCaseUID) * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4) 
 									- Numbers.LAND_WIDTH/2;

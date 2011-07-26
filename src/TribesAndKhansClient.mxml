@@ -30,6 +30,7 @@
 			import com.uralys.tribes.windows.CreditsWindow;
 			import com.uralys.tribes.windows.GlobalMessageWindow;
 			import com.uralys.tribes.windows.LoginWindow;
+			import com.uralys.tribes.windows.PlayerProfileWindow;
 			
 			import mx.core.FlexGlobals;
 			import mx.managers.PopUpManager;
@@ -187,6 +188,20 @@
 					
 				PopUpManager.addPopUp(boardsWindow, this, false);
 				PopUpManager.centerPopUp(boardsWindow);
+			}
+			
+			//-----------------------------------------------------------------------//
+
+			public var playerProfileWindow:PlayerProfileWindow = new PlayerProfileWindow();
+			public function openPlayerProfileWindow(playerUID:String):void 
+			{
+				playerProfileWindow.playerUID = playerUID;
+				playerProfileWindow.closeWindow();
+					
+				PopUpManager.addPopUp(playerProfileWindow, this, false);
+				PopUpManager.centerPopUp(playerProfileWindow);
+				
+				playerProfileWindow.refresh();
 			}
 			
 			//-----------------------------------------------------------------------//

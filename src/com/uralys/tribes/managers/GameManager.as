@@ -209,7 +209,21 @@ package com.uralys.tribes.managers {
 		
 		//-------------------------------------------------------------------------//
 		
+		public function getPlayer(playerUID:String):void
+		{
+			Session.WAIT_FOR_SERVER = true;
+			var gameWrapper:RemoteObject = getGameWrapper();
+			gameWrapper.getPlayer.addEventListener("result", receivedPlayer);
+			gameWrapper.getPlayer(playerUID);
+		}
 		
+		public function receivedPlayer(event:ResultEvent):void
+		{
+			Session.WAIT_FOR_SERVER = false;
+			Session.playerLoaded = event.result as Player;
+		}
+		
+		//-------------------------------------------------------------------------//
 		
 		public function createUnit(unit:Unit, cityUID):void
 		{

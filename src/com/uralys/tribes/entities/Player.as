@@ -21,11 +21,25 @@ package com.uralys.tribes.entities
 		private var _nbCities:int;
 		private var _nbArmies:int;
 		private var _nbPopulation:int;
+
+		private var _profile:String;
 		
+		//-------------------------------------------------------//
+
 		public function Player(){}
 
 		//-------------------------------------------------------//
 		
+		public function get profile():String
+		{
+			return _profile;
+		}
+
+		public function set profile(value:String):void
+		{
+			_profile = value;
+		}
+
 		public function get musicOn():Boolean
 		{
 			return _musicOn;

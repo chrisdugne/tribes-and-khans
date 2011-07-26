@@ -17,7 +17,7 @@ package com.uralys.tribes.commons
 
 		//=====================================================//
 		
-		[Bindable] public static var VERSION:String = "1.1.82.4";
+		[Bindable] public static var VERSION:String = "1.1.82.5";
 		[Bindable] public static var LOGGED_IN:Boolean = false; 
 		[Bindable] public static var CONNECTED_TO_FACEBOOK:Boolean = false;
 		
@@ -44,6 +44,7 @@ package com.uralys.tribes.commons
 		
 		[Bindable] public static var uralysProfile:UralysProfile;
 		[Bindable] public static var player:Player;
+		[Bindable] public static var playerLoaded:Player; // le dernier joueur dont on a charge le profil TAK
 		
 		//=====================================================//
 

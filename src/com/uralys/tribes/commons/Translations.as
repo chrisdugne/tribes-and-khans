@@ -555,6 +555,12 @@ public class Translations{
 									"Cities"]);
 
 	[Bindable]
+	public static var UNITS:ArrayCollection = new ArrayCollection(
+									["Unités",
+									"Units",
+									"Units"]);
+
+	[Bindable]
 	public static var CITY:ArrayCollection = new ArrayCollection(
 									["Ville",
 									"City",

@@ -51,6 +51,9 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		
 		try{
+			// il peut arriver qu'il y ait un probleme dans le getPlayer
+			// dans ce cas Flex demande un createPlayer
+			// on verifie ici que le player n'existe pas pour ne pas l'ecraser si il existe.
 			PlayerDTO playerDTOinDatastore = pm.getObjectById(PlayerDTO.class, uralysUID);
 			if(playerDTOinDatastore != null)
 				return uralysUID;

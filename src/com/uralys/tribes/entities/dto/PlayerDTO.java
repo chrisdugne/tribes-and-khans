@@ -10,6 +10,7 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import com.google.appengine.api.datastore.Text;
 import com.uralys.tribes.dao.impl.UniversalDAO;
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
@@ -43,6 +44,8 @@ public class PlayerDTO {
 	@Persistent private Integer nbPopulation;
 	@Persistent private Integer nbCities;
 	@Persistent private Integer nbArmies;
+
+	@Persistent private Text profile;
 	
 	//-----------------------------------------------------------------------------------//
 
@@ -148,9 +151,15 @@ public class PlayerDTO {
 	public void setReadMessages(List<String> readMessages) {
 		this.readMessages = readMessages;
 	}
+	public Text getProfile() {
+		return profile;
+	}
+	public void setProfile(Text profil) {
+		this.profile = profil;
+	}
 	
 	//-----------------------------------------------------------------------------------//
-
+	
 	public List<UnitDTO> getUnits() {
 		return UniversalDAO.getInstance().getListDTO(unitUIDs, UnitDTO.class);		
 	}

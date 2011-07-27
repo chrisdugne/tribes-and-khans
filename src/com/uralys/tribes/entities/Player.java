@@ -22,6 +22,8 @@ public class Player
 	private Integer nbPopulation;
 	private Integer nbCities;
 	private Integer nbArmies;
+
+	private String profile;
 	
 	//-----------------------------------------------------------------------------------//
 
@@ -102,6 +104,12 @@ public class Player
 	}
 	public void setLastStep(long lastStep) {
 		this.lastStep = lastStep;
+	}
+	public void setProfile(String profile) {
+		this.profile = profile;
+	}
+	public String getProfile() {
+		return profile;
 	}
 	
 	

@@ -73,6 +73,8 @@ public class EntitiesConverter {
 		
 		if(!requireFullData)
 			return player;
+
+		player.setProfile(playerDTO.getProfile().toString());
 			
 		// -----------------------------------------------------------------------------------//
 

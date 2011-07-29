@@ -28,6 +28,7 @@ import com.uralys.tribes.entities.dto.MoveDTO;
 import com.uralys.tribes.entities.dto.PlayerDTO;
 import com.uralys.tribes.entities.dto.SmithDTO;
 import com.uralys.tribes.entities.dto.UnitDTO;
+import com.uralys.utils.Utils;
 
 public class EntitiesConverter {
 
@@ -47,8 +48,14 @@ public class EntitiesConverter {
 		move.setUnitUID(moveDTO.getUnitUID());
 		move.setValue(moveDTO.getValue());
 
-		if(requireLinkedGathering)
-			move.setGathering(convertGatheringDTO(moveDTO.getGathering()));
+		if(requireLinkedGathering){
+			try {
+				move.setGathering(convertGatheringDTO(moveDTO.getGathering()));
+			} catch (Exception e) {
+				Utils.print("LOADCASES : move.getGathering DOES NOT EXIST | gathering " + moveDTO.getGatheringUID());
+			}
+			
+		}
 
 		return move;
 	}
@@ -74,7 +81,7 @@ public class EntitiesConverter {
 		if(!requireFullData)
 			return player;
 
-		player.setProfile(playerDTO.getProfile().toString());
+		//player.setProfile(playerDTO.getProfile().toString());
 			
 		// -----------------------------------------------------------------------------------//
 

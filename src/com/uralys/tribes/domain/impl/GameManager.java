@@ -1053,7 +1053,6 @@ public class GameManager implements IGameManager {
 			if(debug)Utils.print("found a gathering expected !");
 			Gathering gatheringExpected = EntitiesConverter.convertGatheringDTO(gameDao.getGathering(unit.getGatheringUIDExpected()));
 			if(debug)Utils.print("gathering : " + gatheringExpected.getGatheringUID());
-			if(debug)Utils.print("1");
 			
 			if(gatheringExpected.getUnitUIDs().size() == 1){
 				// ca arrive... a voir pourquoi, mais il y reste parfois un gatheringExpected alors que l'unité n'en a pas finalement
@@ -1078,7 +1077,6 @@ public class GameManager implements IGameManager {
 					if(debug)Utils.print("found the move linked with this gathering : " + movesExpected.get(0).getMoveUID());
 					movesExpected.get(0).setTimeTo(-1);
 				}
-				if(debug)Utils.print("2");
 
 				Unit unitToReplace;
 				if(gatheringExpected.getUnitUIDs().get(0).equals(unit.getUnitUID()))
@@ -1086,14 +1084,10 @@ public class GameManager implements IGameManager {
 				else
 					unitToReplace = getUnit(gatheringExpected.getUnitUIDs().get(0), datacontainer, true);
 
-				if(debug)Utils.print("3");
-				
 				unitToReplace.setEndTime(-1);
 				unitToReplace.setGatheringUIDExpected(null);
 				updateUnit(unitToReplace, null, false);
 
-				if(debug)Utils.print("4");
-				
 				Unit newUnit = getUnit(gatheringExpected.getNewUnitUID(), datacontainer);
 				if(newUnit != null){
 					newUnit.setEndTime(1);
@@ -1103,34 +1097,29 @@ public class GameManager implements IGameManager {
 					gameDao.deleteMoves(newUnit.getUnitUID());
 				}
 				
-				if(debug)Utils.print("5");
-				
 				if(debug)Utils.print("unitToReplace : " + unitToReplace.getUnitUID());
 				unitsToReplace.add(unitToReplace);
 
-				if(debug)Utils.print("6");
 			}
 			
 		}
-		if(debug)Utils.print("7");
 		
 		// on degage le challenger(cette unité) de la case finale calculée precedemment pour cette unité
+		// degage le challenger aussi pour la case de depart
 		// on supprime la prise de la ville s'il y en avait une d'enregistrée
+		gameDao.resetChallenger(movesExpected.get(0).getCaseUID());
 		gameDao.resetChallenger(unit.getFinalCaseUIDExpected());
 
-		if(debug)Utils.print("8");
 
 		// on supprime tous les moves (+ gathering, + case.recordedMove, + unit.move)
 		gameDao.deleteMoves(unit.getUnitUID());
 
-		if(debug)Utils.print("9");
 
 		unit.setMoves(new ArrayList<Move>());
 		unit.setEndTime(-1);
 		unit.setGatheringUIDExpected(null);
 		updateUnit(unit, null, false);
 
-		if(debug)Utils.print("10");
 
 		return unitsToReplace;
 	}

@@ -284,20 +284,24 @@ public class EntitiesConverter {
 					UnitDTO newUnit = (UnitDTO) UniversalDAO.getInstance().getObjectDTO(gathering.getNewUnitUID(), UnitDTO.class);
 					
 					if(newUnit != null){
-						Move moveToAdd = convertMoveDTO(newUnit.getMoves().get(0), requireLinkedGatherings);
-						
-						int indexOfTheMoveToAdd = 0;
-						for(Move moveRecorded : moves){
-							indexOfTheMoveToAdd++;
-							if(moveRecorded.getTimeTo() == moveToAdd.getTimeFrom()){
-								break;
+						// il arrive qu'il y ait des unit qui nont pas de move...
+						// dans ce cas bug : l'armee sera supprimee par flex lors de la prochaine connexion du joueur.
+						if(newUnit.getMoves().size() != 0){
+							Move moveToAdd = convertMoveDTO(newUnit.getMoves().get(0), requireLinkedGatherings);
+							
+							int indexOfTheMoveToAdd = 0;
+							for(Move moveRecorded : moves){
+								indexOfTheMoveToAdd++;
+								if(moveRecorded.getTimeTo() == moveToAdd.getTimeFrom()){
+									break;
+								}
 							}
+							
+							if(indexOfTheMoveToAdd < moves.size())
+								moveToAdd.setTimeTo(moves.get(indexOfTheMoveToAdd).getTimeFrom());
+							
+							moves.add(indexOfTheMoveToAdd, moveToAdd);					
 						}
-						
-						if(indexOfTheMoveToAdd < moves.size())
-							moveToAdd.setTimeTo(moves.get(indexOfTheMoveToAdd).getTimeFrom());
-						
-						moves.add(indexOfTheMoveToAdd, moveToAdd);					
 					}
 					//else : pas de newUnit pour ce gathering => il y a eu un conflit qui se termine en DRAW : autodestruction des 2 armees
 				}

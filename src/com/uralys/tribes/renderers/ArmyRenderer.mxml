@@ -4,7 +4,7 @@
 				xmlns:mx="library://ns.adobe.com/flex/mx" 
 				useHandCursor="true"
 				buttonMode="true"
-				contentBackgroundAlpha="0">
+				contentBackgroundAlpha="0" xmlns:renderers="com.uralys.tribes.renderers.*">
 	
 	<s:states>
 		<s:State name="normal" />
@@ -53,12 +53,7 @@
 				<s:SolidColor color="{army.ownerStatus == Unit.PLAYER ? colorPlayer : colorEnnemy}" alpha="0.4"/>
 			</s:fill>
 		</s:Rect>
-		<s:HGroup width="100%">
-			<s:Label color="#FFFFFF" 
-					 left="20" 
-					 verticalCenter="2"
-					 text="{Translations.ARMY.getItemAt(Session.LANGUAGE)} {army.status == Unit.TO_BE_CREATED || army.isModified ? Translations.NOT_VALIDATED.getItemAt(Session.LANGUAGE) : ('('+army.player.name+')')}"/>
-		</s:HGroup>
+		<renderers:PlayerName player="{army.player}"/>
 		<s:HGroup width="100%"
 				  y="30"
 				  visible="{army.ownerStatus == Unit.PLAYER}">

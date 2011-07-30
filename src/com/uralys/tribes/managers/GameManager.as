@@ -321,6 +321,7 @@ package com.uralys.tribes.managers {
 			trace("unit.endTime : " + unit.endTime);
 			trace("now : " + now);
 			
+			
 
 			if(unit.endTime != -1 && unit.endTime < now)
 			{
@@ -336,6 +337,12 @@ package com.uralys.tribes.managers {
 				return false;
 			}
 
+			if(!UnitMover.getInstance().refreshMoves(unit)){
+				unit.status = Unit.DESTROYED;
+				trace("bug ! endTime etait != -1 et pourtant on a une Unit.DESTROYED (la case n'e contient pas de move pour cette unit, car il n'y a plus de move pour cette unit !)");
+				return false;
+			}
+				
 			
 			if(unit.type == 1)
 			{
@@ -354,7 +361,6 @@ package com.uralys.tribes.managers {
 				}
 			}
 
-			UnitMover.getInstance().refreshMoves(unit);
 
 			unit.ownerStatus = Unit.PLAYER;
 			unit.isModified = false;	

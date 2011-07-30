@@ -39,6 +39,7 @@ package com.uralys.tribes.core
 	
 		public function refreshTimers():void
 		{
+			trace("refreshTimers for " + Session.allUnits.length); 
 			for each(var timer:Timer in timers.keySet()){
 				timer.stop();
 			}
@@ -193,34 +194,51 @@ package com.uralys.tribes.core
 
 		/*
 		 * supprime les moves perimes de la liste
+		 *
+		 * return false si l'unité devait en fait etre detruite 
+		 * (=> dans le cas du bug ou endTime = -1 mais pas de move avec timeTo = -1 et finalcase ne contient pas le move)
 		 */
-		public function refreshMoves(unit:Unit)
+		public function refreshMoves(unit:Unit):Boolean
 		{
+			trace("refreshMoves : " + unit.moves.length + " moves");
 			// hack ici arrive que des armees n'ont pas de move..
-			// a priori elles doivent encore exister, donc dans ce cas on leur rajoute un move sur la case courante
-			// peut etre qu'au contraire il faut supprimer la unit xD
-			// a surveiller !!!
+			// donc elles ne devraient pas apparaitre ici, leur endTime est faux ! (il ne devrait pas etre à -1)
 			if(unit.moves.length == 0){
-				var move:Move = new Move();
-				move.initNewMove(unit.unitUID, Utils.getXFromCaseUID(unit.finalCaseUIDExpected), Utils.getYFromCaseUID(unit.finalCaseUIDExpected));
-				unit.moves.addItem(move);
+				trace("no moves !!!bug : unit.endTime ne devrait pas etre à -1");
+				trace("donc cette armee aurait du etre destroyed");
+				return false;
 			}
 			
-			
-			var nbIndexesToRemove:int = -1;
+			var numOfLastIndexToRemove:int = -1;
 			var now:Number = new Date().getTime();
 			
-			for each(var move:Move in unit.moves){
+			for each(var move:Move in unit.moves)
+			{
+				trace("checking move : " + move.moveUID);
 				if(now > move.timeTo && move.timeTo != -1)
-					nbIndexesToRemove++;
+					numOfLastIndexToRemove++;
 				else
 					break;
 			}
 			
-			for(var i:int = 0; i <= nbIndexesToRemove; i++)
+			if(numOfLastIndexToRemove == (unit.moves.length-1)){
+				trace("on va supprimer tous les moves");
+				trace("donc le dernier n'a pas de timeTo à -1");
+				trace("donc cette armee aurait du etre destroyed");
+				return false;
+			}
+				
+				
+			for(var i:int = 0; i <= numOfLastIndexToRemove; i++)
 				unit.moves.removeItemAt(0);
 			
+			
+			trace("nbMoves remaining : " + unit.moves.length);
 			unit.currentCaseUID = (unit.moves.getItemAt(0) as Move).caseUID;
+			
+			trace("unit.currentCaseUID : " + unit.currentCaseUID);
+			trace("refreshMoves DONE");
+			return true;
 		}
 
 		public function resetPendingMoves(unit:Unit)

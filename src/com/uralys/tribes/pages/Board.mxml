@@ -195,6 +195,9 @@
 			{
 				var unitUIDsToDelete:ArrayCollection = new ArrayCollection();
 				var uidsToRemove:ArrayCollection = new ArrayCollection();
+				
+				trace("refreshUnits : " + Session.player.units.length);
+				
 				for each(var unit:Unit in Session.player.units)
 				{
 					var unitIsPrepared:Boolean = GameManager.getInstance().prepareUnitForClientSide(unit);
@@ -208,9 +211,6 @@
 						}
 						
 						uidsToRemove.addItem(unit.unitUID);
-					}
-					else{
-						trace(ObjectUtil.toString(unit));
 					}
 				}
 				
@@ -870,7 +870,7 @@
 					  visible="{Session.player.playerUID == Session.CURRENT_CASE_SELECTED.landOwner.playerUID}"/>
 			</s:HGroup>
 			<s:HGroup>
-				<s:Label text="{Translations.PLAYER.getItemAt(Session.LANGUAGE)} : {Session.player.playerUID == Session.CURRENT_CASE_SELECTED.landOwner.playerUID ? Session.player.name : Session.CURRENT_CASE_SELECTED.landOwner.name}"/>
+				<renderers:PlayerName player="{Session.player.playerUID == Session.CURRENT_CASE_SELECTED.landOwner.playerUID ? Session.player : Session.CURRENT_CASE_SELECTED.landOwner}"/>
 				<mx:Image source="{ImageContainer.getImage(ImageContainer.EDIT)}"
 					  click="openWriteMessage()"
 					  visible="{Session.player.playerUID != Session.CURRENT_CASE_SELECTED.landOwner.playerUID}"/>

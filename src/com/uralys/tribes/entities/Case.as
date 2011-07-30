@@ -218,7 +218,10 @@ package com.uralys.tribes.entities
 					}
 					
 					if(unit.ownerStatus == Unit.PLAYER && unit.status == Unit.FREE){
-						pawn.timeTo = move.timeTo;
+						// garder en tete qu'il y a un seul pion de visible
+						// donc si il y a marchand et armee, on affiche la barre qui a le plus petit temps
+						if(pawn.timeTo == -1 || pawn.timeTo > move.timeTo)
+							pawn.timeTo = move.timeTo;
 					}
 					
 					unit.isModified = false;

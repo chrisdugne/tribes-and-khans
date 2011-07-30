@@ -200,6 +200,7 @@
 					
 				PopUpManager.addPopUp(playerProfileWindow, this, false);
 				PopUpManager.centerPopUp(playerProfileWindow);
+				playerProfileWindow.x = 5;
 				
 				playerProfileWindow.refresh();
 			}

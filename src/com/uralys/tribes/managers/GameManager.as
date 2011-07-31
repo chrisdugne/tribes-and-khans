@@ -552,6 +552,7 @@ package com.uralys.tribes.managers {
 			
 			city.refreshUnemployed();
 			city.peopleCreatingWheat += city.unemployed;
+			if(city.peopleCreatingWheat < 0)city.peopleCreatingWheat = 0; // ca arrive que les unemployed soient plus nombreux que population à la connexion...on force au moins le 0 ca fera toujours moins faux que du negatif...
 			city.refreshUnemployed();
 			
 			// calcul des resources gagnees avec le precedent choix de peopleCreatingXXX

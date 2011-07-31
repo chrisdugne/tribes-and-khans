@@ -16,7 +16,7 @@ public class Utils
 		
 		// return 1-i or 0
 		public static function random(i:int):int {
-			if(i == 0)
+			if(i <= 0)
 				return 0;
 			
 			var rand:int = Math.round(Math.random()*i);		

@@ -16,7 +16,7 @@ public interface IGameService {
 	public Player getPlayer(String uralysUID);
 
 	public void savePlayer(Player player);
-	public DataContainer4UnitSaved buildCity(City city, Unit merchant, String uralysUID);
+	public void buildCity(City city, Unit merchant, String uralysUID);
 	public void saveCity(City city);
 	public void deleteUnit(String uralysUID, Unit unit);
 	public void deleteUnits(String uralysUID, List<String> unitsUID);

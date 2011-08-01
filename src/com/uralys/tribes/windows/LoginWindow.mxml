@@ -15,9 +15,6 @@
 	
 	<fx:Script>
 		<![CDATA[
-			//-----------------------------------------------------------------//
-			
-			import mx.managers.PopUpManager;
 			import com.uralys.tribes.commons.Names;
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;
@@ -28,6 +25,8 @@
 			
 			import mx.controls.SWFLoader;
 			import mx.core.FlexGlobals;
+			import mx.managers.PopUpManager;
+			import mx.utils.StringUtil;
 
 			//-----------------------------------------------------------------//
 			
@@ -53,7 +52,7 @@
 					sharedObject.data.lastEmail = emailInput.text;
 					sharedObject.data.lastPassword = passwordInput.text;
 					
-					AccountManager.getInstance().login(emailInput.text, SHA1.encrypt(passwordInput.text));
+					AccountManager.getInstance().login(emailInput.text.toLowerCase(), SHA1.encrypt(passwordInput.text));
 				}
 				else
 					Session.WAIT_FOR_CONNECTION = false;
@@ -66,7 +65,7 @@
 					sharedObject.data.lastEmail = emailInput.text;
 					sharedObject.data.lastPassword = passwordInput.text;
 					
-					AccountManager.getInstance().register(emailInput.text, SHA1.encrypt(passwordInput.text));
+					AccountManager.getInstance().register(emailInput.text.toLowerCase(), SHA1.encrypt(passwordInput.text));
 				}
 				else
 					Session.WAIT_FOR_CONNECTION = false;

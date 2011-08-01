@@ -704,11 +704,9 @@ package com.uralys.tribes.managers {
 		{
 			refreshCitySmithsAndEquipments(city, false);
 			
-			currentUnitBeingSaved = merchant;
 			cityBeingSaved = city;
 			
 			var gameWrapper:RemoteObject = getGameWrapper();
-			gameWrapper.buildCity.addEventListener("result", unitSaved);
 			gameWrapper.buildCity(city, merchant, Session.player.uralysUID);	
 		}
 		
@@ -894,7 +892,6 @@ package com.uralys.tribes.managers {
 			
 			if(event.result != null)
 			{
-
 				var casesAltered:ArrayCollection = event.result.casesAltered;
 				var unitsAltered:ArrayCollection = event.result.unitsAltered;
 

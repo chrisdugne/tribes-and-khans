@@ -295,9 +295,15 @@ package com.uralys.tribes.entities
 		//==========================================================================//
 
 		public function mayBuildAcity():Boolean{
-			trace('mayBuildAcity ? ' + type);
+			trace('mayBuildAcity ? ' + (type == 2 
+				&& size >= Numbers.CITY_MERCHANT_BASE
+				&& wheat >= Numbers.CITY_WHEAT_BASE_PRICE + size
+				&& wood >= Numbers.CITY_WOOD_BASE_PRICE + size * 10
+				&& iron >= Numbers.CITY_IRON_BASE_PRICE + size * 10
+				&& gold >= Numbers.CITY_GOLD_BASE_PRICE));
+			
 			return type == 2 
-				&& size >= 250
+				&& size >= Numbers.CITY_MERCHANT_BASE
 				&& wheat >= Numbers.CITY_WHEAT_BASE_PRICE + size
 				&& wood >= Numbers.CITY_WOOD_BASE_PRICE + size * 10
 				&& iron >= Numbers.CITY_IRON_BASE_PRICE + size * 10

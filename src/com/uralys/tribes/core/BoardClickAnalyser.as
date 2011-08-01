@@ -55,7 +55,9 @@ package com.uralys.tribes.core
 				thereIsACity = true;
 
 			if(_case.merchants != null
-			&& _case.merchants.mayBuildAcity())
+			&& _case.merchants.mayBuildAcity()
+			&& _case.landOwner != null
+			&& _case.landOwner.playerUID == Session.player.playerUID)
 				thereIsAMerchantThatCanBuildACityHere = true;
 			
 			if(thereIsACity)

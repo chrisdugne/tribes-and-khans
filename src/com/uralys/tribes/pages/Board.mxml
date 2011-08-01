@@ -527,6 +527,8 @@
 			
 			private function buildCity():void
 			{
+				trace("Build a city | " + Session.CURRENT_CASE_SELECTED.caseUID);
+				
 				var city:City = new City();
 				city.cityUID = "new";
 				city.name = "Ville en construction";
@@ -568,9 +570,12 @@
 				selectedUnit.bows = 0;
 				selectedUnit.swords = 0;
 				selectedUnit.endTime = 1;
-				selectedUnit.status = Unit.DESTROYED;
 				
-				Session.map[city.x][city.y].forceRefresh();
+				try{
+					Session.CURRENT_CASE_SELECTED.merchants = null;
+					Session.CURRENT_CASE_SELECTED.forceRefresh();
+				}
+				catch(e:Error){}
 				
 				trace("build city on ["+city.x+"]["+city.y+"]");
 				GameManager.getInstance().buildCity(city, selectedUnit);

@@ -22,6 +22,7 @@
 			import com.uralys.tribes.managers.GameManager;
 			
 			import mx.controls.SWFLoader;
+			import mx.core.FlexGlobals;
 			import mx.events.ItemClickEvent;
 			import mx.managers.PopUpManager;
 
@@ -44,31 +45,28 @@
 			public function refresh():void{
 				GameManager.getInstance().getPlayer(playerUID);
 			}
-			
-			//-----------------------------------------------------------//
-			
-			protected function initCitiesList():void{
-				citiesList.addEventListener(ItemClickEvent.ITEM_CLICK, onCityClick);
+
+			//-----------------------------------------------------------------//
+
+			public var editProfileWindow:EditPlayerProfileWindow = new EditPlayerProfileWindow();
+			private function openEditProfile():void{
+				editProfileWindow.closeWindow();
+					
+				PopUpManager.addPopUp(editProfileWindow, FlexGlobals.topLevelApplication.window, true);
+				PopUpManager.centerPopUp(editProfileWindow);
 			}
 			
-			protected function initUnitsList():void{
-				unitsList.addEventListener(ItemClickEvent.ITEM_CLICK, onUnitClick);
-			}			
+			//-------------------------------------------------------------------------//
 			
-			//---------------------------------------------------------------------------------------------------//
-			// click sur une ville dans la barre laterale
-			protected function onCityClick(event:ItemClickEvent):void
+			public var messageWindow:MessageWindow = new MessageWindow();
+			private function openWriteMessage():void
 			{
-				if(Session.LOGGED_IN)
-					Session.board.onCityClick(event);
+				messageWindow.closeWindow(); 
+				
+				PopUpManager.addPopUp(messageWindow, FlexGlobals.topLevelApplication.window, false);
+				PopUpManager.centerPopUp(messageWindow);
 			}
 			
-			// click sur une unité dans la barre laterale
-			protected function onUnitClick(event:ItemClickEvent):void
-			{
-				if(Session.LOGGED_IN)
-					Session.board.onMyUnitClick(event);
-			}
 		]]>
 	</fx:Script>
 	
@@ -77,44 +75,28 @@
 		<s:VGroup horizontalAlign="center" top="5" width="100%">
 			<mx:SWFLoader source="{ImageContainer.LOADING}" 
 						  visible="{Session.WAIT_FOR_SERVER}"/>
-			<s:Label text="{Session.playerLoaded.name}" color="#ffffff"/>
+			<s:HGroup>
+				<s:Label text="{Session.playerLoaded.name}" color="#ffffff" fontSize="26"/>
+				<mx:Image source="{ImageContainer.getImage(ImageContainer.EDIT_WHITE)}"
+						  click="openWriteMessage()"
+						  visible="{Session.LOGGED_IN &amp;&amp; Session.player.playerUID != Session.playerLoaded.playerUID}"
+						  includeInLayout="{Session.LOGGED_IN &amp;&amp; Session.player.playerUID != Session.playerLoaded.playerUID}"/>
+			</s:HGroup>
+			
+			<s:Label text="{Translations.CITIES.getItemAt(Session.LANGUAGE)} : {Session.playerLoaded.nbCities}" color="#ffffff"/>
+			<s:Label text="{Translations.ARMIES.getItemAt(Session.LANGUAGE)} : {Session.playerLoaded.nbArmies}" color="#ffffff"/>
+			<s:Label text="{Translations.LANDS.getItemAt(Session.LANGUAGE)} : {Session.playerLoaded.nbLands}" color="#ffffff"/>
+			<s:Label text="{Translations.POPULATION.getItemAt(Session.LANGUAGE)} : {Session.playerLoaded.nbPopulation}" color="#ffffff"/>
+			<s:HGroup>
+				<s:Label text="{Translations.PROFILE.getItemAt(Session.LANGUAGE)}" color="#ffffff"/>
+				<mx:Image source="{ImageContainer.getImage(ImageContainer.EDIT_WHITE)}"
+						  click="openEditProfile()"
+						  visible="{Session.LOGGED_IN &amp;&amp; Session.player.playerUID == Session.playerLoaded.playerUID}"
+						  includeInLayout="{Session.LOGGED_IN &amp;&amp; Session.player.playerUID == Session.playerLoaded.playerUID}"
+						  />
+			</s:HGroup>
 			<s:Label text="{Session.playerLoaded.profile}" color="#ffffff"/>
 			
-			<s:Label text="{Translations.CITIES.getItemAt(Session.LANGUAGE)}"
-					 color="#ffffff"/>
-			<s:Scroller height="200">
-				<s:Group>
-					<s:List id="citiesList"
-							itemRenderer="com.uralys.tribes.renderers.CityListRenderer"
-							dataProvider="{Session.playerLoaded.cities}"
-							borderVisible="false"
-							width="240"
-							contentBackgroundAlpha="0"
-							creationComplete="initCitiesList()">
-						<s:layout>
-							<s:VerticalLayout gap="1" useVirtualLayout="true" />
-						</s:layout>
-					</s:List>
-				</s:Group>
-			</s:Scroller>
-			<s:Label text="{Translations.UNITS.getItemAt(Session.LANGUAGE)}"
-					 visible="{Session.player.units.length > 0}"
-					 color="#ffffff"/>
-			<s:Scroller height="200">
-				<s:Group>
-					<s:List id="unitsList"
-							itemRenderer="com.uralys.tribes.renderers.UnitListRenderer"
-							dataProvider="{Session.playerLoaded.units}"
-							borderVisible="false"
-							width="240"
-							contentBackgroundAlpha="0"
-							creationComplete="initUnitsList()">
-						<s:layout>
-							<s:VerticalLayout gap="1" useVirtualLayout="true" />
-						</s:layout>
-					</s:List>
-				</s:Group>
-			</s:Scroller>
 		</s:VGroup>
 		
 	</s:Group>

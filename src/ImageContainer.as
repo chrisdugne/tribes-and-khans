@@ -2,6 +2,7 @@ package
 {
 	import flash.display.Bitmap;
 	import flash.display.Loader;
+	import flash.events.Event;
 	import flash.net.URLRequest;
 	
 	import mx.collections.ArrayCollection;
@@ -177,6 +178,7 @@ public final class ImageContainer
 	[Bindable] public static var FONTS:Bitmap;
 	[Bindable] public static var URALYS_MINI_LOGO:Bitmap;
 	[Bindable] public static var SOUNDCLOUD:Bitmap;
+	[Bindable] public static var EDIT_WHITE:Bitmap;
 
 	//   ======================================================================//
 
@@ -229,7 +231,8 @@ public final class ImageContainer
 		 "webresources/images/logos/icons.png",
 		 "webresources/images/logos/fonts.png",
 		 "webresources/images/logos/uralysminilogo.png",
-		 "webresources/images/logos/soundcloud.png"
+		 "webresources/images/logos/soundcloud.png",
+		 "webresources/images/edit_white.png"
 		 
 		 ]);
 	
@@ -362,11 +365,14 @@ public final class ImageContainer
 			case 36:
 				SOUNDCLOUD = event.currentTarget.content;
 				break;
+			case 37:
+				EDIT_WHITE = event.currentTarget.content;
+				break;
 		}
 		
 		currentImage++;
 		
-		if(currentImage < 37)
+		if(currentImage < 38)
 			loadNextImage();
 		else
 			IMAGES_LOADED = true;

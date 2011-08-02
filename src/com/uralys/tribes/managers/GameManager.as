@@ -206,7 +206,13 @@ package com.uralys.tribes.managers {
 			}
 		}
 		
+		//-------------------------------------------------------------------------//
 		
+		public function updatePlayerProfile():void{
+			var gameWrapper:RemoteObject = getGameWrapper();
+			gameWrapper.updatePlayerProfile(Session.player.playerUID, Session.playerLoaded.profile);
+		}
+
 		//-------------------------------------------------------------------------//
 		
 		public function getPlayer(playerUID:String):void

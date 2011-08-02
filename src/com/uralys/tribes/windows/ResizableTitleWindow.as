@@ -44,6 +44,8 @@ package com.uralys.tribes.windows
 		//  Properties 
 		//
 		//--------------------------------------------------------------------------
+
+		public var acceptResize:Boolean = true;
 		
 		//----------------------------------
 		//  Resize Handle
@@ -122,6 +124,9 @@ package com.uralys.tribes.windows
 		 */
 		protected function resizeHandle_mouseMoveHandler(event:MouseEvent):void
 		{
+			if(!acceptResize)
+				return;
+			
 			// during a resize, only the TitleWindow should get mouse move events
 			// we don't check the target since this is on the systemManager and the target
 			// changes a lot -- but this listener only exists during a resize.

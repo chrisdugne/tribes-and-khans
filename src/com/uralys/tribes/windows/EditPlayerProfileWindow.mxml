@@ -5,11 +5,12 @@
 			   xmlns:windows="com.uralys.tribes.windows.*"
 			   skinClass="com.uralys.tribes.skins.WindowSkin"
 			   close="{closeWindow()}"
-			   width="440"
-			   height="420"
+			   width="340"
+			   height="410"
 			   backgroundAlpha="0.7"
 			   backgroundColor="#000000"
 			   cornerRadius="15"
+			   acceptResize="false"
 			   >
 	
 	
@@ -17,29 +18,23 @@
 		<![CDATA[
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;
+			import com.uralys.tribes.managers.AccountManager;
+			import com.uralys.tribes.managers.GameManager;
 			
-			import mx.core.FlexGlobals;
 			import mx.managers.PopUpManager;
 
 			//-----------------------------------------------------------------//
 
 			public function closeWindow():void{
 				PopUpManager.removePopUp(this);
+				GameManager.getInstance().updatePlayerProfile();
 			}
+			
 			//-----------------------------------------------------------------//
-			
-			protected function send():void
-			{
-				trace("sending to player " + Session.playerLoaded.playerUID);
-				trace(message.text);
-				FlexGlobals.topLevelApplication.message("Bientot operationnel !!!");
-			}
-			
 		]]>
 	</fx:Script>
 	
 	<s:Group width="100%" height="100%">
-		
 		<s:VGroup width="100%" height="100%"
 				  paddingTop="10"
 				  paddingLeft="10"
@@ -48,12 +43,13 @@
 				  verticalAlign="middle"
 				  horizontalAlign="center">
 			
-			<s:Label text="{Translations.WRITE_MESSAGE.getItemAt(Session.LANGUAGE)} {Session.playerLoaded.name} ({400 - message.text.length})" color="#ffffff"/>
-			
-			<s:TextArea id="message" maxChars="400"
-						width="100%"
-						height="100%"/>
-			<s:Button label="Send" click="send()"/>
+			<s:Label text="{Translations.EDIT_PROFILE.getItemAt(Session.LANGUAGE)}" color="#ffffff"/>
+			<s:TextArea text="@{Session.playerLoaded.profile}"
+						height="330"
+						/>
+			<s:Button label="{Translations.OK.getItemAt(Session.LANGUAGE)}" 
+					  click="closeWindow()"
+					  skinClass="com.uralys.tribes.skins.CustomButtonSkin"/>
 		</s:VGroup>
 	</s:Group>
 	

@@ -175,6 +175,24 @@ public class Translations{
 									"Join a Game"]);
 
 	[Bindable]
+	public static var PROFILE:ArrayCollection = new ArrayCollection(
+									["Profil",
+									"Profile",
+									"Profile"]);
+	
+	[Bindable]
+	public static var EDIT_PROFILE:ArrayCollection = new ArrayCollection(
+									["Editez votre profil",
+									"Edit your profile",
+									"Edit your profile"]);
+
+	[Bindable]
+	public static var WRITE_MESSAGE:ArrayCollection = new ArrayCollection(
+									["Ecrire un message à ",
+									"Write a message to ",
+									"Write a message to "]);
+
+	[Bindable]
 	public static var FREE_PEOPLE:ArrayCollection = new ArrayCollection(
 									["Tout le monde travaille, libérez des travailleurs ! (50 requis)",
 									"Everybody is busy, free some workers ! (50 requested)",

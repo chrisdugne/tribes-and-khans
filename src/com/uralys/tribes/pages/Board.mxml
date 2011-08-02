@@ -14,6 +14,8 @@
 	
 	<fx:Script>
 		<![CDATA[
+			//-----------------------------------------------------------------//
+			
 			import com.uralys.tribes.commons.Numbers;
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;
@@ -611,16 +613,6 @@
 				comeBack.play();
 			}
 			
-			//-------------------------------------------------------------------------//
-			
-			public var messageWindow:MessageWindow = new MessageWindow();
-			private function openWriteMessage():void
-			{
-				messageWindow.closeWindow(); 
-				
-				PopUpManager.addPopUp(messageWindow, this, false);
-				PopUpManager.centerPopUp(messageWindow);
-			}
 //			
 //			private function saveTurn():void{
 //				
@@ -874,12 +866,7 @@
 					  click="showCityChangeName.play()"
 					  visible="{Session.player.playerUID == Session.CURRENT_CASE_SELECTED.landOwner.playerUID}"/>
 			</s:HGroup>
-			<s:HGroup>
-				<renderers:PlayerName player="{Session.player.playerUID == Session.CURRENT_CASE_SELECTED.landOwner.playerUID ? Session.player : Session.CURRENT_CASE_SELECTED.landOwner}"/>
-				<mx:Image source="{ImageContainer.getImage(ImageContainer.EDIT)}"
-					  click="openWriteMessage()"
-					  visible="{Session.player.playerUID != Session.CURRENT_CASE_SELECTED.landOwner.playerUID}"/>
-			</s:HGroup>
+			<renderers:PlayerName player="{Session.player.playerUID == Session.CURRENT_CASE_SELECTED.landOwner.playerUID ? Session.player : Session.CURRENT_CASE_SELECTED.landOwner}"/>
 			
 			<s:Button label="{Translations.ENTER_CITY.getItemAt(Session.LANGUAGE)}" 
 					  id="enterCityButton"

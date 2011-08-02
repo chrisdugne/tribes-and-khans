@@ -1,18 +1,20 @@
 package com.uralys.tribes.core
 {
 
+import com.uralys.tribes.commons.Names;
 import com.uralys.tribes.commons.Session;
 
 import flash.events.Event;
 import flash.media.Sound;
 import flash.media.SoundChannel;
 import flash.media.SoundTransform;
+import flash.net.SharedObject;
 import flash.net.URLRequest;
 
 import mx.core.FlexGlobals;
 
 /**
-The MusicPlayer manages the sounds
+	The MusicPlayer manages the sounds
 */
 public class MusicPlayer
 {		
@@ -38,14 +40,21 @@ public class MusicPlayer
 		private var channel:SoundChannel;
 		private var soundTransform:SoundTransform = new SoundTransform();
 		
-		public function initMusic():void{
+		public function initMusic():void
+		{
+			var sharedObject:SharedObject = SharedObject.getLocal(Names.SHARED_OBJECT_NAME);
+			volume = sharedObject.data.volume;
+			
+			if(isNaN(volume))
+				sharedObject.data.volume = 0.7;
+			
 			if(!music){
 				var request:URLRequest = new URLRequest("webresources/music/music1.mp3");
 	            music = new Sound();
 	            music.load(request);
 				
 				//volume = Session.player.musicOn ? 1 : 0;
-				volume = 0.7;
+				volume = sharedObject.data.volume;
 				playMusic();	
 			}
 			else{
@@ -71,6 +80,9 @@ public class MusicPlayer
 				if(Session.LOGGED_IN)
 					Session.player.musicOn = true;
 			}
+			
+			var sharedObject:SharedObject = SharedObject.getLocal(Names.SHARED_OBJECT_NAME);
+			sharedObject.data.volume = volume;
 		}
 
 		public function playMusic():void 
@@ -92,11 +104,12 @@ public class MusicPlayer
 			var pourcentageValue:int = FlexGlobals.topLevelApplication.volumeSlider.value;
 			
 			volumeRecorded = pourcentageValue/100;
-			if(volume > 0){
-				volume = pourcentageValue/100;
-				soundTransform.volume = volume;
-				channel.soundTransform = soundTransform;
-			}
+			volume = pourcentageValue/100;
+			soundTransform.volume = volume;
+			channel.soundTransform = soundTransform;
+			
+			var sharedObject:SharedObject = SharedObject.getLocal(Names.SHARED_OBJECT_NAME);
+			sharedObject.data.volume = volume;
 		}
 }
 

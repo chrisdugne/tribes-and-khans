@@ -36,4 +36,6 @@ public interface IGameService {
 	public List<Player> getLandsBoard();
 	public List<Player> getPopulationBoard(); 
 	public List<Player> getArmiesBoard();
+
+	public void updatePlayerProfile(String playerUID, String profile);
 }

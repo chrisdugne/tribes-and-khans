@@ -72,4 +72,6 @@ public interface IGameDAO {
 	public List<PlayerDTO> getLandsBoard();
 	public List<PlayerDTO> getPopulationBoard(); 
 	public List<PlayerDTO> getArmiesBoard();
+	
+	public void updatePlayerProfile(String playerUID, String profile);
 }

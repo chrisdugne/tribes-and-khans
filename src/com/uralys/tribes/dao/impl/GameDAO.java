@@ -1135,4 +1135,16 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		
 		return (List<PlayerDTO>) q.execute();
 	}
+
+	//------------------------------------------------------------------------------//
+	
+	public void updatePlayerProfile(String playerUID, String profile) 
+	{
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		PlayerDTO playerDTO = pm.getObjectById(PlayerDTO.class, playerUID);
+		
+		playerDTO.setProfile(profile);
+		
+		pm.close();
+	}
 }

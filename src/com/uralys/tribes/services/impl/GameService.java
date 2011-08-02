@@ -165,4 +165,10 @@ public class GameService implements IGameService {
 	public List<Player> getArmiesBoard(){
 		return gameManager.getArmiesBoard();
 	}
+
+	// -----------------------------------------------------------------------------------//
+	
+	public void updatePlayerProfile(String playerUID, String profile) {
+		gameManager.updatePlayerProfile(playerUID, profile);
+	}
 }

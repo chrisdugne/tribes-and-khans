@@ -362,6 +362,12 @@ public class GameManager implements IGameManager {
 	}
 	
 	//==================================================================================================//
+
+	public void updatePlayerProfile(String playerUID, String profile) {
+		gameDao.updatePlayerProfile(playerUID, profile);
+	}
+	
+	//==================================================================================================//
 	
 	/**
 	 * 02 mai 2011

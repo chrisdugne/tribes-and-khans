@@ -115,23 +115,32 @@ public class EntitiesConverter {
 
 		// -----------------------------------------------------------------------------------//
 
-		List<String> readMessages = new ArrayList<String>();
+		List<Message> readMessages = new ArrayList<Message>();
+		List<Message> newMessages = new ArrayList<Message>();
+		List<Message> archivedMessages = new ArrayList<Message>();
 		
-		for (String message : playerDTO.getReadMessages()) {
-			readMessages.add(message);
+		for (MessageDTO message : playerDTO.getMessages()) 
+		{
+			switch (message.getStatus()) 
+			{
+				case Message.UNREAD:
+					newMessages.add(convertMessageDTO(message));
+					break;
+				case Message.READ:
+					readMessages.add(convertMessageDTO(message));
+					break;
+				case Message.ARCHIVED:
+					archivedMessages.add(convertMessageDTO(message));
+					break;
+
+				default:
+					break;
+			}
 		}
 		
 		player.setReadMessages(readMessages);
-		
-		// -----------------------------------------------------------------------------------//
-
-		List<String> newMessages = new ArrayList<String>();
-		
-		for (String message : playerDTO.getNewMessages()) {
-			newMessages.add(message);
-		}
-		
 		player.setNewMessages(newMessages);
+		player.setArchivedMessages(archivedMessages);
 		
 		// -----------------------------------------------------------------------------------//
 
@@ -151,6 +160,7 @@ public class EntitiesConverter {
 		message.setSenderUID(messageDTO.getSenderUID());
 		message.setSenderName(messageDTO.getSenderName());
 		message.setStatus(messageDTO.getStatus());
+		message.setTime(messageDTO.getTime());
 		
 		return message;
 	}

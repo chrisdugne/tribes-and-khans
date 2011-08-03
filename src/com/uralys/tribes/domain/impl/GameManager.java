@@ -112,6 +112,10 @@ public class GameManager implements IGameManager {
 	
 	//==================================================================================================//
 
+	public Player getPlayerInfo(String uralysUID) {
+		return EntitiesConverter.convertPlayerDTO(gameDao.getPlayer(uralysUID), false);
+	}
+
 	public Player getPlayer(String uralysUID) {
 		return getPlayer(uralysUID, null);
 	}
@@ -365,6 +369,12 @@ public class GameManager implements IGameManager {
 
 	public void updatePlayerProfile(String playerUID, String profile) {
 		gameDao.updatePlayerProfile(playerUID, profile);
+	}
+	
+	//==================================================================================================//
+
+	public void sendMessage(String senderUID, String recipientUID, String message){
+		gameDao.sendMessage(senderUID, recipientUID, message);
 	}
 	
 	//==================================================================================================//

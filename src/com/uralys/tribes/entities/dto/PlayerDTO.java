@@ -15,6 +15,7 @@ import com.uralys.tribes.dao.impl.UniversalDAO;
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 public class PlayerDTO {
  
+	//-----------------------------------------------------------------------------------//
 
     @PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
@@ -35,8 +36,7 @@ public class PlayerDTO {
 	@Persistent private List<String> unitUIDs = new ArrayList<String>();
 	@Persistent private List<String> meetingsUIDs = new ArrayList<String>();
 
-	@Persistent private List<String> newMessages = new ArrayList<String>();
-	@Persistent private List<String> readMessages = new ArrayList<String>();
+	@Persistent private List<String> messageUIDs = new ArrayList<String>();
 	@Persistent private Long lastStep;
 
 	@Persistent private Integer nbLands; 
@@ -120,11 +120,11 @@ public class PlayerDTO {
 	public void setLastStep(Long lastStep) {
 		this.lastStep = lastStep;
 	}
-	public List<String> getNewMessages() {
-		return newMessages;
+	public List<String> getMessageUIDs() {
+		return messageUIDs;
 	}
-	public void setNewMessages(List<String> newMessages) {
-		this.newMessages = newMessages;
+	public void setMessageUIDs(List<String> messages) {
+		this.messageUIDs = messages;
 	}
 	public Integer getNbPopulation() {
 		return nbPopulation;
@@ -144,12 +144,6 @@ public class PlayerDTO {
 	public void setNbArmies(Integer nbArmies) {
 		this.nbArmies = nbArmies;
 	}
-	public List<String> getReadMessages() {
-		return readMessages;
-	}
-	public void setReadMessages(List<String> readMessages) {
-		this.readMessages = readMessages;
-	}
 	public String getProfile() {
 		return profile;
 	}
@@ -158,6 +152,10 @@ public class PlayerDTO {
 	}
 	
 	//-----------------------------------------------------------------------------------//
+	
+	public List<MessageDTO> getMessages() {
+		return UniversalDAO.getInstance().getListDTO(messageUIDs, MessageDTO.class);		
+	}
 	
 	public List<UnitDTO> getUnits() {
 		return UniversalDAO.getInstance().getListDTO(unitUIDs, UnitDTO.class);		

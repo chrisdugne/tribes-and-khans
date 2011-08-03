@@ -14,9 +14,10 @@ public interface IGameService {
 	public void changeMusicOn(String uralysUID, boolean musicOn);
 	public String createPlayer(String uralysUID, String email);
 	public Player getPlayer(String uralysUID);
+	public Player getPlayerInfo(String uralysUID);
 
 	public void savePlayer(Player player);
-	public void buildCity(City city, Unit merchant, String uralysUID);
+	public String buildCity(City city, Unit merchant, String uralysUID);
 	public void saveCity(City city);
 	public void deleteUnit(String uralysUID, Unit unit);
 	public void deleteUnits(String uralysUID, List<String> unitsUID);
@@ -38,4 +39,6 @@ public interface IGameService {
 	public List<Player> getArmiesBoard();
 
 	public void updatePlayerProfile(String playerUID, String profile);
+
+	public void sendMessage(String senderUID, String recipientUID, String message);
 }

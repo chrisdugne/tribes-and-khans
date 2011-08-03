@@ -20,6 +20,7 @@ import com.uralys.tribes.entities.dto.CityDTO;
 import com.uralys.tribes.entities.dto.EquipmentDTO;
 import com.uralys.tribes.entities.dto.GatheringDTO;
 import com.uralys.tribes.entities.dto.ItemDTO;
+import com.uralys.tribes.entities.dto.MessageDTO;
 import com.uralys.tribes.entities.dto.MoveDTO;
 import com.uralys.tribes.entities.dto.PlayerDTO;
 import com.uralys.tribes.entities.dto.ServerDataDTO;
@@ -141,6 +142,7 @@ public class DataviewerServlet extends HttpServlet {
 				" <OPTION VALUE=\"case\">CaseDTO" +
 				" <OPTION VALUE=\"move\">MoveDTO" +
 				" <OPTION VALUE=\"gathering\">GatheringDTO" +
+				" <OPTION VALUE=\"message\">MessageDTO" +
 				" <OPTION VALUE=\"item\">ItemDTO" +
 				" <OPTION VALUE=\"serverdata\">ServerDataDTO" +
 				
@@ -542,6 +544,8 @@ public class DataviewerServlet extends HttpServlet {
 			return MoveDTO.class;
 		else if(dto.equals("gathering"))
 			return GatheringDTO.class;
+		else if(dto.equals("message"))
+			return MessageDTO.class;
 		else if(dto.equals("serverdata"))
 			return ServerDataDTO.class;
 		

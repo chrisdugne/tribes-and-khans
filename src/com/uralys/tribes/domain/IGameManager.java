@@ -13,6 +13,7 @@ public interface IGameManager {
 
 	public String createPlayer(String uralysUID, String email);
 	public Player getPlayer(String uralysUID);
+	public Player getPlayerInfo(String uralysUID);
 
 	public void savePlayer(Player player);
 	public String buildCity(City city, String uralysUID);	
@@ -39,4 +40,5 @@ public interface IGameManager {
 	public List<Player> getArmiesBoard();
 	
 	public void updatePlayerProfile(String playerUID, String profile);
+	public void sendMessage(String senderUID, String recipientUID, String message);
 }

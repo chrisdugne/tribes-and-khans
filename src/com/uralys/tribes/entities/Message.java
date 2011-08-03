@@ -1,16 +1,21 @@
 package com.uralys.tribes.entities;
 
-import com.google.appengine.api.datastore.Text;
-
 public class Message {
 	
 	//-----------------------------------------------------------------------------------//
 
+	public static final int UNREAD = 1;
+	public static final int READ = 2;
+	public static final int ARCHIVED = 3;
+	
+	//-----------------------------------------------------------------------------------//
+
 	private String messageUID;
-	private Text content;
+	private String content;
 	private String senderUID;
 	private String senderName;
 	private int status;
+	private long time;
 
 	//-----------------------------------------------------------------------------------//
 
@@ -20,10 +25,10 @@ public class Message {
 	public void setMessageUID(String messageUID) {
 		this.messageUID = messageUID;
 	}
-	public Text getContent() {
+	public String getContent() {
 		return content;
 	}
-	public void setContent(Text content) {
+	public void setContent(String content) {
 		this.content = content;
 	}
 	public String getSenderUID() {
@@ -43,6 +48,12 @@ public class Message {
 	}
 	public void setStatus(int status) {
 		this.status = status;
+	}
+	public long getTime() {
+		return time;
+	}
+	public void setTime(long time) {
+		this.time = time;
 	}
 	
 	//-----------------------------------------------------------------------------------//

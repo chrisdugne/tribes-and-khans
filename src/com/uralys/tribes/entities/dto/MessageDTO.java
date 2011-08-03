@@ -7,8 +7,6 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
-import com.google.appengine.api.datastore.Text;
-
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 public class MessageDTO {
 	
@@ -23,10 +21,11 @@ public class MessageDTO {
     @Extension(vendorName="datanucleus", key="gae.pk-name", value="true")
 	private String messageUID;
 	
-	@Persistent private Text content;
+	@Persistent private String content;
 	@Persistent private String senderUID;
 	@Persistent private String senderName;
 	@Persistent private int status;
+	@Persistent private long time;
 
 	//-----------------------------------------------------------------------------------//
 
@@ -48,10 +47,10 @@ public class MessageDTO {
 	public void setMessageUID(String messageUID) {
 		this.messageUID = messageUID;
 	}
-	public Text getContent() {
+	public String getContent() {
 		return content;
 	}
-	public void setContent(Text content) {
+	public void setContent(String content) {
 		this.content = content;
 	}
 	public String getSenderUID() {
@@ -65,6 +64,12 @@ public class MessageDTO {
 	}
 	public void setKey(String key) {
 		this.key = key; 
+	}
+	public long getTime() {
+		return time;
+	}
+	public void setTime(long time) {
+		this.time = time;
 	}
 	
 	//-----------------------------------------------------------------------------------//

@@ -16,6 +16,7 @@ import com.uralys.tribes.dao.IGameDAO;
 import com.uralys.tribes.entities.Case;
 import com.uralys.tribes.entities.City;
 import com.uralys.tribes.entities.Equipment;
+import com.uralys.tribes.entities.Message;
 import com.uralys.tribes.entities.Move;
 import com.uralys.tribes.entities.Player;
 import com.uralys.tribes.entities.Unit;
@@ -25,6 +26,7 @@ import com.uralys.tribes.entities.dto.ConflictDTO;
 import com.uralys.tribes.entities.dto.EquipmentDTO;
 import com.uralys.tribes.entities.dto.GatheringDTO;
 import com.uralys.tribes.entities.dto.ItemDTO;
+import com.uralys.tribes.entities.dto.MessageDTO;
 import com.uralys.tribes.entities.dto.MoveDTO;
 import com.uralys.tribes.entities.dto.PlayerDTO;
 import com.uralys.tribes.entities.dto.ServerDataDTO;
@@ -135,7 +137,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		city.setKey(KeyFactory.keyToString(key));
 		city.setCityUID(cityUID);
 		city.setOwnerUID(playerUID);
-		city.setName("Nouvelle ville");
+		city.setName(cityFromFlex == null ? "Nouvelle ville" : cityFromFlex.getName());
 		city.setPopulation(cityFromFlex == null ? 1000 : cityFromFlex.getPopulation());
 		city.setWheat(cityFromFlex == null ? 400 : cityFromFlex.getWheat());
 		city.setWood(cityFromFlex == null ? 200 : cityFromFlex.getWood());
@@ -209,17 +211,12 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		// creation des cases autour de la ville
 
 		createOrRefreshCase(city.getX(), city.getY(), cityUID, Case.CITY, playerUID, pm);
-//		createOrRefreshCase(city.getX()-1, city.getY()-1, null, Case.FOREST, playerUID, pm);
-//		createOrRefreshCase(city.getX()-1, city.getY()+1, null, Case.FOREST, playerUID, pm);
-//		createOrRefreshCase(city.getX(), city.getY()-2, null, Case.FOREST, playerUID, pm);
-//		createOrRefreshCase(city.getX(), city.getY()+2, null, Case.FOREST, playerUID, pm);
-//		createOrRefreshCase(city.getX()+1, city.getY()-1, null, Case.FOREST, playerUID, pm);
-//		createOrRefreshCase(city.getX()+1, city.getY()+1, null, Case.FOREST, playerUID, pm);
 		
 		//--------------------------------------//
 
 		player.getCityUIDs().add(cityUID);
 		player.setNbCities(player.getNbCities() + 1);
+		player.setNbLands(player.getNbLands() + 1);
 		
 		return cityUID;
 	}
@@ -1147,4 +1144,35 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		
 		pm.close();
 	}
+
+	//------------------------------------------------------------------------------//
+	
+	public void sendMessage(String senderUID, String recipientUID, String message)
+	{
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		PlayerDTO senderDTO = pm.getObjectById(PlayerDTO.class, senderUID);
+		PlayerDTO recepientDTO = pm.getObjectById(PlayerDTO.class, recipientUID);
+		
+		MessageDTO messageDTO = new MessageDTO();
+		
+		String messageUID = Utils.generateUID();
+		Key key = KeyFactory.createKey(MessageDTO.class.getSimpleName(), messageUID);
+		
+		messageDTO.setKey(KeyFactory.keyToString(key));
+		messageDTO.setMessageUID(messageUID);
+		
+		messageDTO.setContent(message);
+		messageDTO.setStatus(Message.UNREAD);
+		
+		messageDTO.setSenderUID(senderUID);
+		messageDTO.setSenderName(senderDTO.getName());
+		
+		messageDTO.setTime(new Date().getTime());
+		
+		recepientDTO.getMessageUIDs().add(messageUID);
+		
+		pm.makePersistent(messageDTO);
+		pm.close();
+	}
+		
 }

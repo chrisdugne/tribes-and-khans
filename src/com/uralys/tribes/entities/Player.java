@@ -13,8 +13,9 @@ public class Player
 	private List<City> cities = new ArrayList<City>();
 	private List<Unit> units = new ArrayList<Unit>();
 	private List<Conflict> conflicts = new ArrayList<Conflict>();
-	private List<String> newMessages = new ArrayList<String>();
-	private List<String> readMessages = new ArrayList<String>();
+	private List<Message> newMessages = new ArrayList<Message>();
+	private List<Message> readMessages = new ArrayList<Message>();
+	private List<Message> archivedMessages = new ArrayList<Message>();
 
 	private long lastStep;
 
@@ -36,17 +37,23 @@ public class Player
 	public String getName() {
 		return name;
 	}
-	public List<String> getNewMessages() {
+	public List<Message> getNewMessages() {
 		return newMessages;
 	}
-	public void setNewMessages(List<String> newMessages) {
+	public void setNewMessages(List<Message> newMessages) {
 		this.newMessages = newMessages;
 	}
-	public List<String> getReadMessages() {
+	public List<Message> getReadMessages() {
 		return readMessages;
 	}
-	public void setReadMessages(List<String> oldMessages) {
+	public void setReadMessages(List<Message> oldMessages) {
 		this.readMessages = oldMessages;
+	}
+	public List<Message> getArchivedMessages() {
+		return archivedMessages;
+	}
+	public void setArchivedMessages(List<Message> archivedMessages) {
+		this.archivedMessages = archivedMessages;
 	}
 	public void setName(String name) {
 		this.name = name;

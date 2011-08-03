@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:ItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+				xmlns:s="library://ns.adobe.com/flex/spark" 
+				xmlns:mx="library://ns.adobe.com/flex/mx" 
+				autoDrawBackground="true"
+				click="{clicked()}"
+				creationComplete="getTime()"
+				visible="{(data as Message).status != Message.DELETED}">
+	<fx:Script>
+		<![CDATA[
+			import com.uralys.tribes.entities.Message;
+			
+			import mx.formatters.DateFormatter;
+			
+			[Bindable] private var time:String;
+			
+			private function getTime():void
+			{
+				var formatter : DateFormatter;
+				formatter = new DateFormatter();
+				formatter.formatString = "DD MMMM YYYY, HHhNN";
+				time = formatter.format(new Date((data as Message).time));
+			}
+
+			private function clicked():void{
+				if((data as Message).status == Message.UNREAD)
+					(data as Message).status = Message.READ;
+			}
+		]]>
+	</fx:Script>
+	
+	<s:Label text="{(data as Message).senderName} {(time)}"
+			 color="#ffffff"/>
+	
+</s:ItemRenderer>

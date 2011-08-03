@@ -12,13 +12,13 @@ public class Translations{
 
 	//-----------------------------------------------------------------------------------//
 
+	public static var idMessage:String = "1";
 	
 	[Bindable]
 	public static var G_MESSAGE:ArrayCollection = new ArrayCollection(
 									["Salut !\n" +
-										"Merci de tester le jeu !\n\n" +
-										"Ca y est, les classements sont en place !!\n" +
-										"Ils vont se mettre à jour au fur et à mesure des connexions.\n\n" +
+										"Les profils sont maintenant en place.\n" +
+										"La construction des villes a été améliorée.\n" +
 										"La messagerie est en toujours en développement.\n\n" +
 										"Pensez au forum et bon jeu ;)",
 									"Hi !\n" +
@@ -33,6 +33,11 @@ public class Translations{
 										"They'll be up to date within the connections.\n\n" +
 										"The message box is still being developed.\n\n" +
 										"Do not forget the forum, GG && HF ;)"]);
+	[Bindable]
+	public static var DO_NOT_SHOW_MESSAGE:ArrayCollection = new ArrayCollection(
+									["Ne pas me montrer ce message la prochaine fois",
+									"Do not show me that message next time",
+									"Do not show me that message next time"]);
 	
 	//-----------------------------------------------------------------------------------//
 
@@ -366,6 +371,45 @@ public class Translations{
 									["Autres Villes",
 									"Other cities",
 									"Other cities"]);
+	
+	[Bindable]
+	public static var CITY_BUILDING_NAME:ArrayCollection = new ArrayCollection(
+									["Ville en construction",
+									"City being built",
+									"City being built"]);
+
+	[Bindable]
+	public static var CITY_BUILDING_DONE:ArrayCollection = new ArrayCollection(
+									["Construction terminée dans",
+									"Building terminated in ",
+									"Building terminated in "]);
+
+	[Bindable]
+	public static var NEW_CITY:ArrayCollection = new ArrayCollection(
+									["Nouvelle Ville",
+									"New City",
+									"New City"]);
+	
+	//-----------------------------------------------------------------------------------//
+
+	[Bindable]
+	public static var UNREAD:ArrayCollection = new ArrayCollection(
+									["Non lus",
+									"Unread",
+									"Unread"]);
+
+	[Bindable]
+	public static var READ:ArrayCollection = new ArrayCollection(
+									["Lus",
+									"Read",
+									"Read"]);
+
+	[Bindable]
+	public static var ARCHIVES:ArrayCollection = new ArrayCollection(
+									["Archives",
+									"Archives",
+									"Archives"]);
+	
 	
 	//-----------------------------------------------------------------------------------//
 	

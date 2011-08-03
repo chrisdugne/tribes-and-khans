@@ -55,9 +55,7 @@ package com.uralys.tribes.core
 				thereIsACity = true;
 
 			if(_case.merchants != null
-			&& _case.merchants.mayBuildAcity()
-			&& _case.landOwner != null
-			&& _case.landOwner.playerUID == Session.player.playerUID)
+			&& _case.merchants.mayBuildAcity())
 				thereIsAMerchantThatCanBuildACityHere = true;
 			
 			if(thereIsACity)
@@ -67,10 +65,10 @@ package com.uralys.tribes.core
 		}
 		
 		
-		public function clickOnHouse(city:City):void
-		{
-			clickOnCity(city);				
-		}
+//		public function clickOnHouse(city:City):void
+//		{
+//			clickOnCity(city);				
+//		}
 
 		private function clickOnCity(city:City):void
 		{

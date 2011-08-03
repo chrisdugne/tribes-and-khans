@@ -308,56 +308,56 @@ package com.uralys.tribes.core
 			Session.board.pawnLayer.addElement(image);
 		}
 		
-		public function drawCity2(city:City):void
-		{
-			var angle:int = 0;
-			var distanceAuCentre:int = 0;
-			var insideCircle:Boolean = true;
-			
-			var images:Map = new Map();
-			
-			while(insideCircle){
-				var image:Image = new Image();
-				
-				switch(Utils.random(3)){
-					case 1:
-						image.source = ImageContainer.HOUSE1;
-						break;
-					case 2:
-						image.source = ImageContainer.HOUSE2;
-						break;
-					case 3:
-						image.source = ImageContainer.HOUSE3;
-						break;
-					
-				}
-				
-				
-				var cityPx:int = city.x * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4) + Numbers.LAND_WIDTH/2;
-				var cityPy:int = city.y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2) + Numbers.LAND_HEIGHT/2;
-				
-				image.x = (cityPx - image.width - 10) + (Math.cos(angle)*(distanceAuCentre/2));
-				image.y = (cityPy - image.height - 10) + (Math.sin(angle)*(distanceAuCentre/2));
-				
-				image.data = city;
-				image.addEventListener(MouseEvent.CLICK, cityIsCLicked);
-				image.addEventListener(MouseEvent.ROLL_OVER, cityIsRolledOn);
-				
-				if(distanceAuCentre > city.radius*2)
-					insideCircle = false;
-				else{
-					images.put(image.y, image);
-					distanceAuCentre = angle/360 * 25;
-					angle += distanceAuCentre > 50 ? (distanceAuCentre > 100 ? 10 : 20) : 40;
-				}
-			}
-			
-			images.sortKeys(new SortField(null, true));
-			
-			for each(var image:Image in images.values()){
-				Session.board.mapPositioner.addElement(image);
-			}
-		}
+//		public function drawCity2(city:City):void
+//		{
+//			var angle:int = 0;
+//			var distanceAuCentre:int = 0;
+//			var insideCircle:Boolean = true;
+//			
+//			var images:Map = new Map();
+//			
+//			while(insideCircle){
+//				var image:Image = new Image();
+//				
+//				switch(Utils.random(3)){
+//					case 1:
+//						image.source = ImageContainer.HOUSE1;
+//						break;
+//					case 2:
+//						image.source = ImageContainer.HOUSE2;
+//						break;
+//					case 3:
+//						image.source = ImageContainer.HOUSE3;
+//						break;
+//					
+//				}
+//				
+//				
+//				var cityPx:int = city.x * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4) + Numbers.LAND_WIDTH/2;
+//				var cityPy:int = city.y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2) + Numbers.LAND_HEIGHT/2;
+//				
+//				image.x = (cityPx - image.width - 10) + (Math.cos(angle)*(distanceAuCentre/2));
+//				image.y = (cityPy - image.height - 10) + (Math.sin(angle)*(distanceAuCentre/2));
+//				
+//				image.data = city;
+//				image.addEventListener(MouseEvent.CLICK, cityIsCLicked);
+//				image.addEventListener(MouseEvent.ROLL_OVER, cityIsRolledOn);
+//				
+//				if(distanceAuCentre > city.radius*2)
+//					insideCircle = false;
+//				else{
+//					images.put(image.y, image);
+//					distanceAuCentre = angle/360 * 25;
+//					angle += distanceAuCentre > 50 ? (distanceAuCentre > 100 ? 10 : 20) : 40;
+//				}
+//			}
+//			
+//			images.sortKeys(new SortField(null, true));
+//			
+//			for each(var image:Image in images.values()){
+//				Session.board.mapPositioner.addElement(image);
+//			}
+//		}
 		
 		//------------------------------------------------------------------------------------//
 		
@@ -498,9 +498,9 @@ package com.uralys.tribes.core
 			BoardClickAnalyser.getInstance().clickOnCase(event.currentTarget.data as Case);
 		}
 		
-		protected function cityIsCLicked(event:MouseEvent):void{
-			BoardClickAnalyser.getInstance().clickOnHouse(event.currentTarget.data as City);
-		}
+//		protected function cityIsCLicked(event:MouseEvent):void{
+//			BoardClickAnalyser.getInstance().clickOnHouse(event.currentTarget.data as City);
+//		}
 		
 		protected function tileIsRolledOn(event:MouseEvent):void{
 			BoardClickAnalyser.getInstance().rollOnCase(event.currentTarget.data as Case);

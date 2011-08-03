@@ -16,6 +16,7 @@ package com.uralys.tribes.entities
 		private var _conflicts:ArrayCollection = new ArrayCollection();
 		private var _readMessages:ArrayCollection = new ArrayCollection();
 		private var _newMessages:ArrayCollection = new ArrayCollection();
+		private var _archivedMessages:ArrayCollection = new ArrayCollection();
 
 		private var _nbLands:int;
 		private var _nbCities:int;
@@ -187,6 +188,16 @@ package com.uralys.tribes.entities
 		public function set readMessages(value:ArrayCollection):void
 		{
 			_readMessages = value;
+		}
+
+		public function get archivedMessages():ArrayCollection
+		{
+			return _archivedMessages;
+		}
+		
+		public function set archivedMessages(value:ArrayCollection):void
+		{
+			_archivedMessages = value;
 		}
 
 		//-------------------------------------------------------//

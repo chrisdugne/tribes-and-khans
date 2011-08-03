@@ -1,8 +1,10 @@
+
 package com.uralys.tribes.managers {
 	
 	import com.uralys.tribes.commons.Names;
 	import com.uralys.tribes.commons.Numbers;
 	import com.uralys.tribes.commons.Session;
+	import com.uralys.tribes.commons.Translations;
 	import com.uralys.tribes.core.BoardDrawer;
 	import com.uralys.tribes.core.Pager;
 	import com.uralys.tribes.core.UnitMover;
@@ -215,15 +217,15 @@ package com.uralys.tribes.managers {
 
 		//-------------------------------------------------------------------------//
 		
-		public function getPlayer(playerUID:String):void
+		public function getPlayerInfo(playerUID:String):void
 		{
 			Session.WAIT_FOR_SERVER = true;
 			var gameWrapper:RemoteObject = getGameWrapper();
-			gameWrapper.getPlayer.addEventListener("result", receivedPlayer);
-			gameWrapper.getPlayer(playerUID);
+			gameWrapper.getPlayerInfo.addEventListener("result", receivedPlayerInfo);
+			gameWrapper.getPlayerInfo(playerUID);
 		}
-		
-		public function receivedPlayer(event:ResultEvent):void
+
+		public function receivedPlayerInfo(event:ResultEvent):void
 		{
 			Session.WAIT_FOR_SERVER = false;
 			Session.playerLoaded = event.result as Player;
@@ -713,7 +715,21 @@ package com.uralys.tribes.managers {
 			cityBeingSaved = city;
 			
 			var gameWrapper:RemoteObject = getGameWrapper();
+			gameWrapper.buildCity.addEventListener("result", cityBuilt);	
 			gameWrapper.buildCity(city, merchant, Session.player.uralysUID);	
+		}
+		
+		private function cityBuilt(event:ResultEvent):void
+		{
+			for each(var city:City in Session.player.cities)
+			{
+				if(city.cityUID == "new"){
+					city.cityUID = event.result as String;
+					break;
+				}
+			}
+			
+			Session.board.reloadCurrentCases();
 		}
 		
 		//----------------------------------------------------------------------//
@@ -787,6 +803,33 @@ package com.uralys.tribes.managers {
 			Session.WAIT_FOR_SERVER = false;
 			Session.landsBoard = Utils.sort(event.result as ArrayCollection, "nbLands");
 		}
+		
+		//--------------------------------------------------------------------------------//
+		
+		public function sendMessage(message:String):void
+		{
+			var gameWrapper:RemoteObject = getGameWrapper();
+			gameWrapper.sendMessage(Session.player.playerUID, Session.playerLoaded.playerUID, message);
+		}
+
+		public function markAsRead(messageUIDs:ArrayCollection):void
+		{
+			var gameWrapper:RemoteObject = getGameWrapper();
+			gameWrapper.markAsRead(messageUIDs);
+		}
+
+		public function archiveMessages(messageUIDs:ArrayCollection):void
+		{
+			var gameWrapper:RemoteObject = getGameWrapper();
+			gameWrapper.archiveMessages(messageUIDs);
+		}
+
+		public function deleteMessages(messageUIDs:ArrayCollection):void
+		{
+			var gameWrapper:RemoteObject = getGameWrapper();
+			gameWrapper.deleteMessages(messageUIDs);
+		}
+		
 		
 		//--------------------------------------------------------------------------------//
 		// pour que les appels AMF se fassent 1 par 1, on utilise le deleteNextMove, qui est appele à chaque 'moveDeleted'
@@ -863,14 +906,31 @@ package com.uralys.tribes.managers {
 			// ce qui va rafraichir les moves des units sur chaque case
 			// et remplir Session.movesToDelete
 			// et Session.allUnits
-			// on affecte dans le forceRefresh le _move du actif sur la case. (ca suppose 1 seul pion visible par case) 
+			// on affecte dans le forceRefresh le _move du actif sur la case. (ca suppose 1 seul pion visible par case)
+			// on en profite aussi pour rafraichir les villes en Session
 			
+			var citiesLoaded:ArrayCollection = new ArrayCollection();
 			for each(var _case:Case in Session.CASES_LOADED)
 			{
 				Session.map[_case.x][_case.y] = _case;
 				(Session.map[_case.x][_case.y] as Case).forceRefresh(true);
+				
+				if(_case.city != null)
+					citiesLoaded.addItem(_case.city);
 			}
 
+			for each(var _cityLoaded:City in citiesLoaded)
+			{
+				for each(var _city:City in Session.player.cities)
+				{
+					if(_city.cityUID == _cityLoaded.cityUID)
+					{
+						_city = _cityLoaded;
+						break;
+					}
+				}
+			}
+			
 			//------------------------------------------------//
 			
 			// on enregistre tous les timers pour les moves des unites du plateau

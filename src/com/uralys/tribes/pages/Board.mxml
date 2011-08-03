@@ -14,7 +14,7 @@
 	
 	<fx:Script>
 		<![CDATA[
-			//-----------------------------------------------------------------//
+			//---------------------------------------------------------------------------------------//
 			
 			import com.uralys.tribes.commons.Numbers;
 			import com.uralys.tribes.commons.Session;
@@ -34,6 +34,8 @@
 			import com.uralys.tribes.entities.Unit;
 			import com.uralys.tribes.managers.GameManager;
 			import com.uralys.tribes.renderers.Pawn;
+			import com.uralys.tribes.skins.ClassicProgressBarSkin;
+			import com.uralys.tribes.skins.CustomProgressTrackSkin;
 			import com.uralys.tribes.windows.MessageWindow;
 			import com.uralys.tribes.windows.ReportsWindow;
 			import com.uralys.utils.Utils;
@@ -116,12 +118,17 @@
 			
 			//---------------------------------------------------------------------------------------------------//
 
-			private function checkToLoadCases(x:int, y:int):void
+			public function reloadCurrentCases():void{
+				checkToLoadCases(Session.MAP_WIDTH/2 - mapPositioner.x, Session.MAP_HEIGHT/2 - mapPositioner.y, true);
+			}
+			
+			private function checkToLoadCases(x:int, y:int, force:Boolean = false):void
 			{
 				if(x < Session.LEFT_LIMIT_LOADED
 				|| x > Session.RIGHT_LIMIT_LOADED 
 				|| y < Session.TOP_LIMIT_LOADED 
-				|| y > Session.BOTTOM_LIMIT_LOADED)
+				|| y > Session.BOTTOM_LIMIT_LOADED
+				|| force)
 				{
 					var centerX:int = x / (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4); 
 					var centerY:int = y / (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2);
@@ -497,12 +504,14 @@
 			/**
 			 * le BoardClickListener regarde si il y a une ville dans la case clickee et arrive ici
 			 */ 
-			public function showEnterCity(city:City):void{
+			public function showEnterCity(city:City):void
+			{
 				if(Session.MOVE_A_UNIT){
 					return;
 				}
 				
-				for each(var cityInSession:City in Session.player.cities){
+				for each(var cityInSession:City in Session.player.cities)
+				{
 					if(cityInSession.cityUID == city.cityUID){
 						selectedCity = cityInSession;
 						break;
@@ -515,8 +524,22 @@
 				enterCityForm.includeInLayout = true;
 				enterCityForm.visible = true;				
 				enterCityButton.enabled = selectedCity.beginTime < new Date().getTime();
-				enterCityButtonAvailableLabel.text = Translations.READY.getItemAt(Session.LANGUAGE) + " : " + new Date(selectedCity.beginTime);
 				
+				setBuildingCityProgressBar();
+			}
+				
+
+			private function setBuildingCityProgressBar( ):void
+			{
+				var millisRemaining:Number = selectedCity.beginTime - new Date().getTime(); 
+				
+				var millisSpent:Number = Numbers.TIME_TO_BUILD_A_CITY - millisRemaining;
+				
+				var hours:int = millisRemaining/60/60/1000;
+				var minutes:int = (millisRemaining-hours*60*60*1000)/60/1000;
+				
+				buildingCityProgessBar.setProgress( millisSpent, Numbers.TIME_TO_BUILD_A_CITY );
+				labelBuildingCity.text = Translations.CITY_BUILDING_DONE.getItemAt(Session.LANGUAGE) + " " +(hours>9 ? "" : "0") + hours + "h"+ (minutes>9 ? "" : "0") + minutes;
 			}
 			
 			private function enterCity(event:MouseEvent):void
@@ -529,11 +552,9 @@
 			
 			private function buildCity():void
 			{
-				trace("Build a city | " + Session.CURRENT_CASE_SELECTED.caseUID);
-				
 				var city:City = new City();
 				city.cityUID = "new";
-				city.name = "Ville en construction";
+				city.name = Translations.CITY_BUILDING_NAME.getItemAt(Session.LANGUAGE) as String;
 				city.gold = selectedUnit.gold;
 				city.wheat = selectedUnit.wheat;
 				city.wood = selectedUnit.wood - (Numbers.CITY_WOOD_BASE_PRICE + selectedUnit.size * 10);
@@ -544,10 +565,11 @@
 				city.swordStock = selectedUnit.swords;
 				city.armorStock = selectedUnit.armors;
 				
-				city.x = Utils.getXFromCaseUID(Session.CURRENT_CASE_SELECTED.caseUID);
-				city.y = Utils.getYFromCaseUID(Session.CURRENT_CASE_SELECTED.caseUID);
+				city.x = Session.CURRENT_CASE_SELECTED.x;
+				city.y = Session.CURRENT_CASE_SELECTED.y;
 				
 				city.beginTime = new Date().getTime() + Numbers.TIME_TO_BUILD_A_CITY;
+				trace("city.beginTime : " + city.beginTime);
 				
 				try{
 					Session.player.units.removeItemAt(Session.player.units.getItemIndex(selectedUnit));	
@@ -853,12 +875,13 @@
 		
 		<s:VGroup id="enterCityForm"
 				  top="70" 
-				  x="{boardImage.x+Session.MAP_WIDTH + 25}"
+				  x="{boardImage.x+Session.MAP_WIDTH + 65}"
 				  visible="false"
 				  includeInLayout="false"
 				  excludeFrom="moveUnit"
 				  horizontalAlign="center"
-				  paddingTop="5">
+				  paddingTop="5"
+				  width="200">
 			<s:HGroup>
 				<s:Label text="{Translations.CITY.getItemAt(Session.LANGUAGE)} : {Session.CURRENT_CASE_SELECTED.city.name} ({Session.CURRENT_CASE_SELECTED.city.population})"
 						  click="if(Session.player.playerUID == Session.CURRENT_CASE_SELECTED.landOwner.playerUID)showCityChangeName.play()"/>
@@ -873,7 +896,19 @@
 					  click="enterCity(event)"
 					  skinClass="com.uralys.tribes.skins.CustomButtonSkin"
 					  visible="{Session.player.playerUID == Session.CURRENT_CASE_SELECTED.landOwner.playerUID}"/>
-			<s:Label id="enterCityButtonAvailableLabel" visible="{!enterCityButton.enabled}"/>
+			<mx:ProgressBar id="buildingCityProgessBar"
+							width="120"
+							right="0" top="0"
+							mode="manual"
+							trackSkin="{CustomProgressTrackSkin}"
+							barSkin="{ClassicProgressBarSkin}"
+							label="" 
+							includeInLayout="{!enterCityButton.enabled}"
+							visible="{!enterCityButton.enabled}"
+							labelPlacement="top"/>
+			<s:Label id="labelBuildingCity"
+					 includeInLayout="{!enterCityButton.enabled}"
+					 visible="{!enterCityButton.enabled}"/>
 		</s:VGroup>
 
 		<s:TabBar id="tabs" dataProvider="{viewstack}"

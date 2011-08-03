@@ -17,6 +17,7 @@
 		<![CDATA[
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;
+			import com.uralys.tribes.managers.GameManager;
 			
 			import mx.core.FlexGlobals;
 			import mx.managers.PopUpManager;
@@ -30,9 +31,8 @@
 			
 			protected function send():void
 			{
-				trace("sending to player " + Session.playerLoaded.playerUID);
-				trace(message.text);
-				FlexGlobals.topLevelApplication.message("Bientot operationnel !!!");
+				GameManager.getInstance().sendMessage(message.text);
+				closeWindow();
 			}
 			
 		]]>

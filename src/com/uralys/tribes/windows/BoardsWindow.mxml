@@ -16,6 +16,8 @@
 	
 	<fx:Script>
 		<![CDATA[
+			//-----------------------------------------------------------------//
+			
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;
 			import com.uralys.tribes.managers.GameManager;

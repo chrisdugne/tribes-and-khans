@@ -4,7 +4,7 @@
 			   xmlns:mx="library://ns.adobe.com/flex/mx"
 			   xmlns:windows="com.uralys.tribes.windows.*"
 			   skinClass="com.uralys.tribes.skins.WindowSkin"
-			   close="{closeWindow()}"
+			   close="{closeWindow(true)}"
 			   width="250"
 			   height="450"
 			   backgroundAlpha="0.7"
@@ -15,8 +15,7 @@
 	
 	<fx:Script>
 		<![CDATA[
-			//-----------------------------------------------------------------//
-			
+			import com.uralys.tribes.commons.Names;
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;
 			
@@ -24,8 +23,14 @@
 
 			//-----------------------------------------------------------------//
 			
-			public function closeWindow():void{
+			public function closeWindow(save:Boolean = false):void
+			{
 				PopUpManager.removePopUp(this);
+				
+				if(save && checkBox.selected){
+					var sharedObject:SharedObject = SharedObject.getLocal(Names.SHARED_OBJECT_NAME);
+					sharedObject.data.idMessage = Translations.idMessage;
+				}
 			}
 			//-----------------------------------------------------------------//
 		]]>
@@ -43,6 +48,13 @@
 					 color="#ffffff"
 					 height="100%"
 					 width="100%"/>
+			<s:HGroup width="100%">
+				<s:CheckBox id="checkBox"/>
+				<s:Label text="{Translations.DO_NOT_SHOW_MESSAGE.getItemAt(Session.LANGUAGE)}"
+						 color="#ffffff"
+						 width="100%"/>
+			</s:HGroup>
+			<s:Button label="{Translations.OK.getItemAt(Session.LANGUAGE)}" click="closeWindow(true)"/>
 		</s:VGroup>
 	</s:Group>
 	

@@ -43,7 +43,7 @@
 			//-----------------------------------------------------------------//
 			
 			public function refresh():void{
-				GameManager.getInstance().getPlayer(playerUID);
+				GameManager.getInstance().getPlayerInfo(playerUID);
 			}
 
 			//-----------------------------------------------------------------//

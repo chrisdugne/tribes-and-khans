@@ -17,6 +17,11 @@ public final class ImageContainer
 	
 	//   ======================================================================//
 
+	[Embed(source="resources/embed/mail.png")]
+	[Bindable] public static var MAIL_BOX:Class;
+	
+	//   ======================================================================//
+
 	[Embed(source="resources/embed/flags/fr.png")]
 	[Bindable] public static var FR_FLAG:Class;
 
@@ -83,37 +88,6 @@ public final class ImageContainer
 
 	//   ======================================================================//
 
-	[Embed(source="resources/embed/icons/left.png")]
-	[Bindable] public static var LEFT:Class;
-
-	[Embed(source="resources/embed/icons/right.png")]
-	[Bindable] public static var RIGHT:Class;
-
-	[Embed(source="resources/embed/icons/top_left.png")]
-	[Bindable] public static var TOP_LEFT:Class;
-
-	[Embed(source="resources/embed/icons/top_right.png")]
-	[Bindable] public static var TOP_RIGHT:Class;
-
-	[Embed(source="resources/embed/icons/all_left.png")]
-	[Bindable] public static var ALL_LEFT:Class;
-
-	[Embed(source="resources/embed/icons/all_right.png")]
-	[Bindable] public static var ALL_RIGHT:Class;
-	
-	//   ======================================================================//
-
-	[Embed(source="resources/embed/house1.png")]
-	[Bindable] public static var HOUSE1:Class;
- 
-	[Embed(source="resources/embed/house2.png")]
-	[Bindable] public static var HOUSE2:Class;
- 
-	[Embed(source="resources/embed/house3.png")]
-	[Bindable] public static var HOUSE3:Class;
- 
-	//   ======================================================================//
-	
 	[Embed(source="resources/embed/merchant1.png")]
 	[Bindable] public static var MERCHANT1:Class;
 	

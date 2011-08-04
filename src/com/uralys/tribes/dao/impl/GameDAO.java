@@ -1175,4 +1175,48 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		pm.close();
 	}
 		
+
+
+	@SuppressWarnings("unchecked")
+	public void markAsRead(List<String> messageUIDs) 
+	{
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		Query query = pm.newQuery("select from " + MessageDTO.class.getName() + " where :messageUIDs.contains(key)");
+		List<MessageDTO> messages = (List<MessageDTO>) query.execute(messageUIDs);
+		
+		for(MessageDTO message : messages){
+			message.setStatus(Message.READ);
+		}
+		
+		pm.close();
+	}
+
+	@SuppressWarnings("unchecked")
+	public void archiveMessages(List<String> messageUIDs) 
+	{
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		Query query = pm.newQuery("select from " + MessageDTO.class.getName() + " where :messageUIDs.contains(key)");
+		List<MessageDTO> messages = (List<MessageDTO>) query.execute(messageUIDs);
+		
+		for(MessageDTO message : messages){
+			message.setStatus(Message.ARCHIVED);
+		}
+		
+		pm.close();
+	}
+
+	@SuppressWarnings("unchecked")
+	public void deleteMessages(String uralysUID, List<String> messageUIDs) 
+	{
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		Query query = pm.newQuery("select from " + MessageDTO.class.getName() + " where :messageUIDs.contains(key)");
+		List<MessageDTO> messages = (List<MessageDTO>) query.execute(messageUIDs);
+		
+		PlayerDTO player = pm.getObjectById(PlayerDTO.class, uralysUID);
+		player.getMessageUIDs().removeAll(messageUIDs);
+		
+		pm.deletePersistentAll(messages);
+		pm.close();
+	}
+	
 }

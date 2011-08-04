@@ -186,5 +186,17 @@ public class GameService implements IGameService {
 	public void sendMessage(String senderUID, String recipientUID, String message){
 		gameManager.sendMessage(senderUID, recipientUID, message);
 	}
+
+	public void markAsRead(List<String> messageUIDs) {
+		gameManager.markAsRead(messageUIDs);
+	}
+
+	public void archiveMessages(List<String> messageUIDs) {
+		gameManager.archiveMessages(messageUIDs);
+	}
+
+	public void deleteMessages(String uralysUID, List<String> messageUIDs) {
+		gameManager.deleteMessages(uralysUID, messageUIDs);
+	}
 	
 }

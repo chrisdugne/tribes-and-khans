@@ -376,6 +376,18 @@ public class GameManager implements IGameManager {
 	public void sendMessage(String senderUID, String recipientUID, String message){
 		gameDao.sendMessage(senderUID, recipientUID, message);
 	}
+
+	public void markAsRead(List<String> messageUIDs) {
+		gameDao.markAsRead(messageUIDs);
+	}
+
+	public void archiveMessages(List<String> messageUIDs) {
+		gameDao.archiveMessages(messageUIDs);
+	}
+
+	public void deleteMessages(String uralysUID, List<String> messageUIDs) {
+		gameDao.deleteMessages(uralysUID, messageUIDs);
+	}
 	
 	//==================================================================================================//
 	

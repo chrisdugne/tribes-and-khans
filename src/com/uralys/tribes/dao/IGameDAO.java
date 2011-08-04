@@ -74,5 +74,9 @@ public interface IGameDAO {
 	public List<PlayerDTO> getArmiesBoard();
 	
 	public void updatePlayerProfile(String playerUID, String profile);
+	
 	public void sendMessage(String senderUID, String recipientUID, String message);
+	public void markAsRead(List<String> messageUIDs);
+	public void archiveMessages(List<String> messageUIDs);
+	public void deleteMessages(String uralysUID, List<String> messageUIDs);
 }

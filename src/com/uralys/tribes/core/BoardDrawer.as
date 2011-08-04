@@ -60,6 +60,8 @@ package com.uralys.tribes.core
 		
 		private var moveGradient:Array;
 		private var radialGrad:RadialGradientStroke;
+
+		[Bindable] public static var scale:Number = 1;
 		
 		//=====================================================================================//
 	
@@ -223,13 +225,15 @@ package com.uralys.tribes.core
 					break;
 			}
 			
-			image.x = _case.x * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4);
-			image.y = _case.y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2);
+			image.x = _case.x * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4) * scale;
+			image.y = _case.y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2) * scale;
+			image.scaleX = scale;
+			image.scaleY = scale;
 			
 			// decalage des tuiles forets
 			if(placeForet){
-				image.x -=10;	
-				image.y -=9;	
+				image.x -= 10 * scale;	
+				image.y -= 9 * scale;	
 			}
 			
 			image.data = _case;
@@ -584,93 +588,21 @@ package com.uralys.tribes.core
 		
 		
 		//==================================================================================================//
-		// old replay
-		
-		
-//		private var conflictInDisplay:Conflict;
-//		private var moves:ArrayCollection;
-//		private var imagesForTheReplay:ArrayCollection;
-		
-//		public function displayConflict(conflict:Conflict):void{
-//			
-//			conflictInDisplay = conflict;
-//			
-//			FlexGlobals.topLevelApplication.hideconflicts.addEventListener(EffectEvent.EFFECT_END, windowClosed);
-//			FlexGlobals.topLevelApplication.hideconflicts.play();
-//		}
-		
-//		protected function windowClosed(event:EffectEvent):void{
-//			FlexGlobals.topLevelApplication.hideconflicts.removeEventListener(EffectEvent.EFFECT_END, windowClosed);
-//			
-//			var mover:spark.effects.Move = new spark.effects.Move();
-//			mover.target = Session.board.mapPositioner;
-//			mover.xTo = 250 - conflictInDisplay.x;
-//			mover.yTo = 250 - conflictInDisplay.y;
-//			mover.duration = 800;
-//			mover.addEventListener(EffectEvent.EFFECT_END, boardPlaced);
-//			mover.play();
-//		}
 
-//		protected function boardPlaced(event:EffectEvent):void{
-//			
-//			moves = new ArrayCollection();
-//			imagesForTheReplay = new ArrayCollection();
-//			
-//			for each(var moveConflict:MoveConflict in conflictInDisplay.moveAllies){
-//				moves.addItem(moveArmyOnConflict(moveConflict, conflictInDisplay.x, conflictInDisplay.y));
-//			}
-//			
-//			for each(var moveConflict:MoveConflict in conflictInDisplay.moveEnnemies){
-//				moves.addItem(moveArmyOnConflict(moveConflict, conflictInDisplay.x, conflictInDisplay.y));
-//			}
-//			
-//			// recupere le dernier move (on part de la fin et on chope le premier non null (null = armyStanding : pas de move))
-//			var i:int = 1;
-//			var lastMove:com.uralys.tribes.entities.Move = null;
-//			while(lastMove == null){
-//				lastMove = moves.getItemAt(moves.length-i) as com.uralys.tribes.entities.Move;
-//				i++;
-//			}
-//			
-//			//attend la fin du dernier move
-//			lastMove.addEventListener(EffectEvent.EFFECT_END, moveConflictDone);
-//		}
+		public function zoom():void{
+			scale *= 2;
+			refreshDisplay();
+			
+			Session.board.mapPositioner.x *= scale;
+			Session.board.mapPositioner.y *= scale;
+		}
 
-//		private function moveArmyOnConflict(moveConflict:MoveConflict, xTo:int, yTo:int):spark.effects.Move{
-//			
-//			var radius:int =  Math.sqrt(moveConflict.armySize)/2 + 2;
-//			var images:Array = drawArmyImages(moveConflict.xFrom, moveConflict.yFrom, radius, 1);
-//			
-//			for(var i:int=0; i<images.length; i++){
-//				imagesForTheReplay.addItem(images[i]);
-//			}
-//			
-//			if(!moveConflict.armyStanding){
-//				var mover:spark.effects.Move = new spark.effects.Move();
-//				mover.targets = images;
-//				mover.xFrom = moveConflict.xFrom;
-//				mover.yFrom = moveConflict.yFrom;
-//				mover.xTo = xTo-12;
-//				mover.yTo = yTo-12;
-//				mover.duration = 2000;
-//				
-//				mover.play();
-//				return mover;
-//			}
-//			else
-//				return null;
-//		}
-//		
-//		
-//		protected function moveConflictDone(event:EffectEvent):void{
-//			
-//			for each(var image:Image in imagesForTheReplay){
-//				image.visible = false;
-//				image = null;
-//			}
-//			
-//			FlexGlobals.topLevelApplication.showconflicts.play();
-//		}
-		
+		public function unzoom():void{
+			scale /= 2;
+			refreshDisplay();
+			
+			Session.board.mapPositioner.x *= scale;
+			Session.board.mapPositioner.y *= scale;
+		}
 	}
 }

@@ -983,6 +983,9 @@
 			<s:Label text="X : {Session.COORDINATE_X}"/>
 			<mx:Spacer width="200"/>
 			<s:Label text="Y : {Session.COORDINATE_Y}"/>
+			<s:Button click="BoardDrawer.getInstance().unzoom()" width="50" label="unzoom"/>
+			<s:Button click="BoardDrawer.getInstance().zoom()" width="50" label="zoom"/>
+			<s:Label text="{BoardDrawer.scale}"/>
 		</s:HGroup>
 
 		<!-- =============================================================================================== -->

@@ -4,23 +4,21 @@
 			   xmlns:mx="library://ns.adobe.com/flex/mx"
 			   xmlns:windows="com.uralys.tribes.windows.*"
 			   skinClass="com.uralys.tribes.skins.WindowSkin"
-			   close="{closeWindow()}"
+			   close="{closeWindow(true)}"
 			   width="440"
 			   height="420"
 			   backgroundAlpha="0.7"
 			   backgroundColor="#000000"
-			   cornerRadius="15"
-			   >
-	
-	
+			   cornerRadius="15">
 	<fx:Script>
 		<![CDATA[
 			//-----------------------------------------------------------------//
-			
+
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;
 			import com.uralys.tribes.entities.Message;
 			import com.uralys.tribes.managers.GameManager;
+			import com.uralys.tribes.pages.Board;
 			
 			import mx.collections.ArrayCollection;
 			import mx.core.FlexGlobals;
@@ -28,17 +26,21 @@
 
 			//-----------------------------------------------------------------//
 
-			public function closeWindow():void
-			{
-				var messagesToRemoveFromNews:ArrayCollection = new ArrayCollection();
-				var messagesToRemoveFromReads:ArrayCollection = new ArrayCollection();
-				var messagesToRemoveFromArchived:ArrayCollection = new ArrayCollection();
+			var messageToMarkAsReadUIDs:ArrayCollection = new ArrayCollection();
+			var messageToDeleteUIDs:ArrayCollection = new ArrayCollection();
+			var messageToArchiveUIDs:ArrayCollection = new ArrayCollection();
+			
+			//-----------------------------------------------------------------//
 
-				var messageToMarkAsReadUIDs:ArrayCollection = new ArrayCollection();
-				var messageToDeleteUIDs:ArrayCollection = new ArrayCollection();
-				var messageToArchiveUIDs:ArrayCollection = new ArrayCollection();
+			public function closeWindow(manageMessages:Boolean = false):void
+			{
+				PopUpManager.removePopUp(this);
+				if(!manageMessages)
+					return;
 				
 				//---------------------------//
+				
+				var messagesToRemoveFromNews:ArrayCollection = new ArrayCollection();
 				
 				for each(var message:Message in Session.player.newMessages)
 				{
@@ -48,55 +50,65 @@
 						messageToMarkAsReadUIDs.addItem(message.messageUID);
 					}
 				}
-
+				
 				for each(var messageToRemoveFromNews:Message in messagesToRemoveFromNews){
 					Session.player.newMessages.removeItemAt(Session.player.newMessages.getItemIndex(messageToRemoveFromNews));
 				}
 
 				//---------------------------//
-				
-				for each(var message:Message in Session.player.readMessages)
-				{
-					if(message.status == Message.DELETED){
-						messagesToRemoveFromReads.addItem(message);
-						messageToDeleteUIDs.addItem(message.messageUID);
-					}
 
-					else if(message.status == Message.ARCHIVED){
-						messagesToRemoveFromReads.addItem(message);
-						messageToArchiveUIDs.addItem(message.messageUID);
-					}
-				}
+				if(messageToMarkAsReadUIDs.length > 0)
+					GameManager.getInstance().markAsRead(messageToMarkAsReadUIDs);
 				
-				for each(var messageToRemoveFromReads:Message in messagesToRemoveFromReads){
-					Session.player.newMessages.removeItemAt(Session.player.newMessages.getItemIndex(messageToRemoveFromReads));
-				}
+				if(messageToArchiveUIDs.length > 0)
+					GameManager.getInstance().archiveMessages(messageToArchiveUIDs);
+				
+				if(messageToDeleteUIDs.length > 0)
+					GameManager.getInstance().deleteMessages(messageToDeleteUIDs);
 
-				//---------------------------//
-				
-				for each(var message:Message in Session.player.archivedMessages)
-				{
-					if(message.status == Message.DELETED){
-						messagesToRemoveFromArchived.addItem(message);
-						messageToDeleteUIDs.addItem(message.messageUID);
-					}
-				}
-				
-				//---------------------------//
-
-				GameManager.getInstance().markAsRead(messageToMarkAsReadUIDs);
-				GameManager.getInstance().archiveMessages(messageToArchiveUIDs);
-				GameManager.getInstance().deleteMessages(messageToDeleteUIDs);
-
-				//---------------------------//
-				
-				PopUpManager.removePopUp(this);
 			}
+			
 			//-----------------------------------------------------------------//
 			
 			public function refresh():void
 			{
 				//GameManager.getInstance().sendMessage(message.text);
+			}
+
+			//-----------------------------------------------------------------//
+			
+			private function deleteReadMessage():void{
+				(readMessagesList.selectedItem as Message).status = Message.DELETED;
+				
+				messageToDeleteUIDs.addItem((readMessagesList.selectedItem as Message).messageUID);
+				Session.player.readMessages.removeItemAt(Session.player.readMessages.getItemIndex((readMessagesList.selectedItem as Message)));
+				
+				readMessagesList.selectedItem = null;
+			}
+
+			private function deleteArchivedMessage():void{
+				(archivedMessagesList.selectedItem as Message).status = Message.DELETED;
+				
+				messageToDeleteUIDs.addItem((archivedMessagesList.selectedItem as Message).messageUID);
+				Session.player.archivedMessages.removeItemAt(Session.player.archivedMessages.getItemIndex((archivedMessagesList.selectedItem as Message)));
+				
+				archivedMessagesList.selectedItem = null;
+			}
+			
+			private function archiveReadMessage():void
+			{
+				if(Session.player.archivedMessages.length == 20){
+					FlexGlobals.topLevelApplication.message(Translations.MAX_ARCHIVE.getItemAt(Session.LANGUAGE) as String);
+					return;
+				}
+				
+				(readMessagesList.selectedItem as Message).status = Message.ARCHIVED;
+				
+				messageToArchiveUIDs.addItem((readMessagesList.selectedItem as Message).messageUID);
+				Session.player.archivedMessages.addItem(readMessagesList.selectedItem as Message);
+				Session.player.readMessages.removeItemAt(Session.player.readMessages.getItemIndex((readMessagesList.selectedItem as Message)));
+				
+				readMessagesList.selectedItem = null;
 			}
 			
 		]]>
@@ -132,9 +144,15 @@
 							rollOverColor="#000101"
 							itemRenderer="com.uralys.tribes.renderers.MessageRenderer"
 							skinClass="com.uralys.tribes.skins.CustomListSkin"/>
-					<s:Label width="60%"
-							 text="{(newMessagesList.selectedItem as Message).content}"
-							 color="#ffffff"/>
+					<s:VGroup width="60%" height="100%"
+							  horizontalAlign="center"
+							  paddingTop="5">
+						<s:Label text="{(newMessagesList.selectedItem as Message).date}"
+								 color="#ffffff"/>
+						<s:Label width="60%"
+								 text="{(newMessagesList.selectedItem as Message).content}"
+								 color="#ffffff"/>
+					</s:VGroup>
 				</s:HGroup>
 			</s:NavigatorContent>
 			<s:NavigatorContent label="{Translations.READ.getItemAt(Session.LANGUAGE)} ({Session.player.readMessages.length})">
@@ -149,9 +167,26 @@
 							rollOverColor="#000101"
 							itemRenderer="com.uralys.tribes.renderers.MessageRenderer"
 							skinClass="com.uralys.tribes.skins.CustomListSkin"/>
-					<s:Label width="60%"
-							 text="{(readMessagesList.selectedItem as Message).content}"
-							 color="#ffffff"/>
+					<s:VGroup width="60%" height="100%"
+							  horizontalAlign="center"
+							  paddingTop="5">
+						<s:Label text="{(readMessagesList.selectedItem as Message).date}"
+								 color="#ffffff"/>
+						<s:Label width="60%"
+								 text="{(readMessagesList.selectedItem as Message).content}"
+								 color="#ffffff"/>
+						<mx:Spacer height="100%"/>
+						<s:HGroup width="100%" visible="{readMessagesList.selectedItem != null}">
+							<s:Button skinClass="com.uralys.tribes.skins.CustomButtonSkin" 
+									  label="{Translations.ARCHIVE.getItemAt(Session.LANGUAGE)}"
+									  click="archiveReadMessage()"/>
+							<mx:Spacer width="100%"/>
+							<s:Button skinClass="com.uralys.tribes.skins.CustomButtonSkin"
+									  label="{Translations.DELETE.getItemAt(Session.LANGUAGE)}"
+									  click="deleteReadMessage()"/>
+						</s:HGroup>
+					</s:VGroup>
+					
 				</s:HGroup>
 			</s:NavigatorContent>
 			<s:NavigatorContent label="{Translations.ARCHIVES.getItemAt(Session.LANGUAGE)} ({Session.player.archivedMessages.length})">
@@ -166,9 +201,22 @@
 							rollOverColor="#000101"
 							itemRenderer="com.uralys.tribes.renderers.MessageRenderer"
 							skinClass="com.uralys.tribes.skins.CustomListSkin"/>
-					<s:Label width="60%"
+					<s:VGroup width="60%" height="100%"
+							  horizontalAlign="center"
+							  paddingTop="5">
+						<s:Label text="{(archivedMessagesList.selectedItem as Message).date}"
+							 color="#ffffff"/>
+						<s:Label width="60%"
 							 text="{(archivedMessagesList.selectedItem as Message).content}"
 							 color="#ffffff"/>
+						<mx:Spacer height="100%"/>
+						<s:HGroup width="100%" visible="{archivedMessagesList.selectedItem != null}">
+							<mx:Spacer width="100%"/>
+							<s:Button skinClass="com.uralys.tribes.skins.CustomButtonSkin"
+									  label="{Translations.DELETE.getItemAt(Session.LANGUAGE)}"
+									  click="deleteArchivedMessage()"/>
+						</s:HGroup>
+					</s:VGroup>
 				</s:HGroup>
 			</s:NavigatorContent>
 		</mx:ViewStack>

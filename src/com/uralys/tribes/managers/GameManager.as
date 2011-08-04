@@ -827,7 +827,7 @@ package com.uralys.tribes.managers {
 		public function deleteMessages(messageUIDs:ArrayCollection):void
 		{
 			var gameWrapper:RemoteObject = getGameWrapper();
-			gameWrapper.deleteMessages(messageUIDs);
+			gameWrapper.deleteMessages(Session.player.playerUID, messageUIDs);
 		}
 		
 		

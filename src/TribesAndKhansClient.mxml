@@ -19,6 +19,8 @@
 	
 	<fx:Script>
 		<![CDATA[ 
+			//-----------------------------------------------------------------------//
+			
 			import com.uralys.tribes.commons.Names;
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;
@@ -281,7 +283,7 @@
 				  />
 		<s:Label text="({Session.player.newMessages.length})"
 				 id="labelMessages"
-				 click="navigateToURL(new URLRequest('http://www.uralys.com/tribes-and-khans.'+ (Session.LANGUAGE == 0 ? 'fr' : 'en') +'.html'), '_new');"
+				 click="openMailBox()"
 				 color="#000000"
 				 toolTip="{Translations.OPEN_TAB.getItemAt(Session.LANGUAGE)}"
 				 mouseOver="{labelMessages.setStyle('color', '#ffffff')}"

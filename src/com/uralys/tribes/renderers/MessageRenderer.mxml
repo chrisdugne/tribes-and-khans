@@ -4,32 +4,29 @@
 				xmlns:mx="library://ns.adobe.com/flex/mx" 
 				autoDrawBackground="true"
 				click="{clicked()}"
-				creationComplete="getTime()"
 				visible="{(data as Message).status != Message.DELETED}">
 	<fx:Script>
 		<![CDATA[
 			import com.uralys.tribes.entities.Message;
-			
 			import mx.formatters.DateFormatter;
-			
-			[Bindable] private var time:String;
-			
-			private function getTime():void
+
+			private function clicked():void
 			{
 				var formatter : DateFormatter;
 				formatter = new DateFormatter();
 				formatter.formatString = "DD MMMM YYYY, HHhNN";
-				time = formatter.format(new Date((data as Message).time));
-			}
-
-			private function clicked():void{
+				(data as Message).date = formatter.format(new Date((data as Message).time));
+				
 				if((data as Message).status == Message.UNREAD)
 					(data as Message).status = Message.READ;
 			}
 		]]>
 	</fx:Script>
 	
-	<s:Label text="{(data as Message).senderName} {(time)}"
-			 color="#ffffff"/>
+	<s:HGroup width="100%" horizontalAlign="left" paddingLeft="10">
+		<s:Label text="{(data as Message).senderName}"
+				 color="#ffffff"/>
+	
+	</s:HGroup>
 	
 </s:ItemRenderer>

@@ -12,26 +12,24 @@ public class Translations{
 
 	//-----------------------------------------------------------------------------------//
 
-	public static var idMessage:String = "1";
+	public static var idMessage:String = "2";
 	
 	[Bindable]
 	public static var G_MESSAGE:ArrayCollection = new ArrayCollection(
 									["Salut !\n" +
-										"Les profils sont maintenant en place.\n" +
+										"La messagerie est en place !!\n\n" +
 										"La construction des villes a été améliorée.\n" +
-										"La messagerie est en toujours en développement.\n\n" +
+										"Dorénavant vous pouvez cacher ce message d'annonce jusqu'à la prochaine.\n" +
 										"Pensez au forum et bon jeu ;)",
 									"Hi !\n" +
 										"Thank you for testing !\n" +
-										"Here we are, boards are finally open !\n" +
-										"They'll be up to date within the connections.\n\n" +
-										"The message box is still being developed.\n\n" +
+										"Here we are, the mailbox is finally open !\n" +
+										"You may now hide this anouncement window until the next new one.\n" +
 										"Do not forget the forum, GG && HF ;)",
 									"Hi !\n" +
 										"Thank you for testing !\n" +
-										"Here we are, boards are finally open !\n" +
-										"They'll be up to date within the connections.\n\n" +
-										"The message box is still being developed.\n\n" +
+										"Here we are, the mailbox is finally open !\n" +
+										"You may now hide this anouncement window until the next new one.\n" +
 										"Do not forget the forum, GG && HF ;)"]);
 	[Bindable]
 	public static var DO_NOT_SHOW_MESSAGE:ArrayCollection = new ArrayCollection(
@@ -409,6 +407,12 @@ public class Translations{
 									["Archives",
 									"Archives",
 									"Archives"]);
+
+	[Bindable]
+	public static var MAX_ARCHIVE:ArrayCollection = new ArrayCollection(
+									["20 messages max aux Archives",
+									"Max 20 messages in the Archives",
+									"Max 20 messages in the Archives"]);
 	
 	
 	//-----------------------------------------------------------------------------------//
@@ -844,6 +848,12 @@ public class Translations{
 									["Supprimer",
 									"Delete",
 									"Delete"]);
+
+	[Bindable]
+	public static var ARCHIVE:ArrayCollection = new ArrayCollection(
+									["Archiver",
+									"Archive",
+									"Archive"]);
 	[Bindable]
 	public static var HELP:ArrayCollection = new ArrayCollection(
 									["Aide",

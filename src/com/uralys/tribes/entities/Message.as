@@ -74,6 +74,9 @@ package com.uralys.tribes.entities
 			_time = o;
 		}
 		
+		//-------------------------------------------------//
+		
+		public var date:String;
 
 	}
 }

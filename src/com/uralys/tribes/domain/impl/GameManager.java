@@ -289,11 +289,11 @@ public class GameManager implements IGameManager {
 
 	//==================================================================================================//
 
-	public List<Case> loadCases(int[] groups) 
+	public List<Case> loadCases(int[] groups, boolean refreshLandOwners) 
 	{
 		List<Case> cases = new ArrayList<Case>();
 	
-		List<CaseDTO> casesLoaded = gameDao.loadCases(groups);
+		List<CaseDTO> casesLoaded = gameDao.loadCases(groups, refreshLandOwners);
 		for(CaseDTO caseDTO : casesLoaded){
 			cases.add(EntitiesConverter.convertCaseDTO(caseDTO));
 		}

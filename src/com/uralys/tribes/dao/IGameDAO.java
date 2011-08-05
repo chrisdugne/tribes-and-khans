@@ -23,7 +23,7 @@ public interface IGameDAO {
 	
 	//==================================================================================================//
 	public List<ItemDTO> loadItems();
-	public List<CaseDTO> loadCases(int[] groups);
+	public List<CaseDTO> loadCases(int[] groups, boolean refreshLandOwners);
 	public CaseDTO getCase(int i, int j);
 	
 	public void updatePlayer(Player player);

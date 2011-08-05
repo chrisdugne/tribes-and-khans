@@ -77,11 +77,11 @@ public class EntitiesConverter {
 		player.setNbArmies(playerDTO.getNbArmies());
 		player.setNbCities(playerDTO.getNbCities());
 		player.setNbPopulation(playerDTO.getNbPopulation());
+		player.setProfile(playerDTO.getProfile() == null ? "" : playerDTO.getProfile());
 		
 		if(!requireFullData)
 			return player;
 
-		player.setProfile(playerDTO.getProfile() == null ? "" : playerDTO.getProfile());
 			
 		// -----------------------------------------------------------------------------------//
 

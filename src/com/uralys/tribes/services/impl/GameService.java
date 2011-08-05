@@ -138,9 +138,9 @@ public class GameService implements IGameService {
 		return gameManager.loadItems();
 	}
 
-	public List<Case> loadCases(int[] groups) {
+	public List<Case> loadCases(int[] groups, boolean refreshLandOwners) {
 		try {
-			return gameManager.loadCases(groups);
+			return gameManager.loadCases(groups, refreshLandOwners);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ArrayList<Case>();

@@ -305,7 +305,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<CaseDTO> loadCases(int[] groups) 
+	public List<CaseDTO> loadCases(int[] groups, boolean refreshLandOwners) 
 	{
 		long now = new Date().getTime();
 
@@ -316,13 +316,15 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			Query query = pm.newQuery("select from " + CaseDTO.class.getName() + " where groupCase == :group");
 			Collection<? extends CaseDTO> cases = (Collection<? extends CaseDTO>) query.execute(group);
 			
-			for(CaseDTO _case : cases)
-			{
-				if(_case.getChallengerUID() != null)
+			if(refreshLandOwners){
+				for(CaseDTO _case : cases)
 				{
-					if(now - _case.getTimeFromChallenging() > Constants.LAND_TIME*60*1000)
+					if(_case.getChallengerUID() != null)
 					{
-						newLandOwner(_case.getCaseUID());
+						if(now - _case.getTimeFromChallenging() > Constants.LAND_TIME*60*1000)
+						{
+							newLandOwner(_case.getCaseUID());
+						}
 					}
 				}
 			}

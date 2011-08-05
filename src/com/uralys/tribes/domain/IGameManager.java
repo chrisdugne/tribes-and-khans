@@ -27,7 +27,7 @@ public interface IGameManager {
 	public void deleteMove(String moveUID) ;
 	
 	public List<Item> loadItems();
-	public List<Case> loadCases(int[] groups);
+	public List<Case> loadCases(int[] groups, boolean refreshLandOwners);
 	public Case getCase(int x, int y);
 	
 	public void changeName(String uralysUID, String newName);

@@ -14,8 +14,6 @@
 	
 	<fx:Script>
 		<![CDATA[
-			//---------------------------------------------------------------------------------------//
-			
 			import com.uralys.tribes.commons.Numbers;
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;
@@ -58,6 +56,8 @@
 			import mx.utils.ObjectUtil;
 			
 			import spark.components.supportClasses.ItemRenderer;
+			import spark.effects.animation.RepeatBehavior;
+			import spark.filters.GlowFilter;
 			import spark.primitives.Ellipse;
 			import spark.primitives.Line;
 
@@ -86,15 +86,9 @@
 			public function onCityClick(event:ItemClickEvent):void
 			{
 				var city:City = event.currentTarget.selectedItem;
-				mapPositioner.x = Session.MAP_WIDTH/2 
-									- city.x * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4) 
-									- Numbers.LAND_WIDTH/2;
-				mapPositioner.y = Session.MAP_HEIGHT/2 
-									- city.y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2) 
-									- Numbers.LAND_HEIGHT/2;
 				
-				checkToLoadCases(Session.MAP_WIDTH/2 - mapPositioner.x, Session.MAP_HEIGHT/2 - mapPositioner.y);
-				
+				placeBoard(city.x, city.y);
+				reloadCurrentCases();
 				return;
 			}
 			
@@ -104,37 +98,45 @@
 				var unit:Unit = event.currentTarget.selectedItem;
 				unit.currentCaseUID = (unit.moves.getItemAt(0) as com.uralys.tribes.entities.Move).caseUID;
 				
-				mapPositioner.x = Session.MAP_WIDTH/2 
-									- Utils.getXFromCaseUID(unit.currentCaseUID) * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4) 
-									- Numbers.LAND_WIDTH/2;
-				mapPositioner.y = Session.MAP_HEIGHT/2 
-									- Utils.getYFromCaseUID(unit.currentCaseUID) * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2) 
-									- Numbers.LAND_HEIGHT/2;
-				
-				checkToLoadCases(Session.MAP_WIDTH/2 - mapPositioner.x, Session.MAP_HEIGHT/2 - mapPositioner.y);
-				
+				placeBoard(Utils.getXFromCaseUID(unit.currentCaseUID), Utils.getYFromCaseUID(unit.currentCaseUID));
+				reloadCurrentCases();
 				return;
 			}
 			
 			//---------------------------------------------------------------------------------------------------//
 
-			public function reloadCurrentCases():void{
-				checkToLoadCases(Session.MAP_WIDTH/2 - mapPositioner.x, Session.MAP_HEIGHT/2 - mapPositioner.y, true);
+			public function reloadCurrentCases(force:Boolean = false, refreshLandOwners:Boolean = false):void{
+				checkToLoadCases(Utils.getXPixel(Session.CENTER_X), Utils.getYPixel(Session.CENTER_Y), force, refreshLandOwners);
 			}
 			
-			private function checkToLoadCases(x:int, y:int, force:Boolean = false):void
+			private function checkToLoadCases(x:int, y:int, force:Boolean = false, refreshLandOwners = false):void
 			{
+				trace("-------------------------------------");
+				trace("checkToLoadCases | force : " + force);
+				trace("------");
+				trace("x : " + x);
+				trace("y : " + y);
+				trace("------");
+				trace("Session.LEFT_LIMIT_LOADED : " + Session.LEFT_LIMIT_LOADED);
+				trace("Session.RIGHT_LIMIT_LOADED : " + Session.RIGHT_LIMIT_LOADED);
+				trace("Session.TOP_LIMIT_LOADED : " + Session.TOP_LIMIT_LOADED);
+				trace("Session.BOTTOM_LIMIT_LOADED : " + Session.BOTTOM_LIMIT_LOADED);
+				trace("------");
+				trace("Session.CENTER_X : " + Session.CENTER_X);
+				trace("Session.CENTER_Y : " + Session.CENTER_Y);
+				trace("------");
+				
 				if(x < Session.LEFT_LIMIT_LOADED
 				|| x > Session.RIGHT_LIMIT_LOADED 
 				|| y < Session.TOP_LIMIT_LOADED 
 				|| y > Session.BOTTOM_LIMIT_LOADED
 				|| force)
 				{
-					var centerX:int = x / (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4); 
-					var centerY:int = y / (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2);
-					
-					GameManager.getInstance().loadCases(centerX, centerY);
+					trace("  ==>  LOAD");
+					GameManager.getInstance().loadCases(Session.CENTER_X, Session.CENTER_Y, refreshLandOwners);
 				}
+				else
+					trace("  ==>  continue");
 			}
 			
 			//---------------------------------------------------------------------//
@@ -152,13 +154,7 @@
 				if(Session.MOVE_A_UNIT)
 					return;
 				
-				mapPositioner.x = Session.MAP_WIDTH/2 
-									- Utils.getXFromCaseUID(selectedUnit.currentCaseUID) * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4) 
-									- Numbers.LAND_WIDTH/2;
-				mapPositioner.y = Session.MAP_HEIGHT/2 
-									- Utils.getYFromCaseUID(selectedUnit.currentCaseUID) * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2) 
-									- Numbers.LAND_WIDTH/2;
-				
+				placeBoard(Utils.getXFromCaseUID(selectedUnit.currentCaseUID), Utils.getYFromCaseUID(selectedUnit.currentCaseUID));
 				
 				Session.MOVE_A_UNIT = true;
 				currentState = "moveUnit";
@@ -339,6 +335,16 @@
 					// donc elle suit bien la souris et event.localXY a bien lieu au meme endroit sur l'image apres chaque mouseMove
 					mapPositioner.x += (event.currentTarget.mouseX - draggingImageXFrom);
 					mapPositioner.y += (event.currentTarget.mouseY - draggingImageYFrom);
+					
+					Session.CENTER_X = Utils.getXCoordinate(Session.MAP_WIDTH/2 - mapPositioner.x);
+					Session.CENTER_Y = Utils.getYCoordinate(Session.MAP_HEIGHT/2 - mapPositioner.y);
+					
+					if(Math.abs(Session.CENTER_X-Session.CENTER_Y)%2 !=0){
+						// la difference entre x et y n'est pas paire
+						// c'est une 'non case' : un hexagone intermediaire qui ne fait pas partie du plateau
+						// on prend l'hexagone du dessus
+						Session.CENTER_Y -= 1;
+					}
 				}
 			}
 			
@@ -377,7 +383,7 @@
 				
 				isDragging = false;
 				Mouse.show();
-				checkToLoadCases(Session.MAP_WIDTH/2 - mapPositioner.x, Session.MAP_HEIGHT/2 - mapPositioner.y);
+				reloadCurrentCases();
 			}
 			
 			// ------------------------------------------------------------------------// 
@@ -418,6 +424,7 @@
 				//------------------------------------------------------------//
 
 				Session.board = this;
+				
 
 				/*
 					1 - loadItems
@@ -427,8 +434,7 @@
 				*/
 				GameManager.getInstance().loadItems();
 				
-				mapPositioner.x = Session.MAP_WIDTH/2 - (selectedCity.x * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4) + Numbers.LAND_WIDTH/2)
-				mapPositioner.y = Session.MAP_WIDTH/2 - (selectedCity.y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2) + Numbers.LAND_HEIGHT/2)
+				placeBoard(selectedCity.x, selectedCity.y);
 
 				//------------------------------------------------------------//
 			
@@ -800,6 +806,22 @@
 //			}
 //			
 
+			public function placeBoard(x:int, y:int):void
+			{
+				trace("placeBoard  : " + x + " | " + y);
+				mapPositioner.x = Session.MAP_WIDTH/2 
+					- Utils.getXPixel(x)
+					- Utils.getLandWidth()/2;
+				mapPositioner.y = Session.MAP_HEIGHT/2 
+					- Utils.getYPixel(y)
+					- Utils.getLandHeight()/2;
+				trace("mapPositioner  : " + mapPositioner.x + " | " + mapPositioner.y);
+
+				
+				Session.CENTER_X = x;
+				Session.CENTER_Y = y;
+			}
+			
 		]]>
 	</fx:Script>
 	
@@ -976,49 +998,14 @@
 		
 		<!-- =============================================================================================== -->
 		
-		<!--
-		<s:Button label="{Translations.CONFLICT.getItemAt(Session.LANGUAGE)}s" click="{FlexGlobals.topLevelApplication.showconflicts.play()}" right="10"/>
-		-->
 		<s:HGroup width="100%" horizontalAlign="center" paddingTop="5">
 			<s:Label text="X : {Session.COORDINATE_X}"/>
 			<mx:Spacer width="200"/>
 			<s:Label text="Y : {Session.COORDINATE_Y}"/>
-			<s:Button click="BoardDrawer.getInstance().unzoom()" width="50" label="unzoom"/>
-			<s:Button click="BoardDrawer.getInstance().zoom()" width="50" label="zoom"/>
-			<s:Label text="{BoardDrawer.scale}"/>
 		</s:HGroup>
 
 		<!-- =============================================================================================== -->
-		<!--
-		<s:HGroup width="200" height="200" horizontalAlign="center"
-				  bottom="45"
-				  right="150">
-			<s:Group width="200" height="200"
-					 id="minimap"
-					 clipAndEnableScrolling="true"
-					 mouseDown="mouseDownMiniMap(event)"
-					 mouseMove="mouseMoveMiniMap(event)"
-					 mouseOut="mouseUpMiniMap(event)"
-					 mouseUp="mouseUpMiniMap(event)">
-				<s:Rect left="0" right="0" top="0" bottom="0" radiusX="5" radiusY="5">
-					<s:stroke>
-						<s:SolidColorStroke color="0x000000" weight="1" scaleMode="normal"/>
-					</s:stroke>			
-					<s:fill>
-						<s:SolidColor color="{0x000000}" alpha="0.8"/>
-					</s:fill>
-				</s:Rect>
-				<s:Rect x="{-mapPositioner.x/15}" y="{-mapPositioner.y/15}" width="33" height="33">
-					<s:stroke>
-						<s:SolidColorStroke color="0xffffff" weight="1" scaleMode="normal"/>
-					</s:stroke>		
-					<s:fill>
-						<s:SolidColor color="{0xffffff}" alpha="0.2"/>
-					</s:fill>			
-				</s:Rect>
-			</s:Group>
-		</s:HGroup>
-		-->
+
 		<s:Group width="100%">
 			<s:HGroup width="100%" horizontalAlign="center" paddingTop="50">
 				<s:Group width="{Session.MAP_WIDTH}" height="{Session.MAP_HEIGHT}"
@@ -1063,21 +1050,27 @@
 						<mx:Image id="currentMouseHighLightNormal"
 								  source="{ImageContainer.getImage(ImageContainer.HIGHLIGHT_BLEU)}"
 								  visible="{!Session.MOVE_A_UNIT}"
-								  x="{Session.COORDINATE_X * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4)}"
-								  y="{Session.COORDINATE_Y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2)}"
+								  x="{Session.COORDINATE_X * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4) * BoardDrawer.getInstance().scale}"
+								  y="{Session.COORDINATE_Y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2) * BoardDrawer.getInstance().scale}"
+								  scaleX="{BoardDrawer.getInstance().scale}"
+								  scaleY="{BoardDrawer.getInstance().scale}"
 								  mouseEnabled="false"/>
 
 						<mx:Image id="currentMouseHighLight4UnitMoves"
 								  source="{ImageContainer.getImage(ImageContainer.HIGHLIGHT_BLANC)}"
 								  visible="{Session.MOVE_A_UNIT}"
-								  x="{Session.COORDINATE_X * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4)}"
-								  y="{Session.COORDINATE_Y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2)}"
+								  x="{Session.COORDINATE_X * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4) * BoardDrawer.getInstance().scale}"
+								  y="{Session.COORDINATE_Y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2) * BoardDrawer.getInstance().scale}"
+								  scaleX="{BoardDrawer.getInstance().scale}"
+								  scaleY="{BoardDrawer.getInstance().scale}"
 								  mouseEnabled="false"/>
 
 						<mx:Image id="currentSelectionHighLight"
 								  source="{ImageContainer.getImage(ImageContainer.HIGHLIGHT_BLANC)}"
-								  x="{Session.CURRENT_SELECTION_X * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4)}"
-								  y="{Session.CURRENT_SELECTION_Y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2)}"
+								  x="{Session.CURRENT_SELECTION_X * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4) * BoardDrawer.getInstance().scale}"
+								  y="{Session.CURRENT_SELECTION_Y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2) * BoardDrawer.getInstance().scale}"
+								  scaleX="{BoardDrawer.getInstance().scale}"
+								  scaleY="{BoardDrawer.getInstance().scale}"
 								  mouseEnabled="false"/>
 						
 					</s:Group>
@@ -1096,6 +1089,25 @@
 			<mx:Image source="{ImageContainer.MAP_BORDER_RIGHT}"
 					  x="{boardImage.x+Session.MAP_WIDTH - 31}"
 					  y="{boardImage.y + 31}"/>
+			
+			<mx:Image source="{ImageContainer.ZOOM_IN}"
+					  id="zoomInButton"
+					  visible="{!Session.MOVE_A_UNIT &amp;&amp; !Session.WAIT_FOR_SERVER}"
+					  x="{boardImage.x + 25}"
+					  y="{boardImage.y - 15}"
+					  click="{BoardDrawer.getInstance().zoom()}"/>
+			<mx:Image source="{ImageContainer.ZOOM_OUT}"
+					  id="zoomOutButton"
+					  visible="{!Session.MOVE_A_UNIT &amp;&amp; !Session.WAIT_FOR_SERVER}"
+					  x="{boardImage.x + 60}"
+					  y="{boardImage.y - 14}"
+					  click="BoardDrawer.getInstance().unzoom()"/>
+			<mx:Image source="{ImageContainer.REFRESH}"
+					  id="refreshButton"
+					  visible="{!Session.MOVE_A_UNIT &amp;&amp; !Session.WAIT_FOR_SERVER}"
+					  x="{boardImage.x + 95}"
+					  y="{boardImage.y - 13}"
+					  click="reloadCurrentCases(true, true)"/>
 		</s:Group>
 	</s:Group>
 	

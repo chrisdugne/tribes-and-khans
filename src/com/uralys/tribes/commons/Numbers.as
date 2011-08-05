@@ -23,10 +23,6 @@ package com.uralys.tribes.commons
 		public static var BASE_TIME_FOR_LAND_CONQUEST_MILLIS:int = Session.isLocal ? 2*1000 : 60*60*1000;
 //		public static var BASE_TIME_FOR_LAND_CONQUEST_MILLIS:int = 60*60*1000;
 	
-		[Bindable]
-		public static var NB_HORIZONTAL_TILES_BY_LOADING:int = 30; 
-		public static var NB_VERTICAL_TILES_BY_LOADING:int = 30; 
-
 		// une ville se construit en 12h
 		[Bindable]
 		public static var TIME_TO_BUILD_A_CITY:int = 12*60*60*1000;

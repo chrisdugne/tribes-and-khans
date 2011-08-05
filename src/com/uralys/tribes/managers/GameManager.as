@@ -104,7 +104,8 @@ package com.uralys.tribes.managers {
 			}
 
 			var city:City = Session.player.cities.getItemAt(0) as City;
-			BoardDrawer.getInstance().refreshMap(city.x, city.y);
+			
+			GameManager.getInstance().initMap(city.x, city.y);
 			
 			Session.LOGGED_IN_FORCE_STEPS_DONE = true;
 		}
@@ -642,32 +643,49 @@ package com.uralys.tribes.managers {
 			gameWrapper.loadItems();
 		} 
 
-		public function loadCases(centerX:int, centerY:int):void
+		public function initMap(centerX:int, centerY:int):void
+		{
+			Session.WAIT_FOR_SERVER = true;
+			loadCases(centerX, centerY, true);
+		}
+		
+		public function loadCases(centerX:int, centerY:int, refreshLandOwners:Boolean):void
 		{
 			Session.WAIT_FOR_SERVER = true;
 			
+			trace("-------------------------------------");
+
 			var groups:Array = Utils.getGroups(centerX, centerY);
 			groups.sort(Array.NUMERIC);
 			
 			Session.firstCaseX = (groups[0]%27) * 15; // modulo 27
 			Session.firstCaseY = ((int)(groups[0]/27)) * 15; // divisé par 27
 			
+			
+			trace("-------------------------------------");
 			trace("loadCases center : [ " + centerX + " | " + centerY + " ]");
 			trace(groups);
 			trace("Session.firstCaseX : " + Session.firstCaseX);
 			trace("Session.firstCaseY : " + Session.firstCaseY);
 			
 			var caseUIDs:ArrayCollection = new ArrayCollection();
+			Session.nbTilesByEdge = Math.sqrt(groups.length) * 15;
+
+			trace("nbTilesByEdge : " + Session.nbTilesByEdge);
+			trace("-------------------------------------");
+			trace("Utils.getLandWidth() : " + Utils.getLandWidth());
+			trace("15 * Utils.getLandWidth() : " + (15 * Utils.getLandWidth()));
+			trace("Utils.getXPixel(Session.firstCaseX + 15 * Utils.getLandWidth()) : " + (Utils.getXPixel(Session.firstCaseX + 15 * Utils.getLandWidth())));
 			
-			Session.LEFT_LIMIT_LOADED  	 = (centerX - Numbers.NB_HORIZONTAL_TILES_BY_LOADING/2) * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4) + Session.MAP_WIDTH; 
-			Session.RIGHT_LIMIT_LOADED	 = (centerX + Numbers.NB_HORIZONTAL_TILES_BY_LOADING/2) * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4) - Session.MAP_WIDTH;
-			Session.TOP_LIMIT_LOADED 	 = (centerY - Numbers.NB_VERTICAL_TILES_BY_LOADING/2) * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2) + Session.MAP_HEIGHT; 
-			Session.BOTTOM_LIMIT_LOADED	 = (centerY + Numbers.NB_VERTICAL_TILES_BY_LOADING/2) * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2) - Session.MAP_HEIGHT; 
+			
+			Session.LEFT_LIMIT_LOADED  	 = Utils.getXPixel(Session.firstCaseX);
+			Session.RIGHT_LIMIT_LOADED	 = Utils.getXPixel(Session.firstCaseX) + Session.nbTilesByEdge * Utils.getLandWidth();
+			Session.TOP_LIMIT_LOADED 	 = Utils.getYPixel(Session.firstCaseY);
+			Session.BOTTOM_LIMIT_LOADED	 = Utils.getYPixel(Session.firstCaseY) + Session.nbTilesByEdge * Utils.getLandHeight();
 			
 			var gameWrapper:RemoteObject = getGameWrapper();
 			loadCasesResponder.addEventListener("result", casesLoaded);
-			loadCasesResponder.token = gameWrapper.loadCases(groups);
-   			
+			loadCasesResponder.token = gameWrapper.loadCases(groups, refreshLandOwners);
 		}
 
 		public function savePlayer():void{
@@ -729,7 +747,7 @@ package com.uralys.tribes.managers {
 				}
 			}
 			
-			Session.board.reloadCurrentCases();
+			Session.board.reloadCurrentCases(true);
 		}
 		
 		//----------------------------------------------------------------------//
@@ -864,7 +882,7 @@ package com.uralys.tribes.managers {
 			Numbers.loadItemData();
 			
 			if(Session.GAME_OVER){
-				BoardDrawer.getInstance().refreshMap(100, 100);
+				initMap(100, 100);
 			}
 			else
 				loginForceSteps();
@@ -876,12 +894,6 @@ package com.uralys.tribes.managers {
 			trace("casesLoaded");
 			
 			//------------------------------------------------//
-			
-			Session.board.mapPositioner.removeAllElements();
-			Session.board.pawnLayer.removeAllElements();
-			Session.board.landLayer.removeAllElements();
-			
-			//------------------------------------------------//
 
 			Session.CASES_LOADED = event.result as ArrayCollection;
 			trace("received : " + Session.CASES_LOADED.length + " cases");
@@ -891,10 +903,10 @@ package com.uralys.tribes.managers {
 			
 			Session.map = [];
 			
-			for(var i:int=0; i < Numbers.NB_HORIZONTAL_TILES_BY_LOADING; i++)
+			for(var i:int=0; i < Session.nbTilesByEdge; i++)
 			{
 				Session.map[Session.firstCaseX+i] = [];
-				for(var j:int=0; j < Numbers.NB_VERTICAL_TILES_BY_LOADING; j++)
+				for(var j:int=0; j < Session.nbTilesByEdge; j++)
 				{
 					Session.map[Session.firstCaseX+i][Session.firstCaseY+j] = new Case(Session.firstCaseX+i,Session.firstCaseY+j);
 				}

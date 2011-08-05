@@ -3,6 +3,7 @@ package com.uralys.utils
 {
 
 import com.uralys.tribes.commons.Numbers;
+import com.uralys.tribes.core.BoardDrawer;
 
 import flash.display.BitmapData;
 import flash.display.Sprite;
@@ -49,12 +50,33 @@ public class Utils
 		//---------------------------------------------------------------------//
 		// fonction pour recuperer les coordonnees sur le mappositionner lorsquon connait les coordonnees de la case.
 		
-		public static function getXOnBoard(xForTheCell:int):int {
-			return xForTheCell * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4);
+		public static function getXPixel(xCoordinate:int):int {
+			return xCoordinate * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4) * BoardDrawer.getInstance().scale;
 		}
 
-		public static function getYOnBoard(yForTheCell:int):int {
-			return yForTheCell * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2);
+		public static function getYPixel(yCoordinate:int):int {
+			return yCoordinate * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2) * BoardDrawer.getInstance().scale;
+		}
+
+		//---------------------------------------------------------------------//
+		// fonctions inverses
+		
+		public static function getXCoordinate(xPixel:int):int {
+			return xPixel / (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4) / BoardDrawer.getInstance().scale;
+		}
+
+		public static function getYCoordinate(yPixel:int):int {
+			return yPixel / (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2) / BoardDrawer.getInstance().scale;
+		}
+		
+		//---------------------------------------------------------------------//
+
+		public static function getLandWidth():int {
+			return Numbers.LAND_WIDTH * BoardDrawer.getInstance().scale;
+		}
+
+		public static function getLandHeight():int {
+			return Numbers.LAND_HEIGHT * BoardDrawer.getInstance().scale;
 		}
 
 		//---------------------------------------------------------------------//
@@ -173,13 +195,18 @@ public class Utils
 		
 		
 		
-		/*
-		* 0-404 * 0-404 = 27*27 groups
-		* 15*15*27*27 = 405*405
-		* 
-		*/
-		public static function getGroups(x:int, y:int):Array{
-			
+		/**
+		 * 0-404 * 0-404 = 27*27 groups
+		 * 15*15*27*27 = 405*405
+		 * 
+		 * scale 2    : 1 group
+		 * scale 1    : 9 groups
+		 * scale 0.5  : 25 groups
+		 * scale 0.25 : 49 groups
+		 * 
+		 */
+		public static function getGroups(x:int, y:int):Array
+		{
 			var result:Array = [];
 			
 			// groupes de 15*15 sur un damier de 405*405
@@ -188,26 +215,33 @@ public class Utils
 			var groupY:int = y/15;
 			var group = groupX + groupY*27;
 			
-			// north : -1
-			// south : +1
-			// west : -1
-			// east : +1
-			var east_west:int = 1; // init : east
-			var north_south:int = 1; // init : south
-			var regionOnTheGroup:int;
+			trace("group : " + group);
 			
-			if(x - groupX*15 < 8){
-				east_west = -1; // west
+			var offset:int = 0;
+			
+			switch(BoardDrawer.getInstance().scale)
+			{
+				case 2 :
+					offset = 0;
+					break;
+				case 1 :
+					offset = 1;
+					break;
+				case 0.5 :
+					offset = 2;
+					break;
+				case 0.25 :
+					offset = 2;
+					break;
 			}
 
-			if(y - groupY*15 < 8){
-				north_south = -1; // north
-			}
+			trace("offset : " + offset);
 			
-			result = [group, 
-					  group + east_west, 
-					  group + (27*north_south), 
-					  group + (27*north_south) + east_west]; 
+			for(var i:int = -offset; i <= offset ; i++){
+				for(var j:int = -offset; j <= offset ; j++){
+					result.push(group + i + (27*j));
+				}
+			}
 			
 			return result;
 		}

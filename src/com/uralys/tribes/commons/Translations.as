@@ -12,24 +12,23 @@ public class Translations{
 
 	//-----------------------------------------------------------------------------------//
 
-	public static var idMessage:String = "2";
+	public static var idMessage:String = "3";
 	
 	[Bindable]
 	public static var G_MESSAGE:ArrayCollection = new ArrayCollection(
-									["Salut !\n" +
+									["Salut !\n\n" +
+										"Le zoom sur la carte est disponible !.\n\n" +
 										"La messagerie est en place !!\n\n" +
-										"La construction des villes a été améliorée.\n" +
-										"Dorénavant vous pouvez cacher ce message d'annonce jusqu'à la prochaine.\n" +
 										"Pensez au forum et bon jeu ;)",
 									"Hi !\n" +
-										"Thank you for testing !\n" +
-										"Here we are, the mailbox is finally open !\n" +
-										"You may now hide this anouncement window until the next new one.\n" +
+										"Thank you for testing !\n\n" +
+										"Here we are, the mailbox is finally open !\n\n" +
+										"And you may zoom on the map !\n\n" +
 										"Do not forget the forum, GG && HF ;)",
 									"Hi !\n" +
-										"Thank you for testing !\n" +
-										"Here we are, the mailbox is finally open !\n" +
-										"You may now hide this anouncement window until the next new one.\n" +
+										"Thank you for testing !\n\n" +
+										"Here we are, the mailbox is finally open !\n\n" +
+										"And you may zoom on the map !\n\n" +
 										"Do not forget the forum, GG && HF ;)"]);
 	[Bindable]
 	public static var DO_NOT_SHOW_MESSAGE:ArrayCollection = new ArrayCollection(

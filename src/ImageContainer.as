@@ -19,6 +19,17 @@ public final class ImageContainer
 
 	[Embed(source="resources/embed/mail.png")]
 	[Bindable] public static var MAIL_BOX:Class;
+
+	//   ======================================================================//
+
+	[Embed(source="resources/embed/zoom_in.png")]
+	[Bindable] public static var ZOOM_IN:Class;
+
+	[Embed(source="resources/embed/zoom_out.png")]
+	[Bindable] public static var ZOOM_OUT:Class;
+
+	[Embed(source="resources/embed/refresh.png")]
+	[Bindable] public static var REFRESH:Class;
 	
 	//   ======================================================================//
 

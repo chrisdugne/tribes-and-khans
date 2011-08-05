@@ -17,7 +17,7 @@ package com.uralys.tribes.commons
 
 		//=====================================================//
 		
-		[Bindable] public static var VERSION:String = "1.1.86.2";
+		[Bindable] public static var VERSION:String = "1.1.87.2";
 		[Bindable] public static var LOGGED_IN:Boolean = false; 
 		[Bindable] public static var CONNECTED_TO_FACEBOOK:Boolean = false;
 		
@@ -71,6 +71,9 @@ package com.uralys.tribes.commons
 		// pour savoir si on click pour un deplacement de troupes
 		//[Bindable] public static var CURRENT_SELECTION_IS_ARMY:Boolean = false;
 
+		// nombre de tuiles chargees par coté.
+		[Bindable] public static var nbTilesByEdge:int;
+
 		[Bindable] public static var COORDINATE_X:int;
 		[Bindable] public static var COORDINATE_Y:int;
 
@@ -81,6 +84,9 @@ package com.uralys.tribes.commons
 
 		[Bindable] public static var CURRENT_SELECTION_X:int;
 		[Bindable] public static var CURRENT_SELECTION_Y:int;
+
+		[Bindable] public static var CENTER_X:int;
+		[Bindable] public static var CENTER_Y:int;
 
 		[Bindable] public static var CURRENT_CASE_SELECTED:Case;
 		[Bindable] public static var MOVE_A_UNIT:Boolean;

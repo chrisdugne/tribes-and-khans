@@ -61,7 +61,9 @@ package com.uralys.tribes.core
 		private var moveGradient:Array;
 		private var radialGrad:RadialGradientStroke;
 
-		[Bindable] public static var scale:Number = 1;
+		//=====================================================================================//
+
+		[Bindable] public var scale:Number = 1;
 		
 		//=====================================================================================//
 	
@@ -87,21 +89,16 @@ package com.uralys.tribes.core
 		
 		//=====================================================================================//
 
-		/*
-			Load les cases autour de cette case(centerX,centerY)
-		*/
-		public function refreshMap(centerX:int, centerY:int):void{
-			Session.WAIT_FOR_SERVER = true;
-			
-			GameManager.getInstance().loadCases(centerX,centerY);
-		}
-
 		/**
 		 * Lorsque les cases sont chargees, on refresh tout les display
 		 */ 
 		private var timer:Timer = new Timer(1000,1);
 		public function refreshDisplay(event:TimerEvent = null):void
 		{
+			Session.board.mapPositioner.removeAllElements();
+			Session.board.pawnLayer.removeAllElements();
+			Session.board.landLayer.removeAllElements();
+			
 			if(!ImageContainer.IMAGES_LOADED){
 				FlexGlobals.topLevelApplication.message(Translations.LOADING_IMAGES.getItemAt(Session.LANGUAGE));
 				timer.addEventListener(TimerEvent.TIMER_COMPLETE, refreshDisplay);
@@ -114,9 +111,9 @@ package com.uralys.tribes.core
 			}
 			
 			// draw city grounds
-			for(var j:int=0; j < Numbers.NB_VERTICAL_TILES_BY_LOADING; j++)
+			for(var j:int=0; j < Session.nbTilesByEdge; j++)
 			{
-				for(var i:int=0; i < Numbers.NB_HORIZONTAL_TILES_BY_LOADING; i++)
+				for(var i:int=0; i < Session.nbTilesByEdge; i++)
 				{
 					var _case:Case = Session.map[Session.firstCaseX+i][Session.firstCaseY+j];
 					
@@ -125,9 +122,9 @@ package com.uralys.tribes.core
 				}
 			}
 			
-			for(var j:int=0; j < Numbers.NB_VERTICAL_TILES_BY_LOADING; j++)
+			for(var j:int=0; j < Session.nbTilesByEdge; j++)
 			{
-				for(var i:int=0; i < Numbers.NB_HORIZONTAL_TILES_BY_LOADING; i++)
+				for(var i:int=0; i < Session.nbTilesByEdge; i++)
 				{
 					var _case:Case = Session.map[Session.firstCaseX+i][Session.firstCaseY+j];
 					
@@ -136,7 +133,7 @@ package com.uralys.tribes.core
 				}
 
 				// draw forests grounds
-				for(var i:int=0; i < Numbers.NB_HORIZONTAL_TILES_BY_LOADING; i++)
+				for(var i:int=0; i < Session.nbTilesByEdge; i++)
 				{
 					var _case:Case = Session.map[Session.firstCaseX+i][Session.firstCaseY+j];
 					
@@ -147,10 +144,10 @@ package com.uralys.tribes.core
 				
 			}
 
-			for(var j:int=0; j < Numbers.NB_VERTICAL_TILES_BY_LOADING; j++)
+			for(var j:int=0; j < Session.nbTilesByEdge; j++)
 			{
 				// draw units
-				for(var i:int=0; i < Numbers.NB_HORIZONTAL_TILES_BY_LOADING; i++)
+				for(var i:int=0; i < Session.nbTilesByEdge; i++)
 				{
 					var _case:Case = Session.map[Session.firstCaseX+i][Session.firstCaseY+j];
 					
@@ -169,10 +166,10 @@ package com.uralys.tribes.core
 		{
 			Session.board.landLayer.removeAllElements();
 				
-			for(var j:int=0; j < Numbers.NB_VERTICAL_TILES_BY_LOADING; j++)
+			for(var j:int=0; j < Session.nbTilesByEdge; j++)
 			{
 				// draw lands
-				for(var i:int=0; i < Numbers.NB_HORIZONTAL_TILES_BY_LOADING; i++)
+				for(var i:int=0; i < Session.nbTilesByEdge; i++)
 				{
 					var _case:Case = Session.map[Session.firstCaseX+i][Session.firstCaseY+j];
 					
@@ -195,28 +192,29 @@ package com.uralys.tribes.core
 				case 0:
 					// forest
 					placeForet = true;
-					var image:Image = new Image();
-					switch(Utils.random(6)){
-						case 1:
-							image.source = ImageContainer.FORET7;
-							break;
-						case 2:
-							image.source = ImageContainer.FORET7;
-							break;
-						case 3:
-							image.source = ImageContainer.FORET7;
-							break;
-						case 4:
-							image.source = ImageContainer.FORET7;
-							break;
-						case 5:
-							image.source = ImageContainer.FORET7;
-							break;
-						default:
-							image.source = ImageContainer.FORET7;
-							break;
-						
-					}
+					image.source = ImageContainer.FORET7;
+
+//					switch(Utils.random(6)){
+//						case 1:
+//							image.source = ImageContainer.FORET7;
+//							break;
+//						case 2:
+//							image.source = ImageContainer.FORET7;
+//							break;
+//						case 3:
+//							image.source = ImageContainer.FORET7;
+//							break;
+//						case 4:
+//							image.source = ImageContainer.FORET7;
+//							break;
+//						case 5:
+//							image.source = ImageContainer.FORET7;
+//							break;
+//						default:
+//							image.source = ImageContainer.FORET7;
+//							break;
+//						
+//					}
 
 					break;
 				case 1:
@@ -225,8 +223,8 @@ package com.uralys.tribes.core
 					break;
 			}
 			
-			image.x = _case.x * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4) * scale;
-			image.y = _case.y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2) * scale;
+			image.x = Utils.getXPixel(_case.x);
+			image.y = Utils.getYPixel(_case.y);
 			image.scaleX = scale;
 			image.scaleY = scale;
 			
@@ -289,8 +287,10 @@ package com.uralys.tribes.core
 				return; // no unit
 			}
 			
-			_case.pawn.x = _case.x * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4) + 15;
-			_case.pawn.y = _case.y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2) - 10;
+			_case.pawn.x = (Utils.getXPixel(_case.x) + 15*scale);
+			_case.pawn.y = (Utils.getYPixel(_case.y) - 10*scale);
+			imageUnit.scaleX = scale;
+			imageUnit.scaleY = scale;
 			imageUnit.mouseEnabled = false;
 			
 			_case.pawn.addElement(imageUnit);
@@ -303,65 +303,16 @@ package com.uralys.tribes.core
 			var image:Image = new Image();
 			image.source = ImageContainer.getImage(ImageContainer.VILLE);
 			
-			var cityPx:int = city.x * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4);
-			var cityPy:int = city.y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2);
+			var cityPx:int = Utils.getXPixel(city.x);
+			var cityPy:int = Utils.getYPixel(city.y);
 			
 			image.x = cityPx;
 			image.y = cityPy;
+			image.scaleX = scale;
+			image.scaleY = scale;
 			
 			Session.board.pawnLayer.addElement(image);
 		}
-		
-//		public function drawCity2(city:City):void
-//		{
-//			var angle:int = 0;
-//			var distanceAuCentre:int = 0;
-//			var insideCircle:Boolean = true;
-//			
-//			var images:Map = new Map();
-//			
-//			while(insideCircle){
-//				var image:Image = new Image();
-//				
-//				switch(Utils.random(3)){
-//					case 1:
-//						image.source = ImageContainer.HOUSE1;
-//						break;
-//					case 2:
-//						image.source = ImageContainer.HOUSE2;
-//						break;
-//					case 3:
-//						image.source = ImageContainer.HOUSE3;
-//						break;
-//					
-//				}
-//				
-//				
-//				var cityPx:int = city.x * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4) + Numbers.LAND_WIDTH/2;
-//				var cityPy:int = city.y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2) + Numbers.LAND_HEIGHT/2;
-//				
-//				image.x = (cityPx - image.width - 10) + (Math.cos(angle)*(distanceAuCentre/2));
-//				image.y = (cityPy - image.height - 10) + (Math.sin(angle)*(distanceAuCentre/2));
-//				
-//				image.data = city;
-//				image.addEventListener(MouseEvent.CLICK, cityIsCLicked);
-//				image.addEventListener(MouseEvent.ROLL_OVER, cityIsRolledOn);
-//				
-//				if(distanceAuCentre > city.radius*2)
-//					insideCircle = false;
-//				else{
-//					images.put(image.y, image);
-//					distanceAuCentre = angle/360 * 25;
-//					angle += distanceAuCentre > 50 ? (distanceAuCentre > 100 ? 10 : 20) : 40;
-//				}
-//			}
-//			
-//			images.sortKeys(new SortField(null, true));
-//			
-//			for each(var image:Image in images.values()){
-//				Session.board.mapPositioner.addElement(image);
-//			}
-//		}
 		
 		//------------------------------------------------------------------------------------//
 		
@@ -371,13 +322,16 @@ package com.uralys.tribes.core
 			{
 				var image:Image = new Image();
 				
-				image.x = _case.x * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4);
-				image.y = _case.y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2);
+				image.x = Utils.getXPixel(_case.x);
+				image.y = Utils.getYPixel(_case.y);
 				
 				if(_case.landOwner.playerUID == Session.player.playerUID)
 					image.source = ImageContainer.getImage(ImageContainer.HIGHLIGHT_VERT);
 				else
 					image.source = ImageContainer.getImage(ImageContainer.HIGHLIGHT_ROUGE);
+				
+				image.scaleX = scale;
+				image.scaleY = scale;
 				
 				Session.board.landLayer.addElement(image);
 				
@@ -390,9 +344,11 @@ package com.uralys.tribes.core
 					|| Session.map[_case.x - 1][_case.y - 1].landOwner.playerUID != _case.landOwner.playerUID))
 					{
 						var imageNO:Image = new Image();
-						imageNO.x = _case.x * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4);
-						imageNO.y = _case.y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2);
+						imageNO.x = Utils.getXPixel(_case.x);
+						imageNO.y = Utils.getYPixel(_case.y);
 						imageNO.source = ImageContainer.getImage(ImageContainer.FRONTIER_NO);
+						imageNO.scaleX = scale;
+						imageNO.scaleY = scale;
 						
 						Session.board.landLayer.addElement(imageNO);
 					}
@@ -409,9 +365,11 @@ package com.uralys.tribes.core
 					|| Session.map[_case.x - 1][_case.y + 1].landOwner.playerUID != _case.landOwner.playerUID))
 					{
 						var imageSO:Image = new Image();
-						imageSO.x = _case.x * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4);
-						imageSO.y = _case.y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2);
+						imageSO.x = Utils.getXPixel(_case.x);
+						imageSO.y = Utils.getYPixel(_case.y);
 						imageSO.source = ImageContainer.getImage(ImageContainer.FRONTIER_SO);
+						imageSO.scaleX = scale;
+						imageSO.scaleY = scale;
 						
 						Session.board.landLayer.addElement(imageSO);
 					}
@@ -427,9 +385,11 @@ package com.uralys.tribes.core
 					|| Session.map[_case.x][_case.y - 2].landOwner.playerUID != _case.landOwner.playerUID))
 					{
 						var imageN:Image = new Image();
-						imageN.x = _case.x * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4);
-						imageN.y = _case.y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2);
+						imageN.x = Utils.getXPixel(_case.x);
+						imageN.y = Utils.getYPixel(_case.y);
 						imageN.source = ImageContainer.getImage(ImageContainer.FRONTIER_N);
+						imageN.scaleX = scale;
+						imageN.scaleY = scale;
 						
 						Session.board.landLayer.addElement(imageN);
 					}
@@ -445,9 +405,11 @@ package com.uralys.tribes.core
 					|| Session.map[_case.x][_case.y + 2].landOwner.playerUID != _case.landOwner.playerUID))
 					{
 						var imageS:Image = new Image();
-						imageS.x = _case.x * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4);
-						imageS.y = _case.y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2);
+						imageS.x = Utils.getXPixel(_case.x);
+						imageS.y = Utils.getYPixel(_case.y);
 						imageS.source = ImageContainer.getImage(ImageContainer.FRONTIER_S);
+						imageS.scaleX = scale;
+						imageS.scaleY = scale;
 						
 						Session.board.landLayer.addElement(imageS);
 					}
@@ -464,9 +426,11 @@ package com.uralys.tribes.core
 						|| Session.map[_case.x + 1][_case.y - 1].landOwner.playerUID != _case.landOwner.playerUID))
 					{
 						var imageNE:Image = new Image();
-						imageNE.x = _case.x * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4);
-						imageNE.y = _case.y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2);
+						imageNE.x = Utils.getXPixel(_case.x);
+						imageNE.y = Utils.getYPixel(_case.y);
 						imageNE.source = ImageContainer.getImage(ImageContainer.FRONTIER_NE);
+						imageNE.scaleX = scale;
+						imageNE.scaleY = scale;
 						
 						Session.board.landLayer.addElement(imageNE);
 					}
@@ -483,9 +447,11 @@ package com.uralys.tribes.core
 					|| Session.map[_case.x + 1][_case.y + 1].landOwner.playerUID != _case.landOwner.playerUID))
 					{
 						var imageSE:Image = new Image();
-						imageSE.x = _case.x * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4);
-						imageSE.y = _case.y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2);
+						imageSE.x = Utils.getXPixel(_case.x);
+						imageSE.y = Utils.getYPixel(_case.y);
 						imageSE.source = ImageContainer.getImage(ImageContainer.FRONTIER_SE);
+						imageSE.scaleX = scale;
+						imageSE.scaleY = scale;
 						
 						Session.board.landLayer.addElement(imageSE);
 					}
@@ -502,10 +468,6 @@ package com.uralys.tribes.core
 			BoardClickAnalyser.getInstance().clickOnCase(event.currentTarget.data as Case);
 		}
 		
-//		protected function cityIsCLicked(event:MouseEvent):void{
-//			BoardClickAnalyser.getInstance().clickOnHouse(event.currentTarget.data as City);
-//		}
-		
 		protected function tileIsRolledOn(event:MouseEvent):void{
 			BoardClickAnalyser.getInstance().rollOnCase(event.currentTarget.data as Case);
 		}
@@ -516,47 +478,15 @@ package com.uralys.tribes.core
 		
 		//==================================================================================================//
 
-//		private function drawCityText(city:City, isOpponent:Boolean):void{
-//			var name:Label = new Label();
-//			name.text = city.name;
-//			name.x = city.x - city.radius - 20; 
-//			name.y = city.y - city.radius - 20; 
-//		}
-
-		//==================================================================================================//
-		
-		public function drawLand(land:int, isOpponent:Boolean):void{
-			
-			var i:int = land;
-			var j:int = 0;
-			
-			while(land > 30){
-				land -= 30;
-				j++;
-			}
-			
-			i = land;
-			
-			var landSquare:Rect = new Rect();
-			landSquare.width = Numbers.LAND_WIDTH;
-			landSquare.height = Numbers.LAND_HEIGHT;
-			landSquare.x = i*Numbers.LAND_WIDTH;
-			landSquare.y = j*Numbers.LAND_HEIGHT;
-			landSquare.fill = new SolidColor(isOpponent ? Numbers.YELLOW : Numbers.BLUE);
-			landSquare.alpha = 0.2;
-			
-//			board.boardEntities.addElement(landSquare);
-		}
-
-		//==================================================================================================//
-
 		public function addMoveImages(move:com.uralys.tribes.entities.Move, xPreviousMove:int, yPreviousMove:int, displayProgress:Boolean):void
 		{
 			//------------------------------------------------------//
 
 			var moveHighlight:MoveHighLight = new MoveHighLight();
-			moveHighlight.x = Utils.getXOnBoard(Utils.getXFromCaseUID(move.caseUID));
-			moveHighlight.y = Utils.getYOnBoard(Utils.getYFromCaseUID(move.caseUID));
+			moveHighlight.x = Utils.getXPixel(Utils.getXFromCaseUID(move.caseUID));
+			moveHighlight.y = Utils.getYPixel(Utils.getYFromCaseUID(move.caseUID));
+			moveHighlight.image.scaleX = scale;
+			moveHighlight.image.scaleY = scale;
 			
 			currentUnitMoveHighLights.addItem(moveHighlight);
 			Session.board.highlighters.addElement(moveHighlight);
@@ -569,8 +499,8 @@ package com.uralys.tribes.core
  
 				GraphicsUtil.drawArrow(
 					Session.board.highlighters.graphics,
-					new Point(Utils.getXOnBoard(xPreviousMove)+Numbers.LAND_WIDTH/2,Utils.getYOnBoard(yPreviousMove)+Numbers.LAND_HEIGHT/2),
-					new Point(Utils.getXOnBoard(Utils.getXFromCaseUID(move.caseUID))+Numbers.LAND_WIDTH/2,Utils.getYOnBoard(Utils.getYFromCaseUID(move.caseUID))+Numbers.LAND_HEIGHT/2)
+					new Point((Utils.getXPixel(xPreviousMove)+Utils.getLandWidth()/2), (Utils.getYPixel(yPreviousMove)+Utils.getLandHeight()/2)),
+					new Point((Utils.getXPixel(Utils.getXFromCaseUID(move.caseUID))+Utils.getLandWidth()/2), (Utils.getYPixel(Utils.getYFromCaseUID(move.caseUID))+Utils.getLandHeight()/2))
 				);
 			}
 		}
@@ -589,20 +519,54 @@ package com.uralys.tribes.core
 		
 		//==================================================================================================//
 
-		public function zoom():void{
-			scale *= 2;
-			refreshDisplay();
-			
-			Session.board.mapPositioner.x *= scale;
-			Session.board.mapPositioner.y *= scale;
+		public function zoom():void
+		{
+			switch(scale)
+			{
+				case 0.25:
+					scale = 0.5;
+					applyZoom();
+					break;
+
+				case 0.5:
+					scale = 1;
+					applyZoom();
+					break;
+
+				case 1:
+					scale = 2;
+					applyZoom();
+					break;
+				
+			}
 		}
 
-		public function unzoom():void{
-			scale /= 2;
-			refreshDisplay();
-			
-			Session.board.mapPositioner.x *= scale;
-			Session.board.mapPositioner.y *= scale;
+		public function unzoom():void
+		{
+			switch(scale)
+			{
+				case 2:
+					scale = 1;
+					applyZoom();
+					break;
+				
+				case 1:
+					scale = 0.5;
+					applyZoom();
+					break;
+				
+				case 0.5:
+					scale = 0.25;
+					applyZoom();
+					break;
+				
+			}
+		}
+
+		private function applyZoom():void
+		{
+			GameManager.getInstance().loadCases(Session.CENTER_X, Session.CENTER_Y, false);
+			Session.board.placeBoard(Session.CENTER_X, Session.CENTER_Y);
 		}
 	}
 }

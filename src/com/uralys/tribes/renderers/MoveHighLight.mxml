@@ -12,5 +12,6 @@
 	</fx:Script>
 	
 	<mx:Image source="{ImageContainer.getImage(ImageContainer.HIGHLIGHT_VERT)}"
-			  mouseEnabled="false"/>
+			  mouseEnabled="false"
+			  id="image"/>
 </s:Group>

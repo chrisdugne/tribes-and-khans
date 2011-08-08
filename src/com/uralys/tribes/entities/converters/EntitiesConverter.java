@@ -15,6 +15,7 @@ import com.uralys.tribes.entities.Move;
 import com.uralys.tribes.entities.MoveConflict;
 import com.uralys.tribes.entities.Player;
 import com.uralys.tribes.entities.Smith;
+import com.uralys.tribes.entities.Stock;
 import com.uralys.tribes.entities.Unit;
 import com.uralys.tribes.entities.dto.CaseDTO;
 import com.uralys.tribes.entities.dto.CityDTO;
@@ -27,6 +28,7 @@ import com.uralys.tribes.entities.dto.MoveConflictDTO;
 import com.uralys.tribes.entities.dto.MoveDTO;
 import com.uralys.tribes.entities.dto.PlayerDTO;
 import com.uralys.tribes.entities.dto.SmithDTO;
+import com.uralys.tribes.entities.dto.StockDTO;
 import com.uralys.tribes.entities.dto.UnitDTO;
 import com.uralys.utils.Utils;
 
@@ -193,13 +195,23 @@ public class EntitiesConverter {
 		if(requireFullData){
 			// ---------------------------------//
 			
-			List<Equipment> stock = new ArrayList<Equipment>();
+			List<Stock> stocks = new ArrayList<Stock>();
 			
-			for (EquipmentDTO equipmentDTO : cityDTO.getEquipmentStock()) {
-				stock.add(convertEquipmentDTO(equipmentDTO));
+			for (StockDTO stockDTO : cityDTO.getStocks()) {
+				stocks.add(convertStockDTO(stockDTO));
 			}
 			
-			city.setEquipmentStock(stock);
+			city.setStocks(stocks);
+			
+			// ---------------------------------//
+			
+			List<Equipment> equipmentStock = new ArrayList<Equipment>();
+			
+			for (EquipmentDTO equipmentDTO : cityDTO.getEquipmentStock()) {
+				equipmentStock.add(convertEquipmentDTO(equipmentDTO));
+			}
+			
+			city.setEquipmentStock(equipmentStock);
 			
 			// ---------------------------------//
 			
@@ -410,6 +422,25 @@ public class EntitiesConverter {
 		equipment.setItem(convertItemDTO(equipmentDTO.getItem()));
 
 		return equipment;
+	}
+
+	// -----------------------------------------------------------------------------------//
+	
+	public static Stock convertStockDTO(StockDTO stockDTO) {
+		
+		if (stockDTO == null)
+			return null;
+		
+		Stock stock = new Stock();
+		
+		stock.setStockUID(stockDTO.getStockUID());
+		stock.setStockCapacity(stockDTO.getStockCapacity());
+		stock.setStockNextCapacity(stockDTO.getStockNextCapacity());
+		stock.setPeopleBuildingStock(stockDTO.getPeopleBuildingStock());
+		stock.setStockBeginTime(stockDTO.getStockBeginTime());
+		stock.setStockEndTime(stockDTO.getStockEndTime());
+		
+		return stock;
 	}
 
 	// -----------------------------------------------------------------------------------//

@@ -16,6 +16,7 @@ import com.uralys.tribes.entities.Item;
 import com.uralys.tribes.entities.Move;
 import com.uralys.tribes.entities.Player;
 import com.uralys.tribes.entities.Smith;
+import com.uralys.tribes.entities.Stock;
 import com.uralys.tribes.entities.Unit;
 import com.uralys.tribes.entities.converters.EntitiesConverter;
 import com.uralys.tribes.entities.dto.CaseDTO;
@@ -90,6 +91,7 @@ public class GameManager implements IGameManager {
 	
 	private void updateCity(City city, boolean newStep)
 	{
+		Utils.print("updateCity");
 		if(city.getBeginTime() > new Date().getTime())
 			return;
 		
@@ -105,8 +107,16 @@ public class GameManager implements IGameManager {
 		//----------------------------------------//
 		// Equipment stock
 
-		for(Equipment stock : city.getEquipmentStock()){
-			gameDao.updateStock(stock.getEquimentUID(), stock.getSize());	
+		for(Equipment equipmentStock : city.getEquipmentStock()){
+			gameDao.updateEquipmentStock(equipmentStock.getEquimentUID(), equipmentStock.getSize());	
+		}
+		
+		//----------------------------------------//
+		// Stocks
+
+		Utils.print("update stocks : " + city.getStocks().size());
+		for(Stock stock : city.getStocks()){
+			gameDao.updateStock(stock);	
 		}
 	}
 	

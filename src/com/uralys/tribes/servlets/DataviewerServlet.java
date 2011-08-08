@@ -25,6 +25,7 @@ import com.uralys.tribes.entities.dto.MoveDTO;
 import com.uralys.tribes.entities.dto.PlayerDTO;
 import com.uralys.tribes.entities.dto.ServerDataDTO;
 import com.uralys.tribes.entities.dto.SmithDTO;
+import com.uralys.tribes.entities.dto.StockDTO;
 import com.uralys.tribes.entities.dto.UnitDTO;
 import com.uralys.utils.Utils;
 
@@ -136,6 +137,7 @@ public class DataviewerServlet extends HttpServlet {
 				
 				" <OPTION VALUE=\"player\">PlayerDTO" +
 				" <OPTION VALUE=\"city\">CityDTO" +
+				" <OPTION VALUE=\"stock\">StockDTO" +
 				" <OPTION VALUE=\"unit\">UnitDTO" +
 				" <OPTION VALUE=\"smith\">SmithDTO" +
 				" <OPTION VALUE=\"equipment\">EquipmentDTO" +
@@ -530,6 +532,8 @@ public class DataviewerServlet extends HttpServlet {
 			return PlayerDTO.class;
 		else if(dto.equals("city"))
 			return CityDTO.class;
+		else if(dto.equals("stock"))
+			return StockDTO.class;
 		else if(dto.equals("smith"))
 			return SmithDTO.class;
 		else if(dto.equals("unit"))

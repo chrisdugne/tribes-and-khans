@@ -5,6 +5,7 @@ import java.util.List;
 import com.uralys.tribes.entities.City;
 import com.uralys.tribes.entities.Move;
 import com.uralys.tribes.entities.Player;
+import com.uralys.tribes.entities.Stock;
 import com.uralys.tribes.entities.Unit;
 import com.uralys.tribes.entities.dto.CaseDTO;
 import com.uralys.tribes.entities.dto.CityDTO;
@@ -30,7 +31,8 @@ public interface IGameDAO {
 	public void updatePlayerPoints(Player player);
 	public void updateCityResources(City city, boolean newStep);
 	public void updateSmith(String smithUID, int people);
-	public void updateStock(String equipmentUID, int size);
+	public void updateEquipmentStock(String equipmentUID, int size);
+	public void updateStock(Stock stock);
 
 	public void createUnit(Unit unit, String cityUID);
 	public void updateUnit(Unit unit, String cityUID);

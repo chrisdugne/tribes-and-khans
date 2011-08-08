@@ -19,6 +19,7 @@ import com.uralys.tribes.entities.Equipment;
 import com.uralys.tribes.entities.Message;
 import com.uralys.tribes.entities.Move;
 import com.uralys.tribes.entities.Player;
+import com.uralys.tribes.entities.Stock;
 import com.uralys.tribes.entities.Unit;
 import com.uralys.tribes.entities.dto.CaseDTO;
 import com.uralys.tribes.entities.dto.CityDTO;
@@ -31,6 +32,7 @@ import com.uralys.tribes.entities.dto.MoveDTO;
 import com.uralys.tribes.entities.dto.PlayerDTO;
 import com.uralys.tribes.entities.dto.ServerDataDTO;
 import com.uralys.tribes.entities.dto.SmithDTO;
+import com.uralys.tribes.entities.dto.StockDTO;
 import com.uralys.tribes.entities.dto.UnitDTO;
 import com.uralys.tribes.utils.TribesUtils;
 import com.uralys.utils.Utils;
@@ -43,6 +45,14 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	private static String ITEM_UID_BOW = "_bow";
 	private static String ITEM_UID_SWORD = "_sword";
 	private static String ITEM_UID_ARMOR = "_armor";
+
+	private static String WHEAT_STOCK_ID = "_wheat_stock";
+	private static String WOOD_STOCK_ID = "_wood_stock";
+	private static String IRON_STOCK_ID = "_iron_stock";
+	private static String BOW_STOCK_ID = "_bow_stock";
+	private static String SWORD_STOCK_ID = "_sword_stock";
+	private static String ARMOR_STOCK_ID = "_armor_stock";
+	
 	private static boolean debug = true; 
 
 	//-----------------------------------------------------------------------//
@@ -73,10 +83,10 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		playerDTO.setUralysUID(uralysUID);
 		playerDTO.setName("New Player");
 		playerDTO.setAllyUID(uralysUID);
-		playerDTO.setNbLands(1);
+		playerDTO.setNbLands(0);
 		playerDTO.setNbCities(0);
 		playerDTO.setNbArmies(0);
-		playerDTO.setNbPopulation(1000);
+		playerDTO.setNbPopulation(500);
 		playerDTO.setNbConnections(0);
 		playerDTO.setMusicOn(true);
 		
@@ -202,6 +212,23 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		city.getSmithUIDs().add(bowWorkersUID);
 		city.getSmithUIDs().add(swordWorkersUID);
 		city.getSmithUIDs().add(armorWorkersUID);
+
+		//--------------------------------------//
+		// init Stocks
+		
+		String wheatStockUID = createStock(cityUID, WHEAT_STOCK_ID, 500);
+		String woodStockUID = createStock(cityUID, WOOD_STOCK_ID, 500);
+		String ironStockUID = createStock(cityUID, IRON_STOCK_ID, 500);
+		String bowStockUID = createStock(cityUID, BOW_STOCK_ID, 50);
+		String swordStockUID = createStock(cityUID, SWORD_STOCK_ID, 50);
+		String armorStockUID = createStock(cityUID, ARMOR_STOCK_ID, 50);
+		
+		city.getStockUIDs().add(wheatStockUID);
+		city.getStockUIDs().add(woodStockUID);
+		city.getStockUIDs().add(ironStockUID);
+		city.getStockUIDs().add(bowStockUID);
+		city.getStockUIDs().add(swordStockUID);
+		city.getStockUIDs().add(armorStockUID);
 
 		//--------------------------------------//
 		
@@ -482,11 +509,27 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		pm.close();
 	}
 	
-	public void updateStock(String stockUID, int size){
+	public void updateEquipmentStock(String stockUID, int size){
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		EquipmentDTO equipmentDTO = pm.getObjectById(EquipmentDTO.class, stockUID);
 		
 		equipmentDTO.setSize(size);
+		pm.close();
+	}
+	
+	public void updateStock(Stock stock){
+		Utils.print("dao update stocks : " + stock.getStockUID());
+		Utils.print(stock.getStockNextCapacity()+"");
+	
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		StockDTO stockDTO = pm.getObjectById(StockDTO.class, stock.getStockUID());
+		
+		stockDTO.setPeopleBuildingStock(stock.getPeopleBuildingStock());
+		stockDTO.setStockBeginTime(stock.getStockBeginTime());
+		stockDTO.setStockEndTime(stock.getStockEndTime());
+		stockDTO.setStockCapacity(stock.getStockCapacity());
+		stockDTO.setStockNextCapacity(stock.getStockNextCapacity());
+		
 		pm.close();
 	}
 	
@@ -590,7 +633,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		pm.close();
 		
 		for(Equipment equipment : unit.getEquipments()){
-			updateStock(equipment.getEquimentUID(), equipment.getSize());
+			updateEquipmentStock(equipment.getEquimentUID(), equipment.getSize());
 		}
 		
 	}
@@ -1077,6 +1120,31 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		pm.close();
 		
 		return smithUID;
+	}
+	
+	
+	private String createStock(String cityUID, String stockId, int capacity) {
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		
+		StockDTO stock = new StockDTO();
+
+		String stockUID = cityUID+"_"+stockId;
+		
+		Key key = KeyFactory.createKey(StockDTO.class.getSimpleName(), stockUID);
+		
+		stock.setKey(KeyFactory.keyToString(key));
+		
+		stock.setStockUID(stockUID);
+		stock.setStockCapacity(capacity);
+		stock.setStockNextCapacity(0);
+		stock.setPeopleBuildingStock(0);
+		stock.setStockBeginTime(-1);
+		stock.setStockEndTime(new Date().getTime());
+		
+		pm.makePersistent(stock);
+		pm.close();
+		
+		return stockUID;
 	}
 	
 	//======================================================================================================//

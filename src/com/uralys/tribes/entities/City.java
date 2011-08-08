@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class City {
+	//-----------------------------------------------------------------------------------//
 
 	private String cityUID;
 	private String ownerUID;
@@ -27,6 +28,7 @@ public class City {
 
 	private List<Equipment> equipmentStock = new ArrayList<Equipment>();
 	private List<Smith> smiths = new ArrayList<Smith>();
+	private List<Stock> stocks = new ArrayList<Stock>();
 	
 	//-----------------------------------------------------------------------------------//
 	
@@ -163,6 +165,14 @@ public class City {
 
 	public void setOwnerUID(String ownerUID) {
 		this.ownerUID = ownerUID;
+	}
+
+	public List<Stock> getStocks() {
+		return stocks;
+	}
+
+	public void setStocks(List<Stock> stocks) {
+		this.stocks = stocks;
 	}
 
 	

@@ -42,6 +42,7 @@ public class CityDTO {
 	@Persistent private int peopleCreatingWood;
 	@Persistent private int iron;
 	@Persistent private int peopleCreatingIron;
+
 	@Persistent private Integer gold;
 
 	@Persistent private int x;
@@ -49,6 +50,7 @@ public class CityDTO {
 	
 	@Persistent private List<String> smithUIDs = new ArrayList<String>();
 	@Persistent private List<String> equipmentStockUIDs = new ArrayList<String>();
+	@Persistent private List<String> stockUIDs = new ArrayList<String>();
 	
 	//-----------------------------------------------------------------------------------//
 
@@ -185,6 +187,17 @@ public class CityDTO {
 	}
 	public void setEquipmentStockUIDs(List<String> equipmentStockUIDs) {
 		this.equipmentStockUIDs = equipmentStockUIDs;
+	}
+	//-----------------------------------------------------------------------------------//
+	
+	public List<StockDTO> getStocks() {
+		return UniversalDAO.getInstance().getListDTO(stockUIDs, StockDTO.class);
+	}
+	public List<String> getStockUIDs() {
+		return stockUIDs;
+	}
+	public void setStockUIDs(List<String> stockUIDs) {
+		this.stockUIDs = stockUIDs;
 	}
 	
 	//-----------------------------------------------------------------------------------//

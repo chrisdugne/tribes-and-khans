@@ -297,5 +297,12 @@ public class Utils
 			
 			return collection;
 		}
+		
+		//----------------------------------------------------------------------------------------------------
+		
+		public static function getStockName(stockUID:String):String
+		{
+			return stockUID.substr(stockUID.indexOf("__")+1); 
+		}
 }
 }

@@ -7,15 +7,12 @@
 				visible="{(data as Message).status != Message.DELETED}">
 	<fx:Script>
 		<![CDATA[
+			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.entities.Message;
-			import mx.formatters.DateFormatter;
 
 			private function clicked():void
 			{
-				var formatter : DateFormatter;
-				formatter = new DateFormatter();
-				formatter.formatString = "DD MMMM YYYY, HHhNN";
-				(data as Message).date = formatter.format(new Date((data as Message).time));
+				(data as Message).date = Session.dateFormatter.format(new Date((data as Message).time));
 				
 				if((data as Message).status == Message.UNREAD)
 					(data as Message).status = Message.READ;

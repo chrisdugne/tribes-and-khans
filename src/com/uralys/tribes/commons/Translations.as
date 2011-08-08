@@ -205,6 +205,11 @@ public class Translations{
 									["Prochaine récolte dans",
 									"Next step in",
 									"Next step in"]);
+	[Bindable]
+	public static var REMAINS:ArrayCollection = new ArrayCollection(
+									["Il reste",
+									"Remains",
+									"Remains"]);
 	
 
 	//-----------------------------------------------------------------------------------//
@@ -1017,6 +1022,18 @@ public class Translations{
 									["Votre armée",
 									"Your army",
 									"Your army"]);
+
+	[Bindable]
+	public static var BUILDINGS:ArrayCollection = new ArrayCollection(
+									["Constructions",
+									"Buildings",
+									"Buildings"]);
+
+	[Bindable]
+	public static var UPGRADE:ArrayCollection = new ArrayCollection(
+									["Construire",
+									"Upgrade",
+									"Upgrade"]);
 
 	//-----------------------------------------------------------------------------------//
 	// TUTORIALS

@@ -77,6 +77,12 @@ public final class ImageContainer
 
 	[Embed(source="resources/embed/icons/check.png")]
 	[Bindable] public static var CHECK:Class;  
+	
+	[Embed(source="resources/embed/clock.png")]
+	[Bindable] public static var CLOCK:Class;  
+
+	[Embed(source="resources/embed/upgrade_arrow.png")]
+	[Bindable] public static var UPGRADE_ARROW:Class;  
 
 	//   ======================================================================//
 

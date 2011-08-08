@@ -28,6 +28,7 @@ package com.uralys.tribes.entities
 		protected var _y:int;
 		protected var _equipmentStock:ArrayCollection = new ArrayCollection();
 		protected var _smiths:ArrayCollection = new ArrayCollection();
+		protected var _stocks:ArrayCollection = new ArrayCollection();
 		
 		protected var _beginTime:Number;
 		protected var _endTime:Number;
@@ -173,6 +174,14 @@ package com.uralys.tribes.entities
 		public function set smiths(o:ArrayCollection):void {
 			_smiths = o;
 		}
+	
+		public function get stocks():ArrayCollection {
+			return _stocks;
+		}
+	
+		public function set stocks(o:ArrayCollection):void {
+			_stocks = o;
+		}
 		
 		public function get beginTime():Number
 		{
@@ -249,6 +258,12 @@ package com.uralys.tribes.entities
 							- peopleCreatingWheat 
 							- peopleCreatingWood 
 							- peopleCreatingIron 
+							- wheatStockBuilders
+							- woodStockBuilders
+							- ironStockBuilders
+							- bowStockBuilders
+							- swordStockBuilders
+							- armorStockBuilders
 							- bowWorkers
 							- swordWorkers
 							- armorWorkers
@@ -282,7 +297,26 @@ package com.uralys.tribes.entities
 		protected var _woodSpent:int;
 		protected var _ironEarned:int;
 		protected var _ironSpent:int;
+		
+		private var _wheatStockCapacity:int;
+		private var _wheatStockNextCapacity:int;
+		private var _wheatStockBuilders:int;
+		private var _wheatStockBeginTime:Number;
+		private var _wheatStockEndTime:Number;
 
+		private var _woodStockCapacity:int;
+		private var _woodStockNextCapacity:int;
+		private var _woodStockBuilders:int;
+		private var _woodStockBeginTime:Number;
+		private var _woodStockEndTime:Number;
+
+		private var _ironStockCapacity:int;
+		private var _ironStockNextCapacity:int;
+		private var _ironStockBuilders:int;
+		private var _ironStockBeginTime:Number;
+		private var _ironStockEndTime:Number;
+
+		//---------------------------------------------------------------//
 		// market management
 		protected var _wheatBought:int;
 		protected var _woodBought:int;
@@ -299,6 +333,9 @@ package com.uralys.tribes.entities
 		protected var _goldEarned:int;
 		protected var _goldSpent:int;
 
+		//---------------------------------------------------------------//
+		// getters/setters for ressources and market management
+		
 		public function get wheatEarned():int{
 			return _wheatEarned;
 		}
@@ -354,7 +391,6 @@ package com.uralys.tribes.entities
 		public function set woodSold(o:int):void{
 			_woodSold = o;
 		}
-
 
 		public function get woodSpent():int{
 			return _woodSpent;
@@ -459,10 +495,137 @@ package com.uralys.tribes.entities
 		public function set armorsSold(o:int):void{
 			_armorsSold = o;
 		}
+		
+		public function get wheatStockCapacity():int {
+			return _wheatStockCapacity;
+		}
+		
+		public function set wheatStockCapacity(o:int):void {
+			_wheatStockCapacity = o;
+		}
+		
+		public function get wheatStockNextCapacity():int {
+			return _wheatStockNextCapacity;
+		}
+		
+		public function set wheatStockNextCapacity(o:int):void {
+			_wheatStockNextCapacity = o;
+		}
+		
+		public function get wheatStockBuilders():int {
+			return _wheatStockBuilders;
+		}
+		
+		public function set wheatStockBuilders(o:int):void {
+			_wheatStockBuilders = o;
+		}
+		
+		public function get wheatStockBeginTime():Number {
+			return _wheatStockBeginTime;
+		}
+		
+		public function set wheatStockBeginTime(o:Number):void {
+			_wheatStockBeginTime = o;
+		}
+		
+		public function get wheatStockEndTime():Number {
+			return _wheatStockEndTime;
+		}
+		
+		public function set wheatStockEndTime(o:Number):void {
+			_wheatStockEndTime = o;
+		}
+		
+		public function get woodStockCapacity():int {
+			return _woodStockCapacity;
+		}
+		
+		public function set woodStockCapacity(o:int):void {
+			_woodStockCapacity = o;
+		}
+		
+		public function get woodStockNextCapacity():int {
+			return _woodStockNextCapacity;
+		}
+		
+		public function set woodStockNextCapacity(o:int):void {
+			_woodStockNextCapacity = o;
+		}
+		
+		public function get woodStockBuilders():int {
+			return _woodStockBuilders;
+		}
+		
+		public function set woodStockBuilders(o:int):void {
+			_woodStockBuilders = o;
+		}
+		
+		public function get woodStockBeginTime():Number {
+			return _woodStockBeginTime;
+		}
+		
+		public function set woodStockBeginTime(o:Number):void {
+			_woodStockBeginTime = o;
+		}
+		
+		public function get woodStockEndTime():Number {
+			return _woodStockEndTime;
+		}
+		
+		public function set woodStockEndTime(o:Number):void {
+			_woodStockEndTime = o;
+		}
+		
+		public function get ironStockCapacity():int {
+			return _ironStockCapacity;
+		}
+		
+		public function set ironStockCapacity(o:int):void {
+			_ironStockCapacity = o;
+		}
+		
+		public function get ironStockNextCapacity():int {
+			return _ironStockNextCapacity;
+		}
+		
+		public function set ironStockNextCapacity(o:int):void {
+			_ironStockNextCapacity = o;
+		}
+		
+		public function get ironStockBuilders():int {
+			return _ironStockBuilders;
+		}
+		
+		public function set ironStockBuilders(o:int):void {
+			_ironStockBuilders = o;
+		}
+		
+		public function get ironStockBeginTime():Number {
+			return _ironStockBeginTime;
+		}
+		
+		public function set ironStockBeginTime(o:Number):void {
+			_ironStockBeginTime = o;
+		}
+		
+		public function get ironStockEndTime():Number {
+			return _ironStockEndTime;
+		}
+		
+		public function set ironStockEndTime(o:Number):void {
+			_ironStockEndTime = o;
+		}
+
 
 		//---------------------------------------------------------------//
 
 		private var _bowStock:int; // stock dans la ville au debut du tour
+		private var _bowStockCapacity:int;
+		private var _bowStockNextCapacity:int;
+		private var _bowStockBuilders:int;
+		private var _bowStockBeginTime:Number;
+		private var _bowStockEndTime:Number;
+
 		private var _bowsRestored:int; // bows restitues au stock àla fin du tour 
 		private var _bowsEquiped:int; // bows pris du stock pour les armees
 		private var _bowWorkers:int;
@@ -498,10 +661,55 @@ package com.uralys.tribes.entities
 		public function get bowsEquiped():int{
 			return _bowsEquiped;
 		}
+		public function get bowStockCapacity():int {
+			return _bowStockCapacity;
+		}
+		
+		public function set bowStockCapacity(o:int):void {
+			_bowStockCapacity = o;
+		}
+		
+		public function get bowStockNextCapacity():int {
+			return _bowStockNextCapacity;
+		}
+		
+		public function set bowStockNextCapacity(o:int):void {
+			_bowStockNextCapacity = o;
+		}
+		
+		public function get bowStockBuilders():int {
+			return _bowStockBuilders;
+		}
+		
+		public function set bowStockBuilders(o:int):void {
+			_bowStockBuilders = o;
+		}
+		
+		public function get bowStockBeginTime():Number {
+			return _bowStockBeginTime;
+		}
+		
+		public function set bowStockBeginTime(o:Number):void {
+			_bowStockBeginTime = o;
+		}
+		
+		public function get bowStockEndTime():Number {
+			return _bowStockEndTime;
+		}
+		
+		public function set bowStockEndTime(o:Number):void {
+			_bowStockEndTime = o;
+		}
 		
 		//---------------------------------------------------------------//
 		
 		private var _swordStock:int;
+		private var _swordStockCapacity:int;
+		private var _swordStockNextCapacity:int;
+		private var _swordStockBuilders:int;
+		private var _swordStockBeginTime:Number;
+		private var _swordStockEndTime:Number;
+		
 		private var _swordsRestored:int; // bows restitues au stock à la fin du tour 
 		private var _swordsEquiped:int; // bows pris du stock pour les armees
 		private var _swordWorkers:int;
@@ -537,9 +745,55 @@ package com.uralys.tribes.entities
 		public function get swordsEquiped():int{
 			return _swordsEquiped;
 		}
+		
+		public function get swordStockCapacity():int {
+			return _swordStockCapacity;
+		}
+		
+		public function set swordStockCapacity(o:int):void {
+			_swordStockCapacity = o;
+		}
+		
+		public function get swordStockNextCapacity():int {
+			return _swordStockNextCapacity;
+		}
+		
+		public function set swordStockNextCapacity(o:int):void {
+			_swordStockNextCapacity = o;
+		}
+		
+		public function get swordStockBuilders():int {
+			return _swordStockBuilders;
+		}
+		
+		public function set swordStockBuilders(o:int):void {
+			_swordStockBuilders = o;
+		}
+		
+		public function get swordStockBeginTime():Number {
+			return _swordStockBeginTime;
+		}
+		
+		public function set swordStockBeginTime(o:Number):void {
+			_swordStockBeginTime = o;
+		}
+		
+		public function get swordStockEndTime():Number {
+			return _swordStockEndTime;
+		}
+		
+		public function set swordStockEndTime(o:Number):void {
+			_swordStockEndTime = o;
+		}
 		//---------------------------------------------------------------//
 		
 		private var _armorStock:int;
+		private var _armorStockCapacity:int;
+		private var _armorStockNextCapacity:int;
+		private var _armorStockBuilders:int;
+		private var _armorStockBeginTime:Number;
+		private var _armorStockEndTime:Number;
+		
 		private var _armorsRestored:int; // bows restitues au stock à la fin du tour 
 		private var _armorsEquiped:int; // bows pris du stock pour les armees
 		private var _armorWorkers:int;
@@ -576,6 +830,46 @@ package com.uralys.tribes.entities
 			return _armorsEquiped;
 		}
 		
+		public function get armorStockCapacity():int {
+			return _armorStockCapacity;
+		}
+		
+		public function set armorStockCapacity(o:int):void {
+			_armorStockCapacity = o;
+		}
+		
+		public function get armorStockNextCapacity():int {
+			return _armorStockNextCapacity;
+		}
+		
+		public function set armorStockNextCapacity(o:int):void {
+			_armorStockNextCapacity = o;
+		}
+		
+		public function get armorStockBuilders():int {
+			return _armorStockBuilders;
+		}
+		
+		public function set armorStockBuilders(o:int):void {
+			_armorStockBuilders = o;
+		}
+		
+		public function get armorStockBeginTime():Number {
+			return _armorStockBeginTime;
+		}
+		
+		public function set armorStockBeginTime(o:Number):void {
+			_armorStockBeginTime = o;
+		}
+		
+		public function get armorStockEndTime():Number {
+			return _armorStockEndTime;
+		}
+		
+		public function set armorStockEndTime(o:Number):void {
+			_armorStockEndTime = o;
+		}
+
 		//---------------------------------------------------------------//
 
 		

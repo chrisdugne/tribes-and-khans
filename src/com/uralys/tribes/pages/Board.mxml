@@ -525,7 +525,7 @@
 				}
 				
 				// on calcule si ce n'a pas été fait avant
-				GameManager.getInstance().calculateCityData(false, false, selectedCity, false);
+				GameManager.getInstance().calculateCityData(false, false, false, selectedCity, false);
 				
 				enterCityForm.includeInLayout = true;
 				enterCityForm.visible = true;				

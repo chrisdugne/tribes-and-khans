@@ -48,6 +48,8 @@
 					Session.isLocal = true;
 				
 				Session.APPLICATION_WIDTH = FlexGlobals.topLevelApplication.width;
+				Session.dateFormatter.formatString = "DD MMMM YYYY, HHhNN";
+				Session.timeFormatter.formatString = "HHhNN";
 				
 				ImageContainer.loadImages();
 				try{

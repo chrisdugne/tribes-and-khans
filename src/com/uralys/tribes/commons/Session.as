@@ -6,6 +6,7 @@ package com.uralys.tribes.commons
 	import flash.utils.Timer;
 	
 	import mx.collections.ArrayCollection;
+	import mx.formatters.DateFormatter;
 	
 	
 	public class Session extends Object
@@ -17,7 +18,7 @@ package com.uralys.tribes.commons
 
 		//=====================================================//
 		
-		[Bindable] public static var VERSION:String = "1.1.87.2";
+		[Bindable] public static var VERSION:String = "1.2.0";
 		[Bindable] public static var LOGGED_IN:Boolean = false; 
 		[Bindable] public static var CONNECTED_TO_FACEBOOK:Boolean = false;
 		
@@ -125,6 +126,10 @@ package com.uralys.tribes.commons
 		// les images des entities sont dessinees sur la map
 		[Bindable] public static var DRAW_IMAGES:Boolean = true;
 		
+		//=====================================================//
+		
+		[Bindable] public static var dateFormatter : DateFormatter = new DateFormatter();
+		[Bindable] public static var timeFormatter : DateFormatter = new DateFormatter();
 		
 	}
 }

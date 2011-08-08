@@ -17,6 +17,7 @@ package com.uralys.tribes.managers {
 	import com.uralys.tribes.entities.Move;
 	import com.uralys.tribes.entities.Player;
 	import com.uralys.tribes.entities.Smith;
+	import com.uralys.tribes.entities.Stock;
 	import com.uralys.tribes.entities.Unit;
 	import com.uralys.tribes.pages.Board;
 	import com.uralys.utils.Utils;
@@ -27,6 +28,7 @@ package com.uralys.tribes.managers {
 	import mx.rpc.events.FaultEvent;
 	import mx.rpc.events.ResultEvent;
 	import mx.rpc.remoting.mxml.RemoteObject;
+	import mx.utils.ObjectUtil;
 
 	[Bindable]
 	public class GameManager{
@@ -90,6 +92,62 @@ package com.uralys.tribes.managers {
 							break;
 					}
 				}
+
+				trace("MAJ des stocks");
+				// recuperation des stocks
+				for each(var stock:Stock in city.stocks)
+				{
+					// on peut avoir de la triche ici..
+					// car on update la capacite du stock avant le calcul des stepMissed. 
+					// et si le joueur a beaucoup de stepMissed, il va remplir le nouveau stock alors qu'il etait limité à ce moment là
+					updateStockBuildingStatus(stock);
+					var stockName:String = Utils.getStockName(stock.stockUID);
+					
+					switch(stockName){
+						case "_wheat_stock" :
+							city.wheatStockCapacity = stock.stockCapacity;
+							city.wheatStockBuilders = stock.peopleBuildingStock;
+							city.wheatStockBeginTime = stock.stockBeginTime;
+							city.wheatStockEndTime = stock.stockEndTime;
+							city.wheatStockNextCapacity = stock.stockNextCapacity;
+							break;
+						case "_wood_stock" :
+							city.woodStockCapacity = stock.stockCapacity;
+							city.woodStockBuilders = stock.peopleBuildingStock;
+							city.woodStockBeginTime = stock.stockBeginTime;
+							city.woodStockEndTime = stock.stockEndTime;
+							city.woodStockNextCapacity = stock.stockNextCapacity;
+							break;
+						case "_iron_stock" :
+							city.ironStockCapacity = stock.stockCapacity;
+							city.ironStockBuilders = stock.peopleBuildingStock;
+							city.ironStockBeginTime = stock.stockBeginTime;
+							city.ironStockEndTime = stock.stockEndTime;
+							city.ironStockNextCapacity = stock.stockNextCapacity;
+							break;
+						case "_bow_stock" :
+							city.bowStockCapacity = stock.stockCapacity;
+							city.bowStockBuilders = stock.peopleBuildingStock;
+							city.bowStockBeginTime = stock.stockBeginTime;
+							city.bowStockEndTime = stock.stockEndTime;
+							city.bowStockNextCapacity = stock.stockNextCapacity;
+							break;
+						case "_sword_stock" :
+							city.swordStockCapacity = stock.stockCapacity;
+							city.swordStockBuilders = stock.peopleBuildingStock;
+							city.swordStockBeginTime = stock.stockBeginTime;
+							city.swordStockEndTime = stock.stockEndTime;
+							city.swordStockNextCapacity = stock.stockNextCapacity;
+							break;
+						case "_armor_stock" :
+							city.armorStockCapacity = stock.stockCapacity;
+							city.armorStockBuilders = stock.peopleBuildingStock;
+							city.armorStockBeginTime = stock.stockBeginTime;
+							city.armorStockEndTime = stock.stockEndTime;
+							city.armorStockNextCapacity = stock.stockNextCapacity;
+							break;
+					}
+				}
 			}
 			
 			
@@ -110,6 +168,17 @@ package com.uralys.tribes.managers {
 			Session.LOGGED_IN_FORCE_STEPS_DONE = true;
 		}
 		
+		private function updateStockBuildingStatus(stock:Stock):void
+		{
+			var now:Number = new Date().getTime();
+			
+			if(stock.stockBeginTime != -1 && now > stock.stockEndTime){
+				stock.stockBeginTime = -1;
+				stock.stockCapacity = stock.stockNextCapacity;
+				stock.peopleBuildingStock = 0;
+			}
+		}
+		
 		public function saveStep(loginCatchUp:Boolean = false)
 		{
 			for each(var city:City in Session.player.cities)
@@ -117,6 +186,15 @@ package com.uralys.tribes.managers {
 				city.wheat += city.wheatEarned - city.wheatSpent;
 				city.wood += city.woodEarned - city.woodSpent;
 				city.iron += city.ironEarned - city.ironSpent;
+				
+				// limitation des stocks
+				
+				if(city.wheat > city.wheatStockCapacity)
+					city.wheat = city.wheatStockCapacity;
+				if(city.wood > city.woodStockCapacity)
+					city.wood = city.woodStockCapacity;
+				if(city.iron > city.ironStockCapacity)
+					city.iron = city.ironStockCapacity;
 				
 				// petite correction, avec les arrondis on arrive parfois a etre negatif de peu. (a verifier)
 				// en tout cas on force le zero, sinon dans city.reset ca casse tout.
@@ -140,12 +218,12 @@ package com.uralys.tribes.managers {
 
 				if(!loginCatchUp)
 				{
-					refreshCitySmithsAndEquipments(city, true);
+					refreshCitySmithsAndEquipmentsAndStocks(city, true);
 				}
 				// else loginCatchUp : on ne refresh surtout pas smith et equipment, ils sont necessaires pour calculateCityData
 
 				city.reset();
-				calculateCityData(loginCatchUp, true, city, starvation);
+				calculateCityData(true, loginCatchUp, true, city, starvation);
 			}
 			
 			(Session.player.cities.getItemAt(0) as City).gold += Session.player.nbLands;
@@ -156,9 +234,9 @@ package com.uralys.tribes.managers {
 		}
 		
 		
-		private function refreshCitySmithsAndEquipments(city:City, needPoduction:Boolean):void
+		private function refreshCitySmithsAndEquipmentsAndStocks(city:City, needProduction:Boolean):void
 		{
-			trace("refreshCitySmithsAndEquipments");
+			trace("refreshCitySmithsAndEquipmentsAndStocks");
 			for each(var equipment:Equipment in city.equipmentStock)
 			{
 				switch(equipment.item.name)
@@ -168,8 +246,11 @@ package com.uralys.tribes.managers {
 						+ city.bowsRestored
 						- city.bowsEquiped;
 						
-						if(needPoduction)
+						if(needProduction)
 							equipment.size += city.bowWorkers * equipment.item.peopleRequired;
+						
+						if(equipment.size > city.bowStockCapacity)
+							equipment.size = city.bowStockCapacity;
 						
 						break;
 					case "sword" :
@@ -177,8 +258,11 @@ package com.uralys.tribes.managers {
 						+ city.swordsRestored
 						- city.swordsEquiped
 						
-						if(needPoduction)
+						if(needProduction)
 							equipment.size += city.swordWorkers * equipment.item.peopleRequired;
+						
+						if(equipment.size > city.swordStockCapacity)
+							equipment.size = city.swordStockCapacity;
 						
 						break;
 					case "armor" :
@@ -186,8 +270,11 @@ package com.uralys.tribes.managers {
 						+ city.armorsRestored
 						- city.armorsEquiped
 						
-						if(needPoduction)
+						if(needProduction)
 							equipment.size += city.armorWorkers * equipment.item.peopleRequired;
+						
+						if(equipment.size > city.armorStockCapacity)
+							equipment.size = city.armorStockCapacity;
 						
 						break;
 				}
@@ -204,6 +291,56 @@ package com.uralys.tribes.managers {
 						break;
 					case "armor" :
 						smith.people = city.armorWorkers;
+						break;
+				}
+			}
+
+			for each(var stock:Stock in city.stocks)
+			{
+				var stockName:String = Utils.getStockName(stock.stockUID);
+
+				switch(stockName){
+					case "_wheat_stock" :
+						stock.peopleBuildingStock = city.wheatStockBuilders;
+						stock.stockCapacity = city.wheatStockCapacity;
+						stock.stockNextCapacity = city.wheatStockNextCapacity;
+						stock.stockBeginTime = city.wheatStockBeginTime;
+						stock.stockEndTime = city.wheatStockEndTime;
+						break;
+					case "_wood_stock" :
+						stock.peopleBuildingStock = city.woodStockBuilders;
+						stock.stockCapacity = city.woodStockCapacity;
+						stock.stockNextCapacity = city.woodStockNextCapacity;
+						stock.stockBeginTime = city.woodStockBeginTime;
+						stock.stockEndTime = city.woodStockEndTime;
+						break;
+					case "_iron_stock" :
+						stock.peopleBuildingStock = city.ironStockBuilders;
+						stock.stockCapacity = city.ironStockCapacity;
+						stock.stockNextCapacity = city.ironStockNextCapacity;
+						stock.stockBeginTime = city.ironStockBeginTime;
+						stock.stockEndTime = city.ironStockEndTime;
+						break;
+					case "_bow_stock" :
+						stock.peopleBuildingStock = city.bowStockBuilders;
+						stock.stockCapacity = city.bowStockCapacity;
+						stock.stockNextCapacity = city.bowStockNextCapacity;
+						stock.stockBeginTime = city.bowStockBeginTime;
+						stock.stockEndTime = city.bowStockEndTime;
+						break;
+					case "_sword_stock" :
+						stock.peopleBuildingStock = city.swordStockBuilders;
+						stock.stockCapacity = city.swordStockCapacity;
+						stock.stockNextCapacity = city.swordStockNextCapacity;
+						stock.stockBeginTime = city.swordStockBeginTime;
+						stock.stockEndTime = city.swordStockEndTime;
+						break;
+					case "_armor_stock" :
+						stock.peopleBuildingStock = city.armorStockBuilders;
+						stock.stockCapacity = city.armorStockCapacity;
+						stock.stockNextCapacity = city.armorStockNextCapacity;
+						stock.stockBeginTime = city.armorStockBeginTime;
+						stock.stockEndTime = city.armorStockEndTime;
 						break;
 				}
 			}
@@ -414,7 +551,7 @@ package com.uralys.tribes.managers {
 		
 		//-------------------------------------------------------------------------------//
 		
-		public function calculateCityData(loginCatchUp:Boolean, forceCalculation:Boolean, city:City, starvation:Boolean):void
+		public function calculateCityData(fromSaveStep:Boolean, loginCatchUp:Boolean, forceCalculation:Boolean, city:City, starvation:Boolean):void
 		{
 			trace("calculateCityData");
 			if(!forceCalculation && city.calculationDone)
@@ -449,8 +586,10 @@ package com.uralys.tribes.managers {
 						if(city.bowWorkers == -1) // stock suffisant
 							city.bowWorkers = smith.people;
 
-						trace("updating bowStock");
-						city.bowStock += city.bowWorkers;
+						if(fromSaveStep){
+							trace("fromSaveStep : updating bowStock");
+							city.bowStock += city.bowWorkers;
+						}
 						
 						trace("final : city.bowWorkers : " + city.bowWorkers);
 						trace("final : city.bowStock : " + city.bowStock);
@@ -720,7 +859,7 @@ package com.uralys.tribes.managers {
 
 		public function saveCity(city:City):void
 		{
-			refreshCitySmithsAndEquipments(city, false);
+			refreshCitySmithsAndEquipmentsAndStocks(city, false);
 			
 			var gameWrapper:RemoteObject = getGameWrapper();
 			gameWrapper.saveCity(city);			
@@ -728,7 +867,7 @@ package com.uralys.tribes.managers {
 
 		public function buildCity(city:City, merchant:Unit):void
 		{
-			refreshCitySmithsAndEquipments(city, false);
+			refreshCitySmithsAndEquipmentsAndStocks(city, false);
 			
 			cityBeingSaved = city;
 			

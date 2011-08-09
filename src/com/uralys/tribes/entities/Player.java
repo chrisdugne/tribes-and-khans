@@ -5,10 +5,12 @@ import java.util.List;
 
 public class Player 
 {
+	//-----------------------------------------------------------------------------------//
+	
 	private String uralysUID;
 
-	private String allyUID;
 	private String name;
+	private Ally ally;
 	
 	private List<City> cities = new ArrayList<City>();
 	private List<Unit> units = new ArrayList<Unit>();
@@ -76,11 +78,11 @@ public class Player
 	public void setConflicts(List<Conflict> conflicts) {
 		this.conflicts = conflicts;
 	}
-	public String getAllyUID() {
-		return allyUID;
+	public Ally getAlly() {
+		return ally;
 	}
-	public void setAllyUID(String allyUID) {
-		this.allyUID = allyUID;
+	public void setAlly(Ally ally) {
+		this.ally = ally;
 	}
 	public List<Unit> getUnits() {
 		return units;

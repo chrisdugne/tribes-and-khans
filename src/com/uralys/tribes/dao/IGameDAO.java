@@ -7,6 +7,7 @@ import com.uralys.tribes.entities.Move;
 import com.uralys.tribes.entities.Player;
 import com.uralys.tribes.entities.Stock;
 import com.uralys.tribes.entities.Unit;
+import com.uralys.tribes.entities.dto.AllyDTO;
 import com.uralys.tribes.entities.dto.CaseDTO;
 import com.uralys.tribes.entities.dto.CityDTO;
 import com.uralys.tribes.entities.dto.ConflictDTO;
@@ -17,15 +18,18 @@ import com.uralys.tribes.entities.dto.UnitDTO;
 
 public interface IGameDAO {
 
-	//==================================================================================================//
-
+	//-----------------------------------------------------------------------------------//
+	
 	public String createPlayer(String uralysUID, String email);
 	public PlayerDTO getPlayer(String uralysUID);
+
+	//-----------------------------------------------------------------------------------//
 	
-	//==================================================================================================//
 	public List<ItemDTO> loadItems();
 	public List<CaseDTO> loadCases(int[] groups, boolean refreshLandOwners);
 	public CaseDTO getCase(int i, int j);
+
+	//-----------------------------------------------------------------------------------//
 	
 	public void updatePlayer(Player player);
 	public void updatePlayerPoints(Player player);
@@ -34,20 +38,30 @@ public interface IGameDAO {
 	public void updateEquipmentStock(String equipmentUID, int size);
 	public void updateStock(Stock stock);
 
+	//-----------------------------------------------------------------------------------//
+	
 	public void createUnit(Unit unit, String cityUID);
 	public void updateUnit(Unit unit, String cityUID);
+
+	//-----------------------------------------------------------------------------------//
 	
 	public List<String> linkNewUnitsAndGetPreviousUnitUIDs(String uralysUID, List<String> createdUnitUIDs);
 	public void linkNewUnit(String uralysUID, String unitUID);
+
+	//-----------------------------------------------------------------------------------//
 	
 	public void deleteUnits(String uralysUID, List<String> toDeleteUnitUIDs);
 	public void deleteUnit(String uralysUID, String unitUID);
 	public UnitDTO getUnit(String unitUID);
+
+	//-----------------------------------------------------------------------------------//
 	
 	public String createCity(City city, String playerUID);
 	public CityDTO createNewFirstCity(String playerUID);
 	public void setNewCityOwner(String cityUID, String newOwnerUID, long timeToChangeOwner);
 	public void checkCityOwner(String cityUID);
+
+	//-----------------------------------------------------------------------------------//
 	
 	public String createMove(Move move);
 	public void setTimeToForMove(String moveUID, long timeTo);
@@ -56,29 +70,59 @@ public interface IGameDAO {
 	public void deleteMove(String moveUID, boolean keepGatheringBecauseItIsLinkedWithAnotherMoveNow);
 	public void deleteMoves(String unitUID);
 
+	//-----------------------------------------------------------------------------------//
+	
 	public void resetChallenger(String caseUID);
 	public CaseDTO tryToSetChallenger(Unit unitArriving, long timeFromChallenging);
+
+	//-----------------------------------------------------------------------------------//
 	
 	public void addUnitInGatheringAndSetNewArmy(String gatheringUID, String unitUID, String newUnitUID);
+
+	//-----------------------------------------------------------------------------------//
 	
 	public ConflictDTO getConflict(String conflictUID);
 	public GatheringDTO getGathering(String gatheringUID);
+
+	//-----------------------------------------------------------------------------------//
 	
 	public String createConflict(String caseUID, String unitUID, String unitUID2);
+
+	//-----------------------------------------------------------------------------------//
 	
 	public void changeName(String uralysUID, String newName);
 	public void changeCityName(String cityUID, String newName);
 	public void changeMusicOn(String uralysUID, boolean musicOn);
+
+	//-----------------------------------------------------------------------------------//
 	
 	public List<PlayerDTO> getCitiesBoard();
 	public List<PlayerDTO> getLandsBoard();
 	public List<PlayerDTO> getPopulationBoard(); 
 	public List<PlayerDTO> getArmiesBoard();
+
+	//-----------------------------------------------------------------------------------//
 	
 	public void updatePlayerProfile(String playerUID, String profile);
+	public void updateAllyProfile(String allyUID, String profile);
+
+	//-----------------------------------------------------------------------------------//
 	
 	public void sendMessage(String senderUID, String recipientUID, String message);
 	public void markAsRead(List<String> messageUIDs);
 	public void archiveMessages(List<String> messageUIDs);
 	public void deleteMessages(String uralysUID, List<String> messageUIDs);
+	
+	//-----------------------------------------------------------------------------------//
+	
+	public AllyDTO createAlly(String uralysUID, String allyName);
+	public AllyDTO getAlly(String allyUID);
+
+	public List<AllyDTO> getTopAlliesByCities();
+	public List<AllyDTO> getTopAlliesByArmies();
+	public List<AllyDTO> getTopAlliesByPopulation();
+	public List<AllyDTO> getTopAlliesByLands();
+	
+	//-----------------------------------------------------------------------------------//
+	
 }

@@ -30,6 +30,7 @@ public class PlayerDTO {
 	@Persistent private Integer nbConnections;
 	
 	@Persistent private String allyUID; 
+
 	@Persistent private boolean musicOn; 
 	@Persistent private List<String> cityUIDs = new ArrayList<String>();
 	@Persistent private List<String> cityBeingOwnedUIDs = new ArrayList<String>();
@@ -167,6 +168,13 @@ public class PlayerDTO {
 	
 	public List<ConflictDTO> getMeetings() {
 		return UniversalDAO.getInstance().getListDTO(meetingsUIDs, ConflictDTO.class);		
+	}
+
+	public AllyDTO getAlly() {
+		if(allyUID.equals(uralysUID))
+			return null;
+		else
+			return (AllyDTO) UniversalDAO.getInstance().getObjectDTO(allyUID, AllyDTO.class);		
 	}
 	
 	//-----------------------------------------------------------------------------------//

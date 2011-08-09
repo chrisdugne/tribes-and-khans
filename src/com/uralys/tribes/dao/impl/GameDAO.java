@@ -21,6 +21,7 @@ import com.uralys.tribes.entities.Move;
 import com.uralys.tribes.entities.Player;
 import com.uralys.tribes.entities.Stock;
 import com.uralys.tribes.entities.Unit;
+import com.uralys.tribes.entities.dto.AllyDTO;
 import com.uralys.tribes.entities.dto.CaseDTO;
 import com.uralys.tribes.entities.dto.CityDTO;
 import com.uralys.tribes.entities.dto.ConflictDTO;
@@ -496,7 +497,6 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		cityDTO.setPeopleCreatingWood(city.getPeopleCreatingWood() < 0 ? 0 : city.getPeopleCreatingWood());
 		cityDTO.setPeopleCreatingIron(city.getPeopleCreatingIron() < 0 ? 0 : city.getPeopleCreatingIron());
 		
-		
 		pm.close();
 	}
 	
@@ -518,9 +518,6 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	}
 	
 	public void updateStock(Stock stock){
-		Utils.print("dao update stocks : " + stock.getStockUID());
-		Utils.print(stock.getStockNextCapacity()+"");
-	
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		StockDTO stockDTO = pm.getObjectById(StockDTO.class, stock.getStockUID());
 		
@@ -1152,19 +1149,13 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	@SuppressWarnings("unchecked")
 	public List<PlayerDTO> getCitiesBoard() 
 	{
-		Utils.print("dao : getCitiesBoard");
-		
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		Query q = pm.newQuery("select from " + PlayerDTO.class.getName());
 		
 		q.setOrdering("nbCities descending");
 		q.setRange(0,30);
 		
-		Utils.print(q.toString());
-		List<PlayerDTO> players = (List<PlayerDTO>) q.execute();
-		Utils.print(players.size() + " players");
-		
-		return players;
+		return (List<PlayerDTO>) q.execute();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -1211,6 +1202,16 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		PlayerDTO playerDTO = pm.getObjectById(PlayerDTO.class, playerUID);
 		
 		playerDTO.setProfile(profile);
+		
+		pm.close();
+	}
+	
+	public void updateAllyProfile(String allyUID, String profile) 
+	{
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		AllyDTO allyDTO = pm.getObjectById(AllyDTO.class, allyUID);
+		
+		allyDTO.setProfile(profile);
 		
 		pm.close();
 	}
@@ -1289,4 +1290,87 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		pm.close();
 	}
 	
+	//-----------------------------------------------------------------------------------//
+
+	public AllyDTO createAlly(String uralysUID, String allyName) 
+	{
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		PlayerDTO player = pm.getObjectById(PlayerDTO.class, uralysUID);
+		AllyDTO ally = new AllyDTO();
+
+		String allyUID = Utils.generateUID();
+		Key key = KeyFactory.createKey(AllyDTO.class.getSimpleName(), allyUID);
+		
+		ally.setKey(KeyFactory.keyToString(key));
+		ally.setAllyUID(allyUID);
+		ally.setName(allyName);
+		ally.setProfile("");
+		ally.getPlayerUIDs().add(uralysUID);
+		
+		ally.setNbArmies(player.getNbArmies());
+		ally.setNbCities(player.getNbCities());
+		ally.setNbPopulation(player.getNbPopulation());
+		ally.setNbLands(player.getNbLands());
+		
+		player.setAllyUID(allyUID);
+		
+		pm.makePersistent(ally);
+		pm.close();
+		
+		return ally;
+	}
+
+	public AllyDTO getAlly(String allyUID) {
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		return pm.getObjectById(AllyDTO.class, allyUID);
+	}
+	
+	//-----------------------------------------------------------------------------------//
+	@SuppressWarnings("unchecked")
+	public List<AllyDTO> getTopAlliesByPopulation() 
+	{
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		Query q = pm.newQuery("select from " + AllyDTO.class.getName());
+		
+		q.setOrdering("nbPopulation descending");
+		q.setRange(0,30);
+		
+		return (List<AllyDTO>) q.execute();
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<AllyDTO> getTopAlliesByArmies() 
+	{
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		Query q = pm.newQuery("select from " + AllyDTO.class.getName());
+		
+		q.setOrdering("nbArmies descending");
+		q.setRange(0,30);
+		
+		return (List<AllyDTO>) q.execute();
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<AllyDTO> getTopAlliesByCities() 
+	{
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		Query q = pm.newQuery("select from " + AllyDTO.class.getName());
+		
+		q.setOrdering("nbCities descending");
+		q.setRange(0,30);
+		
+		return (List<AllyDTO>) q.execute();
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<AllyDTO> getTopAlliesByLands() 
+	{
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		Query q = pm.newQuery("select from " + AllyDTO.class.getName());
+		
+		q.setOrdering("nbLands descending");
+		q.setRange(0,30);
+		
+		return (List<AllyDTO>) q.execute();
+	}
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.uralys.tribes.domain.IGameManager;
+import com.uralys.tribes.entities.Ally;
 import com.uralys.tribes.entities.Case;
 import com.uralys.tribes.entities.City;
 import com.uralys.tribes.entities.DataContainer4UnitSaved;
@@ -180,6 +181,10 @@ public class GameService implements IGameService {
 	public void updatePlayerProfile(String playerUID, String profile) {
 		gameManager.updatePlayerProfile(playerUID, profile);
 	}
+	
+	public void updateAllyProfile(String allyUID, String profile) {
+		gameManager.updateAllyProfile(allyUID, profile);
+	}
 
 	// -----------------------------------------------------------------------------------//
 
@@ -197,6 +202,36 @@ public class GameService implements IGameService {
 
 	public void deleteMessages(String uralysUID, List<String> messageUIDs) {
 		gameManager.deleteMessages(uralysUID, messageUIDs);
+	}
+
+	// -----------------------------------------------------------------------------------//
+
+	public Ally createAlly(String uralysUID, String allyName) {
+		return gameManager.createAlly(uralysUID, allyName);
+	}
+
+	public Ally getAlly(String allyUID) {
+		return gameManager.getAlly(allyUID);
+	}
+
+	public void joinAlly(String uralysUID, String allyUID) {
+		gameManager.joinAlly(uralysUID, allyUID);
+	}
+
+	public List<Ally> getTopAlliesByCities() {
+		return gameManager.getTopAlliesByCities();
+	}
+
+	public List<Ally> getTopAlliesByArmies() {
+		return gameManager.getTopAlliesByArmies();
+	}
+
+	public List<Ally> getTopAlliesByPopulation() {
+		return gameManager.getTopAlliesByPopulation();
+	}
+
+	public List<Ally> getTopAlliesByLands() {
+		return gameManager.getTopAlliesByLands();
 	}
 	
 }

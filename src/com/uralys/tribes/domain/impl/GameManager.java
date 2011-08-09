@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.uralys.tribes.dao.IGameDAO;
 import com.uralys.tribes.domain.IGameManager;
+import com.uralys.tribes.entities.Ally;
 import com.uralys.tribes.entities.Case;
 import com.uralys.tribes.entities.City;
 import com.uralys.tribes.entities.DataContainer4UnitSaved;
@@ -19,6 +20,7 @@ import com.uralys.tribes.entities.Smith;
 import com.uralys.tribes.entities.Stock;
 import com.uralys.tribes.entities.Unit;
 import com.uralys.tribes.entities.converters.EntitiesConverter;
+import com.uralys.tribes.entities.dto.AllyDTO;
 import com.uralys.tribes.entities.dto.CaseDTO;
 import com.uralys.tribes.entities.dto.ItemDTO;
 import com.uralys.tribes.entities.dto.PlayerDTO;
@@ -381,6 +383,10 @@ public class GameManager implements IGameManager {
 		gameDao.updatePlayerProfile(playerUID, profile);
 	}
 	
+	public void updateAllyProfile(String allyUID, String profile) {
+		gameDao.updateAllyProfile(allyUID, profile);
+	}
+	
 	//==================================================================================================//
 
 	public void sendMessage(String senderUID, String recipientUID, String message){
@@ -398,6 +404,70 @@ public class GameManager implements IGameManager {
 	public void deleteMessages(String uralysUID, List<String> messageUIDs) {
 		gameDao.deleteMessages(uralysUID, messageUIDs);
 	}
+	
+	//==================================================================================================//
+
+	public Ally createAlly(String uralysUID, String allyName) {
+		return EntitiesConverter.convertAllyDTO(gameDao.createAlly(uralysUID, allyName), true);
+	}
+
+	public Ally getAlly(String allyUID) {
+		return EntitiesConverter.convertAllyDTO(gameDao.getAlly(allyUID), true);
+	}
+
+	public void joinAlly(String uralysUID, String allyUID) {
+		//gameDao.joinAlly(uralysUID, allyUID);
+	}
+	
+	//-----------------------------------------------------------------------------------//
+	public List<Ally> getTopAlliesByCities() 
+	{
+		List<Ally> allies = new ArrayList<Ally>();
+		
+		List<AllyDTO> alliesDTO = gameDao.getTopAlliesByCities();
+		for(AllyDTO allyDTO : alliesDTO){
+			allies.add(EntitiesConverter.convertAllyDTO(allyDTO, false));
+		}
+
+		return allies;
+	}
+
+	public List<Ally> getTopAlliesByArmies() {
+
+		List<Ally> allies = new ArrayList<Ally>();
+		
+		List<AllyDTO> alliesDTO = gameDao.getTopAlliesByArmies();
+		for(AllyDTO allyDTO : alliesDTO){
+			allies.add(EntitiesConverter.convertAllyDTO(allyDTO, false));
+		}
+
+		return allies;
+	}
+
+	public List<Ally> getTopAlliesByPopulation() {
+
+		List<Ally> allies = new ArrayList<Ally>();
+		
+		List<AllyDTO> alliesDTO = gameDao.getTopAlliesByPopulation();
+		for(AllyDTO allyDTO : alliesDTO){
+			allies.add(EntitiesConverter.convertAllyDTO(allyDTO, false));
+		}
+
+		return allies;
+	}
+
+	public List<Ally> getTopAlliesByLands() {
+
+		List<Ally> allies = new ArrayList<Ally>();
+		
+		List<AllyDTO> alliesDTO = gameDao.getTopAlliesByLands();
+		for(AllyDTO allyDTO : alliesDTO){
+			allies.add(EntitiesConverter.convertAllyDTO(allyDTO, false));
+		}
+
+		return allies;
+	}
+	
 	
 	//==================================================================================================//
 	
@@ -423,7 +493,7 @@ public class GameManager implements IGameManager {
 		
 		int currentUnitValue = unitArriving.getValue();
 		
-		String allyUIDOfUnitArriving = getPlayer(unitArriving.getPlayer().getUralysUID(), datacontainer).getAllyUID();
+		String allyUIDOfUnitArriving = getPlayer(unitArriving.getPlayer().getUralysUID(), datacontainer).getAlly().getAllyUID();
 
 		if(debug){
 			Utils.print("initial value : " + currentUnitValue);
@@ -499,7 +569,7 @@ public class GameManager implements IGameManager {
 			
 			if(_case.getCity() != null)
 			{
-				if(!(getPlayer(_case.getCity().getOwnerUID(), datacontainer).getAllyUID()).equals(allyUIDOfUnitArriving))
+				if(!(getPlayer(_case.getCity().getOwnerUID(), datacontainer).getAlly().getAllyUID()).equals(allyUIDOfUnitArriving))
 				{
 					attackACity = true;
 					if(debug)Utils.print("attackACity !!");
@@ -679,7 +749,7 @@ public class GameManager implements IGameManager {
 									arrivalOnThisCaseMove.setValue(currentUnitValue);
 									
 									winnerUID = unitRecorded.getPlayer().getUralysUID();
-									allyUIDOfTheNewUnit = getPlayer(unitRecorded.getPlayer().getUralysUID(), datacontainer).getAllyUID();
+									allyUIDOfTheNewUnit = getPlayer(unitRecorded.getPlayer().getUralysUID(), datacontainer).getAlly().getAllyUID();
 									valueOfTheUnitRemaining = (int)(valueOfTheEnnemy*rateRemaining);
 									sizeOfTheNewUnit = (int)(unitRecorded.getSize()*rateRemaining);
 									

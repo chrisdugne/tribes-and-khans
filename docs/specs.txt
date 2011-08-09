@@ -1,3 +1,4 @@
+==================================================================================================edit aout 2011 : version 1.0 :)
 
 Ville : population
 		cereales/moutons/vaches
@@ -42,8 +43,6 @@ et	yFrom2 =< yTo1
 et	yTo2 >= yFrom1
 
 
-			 
-=======================================================================================
 
 Profil 
 	- uid (create account)
@@ -70,4 +69,55 @@ Move
 	- xTo
 	- yFrom
 	- yTo
+		
+=======================================================================================
+version 1.2 !!
+
+ressources
+ 
+ x men
+ x * 10 bois
+ x * 10 fer
+ time = x/10 *2h 
+ stock = x*20
+ 
+ 
+ depart pop 1000: stock : 500 500 500
+ 50h
+ 500 bois 
+ 500 fer
+ 10 heures
+ stock -> 1000 
+ 
+ 
+ stock 1000 1000 1000
+ 100h 1000bois 1000 fer
+ 20h 
+ stock -> 2000
+ 
+ 10000h 100000bois 100000fer
+ 2000h..(100 jours) -> il va falloir apporter du ble pour les nourrir !!
+ 
+ ----------------------------------------------
+ forge
+ 
+ max smith = pop/100 
+ 
+ ----------------------------------------------
+ equipment
+ 
+ x men
+ x * 10 bois
+ x * 10 fer
+ time = x/10 *2h 
+ stock = x*2
+ 
+ 
+ depart pop 1000: stock : 50 50 50
+ 50h
+ 500 bois 
+ 500 fer
+ 10 heures
+ stock -> 100 
+ 	
 

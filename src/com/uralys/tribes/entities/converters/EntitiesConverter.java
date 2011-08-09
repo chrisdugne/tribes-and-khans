@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.uralys.tribes.dao.impl.UniversalDAO;
+import com.uralys.tribes.entities.Ally;
 import com.uralys.tribes.entities.Case;
 import com.uralys.tribes.entities.City;
 import com.uralys.tribes.entities.Conflict;
@@ -17,6 +18,7 @@ import com.uralys.tribes.entities.Player;
 import com.uralys.tribes.entities.Smith;
 import com.uralys.tribes.entities.Stock;
 import com.uralys.tribes.entities.Unit;
+import com.uralys.tribes.entities.dto.AllyDTO;
 import com.uralys.tribes.entities.dto.CaseDTO;
 import com.uralys.tribes.entities.dto.CityDTO;
 import com.uralys.tribes.entities.dto.ConflictDTO;
@@ -72,7 +74,6 @@ public class EntitiesConverter {
 		Player player = new Player();
 
 		player.setUralysUID(playerDTO.getUralysUID());
-		player.setAllyUID(playerDTO.getAllyUID());
 		player.setName(playerDTO.getName());
 		player.setLastStep(playerDTO.getLastStep());
 		player.setNbLands(playerDTO.getNbLands());
@@ -80,6 +81,8 @@ public class EntitiesConverter {
 		player.setNbCities(playerDTO.getNbCities());
 		player.setNbPopulation(playerDTO.getNbPopulation());
 		player.setProfile(playerDTO.getProfile() == null ? "" : playerDTO.getProfile());
+
+		player.setAlly(convertAllyDTO(playerDTO.getAlly(), false));
 		
 		if(!requireFullData)
 			return player;
@@ -442,7 +445,43 @@ public class EntitiesConverter {
 		
 		return stock;
 	}
+	
+	// -----------------------------------------------------------------------------------//
+	
+	public static Ally convertAllyDTO(AllyDTO allyDTO, boolean requirePlayerList) 
+	{
+		if (allyDTO == null)
+			return null;
+		
+		Ally ally = new Ally();
 
+		ally.setAllyUID(allyDTO.getAllyUID());
+		ally.setName(allyDTO.getName());
+		ally.setNbLands(allyDTO.getNbLands());
+		ally.setNbArmies(allyDTO.getNbArmies());
+		ally.setNbCities(allyDTO.getNbCities());
+		ally.setNbPopulation(allyDTO.getNbPopulation());
+		ally.setProfile(allyDTO.getProfile() == null ? "" : allyDTO.getProfile());
+		
+		ally.setNbPlayers(allyDTO.getPlayerUIDs().size());
+
+		// -----------------------------------------------------------------------------------//
+		
+		if(requirePlayerList){
+			List<Player> players = new ArrayList<Player>();
+			
+			for (PlayerDTO playerDTO : allyDTO.getPlayers()) {
+				players.add(convertPlayerDTO(playerDTO, false));
+			}
+			
+			ally.setPlayers(players);
+		}
+		
+		// -----------------------------------------------------------------------------------//
+
+		return ally;
+	}
+		
 	// -----------------------------------------------------------------------------------//
 
 	public static Smith convertSmithDTO(SmithDTO smithDTO) {

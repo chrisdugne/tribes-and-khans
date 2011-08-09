@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.uralys.tribes.dao.impl.UniversalDAO;
+import com.uralys.tribes.entities.dto.AllyDTO;
 import com.uralys.tribes.entities.dto.CaseDTO;
 import com.uralys.tribes.entities.dto.CityDTO;
 import com.uralys.tribes.entities.dto.EquipmentDTO;
@@ -136,6 +137,7 @@ public class DataviewerServlet extends HttpServlet {
 				//-----------------------------------------------------------------------------------//				// - HERE : add a line for every new DTO
 				
 				" <OPTION VALUE=\"player\">PlayerDTO" +
+				" <OPTION VALUE=\"ally\">AllyDTO" +
 				" <OPTION VALUE=\"city\">CityDTO" +
 				" <OPTION VALUE=\"stock\">StockDTO" +
 				" <OPTION VALUE=\"unit\">UnitDTO" +
@@ -530,6 +532,8 @@ public class DataviewerServlet extends HttpServlet {
 
 		if(dto.equals("player"))
 			return PlayerDTO.class;
+		else if(dto.equals("ally"))
+			return AllyDTO.class;
 		else if(dto.equals("city"))
 			return CityDTO.class;
 		else if(dto.equals("stock"))

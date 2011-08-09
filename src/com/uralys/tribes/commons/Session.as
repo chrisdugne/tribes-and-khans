@@ -1,5 +1,6 @@
 package com.uralys.tribes.commons
 {
+	import com.uralys.tribes.entities.Ally;
 	import com.uralys.tribes.entities.Case;
 	import com.uralys.tribes.pages.Board;
 	
@@ -18,7 +19,7 @@ package com.uralys.tribes.commons
 
 		//=====================================================//
 		
-		[Bindable] public static var VERSION:String = "1.2.0";
+		[Bindable] public static var VERSION:String = "1.2.1";
 		[Bindable] public static var LOGGED_IN:Boolean = false; 
 		[Bindable] public static var CONNECTED_TO_FACEBOOK:Boolean = false;
 		
@@ -46,13 +47,19 @@ package com.uralys.tribes.commons
 		[Bindable] public static var uralysProfile:UralysProfile;
 		[Bindable] public static var player:Player;
 		[Bindable] public static var playerLoaded:Player; // le dernier joueur dont on a charge le profil TAK
+		[Bindable] public static var allyLoaded:Ally; // la derniere ally dont on a charge le profil
 		
 		//=====================================================//
 
-		[Bindable] public static var citiesBoard:ArrayCollection; 
-		[Bindable] public static var armiesBoard:ArrayCollection; 
-		[Bindable] public static var populationBoard:ArrayCollection; 
-		[Bindable] public static var landsBoard:ArrayCollection; 
+		[Bindable] public static var playersCitiesBoard:ArrayCollection; 
+		[Bindable] public static var playersArmiesBoard:ArrayCollection; 
+		[Bindable] public static var playersPopulationBoard:ArrayCollection; 
+		[Bindable] public static var playersLandsBoard:ArrayCollection; 
+
+		[Bindable] public static var alliesCitiesBoard:ArrayCollection; 
+		[Bindable] public static var alliesArmiesBoard:ArrayCollection; 
+		[Bindable] public static var alliesPopulationBoard:ArrayCollection; 
+		[Bindable] public static var alliesLandsBoard:ArrayCollection; 
 		
 		//=====================================================//
 		

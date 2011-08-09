@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<windows:ResizableTitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   xmlns:windows="com.uralys.tribes.windows.*"
+			   skinClass="com.uralys.tribes.skins.WindowSkin"
+			   close="{closeWindow()}"
+			   width="330"
+			   height="170"
+			   backgroundAlpha="0.7"
+			   backgroundColor="#000000"
+			   cornerRadius="15"
+			   >
+	
+	
+	<fx:Script>
+		<![CDATA[
+			import com.uralys.tribes.commons.Session;
+			import com.uralys.tribes.commons.Translations;
+			import com.uralys.tribes.managers.GameManager;
+			import com.uralys.tribes.skins.CustomButtonSkin;
+			
+			import mx.core.FlexGlobals;
+			import mx.managers.PopUpManager;
+			import mx.utils.StringUtil;
+
+			//-----------------------------------------------------------------//
+
+			public function closeWindow():void{
+				PopUpManager.removePopUp(this);
+			}
+			//-----------------------------------------------------------------//
+			
+			protected function create():void
+			{
+				GameManager.getInstance().createAlly(allyName.text);
+				closeWindow();
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:Group width="100%" height="100%">
+		
+		<s:VGroup width="100%" height="100%"
+				  paddingTop="10"
+				  paddingLeft="10"
+				  paddingRight="10"
+				  paddingBottom="10"
+				  verticalAlign="middle"
+				  horizontalAlign="center">
+			
+			<s:Label text="{Translations.CHOOSE_ALLY_NAME.getItemAt(Session.LANGUAGE)}" color="#ffffff"/>
+			
+			<s:TextInput id="allyName"
+						width="100%"
+						height="100%"/>
+			<s:Button label="{Translations.CREATE.getItemAt(Session.LANGUAGE)}" 
+					  click="create()"
+					  enabled="{StringUtil.trim(allyName.text).length > 0}"
+					  skinClass="{CustomButtonSkin}"/>
+			<s:Button label="{Translations.CANCEL.getItemAt(Session.LANGUAGE)}" click="closeWindow()"
+					  skinClass="{CustomButtonSkin}"/>
+		</s:VGroup>
+	</s:Group>
+	
+</windows:ResizableTitleWindow>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Label xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 text="{ally.name}"
+		 color="#ffffff"
+		 mouseOver="{this.setStyle('color', '#668FB3')}"
+		 mouseOut="{this.setStyle('color', '#ffffff')}"
+		 click="openProfile()">
+	
+	<fx:Script>
+		<![CDATA[
+			import com.uralys.tribes.entities.Ally;
+			
+			import mx.core.FlexGlobals;
+			
+			[Bindable]
+			public var ally:Ally;
+			
+			protected function openProfile():void
+			{
+				FlexGlobals.topLevelApplication.openAllyProfileWindow(ally.allyUID);
+			}
+		]]>
+	</fx:Script>
+</s:Label>

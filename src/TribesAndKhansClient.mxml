@@ -19,8 +19,6 @@
 	
 	<fx:Script>
 		<![CDATA[ 
-			//-----------------------------------------------------------------------//
-			
 			import com.uralys.tribes.commons.Names;
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;
@@ -28,6 +26,7 @@
 			import com.uralys.tribes.core.Pager;
 			import com.uralys.tribes.managers.AccountManager;
 			import com.uralys.tribes.pages.Home;
+			import com.uralys.tribes.windows.AllyProfileWindow;
 			import com.uralys.tribes.windows.BoardsWindow;
 			import com.uralys.tribes.windows.CreditsWindow;
 			import com.uralys.tribes.windows.GlobalMessageWindow;
@@ -212,6 +211,20 @@
 				playerProfileWindow.x = 5;
 				
 				playerProfileWindow.refresh();
+			}
+
+			//-----------------------------------------------------------------------//
+
+			public var allyProfileWindow:AllyProfileWindow = new AllyProfileWindow();
+			public function openAllyProfileWindow(allyUID:String):void 
+			{
+				allyProfileWindow.allyUID = allyUID;
+				allyProfileWindow.closeWindow();
+					
+				PopUpManager.addPopUp(allyProfileWindow, this, false);
+				PopUpManager.centerPopUp(allyProfileWindow);
+				
+				allyProfileWindow.refresh();
 			}
 			
 			//-----------------------------------------------------------------------//

@@ -6,10 +6,12 @@ package com.uralys.tribes.entities
 	[RemoteClass(alias="com.uralys.tribes.entities.Player")]
 	public class Player
 	{
+		//-------------------------------------------------------//
+		
 		private var _uralysUID:String;
 		private var _name:String;
 		private var _musicOn:Boolean;
-		private var _allyUID:String;
+		private var _ally:Ally;
 		private var _lastStep:Number;
 		private var _cities:ArrayCollection;
 		private var _units:ArrayCollection = new ArrayCollection();
@@ -91,14 +93,14 @@ package com.uralys.tribes.entities
 			_lastStep = value;
 		}
 		
-		public function get allyUID():String
+		public function get ally():Ally
 		{
-			return _allyUID;
+			return _ally;
 		}
 
-		public function set allyUID(value:String):void
+		public function set ally(value:Ally):void
 		{
-			_allyUID = value;
+			_ally = value;
 		}
 		
 		public function get cities():ArrayCollection

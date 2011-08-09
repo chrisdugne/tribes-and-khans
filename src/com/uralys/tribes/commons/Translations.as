@@ -267,6 +267,41 @@ public class Translations{
 									["joueurs",
 									"players",
 									"players"]);
+	[Bindable]
+	public static var ALLIES:ArrayCollection = new ArrayCollection(
+									["Alliances",
+									"Allies",
+									"Allies"]);
+	[Bindable]
+	public static var ALLY:ArrayCollection = new ArrayCollection(
+									["Alliance",
+									"Ally",
+									"Ally"]);
+	[Bindable]
+	public static var CREATE_ALLY:ArrayCollection = new ArrayCollection(
+									["Créer une Alliance",
+									"Create an Ally",
+									"Create an Ally"]);
+	[Bindable]
+	public static var LEAVE_ALLY:ArrayCollection = new ArrayCollection(
+									["Quitter l'Alliance",
+									"Leave the Ally",
+									"Leave the Ally"]);
+	[Bindable]
+	public static var EDIT_ALLY_PROFILE:ArrayCollection = new ArrayCollection(
+									["Editer le profil de l'Alliance",
+									"Edit the Ally's profile",
+									"Edit the Ally's profile"]);
+	[Bindable]
+	public static var NO_ALLY:ArrayCollection = new ArrayCollection(
+									["Pas d'Alliance",
+									"No Ally",
+									"No Ally"]);
+	[Bindable]
+	public static var CHOOSE_ALLY_NAME:ArrayCollection = new ArrayCollection(
+									["Nom de l'Alliance",
+									"Ally's name",
+									"Ally's name"]);
 
 	[Bindable]
 	public static var PLAYER:ArrayCollection = new ArrayCollection(

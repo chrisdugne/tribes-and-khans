@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<windows:ResizableTitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   xmlns:windows="com.uralys.tribes.windows.*"
+			   skinClass="com.uralys.tribes.skins.WindowSkin"
+			   close="{closeWindow()}"
+			   width="540"
+			   height="560"
+			   backgroundAlpha="0.7"
+			   backgroundColor="#000000"
+			   cornerRadius="15"
+			   >
+	
+	
+	<fx:Script>
+		<![CDATA[
+			//-----------------------------------------------------------------//
+			
+			import com.uralys.tribes.commons.Numbers;
+			import com.uralys.tribes.commons.Session;
+			import com.uralys.tribes.commons.Translations;
+			import com.uralys.tribes.entities.City;
+			import com.uralys.tribes.managers.GameManager;
+			
+			import mx.controls.SWFLoader;
+			import mx.core.FlexGlobals;
+			import mx.events.ItemClickEvent;
+			import mx.managers.PopUpManager;
+
+			//-----------------------------------------------------------------//
+			
+			public var allyUID:String;
+			
+			//-----------------------------------------------------------------//
+
+			private var loadingFlash:SWFLoader;
+
+			//-----------------------------------------------------------------//
+			
+			public function closeWindow():void{
+				PopUpManager.removePopUp(this);
+			}
+			
+			//-----------------------------------------------------------------//
+			
+			public function refresh():void{
+				GameManager.getInstance().getAlly(allyUID);
+			}
+
+			//-----------------------------------------------------------------//
+	
+			public var editProfileWindow:EditProfileWindow = new EditProfileWindow();
+			private function openEditProfile():void{
+				editProfileWindow.closeWindow();
+				editProfileWindow.editPlayer = false;
+					
+				PopUpManager.addPopUp(editProfileWindow, FlexGlobals.topLevelApplication.window, true);
+				PopUpManager.centerPopUp(editProfileWindow);
+			}
+			
+			//-----------------------------------------------------------------//
+			
+			public function leaveAlly():void{
+
+			}
+		]]>
+	</fx:Script>
+	
+	<s:Group width="100%" height="100%">
+		
+		<s:HGroup width="100%" height="100%"
+				  horizontalAlign="center"
+				  verticalAlign="middle">
+			<s:VGroup horizontalAlign="center" 
+					   top="5" width="50%" height="100%"
+					   paddingBottom="5">
+				<mx:SWFLoader source="{ImageContainer.LOADING}" 
+							  visible="{Session.WAIT_FOR_SERVER}"/>
+				<s:Label text="{Session.allyLoaded.name}" color="#ffffff" fontSize="26"/>
+				<mx:HRule width="70%"/>
+				<s:Label text="{Translations.CITIES.getItemAt(Session.LANGUAGE)} : {Session.allyLoaded.nbCities}" color="#ffffff"/>
+				<s:Label text="{Translations.ARMIES.getItemAt(Session.LANGUAGE)} : {Session.allyLoaded.nbArmies}" color="#ffffff"/>
+				<s:Label text="{Translations.LANDS.getItemAt(Session.LANGUAGE)} : {Session.allyLoaded.nbLands}" color="#ffffff"/>
+				<s:Label text="{Translations.POPULATION.getItemAt(Session.LANGUAGE)} : {Session.allyLoaded.nbPopulation}" color="#ffffff"/>
+				
+				<mx:HRule width="70%"/>
+				<s:Label text="{Session.allyLoaded.profile}" color="#ffffff"/>
+				
+				<mx:Spacer height="100%"/>
+				<mx:HRule width="70%"/>
+				
+				<s:Button label="{Translations.EDIT_ALLY_PROFILE.getItemAt(Session.LANGUAGE)}"
+						  click="openEditProfile()"
+						  visible="{Session.LOGGED_IN &amp;&amp; Session.allyLoaded != null &amp;&amp; Session.player.playerUID == Session.allyLoaded.players.getItemAt(0).playerUID}"
+						  includeInLayout="{Session.LOGGED_IN &amp;&amp; Session.allyLoaded != null &amp;&amp; Session.player.playerUID == Session.allyLoaded.players.getItemAt(0).playerUID}"
+						  skinClass="com.uralys.tribes.skins.CustomButtonSkin"/>
+				
+			</s:VGroup>
+			<s:HGroup width="50%" height="80%"
+					  horizontalAlign="center"
+					  verticalAlign="middle">
+				<s:VGroup width="100%" height="100%"
+						  horizontalAlign="center">
+					<s:List dataProvider="{Session.allyLoaded.players}"
+							id="alliesCitiesList"
+							height="100%"
+							width="80%"
+							selectionColor="#000101"
+							rollOverColor="#000101"
+							itemRenderer="com.uralys.tribes.renderers.PlayerSimpleRenderer"
+							skinClass="com.uralys.tribes.skins.CustomListSkin"/>
+					
+					<s:Button label="{Translations.LEAVE_ALLY.getItemAt(Session.LANGUAGE)}"
+							  click="leaveAlly()"
+							  visible="{Session.LOGGED_IN &amp;&amp; Session.allyLoaded != null &amp;&amp; Session.player.ally.allyUID == Session.allyLoaded.allyUID}"
+							  includeInLayout="{Session.LOGGED_IN &amp;&amp; Session.allyLoaded != null &amp;&amp; Session.player.ally.allyUID == Session.allyLoaded.allyUID}"
+							  skinClass="com.uralys.tribes.skins.CustomButtonSkin"/>
+					
+				</s:VGroup>
+			</s:HGroup>
+		</s:HGroup>
+		
+	</s:Group>
+	
+</windows:ResizableTitleWindow>

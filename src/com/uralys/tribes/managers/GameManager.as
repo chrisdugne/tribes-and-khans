@@ -8,6 +8,7 @@ package com.uralys.tribes.managers {
 	import com.uralys.tribes.core.BoardDrawer;
 	import com.uralys.tribes.core.Pager;
 	import com.uralys.tribes.core.UnitMover;
+	import com.uralys.tribes.entities.Ally;
 	import com.uralys.tribes.entities.Case;
 	import com.uralys.tribes.entities.City;
 	import com.uralys.tribes.entities.DataContainer4UnitSaved;
@@ -353,6 +354,11 @@ package com.uralys.tribes.managers {
 			gameWrapper.updatePlayerProfile(Session.player.playerUID, Session.playerLoaded.profile);
 		}
 
+		public function updateAllyProfile():void{
+			var gameWrapper:RemoteObject = getGameWrapper();
+			gameWrapper.updateAllyProfile(Session.allyLoaded.allyUID, Session.allyLoaded.profile);
+		}
+
 		//-------------------------------------------------------------------------//
 		
 		public function getPlayerInfo(playerUID:String):void
@@ -369,8 +375,42 @@ package com.uralys.tribes.managers {
 			Session.playerLoaded = event.result as Player;
 		}
 		
+
 		//-------------------------------------------------------------------------//
 		
+		public function getAlly(allyUID:String):void
+		{
+			Session.WAIT_FOR_SERVER = true;
+			var gameWrapper:RemoteObject = getGameWrapper();
+			gameWrapper.getAlly.addEventListener("result", receivedAlly);
+			gameWrapper.getAlly(allyUID);
+		}
+
+		public function receivedAlly(event:ResultEvent):void
+		{
+			Session.WAIT_FOR_SERVER = false;
+			Session.allyLoaded = event.result as Ally;
+		}
+		
+		//-------------------------------------------------------------------------//
+		
+		public function createAlly(allyName:String):void
+		{
+			Session.WAIT_FOR_SERVER = true;
+			var gameWrapper:RemoteObject = getGameWrapper();
+			gameWrapper.createAlly.addEventListener("result", allyCreated);
+			gameWrapper.createAlly(Session.player.playerUID, allyName);
+		}
+		
+		public function allyCreated(event:ResultEvent):void
+		{
+			Session.WAIT_FOR_SERVER = false;
+			Session.player.ally = event.result as Ally;
+			Session.playerLoaded.ally = event.result as Ally;
+		}
+		
+		//-------------------------------------------------------------------------//
+
 		public function createUnit(unit:Unit, cityUID):void
 		{
 			if(unit == null)
@@ -719,14 +759,14 @@ package com.uralys.tribes.managers {
 			var naturalEvolutionPercentage:int = Utils.random(maxPercentage)+1;
 			var armyPercentage:int = 100*armyRaised/population;
 			
-			if(population < 200)
-				naturalEvolutionPercentage *= 5;
-			else if(population < 500)
-				naturalEvolutionPercentage *= 4;
-			else if(population < 1000)
-				naturalEvolutionPercentage *= 3;
-			else if(population < 2000)
-				naturalEvolutionPercentage *= 2;
+//			if(population < 200)
+//				naturalEvolutionPercentage *= 5;
+//			else if(population < 500)
+//				naturalEvolutionPercentage *= 4;
+//			else if(population < 1000)
+//				naturalEvolutionPercentage *= 3;
+//			else if(population < 2000)
+//				naturalEvolutionPercentage *= 2;
 			
 			
 			var evolutionPercentage:int = naturalEvolutionPercentage - Math.sqrt(armyPercentage);
@@ -893,7 +933,7 @@ package com.uralys.tribes.managers {
 		
 		public function getCitiesBoard(forceRefresh:Boolean = false):void
 		{
-			if(!forceRefresh && Session.citiesBoard != null)
+			if(!forceRefresh && Session.playersCitiesBoard != null)
 				return;
 			
 			Session.WAIT_FOR_SERVER = true;
@@ -904,7 +944,7 @@ package com.uralys.tribes.managers {
 	
 		public function getArmiesBoard(forceRefresh:Boolean = false):void
 		{
-			if(!forceRefresh && Session.armiesBoard != null)
+			if(!forceRefresh && Session.playersArmiesBoard != null)
 				return;
 			
 			Session.WAIT_FOR_SERVER = true;
@@ -915,7 +955,7 @@ package com.uralys.tribes.managers {
 		
 		public function getPopulationBoard(forceRefresh:Boolean = false):void
 		{
-			if(!forceRefresh && Session.populationBoard != null)
+			if(!forceRefresh && Session.playersPopulationBoard != null)
 				return;
 			
 			Session.WAIT_FOR_SERVER = true;
@@ -926,7 +966,7 @@ package com.uralys.tribes.managers {
 		
 		public function getLandsBoard(forceRefresh:Boolean = false):void
 		{
-			if(!forceRefresh && Session.landsBoard != null)
+			if(!forceRefresh && Session.playersLandsBoard != null)
 				return;
 			
 			Session.WAIT_FOR_SERVER = true;
@@ -935,30 +975,102 @@ package com.uralys.tribes.managers {
 			gameWrapper.getLandsBoard();
 		}
 		
+		//----------------------------------------------------------------------//
+		
+		public function getTopAlliesByCities(forceRefresh:Boolean = false):void
+		{
+			if(!forceRefresh && Session.alliesCitiesBoard != null)
+				return;
+			
+			Session.WAIT_FOR_SERVER = true;
+			var gameWrapper:RemoteObject = getGameWrapper();
+			gameWrapper.getTopAlliesByCities.addEventListener("result", alliesCitiesBoardReceived);
+			gameWrapper.getTopAlliesByCities();
+		}
+	
+		public function getTopAlliesByArmies(forceRefresh:Boolean = false):void
+		{
+			if(!forceRefresh && Session.alliesArmiesBoard != null)
+				return;
+			
+			Session.WAIT_FOR_SERVER = true;
+			var gameWrapper:RemoteObject = getGameWrapper();
+			gameWrapper.getTopAlliesByArmies.addEventListener("result", alliesArmiesBoardReceived);
+			gameWrapper.getTopAlliesByArmies();
+		}
+		
+		public function getTopAlliesByPopulation(forceRefresh:Boolean = false):void
+		{
+			if(!forceRefresh && Session.alliesPopulationBoard != null)
+				return;
+			
+			Session.WAIT_FOR_SERVER = true;
+			var gameWrapper:RemoteObject = getGameWrapper();
+			gameWrapper.getTopAlliesByPopulation.addEventListener("result", alliesPopulationBoardReceived);
+			gameWrapper.getTopAlliesByPopulation();
+		}
+		
+		public function getTopAlliesByLands(forceRefresh:Boolean = false):void
+		{
+			if(!forceRefresh && Session.alliesLandsBoard != null)
+				return;
+			
+			Session.WAIT_FOR_SERVER = true;
+			var gameWrapper:RemoteObject = getGameWrapper();
+			gameWrapper.getTopAlliesByLands.addEventListener("result", alliesLandsBoardReceived);
+			gameWrapper.getTopAlliesByLands();
+		}
+		
 		//--------------------------------------------------------------------------------//
 		
 		private function citiesBoardReceived(event:ResultEvent):void
 		{
 			Session.WAIT_FOR_SERVER = false;
-			Session.citiesBoard = Utils.sort(event.result as ArrayCollection, "nbCities");
+			Session.playersCitiesBoard = Utils.sort(event.result as ArrayCollection, "nbCities");
 		}
 		
 		private function armiesBoardReceived(event:ResultEvent):void
 		{
 			Session.WAIT_FOR_SERVER = false;
-			Session.armiesBoard = Utils.sort(event.result as ArrayCollection, "nbArmies");
+			Session.playersArmiesBoard = Utils.sort(event.result as ArrayCollection, "nbArmies");
 		}
 		
 		private function populationBoardReceived(event:ResultEvent):void
 		{
 			Session.WAIT_FOR_SERVER = false;
-			Session.populationBoard = Utils.sort(event.result as ArrayCollection, "nbPopulation");
+			Session.playersPopulationBoard = Utils.sort(event.result as ArrayCollection, "nbPopulation");
 		}
 		
 		private function landsBoardReceived(event:ResultEvent):void
 		{
 			Session.WAIT_FOR_SERVER = false;
-			Session.landsBoard = Utils.sort(event.result as ArrayCollection, "nbLands");
+			Session.playersLandsBoard = Utils.sort(event.result as ArrayCollection, "nbLands");
+		}
+		
+		//--------------------------------------------------------------------------------//
+		
+		private function alliesCitiesBoardReceived(event:ResultEvent):void
+		{
+			Session.WAIT_FOR_SERVER = false;
+			Session.alliesCitiesBoard = Utils.sort(event.result as ArrayCollection, "nbCities");
+		}
+		
+		private function alliesArmiesBoardReceived(event:ResultEvent):void
+		{
+			Session.WAIT_FOR_SERVER = false;
+			Session.alliesArmiesBoard = Utils.sort(event.result as ArrayCollection, "nbArmies");
+		}
+		
+		private function alliesPopulationBoardReceived(event:ResultEvent):void
+		{
+			Session.WAIT_FOR_SERVER = false;
+			Session.alliesPopulationBoard = Utils.sort(event.result as ArrayCollection, "nbPopulation");
+		}
+		
+		private function alliesLandsBoardReceived(event:ResultEvent):void
+		{
+			Session.WAIT_FOR_SERVER = false;
+			Session.alliesLandsBoard = Utils.sort(event.result as ArrayCollection, "nbLands");
 		}
 		
 		//--------------------------------------------------------------------------------//

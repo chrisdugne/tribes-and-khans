@@ -16,18 +16,30 @@
 	
 	<fx:Script>
 		<![CDATA[
+			//-----------------------------------------------------------------//
+			
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;
 			import com.uralys.tribes.managers.AccountManager;
 			import com.uralys.tribes.managers.GameManager;
 			
 			import mx.managers.PopUpManager;
+			
+			//-----------------------------------------------------------------//
+
+			// if false : editing ally profile 
+			[Bindable] public var editPlayer:Boolean = true;
 
 			//-----------------------------------------------------------------//
 
-			public function closeWindow():void{
+			public function closeWindow():void
+			{
 				PopUpManager.removePopUp(this);
-				GameManager.getInstance().updatePlayerProfile();
+				
+				if(editPlayer)
+					GameManager.getInstance().updatePlayerProfile();
+				else
+					GameManager.getInstance().updateAllyProfile();
 			}
 			
 			//-----------------------------------------------------------------//
@@ -44,7 +56,7 @@
 				  horizontalAlign="center">
 			
 			<s:Label text="{Translations.EDIT_PROFILE.getItemAt(Session.LANGUAGE)}" color="#ffffff"/>
-			<s:TextArea text="@{Session.playerLoaded.profile}"
+			<s:TextArea text="@{editPlayer ? Session.playerLoaded.profile : Session.allyLoaded.profile}"
 						height="330"
 						/>
 			<s:Button label="{Translations.OK.getItemAt(Session.LANGUAGE)}" 

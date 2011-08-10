@@ -15,6 +15,8 @@
 	
 	<fx:Script>
 		<![CDATA[
+			//-----------------------------------------------------------------//
+
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;
 			import com.uralys.tribes.managers.GameManager;
@@ -33,6 +35,7 @@
 			{
 				GameManager.getInstance().sendMessage(message.text);
 				closeWindow();
+				FlexGlobals.topLevelApplication.message(Translations.MESSAGE_SENT_TO.getItemAt(Session.LANGUAGE) + " " + Session.playerLoaded.name);
 			}
 			
 		]]>

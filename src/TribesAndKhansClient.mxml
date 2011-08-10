@@ -19,6 +19,8 @@
 	
 	<fx:Script>
 		<![CDATA[ 
+			//-----------------------------------------------------------------------//
+			
 			import com.uralys.tribes.commons.Names;
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;
@@ -212,6 +214,10 @@
 				
 				playerProfileWindow.refresh();
 			}
+			
+			public function closePlayerProfileWindow():void{
+				playerProfileWindow.closeWindow();
+			}
 
 			//-----------------------------------------------------------------------//
 
@@ -234,7 +240,7 @@
 			{
 				mailBoxWindow.closeWindow();
 					
-				PopUpManager.addPopUp(mailBoxWindow, this, false);
+				PopUpManager.addPopUp(mailBoxWindow, this, true);
 				PopUpManager.centerPopUp(mailBoxWindow);
 				
 				mailBoxWindow.refresh();
@@ -290,6 +296,26 @@
 				  />
 		
 		<mx:Spacer width="100%"/>
+		<s:Label text="{Translations.MY_ALLY.getItemAt(Session.LANGUAGE)}"
+				 id="labelAlly"
+				 click="openAllyProfileWindow(Session.player.ally.allyUID)"
+				 color="#000000"
+				 toolTip="{Translations.PROFILE.getItemAt(Session.LANGUAGE)}"
+				 mouseOver="{labelAlly.setStyle('color', '#ffffff')}"
+				 mouseOut="{labelAlly.setStyle('color', '#000000')}"
+				 visible="{Session.LOGGED_IN &amp;&amp; Session.player.ally != null}"/>
+		
+		<mx:Spacer width="30"/>
+		<s:Label text="{Translations.MY_PROFILE.getItemAt(Session.LANGUAGE)}"
+				 id="labelProfile"
+				 click="openPlayerProfileWindow(Session.player.playerUID)"
+				 color="#000000"
+				 toolTip="{Translations.PROFILE.getItemAt(Session.LANGUAGE)}"
+				 mouseOver="{labelProfile.setStyle('color', '#ffffff')}"
+				 mouseOut="{labelProfile.setStyle('color', '#000000')}"
+				 visible="{Session.LOGGED_IN}"/>
+		
+		<mx:Spacer width="30"/>
 		<mx:Image source="{ImageContainer.MAIL_BOX}"
 				  click="openMailBox()"
 				  mouseOver="{labelMessages.setStyle('color', '#ffffff')}"

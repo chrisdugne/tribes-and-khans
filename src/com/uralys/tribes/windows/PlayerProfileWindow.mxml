@@ -22,6 +22,7 @@
 			import com.uralys.tribes.commons.Translations;
 			import com.uralys.tribes.entities.City;
 			import com.uralys.tribes.managers.GameManager;
+			import com.uralys.utils.Utils;
 			
 			import mx.controls.SWFLoader;
 			import mx.core.FlexGlobals;
@@ -80,6 +81,22 @@
 				PopUpManager.centerPopUp(createAllyWindow);
 			}
 			
+			//-------------------------------------------------------------------------//
+			
+			private function inviteInAlly():void{
+				GameManager.getInstance().inviteInAlly(Session.playerLoaded.playerUID, Session.player.ally.allyUID);
+				Session.player.ally.inviteds.addItem(Session.playerLoaded);
+				
+				inviteAllyButton.visible = false;
+				inviteAllyButton.includeInLayout = false;
+
+				invitationSentLabel.visible = true;
+				invitationSentLabel.includeInLayout = true;	
+				
+				FlexGlobals.topLevelApplication.message(Translations.INVITATION_SENT_TO.getItemAt(Session.LANGUAGE) + " " + Session.playerLoaded.name);
+			}
+
+			//-------------------------------------------------------------------------//
 		]]>
 	</fx:Script>
 	
@@ -98,9 +115,35 @@
 			<renderers:AllyName ally="{Session.playerLoaded.ally}"
 								visible="{Session.playerLoaded.ally != null}"
 								includeInLayout="{Session.playerLoaded.ally != null}"/>
-			<s:Label text="{Translations.NO_ALLY.getItemAt(Session.LANGUAGE)}" color="#ffffff"
+			
+			<s:Label text="{Translations.NO_ALLY.getItemAt(Session.LANGUAGE)}" 
 					 visible="{Session.playerLoaded.ally == null}"
-					 includeInLayout="{Session.playerLoaded.ally == null}"/>
+					 includeInLayout="{Session.playerLoaded.ally == null}"
+					 color="#ffffff"/>
+			
+			<s:Button label="{Translations.INVITE_IN_ALLY.getItemAt(Session.LANGUAGE)} {Session.player.ally.name}"
+					  id="inviteAllyButton"
+					  click="inviteInAlly()"
+					  visible="{Session.LOGGED_IN 
+					  &amp;&amp; Session.playerLoaded != null 
+					  &amp;&amp; Session.playerLoaded.ally == null 
+					  &amp;&amp; Session.player.ally != null 
+					  &amp;&amp; Session.player.playerUID == Session.player.ally.players.getItemAt(0).playerUID
+					  &amp;&amp; !Utils.containsPlayer(Session.player.ally.inviteds, Session.playerLoaded)}"
+					  includeInLayout="{inviteAllyButton.visible}"
+					  skinClass="com.uralys.tribes.skins.CustomButtonSkin"/>
+			
+			<s:Label text="({Translations.INVITATION_SENT.getItemAt(Session.LANGUAGE)})"
+					 id="invitationSentLabel"
+					 visible="{Session.LOGGED_IN 
+					 &amp;&amp; Session.playerLoaded != null 
+					 &amp;&amp; Session.playerLoaded.ally == null 
+					 &amp;&amp; Session.player.ally != null 
+					 &amp;&amp; Session.player.playerUID == Session.player.ally.players.getItemAt(0).playerUID
+					 &amp;&amp; Utils.containsPlayer(Session.player.ally.inviteds, Session.playerLoaded)}"
+					 includeInLayout="{invitationSentLabel.visible}"
+					 color="#ffffff"/>
+			
 			<mx:HRule width="70%"/>
 
 			<s:Label text="{Translations.CITIES.getItemAt(Session.LANGUAGE)} : {Session.playerLoaded.nbCities}" color="#ffffff"/>

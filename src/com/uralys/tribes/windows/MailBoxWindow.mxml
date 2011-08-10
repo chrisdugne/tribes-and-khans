@@ -3,22 +3,26 @@
 			   xmlns:s="library://ns.adobe.com/flex/spark" 
 			   xmlns:mx="library://ns.adobe.com/flex/mx"
 			   xmlns:windows="com.uralys.tribes.windows.*"
+			   xmlns:renderers="com.uralys.tribes.renderers.*"
 			   skinClass="com.uralys.tribes.skins.WindowSkin"
 			   close="{closeWindow(true)}"
-			   width="440"
-			   height="420"
+			   creationComplete="init()"
+			   width="580"
+			   height="480"
 			   backgroundAlpha="0.7"
 			   backgroundColor="#000000"
-			   cornerRadius="15">
+			   cornerRadius="15" >
 	<fx:Script>
 		<![CDATA[
 			//-----------------------------------------------------------------//
-
+			
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;
+			import com.uralys.tribes.entities.Ally;
 			import com.uralys.tribes.entities.Message;
 			import com.uralys.tribes.managers.GameManager;
 			import com.uralys.tribes.pages.Board;
+			import com.uralys.utils.Utils;
 			
 			import mx.collections.ArrayCollection;
 			import mx.core.FlexGlobals;
@@ -70,31 +74,104 @@
 			
 			//-----------------------------------------------------------------//
 			
+			public function init():void{
+				if(Session.player.ally != null)
+					deleteAllAllyInvitations();
+			}
+
 			public function refresh():void
 			{
 				//GameManager.getInstance().sendMessage(message.text);
 			}
 
 			//-----------------------------------------------------------------//
-			
-			private function deleteReadMessage():void{
-				(readMessagesList.selectedItem as Message).status = Message.DELETED;
+
+			private function deleteAllAllyInvitations():void
+			{
+				//---------//
+
+				var newMessagesToDelete:ArrayCollection = new ArrayCollection();
+				for each(var newMessage:Message in Session.player.newMessages){
+					if(Utils.isInviteMessage(newMessage))
+						newMessagesToDelete.addItem(newMessage);
+				}
+
+				for each(var newMessageToDelete:Message in newMessagesToDelete)
+					deleteNewMessage(newMessageToDelete);				
 				
-				messageToDeleteUIDs.addItem((readMessagesList.selectedItem as Message).messageUID);
-				Session.player.readMessages.removeItemAt(Session.player.readMessages.getItemIndex((readMessagesList.selectedItem as Message)));
+				//---------//
+
+				var readMessagesToDelete:ArrayCollection = new ArrayCollection();
+				for each(var readMessage:Message in Session.player.readMessages){
+					if(Utils.isInviteMessage(readMessage))
+						readMessagesToDelete.addItem(readMessage);
+				}
+				
+				for each(var readMessageToDelete:Message in readMessagesToDelete)
+					deleteReadMessage(readMessageToDelete);				
+				
+				//---------//
+
+				var archivedMessagesToDelete:ArrayCollection = new ArrayCollection();
+				for each(var archivedMessage:Message in Session.player.archivedMessages){
+					if(Utils.isInviteMessage(archivedMessage))
+						archivedMessagesToDelete.addItem(archivedMessage);
+				}
+				
+				for each(var archivedMessageToDelete:Message in archivedMessagesToDelete)
+					deleteArchivedMessage(archivedMessageToDelete);				
+				
+				//---------//
+			}
+
+			//-----------------------------------------------------------------//
+			
+			private function deleteNewMessage(message:Message):void
+			{
+				message.status = Message.DELETED;
+
+				messageToDeleteUIDs.addItem(message.messageUID);
+				Session.player.newMessages.removeItemAt(Session.player.newMessages.getItemIndex(message));
+				
+				newMessagesList.selectedItem = null;
+			}
+
+			private function deleteNewMessageFromList():void{
+				deleteNewMessage(newMessagesList.selectedItem as Message);
+			}
+
+			//-----------------------------------------------------------------//
+
+			private function deleteReadMessage(message:Message):void{
+				message.status = Message.DELETED;
+				
+				messageToDeleteUIDs.addItem(message.messageUID);
+				Session.player.readMessages.removeItemAt(Session.player.readMessages.getItemIndex(message));
 				
 				readMessagesList.selectedItem = null;
 			}
+			
+			private function deleteReadMessageFromList():void{
+				deleteReadMessage(readMessagesList.selectedItem as Message);
+			}
+			
+			//-----------------------------------------------------------------//
 
-			private function deleteArchivedMessage():void{
-				(archivedMessagesList.selectedItem as Message).status = Message.DELETED;
+			private function deleteArchivedMessage(message:Message):void{
+				message.status = Message.DELETED;
 				
-				messageToDeleteUIDs.addItem((archivedMessagesList.selectedItem as Message).messageUID);
-				Session.player.archivedMessages.removeItemAt(Session.player.archivedMessages.getItemIndex((archivedMessagesList.selectedItem as Message)));
+				messageToDeleteUIDs.addItem(message.messageUID);
+				Session.player.archivedMessages.removeItemAt(Session.player.archivedMessages.getItemIndex(message));
 				
 				archivedMessagesList.selectedItem = null;
 			}
 			
+			private function deleteArchivedMessageFromList():void{
+				deleteArchivedMessage(archivedMessagesList.selectedItem as Message);
+			}
+			
+			//-----------------------------------------------------------------//
+
 			private function archiveReadMessage():void
 			{
 				if(Session.player.archivedMessages.length == 20){
@@ -109,6 +186,16 @@
 				Session.player.readMessages.removeItemAt(Session.player.readMessages.getItemIndex((readMessagesList.selectedItem as Message)));
 				
 				readMessagesList.selectedItem = null;
+			}
+			
+			//-----------------------------------------------------------------//
+			
+			private function acceptAllyInvitation(ally:Ally):void
+			{
+				GameManager.getInstance().joinAlly(ally.allyUID);
+				deleteAllAllyInvitations();
+				
+				Session.player.ally = ally;
 			}
 			
 		]]>
@@ -147,11 +234,10 @@
 					<s:VGroup width="60%" height="100%"
 							  horizontalAlign="center"
 							  paddingTop="5">
-						<s:Label text="{(newMessagesList.selectedItem as Message).date}"
-								 color="#ffffff"/>
-						<s:Label width="60%"
-								 text="{(newMessagesList.selectedItem as Message).content}"
-								 color="#ffffff"/>
+						<renderers:MessageContentRenderer message="{newMessagesList.selectedItem as Message}"
+														  visible="{newMessagesList.selectedItem != null}"
+														  accept="{acceptAllyInvitation}"
+														  refuse="{deleteNewMessageFromList}"/>
 					</s:VGroup>
 				</s:HGroup>
 			</s:NavigatorContent>
@@ -169,12 +255,14 @@
 							skinClass="com.uralys.tribes.skins.CustomListSkin"/>
 					<s:VGroup width="60%" height="100%"
 							  horizontalAlign="center"
-							  paddingTop="5">
-						<s:Label text="{(readMessagesList.selectedItem as Message).date}"
-								 color="#ffffff"/>
-						<s:Label width="60%"
-								 text="{(readMessagesList.selectedItem as Message).content}"
-								 color="#ffffff"/>
+							  paddingTop="5"
+							  contentBackgroundAlpha="0">
+						
+						<renderers:MessageContentRenderer message="{readMessagesList.selectedItem as Message}"
+														  visible="{readMessagesList.selectedItem != null}"
+														  accept="{acceptAllyInvitation}"
+														  refuse="{deleteReadMessageFromList}"/>
+						
 						<mx:Spacer height="100%"/>
 						<s:HGroup width="100%" visible="{readMessagesList.selectedItem != null}">
 							<s:Button skinClass="com.uralys.tribes.skins.CustomButtonSkin" 
@@ -183,7 +271,7 @@
 							<mx:Spacer width="100%"/>
 							<s:Button skinClass="com.uralys.tribes.skins.CustomButtonSkin"
 									  label="{Translations.DELETE.getItemAt(Session.LANGUAGE)}"
-									  click="deleteReadMessage()"/>
+									  click="deleteReadMessageFromList()"/>
 						</s:HGroup>
 					</s:VGroup>
 					
@@ -203,18 +291,20 @@
 							skinClass="com.uralys.tribes.skins.CustomListSkin"/>
 					<s:VGroup width="60%" height="100%"
 							  horizontalAlign="center"
-							  paddingTop="5">
-						<s:Label text="{(archivedMessagesList.selectedItem as Message).date}"
-							 color="#ffffff"/>
-						<s:Label width="60%"
-							 text="{(archivedMessagesList.selectedItem as Message).content}"
-							 color="#ffffff"/>
+							  paddingTop="5"
+							  contentBackgroundAlpha="0">
+						
+						<renderers:MessageContentRenderer message="{archivedMessagesList.selectedItem as Message}"
+														  visible="{archivedMessagesList.selectedItem != null}"
+														  accept="{acceptAllyInvitation}"
+														  refuse="{deleteArchivedMessageFromList}"/>
+						
 						<mx:Spacer height="100%"/>
 						<s:HGroup width="100%" visible="{archivedMessagesList.selectedItem != null}">
 							<mx:Spacer width="100%"/>
 							<s:Button skinClass="com.uralys.tribes.skins.CustomButtonSkin"
 									  label="{Translations.DELETE.getItemAt(Session.LANGUAGE)}"
-									  click="deleteArchivedMessage()"/>
+									  click="deleteArchivedMessageFromList()"/>
 						</s:HGroup>
 					</s:VGroup>
 				</s:HGroup>

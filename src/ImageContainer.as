@@ -84,6 +84,12 @@ public final class ImageContainer
 	[Embed(source="resources/embed/upgrade_arrow.png")]
 	[Bindable] public static var UPGRADE_ARROW:Class;  
 
+	[Embed(source="resources/embed/arrow_promote.png")]
+	[Bindable] public static var ARROW_PROMOTE:Class;  
+
+	[Embed(source="resources/embed/arrow_demote.png")]
+	[Bindable] public static var ARROW_DEMOTE:Class;  
+
 	//   ======================================================================//
 
 	[Embed(source="resources/embed/icons/epee.png")]

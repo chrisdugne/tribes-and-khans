@@ -8,7 +8,25 @@ package com.uralys.tribes.entities
 	{
 		//--------------------------------------------------------------//
 
-		public function Ally(){}
+		public function Ally(invitationMessageContent:String = null)
+		{
+			trace("new Ally : " + invitationMessageContent != null);
+			// creation à partir d'un message d'invitation
+			if(invitationMessageContent != null)
+			{
+				var firstMarkIndex:int = invitationMessageContent.indexOf("|");
+				var secondMarkIndex:int = invitationMessageContent.indexOf("|", firstMarkIndex+1);
+				
+				allyUID = invitationMessageContent.substring(firstMarkIndex+1, secondMarkIndex);
+				name = invitationMessageContent.substring(secondMarkIndex+1, invitationMessageContent.length);
+				
+				trace(invitationMessageContent);
+				trace(firstMarkIndex);
+				trace(secondMarkIndex);
+				trace(allyUID);
+				trace(name);
+			}
+		}
 		
 		//--------------------------------------------------------------//
 		

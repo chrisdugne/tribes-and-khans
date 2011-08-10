@@ -4,7 +4,8 @@
 				xmlns:mx="library://ns.adobe.com/flex/mx" 
 				useHandCursor="true"
 				buttonMode="true"
-				contentBackgroundAlpha="0" xmlns:renderers="com.uralys.tribes.renderers.*">
+				contentBackgroundAlpha="0" 
+				xmlns:renderers="com.uralys.tribes.renderers.*">
 	
 	<s:states>
 		<s:State name="normal" />

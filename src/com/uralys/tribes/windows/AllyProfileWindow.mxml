@@ -62,7 +62,10 @@
 			//-----------------------------------------------------------------//
 			
 			public function leaveAlly():void{
-
+				GameManager.getInstance().removeFromAlly(Session.player.playerUID, Session.player.ally.allyUID);
+				Session.player.ally = null;
+				closeWindow();
+				FlexGlobals.topLevelApplication.closePlayerProfileWindow();
 			}
 		]]>
 	</fx:Script>
@@ -108,10 +111,10 @@
 							width="80%"
 							selectionColor="#000101"
 							rollOverColor="#000101"
-							itemRenderer="com.uralys.tribes.renderers.PlayerSimpleRenderer"
+							itemRenderer="com.uralys.tribes.renderers.PlayerInAllyRenderer"
 							skinClass="com.uralys.tribes.skins.CustomListSkin"/>
 					
-					<s:Button label="{Translations.LEAVE_ALLY.getItemAt(Session.LANGUAGE)}"
+					<s:Button label="{Session.player.ally.players.length == 1 ? Translations.DELETE_ALLY.getItemAt(Session.LANGUAGE) : Translations.LEAVE_ALLY.getItemAt(Session.LANGUAGE)}"
 							  click="leaveAlly()"
 							  visible="{Session.LOGGED_IN &amp;&amp; Session.allyLoaded != null &amp;&amp; Session.player.ally.allyUID == Session.allyLoaded.allyUID}"
 							  includeInLayout="{Session.LOGGED_IN &amp;&amp; Session.allyLoaded != null &amp;&amp; Session.player.ally.allyUID == Session.allyLoaded.allyUID}"

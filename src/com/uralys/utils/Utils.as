@@ -4,6 +4,8 @@ package com.uralys.utils
 
 import com.uralys.tribes.commons.Numbers;
 import com.uralys.tribes.core.BoardDrawer;
+import com.uralys.tribes.entities.Ally;
+import com.uralys.tribes.entities.Message;
 import com.uralys.tribes.entities.Player;
 
 import flash.display.BitmapData;
@@ -12,6 +14,7 @@ import flash.display.Sprite;
 import mx.collections.ArrayCollection;
 import mx.collections.Sort;
 import mx.collections.SortField;
+import mx.utils.ObjectUtil;
 
 public class Utils
 {
@@ -310,14 +313,31 @@ public class Utils
 		
 		public static function containsPlayer(collection:ArrayCollection, player:Player):Boolean
 		{
-			trace("containsPlayer : " + player.name);
 			for each(var playerInSource:Player in collection){
-				trace("playerInSource : " + playerInSource.name);
 				if(player.playerUID == playerInSource.playerUID)
 					return true;
 			}
 			
 			return false;
+		}
+
+		//----------------------------------------------------------------------------------------------------
+		
+		public static function isClassicMessage(message:Message):Boolean
+		{
+			if(message.content.indexOf("____allyInvitation") != -1)
+				return false;
+			
+			return true;
+		}
+
+		public static function isInviteMessage(message:Message):Boolean
+		{
+			return message.content.indexOf("____allyInvitation") != -1;
+		}
+
+		public static function createDummyAlly(content:String):Ally{
+			return new Ally(content);
 		}
 }
 }

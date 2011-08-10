@@ -181,6 +181,12 @@ public class Translations{
 									["Profil",
 									"Profile",
 									"Profile"]);
+
+	[Bindable]
+	public static var MY_PROFILE:ArrayCollection = new ArrayCollection(
+									["Mon Profil",
+									"My Profile",
+									"My Profile"]);
 	
 	[Bindable]
 	public static var EDIT_PROFILE:ArrayCollection = new ArrayCollection(
@@ -193,6 +199,12 @@ public class Translations{
 									["Ecrire un message à ",
 									"Write a message to ",
 									"Write a message to "]);
+	
+	[Bindable]
+	public static var MESSAGE_SENT_TO:ArrayCollection = new ArrayCollection(
+									["Message envoyé à",
+									"Message sent to ",
+									"Message sent to "]);
 
 	[Bindable]
 	public static var FREE_PEOPLE:ArrayCollection = new ArrayCollection(
@@ -278,6 +290,11 @@ public class Translations{
 									"Ally",
 									"Ally"]);
 	[Bindable]
+	public static var MY_ALLY:ArrayCollection = new ArrayCollection(
+									["Mon Alliance",
+									"My Ally",
+									"My Ally"]);
+	[Bindable]
 	public static var CREATE_ALLY:ArrayCollection = new ArrayCollection(
 									["Créer une Alliance",
 									"Create an Ally",
@@ -288,10 +305,25 @@ public class Translations{
 									"Leave the Ally",
 									"Leave the Ally"]);
 	[Bindable]
+	public static var DELETE_ALLY:ArrayCollection = new ArrayCollection(
+									["Supprimer l'Alliance",
+									"Delete the Ally",
+									"Delete the Ally"]);
+	[Bindable]
+	public static var JOIN_ALLY:ArrayCollection = new ArrayCollection(
+									["Vous avez reçu une invitation\n pour rejoindre une Alliance",
+									"You received an invitation\n to join an Ally",
+									"You received an invitation\n to join an Ally"]);
+	[Bindable]
 	public static var EDIT_ALLY_PROFILE:ArrayCollection = new ArrayCollection(
 									["Editer le profil de l'Alliance",
 									"Edit the Ally's profile",
 									"Edit the Ally's profile"]);
+	[Bindable]
+	public static var INVITATION_SENT:ArrayCollection = new ArrayCollection(
+									["Invitation envoyée",
+									"Invitation sent",
+									"Invitation sent"]);
 	[Bindable]
 	public static var NO_ALLY:ArrayCollection = new ArrayCollection(
 									["Pas d'Alliance",
@@ -302,6 +334,13 @@ public class Translations{
 									["Inviter dans",
 									"Invite in",
 									"Invite in"]);
+	
+	[Bindable]
+	public static var INVITATION_SENT_TO:ArrayCollection = new ArrayCollection(
+									["Invitation envoyée à",
+									"Invitation sent to ",
+									"Invitation sent to "]);
+	
 	[Bindable]
 	public static var CHOOSE_ALLY_NAME:ArrayCollection = new ArrayCollection(
 									["Nom de l'Alliance",
@@ -881,6 +920,16 @@ public class Translations{
 									["Ok",
 									"Ok",
 									"Ok"]);
+	[Bindable]
+	public static var ACCEPT:ArrayCollection = new ArrayCollection(
+									["Accepter",
+									"Accept",
+									"Accept"]);
+	[Bindable]
+	public static var REFUSE:ArrayCollection = new ArrayCollection(
+									["Refuser",
+									"Refuse",
+									"Refuse"]);
 	[Bindable]
 	public static var NEWNAME:ArrayCollection = new ArrayCollection(
 									["Nouveau nom",

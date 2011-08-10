@@ -23,7 +23,7 @@
 -->
 <s:SparkSkin xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark" 
     xmlns:fb="http://ns.adobe.com/flashbuilder/2009" blendMode="normal" mouseEnabled="false"
-    minWidth="76" minHeight="76" alpha.disabled="0.5" alpha.disabledWithControlBar="0.5" xmlns:mx="library://ns.adobe.com/flex/mx">
+    minWidth="76" minHeight="76" alpha.disabled="0.5" alpha.disabledWithControlBar="0.5">
     
     <fx:Metadata>
         <![CDATA[ 
@@ -181,7 +181,7 @@
             
             <!--- Chris custom header group ! (id = moveArea pour garder les listeners pour le move de la fenetre) -->
 			<s:HGroup width="100%" id="moveArea">
-				<mx:Spacer width="100%"/>
+				<s:Spacer width="100%"/>
 	            <s:Button id="closeButton" skinClass="com.uralys.tribes.skins.TitleWindowCloseButtonSkin"
 	                      width="15" height="15" right="7" top="7" />
 			</s:HGroup>
@@ -240,7 +240,7 @@
 		
 		<!-- resize handle -->
 		<s:Group id="resizeHandle" right="1" bottom="1" width="15" height="15">
-			<mx:Image source="{ImageContainer.RESIZER}"/>
+			<s:Image source="{ImageContainer.RESIZER}"/>
 		</s:Group>
 
     </s:Group>

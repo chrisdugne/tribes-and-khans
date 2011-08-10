@@ -70,6 +70,11 @@ package com.uralys.tribes.managers {
 		private function loginForceSteps():void 
 		{
 			trace("loginForceSteps");
+			
+			// la liste est inversée quand on arrive ici..
+			if(Session.player.ally != null)
+				Session.player.ally.players.source.reverse();
+			
 			var now:Number = new Date().getTime();
 			var timeSpentMillis:Number = now - Numbers.SERVER_START;
 			
@@ -164,7 +169,7 @@ package com.uralys.tribes.managers {
 
 			var city:City = Session.player.cities.getItemAt(0) as City;
 			
-			GameManager.getInstance().initMap(city.x, city.y);
+			initMap(city.x, city.y);
 			
 			Session.LOGGED_IN_FORCE_STEPS_DONE = true;
 		}
@@ -369,13 +374,12 @@ package com.uralys.tribes.managers {
 			gameWrapper.getPlayerInfo(playerUID);
 		}
 
-		public function receivedPlayerInfo(event:ResultEvent):void
+		private function receivedPlayerInfo(event:ResultEvent):void
 		{
 			Session.WAIT_FOR_SERVER = false;
 			Session.playerLoaded = event.result as Player;
 		}
 		
-
 		//-------------------------------------------------------------------------//
 		
 		public function getAlly(allyUID:String):void
@@ -386,10 +390,13 @@ package com.uralys.tribes.managers {
 			gameWrapper.getAlly(allyUID);
 		}
 
-		public function receivedAlly(event:ResultEvent):void
+		private function receivedAlly(event:ResultEvent):void
 		{
 			Session.WAIT_FOR_SERVER = false;
 			Session.allyLoaded = event.result as Ally;
+			
+			if(Session.player.ally.allyUID == Session.allyLoaded.allyUID)
+				Session.player.ally = Session.allyLoaded;
 		}
 		
 		//-------------------------------------------------------------------------//
@@ -402,11 +409,28 @@ package com.uralys.tribes.managers {
 			gameWrapper.createAlly(Session.player.playerUID, allyName);
 		}
 		
-		public function allyCreated(event:ResultEvent):void
+		private function allyCreated(event:ResultEvent):void
 		{
 			Session.WAIT_FOR_SERVER = false;
 			Session.player.ally = event.result as Ally;
 			Session.playerLoaded.ally = event.result as Ally;
+		}
+		
+		//-------------------------------------------------------------------------//
+		
+		public function inviteInAlly(playerUID:String, allyUID:String):void{
+			var gameWrapper:RemoteObject = getGameWrapper();
+			gameWrapper.inviteInAlly(playerUID, allyUID);
+		}
+		
+		public function joinAlly(allyUID:String):void{
+			var gameWrapper:RemoteObject = getGameWrapper();
+			gameWrapper.joinAlly(Session.player.playerUID, allyUID);
+		}
+
+		public function removeFromAlly(playerUID:String, allyUID:String):void{
+			var gameWrapper:RemoteObject = getGameWrapper();
+			gameWrapper.removeFromAlly(playerUID, allyUID);
 		}
 		
 		//-------------------------------------------------------------------------//
@@ -931,44 +955,32 @@ package com.uralys.tribes.managers {
 		
 		//----------------------------------------------------------------------//
 		
-		public function getCitiesBoard(forceRefresh:Boolean = false):void
+		public function getCitiesBoard():void
 		{
-			if(!forceRefresh && Session.playersCitiesBoard != null)
-				return;
-			
 			Session.WAIT_FOR_SERVER = true;
 			var gameWrapper:RemoteObject = getGameWrapper();
 			gameWrapper.getCitiesBoard.addEventListener("result", citiesBoardReceived);
 			gameWrapper.getCitiesBoard();
 		}
 	
-		public function getArmiesBoard(forceRefresh:Boolean = false):void
+		public function getArmiesBoard():void
 		{
-			if(!forceRefresh && Session.playersArmiesBoard != null)
-				return;
-			
 			Session.WAIT_FOR_SERVER = true;
 			var gameWrapper:RemoteObject = getGameWrapper();
 			gameWrapper.getArmiesBoard.addEventListener("result", armiesBoardReceived);
 			gameWrapper.getArmiesBoard();
 		}
 		
-		public function getPopulationBoard(forceRefresh:Boolean = false):void
+		public function getPopulationBoard():void
 		{
-			if(!forceRefresh && Session.playersPopulationBoard != null)
-				return;
-			
 			Session.WAIT_FOR_SERVER = true;
 			var gameWrapper:RemoteObject = getGameWrapper();
 			gameWrapper.getArmiesBoard.addEventListener("result", populationBoardReceived);
 			gameWrapper.getArmiesBoard();
 		}
 		
-		public function getLandsBoard(forceRefresh:Boolean = false):void
+		public function getLandsBoard():void
 		{
-			if(!forceRefresh && Session.playersLandsBoard != null)
-				return;
-			
 			Session.WAIT_FOR_SERVER = true;
 			var gameWrapper:RemoteObject = getGameWrapper();
 			gameWrapper.getLandsBoard.addEventListener("result", landsBoardReceived);
@@ -977,44 +989,32 @@ package com.uralys.tribes.managers {
 		
 		//----------------------------------------------------------------------//
 		
-		public function getTopAlliesByCities(forceRefresh:Boolean = false):void
+		public function getTopAlliesByCities():void
 		{
-			if(!forceRefresh && Session.alliesCitiesBoard != null)
-				return;
-			
 			Session.WAIT_FOR_SERVER = true;
 			var gameWrapper:RemoteObject = getGameWrapper();
 			gameWrapper.getTopAlliesByCities.addEventListener("result", alliesCitiesBoardReceived);
 			gameWrapper.getTopAlliesByCities();
 		}
 	
-		public function getTopAlliesByArmies(forceRefresh:Boolean = false):void
+		public function getTopAlliesByArmies():void
 		{
-			if(!forceRefresh && Session.alliesArmiesBoard != null)
-				return;
-			
 			Session.WAIT_FOR_SERVER = true;
 			var gameWrapper:RemoteObject = getGameWrapper();
 			gameWrapper.getTopAlliesByArmies.addEventListener("result", alliesArmiesBoardReceived);
 			gameWrapper.getTopAlliesByArmies();
 		}
 		
-		public function getTopAlliesByPopulation(forceRefresh:Boolean = false):void
+		public function getTopAlliesByPopulation():void
 		{
-			if(!forceRefresh && Session.alliesPopulationBoard != null)
-				return;
-			
 			Session.WAIT_FOR_SERVER = true;
 			var gameWrapper:RemoteObject = getGameWrapper();
 			gameWrapper.getTopAlliesByPopulation.addEventListener("result", alliesPopulationBoardReceived);
 			gameWrapper.getTopAlliesByPopulation();
 		}
 		
-		public function getTopAlliesByLands(forceRefresh:Boolean = false):void
+		public function getTopAlliesByLands():void
 		{
-			if(!forceRefresh && Session.alliesLandsBoard != null)
-				return;
-			
 			Session.WAIT_FOR_SERVER = true;
 			var gameWrapper:RemoteObject = getGameWrapper();
 			gameWrapper.getTopAlliesByLands.addEventListener("result", alliesLandsBoardReceived);

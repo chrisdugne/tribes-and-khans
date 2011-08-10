@@ -4,6 +4,7 @@ package com.uralys.utils
 
 import com.uralys.tribes.commons.Numbers;
 import com.uralys.tribes.core.BoardDrawer;
+import com.uralys.tribes.entities.Player;
 
 import flash.display.BitmapData;
 import flash.display.Sprite;
@@ -303,6 +304,20 @@ public class Utils
 		public static function getStockName(stockUID:String):String
 		{
 			return stockUID.substr(stockUID.indexOf("__")+1); 
+		}
+
+		//----------------------------------------------------------------------------------------------------
+		
+		public static function containsPlayer(collection:ArrayCollection, player:Player):Boolean
+		{
+			trace("containsPlayer : " + player.name);
+			for each(var playerInSource:Player in collection){
+				trace("playerInSource : " + playerInSource.name);
+				if(player.playerUID == playerInSource.playerUID)
+					return true;
+			}
+			
+			return false;
 		}
 }
 }

@@ -298,6 +298,11 @@ public class Translations{
 									"No Ally",
 									"No Ally"]);
 	[Bindable]
+	public static var INVITE_IN_ALLY:ArrayCollection = new ArrayCollection(
+									["Inviter dans",
+									"Invite in",
+									"Invite in"]);
+	[Bindable]
 	public static var CHOOSE_ALLY_NAME:ArrayCollection = new ArrayCollection(
 									["Nom de l'Alliance",
 									"Ally's name",

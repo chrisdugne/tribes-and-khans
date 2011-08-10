@@ -66,9 +66,12 @@ public interface IGameService {
 	public void deleteMessages(String uralysUID, List<String> messageUIDs);
 	
 	//-----------------------------------------------------------------------------------//
+	
 	public Ally createAlly(String uralysUID, String allyName);
 	public Ally getAlly(String allyUID);
+	public void inviteInAlly(String uralysUID, String allyUID);
 	public void joinAlly(String uralysUID, String allyUID);
+	public void removeFromAlly(String uralysUID, String allyUID);
 
 	public List<Ally> getTopAlliesByCities();
 	public List<Ally> getTopAlliesByArmies();

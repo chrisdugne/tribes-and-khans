@@ -228,4 +228,11 @@ public class Utils {
 			log.info(string);
 	}
 
+	//==================================================================================================//
+	
+	// content = ____allyInvitation|13129045021323891435642|Les Colibris
+	public static String getAllyUID(String content) {
+		return content.substring(content.indexOf("|")+1, content.indexOf("|", content.indexOf("|")+1));
+	}
+
 }

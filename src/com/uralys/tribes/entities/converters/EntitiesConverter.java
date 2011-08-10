@@ -82,7 +82,7 @@ public class EntitiesConverter {
 		player.setNbPopulation(playerDTO.getNbPopulation());
 		player.setProfile(playerDTO.getProfile() == null ? "" : playerDTO.getProfile());
 
-		player.setAlly(convertAllyDTO(playerDTO.getAlly(), false));
+		player.setAlly(convertAllyDTO(playerDTO.getAlly(), requireFullData));
 		
 		if(!requireFullData)
 			return player;
@@ -467,7 +467,8 @@ public class EntitiesConverter {
 
 		// -----------------------------------------------------------------------------------//
 		
-		if(requirePlayerList){
+		if(requirePlayerList)
+		{
 			List<Player> players = new ArrayList<Player>();
 			
 			for (PlayerDTO playerDTO : allyDTO.getPlayers()) {
@@ -475,6 +476,16 @@ public class EntitiesConverter {
 			}
 			
 			ally.setPlayers(players);
+			
+			
+
+			List<Player> inviteds = new ArrayList<Player>();
+			
+			for (PlayerDTO playerDTO : allyDTO.getInviteds()) {
+				inviteds.add(convertPlayerDTO(playerDTO, false));
+			}
+			
+			ally.setInviteds(inviteds);
 		}
 		
 		// -----------------------------------------------------------------------------------//

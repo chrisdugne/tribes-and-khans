@@ -2,6 +2,7 @@ package com.uralys.tribes.dao;
 
 import java.util.List;
 
+import com.uralys.tribes.entities.Ally;
 import com.uralys.tribes.entities.City;
 import com.uralys.tribes.entities.Move;
 import com.uralys.tribes.entities.Player;
@@ -33,6 +34,7 @@ public interface IGameDAO {
 	
 	public void updatePlayer(Player player);
 	public void updatePlayerPoints(Player player);
+	public void updateAllyPoints(Ally ally);
 	public void updateCityResources(City city, boolean newStep);
 	public void updateSmith(String smithUID, int people);
 	public void updateEquipmentStock(String equipmentUID, int size);
@@ -117,6 +119,9 @@ public interface IGameDAO {
 	
 	public AllyDTO createAlly(String uralysUID, String allyName);
 	public AllyDTO getAlly(String allyUID);
+	public void inviteInAlly(String uralysUID, String allyUID, String inviteInAllyMessage);
+	public void joinAlly(String uralysUID, String allyUID);
+	public void removeFromAlly(String uralysUID, String allyUID);
 
 	public List<AllyDTO> getTopAlliesByCities();
 	public List<AllyDTO> getTopAlliesByArmies();

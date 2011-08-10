@@ -160,6 +160,16 @@ public class GameManager implements IGameManager {
 			}
 			
 			//------------------------------------//
+			// MAJ des points des l'alliance : on enleve les anciennes donnees
+			
+			if(player.getAlly() != null){
+				player.getAlly().setNbArmies(player.getAlly().getNbArmies() - player.getNbArmies());
+				player.getAlly().setNbCities(player.getAlly().getNbCities() - player.getNbCities());
+				player.getAlly().setNbPopulation(player.getAlly().getNbPopulation() - player.getNbPopulation());
+			}
+			
+			//------------------------------------//
+			// on calcule les nouvelles donnees
 			
 			player.setNbCities(player.getCities().size());
 			
@@ -176,6 +186,18 @@ public class GameManager implements IGameManager {
 			
 			gameDao.updatePlayerPoints(player);
 			
+			//------------------------------------//
+			// MAJ des points des l'alliance : on ajoute les nouvelles donnees
+			
+			if(player.getAlly() != null){
+				player.getAlly().setNbArmies(player.getAlly().getNbArmies() + player.getNbArmies());
+				player.getAlly().setNbCities(player.getAlly().getNbCities() + player.getNbCities());
+				player.getAlly().setNbPopulation(player.getAlly().getNbPopulation() + player.getNbPopulation());
+				
+
+				gameDao.updateAllyPoints(player.getAlly());
+			}
+
 			//------------------------------------//
 
 			return player;
@@ -416,7 +438,21 @@ public class GameManager implements IGameManager {
 	}
 
 	public void joinAlly(String uralysUID, String allyUID) {
-		//gameDao.joinAlly(uralysUID, allyUID);
+		gameDao.joinAlly(uralysUID, allyUID);
+	}
+
+	public void inviteInAlly(String uralysUID, String allyUID) 
+	{
+		AllyDTO ally = gameDao.getAlly(allyUID);
+		gameDao.inviteInAlly(uralysUID, allyUID, createInviteInAllyMessage(allyUID, ally.getName()));
+	}
+
+	public void removeFromAlly(String uralysUID, String allyUID){ 
+		gameDao.removeFromAlly(uralysUID, allyUID);
+	}
+	
+	private String createInviteInAllyMessage(String allyUID, String allyName) {
+		return "____allyInvitation|"+allyUID+"|"+allyName;
 	}
 	
 	//-----------------------------------------------------------------------------------//
@@ -475,7 +511,7 @@ public class GameManager implements IGameManager {
 	 * 02 mai 2011
 	 * HYPER IMPORTANT !!
 	 * lorsqu'on fait les replaceUnit, on rentre dans de grosses recursions, il suffit de 12-15 pour deja perdre du temps, 
-	 * donc un rassemblement de beauvcoup darmees ne peut pas marcher (et cest ce qui risque darriver tres vite )
+	 * donc un rassemblement de beaucoup d'armees ne peut pas marcher (et cest ce qui risque d'arriver tres vite )
 	 * peut etre une solution : UNIFIER LES GROUPES DARMEES PAR ALLIANCE
 	 * il faut une hierarchie d'alliance, pour determiner qui controle la nouvelle armee par defaut
 	 * il faut plus tard pouvoir separer une armee en plusieurs si on les deplace (fixer chaque scission a 3 pour ne pas renouveler le probleme, comme ca larmee se divisera par 3, puis par 3 etc et ca sera accessible)

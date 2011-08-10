@@ -11,6 +11,7 @@ public class Ally {
 	
 	private String name;
 	private List<Player> players = new ArrayList<Player>();
+	private List<Player> inviteds = new ArrayList<Player>();
 
 	private Integer nbPlayers; 
 	private Integer nbLands; 
@@ -52,6 +53,14 @@ public class Ally {
 
 	public void setPlayers(List<Player> players) {
 		this.players = players;
+	}
+
+	public List<Player> getInviteds() {
+		return inviteds;
+	}
+
+	public void setInviteds(List<Player> inviteds) {
+		this.inviteds = inviteds;
 	}
 
 	public Integer getNbLands() {

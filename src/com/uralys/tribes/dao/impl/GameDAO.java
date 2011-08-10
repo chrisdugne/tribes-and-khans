@@ -13,6 +13,7 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.uralys.tribes.commons.Constants;
 import com.uralys.tribes.dao.IGameDAO;
+import com.uralys.tribes.entities.Ally;
 import com.uralys.tribes.entities.Case;
 import com.uralys.tribes.entities.City;
 import com.uralys.tribes.entities.Equipment;
@@ -244,7 +245,15 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 
 		player.getCityUIDs().add(cityUID);
 		player.setNbCities(player.getNbCities() + 1);
-		player.setNbLands(player.getNbLands() + 1);
+		
+		increaseLandsCount(player, pm);
+		
+//		player.setNbLands(player.getNbLands() + 1);
+//		
+//		if(player.getAlly() != null){
+//			AllyDTO ally = pm.getObjectById(AllyDTO.class, player.getAllyUID());	
+//			ally.setNbLands(ally.getNbLands() + 1);
+//		}
 		
 		return cityUID;
 	}
@@ -368,8 +377,11 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	{
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		CaseDTO _case = pm.getObjectById(CaseDTO.class, caseUID);
-		decreaseLandsCount(_case.getLandOwnerUID());
-		increaseLandsCount(_case.getChallengerUID());
+		PlayerDTO owner = pm.getObjectById(PlayerDTO.class, _case.getLandOwnerUID());
+		PlayerDTO challenger = pm.getObjectById(PlayerDTO.class, _case.getChallengerUID());
+
+		decreaseLandsCount(owner, pm);
+		increaseLandsCount(challenger, pm);
 		
 		_case.setLandOwnerUID(_case.getChallengerUID());
 		_case.setChallengerUID(null);
@@ -405,30 +417,24 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 
 	//==================================================================================================//
 	
-	private void increaseLandsCount(String playerUID)
+	private void increaseLandsCount(PlayerDTO playerDTO, PersistenceManager pm)
 	{
-		if(playerUID == null)
-			return;
-
-		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
-		PlayerDTO playerDTO = pm.getObjectById(PlayerDTO.class, playerUID);
-	
 		playerDTO.setNbLands(playerDTO.getNbLands() + 1);
 
-		pm.close();
+		if(!playerDTO.getUralysUID().equals(playerDTO.getAllyUID())){
+			AllyDTO ally = pm.getObjectById(AllyDTO.class, playerDTO.getAllyUID());	
+			ally.setNbLands(ally.getNbLands() + 1);
+		}
 	}
 	
-	private void decreaseLandsCount(String playerUID)
+	private void decreaseLandsCount(PlayerDTO playerDTO, PersistenceManager pm)
 	{
-		if(playerUID == null)
-			return;
-		
-		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
-		PlayerDTO playerDTO = pm.getObjectById(PlayerDTO.class, playerUID);
-		
 		playerDTO.setNbLands(playerDTO.getNbLands() - 1);
-		
-		pm.close();
+
+		if(playerDTO.getUralysUID() != playerDTO.getAllyUID()){
+			AllyDTO ally = pm.getObjectById(AllyDTO.class, playerDTO.getAllyUID());	
+			ally.setNbLands(ally.getNbLands() - 1);
+		}
 	}
 
 	//==================================================================================================//
@@ -453,6 +459,18 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		playerDTO.setNbPopulation(player.getNbPopulation());
 		playerDTO.setNbCities(player.getNbCities());
 		playerDTO.setNbArmies(player.getNbArmies());
+		
+		pm.close();
+	}
+
+	public void updateAllyPoints(Ally ally)
+	{
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		AllyDTO allyDTO = pm.getObjectById(AllyDTO.class, ally.getAllyUID());
+		
+		allyDTO.setNbPopulation(ally.getNbPopulation());
+		allyDTO.setNbCities(ally.getNbCities());
+		allyDTO.setNbArmies(ally.getNbArmies());
 		
 		pm.close();
 	}
@@ -789,14 +807,14 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			// changing owner !
 			PlayerDTO previousOwner = pm.getObjectById(PlayerDTO.class, cityDTO.getOwnerUID());
 			previousOwner.getCityUIDs().remove(cityUID);
-			previousOwner.setNbLands(previousOwner.getNbLands() - 1);
 			previousOwner.setNbCities(previousOwner.getNbCities() - 1);
+			decreaseLandsCount(previousOwner, pm);
 			
 			PlayerDTO newOwner = pm.getObjectById(PlayerDTO.class, cityDTO.getNextOwnerUID());
 			newOwner.getCityUIDs().add(cityUID);
 			newOwner.getCityBeingOwnedUIDs().remove(cityUID);
-			newOwner.setNbLands(newOwner.getNbLands() + 1);
 			newOwner.setNbCities(newOwner.getNbCities() + 1);
+			increaseLandsCount(newOwner, pm);
 			
 			cityDTO.setNextOwnerUID(null);
 			cityDTO.setOwnerUID(newOwner.getUralysUID());
@@ -1286,6 +1304,13 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		PlayerDTO player = pm.getObjectById(PlayerDTO.class, uralysUID);
 		player.getMessageUIDs().removeAll(messageUIDs);
 		
+		for(MessageDTO message : messages){
+			if(message.getContent().contains("____allyInvitation")){
+				AllyDTO ally = pm.getObjectById(AllyDTO.class, Utils.getAllyUID(message.getContent()));
+				ally.getInvitedUIDs().remove(uralysUID);
+			}
+		}
+		
 		pm.deletePersistentAll(messages);
 		pm.close();
 	}
@@ -1324,7 +1349,59 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		return pm.getObjectById(AllyDTO.class, allyUID);
 	}
-	
+
+	public void inviteInAlly(String uralysUID, String allyUID, String inviteInAllyMessage) 
+	{
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		AllyDTO allyDTO = pm.getObjectById(AllyDTO.class, allyUID);
+		
+		allyDTO.getInvitedUIDs().add(uralysUID);
+		sendMessage(allyDTO.getPlayerUIDs().get(0), uralysUID, inviteInAllyMessage);
+		
+		pm.close();
+	}
+
+	public void joinAlly(String uralysUID, String allyUID) 
+	{
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		AllyDTO allyDTO = pm.getObjectById(AllyDTO.class, allyUID);
+		PlayerDTO player = pm.getObjectById(PlayerDTO.class, uralysUID);
+		
+		player.setAllyUID(allyUID);
+		allyDTO.getPlayerUIDs().add(uralysUID);
+		
+		allyDTO.setNbArmies(allyDTO.getNbArmies() + player.getNbArmies());
+		allyDTO.setNbCities(allyDTO.getNbCities() + player.getNbCities());
+		allyDTO.setNbPopulation(allyDTO.getNbPopulation() + player.getNbPopulation());
+		allyDTO.setNbLands(allyDTO.getNbLands() + player.getNbLands());
+		
+		pm.close();
+	}
+
+	public void removeFromAlly(String uralysUID, String allyUID) 
+	{
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		AllyDTO allyDTO = pm.getObjectById(AllyDTO.class, allyUID);
+		PlayerDTO player = pm.getObjectById(PlayerDTO.class, uralysUID);
+		
+		player.setAllyUID(uralysUID);
+		
+		if(allyDTO.getPlayerUIDs().size() == 1){
+			pm.deletePersistent(allyDTO);
+		}
+		else{
+			allyDTO.getPlayerUIDs().remove(uralysUID);
+			
+			allyDTO.setNbArmies(allyDTO.getNbArmies() - player.getNbArmies());
+			allyDTO.setNbCities(allyDTO.getNbCities() - player.getNbCities());
+			allyDTO.setNbPopulation(allyDTO.getNbPopulation() - player.getNbPopulation());
+			allyDTO.setNbLands(allyDTO.getNbLands() - player.getNbLands());
+		}
+		
+		
+		pm.close();
+	}
+
 	//-----------------------------------------------------------------------------------//
 	@SuppressWarnings("unchecked")
 	public List<AllyDTO> getTopAlliesByPopulation() 
@@ -1373,4 +1450,5 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		
 		return (List<AllyDTO>) q.execute();
 	}
+
 }

@@ -233,5 +233,13 @@ public class GameService implements IGameService {
 	public List<Ally> getTopAlliesByLands() {
 		return gameManager.getTopAlliesByLands();
 	}
+
+	public void inviteInAlly(String uralysUID, String allyUID) {
+		gameManager.inviteInAlly(uralysUID, allyUID);
+	}
+
+	public void removeFromAlly(String uralysUID, String allyUID) {
+		gameManager.removeFromAlly(uralysUID, allyUID);
+	}
 	
 }

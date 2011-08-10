@@ -28,6 +28,7 @@ public class AllyDTO {
 	
 	@Persistent private String name;
 	@Persistent private List<String> playerUIDs = new ArrayList<String>();
+	@Persistent private List<String> invitedUIDs = new ArrayList<String>();
 
 	@Persistent private Integer nbLands; 
 	@Persistent private Integer nbPopulation;
@@ -68,6 +69,14 @@ public class AllyDTO {
 
 	public void setPlayerUIDs(List<String> playerUIDs) {
 		this.playerUIDs = playerUIDs;
+	}
+
+	public List<String> getInvitedUIDs() {
+		return invitedUIDs;
+	}
+
+	public void setInvitedUIDs(List<String> invitedUIDs) {
+		this.invitedUIDs = invitedUIDs;
 	}
 
 	public Integer getNbLands() {
@@ -114,6 +123,10 @@ public class AllyDTO {
 	
 	public List<PlayerDTO> getPlayers() {
 		return (List<PlayerDTO>) UniversalDAO.getInstance().getListDTO(playerUIDs, PlayerDTO.class);
+	}
+	
+	public List<PlayerDTO> getInviteds() {
+		return (List<PlayerDTO>) UniversalDAO.getInstance().getListDTO(invitedUIDs, PlayerDTO.class);
 	}
 
 	//-----------------------------------------------------------------------------------//

@@ -21,7 +21,8 @@ package com.uralys.tribes.entities
 		protected var _nbArmies:int;
 		protected var _profile:String;
 		protected var _players:ArrayCollection;
-		
+		protected var _inviteds:ArrayCollection;
+
 		//--------------------------------------------------------------//
 		
 		
@@ -96,9 +97,15 @@ package com.uralys.tribes.entities
 		public function set players(o:ArrayCollection):void {
 			_players = o;
 		}
-		
-		
-		
 
+		public function get inviteds():ArrayCollection
+		{
+			return _inviteds;
+		}
+
+		public function set inviteds(value:ArrayCollection):void
+		{
+			_inviteds = value;
+		}
 	}
 }

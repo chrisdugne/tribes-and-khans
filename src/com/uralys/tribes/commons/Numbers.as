@@ -40,6 +40,10 @@ package com.uralys.tribes.commons
 		public static var WHITE:Number = 0xFFFFFF;
 		[Bindable]
 		public static var YELLOW:Number = 0xC4BC45;
+		
+		[Bindable] public static var colorPlayer:Number = 0x5CBF7A; 
+		[Bindable] public static var colorEnnemy:Number = 0xBF5C5C;
+		[Bindable] public static var colorAlly:Number = 0x5C7FBF;
 	
 		//==================================================================================================//
 		// game COEFF

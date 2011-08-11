@@ -527,7 +527,7 @@
 				}
 				
 				// on calcule si ce n'a pas été fait avant
-				GameManager.getInstance().calculateCityData(false, false, false, selectedCity, false);
+				GameManager.getInstance().updateCityWorkersEarningsAndSpendings(false, false, false, selectedCity, false);
 				
 				enterCityForm.includeInLayout = true;
 				enterCityForm.visible = true;				
@@ -933,48 +933,49 @@
 			<s:Label id="labelBuildingCity"
 					 includeInLayout="{!enterCityButton.enabled}"
 					 visible="{!enterCityButton.enabled}"/>
+			
+			<s:Button label="{Translations.REFRESH.getItemAt(Session.LANGUAGE)}" 
+					  id="refreshOpponentButton"
+					  click="{GameManager.getInstance().refreshPlayer(Session.CURRENT_CASE_SELECTED.landOwner)}"
+					  skinClass="com.uralys.tribes.skins.CustomButtonSkin"
+					  visible="{Session.player.playerUID != Session.CURRENT_CASE_SELECTED.landOwner.playerUID
+					  		&amp;&amp; Session.CURRENT_CASE_SELECTED.landOwner.lastStep &lt; Session.player.lastStep}"/>
+		</s:VGroup>
+		
+		<s:VGroup id="unitForm"
+				  top="210" 
+				  x="{boardImage.x+Session.MAP_WIDTH + 65}"
+				  visible="{Session.CURRENT_CASE_SELECTED != null 
+						  &amp;&amp; 
+						  ((Session.CURRENT_CASE_SELECTED.army !=null 
+						  &amp;&amp; Session.CURRENT_CASE_SELECTED.army.size > 0)
+						  ||
+						  (Session.CURRENT_CASE_SELECTED.merchants !=null 
+						  &amp;&amp; Session.CURRENT_CASE_SELECTED.merchants.size > 0))}"
+				  excludeFrom="moveUnit"
+				  horizontalAlign="center"
+				  paddingTop="5"
+				  width="200">
+			
+			<mx:HRule width="180"/>
+			<renderers:ArmyRenderer army="{Session.CURRENT_CASE_SELECTED.army}" 
+									visible="{Session.CURRENT_CASE_SELECTED != null &amp;&amp; Session.CURRENT_CASE_SELECTED.army !=null &amp;&amp; Session.CURRENT_CASE_SELECTED.army.size > 0}"
+									click="selectedUnit = Session.CURRENT_CASE_SELECTED.army; onUnitClick();"/>
+			<mx:HRule width="180"/>
+			<renderers:MerchantsRenderer merchant="{Session.CURRENT_CASE_SELECTED.merchants}" 
+										 visible="{Session.CURRENT_CASE_SELECTED != null &amp;&amp; Session.CURRENT_CASE_SELECTED.merchants !=null &amp;&amp; Session.CURRENT_CASE_SELECTED.merchants.size > 0}"
+										 click="selectedUnit = Session.CURRENT_CASE_SELECTED.merchants; onUnitClick();"/>
 		</s:VGroup>
 
-		<s:TabBar id="tabs" dataProvider="{viewstack}"
-				  top="210" right="135"
-				  excludeFrom="moveUnit"
-				  skinClass="com.uralys.tribes.skins.CustomTabBarSkin"
-				  visible="{Session.CURRENT_CASE_SELECTED != null 
-				  &amp;&amp; 
-				  			((Session.CURRENT_CASE_SELECTED.army !=null 
-				  			&amp;&amp; Session.CURRENT_CASE_SELECTED.army.size > 0)
-				  				||
-				  			(Session.CURRENT_CASE_SELECTED.merchants !=null 
-				  			&amp;&amp; Session.CURRENT_CASE_SELECTED.merchants.size > 0))}"/>
-		
-		<mx:ViewStack id="viewstack" width="200" top="240" right="95"
-					  excludeFrom="moveUnit">
-			
-			<s:NavigatorContent label="{Translations.ARMY.getItemAt(Session.LANGUAGE)}">
-				<renderers:ArmyRenderer army="{Session.CURRENT_CASE_SELECTED.army}" 
-										visible="{Session.CURRENT_CASE_SELECTED != null &amp;&amp; Session.CURRENT_CASE_SELECTED.army !=null &amp;&amp; Session.CURRENT_CASE_SELECTED.army.size > 0}"
-										click="selectedUnit = Session.CURRENT_CASE_SELECTED.army; onUnitClick();"/>
-			</s:NavigatorContent>
-			<s:NavigatorContent label="{Translations.MERCHANTS.getItemAt(Session.LANGUAGE)}">
-				<renderers:MerchantsRenderer merchant="{Session.CURRENT_CASE_SELECTED.merchants}" 
-											 visible="{Session.CURRENT_CASE_SELECTED != null &amp;&amp; Session.CURRENT_CASE_SELECTED.merchants !=null &amp;&amp; Session.CURRENT_CASE_SELECTED.merchants.size > 0}"
-											 click="selectedUnit = Session.CURRENT_CASE_SELECTED.merchants; onUnitClick();"/>
-			</s:NavigatorContent>
-		</mx:ViewStack>
-		<s:Label visible="{Session.CURRENT_CASE_SELECTED != null &amp;&amp; Session.CURRENT_CASE_SELECTED.pawn.status == Pawn.CONQUERING_LAND}"
-				 text="{Translations.CONQUERING_LAND.getItemAt(Session.LANGUAGE)}"
-				 bottom="200"
-				 right="95"/>
-		
 		<s:CheckBox id="checkboxBars"
 					selected="@{Session.LANDS_VISIBLE}" 
 					label="{Translations.SHOW_LANDS.getItemAt(Session.LANGUAGE)}"
-					x="{viewstack.x}"
+					right="95"
 					bottom="70"/>
 		<s:CheckBox id="checkboxLands"
 					selected="@{Session.SHOW_MOVES_PROGRESS_BARS}" 
 					label="{Translations.PROGRESS_BARS.getItemAt(Session.LANGUAGE)}"
-					x="{viewstack.x}"
+					right="95"
 					bottom="44"/>
 
 		<s:VGroup top="150" right="95"
@@ -1050,7 +1051,7 @@
 							 mouseEnabledWhereTransparent="false">
 						
 						<mx:Image id="currentMouseHighLightNormal"
-								  source="{ImageContainer.getImage(ImageContainer.HIGHLIGHT_BLEU)}"
+								  source="{ImageContainer.getImage(ImageContainer.HIGHLIGHT_BLANC)}"
 								  visible="{!Session.MOVE_A_UNIT}"
 								  x="{Session.COORDINATE_X * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4) * BoardDrawer.getInstance().scale}"
 								  y="{Session.COORDINATE_Y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2) * BoardDrawer.getInstance().scale}"

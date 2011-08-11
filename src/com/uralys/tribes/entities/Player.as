@@ -221,13 +221,11 @@ package com.uralys.tribes.entities
 		
 		public function getUnit(unitUID:String):Unit
 		{
-			trace("Session.getunit " + unitUID);
 			for each(var unit:Unit in units){
 				if(unit.unitUID == unitUID)
 					return unit;
 			}
 			
-			trace("NOT FOUND : NULL");
 			return null;
 		}	
 

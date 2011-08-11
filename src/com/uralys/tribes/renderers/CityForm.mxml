@@ -2033,7 +2033,7 @@
 									<s:Button label="{Translations.NEW_MERCHANTS.getItemAt(Session.LANGUAGE)}" 
 											  click="newMerchants()"
 											  skinClass="com.uralys.tribes.skins.CustomButtonSkin"
-											  visible="{city.merchant == null &amp;&amp; Session.player.units.length &lt; Session.player.cities.length*3}"/>
+											  enabled="{city.merchant == null &amp;&amp; Session.player.units.length &lt; Session.player.cities.length*3}"/>
 									<mx:Image width="30" height="30" 
 											  toolTip=" "
 											  toolTipCreate="{onCreateMerchantToolTip(event)}"
@@ -2291,7 +2291,7 @@
 							<s:Button label="{Translations.NEW_ARMY.getItemAt(Session.LANGUAGE)}" 
 									  skinClass="com.uralys.tribes.skins.CustomButtonSkin"
 									  click="newArmy()"
-									  visible="{city.army == null &amp;&amp; Session.player.units.length &lt; Session.player.cities.length*3}"/>
+									  enabled="{city.army == null &amp;&amp; Session.player.units.length &lt; Session.player.cities.length*3}"/>
 							<s:Button label="{Translations.DELETE.getItemAt(Session.LANGUAGE)}" 
 									  skinClass="com.uralys.tribes.skins.CustomButtonSkin"
 									  click="deleteArmy()"

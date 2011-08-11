@@ -5,6 +5,7 @@ package com.uralys.tribes.entities
 	import com.uralys.tribes.core.UnitMover;
 	import com.uralys.tribes.managers.GameManager;
 	import com.uralys.tribes.renderers.Pawn;
+	import com.uralys.utils.Utils;
 	
 	import mx.collections.ArrayCollection;
 	import mx.controls.Image;
@@ -199,14 +200,17 @@ package com.uralys.tribes.entities
 					foundUnitsOnThisCase = true;
 					
 					pawn.unit = unit;
-						
-					if(unitInPlayer != null){
+					
+					
+					if(unitInPlayer != null)
 						unit.ownerStatus = Unit.PLAYER;
-					}
-					else{
-						// plus tard, pour les ally, on va devoir checker si unit.playerUID est bien dans notre alliance.
+
+					else if(Session.player.ally != null && Utils.containsPlayer(Session.player.ally.players, unit.player))
+						unit.ownerStatus = Unit.ALLY;	
+					
+					else
 						unit.ownerStatus = Unit.ENNEMY;				
-					}
+					
 					
 					switch(unit.type){
 						case 1:

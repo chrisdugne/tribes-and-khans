@@ -43,11 +43,13 @@ public class Translations{
 									["Profil Uralys créé. Bienvenue !",
 									"Uralys profile created. Welcome !",
 									"Uralys profile created. Welcome !"]);
+	
 	[Bindable]
 	public static var HOW_TO_PLAY:ArrayCollection = new ArrayCollection(
 									["Comment jouer",
 									"How to play",
 									"How to play"]);
+
 
 	[Bindable]
 	public static var OPEN_TAB:ArrayCollection = new ArrayCollection(

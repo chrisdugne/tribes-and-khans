@@ -269,14 +269,14 @@
 		<mx:Image id="usButton" source="{ImageContainer.US_FLAG}" click="us()" visible="{Session.LANGUAGE != 2}" width="25"/>
 		
 		<mx:Image id="soundOnButton" source="{ImageContainer.HP}" click="{music()}"/>
-		<s:Label text="{MusicPlayer.volume &gt; 0 ? 'On' : 'Off'}" click="{music()}"
+		<s:Label text="{MusicPlayer.getInstance().volume &gt; 0 ? 'On' : 'Off'}" click="{music()}"
 				 id="labelVolume"
 				 mouseOver="{labelVolume.setStyle('color', '#ffffff')}"
 				 mouseOut="{labelVolume.setStyle('color', '#000000')}"/>
 		<s:HSlider id="volumeSlider" 
 				   maximum="100" 
 				   showDataTip="false"
-				   value="{MusicPlayer.volume * 100}" 
+				   value="{MusicPlayer.getInstance().volume * 100}" 
 				   change="{MusicPlayer.getInstance().changeVolume()}"
 				   height="20"/>
 		

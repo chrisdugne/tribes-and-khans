@@ -9,6 +9,7 @@
 		<![CDATA[
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.entities.Message;
+			import com.uralys.utils.Utils;
 
 			private function clicked():void
 			{
@@ -20,8 +21,8 @@
 		]]>
 	</fx:Script>
 	
-	<s:HGroup width="100%" horizontalAlign="left" paddingLeft="10">
-		<s:Label text="{(data as Message).senderName}"
+	<s:HGroup width="100%" horizontalAlign="left" paddingLeft="15">
+		<s:Label text="{(data as Message).senderName} {Utils.isInviteMessage(data as Message) ? ' (invitation)' : ''}"
 				 color="#ffffff"/>
 	
 	</s:HGroup>

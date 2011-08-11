@@ -52,7 +52,7 @@
 			protected function nextStep():void
 			{
 				if(Session.LOGGED_IN_FORCE_STEPS_DONE)
-					GameManager.getInstance().saveStep();
+					GameManager.getInstance().calculateStep(Session.player);
 				
 				// message 'resources recues'
 				FlexGlobals.topLevelApplication.message(Translations.RESOURCES_UPDATED.getItemAt(Session.LANGUAGE), 3);

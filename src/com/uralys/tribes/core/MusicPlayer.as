@@ -33,7 +33,7 @@ public class MusicPlayer
 		//=====================================================================================//
 
 		[Bindable]
-		public static var volume:Number = 1;
+		public var volume:Number = 1;
 		
 		private var volumeRecorded:Number;
 		private var music:Sound;

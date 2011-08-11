@@ -90,7 +90,7 @@ package com.uralys.tribes.core
 		//=====================================================================================//
 
 		/**
-		 * Lorsque les cases sont chargees, on refresh tout les display
+		 * Lorsque les cases sont chargees, on refresh tout le display
 		 */ 
 		private var timer:Timer = new Timer(1000,1);
 		public function refreshDisplay(event:TimerEvent = null):void
@@ -327,6 +327,10 @@ package com.uralys.tribes.core
 				
 				if(_case.landOwner.playerUID == Session.player.playerUID)
 					image.source = ImageContainer.getImage(ImageContainer.HIGHLIGHT_VERT);
+
+				else if(Session.player.ally != null && Utils.containsPlayer(Session.player.ally.players, _case.landOwner))
+					image.source = ImageContainer.getImage(ImageContainer.HIGHLIGHT_BLEU);
+				
 				else
 					image.source = ImageContainer.getImage(ImageContainer.HIGHLIGHT_ROUGE);
 				
@@ -566,7 +570,6 @@ package com.uralys.tribes.core
 		private function applyZoom():void
 		{
 			GameManager.getInstance().loadCases(Session.CENTER_X, Session.CENTER_Y, false);
-			Session.board.placeBoard(Session.CENTER_X, Session.CENTER_Y);
 		}
 	}
 }

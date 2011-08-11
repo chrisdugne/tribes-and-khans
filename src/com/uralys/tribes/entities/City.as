@@ -872,7 +872,6 @@ package com.uralys.tribes.entities
 
 		//---------------------------------------------------------------//
 
-		
 		public function reset():void
 		{
 			woodSpent = 0;
@@ -883,7 +882,7 @@ package com.uralys.tribes.entities
 			ironEarned = 0;
 			armyRaised = 0;
 			armyReleased = 0;
-			_armiesToFeed = 0;
+			unitsToFeed = 0;
 			
 			bowsRestored = 0;
 			bowsEquiped = 0;

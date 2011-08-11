@@ -25,6 +25,7 @@ package com.uralys.tribes.managers {
 	
 	import mx.collections.ArrayCollection;
 	import mx.controls.Alert;
+	import mx.core.FlexGlobals;
 	import mx.rpc.CallResponder;
 	import mx.rpc.events.FaultEvent;
 	import mx.rpc.events.ResultEvent;
@@ -54,8 +55,8 @@ package com.uralys.tribes.managers {
 			loadCasesResponder = new CallResponder();
 		}
 		
-		private function getGameWrapper():RemoteObject{
-			
+		private function getGameWrapper():RemoteObject
+		{
 			var gameWrapper:RemoteObject = new RemoteObject();
 			gameWrapper.destination = "GameWrapper";
 			gameWrapper.endpoint = Names.SERVER_AMF_ENDPOINT;
@@ -67,21 +68,37 @@ package com.uralys.tribes.managers {
 		// CONTROLS
 		//============================================================================================//
 		
-		private function loginForceSteps():void 
+		public function refreshPlayer(player:Player):void
 		{
-			trace("loginForceSteps");
+			Session.WAIT_FOR_SERVER = true;
+			var gameWrapper:RemoteObject = getGameWrapper();
+			gameWrapper.getPlayer.addEventListener("result", receivedPlayerToRefresh);
+			gameWrapper.getPlayer(player.playerUID);
+		}
+		
+		private function receivedPlayerToRefresh(event:ResultEvent):void
+		{
+			Session.WAIT_FOR_SERVER = false;
+			calculateSteps(event.result as Player);
+		}
+
+		//============================================================================================//
+		
+		private function calculateSteps(player:Player):void 
+		{
+			trace("calculateSteps");
 			
 			// la liste est inversée quand on arrive ici..
-			if(Session.player.ally != null)
-				Session.player.ally.players.source.reverse();
+			if(player.ally != null)
+				player.ally.players.source.reverse();
 			
 			var now:Number = new Date().getTime();
 			var timeSpentMillis:Number = now - Numbers.SERVER_START;
 			
 			var nbStepsSinceBeginning:int = timeSpentMillis/(Numbers.TIME_PER_STEP*60*1000);
-			var nbStepsMissed:int = nbStepsSinceBeginning - Session.player.lastStep;
+			var nbStepsMissed:int = nbStepsSinceBeginning - player.lastStep;
 			
-			for each(var city:City in Session.player.cities)
+			for each(var city:City in player.cities)
 			{
 				trace("MAJ des stocks de la forge");
 				// recuperation des stocks de la forge
@@ -156,39 +173,53 @@ package com.uralys.tribes.managers {
 				}
 			}
 			
-			
+			//6*24 = 144 steps par jour
+			//7 jours = 7 * 144 = 1008 steps par semaine : on limite à une absence de 7 jours pour les calculs.
 			trace(nbStepsMissed + " missed");
+			if(nbStepsMissed > 1000)
+				nbStepsMissed = 1000;
+
 			for(var i:int = 0; i < nbStepsMissed-1; i++){
-				saveStep(true);
+				calculateStep(player, true);
 			}
 		
 			// enregistre le statut lors du dernier step a rattrapper
 			if(nbStepsMissed > 0){
-				saveStep();
+				calculateStep(player);
 			}
 
-			var city:City = Session.player.cities.getItemAt(0) as City;
+			var city:City = player.cities.getItemAt(0) as City;
 			
 			initMap(city.x, city.y);
 			
 			Session.LOGGED_IN_FORCE_STEPS_DONE = true;
 		}
 		
-		private function updateStockBuildingStatus(stock:Stock):void
+		var allCitiesAreFilled:Boolean = false; // pour le catchUpCalculation uniquement
+		public function calculateStep(player:Player, catchUpCalculation:Boolean = false):void
 		{
-			var now:Number = new Date().getTime();
+			(player.cities.getItemAt(0) as City).gold += player.nbLands;
 			
-			if(stock.stockBeginTime != -1 && now > stock.stockEndTime){
-				stock.stockBeginTime = -1;
-				stock.stockCapacity = stock.stockNextCapacity;
-				stock.peopleBuildingStock = 0;
+			if(!catchUpCalculation || !allCitiesAreFilled)
+				allCitiesAreFilled = calculateCitiesStep(catchUpCalculation);
+
+			if(!catchUpCalculation){
+				savePlayer(player);
 			}
 		}
 		
-		public function saveStep(loginCatchUp:Boolean = false)
+		private function calculateCitiesStep(catchUpCalculation:Boolean = false):void
 		{
+			trace("------------------------");
+			trace("calculateCitiesStep");
+			
 			for each(var city:City in Session.player.cities)
 			{
+				trace("--------------");
+				trace("city : " + city.name);
+				trace("wheatEarned : " + city.wheatEarned + " | wheatSpent : " + city.wheatSpent);
+				trace("woodEarned : " + city.woodEarned + " | woodSpent : " + city.woodSpent);
+				trace("ironEarned : " + city.ironEarned + " | ironSpent : " + city.ironSpent);
 				city.wheat += city.wheatEarned - city.wheatSpent;
 				city.wood += city.woodEarned - city.woodSpent;
 				city.iron += city.ironEarned - city.ironSpent;
@@ -211,7 +242,7 @@ package com.uralys.tribes.managers {
 					city.wood = 0;
 				if(city.iron < 0)
 					city.iron = 0;
-
+				
 				var starvation:Boolean = false;
 				
 				if(city.wheat < 0){
@@ -221,24 +252,28 @@ package com.uralys.tribes.managers {
 				
 				var armyRaised:int = city.armyRaised - city.armyReleased;
 				city.population = calculatePopulation(city.population, starvation, armyRaised);
-
-				if(!loginCatchUp)
+				
+				if(!catchUpCalculation)
 				{
 					refreshCitySmithsAndEquipmentsAndStocks(city, true);
 				}
-				// else loginCatchUp : on ne refresh surtout pas smith et equipment, ils sont necessaires pour calculateCityData
-
+				// else catchUpCalculation : on ne refresh surtout pas smith et equipment, ils sont necessaires pour updateCityWorkersEarningsAndSpendings
+				
 				city.reset();
-				calculateCityData(true, loginCatchUp, true, city, starvation);
-			}
-			
-			(Session.player.cities.getItemAt(0) as City).gold += Session.player.nbLands;
-			
-			if(!loginCatchUp){
-				savePlayer();
+				updateCityWorkersEarningsAndSpendings(true, catchUpCalculation, true, city, starvation);
 			}
 		}
 		
+		private function updateStockBuildingStatus(stock:Stock):void
+		{
+			var now:Number = new Date().getTime();
+			
+			if(stock.stockBeginTime != -1 && now > stock.stockEndTime){
+				stock.stockBeginTime = -1;
+				stock.stockCapacity = stock.stockNextCapacity;
+				stock.peopleBuildingStock = 0;
+			}
+		}
 		
 		private function refreshCitySmithsAndEquipmentsAndStocks(city:City, needProduction:Boolean):void
 		{
@@ -362,6 +397,11 @@ package com.uralys.tribes.managers {
 		public function updateAllyProfile():void{
 			var gameWrapper:RemoteObject = getGameWrapper();
 			gameWrapper.updateAllyProfile(Session.allyLoaded.allyUID, Session.allyLoaded.profile);
+		}
+
+		public function saveAllyHierarchy():void{
+			var gameWrapper:RemoteObject = getGameWrapper();
+			gameWrapper.saveAllyHierarchy(Session.player.ally);
 		}
 
 		//-------------------------------------------------------------------------//
@@ -615,9 +655,10 @@ package com.uralys.tribes.managers {
 		
 		//-------------------------------------------------------------------------------//
 		
-		public function calculateCityData(fromSaveStep:Boolean, loginCatchUp:Boolean, forceCalculation:Boolean, city:City, starvation:Boolean):void
+		public function updateCityWorkersEarningsAndSpendings(fromSaveStep:Boolean, catchUpCalculation:Boolean, forceCalculation:Boolean, city:City, starvation:Boolean):void
 		{
-			trace("calculateCityData");
+			trace("--------");
+			trace("updateCityWorkersEarningsAndSpendings");
 			if(!forceCalculation && city.calculationDone)
 				return;
 			
@@ -748,7 +789,6 @@ package com.uralys.tribes.managers {
 				city.peopleCreatingIron = 0;
 			}
 			
-			
 			// calcul des depenses prevues avec les choix du tour precedent
 			city.woodSpent += city.bowWorkers * Numbers.BOW_WOOD;
 			city.woodSpent += city.swordWorkers * Numbers.SWORD_WOOD;
@@ -876,24 +916,21 @@ package com.uralys.tribes.managers {
 
 			trace("nbTilesByEdge : " + Session.nbTilesByEdge);
 			trace("-------------------------------------");
-			trace("Utils.getLandWidth() : " + Utils.getLandWidth());
-			trace("15 * Utils.getLandWidth() : " + (15 * Utils.getLandWidth()));
-			trace("Utils.getXPixel(Session.firstCaseX + 15 * Utils.getLandWidth()) : " + (Utils.getXPixel(Session.firstCaseX + 15 * Utils.getLandWidth())));
 			
 			
-			Session.LEFT_LIMIT_LOADED  	 = Utils.getXPixel(Session.firstCaseX);
-			Session.RIGHT_LIMIT_LOADED	 = Utils.getXPixel(Session.firstCaseX) + Session.nbTilesByEdge * Utils.getLandWidth();
-			Session.TOP_LIMIT_LOADED 	 = Utils.getYPixel(Session.firstCaseY);
-			Session.BOTTOM_LIMIT_LOADED	 = Utils.getYPixel(Session.firstCaseY) + Session.nbTilesByEdge * Utils.getLandHeight();
+			Session.LEFT_LIMIT_LOADED  	 = Utils.getXPixel(Session.firstCaseX) + Session.MAP_WIDTH/2 * BoardDrawer.getInstance().scale;
+			Session.RIGHT_LIMIT_LOADED	 = Utils.getXPixel(Session.firstCaseX) + Session.nbTilesByEdge * Utils.getLandWidth() - 3*Session.MAP_WIDTH * BoardDrawer.getInstance().scale;
+			Session.TOP_LIMIT_LOADED 	 = Utils.getYPixel(Session.firstCaseY) + Session.MAP_HEIGHT/2 * BoardDrawer.getInstance().scale;
+			Session.BOTTOM_LIMIT_LOADED	 = Utils.getYPixel(Session.firstCaseY) + Session.nbTilesByEdge * Utils.getLandHeight() - 7*Session.MAP_HEIGHT * BoardDrawer.getInstance().scale;
 			
 			var gameWrapper:RemoteObject = getGameWrapper();
 			loadCasesResponder.addEventListener("result", casesLoaded);
 			loadCasesResponder.token = gameWrapper.loadCases(groups, refreshLandOwners);
 		}
 
-		public function savePlayer():void{
+		public function savePlayer(player:Player):void{
 			var gameWrapper:RemoteObject = getGameWrapper();
-			savePlayerResponder.token = gameWrapper.savePlayer(Session.player);
+			savePlayerResponder.token = gameWrapper.savePlayer(player);
 		}
 
 		public function deleteUnit (unit:Unit):void
@@ -1136,7 +1173,7 @@ package com.uralys.tribes.managers {
 				initMap(100, 100);
 			}
 			else
-				loginForceSteps();
+				calculateSteps(Session.player);
 		}
 		
 		
@@ -1195,6 +1232,9 @@ package com.uralys.tribes.managers {
 			}
 			
 			//------------------------------------------------//
+
+			// on place le plateau au bon endroit
+			Session.board.placeBoard(Session.CENTER_X, Session.CENTER_Y);
 			
 			// on enregistre tous les timers pour les moves des unites du plateau
 			UnitMover.getInstance().refreshTimers();
@@ -1207,6 +1247,7 @@ package com.uralys.tribes.managers {
 			
 			// on supprime maintenant tous les Session.movesToDelete
 			deleteAllMovesToBeDeleted();
+			
 		}
 		
 		private var currentUnitBeingSaved:Unit;

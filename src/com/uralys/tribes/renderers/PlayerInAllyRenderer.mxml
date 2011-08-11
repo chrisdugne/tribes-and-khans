@@ -16,27 +16,53 @@
 			
 			private function removePlayerFromAlly():void
 			{
-				var indexToremove:int = -1;
+				var indexToRemove:int = -1;
 				for each(var player:Player in Session.player.ally.players){
 					if(player.playerUID == data.playerUID){
-						indexToremove = Session.player.ally.players.getItemIndex(player);
+						indexToRemove = Session.player.ally.players.getItemIndex(player);
 						GameManager.getInstance().removeFromAlly(player.playerUID, Session.player.ally.allyUID);
 						break;
 					}
 				}
 				
-				if(indexToremove)
-					Session.player.ally.players.removeItemAt(indexToremove);
+				if(indexToRemove)
+					Session.player.ally.players.removeItemAt(indexToRemove);
 			}
 			
 			//--------------------------------------------------------------------------------//
 			
-			private function promotePlayer():void{
+			private function promotePlayer():void
+			{
+				var indexSelected:int = -1;
+				for each(var player:Player in Session.player.ally.players)
+				{
+					if(player.playerUID == data.playerUID)
+					{
+						indexSelected = Session.player.ally.players.getItemIndex(player);
+						var playerToDemote:Player = Session.player.ally.players.setItemAt(player, indexSelected - 1) as Player;
+						Session.player.ally.players.setItemAt(playerToDemote, indexSelected);
+						break;
+					}
+				}
 				
+				GameManager.getInstance().saveAllyHierarchy();
 			}
 
-			private function demotePlayer():void{
+			private function demotePlayer():void
+			{
+				var indexSelected:int = -1;
+				for each(var player:Player in Session.player.ally.players)
+				{
+					if(player.playerUID == data.playerUID)
+					{
+						indexSelected = Session.player.ally.players.getItemIndex(player);
+						var playerToPromote:Player = Session.player.ally.players.setItemAt(player, indexSelected + 1) as Player;
+						Session.player.ally.players.setItemAt(playerToPromote, indexSelected);
+						break;
+					}
+				}
 				
+				GameManager.getInstance().saveAllyHierarchy();
 			}
 			
 		]]>

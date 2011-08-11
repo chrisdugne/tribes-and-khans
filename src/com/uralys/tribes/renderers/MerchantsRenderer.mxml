@@ -14,13 +14,12 @@
 	
 	<fx:Script>
 		<![CDATA[
+			import com.uralys.tribes.commons.Numbers;
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;
 			import com.uralys.tribes.entities.Unit;
 			
 			[Bindable] public var merchant:Unit;
-			[Bindable] private var colorPlayer:Number = 0x11ee11;
-			[Bindable] private var colorEnnemy:Number = 0xee1111;
 			
 		]]>
 	</fx:Script>
@@ -46,7 +45,7 @@
 	<s:Group id="groupDetails" height="180" width="160" width.hovered="170" width.selected="170">
 		<s:Rect left="0" right="0" top="0" bottom="0" radiusX="5" radiusY="5">
 			<s:fill>
-				<s:SolidColor color="{merchant.ownerStatus == Unit.PLAYER ? colorPlayer : colorEnnemy}" alpha="0.4"/>
+				<s:SolidColor color="{merchant.ownerStatus == Unit.PLAYER ? Numbers.colorPlayer : (merchant.ownerStatus == Unit.ALLY ? Numbers.colorAlly  : Numbers.colorEnnemy)}" alpha="0.4"/>
 			</s:fill>
 		</s:Rect>
 		<renderers:PlayerName player="{merchant.player}"/>
@@ -57,11 +56,11 @@
 					 left="20" 
 					 verticalCenter="2"
 					 text="{merchant.size}"
-					 visible="{merchant.ownerStatus == Unit.PLAYER}"/>
+					 visible="{merchant.ownerStatus == Unit.PLAYER || merchant.ownerStatus == Unit.ALLY}"/>
 		</s:HGroup>
 		<s:VGroup horizontalAlign="center" verticalAlign="middle"
 				  y="60"
-				  visible="{merchant.ownerStatus == Unit.PLAYER}">
+				  visible="{merchant.ownerStatus == Unit.PLAYER || merchant.ownerStatus == Unit.ALLY}">
 			
 			<s:HGroup horizontalAlign="center" verticalAlign="middle">
 				

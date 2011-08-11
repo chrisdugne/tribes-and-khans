@@ -72,6 +72,7 @@ public interface IGameService {
 	public void inviteInAlly(String uralysUID, String allyUID);
 	public void joinAlly(String uralysUID, String allyUID);
 	public void removeFromAlly(String uralysUID, String allyUID);
+	public void saveAllyHierarchy(Ally ally);
 
 	public List<Ally> getTopAlliesByCities();
 	public List<Ally> getTopAlliesByArmies();

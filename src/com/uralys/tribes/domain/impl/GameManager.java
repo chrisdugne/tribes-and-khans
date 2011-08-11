@@ -450,6 +450,17 @@ public class GameManager implements IGameManager {
 	public void removeFromAlly(String uralysUID, String allyUID){ 
 		gameDao.removeFromAlly(uralysUID, allyUID);
 	}
+
+	public void saveAllyHierarchy(Ally ally) {
+		
+		List<String> playerUIDs = new ArrayList<String>();
+		
+		for(Player player : ally.getPlayers()){
+			playerUIDs.add(player.getUralysUID());
+		}
+		
+		gameDao.saveAllyPlayers(ally.getAllyUID(), playerUIDs);
+	}
 	
 	private String createInviteInAllyMessage(String allyUID, String allyName) {
 		return "____allyInvitation|"+allyUID+"|"+allyName;
@@ -507,17 +518,6 @@ public class GameManager implements IGameManager {
 	
 	//==================================================================================================//
 	
-	/**
-	 * 02 mai 2011
-	 * HYPER IMPORTANT !!
-	 * lorsqu'on fait les replaceUnit, on rentre dans de grosses recursions, il suffit de 12-15 pour deja perdre du temps, 
-	 * donc un rassemblement de beaucoup d'armees ne peut pas marcher (et cest ce qui risque d'arriver tres vite )
-	 * peut etre une solution : UNIFIER LES GROUPES DARMEES PAR ALLIANCE
-	 * il faut une hierarchie d'alliance, pour determiner qui controle la nouvelle armee par defaut
-	 * il faut plus tard pouvoir separer une armee en plusieurs si on les deplace (fixer chaque scission a 3 pour ne pas renouveler le probleme, comme ca larmee se divisera par 3, puis par 3 etc et ca sera accessible)
-	 * il faut pouvoir donner le controle d'une armee à qqun de l'alliance.
-	 * 
-	 */
 	// le premier Move est la case actuelle où est posée l'unité avant son départ
 	private List<Unit> placeUnit(Unit unitArriving, List<Move> moves, List<Unit> unitsMakingThisReplacing, DataContainer datacontainer)
 	{
@@ -528,8 +528,9 @@ public class GameManager implements IGameManager {
 		if(debug)Utils.print("place unit " + unitArriving.getUnitUID());
 		
 		int currentUnitValue = unitArriving.getValue();
+		Player player = getPlayer(unitArriving.getPlayer().getUralysUID(), datacontainer);
 		
-		String allyUIDOfUnitArriving = getPlayer(unitArriving.getPlayer().getUralysUID(), datacontainer).getAlly().getAllyUID();
+		String allyUIDOfUnitArriving = player.getAlly() == null ? player.getUralysUID() : player.getAlly().getAllyUID();
 
 		if(debug){
 			Utils.print("initial value : " + currentUnitValue);
@@ -605,7 +606,10 @@ public class GameManager implements IGameManager {
 			
 			if(_case.getCity() != null)
 			{
-				if(!(getPlayer(_case.getCity().getOwnerUID(), datacontainer).getAlly().getAllyUID()).equals(allyUIDOfUnitArriving))
+				Player playerOfTheCity = getPlayer(_case.getCity().getOwnerUID(), datacontainer);
+				String allyUIDOfTheCity = playerOfTheCity.getAlly() == null ? playerOfTheCity.getUralysUID() : playerOfTheCity.getAlly().getAllyUID(); 
+				
+				if(!allyUIDOfTheCity.equals(allyUIDOfUnitArriving))
 				{
 					attackACity = true;
 					if(debug)Utils.print("attackACity !!");
@@ -734,7 +738,13 @@ public class GameManager implements IGameManager {
 										
 									}
 									
-									ownerUIDOfTheNewUnit = unitArriving.getPlayer().getUralysUID();
+									if(player.getAlly() == null){
+										ownerUIDOfTheNewUnit = player.getUralysUID();
+									}
+									else{
+										ownerUIDOfTheNewUnit = getNewOwner(player.getAlly().getAllyUID(), unitRecorded, unitArriving);
+									}
+
 									allyUIDOfTheNewUnit = allyUIDOfUnitArriving;
 									statusOfTheNewUnit = unitArriving.getStatus();
 									valueOfTheNewUnit = unitArriving.getValue() + unitRecorded.getValue();
@@ -758,7 +768,7 @@ public class GameManager implements IGameManager {
 							{
 								// croisement avec un ennemi !
 								// conflit
-								if(debug)Utils.print(" Conflit !!!");
+								if(debug)Utils.print(" Conflit !");
 								if(debug)Utils.print(" - trouvé un ennemy : unit " + unitRecordedUID);							
 								
 								int valueOfTheEnnemy = recordedMove.getValue();
@@ -785,7 +795,10 @@ public class GameManager implements IGameManager {
 									arrivalOnThisCaseMove.setValue(currentUnitValue);
 									
 									winnerUID = unitRecorded.getPlayer().getUralysUID();
-									allyUIDOfTheNewUnit = getPlayer(unitRecorded.getPlayer().getUralysUID(), datacontainer).getAlly().getAllyUID();
+									
+									Player ownerOfTheNewUnit = getPlayer(unitRecorded.getPlayer().getUralysUID(), datacontainer);
+									allyUIDOfTheNewUnit = ownerOfTheNewUnit.getAlly() == null ? ownerOfTheNewUnit.getUralysUID() : ownerOfTheNewUnit.getAlly().getAllyUID();
+									
 									valueOfTheUnitRemaining = (int)(valueOfTheEnnemy*rateRemaining);
 									sizeOfTheNewUnit = (int)(unitRecorded.getSize()*rateRemaining);
 									
@@ -796,7 +809,7 @@ public class GameManager implements IGameManager {
 									equipmentsOfTheNewUnit = unitRecorded.getEquipments();
 
 									if(defendACity)
-										gameDao.setNewCityOwner(_case.getCity().getCityUID(), unitRecorded.getPlayer().getUralysUID(), recordedMove.getTimeFrom());
+										gameDao.refreshCityOwner(_case.getCity().getCityUID(), unitRecorded.getPlayer().getUralysUID(), recordedMove.getTimeFrom(), _case.getCity().getPopulation()/10);
 								}
 								else if(currentUnitValue > valueOfTheEnnemy)
 								{
@@ -817,7 +830,7 @@ public class GameManager implements IGameManager {
 									equipmentsOfTheNewUnit = unitArriving.getEquipments();
 									
 									if(attackACity)
-										gameDao.setNewCityOwner(_case.getCity().getCityUID(), unitArriving.getPlayer().getUralysUID(), arrivalOnThisCaseMove.getTimeFrom());
+										gameDao.refreshCityOwner(_case.getCity().getCityUID(), unitArriving.getPlayer().getUralysUID(), arrivalOnThisCaseMove.getTimeFrom(), _case.getCity().getPopulation()/10);
 								}
 								else{
 									// draw : no newArmy
@@ -835,6 +848,8 @@ public class GameManager implements IGameManager {
 							} // endif croisement avec un ennemy
 							
 							if(foundAGathering){
+								if(debug)Utils.print(" ---------------------------------");
+								if(debug)Utils.print(" - foundAGathering : finalize");
 								if(debug)Utils.print(" - attribution des endTime sur les units, et du timeTo sur le recordedMove");
 								
 								long timeOfTheMeeting; // c'est l'heure du croisement qui compte
@@ -919,11 +934,11 @@ public class GameManager implements IGameManager {
 							
 							} // endif foundAGathering
 							
-						}// endif croisement
+						}// endif croisement (if meetingHappens)
 						else{
 							if(debug)Utils.print("	pas de croisement avec ce passage");
 							if(attackACity)
-								gameDao.setNewCityOwner(_case.getCity().getCityUID(), unitArriving.getPlayer().getUralysUID(), arrivalOnThisCaseMove.getTimeFrom());
+								attackACityWithNoArmyInDefense(currentUnitValue, _case, unitArriving, arrivalOnThisCaseMove);
 						}
 						
 						if(foundAGathering){
@@ -933,7 +948,7 @@ public class GameManager implements IGameManager {
 					}// fin du for sur les recordedMoves
 				} // end if at least 1 recordedMove exists 
 				else if(attackACity){
-					gameDao.setNewCityOwner(_case.getCity().getCityUID(), unitArriving.getPlayer().getUralysUID(), arrivalOnThisCaseMove.getTimeFrom());
+					attackACityWithNoArmyInDefense(currentUnitValue, _case, unitArriving, arrivalOnThisCaseMove);
 				}
 				
 			} // end if currentUnitValue == 0
@@ -1016,6 +1031,47 @@ public class GameManager implements IGameManager {
 		if(topdebug)Utils.print("fin du replacement, et du placement  | " + new Date());
 		return unitsReplacedByThisPlacement;
 
+	}
+
+	private void attackACityWithNoArmyInDefense(int currentUnitValue, Case _case, Unit unitArriving, Move arrivalOnThisCaseMove) 
+	{
+		// ici : attaque d'une ville sans defense armée
+		if(debug)Utils.print("----------------");
+		if(debug)Utils.print("Attaque d'une ville sans défenses !");
+		
+		int valueOfTheCity = _case.getCity().getPopulation()/10;
+		if(debug)Utils.print("population : " + valueOfTheCity + " pts");
+		
+		int populationLost;
+		if(currentUnitValue > valueOfTheCity){
+			if(debug)Utils.print("La ville se fait prendre");
+			populationLost = _case.getCity().getPopulation()/3;
+			arrivalOnThisCaseMove.setValue(currentUnitValue - valueOfTheCity);
+			gameDao.refreshCityOwner(_case.getCity().getCityUID(), unitArriving.getPlayer().getUralysUID(), arrivalOnThisCaseMove.getTimeFrom(), populationLost);
+		}
+		else{
+			if(debug)Utils.print("L'armée se fait déboiter");
+			populationLost = currentUnitValue*5;
+			arrivalOnThisCaseMove.setValue(0);
+			unitArriving.setEndTime(arrivalOnThisCaseMove.getTimeFrom());
+			arrivalOnThisCaseMove.setTimeTo(arrivalOnThisCaseMove.getTimeFrom());
+			gameDao.refreshCityOwner(_case.getCity().getCityUID(), _case.getCity().getOwnerUID(), arrivalOnThisCaseMove.getTimeFrom(), populationLost);
+		}
+	}
+
+	private String getNewOwner(String allyUID, Unit unitRecorded, Unit unitArriving) 
+	{
+		AllyDTO ally = gameDao.getAlly(allyUID);
+		
+		for(String playerUID : ally.getPlayerUIDs())
+		{
+			if(playerUID.equals(unitRecorded.getPlayer().getUralysUID()))
+				return playerUID;
+			else if(playerUID.equals(unitArriving.getPlayer().getUralysUID()))
+				return playerUID;
+		}
+		
+		return null;
 	}
 
 	private String getPreviousMove(Move move, DataContainer datacontainer) 

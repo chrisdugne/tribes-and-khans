@@ -60,7 +60,7 @@ public interface IGameDAO {
 	
 	public String createCity(City city, String playerUID);
 	public CityDTO createNewFirstCity(String playerUID);
-	public void setNewCityOwner(String cityUID, String newOwnerUID, long timeToChangeOwner);
+	public void refreshCityOwner(String cityUID, String newOwnerUID, long timeToChangeOwner, int populationLost);
 	public void checkCityOwner(String cityUID);
 
 	//-----------------------------------------------------------------------------------//
@@ -122,6 +122,7 @@ public interface IGameDAO {
 	public void inviteInAlly(String uralysUID, String allyUID, String inviteInAllyMessage);
 	public void joinAlly(String uralysUID, String allyUID);
 	public void removeFromAlly(String uralysUID, String allyUID);
+	public void saveAllyPlayers(String allyUID, List<String> playerUIDs);
 
 	public List<AllyDTO> getTopAlliesByCities();
 	public List<AllyDTO> getTopAlliesByArmies();

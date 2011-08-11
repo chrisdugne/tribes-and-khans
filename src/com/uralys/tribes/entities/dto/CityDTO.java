@@ -35,6 +35,7 @@ public class CityDTO {
 	@Persistent private Long timeToChangeOwner;
 	@Persistent private String nextOwnerUID;
 	@Persistent private String ownerUID;
+	@Persistent private Integer populationLost;
 	
 	@Persistent private int wheat;
 	@Persistent private int peopleCreatingWheat;
@@ -151,6 +152,12 @@ public class CityDTO {
 	}
 	public void setOwnerUID(String ownerUID) {
 		this.ownerUID = ownerUID;
+	}
+	public Integer getPopulationLost() {
+		return populationLost;
+	}
+	public void setPopulationLost(Integer populationLost) {
+		this.populationLost = populationLost;
 	}
 	public long getBeginTime() {
 		return beginTime;

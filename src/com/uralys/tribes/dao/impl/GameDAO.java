@@ -99,7 +99,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		
 		persist(playerDTO);
 		
-		createCity(null, uralysUID, pm, serverData.getNbPlayers());
+		createCity(null, uralysUID, pm, serverData.getAlpha());
 		
 		pm.close();
 
@@ -127,7 +127,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		ServerDataDTO serverData = pm.getObjectById(ServerDataDTO.class, "serverData");
 		
-		String cityUID = createCity(null, playerUID, pm, serverData.getNbPlayers());
+		String cityUID = createCity(null, playerUID, pm, serverData.getAlpha());
 		CityDTO newCity = pm.getObjectById(CityDTO.class, cityUID);
 		pm.close();
 		return newCity;
@@ -135,7 +135,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	
 	//-----------------------------------------------------------------------//
 
-	private String createCity(City cityFromFlex, String playerUID, PersistenceManager pm, int numPlayers) 
+	private String createCity(City cityFromFlex, String playerUID, PersistenceManager pm, double alpha) 
 	{
 		PlayerDTO player = pm.getObjectById(PlayerDTO.class, playerUID);
 		
@@ -162,6 +162,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		city.setPeopleCreatingIron(0);
 		city.setTimeToChangeOwner(-1l);
 		city.setNextOwnerUID(null);
+		city.setPopulationLost(null);
 
 		int cityX = 0; 
 		int cityY = 0; 
@@ -171,8 +172,8 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			boolean caseFound = false;
 			
 			while(!caseFound){
-				cityX = getInitialCityX(numPlayers);
-				cityY = getInitialCityY(numPlayers);
+				cityX = getInitialCityX(alpha);
+				cityY = getInitialCityY(alpha);
 				
 				if(Math.abs(cityX-cityY)%2 !=0){
 					// la difference entre x et y n'est pas paire
@@ -321,14 +322,18 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	*/
 	
 	// 20 joueurs par colonnes et par ligne
-	private int getInitialCityX(int numPlayers) {
-		int column = numPlayers%20 ;
-		int randomX = Utils.random(5);
+	private int getInitialCityX(double alpha) {
 		
-		return 100 + randomX + column*10;
+		int turn = alpha/2*Math.PI;
+//		200 +
+		
+//		int column = numPlayers%20 ;
+//		int randomX = Utils.random(5);
+//		
+//		return 100 + randomX + column*10;
 	}
 
-	private int getInitialCityY(int numPlayers) {
+	private int getInitialCityY(double alpha) {
 		int line = numPlayers/20;
 		int randomY = Utils.random(5);
 
@@ -377,10 +382,13 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	{
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		CaseDTO _case = pm.getObjectById(CaseDTO.class, caseUID);
-		PlayerDTO owner = pm.getObjectById(PlayerDTO.class, _case.getLandOwnerUID());
+		
+		if(_case.getLandOwnerUID() != null){
+			PlayerDTO owner = pm.getObjectById(PlayerDTO.class, _case.getLandOwnerUID());
+			decreaseLandsCount(owner, pm);
+		}
+		
 		PlayerDTO challenger = pm.getObjectById(PlayerDTO.class, _case.getChallengerUID());
-
-		decreaseLandsCount(owner, pm);
 		increaseLandsCount(challenger, pm);
 		
 		_case.setLandOwnerUID(_case.getChallengerUID());
@@ -431,7 +439,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	{
 		playerDTO.setNbLands(playerDTO.getNbLands() - 1);
 
-		if(playerDTO.getUralysUID() != playerDTO.getAllyUID()){
+		if(!playerDTO.getUralysUID().equals(playerDTO.getAllyUID())){
 			AllyDTO ally = pm.getObjectById(AllyDTO.class, playerDTO.getAllyUID());	
 			ally.setNbLands(ally.getNbLands() - 1);
 		}
@@ -779,7 +787,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	
 	//========================================================================================//
 
-	public void setNewCityOwner(String cityUID, String newOwnerUID, long timeToChangeOwner)
+	public void refreshCityOwner(String cityUID, String newOwnerUID, long timeToChangeOwner, int populationLost)
 	{
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		CityDTO cityDTO = pm.getObjectById(CityDTO.class, cityUID);
@@ -787,6 +795,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 
 		cityDTO.setTimeToChangeOwner(timeToChangeOwner);
 		cityDTO.setNextOwnerUID(newOwnerUID);
+		cityDTO.setPopulationLost(populationLost);
 		
 		if(!playerDTO.getCityBeingOwnedUIDs().contains(cityDTO.getCityUID()))
 			playerDTO.getCityBeingOwnedUIDs().add(cityDTO.getCityUID());
@@ -804,24 +813,31 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		
 		if(cityDTO.getTimeToChangeOwner() != -1 && cityDTO.getTimeToChangeOwner() < new Date().getTime())
 		{
-			// changing owner !
-			PlayerDTO previousOwner = pm.getObjectById(PlayerDTO.class, cityDTO.getOwnerUID());
-			previousOwner.getCityUIDs().remove(cityUID);
-			previousOwner.setNbCities(previousOwner.getNbCities() - 1);
-			decreaseLandsCount(previousOwner, pm);
-			
-			PlayerDTO newOwner = pm.getObjectById(PlayerDTO.class, cityDTO.getNextOwnerUID());
-			newOwner.getCityUIDs().add(cityUID);
-			newOwner.getCityBeingOwnedUIDs().remove(cityUID);
-			newOwner.setNbCities(newOwner.getNbCities() + 1);
-			increaseLandsCount(newOwner, pm);
-			
-			cityDTO.setNextOwnerUID(null);
-			cityDTO.setOwnerUID(newOwner.getUralysUID());
-			cityDTO.setTimeToChangeOwner(-1L);
+			if(cityDTO.getOwnerUID().equals(cityDTO.getNextOwnerUID()))
+			{
+				// changing owner !
+				PlayerDTO previousOwner = pm.getObjectById(PlayerDTO.class, cityDTO.getOwnerUID());
+				previousOwner.getCityUIDs().remove(cityUID);
+				previousOwner.setNbCities(previousOwner.getNbCities() - 1);
+				decreaseLandsCount(previousOwner, pm);
+				
+				PlayerDTO newOwner = pm.getObjectById(PlayerDTO.class, cityDTO.getNextOwnerUID());
+				newOwner.getCityUIDs().add(cityUID);
+				newOwner.getCityBeingOwnedUIDs().remove(cityUID);
+				newOwner.setNbCities(newOwner.getNbCities() + 1);
+				increaseLandsCount(newOwner, pm);
 
-			CaseDTO _case = pm.getObjectById(CaseDTO.class, "case_"+cityDTO.getX()+"_"+cityDTO.getY());
-			_case.setLandOwnerUID(newOwner.getUralysUID());
+				cityDTO.setOwnerUID(newOwner.getUralysUID());
+
+				CaseDTO _case = pm.getObjectById(CaseDTO.class, "case_"+cityDTO.getX()+"_"+cityDTO.getY());
+				_case.setLandOwnerUID(newOwner.getUralysUID());
+			}
+			
+			cityDTO.setPopulation(cityDTO.getPopulation() - cityDTO.getPopulationLost());
+			
+			cityDTO.setPopulationLost(null);
+			cityDTO.setNextOwnerUID(null);
+			cityDTO.setTimeToChangeOwner(-1L);
 		}
 		
 		pm.close();
@@ -1047,6 +1063,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			}
 
 			_city.setNextOwnerUID(null);
+			_city.setPopulationLost(null);
 			_city.setTimeToChangeOwner(-1l);
 		}
 		
@@ -1398,6 +1415,16 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			allyDTO.setNbLands(allyDTO.getNbLands() - player.getNbLands());
 		}
 		
+		
+		pm.close();
+	}
+
+	public void saveAllyPlayers(String allyUID, List<String> playerUIDs) 
+	{
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		AllyDTO allyDTO = pm.getObjectById(AllyDTO.class, allyUID);
+		
+		allyDTO.setPlayerUIDs(playerUIDs);
 		
 		pm.close();
 	}

@@ -472,12 +472,11 @@ public class EntitiesConverter {
 			List<Player> players = new ArrayList<Player>();
 			
 			for (PlayerDTO playerDTO : allyDTO.getPlayers()) {
+				Utils.print(playerDTO.getName());
 				players.add(convertPlayerDTO(playerDTO, false));
 			}
 			
 			ally.setPlayers(players);
-			
-			
 
 			List<Player> inviteds = new ArrayList<Player>();
 			

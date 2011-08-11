@@ -20,6 +20,8 @@ public class ServerDataDTO {
 	private String dataUID; 
 	
 	@Persistent	private int nbPlayers;
+
+	@Persistent	private double alpha;
 	
 	@Persistent	private Boolean dataviewerVisible;
 
@@ -55,6 +57,14 @@ public class ServerDataDTO {
 
 	public void setNbPlayers(int nbPlayers) {
 		this.nbPlayers = nbPlayers;
+	}
+
+	public double getAlpha() {
+		return alpha;
+	}
+
+	public void setAlpha(double alpha) {
+		this.alpha = alpha;
 	}
 	
 	

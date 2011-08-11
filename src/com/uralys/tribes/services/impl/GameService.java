@@ -241,5 +241,9 @@ public class GameService implements IGameService {
 	public void removeFromAlly(String uralysUID, String allyUID) {
 		gameManager.removeFromAlly(uralysUID, allyUID);
 	}
+
+	public void saveAllyHierarchy(Ally ally) {
+		gameManager.saveAllyHierarchy(ally);
+	}
 	
 }

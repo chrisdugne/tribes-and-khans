@@ -44,15 +44,21 @@ public class UniversalDAO{
 
 	//-----------------------------------------------------------------------------------//
 
-	@SuppressWarnings("unchecked")
 	public <E> List<E> getListDTO(List<String> uids, Class<E> objectClass) {
+		return getListDTO(uids, objectClass, null);
+	}
+
+	@SuppressWarnings("unchecked")
+	public <E> List<E> getListDTO(List<String> uids, Class<E> objectClass, String ordering) {
 		
 		if(uids == null || uids.size() == 0)
 			return new ArrayList<E>();
 		
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		Query query = pm.newQuery("select from " + objectClass.getName() + " where :uids.contains(key)");
-		query.setOrdering("key");
+		
+		if(ordering != null)
+			query.setOrdering(ordering);
 		
 		return (List<E>) query.execute(uids);
 	}

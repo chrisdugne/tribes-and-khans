@@ -99,7 +99,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		
 		persist(playerDTO);
 		
-		createCity(null, uralysUID, pm, serverData.getAlpha());
+		createCity(null, uralysUID, pm, serverData);
 		
 		pm.close();
 
@@ -127,7 +127,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		ServerDataDTO serverData = pm.getObjectById(ServerDataDTO.class, "serverData");
 		
-		String cityUID = createCity(null, playerUID, pm, serverData.getAlpha());
+		String cityUID = createCity(null, playerUID, pm, serverData);
 		CityDTO newCity = pm.getObjectById(CityDTO.class, cityUID);
 		pm.close();
 		return newCity;
@@ -135,7 +135,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	
 	//-----------------------------------------------------------------------//
 
-	private String createCity(City cityFromFlex, String playerUID, PersistenceManager pm, double alpha) 
+	private String createCity(City cityFromFlex, String playerUID, PersistenceManager pm, ServerDataDTO serverData) 
 	{
 		PlayerDTO player = pm.getObjectById(PlayerDTO.class, playerUID);
 		
@@ -172,8 +172,9 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			boolean caseFound = false;
 			
 			while(!caseFound){
-				cityX = getInitialCityX(alpha);
-				cityY = getInitialCityY(alpha);
+				cityX = getInitialCityX(serverData.getAlpha());
+				cityY = getInitialCityY(serverData.getAlpha());
+				serverData.setAlpha(increaseAlpha(serverData.getAlpha()));
 				
 				if(Math.abs(cityX-cityY)%2 !=0){
 					// la difference entre x et y n'est pas paire
@@ -185,6 +186,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 				if(getCase(cityX, cityY).getLandOwnerUID() == null)
 					caseFound = true;
 			}
+			
 		}
 		else{
 			cityX = cityFromFlex.getX();
@@ -322,22 +324,22 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	*/
 	
 	// 20 joueurs par colonnes et par ligne
-	private int getInitialCityX(double alpha) {
-		
-		int turn = alpha/2*Math.PI;
-//		200 +
-		
-//		int column = numPlayers%20 ;
-//		int randomX = Utils.random(5);
-//		
-//		return 100 + randomX + column*10;
+	private int getInitialCityX(double alpha) 
+	{
+		int turn = (int) (alpha/(2*Math.PI)) + 1;
+		return (int) (200 + turn*Math.cos(alpha)*Constants.PLAYER_DISTANCE);
 	}
 
-	private int getInitialCityY(double alpha) {
-		int line = numPlayers/20;
-		int randomY = Utils.random(5);
+	private int getInitialCityY(double alpha) 
+	{
+		int turn = (int) (alpha/(2*Math.PI)) + 1;
+		return (int) (200 + turn*Math.sin(alpha)*Constants.PLAYER_DISTANCE);
+	}
 
-		return 100 + randomY + line*10;
+	private double increaseAlpha(double alpha) 
+	{
+		int turn = (int) (alpha/(2*Math.PI)) + 1;
+		return alpha += Math.PI/(4*turn);
 	}
 	
 	//==================================================================================================//
@@ -560,7 +562,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 
 	public String createCity(City city, String playerUID){
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
-		String cityUID = createCity(city, playerUID, pm, -1);
+		String cityUID = createCity(city, playerUID, pm, null);
 		pm.close();
 		return cityUID;
 	}

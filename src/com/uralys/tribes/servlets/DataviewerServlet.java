@@ -393,6 +393,8 @@ public class DataviewerServlet extends HttpServlet {
 						field.set(instance, value == null ? null : Boolean.parseBoolean(value));
 					else if(field.getType().getName().equals("java.lang.Float") || field.getType().getName().equals("float"))
 						field.set(instance, value == null ? null : Float.parseFloat(value));
+					else if(field.getType().getName().equals("java.lang.Double") || field.getType().getName().equals("double"))
+						field.set(instance, value == null ? null : Double.parseDouble(value));
 					else if(field.getType().getName().equals("java.lang.Long") || field.getType().getName().equals("long"))
 						field.set(instance, value == null ? null : Long.parseLong(value));
 					else{

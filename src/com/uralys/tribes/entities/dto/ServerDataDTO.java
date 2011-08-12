@@ -19,9 +19,9 @@ public class ServerDataDTO {
     @Extension(vendorName="datanucleus", key="gae.pk-name", value="true")
 	private String dataUID; 
 	
-	@Persistent	private int nbPlayers;
+	@Persistent	private Integer nbPlayers;
 
-	@Persistent	private double alpha;
+	@Persistent	private Double alpha;
 	
 	@Persistent	private Boolean dataviewerVisible;
 

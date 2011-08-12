@@ -918,10 +918,10 @@ package com.uralys.tribes.managers {
 			trace("-------------------------------------");
 			
 			
-			Session.LEFT_LIMIT_LOADED  	 = Utils.getXPixel(Session.firstCaseX) + Session.MAP_WIDTH/2 * BoardDrawer.getInstance().scale;
-			Session.RIGHT_LIMIT_LOADED	 = Utils.getXPixel(Session.firstCaseX) + Session.nbTilesByEdge * Utils.getLandWidth() - 3*Session.MAP_WIDTH * BoardDrawer.getInstance().scale;
-			Session.TOP_LIMIT_LOADED 	 = Utils.getYPixel(Session.firstCaseY) + Session.MAP_HEIGHT/2 * BoardDrawer.getInstance().scale;
-			Session.BOTTOM_LIMIT_LOADED	 = Utils.getYPixel(Session.firstCaseY) + Session.nbTilesByEdge * Utils.getLandHeight() - 7*Session.MAP_HEIGHT * BoardDrawer.getInstance().scale;
+			Session.LEFT_LIMIT_LOADED  	 = Utils.getXPixel(Session.firstCaseX) + Session.MAP_WIDTH/2;
+			Session.RIGHT_LIMIT_LOADED	 = Utils.getXPixel(Session.firstCaseX + Session.nbTilesByEdge) - Session.MAP_WIDTH/2;
+			Session.TOP_LIMIT_LOADED 	 = Utils.getYPixel(Session.firstCaseY) + Session.MAP_HEIGHT/2;
+			Session.BOTTOM_LIMIT_LOADED	 = Utils.getYPixel(Session.firstCaseY + Session.nbTilesByEdge) - Session.MAP_HEIGHT/2;
 			
 			var gameWrapper:RemoteObject = getGameWrapper();
 			loadCasesResponder.addEventListener("result", casesLoaded);

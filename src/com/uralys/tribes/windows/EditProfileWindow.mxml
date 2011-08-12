@@ -56,8 +56,15 @@
 				  horizontalAlign="center">
 			
 			<s:Label text="{Translations.EDIT_PROFILE.getItemAt(Session.LANGUAGE)}" color="#ffffff"/>
-			<s:TextArea text="@{editPlayer ? Session.playerLoaded.profile : Session.allyLoaded.profile}"
+			<s:TextArea text="@{Session.playerLoaded.profile}"
 						height="330"
+						visible="{editPlayer}"
+						includeInLayout="{editPlayer}"
+						/>
+			<s:TextArea text="@{Session.allyLoaded.profile}"
+						height="330"
+						visible="{!editPlayer}"
+						includeInLayout="{!editPlayer}"
 						/>
 			<s:Button label="{Translations.OK.getItemAt(Session.LANGUAGE)}" 
 					  click="closeWindow()"

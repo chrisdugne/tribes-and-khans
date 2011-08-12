@@ -12,24 +12,25 @@ public class Translations{
 
 	//-----------------------------------------------------------------------------------//
 
-	public static var idMessage:String = "3";
+	public static var idMessage:String = "4";
 	
 	[Bindable]
 	public static var G_MESSAGE:ArrayCollection = new ArrayCollection(
-									["Salut !\n\n" +
-										"Le zoom sur la carte est disponible !.\n\n" +
-										"La messagerie est en place !!\n\n" +
-										"Pensez au forum et bon jeu ;)",
-									"Hi !\n" +
-										"Thank you for testing !\n\n" +
-										"Here we are, the mailbox is finally open !\n\n" +
-										"And you may zoom on the map !\n\n" +
-										"Do not forget the forum, GG && HF ;)",
-									"Hi !\n" +
-										"Thank you for testing !\n\n" +
-										"Here we are, the mailbox is finally open !\n\n" +
-										"And you may zoom on the map !\n\n" +
-										"Do not forget the forum, GG && HF ;)"]);
+									["Bienvenue sur la version 1.2 !\n\n" +
+										"Vous pouvez désormais jouer en Alliance\n avec d'autres joueurs.\n\n" +
+										"Construisez vos entrepots pour agrandir\n les capacités de vos villes.\n\n" +
+										"Faites un tour sur le forum pour proposer des évolutions du jeu\n" +
+										"Ou pour remonter un bug.\n",
+									"Welcome on the the 1.2 !\n\n" +
+										"You can know play with Allies.\n\n" +
+										"Build your stocks to upgrade your cities.\n\n" +
+										"Go see the forum to suggest a game evolution,\n" +
+										"Or to tell us about un bug you found.",
+									"Welcome on the the 1.2 !\n\n" +
+										"You can know play with Allies.\n\n" +
+										"Build your stocks to upgrade your cities.\n\n" +
+										"Go see the forum to suggest a game evolution,\n" +
+										"Or to tell us about un bug you found."]);
 	[Bindable]
 	public static var DO_NOT_SHOW_MESSAGE:ArrayCollection = new ArrayCollection(
 									["Ne pas me montrer ce message la prochaine fois",

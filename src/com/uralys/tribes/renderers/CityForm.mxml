@@ -75,6 +75,9 @@
 					
 					city.woodEarned = Numbers.WOOD_EARNING_COEFF * city.peopleCreatingWood;
 					
+					if(labelStarvation.visible)
+						city.woodEarned /= 2;
+					
 					updateWorkersProgressBar();
 				}
 				
@@ -91,6 +94,9 @@
 					
 					city.ironEarned = Numbers.IRON_EARNING_COEFF * city.peopleCreatingIron;
 					
+					if(labelStarvation.visible)
+						city.ironEarned /= 2;
+					
 					updateWorkersProgressBar();
 				}
 
@@ -98,6 +104,9 @@
 
 				public function updateWorkersProgressBar():void
 				{
+					if(workersProgressBar == null)
+						return;
+					
 					workersProgressBar.setProgress(city.peopleCreatingWheat 
 												 + city.peopleCreatingWood
 												 + city.peopleCreatingIron
@@ -1193,6 +1202,7 @@
 												 styleName="numberLabel" 
 												 textAlign="right"
 												 minWidth="60"/>
+										<s:Image source="{ImageContainer.MERCHANTS}"/>
 										<s:HSlider id="wheatWorkersSlider"
 												   showDataTip="false"
 													liveDragging="true" 
@@ -1223,13 +1233,14 @@
 												 styleName="numberLabel" 
 												 textAlign="right"
 												 minWidth="60"/>
+										<s:Image source="{ImageContainer.MERCHANTS}"/>
 										<s:HSlider id="woodWorkersSlider"
 												   showDataTip="false"
 												   liveDragging="true" 
 												   change="woodWorkersCheck(event)"
 												   value="{city.peopleCreatingWood}"
 												   maximum="{city.population}"
-												   snapInterval="1"/>
+												   snapInterval="1"/> 
 									</s:HGroup>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center" verticalAlign="middle"> 
@@ -1253,6 +1264,7 @@
 												 styleName="numberLabel" 
 												 textAlign="right"
 												 minWidth="60"/>
+										<s:Image source="{ImageContainer.MERCHANTS}"/>
 										<s:HSlider id="ironWorkersSlider"
 												   showDataTip="false"
 												   liveDragging="true" 
@@ -1279,6 +1291,7 @@
 								  includeInLayout="{city.wheat + city.wheatEarned - city.wheatSpent &lt; 0}">
 							<s:Label text="{Translations.STARVATION.getItemAt(Session.LANGUAGE)}"
 									 visible="{city.wheat + city.wheatEarned - city.wheatSpent &lt; 0}"
+									 id="labelStarvation"
 									 color="{Numbers.RED}"/>
 						</s:HGroup>
 					</s:VGroup>
@@ -1316,6 +1329,7 @@
 											   styleName="numberLabel" 
 											   textAlign="right"
 											   minWidth="60"/>
+									  <s:Image source="{ImageContainer.MERCHANTS}"/>
 									  <s:HSlider id="bowWorkersSlider"
 												 showDataTip="false"
 												 liveDragging="true" 
@@ -1344,6 +1358,7 @@
 												 styleName="numberLabel" 
 												 textAlign="right"
 												 minWidth="60"/>
+										<s:Image source="{ImageContainer.MERCHANTS}"/>
 										<s:HSlider id="swordWorkersSlider"
 												   showDataTip="false"
 												   liveDragging="true" 
@@ -1372,6 +1387,7 @@
 												 styleName="numberLabel" 
 												 textAlign="right"
 												 minWidth="60"/>
+										<s:Image source="{ImageContainer.MERCHANTS}"/>
 										<s:HSlider id="armorWorkersSlider"
 												   showDataTip="false"
 												   liveDragging="true" 

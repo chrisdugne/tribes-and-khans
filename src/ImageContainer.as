@@ -116,6 +116,9 @@ public final class ImageContainer
 	
 	[Embed(source="resources/embed/merchant2.png")]
 	[Bindable] public static var MERCHANT2:Class;
+	
+	[Embed(source="resources/embed/merchant3.png")]
+	[Bindable] public static var MERCHANTS:Class;
  
 	//   ======================================================================//
 	
@@ -174,7 +177,7 @@ public final class ImageContainer
 	[Bindable] public static var ICONS:Bitmap;
 	[Bindable] public static var FONTS:Bitmap;
 	[Bindable] public static var URALYS_MINI_LOGO:Bitmap;
-	[Bindable] public static var SOUNDCLOUD:Bitmap;
+	[Bindable] public static var ONESHEET:Bitmap;
 	[Bindable] public static var EDIT_WHITE:Bitmap;
 
 	//   ======================================================================//
@@ -228,7 +231,7 @@ public final class ImageContainer
 		 "webresources/images/logos/icons.png",
 		 "webresources/images/logos/fonts.png",
 		 "webresources/images/logos/uralysminilogo.png",
-		 "webresources/images/logos/soundcloud.png",
+		 "webresources/images/logos/onesheet.png",
 		 "webresources/images/edit_white.png"
 		 
 		 ]);
@@ -360,7 +363,7 @@ public final class ImageContainer
 				URALYS_MINI_LOGO = event.currentTarget.content;
 				break;
 			case 36:
-				SOUNDCLOUD = event.currentTarget.content;
+				ONESHEET = event.currentTarget.content;
 				break;
 			case 37:
 				EDIT_WHITE = event.currentTarget.content;

@@ -278,7 +278,11 @@ package com.uralys.tribes.core
 			
 			var distance:int = Math.abs(lastMoveX - Session.COORDINATE_X) + Math.abs(lastMoveY - Session.COORDINATE_Y);
 			
-			if(distance > 2 || lastMoveY == Session.COORDINATE_Y){
+			if(movesPending.length == 10){
+				FlexGlobals.topLevelApplication.message(Translations.LIMIT_NB_MOVES.getItemAt(Session.LANGUAGE));
+				return true;
+			}
+			else if(distance > 2 || lastMoveY == Session.COORDINATE_Y){
 				FlexGlobals.topLevelApplication.message(Translations.TOO_LONG.getItemAt(Session.LANGUAGE));
 				return true;
 			}

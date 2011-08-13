@@ -105,22 +105,22 @@
 				
 				
 				<s:Label x="{Session.LANGUAGE == 0 ? 300 : 325}" y="420" text="{Translations.MUSIC.getItemAt(Session.LANGUAGE)}" styleName="bigGreen2Style"/>
-				<s:Label x="75" y="455" text="Weightless Wavelength - Utopian Hedonism (2011)" 
+				<s:Label x="75" y="455" text="The House of Wisdom - Utopian Hedonism (2011)" 
 						 styleName="normalWhiteStyle"
-						 click="navigateToURL(new URLRequest('http://soundcloud.com/utopian-hedonism/'),'_new');"
+						 click="navigateToURL(new URLRequest('http://onesheet.com/utopian-hedonism/'),'_new');"
 						 buttonMode="true"
 						 useHandCursor="true"/>
 				
 				<s:HGroup width="100%" horizontalAlign="center" verticalAlign="middle">
-					<mx:Image source="{ImageContainer.SOUNDCLOUD}" 
-							  click="navigateToURL(new URLRequest('http://soundcloud.com/utopian-hedonism/'),'_new');"
-							  buttonMode="true"
-							  useHandCursor="true"/>
 					<s:Label text="{Translations.LISTEN_NOW.getItemAt(Session.LANGUAGE)}"
 							 styleName="littleWhiteStyle"
-							 click="navigateToURL(new URLRequest('http://soundcloud.com/utopian-hedonism/'),'_new');"
+							 click="navigateToURL(new URLRequest('http://onesheet.com/utopian-hedonism/'),'_new');"
 							 buttonMode="true"
 							 useHandCursor="true"/>
+					<mx:Image source="{ImageContainer.ONESHEET}" 
+							  click="navigateToURL(new URLRequest('http://onesheet.com/utopian-hedonism/'),'_new');"
+							  buttonMode="true"
+							  useHandCursor="true"/>
 					
 				</s:HGroup>	
 			</s:VGroup>	

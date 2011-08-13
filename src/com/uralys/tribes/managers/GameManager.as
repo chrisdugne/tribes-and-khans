@@ -235,9 +235,6 @@ package com.uralys.tribes.managers {
 				
 				// petite correction, avec les arrondis on arrive parfois a etre negatif de peu. (a verifier)
 				// en tout cas on force le zero, sinon dans city.reset ca casse tout.
-				
-				if(city.wheat < 0)
-					city.wheat = 0;
 				if(city.wood < 0)
 					city.wood = 0;
 				if(city.iron < 0)
@@ -781,12 +778,12 @@ package com.uralys.tribes.managers {
 			}
 			
 			if(starvation){
-				city.bowWorkers = 0;
-				city.swordWorkers = 0;
-				city.armorWorkers = 0;
-				city.peopleCreatingWheat = city.population;
-				city.peopleCreatingWood = 0;
-				city.peopleCreatingIron = 0;
+				city.bowWorkers *= 2/3;
+				city.swordWorkers *= 2/3;
+				city.armorWorkers *= 2/3;
+				city.peopleCreatingWheat *= 2/3;
+				city.peopleCreatingWood *= 2/3;
+				city.peopleCreatingIron *= 2/3;
 			}
 			
 			// calcul des depenses prevues avec les choix du tour precedent
@@ -803,14 +800,25 @@ package com.uralys.tribes.managers {
 			city.wheatSpent += city.unitsToFeed * Numbers.FEED_COEFF;
 			
 			city.refreshUnemployed();
-			city.peopleCreatingWheat += city.unemployed;
-			if(city.peopleCreatingWheat < 0)city.peopleCreatingWheat = 0; // ca arrive que les unemployed soient plus nombreux que population à la connexion...on force au moins le 0 ca fera toujours moins faux que du negatif...
-			city.refreshUnemployed();
+			Session.board.cityForm.updateWorkersProgressBar();
+			Session.board.cityForm.updateSmithsProgressBar();
+	
+			// attribution autoamtique des unemployed :  a mettre en place pour les comptes premium :p
+//			if(!starvation)
+//				city.peopleCreatingWheat += city.unemployed;
+//	
+//			if(city.peopleCreatingWheat < 0)city.peopleCreatingWheat = 0; // ca arrive que les unemployed soient plus nombreux que population à la connexion...on force au moins le 0 ca fera toujours moins faux que du negatif...
+//			city.refreshUnemployed();
 			
 			// calcul des resources gagnees avec le precedent choix de peopleCreatingXXX
 			city.wheatEarned = Numbers.WHEAT_EARNING_COEFF * city.peopleCreatingWheat;
 			city.woodEarned = Numbers.WOOD_EARNING_COEFF * city.peopleCreatingWood;
 			city.ironEarned = Numbers.IRON_EARNING_COEFF * city.peopleCreatingIron;
+			
+			if(starvation){
+				city.woodEarned /= 2;
+				city.ironEarned /= 2;
+			}
 			
 			city.calculationDone = true;
 		}
@@ -823,20 +831,10 @@ package com.uralys.tribes.managers {
 			var naturalEvolutionPercentage:int = Utils.random(maxPercentage)+1;
 			var armyPercentage:int = 100*armyRaised/population;
 			
-//			if(population < 200)
-//				naturalEvolutionPercentage *= 5;
-//			else if(population < 500)
-//				naturalEvolutionPercentage *= 4;
-//			else if(population < 1000)
-//				naturalEvolutionPercentage *= 3;
-//			else if(population < 2000)
-//				naturalEvolutionPercentage *= 2;
-			
-			
 			var evolutionPercentage:int = naturalEvolutionPercentage - Math.sqrt(armyPercentage);
 			
 			if(starvation)
-				evolutionPercentage -= 25;
+				evolutionPercentage = -100;
 			
 			var populationEvolution:int =  population*evolutionPercentage/100;
 			

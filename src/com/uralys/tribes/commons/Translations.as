@@ -135,12 +135,17 @@ public class Translations{
 									"Unit way edition"]);
 	[Bindable]
 	public static var TOO_LONG:ArrayCollection = new ArrayCollection(
-									["Distance trop longue, choisir une case à cote du dernier deplacement",
+									["Distance trop longue, choisir une case à côté du dernier deplacement",
 									"Too long way, choose a cell next to your last move",
 									"Too long way, choose a cell next to your last move"]);
 	[Bindable]
+	public static var LIMIT_NB_MOVES:ArrayCollection = new ArrayCollection(
+									["10 déplacements en mémoire maximum",
+									"10 recorded moves max",
+									"10 recorded moves max"]);
+	[Bindable]
 	public static var CITY_STOP:ArrayCollection = new ArrayCollection(
-									["Arret dans une ville",
+									["Arrêt dans une ville",
 									"Stop by a city",
 									"Stop by a city"]);
 
@@ -211,9 +216,9 @@ public class Translations{
 
 	[Bindable]
 	public static var FREE_PEOPLE:ArrayCollection = new ArrayCollection(
-									["Tout le monde travaille, libérez des travailleurs ! (50 requis)",
-									"Everybody is busy, free some workers ! (50 requested)",
-									"Everybody is busy, free some workers ! (50 requested)"]);
+									["Tout le monde travaille, libérez des travailleurs !",
+									"Everybody is busy, free some workers !",
+									"Everybody is busy, free some workers !"]);
 
 	[Bindable]
 	public static var REMAINING_TIME:ArrayCollection = new ArrayCollection(
@@ -601,9 +606,9 @@ public class Translations{
 
 	[Bindable]
 	public static var LISTEN_NOW:ArrayCollection = new ArrayCollection(
-									["Ecouter sur Soundclound",
-									"Listen now on Soundcloud",
-									"Listen now on Soundcloud"]);
+									["Découvrir leur ",
+									"Explore their ",
+									"Explore their "]);
 
 	[Bindable]
 	public static var FORGE:ArrayCollection = new ArrayCollection(

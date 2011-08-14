@@ -782,7 +782,7 @@ package com.uralys.tribes.managers {
 				city.bowWorkers *= 2/3;
 				city.swordWorkers *= 2/3;
 				city.armorWorkers *= 2/3;
-				city.peopleCreatingWheat *= 2/3;
+				city.peopleCreatingWheat = 1/3 * city.population;
 				city.peopleCreatingWood *= 2/3;
 				city.peopleCreatingIron *= 2/3;
 			}

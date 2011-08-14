@@ -201,19 +201,19 @@ package com.uralys.tribes.managers {
 			(player.cities.getItemAt(0) as City).gold += player.nbLands;
 			
 			if(!catchUpCalculation || !allCitiesAreFilled)
-				allCitiesAreFilled = calculateCitiesStep(catchUpCalculation);
+				allCitiesAreFilled = calculateCitiesStep(player, catchUpCalculation);
 
 			if(!catchUpCalculation){
 				savePlayer(player);
 			}
 		}
 		
-		private function calculateCitiesStep(catchUpCalculation:Boolean = false):void
+		private function calculateCitiesStep(player:Player, catchUpCalculation:Boolean = false):void
 		{
 			trace("------------------------");
 			trace("calculateCitiesStep");
 			
-			for each(var city:City in Session.player.cities)
+			for each(var city:City in player.cities)
 			{
 				trace("--------------");
 				trace("city : " + city.name);
@@ -249,6 +249,7 @@ package com.uralys.tribes.managers {
 				
 				var armyRaised:int = city.armyRaised - city.armyReleased;
 				city.population = calculatePopulation(city.population, starvation, armyRaised);
+				trace("city.population : " + city.population);
 				
 				if(!catchUpCalculation)
 				{
@@ -826,25 +827,51 @@ package com.uralys.tribes.managers {
 		
 		private function calculatePopulation(population:int, starvation:Boolean, armyRaised:int):int 
 		{
-			var maxPercentage:int = (12000 - population)/1000;
-			
-			var naturalEvolutionPercentage:int = Utils.random(maxPercentage)+1;
-			var armyPercentage:int = 100*armyRaised/population;
-			
-			var evolutionPercentage:int = naturalEvolutionPercentage - Math.sqrt(armyPercentage);
+			trace("------");
+			trace("calculatePopulation");
 			
 			if(starvation)
-				evolutionPercentage = -100;
+				return population - population/20;
+			else if(population < 10000)
+				return population + Utils.random(3);
+			else{
+				// au dela de 10000, on augmente de 1 la pop avec 1 chance sur 25  
+				var i:int = Utils.random(25);
+				
+				if(i != 1)
+					i = 0;
+					
+				return population + i;
+			}
 			
-			var populationEvolution:int =  population*evolutionPercentage/100;
 			
-			
-			populationEvolution /= 20;
-
-			if(population > 10000)
-				populationEvolution /= 10;
-			
-			return population + populationEvolution - armyRaised;
+//			var maxPercentage:int = (12000 - population)/1000;
+//			trace("maxPercentage : " + maxPercentage);
+//			
+//			var naturalEvolutionPercentage:int = Utils.random(maxPercentage)+1;
+//			var armyPercentage:int = 100*armyRaised/population;
+//			trace("naturalEvolutionPercentage : " + naturalEvolutionPercentage);
+//			trace("armyPercentage : " + armyPercentage);
+//			
+//			var evolutionPercentage:int = naturalEvolutionPercentage - Math.sqrt(armyPercentage);
+//			
+//			if(starvation)
+//				evolutionPercentage = -100;
+//			trace("evolutionPercentage : " + evolutionPercentage);
+//			
+//			var populationEvolution:int =  population*evolutionPercentage/100;
+//			trace("populationEvolution : " + populationEvolution);
+//			
+//			populationEvolution /= 20;
+//			trace("populationEvolution final : " + populationEvolution);
+//
+//			if(population > 10000)
+//				populationEvolution /= 10;
+//
+//			trace("populationEvolution final 2 : " + populationEvolution);
+//			trace("population : " + (population + populationEvolution - armyRaised));
+//			
+//			return population + populationEvolution - armyRaised;
 		}
 		
 		public function validateMerchants(city:City):void

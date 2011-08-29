@@ -1335,7 +1335,7 @@
 												 liveDragging="true" 
 												 change="bowWorkersCheck(event)"
 												 value="{city.bowWorkers}"
-												 maximum="{city.availableAsSmith}"
+												 maximum="{city.bowStockCapacity - city.bowStock &lt; city.availableAsSmith ? (city.bowStockCapacity - city.bowStock) : city.availableAsSmith}"
 												 snapInterval="1"/>
 								  </s:HGroup>
 							  </mx:GridItem>
@@ -1364,7 +1364,7 @@
 												   liveDragging="true" 
 												   change="swordWorkersCheck(event)"
 												   value="{city.swordWorkers}"
-												   maximum="{city.availableAsSmith}"
+												   maximum="{city.swordStockCapacity - city.swordStock &lt; city.availableAsSmith ? (city.swordStockCapacity - city.swordStock) : city.availableAsSmith}"
 												   snapInterval="1"/>
 									</s:HGroup>
 								</mx:GridItem>
@@ -1393,7 +1393,7 @@
 												   liveDragging="true" 
 												   change="armorWorkersCheck(event)"
 												   value="{city.armorWorkers}"
-												   maximum="{city.availableAsSmith}"
+												   maximum="{city.armorStockCapacity - city.armorStock &lt; city.availableAsSmith ? (city.armorStockCapacity - city.armorStock) : city.availableAsSmith}"
 												   snapInterval="1"/>
 									</s:HGroup>
 								</mx:GridItem>
@@ -1603,7 +1603,7 @@
 															   liveDragging="true" 
 															   change="wheatMarketBuyCheck(event)"
 															   value="{city.wheatBought}"
-															   maximum="{city.gold/Numbers.WHEAT_PRICE_BUY}"
+															   maximum="{city.wheatStockCapacity - city.wheat &lt; city.gold/Numbers.WHEAT_PRICE_BUY ? (city.wheatStockCapacity - city.wheat) : city.gold/Numbers.WHEAT_PRICE_BUY}"
 															   snapInterval="1"/>
 												</s:HGroup>
 											</mx:GridItem>
@@ -1634,7 +1634,7 @@
 															   liveDragging="true" 
 															   change="woodMarketBuyCheck(event)"
 															   value="{city.woodBought}"
-															   maximum="{city.gold/Numbers.WOOD_PRICE_BUY}"
+															   maximum="{city.woodStockCapacity - city.wood &lt; city.gold/Numbers.WOOD_PRICE_BUY ? (city.woodStockCapacity - city.wood) : city.gold/Numbers.WOOD_PRICE_BUY}"
 															   snapInterval="1"/>
 												</s:HGroup>
 											</mx:GridItem>
@@ -1665,7 +1665,7 @@
 															   liveDragging="true" 
 															   change="ironMarketBuyCheck(event)"
 															   value="{city.ironBought}"
-															   maximum="{city.gold/Numbers.IRON_PRICE_BUY}"
+															   maximum="{city.ironStockCapacity - city.iron &lt; city.gold/Numbers.IRON_PRICE_BUY ? (city.ironStockCapacity - city.iron) : city.gold/Numbers.IRON_PRICE_BUY}"
 															   snapInterval="1"/>
 												</s:HGroup>
 											</mx:GridItem>
@@ -1696,7 +1696,7 @@
 															   liveDragging="true" 
 															   change="bowsMarketBuyCheck(event)"
 															   value="{city.bowsBought}"
-															   maximum="{city.gold/Numbers.BOW_PRICE_BUY}"
+															   maximum="{city.bowStockCapacity - city.bowStock &lt; city.gold/Numbers.BOW_PRICE_BUY ? (city.bowStockCapacity - city.bowStock) : city.gold/Numbers.BOW_PRICE_BUY}"
 															   snapInterval="1"/>
 												</s:HGroup>
 											</mx:GridItem>
@@ -1730,7 +1730,7 @@
 															   liveDragging="true" 
 															   change="swordsMarketBuyCheck(event)"
 															   value="{city.swordsBought}"
-															   maximum="{city.gold/Numbers.SWORD_PRICE_BUY}"
+															   maximum="{city.swordStockCapacity - city.swordStock &lt; city.gold/Numbers.SWORD_PRICE_BUY ? (city.swordStockCapacity - city.swordStock) : city.gold/Numbers.SWORD_PRICE_BUY}"
 															   snapInterval="1"/>
 												</s:HGroup>
 											</mx:GridItem>
@@ -1758,7 +1758,7 @@
 															   liveDragging="true" 
 															   change="armorsMarketBuyCheck(event)"
 															   value="{city.armorsBought}"
-															   maximum="{city.gold/Numbers.ARMOR_PRICE_BUY}"
+															   maximum="{city.armorStockCapacity - city.armorStock &lt; city.gold/Numbers.ARMOR_PRICE_BUY ? (city.armorStockCapacity - city.armorStock) : city.gold/Numbers.ARMOR_PRICE_BUY}"
 															   snapInterval="1"/>
 												</s:HGroup>
 											</mx:GridItem>

@@ -674,6 +674,7 @@ package com.uralys.tribes.managers {
 						trace("smith.people : " + smith.people);
 						trace("depense en bois : " + (Numbers.BOW_WOOD * smith.people) + " | city.wood : " + city.wood);
 						trace("depense en fer : " + (Numbers.BOW_IRON * smith.people) + " | city.iron : " + city.iron);
+						trace("capacite de stock restante : " + (city.bowStockCapacity - city.bowStock));
 						
 						city.bowWorkers = -1;
 						// la depense en bois pour les arcs est plus grande que le stock de bois
@@ -683,11 +684,16 @@ package com.uralys.tribes.managers {
 						// la depense en fer pour les arcs est plus grande que le stock de fer
 						if(Numbers.BOW_IRON * smith.people > city.iron)
 							city.bowWorkers = Math.floor(city.iron/Numbers.BOW_IRON);
+
 						
-						trace("city.bowWorkers : " + city.bowWorkers);
-						
-						if(city.bowWorkers == -1) // stock suffisant
+						if(city.bowWorkers == -1) // ressources suffisantes
 							city.bowWorkers = smith.people;
+
+						// bowStockCapacity insuffisante !
+						if(city.bowStockCapacity - city.bowStock < city.bowWorkers)
+							city.bowWorkers = city.bowStockCapacity - city.bowStock;
+
+						trace("city.bowWorkers : " + city.bowWorkers);
 
 						if(fromSaveStep){
 							trace("fromSaveStep : updating bowStock");
@@ -712,6 +718,7 @@ package com.uralys.tribes.managers {
 						trace("smith.people : " + smith.people);
 						trace("depense en bois : " + (Numbers.SWORD_WOOD * smith.people) + " | woodRemaining : " + woodRemaining);
 						trace("depense en fer : " + (Numbers.SWORD_IRON * smith.people) + " | ironRemaining : " + ironRemaining);
+						trace("capacite de stock restante : " + (city.swordStockCapacity - city.swordStock));
 						
 						city.swordWorkers = -1;
 						
@@ -727,6 +734,10 @@ package com.uralys.tribes.managers {
 						
 						if(city.swordWorkers == -1) // stock suffisant
 							city.swordWorkers = smith.people;
+						
+						// swordStockCapacity insuffisante !
+						if(city.swordStockCapacity - city.swordStock < city.swordWorkers)
+							city.swordWorkers = city.swordStockCapacity - city.swordStock;
 						
 						trace("updating swordStock");
 						city.swordStock += city.swordWorkers;
@@ -749,6 +760,7 @@ package com.uralys.tribes.managers {
 						trace("smith.people : " + smith.people);
 						trace("depense en bois : " + (Numbers.ARMOR_WOOD * smith.people) + " | woodRemaining : " + woodRemaining);
 						trace("depense en fer : " + (Numbers.ARMOR_IRON * smith.people) + " | ironRemaining : " + ironRemaining);
+						trace("capacite de stock restante : " + (city.armorStockCapacity - city.armorStock));
 						
 						city.armorWorkers = -1;
 						
@@ -763,6 +775,10 @@ package com.uralys.tribes.managers {
 						trace("city.armorWorkers : " + city.armorWorkers);
 						if(city.armorWorkers == -1) // stock suffisant
 							city.armorWorkers = smith.people;
+						
+						// armorStockCapacity insuffisante !
+						if(city.armorStockCapacity - city.armorStock < city.armorWorkers)
+							city.armorWorkers = city.armorStockCapacity - city.armorStock;
 						
 						trace("updating armorStock");
 						city.armorStock += city.armorWorkers;
@@ -1137,10 +1153,10 @@ package com.uralys.tribes.managers {
 		
 		//--------------------------------------------------------------------------------//
 		
-		public function sendMessage(message:String):void
+		public function sendMessage(message:String, recipientUID:String):void
 		{
 			var gameWrapper:RemoteObject = getGameWrapper();
-			gameWrapper.sendMessage(Session.player.playerUID, Session.playerLoaded.playerUID, message);
+			gameWrapper.sendMessage(Session.player.playerUID, recipientUID, message);
 		}
 
 		public function markAsRead(messageUIDs:ArrayCollection):void

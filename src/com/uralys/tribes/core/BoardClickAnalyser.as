@@ -12,6 +12,8 @@ package com.uralys.tribes.core
 	import flash.events.MouseEvent;
 	import flash.ui.Mouse;
 	
+	import mx.utils.ObjectUtil;
+	
 	import spark.components.Group;
 	
 

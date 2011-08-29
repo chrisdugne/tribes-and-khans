@@ -7,9 +7,17 @@
 				visible="{(data as Message).status != Message.DELETED}">
 	<fx:Script>
 		<![CDATA[
+			//------------------------------------------------------------------------------//
+
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.entities.Message;
+			import com.uralys.tribes.windows.MessageWindow;
 			import com.uralys.utils.Utils;
+			
+			import mx.core.FlexGlobals;
+			import mx.managers.PopUpManager;
+
+			//------------------------------------------------------------------------------//
 
 			private function clicked():void
 			{
@@ -18,13 +26,28 @@
 				if((data as Message).status == Message.UNREAD)
 					(data as Message).status = Message.READ;
 			}
+			
+			//------------------------------------------------------------------------------//
+
+			public var messageWindow:MessageWindow = new MessageWindow();
+			private function openWriteMessage():void
+			{
+				messageWindow.closeWindow(); 
+				messageWindow.recipientUID = (data as Message).senderUID;
+				messageWindow.recipientName = (data as Message).senderName;
+				
+				PopUpManager.addPopUp(messageWindow, FlexGlobals.topLevelApplication.window, false);
+				PopUpManager.centerPopUp(messageWindow);
+			}
 		]]>
 	</fx:Script>
 	
 	<s:HGroup width="100%" horizontalAlign="left" paddingLeft="15">
 		<s:Label text="{(data as Message).senderName} {Utils.isInviteMessage(data as Message) ? ' (invitation)' : ''}"
 				 color="#ffffff"/>
-	
+		<s:Spacer width="100%"/>
+		<s:Image source="{ImageContainer.EDIT_WHITE}" click="{openWriteMessage()}"
+	/>
 	</s:HGroup>
 	
 </s:ItemRenderer>

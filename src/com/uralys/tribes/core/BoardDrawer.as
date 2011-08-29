@@ -235,7 +235,7 @@ package com.uralys.tribes.core
 			}
 			
 			image.data = _case;
-			image.addEventListener(MouseEvent.CLICK, tileIsCLicked);
+			image.addEventListener(MouseEvent.CLICK, tileIsClicked);
 			image.addEventListener(MouseEvent.ROLL_OVER, tileIsRolledOn);
 			
 			Session.board.mapPositioner.addElement(image);
@@ -468,7 +468,7 @@ package com.uralys.tribes.core
 		//==================================================================================================//
 		// click et roll-over sur les tuiles-images
 		
-		protected function tileIsCLicked(event:MouseEvent):void{
+		protected function tileIsClicked(event:MouseEvent):void{
 			BoardClickAnalyser.getInstance().clickOnCase(event.currentTarget.data as Case);
 		}
 		

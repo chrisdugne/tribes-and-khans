@@ -84,34 +84,44 @@
 			}
 			
 			//---------------------------------------------------------------------------------------------------//
-			// click sur une ville dans la barre laterale ou dans la page du profile
+			// click sur une ville dans la barre laterale
 			public function onCityClick(event:ItemClickEvent):void
 			{
 				var city:City = event.currentTarget.selectedItem;
 				
 				placeBoard(city.x, city.y);
-				reloadCurrentCases();
+				var caseBeingLoaded:Boolean = reloadCurrentCases();
+				
+				if(!caseBeingLoaded){
+					BoardClickAnalyser.getInstance().clickOnCase(Session.map[city.x][city.y]);
+				}
+				
 				return;
 			}
 			
-			// click sur une unité dans la barre laterale ou dans la page du profile
+			// click sur une unité dans la barre laterale
 			public function onMyUnitClick(event:ItemClickEvent):void
 			{
 				var unit:Unit = event.currentTarget.selectedItem;
 				unit.currentCaseUID = (unit.moves.getItemAt(0) as com.uralys.tribes.entities.Move).caseUID;
 				
 				placeBoard(Utils.getXFromCaseUID(unit.currentCaseUID), Utils.getYFromCaseUID(unit.currentCaseUID));
-				reloadCurrentCases();
+				var caseBeingLoaded:Boolean = reloadCurrentCases();
+				
+				if(!caseBeingLoaded){
+					BoardClickAnalyser.getInstance().clickOnCase(Session.map[Utils.getXFromCaseUID(unit.currentCaseUID)][Utils.getYFromCaseUID(unit.currentCaseUID)]);
+				}
+				
 				return;
 			}
 			
 			//---------------------------------------------------------------------------------------------------//
 
-			public function reloadCurrentCases(force:Boolean = false, refreshLandOwners:Boolean = false):void{
-				checkToLoadCases(Utils.getXPixel(Session.CENTER_X), Utils.getYPixel(Session.CENTER_Y), force, refreshLandOwners);
+			public function reloadCurrentCases(force:Boolean = false, refreshLandOwners:Boolean = false):Boolean{
+				return checkToLoadCases(Utils.getXPixel(Session.CENTER_X), Utils.getYPixel(Session.CENTER_Y), force, refreshLandOwners);
 			}
 			
-			private function checkToLoadCases(x:int, y:int, force:Boolean = false, refreshLandOwners = false):void
+			private function checkToLoadCases(x:int, y:int, force:Boolean = false, refreshLandOwners = false):Boolean
 			{
 				trace("-------------------------------------");
 				trace("checkToLoadCases | force : " + force);
@@ -136,9 +146,10 @@
 				{
 					trace("  ==>  LOAD");
 					GameManager.getInstance().loadCases(Session.CENTER_X, Session.CENTER_Y, refreshLandOwners);
+					return true;
 				}
-				else
-					trace("  ==>  continue");
+				
+				return false;
 			}
 			
 			//---------------------------------------------------------------------//
@@ -363,7 +374,7 @@
 					onUnitClick();
 			}
 				
-			protected function mouseUp(event:MouseEvent):void
+			protected function mouseUp(event:MouseEvent = null):void
 			{
 				mayDrag = false;
 				
@@ -376,11 +387,16 @@
 					newMoveAdded = UnitMover.getInstance().recordMove(selectedUnit);
 				}
 				else{
-					Session.CURRENT_SELECTION_X = Session.COORDINATE_X;
-					Session.CURRENT_SELECTION_Y = Session.COORDINATE_Y;
-					
-					Session.CURRENT_CASE_SELECTED = Session.map[Session.CURRENT_SELECTION_X][Session.CURRENT_SELECTION_Y];
-					Session.CURRENT_CASE_SELECTED.tryRefresh();
+					try{
+						Session.CURRENT_SELECTION_X = Session.COORDINATE_X;
+						Session.CURRENT_SELECTION_Y = Session.COORDINATE_Y;
+						
+						Session.CURRENT_CASE_SELECTED = Session.map[Session.CURRENT_SELECTION_X][Session.CURRENT_SELECTION_Y];
+						Session.CURRENT_CASE_SELECTED.tryRefresh();
+					}
+					catch(e:Error){
+						// au chargement Session.map peut etre null, et la souris etre sur une image de bord
+					}
 				}
 				
 				isDragging = false;
@@ -514,6 +530,7 @@
 			 */ 
 			public function showEnterCity(city:City):void
 			{
+				trace("SHOW ENTER CITY");
 				if(Session.MOVE_A_UNIT){
 					return;
 				}
@@ -522,6 +539,7 @@
 				{
 					if(cityInSession.cityUID == city.cityUID){
 						selectedCity = cityInSession;
+						trace("found selectedCity");
 						break;
 					}
 				}
@@ -537,7 +555,7 @@
 			}
 				
 
-			private function setBuildingCityProgressBar( ):void
+			private function setBuildingCityProgressBar():void
 			{
 				var millisRemaining:Number = selectedCity.beginTime - new Date().getTime(); 
 				
@@ -822,6 +840,11 @@
 				
 				Session.CENTER_X = x;
 				Session.CENTER_Y = y;
+				
+				Session.COORDINATE_X = x;
+				Session.COORDINATE_Y = y;
+				
+				mouseUp(); // simule le click sur la case x,y
 			}
 			
 		]]>
@@ -1082,16 +1105,20 @@
 			</s:HGroup>
 			<mx:Image source="{ImageContainer.MAP_BORDER_TOP}"
 					  x="{boardImage.x-31}"
-					  y="{boardImage.y-31}"/>
+					  y="{boardImage.y-31}"
+					  mouseOver="if(isDragging)mouseUp(event)"/>
 			<mx:Image source="{ImageContainer.MAP_BORDER_BOTTOM}"
 					  x="{boardImage.x-31}"
-					  y="{boardImage.y+Session.MAP_HEIGHT - 31}"/>
+					  y="{boardImage.y+Session.MAP_HEIGHT - 31}"
+					  mouseOver="if(isDragging)mouseUp(event)"/>
 			<mx:Image source="{ImageContainer.MAP_BORDER_LEFT}"
 					  x="{boardImage.x-31}"
-					  y="{boardImage.y + 31}"/>
+					  y="{boardImage.y + 31}"
+					  mouseOver="if(isDragging)mouseUp(event)"/>
 			<mx:Image source="{ImageContainer.MAP_BORDER_RIGHT}"
 					  x="{boardImage.x+Session.MAP_WIDTH - 31}"
-					  y="{boardImage.y + 31}"/>
+					  y="{boardImage.y + 31}"
+					  mouseOver="if(isDragging)mouseUp(event)"/>
 			
 			<mx:Image source="{ImageContainer.ZOOM_IN}"
 					  id="zoomInButton"

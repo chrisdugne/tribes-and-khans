@@ -26,6 +26,11 @@
 
 			//-----------------------------------------------------------------//
 
+			public var recipientUID:String;
+			[Bindable] public var recipientName:String;
+			
+			//-----------------------------------------------------------------//
+
 			public function closeWindow():void{
 				PopUpManager.removePopUp(this);
 			}
@@ -33,9 +38,9 @@
 			
 			protected function send():void
 			{
-				GameManager.getInstance().sendMessage(message.text);
+				GameManager.getInstance().sendMessage(message.text, recipientUID);
 				closeWindow();
-				FlexGlobals.topLevelApplication.message(Translations.MESSAGE_SENT_TO.getItemAt(Session.LANGUAGE) + " " + Session.playerLoaded.name);
+				FlexGlobals.topLevelApplication.message(Translations.MESSAGE_SENT_TO.getItemAt(Session.LANGUAGE) + " " + recipientName);
 			}
 			
 		]]>
@@ -51,7 +56,7 @@
 				  verticalAlign="middle"
 				  horizontalAlign="center">
 			
-			<s:Label text="{Translations.WRITE_MESSAGE.getItemAt(Session.LANGUAGE)} {Session.playerLoaded.name} ({400 - message.text.length})" color="#ffffff"/>
+			<s:Label text="{Translations.WRITE_MESSAGE.getItemAt(Session.LANGUAGE)} {recipientName} ({400 - message.text.length})" color="#ffffff"/>
 			
 			<s:TextArea id="message" maxChars="400"
 						width="100%"

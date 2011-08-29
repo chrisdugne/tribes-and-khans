@@ -65,7 +65,9 @@
 			private function openWriteMessage():void
 			{
 				messageWindow.closeWindow(); 
-				
+				messageWindow.recipientName = Session.playerLoaded.name;
+				messageWindow.recipientUID = Session.playerLoaded.playerUID;
+					
 				PopUpManager.addPopUp(messageWindow, FlexGlobals.topLevelApplication.window, false);
 				PopUpManager.centerPopUp(messageWindow);
 			}
@@ -152,7 +154,7 @@
 			<s:Label text="{Translations.POPULATION.getItemAt(Session.LANGUAGE)} : {Session.playerLoaded.nbPopulation}" color="#ffffff"/>
 
 			<mx:HRule width="70%"/>
-			<s:Label text="{Session.playerLoaded.profile}" color="#ffffff"/>
+			<s:Label text="{Session.playerLoaded.profile}" color="#ffffff" width="70%"/>
 			<mx:Spacer height="100%"/>
 			<mx:HRule width="70%"/>
 			

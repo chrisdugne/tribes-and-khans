@@ -231,7 +231,7 @@
 							rollOverColor="#000101"
 							itemRenderer="com.uralys.tribes.renderers.MessageRenderer"
 							skinClass="com.uralys.tribes.skins.CustomListSkin"/>
-					<s:VGroup width="60%" height="100%"
+					<s:VGroup width="60%" height="70%"
 							  horizontalAlign="center"
 							  paddingTop="5">
 						<renderers:MessageContentRenderer message="{newMessagesList.selectedItem as Message}"
@@ -253,7 +253,7 @@
 							rollOverColor="#000101"
 							itemRenderer="com.uralys.tribes.renderers.MessageRenderer"
 							skinClass="com.uralys.tribes.skins.CustomListSkin"/>
-					<s:VGroup width="60%" height="100%"
+					<s:VGroup width="60%" height="90%"
 							  horizontalAlign="center"
 							  paddingTop="5"
 							  contentBackgroundAlpha="0">
@@ -261,7 +261,8 @@
 						<renderers:MessageContentRenderer message="{readMessagesList.selectedItem as Message}"
 														  visible="{readMessagesList.selectedItem != null}"
 														  accept="{acceptAllyInvitation}"
-														  refuse="{deleteReadMessageFromList}"/>
+														  refuse="{deleteReadMessageFromList}"
+														  height="70%"/>
 						
 						<mx:Spacer height="100%"/>
 						<s:HGroup width="100%" visible="{readMessagesList.selectedItem != null}">
@@ -289,7 +290,7 @@
 							rollOverColor="#000101"
 							itemRenderer="com.uralys.tribes.renderers.MessageRenderer"
 							skinClass="com.uralys.tribes.skins.CustomListSkin"/>
-					<s:VGroup width="60%" height="100%"
+					<s:VGroup width="60%" height="70%"
 							  horizontalAlign="center"
 							  paddingTop="5"
 							  contentBackgroundAlpha="0">

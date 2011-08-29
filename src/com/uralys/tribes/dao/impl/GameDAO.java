@@ -815,7 +815,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		
 		if(cityDTO.getTimeToChangeOwner() != -1 && cityDTO.getTimeToChangeOwner() < new Date().getTime())
 		{
-			if(cityDTO.getOwnerUID().equals(cityDTO.getNextOwnerUID()))
+			if(!cityDTO.getOwnerUID().equals(cityDTO.getNextOwnerUID()))
 			{
 				// changing owner !
 				PlayerDTO previousOwner = pm.getObjectById(PlayerDTO.class, cityDTO.getOwnerUID());

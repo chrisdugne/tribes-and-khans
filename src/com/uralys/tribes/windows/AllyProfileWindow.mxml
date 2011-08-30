@@ -52,8 +52,8 @@
 	
 			public var editProfileWindow:EditProfileWindow = new EditProfileWindow();
 			private function openEditProfile():void{
-				editProfileWindow.closeWindow();
 				editProfileWindow.editPlayer = false;
+				editProfileWindow.closeWindow();
 					
 				PopUpManager.addPopUp(editProfileWindow, FlexGlobals.topLevelApplication.window, true);
 				PopUpManager.centerPopUp(editProfileWindow);
@@ -77,7 +77,8 @@
 				  verticalAlign="middle">
 			<s:VGroup horizontalAlign="center" 
 					   top="5" width="50%" height="100%"
-					   paddingBottom="5">
+					   paddingBottom="5"
+					   paddingLeft="6">
 				<mx:SWFLoader source="{ImageContainer.LOADING}" 
 							  visible="{Session.WAIT_FOR_SERVER}"/>
 				<s:Label text="{Session.allyLoaded.name}" color="#ffffff" fontSize="26"/>
@@ -88,7 +89,7 @@
 				<s:Label text="{Translations.POPULATION.getItemAt(Session.LANGUAGE)} : {Session.allyLoaded.nbPopulation}" color="#ffffff"/>
 				
 				<mx:HRule width="70%"/>
-				<s:Label text="{Session.allyLoaded.profile}" color="#ffffff"/>
+				<s:Label text="{Session.allyLoaded.profile}" color="#ffffff" width="270"/>
 				
 				<mx:Spacer height="100%"/>
 				<mx:HRule width="70%"/>

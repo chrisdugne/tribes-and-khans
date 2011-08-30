@@ -5,7 +5,7 @@
 		 minWidth="550"
 		 horizontalAlign="center"
 		 verticalAlign="middle"
-		 creationComplete="init()">
+		 creationComplete="refresh()">
 	
 	<fx:Declarations>
 		<s:State name="upgradeEnabled"/>
@@ -40,7 +40,7 @@
 			
 			//-------------------------------------------------------------------------------------//
 
-			private function init():void{
+			public function refresh():void{
 				if(stockBeginTime == -1)
 					currentState = "upgradeEnabled";
 				else{

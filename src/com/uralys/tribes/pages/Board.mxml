@@ -572,6 +572,7 @@
 			{
 				cityForm.updateWorkersProgressBar();
 				cityForm.updateSmithsProgressBar();
+				cityForm.refreshBuildings();
 				goLeft.play();
 				appearCity.play();
 			}
@@ -640,20 +641,26 @@
 				// on force la validation du marchand si il existe et qu'il reste dans la ville
 				// si il est en mouvement, on ne peut pas l'editer donc pas besoin d'appeler le validateMerchants (qui casserait tout en placant le timeTo à -1) 
 				if(selectedCity.merchant != null 
-				&& (selectedCity.merchant.moves.length == 1 || selectedCity.merchant.status == Unit.INTERCEPTED_ON_THIS_CASE)){
-					for each(var m:com.uralys.tribes.entities.Move in selectedCity.merchant.moves){
-						trace("selectedCity.merchant.move : " + m.moveUID);
-					}
+				&& (selectedCity.merchant.moves.length == 1 || selectedCity.merchant.status == Unit.INTERCEPTED_ON_THIS_CASE))
+				{
 					GameManager.getInstance().validateMerchants(selectedCity);
 				}
 
 				// IDEM pour army
 				if(selectedCity.army != null 
-				&& (selectedCity.army.moves.length == 1 || selectedCity.army.status == Unit.INTERCEPTED_ON_THIS_CASE)){
-					for each(var m:com.uralys.tribes.entities.Move in selectedCity.army.moves){
-						trace("selectedCity.army.move : " + m.moveUID);
-					}
+				&& (selectedCity.army.moves.length == 1 || selectedCity.army.status == Unit.INTERCEPTED_ON_THIS_CASE))
+				{
 					GameManager.getInstance().validateArmy(selectedCity);
+					selectedCity.bowStock -= selectedCity.bowsEquiped - selectedCity.bowsRestored;
+					selectedCity.swordStock -= selectedCity.swordsEquiped - selectedCity.swordsRestored;
+					selectedCity.armorStock -= selectedCity.armorsEquiped - selectedCity.armorsRestored;
+					
+					selectedCity.bowsEquiped = 0;
+					selectedCity.swordsEquiped = 0;
+					selectedCity.armorsEquiped = 0;
+					selectedCity.bowsRestored = 0;
+					selectedCity.swordsRestored = 0;
+					selectedCity.armorsRestored = 0;
 				}
 				
 				GameManager.getInstance().saveCity(selectedCity);

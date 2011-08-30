@@ -73,7 +73,7 @@ package com.uralys.tribes.managers {
 			Session.WAIT_FOR_SERVER = true;
 			var gameWrapper:RemoteObject = getGameWrapper();
 			gameWrapper.getPlayer.addEventListener("result", receivedPlayerToRefresh);
-			gameWrapper.getPlayer(player.playerUID);
+			gameWrapper.getPlayer(player.playerUID, false); // newConnection = false
 		}
 		
 		private function receivedPlayerToRefresh(event:ResultEvent):void
@@ -281,9 +281,7 @@ package com.uralys.tribes.managers {
 				switch(equipment.item.name)
 				{
 					case "bow" :
-						equipment.size = city.bowStock
-						+ city.bowsRestored
-						- city.bowsEquiped;
+						equipment.size = city.bowStock;
 						
 						if(needProduction)
 							equipment.size += city.bowWorkers * equipment.item.peopleRequired;
@@ -293,9 +291,7 @@ package com.uralys.tribes.managers {
 						
 						break;
 					case "sword" :
-						equipment.size = city.swordStock
-						+ city.swordsRestored
-						- city.swordsEquiped
+						equipment.size = city.swordStock;
 						
 						if(needProduction)
 							equipment.size += city.swordWorkers * equipment.item.peopleRequired;
@@ -305,9 +301,7 @@ package com.uralys.tribes.managers {
 						
 						break;
 					case "armor" :
-						equipment.size = city.armorStock
-						+ city.armorsRestored
-						- city.armorsEquiped
+						equipment.size = city.armorStock;
 						
 						if(needProduction)
 							equipment.size += city.armorWorkers * equipment.item.peopleRequired;

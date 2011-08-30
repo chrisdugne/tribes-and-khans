@@ -111,7 +111,7 @@ package com.uralys.tribes.managers {
 			}
 			else{
 				gameWrapper.getPlayer.addEventListener("result", receivedPlayer);
-				gameWrapper.getPlayer(Session.uralysProfile.uralysUID);
+				gameWrapper.getPlayer(Session.uralysProfile.uralysUID, true); // newConnection = true
 			}
 		}
 
@@ -126,7 +126,7 @@ package com.uralys.tribes.managers {
 				FlexGlobals.topLevelApplication.message(Translations.WELCOME.getItemAt(Session.LANGUAGE), 5);
 			
 			gameWrapper.getPlayer.addEventListener("result", receivedPlayer);
-			gameWrapper.getPlayer(uralysUID);
+			gameWrapper.getPlayer(uralysUID, true); // newConnection = true
 		}
 		
 		private var playerCreatedAutomatically:Boolean = false;

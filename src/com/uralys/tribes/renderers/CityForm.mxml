@@ -443,6 +443,19 @@
 					}
 				}
 				
+				public function refreshBuildings():void	
+				{
+					if(wheatBuildingRenderer == null)
+						return;
+						
+					wheatBuildingRenderer.refresh();
+					woodBuildingRenderer.refresh();
+					ironBuildingRenderer.refresh();
+					bowBuildingRenderer.refresh();
+					swordBuildingRenderer.refresh();
+					armorBuildingRenderer.refresh();
+				}
+				
 				//-------------------------------------------------------------------------//
 				// toolTip creation pour la forge
 				
@@ -2457,6 +2470,7 @@
 															stockEndTime="@{city.wheatStockEndTime}"
 															ratioUpgrade="20"
 															city="{city}"
+															id="wheatBuildingRenderer"
 															/>
 							</s:HGroup>
 
@@ -2470,6 +2484,7 @@
 															stockEndTime="@{city.woodStockEndTime}"
 															ratioUpgrade="20"
 															city="{city}"
+															id="woodBuildingRenderer"
 															/>
 							</s:HGroup>
 
@@ -2483,6 +2498,7 @@
 															stockEndTime="@{city.ironStockEndTime}"
 															ratioUpgrade="20"
 															city="{city}"
+															id="ironBuildingRenderer"
 															/>
 							</s:HGroup>
 
@@ -2496,6 +2512,7 @@
 															stockEndTime="@{city.bowStockEndTime}"
 															ratioUpgrade="2"
 															city="{city}"
+															id="bowBuildingRenderer"
 															/>
 							</s:HGroup>
 
@@ -2509,6 +2526,7 @@
 															stockEndTime="@{city.swordStockEndTime}"
 															ratioUpgrade="2"
 															city="{city}"
+															id="swordBuildingRenderer"
 															/>
 							</s:HGroup>
 
@@ -2522,6 +2540,7 @@
 															stockEndTime="@{city.armorStockEndTime}"
 															ratioUpgrade="2"
 															city="{city}"
+															id="armorBuildingRenderer"
 															/>
 							</s:HGroup>
 						</s:VGroup>

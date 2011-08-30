@@ -3,13 +3,14 @@
 			   xmlns:s="library://ns.adobe.com/flex/spark" 
 			   xmlns:mx="library://ns.adobe.com/flex/mx"
 			   xmlns:windows="com.uralys.tribes.windows.*"
+			   xmlns:renderers="com.uralys.tribes.renderers.*"
 			   skinClass="com.uralys.tribes.skins.WindowSkin"
 			   close="{closeWindow()}"
 			   width="340"
 			   height="620"
 			   backgroundAlpha="0.7"
 			   backgroundColor="#000000"
-			   cornerRadius="15" xmlns:renderers="com.uralys.tribes.renderers.*"
+			   cornerRadius="15" 
 			   >
 	
 	

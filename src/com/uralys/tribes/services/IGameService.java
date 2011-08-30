@@ -22,7 +22,7 @@ public interface IGameService {
 	
 	//-----------------------------------------------------------------------------------//
 
-	public Player getPlayer(String uralysUID);
+	public Player getPlayer(String uralysUID, boolean newConnection);
 	public Player getPlayerInfo(String uralysUID);
 
 	//-----------------------------------------------------------------------------------//

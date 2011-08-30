@@ -15,7 +15,7 @@ public interface IGameManager {
 	//-----------------------------------------------------------------------------------//
 	
 	public String createPlayer(String uralysUID, String email);
-	public Player getPlayer(String uralysUID);
+	public Player getPlayer(String uralysUID, boolean newConnection);
 	public Player getPlayerInfo(String uralysUID);
 
 	//-----------------------------------------------------------------------------------//

@@ -128,11 +128,15 @@ public class GameManager implements IGameManager {
 		return EntitiesConverter.convertPlayerDTO(gameDao.getPlayer(uralysUID), false);
 	}
 
-	public Player getPlayer(String uralysUID) {
-		return getPlayer(uralysUID, null);
+	public Player getPlayer(String uralysUID, boolean newConnection) {
+		return getPlayer(uralysUID, null, newConnection);
 	}
 	
-	private Player getPlayer(String uralysUID, DataContainer datacontainer) 
+	private Player getPlayer(String uralysUID, DataContainer datacontainer) {
+		return getPlayer(uralysUID, datacontainer, false);
+	}
+
+	private Player getPlayer(String uralysUID, DataContainer datacontainer, boolean newConnection) 
 	{
 		if(datacontainer != null)
 		{
@@ -143,16 +147,21 @@ public class GameManager implements IGameManager {
 			return datacontainer.playerAlreadyLoaded.get(uralysUID);
 		}
 		else{
-			PlayerDTO playerDTO = gameDao.getPlayer(uralysUID);
+			PlayerDTO playerDTO = gameDao.getPlayer(uralysUID, newConnection);
 			
 			if(playerDTO == null)
 				return null;
-				
+			
+			// on reattribue les villes 
 			List<String> cityUIDs = new ArrayList<String>();
 			cityUIDs.addAll(playerDTO.getCityUIDs());
 			cityUIDs.addAll(playerDTO.getCityBeingOwnedUIDs());
 				
 			checkCityOwners(cityUIDs);
+			
+			//refresh du player
+			playerDTO = gameDao.getPlayer(uralysUID);
+			
 			Player player = EntitiesConverter.convertPlayerDTO(playerDTO, true);
 
 			if(player.getCities().size() == 0){

@@ -23,6 +23,7 @@ public interface IGameDAO {
 	
 	public String createPlayer(String uralysUID, String email);
 	public PlayerDTO getPlayer(String uralysUID);
+	public PlayerDTO getPlayer(String uralysUID, boolean newConnection);
 
 	//-----------------------------------------------------------------------------------//
 	

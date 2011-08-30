@@ -41,9 +41,9 @@ public class GameService implements IGameService {
 		}
 	}
 
-	public Player getPlayer(String uralysUID) {
+	public Player getPlayer(String uralysUID, boolean newConnection) {
 		try {
-			return gameManager.getPlayer(uralysUID);
+			return gameManager.getPlayer(uralysUID, newConnection);
 		} catch (Exception e) {
 			e.printStackTrace(System.out);
 			return null;

@@ -107,10 +107,17 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	}
 	
 	public PlayerDTO getPlayer(String uralysUID) {
+		return getPlayer(uralysUID, false);
+	}
+
+	public PlayerDTO getPlayer(String uralysUID, boolean newConnection) {
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		try{
 			PlayerDTO player = pm.getObjectById(PlayerDTO.class, uralysUID);
-			player.setNbConnections(player.getNbConnections()+1);
+			
+			if(newConnection)
+				player.setNbConnections(player.getNbConnections()+1);
+			
 			pm.close();
 			return player;
 		}
@@ -821,6 +828,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 				PlayerDTO previousOwner = pm.getObjectById(PlayerDTO.class, cityDTO.getOwnerUID());
 				previousOwner.getCityUIDs().remove(cityUID);
 				previousOwner.setNbCities(previousOwner.getNbCities() - 1);
+				previousOwner.setNbPopulation(previousOwner.getNbPopulation() - cityDTO.getPopulation());
 				decreaseLandsCount(previousOwner, pm);
 				
 				PlayerDTO newOwner = pm.getObjectById(PlayerDTO.class, cityDTO.getNextOwnerUID());

@@ -1,12 +1,16 @@
 
+
 package com.uralys.utils
 {
 
 import com.uralys.tribes.commons.Numbers;
+import com.uralys.tribes.commons.Session;
 import com.uralys.tribes.core.BoardDrawer;
 import com.uralys.tribes.entities.Ally;
+import com.uralys.tribes.entities.Item;
 import com.uralys.tribes.entities.Message;
 import com.uralys.tribes.entities.Player;
+import com.uralys.tribes.entities.Item;
 
 import flash.display.BitmapData;
 import flash.display.Sprite;
@@ -338,6 +342,18 @@ public class Utils
 
 		public static function createDummyAlly(content:String):Ally{
 			return new Ally(content);
+		}
+		
+		
+		public static function getItem(itemName:String):Item
+		{
+			for each(var item:Item in Session.ITEMS){
+				if(item.name == itemName)
+					return item;
+			}
+			
+			// never
+			return null;
 		}
 }
 }

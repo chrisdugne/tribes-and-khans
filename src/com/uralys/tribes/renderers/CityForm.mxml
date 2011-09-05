@@ -1310,6 +1310,25 @@
 					</s:VGroup>
 				</s:NavigatorContent> 
 
+				<!-- =============================================================================================== -->
+				<!-- New  Forge Tab -->
+				
+				<s:NavigatorContent label="New {Translations.FORGE.getItemAt(Session.LANGUAGE)}">
+					
+					<s:HGroup width="100%" verticalAlign="middle">
+						<mx:Image toolTip="{Translations.BOW.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.BOW}"/>
+						<renderers:SmithRenderer smiths="@{city.bowWorkers}"
+												 item="{Utils.getItem('bow')}"
+													stock="{city.bowStockCapacity}"
+													weaponsAdded="@{city.ironStockNextCapacity}"
+													beginTime="@{city.ironStockBeginTime}"
+													endTime="@{city.ironStockEndTime}"
+													city="{city}"
+													id="bowsBuildingRenderer"
+													/>
+					</s:HGroup>
+
+				</s:NavigatorContent>
 				
 				<!-- =============================================================================================== -->
 				<!-- Forge Tab -->

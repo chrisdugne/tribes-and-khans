@@ -19,7 +19,7 @@ package com.uralys.tribes.commons
 
 		//=====================================================//
 		
-		[Bindable] public static var VERSION:String = "1.2.14";
+		[Bindable] public static var VERSION:String = "1.2.145";
 		[Bindable] public static var LOGGED_IN:Boolean = false; 
 		[Bindable] public static var CONNECTED_TO_FACEBOOK:Boolean = false;
 		

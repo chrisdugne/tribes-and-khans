@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 minWidth="550"
+		 horizontalAlign="center"
+		 verticalAlign="middle"
+		 creationComplete="refresh()">
+	
+	<fx:Declarations>
+		<s:State name="upgradeEnabled"/>
+		<s:State name="building"/>
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			//-------------------------------------------------------------------------------------//
+
+			import com.uralys.tribes.commons.Numbers;
+			import com.uralys.tribes.commons.Session;
+			import com.uralys.tribes.commons.Translations;
+			import com.uralys.tribes.entities.City;
+			import com.uralys.tribes.entities.Item;
+			import com.uralys.tribes.managers.GameManager;
+			import com.uralys.tribes.skins.CustomButtonSkin;
+			import com.uralys.tribes.skins.WorkersProgressBarSkin;
+			import com.uralys.tribes.skins.WorkersProgressTrackSkin;
+			import com.uralys.utils.Utils;
+		
+			//-------------------------------------------------------------------------------------//
+
+			[Bindable] public var item:Item;
+
+			[Bindable] public var smiths:int;
+			[Bindable] public var stock:int;
+			[Bindable] public var weaponsAdded:int;
+
+			[Bindable] public var beginTime:Number;
+			[Bindable] public var endTime:Number;
+			
+			[Bindable] public var city:City;
+			
+			//-------------------------------------------------------------------------------------//
+
+			public function refresh():void{
+				if(beginTime == -1)
+					currentState = "upgradeEnabled";
+				else{
+					setBuilding();
+				}
+			}
+
+			//-------------------------------------------------------------------------------------//
+			
+			protected function smithCheck(event:Event):void	
+			{
+				var peopleAdded:int = smithsSlider.value - smiths;
+				
+				if(city.unemployed < peopleAdded)
+					smithsSlider.value = smiths + city.unemployed;
+				
+				smiths = smithsSlider.value;
+				timeLabel.text = Utils.round(smiths/10, 0) + 'h';
+				
+				Session.board.cityForm.updateWorkersProgressBar();
+			}
+			
+			//-------------------------------------------------------------------------------------//
+
+			private function upgrade():void
+			{
+				// on est en double binding : le city.stock correspondant va etre MAJ
+				weaponsAdded = smiths * item.peopleRequired;
+				beginTime = new Date().getTime();
+				endTime = beginTime + smiths *60*1000; // 1 forgeron = 1 min
+				
+				city.wood -= smiths * item.wood;
+				city.iron -= smiths * item.iron;
+				
+				GameManager.getInstance().saveCity(city);
+				
+				setBuilding();
+			}
+
+			//-------------------------------------------------------------------------------------//
+			
+			private function setBuilding():void
+			{
+				var now:Number = new Date().getTime();
+				var millisRemaining:Number = endTime - now;
+				var millisSpent:Number = endTime - beginTime - millisRemaining;
+
+				var hours:int = millisRemaining/60/60/1000;
+				var minutes:int = (millisRemaining-hours*60*60*1000)/60/1000;
+				
+				buildingProgressBar.setProgress( millisSpent, endTime - beginTime );
+				buildingProgressBar.label = Translations.REMAINS.getItemAt(Session.LANGUAGE) + " : " + hours+"H"+(minutes>9 ? "" : "0")+minutes;
+				
+				currentState = "building";
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:HGroup width="100%" 
+			  verticalAlign="middle"
+			  paddingRight.building="50">
+		
+		<s:Label text="{smiths}" 
+				 styleName="numberLabel" 
+				 textAlign="right"
+				 minWidth="60"/>
+		<s:Image source="{ImageContainer.MERCHANTS}"/>
+		<s:HSlider id="smithsSlider"
+				   showDataTip="false"
+				   liveDragging="true" 
+				   value="{smiths}"
+				   change="smithCheck(event)"
+				   maximum="{city.unemployed + smiths}"
+				   snapInterval="1"
+				   enabled.building="false"
+				   enabled.upgradeEnabled="true"/>
+		
+		<mx:Spacer width="100%"/>
+		<s:HGroup width="100%"
+				  visible.building="false"
+				  includeInLayout.building="false">
+			<mx:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}" width="25" height="25"/>
+			<s:Label text="{smiths * item.wood}"
+					 color="{smiths * item.wood &lt;= city.wood ? Numbers.GREEN : Numbers.RED}"/>
+	
+			<mx:Spacer width="20"/>
+			<mx:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}" width="25" height="25"/>
+			<s:Label text="{smiths * item.iron}"
+					 color="{smiths * item.iron &lt;= city.iron ? Numbers.GREEN : Numbers.RED}"/>
+	
+			<mx:Spacer width="20"/>
+			<mx:Image toolTip="{Translations.TIME.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.CLOCK}"/>
+			<s:Label id="timeLabel"/>
+		</s:HGroup>
+		<mx:ProgressBar id="buildingProgressBar"
+						width="185"
+						height="20"
+						mode="manual"
+						barSkin="{WorkersProgressBarSkin}"
+						trackSkin="{WorkersProgressTrackSkin}"
+						label="" 
+						labelPlacement="bottom"
+						visible.upgradeEnabled="false"
+						includeInLayout.upgradeEnabled="false"/>
+		
+	</s:HGroup>
+	<s:HGroup width="100%" 
+			  verticalAlign="middle"
+			  horizontalAlign="center">
+		<mx:Spacer width="20%"/>
+		<s:Label text="{stock}"/>
+		<mx:Image source="{ImageContainer.UPGRADE_ARROW}"/>
+		<s:Label text="{smiths * item.peopleRequired}"
+				 color="{stock &lt; smiths * item.peopleRequired ? Numbers.GREEN : Numbers.RED}"/>
+		<mx:Spacer width="100%"/>
+		<s:Button skinClass="{CustomButtonSkin}"
+				  label="{Translations.UPGRADE.getItemAt(Session.LANGUAGE)}"
+				  enabled="{stock &lt; smiths * item.peopleRequired
+				  			&amp;&amp;
+				  			smiths * item.wood &lt;= city.wood
+				  			&amp;&amp;
+				  			smiths * item.iron &lt;= city.iron
+				  			}"
+				  click="upgrade()"
+				  visible.building="false"
+				  includeInLayout.building="false"
+				  />
+	</s:HGroup>
+</s:VGroup>

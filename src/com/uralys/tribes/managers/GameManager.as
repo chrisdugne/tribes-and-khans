@@ -480,19 +480,9 @@ package com.uralys.tribes.managers {
 			swords.size = unit.swords;
 			armors.size = unit.armors;
 			
-			for each(var item:Item in Session.ITEMS){
-				switch(item.name){
-					case "bow" :
-						bows.item = item;
-						break;
-					case "sword" :
-						swords.item = item;
-						break;
-					case "armor" :
-						armors.item = item;
-						break;
-				}
-			}
+			bows.item = Utils.getItem("bow");
+			swords.item = Utils.getItem("sword");
+			armors.item = Utils.getItem("armor");
 			
 			bows.equimentUID = unit.unitUID + "_" + bows.item.itemUID; 
 			swords.equimentUID = unit.unitUID + "_" + swords.item.itemUID; 

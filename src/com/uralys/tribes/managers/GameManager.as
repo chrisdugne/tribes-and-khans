@@ -360,6 +360,9 @@ package com.uralys.tribes.managers {
 						stock.stockNextCapacity = city.bowStockNextCapacity;
 						stock.stockBeginTime = city.bowStockBeginTime;
 						stock.stockEndTime = city.bowStockEndTime;
+						stock.itemsBeingBuilt = city.bowsBeingBuilt;
+						stock.itemsBeingBuiltBeginTime = city.bowsBeingBuiltBeginTime;
+						stock.itemsBeingBuiltEndTime = city.bowsBeingBuiltEndTime;
 						break;
 					case "_sword_stock" :
 						stock.peopleBuildingStock = city.swordStockBuilders;
@@ -367,6 +370,9 @@ package com.uralys.tribes.managers {
 						stock.stockNextCapacity = city.swordStockNextCapacity;
 						stock.stockBeginTime = city.swordStockBeginTime;
 						stock.stockEndTime = city.swordStockEndTime;
+						stock.itemsBeingBuilt = city.swordsBeingBuilt;
+						stock.itemsBeingBuiltBeginTime = city.swordsBeingBuiltBeginTime;
+						stock.itemsBeingBuiltEndTime = city.swordsBeingBuiltEndTime;
 						break;
 					case "_armor_stock" :
 						stock.peopleBuildingStock = city.armorStockBuilders;
@@ -374,6 +380,9 @@ package com.uralys.tribes.managers {
 						stock.stockNextCapacity = city.armorStockNextCapacity;
 						stock.stockBeginTime = city.armorStockBeginTime;
 						stock.stockEndTime = city.armorStockEndTime;
+						stock.itemsBeingBuilt = city.armorsBeingBuilt;
+						stock.itemsBeingBuiltBeginTime = city.armorsBeingBuiltBeginTime;
+						stock.itemsBeingBuiltEndTime = city.armorsBeingBuiltEndTime;
 						break;
 				}
 			}
@@ -802,7 +811,7 @@ package com.uralys.tribes.managers {
 			
 			city.refreshUnemployed();
 			Session.board.cityForm.updateWorkersProgressBar();
-			Session.board.cityForm.updateSmithsProgressBar();
+			//Session.board.cityForm.updateSmithsProgressBar();
 	
 			// attribution autoamtique des unemployed :  a mettre en place pour les comptes premium :p
 //			if(!starvation)

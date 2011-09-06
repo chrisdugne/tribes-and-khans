@@ -16,6 +16,10 @@ package com.uralys.tribes.entities
 		protected var _stockEndTime:Number;
 		protected var _stockNextCapacity:int;
 		
+		protected var _itemsBeingBuilt:int;
+		protected var _itemsBeingBuiltBeginTime:Number;
+		protected var _itemsBeingBuiltEndTime:Number;
+		
 		//--------------------------------------------------------------//
 		
 		
@@ -65,6 +69,36 @@ package com.uralys.tribes.entities
 		
 		public function set stockNextCapacity(o:int):void {
 			_stockNextCapacity = o;
+		}
+
+		public function get itemsBeingBuilt():int
+		{
+			return _itemsBeingBuilt;
+		}
+
+		public function set itemsBeingBuilt(value:int):void
+		{
+			_itemsBeingBuilt = value;
+		}
+
+		public function get itemsBeingBuiltBeginTime():Number
+		{
+			return _itemsBeingBuiltBeginTime;
+		}
+
+		public function set itemsBeingBuiltBeginTime(value:Number):void
+		{
+			_itemsBeingBuiltBeginTime = value;
+		}
+
+		public function get itemsBeingBuiltEndTime():Number
+		{
+			return _itemsBeingBuiltEndTime;
+		}
+
+		public function set itemsBeingBuiltEndTime(value:Number):void
+		{
+			_itemsBeingBuiltEndTime = value;
 		}
 		
 

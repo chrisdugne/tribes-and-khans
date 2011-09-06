@@ -626,9 +626,10 @@ package com.uralys.tribes.entities
 		private var _bowStockBeginTime:Number;
 		private var _bowStockEndTime:Number;
 
-		private var _bowsRestored:int; // bows restitues au stock àla fin du tour 
-		private var _bowsEquiped:int; // bows pris du stock pour les armees
 		private var _bowWorkers:int;
+		private var _bowsBeingBuilt:int;
+		private var _bowsBeingBuiltBeginTime:Number;
+		private var _bowsBeingBuiltEndTime:Number;
 		
 		public function set bowStock(o:int):void{
 			_bowStock = o;
@@ -646,21 +647,14 @@ package com.uralys.tribes.entities
 			return _bowWorkers;
 		}
 		
-		public function set bowsRestored(o:int):void{
-			_bowsRestored = o;
+		public function set bowsBeingBuilt(o:int):void{
+			_bowsBeingBuilt = o;
 		}
 
-		public function get bowsRestored():int{
-			return _bowsRestored;
+		public function get bowsBeingBuilt():int{
+			return _bowsBeingBuilt;
 		}
-
-		public function set bowsEquiped(o:int):void{
-			_bowsEquiped = o;
-		}
-
-		public function get bowsEquiped():int{
-			return _bowsEquiped;
-		}
+		
 		public function get bowStockCapacity():int {
 			return _bowStockCapacity;
 		}
@@ -701,6 +695,22 @@ package com.uralys.tribes.entities
 			_bowStockEndTime = o;
 		}
 		
+		public function get bowsBeingBuiltBeginTime():Number {
+			return _bowsBeingBuiltBeginTime;
+		}
+		
+		public function set bowsBeingBuiltBeginTime(o:Number):void {
+			_bowsBeingBuiltBeginTime = o;
+		}
+		
+		public function get bowsBeingBuiltEndTime():Number {
+			return _bowsBeingBuiltEndTime;
+		}
+		
+		public function set bowsBeingBuiltEndTime(o:Number):void {
+			_bowsBeingBuiltEndTime = o;
+		}
+		
 		//---------------------------------------------------------------//
 		
 		private var _swordStock:int;
@@ -710,9 +720,10 @@ package com.uralys.tribes.entities
 		private var _swordStockBeginTime:Number;
 		private var _swordStockEndTime:Number;
 		
-		private var _swordsRestored:int; // bows restitues au stock à la fin du tour 
-		private var _swordsEquiped:int; // bows pris du stock pour les armees
 		private var _swordWorkers:int;
+		private var _swordsBeingBuilt:int;
+		private var _swordsBeingBuiltBeginTime:Number;
+		private var _swordsBeingBuiltEndTime:Number;
 		
 		public function set swordStock(o:int):void{
 			_swordStock = o;
@@ -730,20 +741,12 @@ package com.uralys.tribes.entities
 			return _swordWorkers;
 		}
 		
-		public function set swordsRestored(o:int):void{
-			_swordsRestored = o;
+		public function set swordsBeingBuilt(o:int):void{
+			_swordsBeingBuilt = o;
 		}
 		
-		public function get swordsRestored():int{
-			return _swordsRestored;
-		}
-		
-		public function set swordsEquiped(o:int):void{
-			_swordsEquiped = o;
-		}
-		
-		public function get swordsEquiped():int{
-			return _swordsEquiped;
+		public function get swordsBeingBuilt():int{
+			return _swordsBeingBuilt;
 		}
 		
 		public function get swordStockCapacity():int {
@@ -785,6 +788,23 @@ package com.uralys.tribes.entities
 		public function set swordStockEndTime(o:Number):void {
 			_swordStockEndTime = o;
 		}
+		
+		public function get swordsBeingBuiltBeginTime():Number {
+			return _swordsBeingBuiltBeginTime;
+		}
+		
+		public function set swordsBeingBuiltBeginTime(o:Number):void {
+			_swordsBeingBuiltBeginTime = o;
+		}
+		
+		public function get swordsBeingBuiltEndTime():Number {
+			return _swordsBeingBuiltEndTime;
+		}
+		
+		public function set swordsBeingBuiltEndTime(o:Number):void {
+			_swordsBeingBuiltEndTime = o;
+		}
+		
 		//---------------------------------------------------------------//
 		
 		private var _armorStock:int;
@@ -794,9 +814,10 @@ package com.uralys.tribes.entities
 		private var _armorStockBeginTime:Number;
 		private var _armorStockEndTime:Number;
 		
-		private var _armorsRestored:int; // bows restitues au stock à la fin du tour 
-		private var _armorsEquiped:int; // bows pris du stock pour les armees
 		private var _armorWorkers:int;
+		private var _armorsBeingBuilt:int;
+		private var _armorsBeingBuiltBeginTime:Number;
+		private var _armorsBeingBuiltEndTime:Number;
 		
 		public function set armorStock(o:int):void{
 			_armorStock = o;
@@ -814,20 +835,12 @@ package com.uralys.tribes.entities
 			return _armorWorkers;
 		}
 		
-		public function set armorsRestored(o:int):void{
-			_armorsRestored = o;
+		public function set armorsBeingBuilt(o:int):void{
+			_armorsBeingBuilt = o;
 		}
 		
-		public function get armorsRestored():int{
-			return _armorsRestored;
-		}
-		
-		public function set armorsEquiped(o:int):void{
-			_armorsEquiped = o;
-		}
-		
-		public function get armorsEquiped():int{
-			return _armorsEquiped;
+		public function get armorsBeingBuilt():int{
+			return _armorsBeingBuilt;
 		}
 		
 		public function get armorStockCapacity():int {
@@ -869,7 +882,23 @@ package com.uralys.tribes.entities
 		public function set armorStockEndTime(o:Number):void {
 			_armorStockEndTime = o;
 		}
-
+		
+		public function get armorsBeingBuiltBeginTime():Number {
+			return _armorsBeingBuiltBeginTime;
+		}
+		
+		public function set armorsBeingBuiltBeginTime(o:Number):void {
+			_armorsBeingBuiltBeginTime = o;
+		}
+		
+		public function get armorsBeingBuiltEndTime():Number {
+			return _armorsBeingBuiltEndTime;
+		}
+		
+		public function set armorsBeingBuiltEndTime(o:Number):void {
+			_armorsBeingBuiltEndTime = o;
+		}
+		
 		//---------------------------------------------------------------//
 
 		public function reset():void
@@ -883,13 +912,6 @@ package com.uralys.tribes.entities
 			armyRaised = 0;
 			armyReleased = 0;
 			unitsToFeed = 0;
-			
-			bowsRestored = 0;
-			bowsEquiped = 0;
-			swordsRestored = 0;
-			swordsEquiped = 0;
-			armorsRestored = 0;
-			armorsEquiped = 0;
 		}
 	}
 }

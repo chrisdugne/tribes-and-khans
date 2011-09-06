@@ -338,7 +338,7 @@
 				}
 				
 				//----------------------------------------------------------------//
-				
+				/*
 				protected function bowWorkersCheck(event:Event):void
 				{
 					// on enleve le precedent debit de ressources 
@@ -430,8 +430,6 @@
 					updateSmithsProgressBar();
 					updateWorkersProgressBar();
 				}
-				
-				//-------------------------------------------------------------------------//
 
 				public function updateSmithsProgressBar():void	
 				{
@@ -442,7 +440,10 @@
 													, city.availableAsSmith);
 					}
 				}
+				*/
 				
+				//-------------------------------------------------------------------------//
+
 				public function refreshBuildings():void	
 				{
 					if(wheatBuildingRenderer == null)
@@ -682,124 +683,40 @@
 				
 				protected function bowsArmyCheck(event:Event):void
 				{
-					var previousNbBows:int = city.army.bows;
-					var newNbBows:int = bowsArmySlider.value;
+					var previousNbBowsInArmy:int = city.army.bows;
+					var newNbBowsInArmy:int = bowsArmySlider.value;
 					
-					if(newNbBows > previousNbBows){
-						// on ajoute des arcs a l'armee
-						var nbBowsAvailable:int = city.bowStock + city.bowsRestored - city.bowsEquiped;
-						var nbBowsEquiped:int =  newNbBows - previousNbBows;
-						
-						// la reserve en arcs n'est pas assez grande
-						if(nbBowsAvailable < nbBowsEquiped){
-							newNbBows = nbBowsAvailable + previousNbBows;
-							nbBowsEquiped = nbBowsAvailable;
-						}
-						
-						if(city.bowsRestored > nbBowsEquiped){
-							city.bowsRestored -= nbBowsEquiped;
-						}
-						else{
-							city.bowsEquiped += nbBowsEquiped - city.bowsRestored;
-							city.bowsRestored = 0;
-						}
-					}
-					else{
-						// on enleve des arcs a l'armee
-						var nbBowsRestored:int = previousNbBows - newNbBows;
-						
-						if(city.bowsEquiped > nbBowsRestored){
-							city.bowsEquiped -= nbBowsRestored;
-						}
-						else{
-							city.bowsRestored += nbBowsRestored - city.bowsEquiped;
-							city.bowsEquiped = 0;
-						}
-					}
+					if(city.bowStock + previousNbBowsInArmy - newNbBowsInArmy > city.bowStockCapacity)
+						newNbBowsInArmy = previousNbBowsInArmy - city.bowStockCapacity - city.bowStock;
 					
-					city.army.bows = newNbBows;
+					city.bowStock += previousNbBowsInArmy - newNbBowsInArmy;
+					city.army.bows = newNbBowsInArmy;
 					bowsArmySlider.value = city.army.bows;
 				}
 				
 				protected function swordsArmyCheck(event:Event):void
 				{
-					var previousNbSwords:int = city.army.swords;
-					var newNbSwords:int = swordsArmySlider.value;
+					var previousNbSwordsInArmy:int = city.army.swords;
+					var newNbSwordsInArmy:int = swordsArmySlider.value;
 					
-					if(newNbSwords > previousNbSwords){
-						// on ajoute des epees a l'armee
-						var nbSwordsAvailable:int = city.swordStock + city.swordsRestored - city.swordsEquiped ; 
-						var nbSwordsEquiped:int =  newNbSwords - previousNbSwords;
-						
-						// la reserve en epees n'est pas assez grande
-						if(nbSwordsAvailable < nbSwordsEquiped){
-							newNbSwords = nbSwordsAvailable + previousNbSwords;
-							nbSwordsEquiped = nbSwordsAvailable;
-						}
-						
-						if(city.swordsRestored > nbSwordsEquiped){
-							city.swordsRestored -= nbSwordsEquiped;
-						}
-						else{
-							city.swordsEquiped += nbSwordsEquiped - city.swordsRestored;
-							city.swordsRestored = 0;
-						}
-					}
-					else{
-						// on enleve des epees a l'armee
-						var nbSwordsRestored:int = previousNbSwords - newNbSwords;
-						
-						if(city.swordsEquiped > nbSwordsRestored){
-							city.swordsEquiped -= nbSwordsRestored;
-						}
-						else{
-							city.swordsRestored += nbSwordsRestored - city.swordsEquiped;
-							city.swordsEquiped = 0;
-						}
-					}
+					if(city.swordStock + previousNbSwordsInArmy - newNbSwordsInArmy > city.swordStockCapacity)
+						newNbSwordsInArmy = previousNbSwordsInArmy - city.swordStockCapacity - city.swordStock;
 					
-					city.army.swords = newNbSwords;	
+					city.swordStock += previousNbSwordsInArmy - newNbSwordsInArmy;
+					city.army.swords = newNbSwordsInArmy;
 					swordsArmySlider.value = city.army.swords;
 				}
 				
 				protected function armorsArmyCheck(event:Event):void
 				{
-					var previousNbArmors:int = city.army.armors;
-					var newNbArmors:int = armorsArmySlider.value;
+					var previousNbArmorsInArmy:int = city.army.armors;
+					var newNbArmorsInArmy:int = armorsArmySlider.value;
 					
-					if(newNbArmors > previousNbArmors){
-						// on ajoute des epees a l'armee
-						var nbArmorsAvailable:int = city.armorStock + city.armorsRestored - city.armorsEquiped ; 
-						var nbArmorsEquiped:int =  newNbArmors - previousNbArmors;
-						
-						// la reserve en epees n'est pas assez grande
-						if(nbArmorsAvailable < nbArmorsEquiped){
-							newNbArmors = nbArmorsAvailable + previousNbArmors;
-							nbArmorsEquiped = nbArmorsAvailable;
-						}
-						
-						if(city.armorsRestored > nbArmorsEquiped){
-							city.armorsRestored -= nbArmorsEquiped;
-						}
-						else{
-							city.armorsEquiped += nbArmorsEquiped - city.armorsRestored;
-							city.armorsRestored = 0;
-						}
-					}
-					else{
-						// on enleve des armures a l'armee
-						var nbArmorsRestored:int = previousNbArmors - newNbArmors;
-						
-						if(city.armorsEquiped > nbArmorsRestored){
-							city.armorsEquiped -= nbArmorsRestored;
-						}
-						else{
-							city.armorsRestored += nbArmorsRestored - city.armorsEquiped;
-							city.armorsEquiped = 0;
-						}
-					}
+					if(city.armorStock + previousNbArmorsInArmy - newNbArmorsInArmy > city.armorStockCapacity)
+						newNbArmorsInArmy = previousNbArmorsInArmy - city.armorStockCapacity - city.armorStock;
 					
-					city.army.armors = newNbArmors;
+					city.armorStock += previousNbArmorsInArmy - newNbArmorsInArmy;
+					city.army.armors = newNbArmorsInArmy;
 					armorsArmySlider.value = city.army.armors;
 				}
 				
@@ -948,39 +865,39 @@
 						trace("city.army.size : " + city.army.size);
 					}
 					
+					//---------------------------------//
 					// on remet les armements dans les stocks de la ville
 					// on enleve des arcs a l'armee
 					var nbBowsRestored:int = city.army.bows;
 					
-					if(city.bowsEquiped > nbBowsRestored){
-						city.bowsEquiped -= nbBowsRestored;
+					if(nbBowsRestored + city.bowStock > city.bowStockCapacity){
+						trace("les arcs debordent");
+						city.bowStock = city.bowStockCapacity;
 					}
-					else{
-						city.bowsRestored += nbBowsRestored - city.bowsEquiped;
-						city.bowsEquiped = 0;
-					}
+					else
+						city.bowStock += city.army.bows;
 					
 					// on enleve des epees a l'armee
 					var nbSwordsRestored:int = city.army.swords;
 					
-					if(city.swordsEquiped > nbSwordsRestored){
-						city.swordsEquiped -= nbSwordsRestored;
+					if(nbSwordsRestored + city.swordStock > city.swordStockCapacity){
+						trace("les epees debordent");
+						city.swordStock = city.swordStockCapacity;
 					}
-					else{
-						city.swordsRestored += nbSwordsRestored - city.swordsEquiped;
-						city.swordsEquiped = 0;
-					}
+					else
+						city.swordStock += city.army.swords;
 					
 					// on enleve des armures a l'armee
 					var nbArmorsRestored:int = city.army.armors;
 					
-					if(city.armorsEquiped > nbArmorsRestored){
-						city.armorsEquiped -= nbArmorsRestored;
+					if(nbArmorsRestored + city.armorStock > city.armorStockCapacity){
+						trace("les armures debordent");
+						city.armorStock = city.armorStockCapacity;
 					}
-					else{
-						city.armorsRestored += nbArmorsRestored - city.armorsEquiped;
-						city.armorsEquiped = 0;
-					}
+					else
+						city.armorStock += city.army.armors;
+					
+					//---------------------------------//
 					
 					Session.player.units.removeItemAt(Session.player.units.getItemIndex(city.army));
 
@@ -1311,27 +1228,67 @@
 				</s:NavigatorContent> 
 
 				<!-- =============================================================================================== -->
-				<!-- New  Forge Tab -->
+				<!-- New Forge Tab -->
 				
-				<s:NavigatorContent label="New {Translations.FORGE.getItemAt(Session.LANGUAGE)}">
-					
-					<s:HGroup width="100%" verticalAlign="middle">
-						<mx:Image toolTip="{Translations.BOW.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.BOW}"/>
-						<renderers:SmithRenderer smiths="@{city.bowWorkers}"
-												 item="{Utils.getItem('bow')}"
-													stock="{city.bowStockCapacity}"
-													weaponsAdded="@{city.ironStockNextCapacity}"
-													beginTime="@{city.ironStockBeginTime}"
-													endTime="@{city.ironStockEndTime}"
-													city="{city}"
-													id="bowsBuildingRenderer"
-													/>
-					</s:HGroup>
+				<s:NavigatorContent label="{Translations.FORGE.getItemAt(Session.LANGUAGE)}">
+					<s:Scroller height="100%" width="100%">
+						<s:VGroup width="100%" horizontalAlign="center">
+							
+							<mx:Spacer height="15"/>
+							<s:HGroup width="100%" verticalAlign="middle">
+								<s:Label text="{city.bowStock}/{city.bowStockCapacity}" styleName="numberLabel"/>
+								<mx:Image toolTip="{Translations.BOW.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.BOW}"/>
+								<renderers:SmithRenderer smiths="@{city.bowWorkers}"
+														 item="{Utils.getItem('bow')}"
+														 stock="{city.bowStock}"
+														 stockCapacity="{city.bowStockCapacity}"
+														 weaponsAdded="@{city.bowsBeingBuilt}"
+														 beginTime="@{city.bowsBeingBuiltBeginTime}"
+														 endTime="@{city.bowsBeingBuiltEndTime}"
+														 city="{city}"
+														 id="bowsBuildingRenderer"
+														/>
+							</s:HGroup>
+
+							<mx:Spacer height="15"/>
+							<s:HGroup width="100%" verticalAlign="middle">
+								<s:Label text="{city.swordStock}/{city.swordStockCapacity}" styleName="numberLabel"/>
+								<mx:Image toolTip="{Translations.SWORD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.SWORD}"/>
+								<renderers:SmithRenderer smiths="@{city.swordWorkers}"
+														 item="{Utils.getItem('sword')}"
+														 stock="{city.swordStock}"
+														 stockCapacity="{city.swordStockCapacity}"
+														 weaponsAdded="@{city.swordsBeingBuilt}"
+														 beginTime="@{city.swordsBeingBuiltBeginTime}"
+														 endTime="@{city.swordsBeingBuiltEndTime}"
+														 city="{city}"
+														 id="swordsBuildingRenderer"
+														/>
+							</s:HGroup>
+
+							<mx:Spacer height="15"/>
+							<s:HGroup width="100%" verticalAlign="middle">
+								<s:Label text="{city.armorStock}/{city.armorStockCapacity}" styleName="numberLabel"/>
+								<mx:Image toolTip="{Translations.ARMOR.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.ARMOR}"/>
+								<renderers:SmithRenderer smiths="@{city.armorWorkers}"
+														 item="{Utils.getItem('armor')}"
+														 stock="{city.armorStock}"
+														 stockCapacity="{city.armorStockCapacity}"
+														 weaponsAdded="@{city.armorsBeingBuilt}"
+														 beginTime="@{city.armorsBeingBuiltBeginTime}"
+														 endTime="@{city.armorsBeingBuiltEndTime}"
+														 city="{city}"
+														 id="armorsBuildingRenderer"
+														/>
+							</s:HGroup>
+						
+						</s:VGroup>
+					</s:Scroller>
 
 				</s:NavigatorContent>
 				
 				<!-- =============================================================================================== -->
-				<!-- Forge Tab -->
+				<!-- Old Forge Tab 
 				
 				<s:NavigatorContent label="{Translations.FORGE.getItemAt(Session.LANGUAGE)}"
 									show="{updateSmithsProgressBar()}">
@@ -1491,11 +1448,11 @@
 						</s:HGroup>
 					</s:VGroup>
 				</s:NavigatorContent>
-				
+				-->
 				
 				
 				<!-- =============================================================================================== -->
-				<!-- Equipment Tab -->
+				<!-- Equipment Tab 
 				
 				<s:NavigatorContent label="{Translations.EQUIPMENT.getItemAt(Session.LANGUAGE)}">
 					<s:VGroup width="100%" horizontalAlign="center">
@@ -1582,6 +1539,7 @@
 						</mx:Grid>
 					</s:VGroup>
 				</s:NavigatorContent>
+				-->
 				
 				<!-- =============================================================================================== -->
 				<!-- Marche -->
@@ -2406,13 +2364,13 @@
 												   liveDragging="true" 
 												   change="bowsArmyCheck(event)"
 												   value="{city.army.bows}"
-												   maximum="{city.bowStock + city.bowsRestored - city.bowsEquiped + city.army.bows}"
+												   maximum="{city.bowStock + city.army.bows}"
 												   snapInterval="1"
 												   enabled="{city.army.moves.length == 1 || city.army.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
 									</s:HGroup>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-									<s:Label text="{city.bowStock + city.bowsRestored - city.bowsEquiped}" />
+									<s:Label text="{city.bowStock}" />
 								</mx:GridItem>
 							</mx:GridRow>
 							<mx:GridRow >
@@ -2430,13 +2388,13 @@
 												   liveDragging="true" 
 												   change="swordsArmyCheck(event)"
 												   value="{city.army.swords}"
-												   maximum="{city.swordStock + city.swordsRestored - city.swordsEquiped + city.army.swords}"
+												   maximum="{city.swordStock + city.army.swords}"
 												   snapInterval="1"
 												   enabled="{city.army.moves.length == 1 || city.army.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
 									</s:HGroup>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-									<s:Label text="{city.swordStock + city.swordsRestored - city.swordsEquiped}" />
+									<s:Label text="{city.swordStock}" />
 								</mx:GridItem>
 							</mx:GridRow>
 							<mx:GridRow >
@@ -2454,13 +2412,13 @@
 												   liveDragging="true" 
 												   change="armorsArmyCheck(event)"
 												   value="{city.army.armors}"
-												   maximum="{city.armorStock + city.armorsRestored - city.armorsEquiped + city.army.armors}"
+												   maximum="{city.armorStock + city.army.armors}"
 												   snapInterval="1"
 												   enabled="{city.army.moves.length == 1 || city.army.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
 									</s:HGroup>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-									<s:Label text="{city.armorStock + city.armorsRestored - city.armorsEquiped}" />
+									<s:Label text="{city.armorStock}" />
 								</mx:GridItem>
 							</mx:GridRow>
 							<mx:GridRow>

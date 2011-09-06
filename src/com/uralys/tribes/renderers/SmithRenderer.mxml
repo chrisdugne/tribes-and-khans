@@ -33,6 +33,7 @@
 
 			[Bindable] public var smiths:int;
 			[Bindable] public var stock:int;
+			[Bindable] public var stockCapacity:int;
 			[Bindable] public var weaponsAdded:int;
 
 			[Bindable] public var beginTime:Number;
@@ -60,14 +61,17 @@
 					smithsSlider.value = smiths + city.unemployed;
 				
 				smiths = smithsSlider.value;
-				timeLabel.text = Utils.round(smiths/10, 0) + 'h';
+				var hours:int = smiths/60;
+				var min:int = smiths - hours*60;
+				
+				timeLabel.text = hours + 'h ' + (min < 10 ? '0' : '') + min + "mn";
 				
 				Session.board.cityForm.updateWorkersProgressBar();
 			}
 			
 			//-------------------------------------------------------------------------------------//
 
-			private function upgrade():void
+			private function build():void
 			{
 				// on est en double binding : le city.stock correspondant va etre MAJ
 				weaponsAdded = smiths * item.peopleRequired;
@@ -116,7 +120,7 @@
 				   liveDragging="true" 
 				   value="{smiths}"
 				   change="smithCheck(event)"
-				   maximum="{city.unemployed + smiths}"
+				   maximum="{city.unemployed + smiths &lt; (stockCapacity - stock)/item.peopleRequired ? city.unemployed + smiths : (stockCapacity - stock)/item.peopleRequired}"
 				   snapInterval="1"
 				   enabled.building="false"
 				   enabled.upgradeEnabled="true"/>
@@ -154,20 +158,17 @@
 			  verticalAlign="middle"
 			  horizontalAlign="center">
 		<mx:Spacer width="20%"/>
-		<s:Label text="{stock}"/>
 		<mx:Image source="{ImageContainer.UPGRADE_ARROW}"/>
-		<s:Label text="{smiths * item.peopleRequired}"
-				 color="{stock &lt; smiths * item.peopleRequired ? Numbers.GREEN : Numbers.RED}"/>
+		<s:Label text="{stock + smiths * item.peopleRequired}/{stockCapacity}"
+				 color="{stock + smiths * item.peopleRequired &gt; stockCapacity ? Numbers.RED : Numbers.GREEN}"/>
 		<mx:Spacer width="100%"/>
 		<s:Button skinClass="{CustomButtonSkin}"
 				  label="{Translations.UPGRADE.getItemAt(Session.LANGUAGE)}"
-				  enabled="{stock &lt; smiths * item.peopleRequired
-				  			&amp;&amp;
-				  			smiths * item.wood &lt;= city.wood
+				  enabled="{smiths * item.wood &lt;= city.wood
 				  			&amp;&amp;
 				  			smiths * item.iron &lt;= city.iron
 				  			}"
-				  click="upgrade()"
+				  click="build()"
 				  visible.building="false"
 				  includeInLayout.building="false"
 				  />

@@ -27,6 +27,10 @@ public class StockDTO {
 	@Persistent private long stockBeginTime;
 	@Persistent private long stockEndTime;
 	@Persistent private long stockNextCapacity;
+
+	@Persistent private int itemsBeingBuilt;
+	@Persistent private long itemsBeingBuiltBeginTime;
+	@Persistent private long itemsBeingBuiltEndTime;
 	
 	//-----------------------------------------------------------------------------------//
 

@@ -116,7 +116,6 @@ public class GameManager implements IGameManager {
 		//----------------------------------------//
 		// Stocks
 
-		Utils.print("update stocks : " + city.getStocks().size());
 		for(Stock stock : city.getStocks()){
 			gameDao.updateStock(stock);	
 		}
@@ -1268,7 +1267,7 @@ public class GameManager implements IGameManager {
 			Gathering gatheringExpected = EntitiesConverter.convertGatheringDTO(gameDao.getGathering(unit.getGatheringUIDExpected()));
 			if(debug)Utils.print("gathering : " + gatheringExpected.getGatheringUID());
 			
-			if(gatheringExpected.getUnitUIDs().size() == 1){
+			if(gatheringExpected == null || gatheringExpected.getUnitUIDs().size() == 1){
 				// ca arrive... a voir pourquoi, mais il y reste parfois un gatheringExpected alors que l'unité n'en a pas finalement
 				// toujours dans le cas d'une newArmy apres un gathering a priori
 				// ce bloc est donc un quickfix tout pourri, mais il va debloquer des unites bloquees..

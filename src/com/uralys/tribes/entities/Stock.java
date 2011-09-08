@@ -12,6 +12,10 @@ public class Stock {
 	private long stockBeginTime;
 	private long stockEndTime;
 	private long stockNextCapacity;
+
+	private Integer itemsBeingBuilt;
+	private Long itemsBeingBuiltBeginTime;
+	private Long itemsBeingBuiltEndTime;
 	
 	//-----------------------------------------------------------------------------------//
 	
@@ -51,6 +55,22 @@ public class Stock {
 	public void setStockNextCapacity(long stockNextCapacity) {
 		this.stockNextCapacity = stockNextCapacity;
 	}
-
-	
+	public Integer getItemsBeingBuilt() {
+		return itemsBeingBuilt;
+	}
+	public void setItemsBeingBuilt(Integer itemsBeingBuilt) {
+		this.itemsBeingBuilt = itemsBeingBuilt;
+	}
+	public Long getItemsBeingBuiltBeginTime() {
+		return itemsBeingBuiltBeginTime;
+	}
+	public void setItemsBeingBuiltBeginTime(Long itemsBeingBuiltBeginTime) {
+		this.itemsBeingBuiltBeginTime = itemsBeingBuiltBeginTime;
+	}
+	public Long getItemsBeingBuiltEndTime() {
+		return itemsBeingBuiltEndTime;
+	}
+	public void setItemsBeingBuiltEndTime(Long itemsBeingBuiltEndTime) {
+		this.itemsBeingBuiltEndTime = itemsBeingBuiltEndTime;
+	}
 }

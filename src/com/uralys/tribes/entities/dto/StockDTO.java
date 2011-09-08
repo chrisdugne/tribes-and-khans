@@ -28,9 +28,9 @@ public class StockDTO {
 	@Persistent private long stockEndTime;
 	@Persistent private long stockNextCapacity;
 
-	@Persistent private int itemsBeingBuilt;
-	@Persistent private long itemsBeingBuiltBeginTime;
-	@Persistent private long itemsBeingBuiltEndTime;
+	@Persistent private Integer itemsBeingBuilt;
+	@Persistent private Long itemsBeingBuiltBeginTime;
+	@Persistent private Long itemsBeingBuiltEndTime;
 	
 	//-----------------------------------------------------------------------------------//
 
@@ -75,5 +75,23 @@ public class StockDTO {
 	}
 	public void setStockNextCapacity(long stockNextCapacity) {
 		this.stockNextCapacity = stockNextCapacity;
+	}
+	public Integer getItemsBeingBuilt() {
+		return itemsBeingBuilt;
+	}
+	public void setItemsBeingBuilt(Integer itemsBeingBuilt) {
+		this.itemsBeingBuilt = itemsBeingBuilt;
+	}
+	public Long getItemsBeingBuiltBeginTime() {
+		return itemsBeingBuiltBeginTime;
+	}
+	public void setItemsBeingBuiltBeginTime(Long itemsBeingBuiltBeginTime) {
+		this.itemsBeingBuiltBeginTime = itemsBeingBuiltBeginTime;
+	}
+	public Long getItemsBeingBuiltEndTime() {
+		return itemsBeingBuiltEndTime;
+	}
+	public void setItemsBeingBuiltEndTime(Long itemsBeingBuiltEndTime) {
+		this.itemsBeingBuiltEndTime = itemsBeingBuiltEndTime;
 	}
 }

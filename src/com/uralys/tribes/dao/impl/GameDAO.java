@@ -561,6 +561,10 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		stockDTO.setStockEndTime(stock.getStockEndTime());
 		stockDTO.setStockCapacity(stock.getStockCapacity());
 		stockDTO.setStockNextCapacity(stock.getStockNextCapacity());
+
+		stockDTO.setItemsBeingBuilt(stock.getItemsBeingBuilt());
+		stockDTO.setItemsBeingBuiltBeginTime(stock.getItemsBeingBuiltBeginTime());
+		stockDTO.setItemsBeingBuiltEndTime(stock.getItemsBeingBuiltEndTime());
 		
 		pm.close();
 	}
@@ -991,9 +995,14 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	{
 		if(gatheringUID == null)
 			return null;
-		
-		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
-		return pm.getObjectById(GatheringDTO.class, gatheringUID);
+		try{
+			PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+			return pm.getObjectById(GatheringDTO.class, gatheringUID);			
+		}
+		catch (Exception e) {
+			// il arrive que le gathering n'existe plus...
+			return null;
+		}
 	}
 
 	public String createConflict(String caseUID, String unitUID, String unitUID2) {
@@ -1182,6 +1191,10 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		stock.setPeopleBuildingStock(0);
 		stock.setStockBeginTime(-1);
 		stock.setStockEndTime(new Date().getTime());
+		
+		stock.setItemsBeingBuilt(0);
+		stock.setItemsBeingBuiltBeginTime(-1l);
+		stock.setItemsBeingBuiltEndTime(new Date().getTime());
 		
 		pm.makePersistent(stock);
 		pm.close();

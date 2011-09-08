@@ -306,7 +306,13 @@ public class EntitiesConverter {
 				
 				if(gathering != null)
 				{
-					UnitDTO newUnit = (UnitDTO) UniversalDAO.getInstance().getObjectDTO(gathering.getNewUnitUID(), UnitDTO.class);
+					UnitDTO newUnit;
+					try{
+						newUnit = (UnitDTO) UniversalDAO.getInstance().getObjectDTO(gathering.getNewUnitUID(), UnitDTO.class);
+					}
+					catch(Exception e){
+						newUnit = null;
+					}
 					
 					if(newUnit != null){
 						// il arrive qu'il y ait des unit qui nont pas de move...
@@ -442,6 +448,10 @@ public class EntitiesConverter {
 		stock.setPeopleBuildingStock(stockDTO.getPeopleBuildingStock());
 		stock.setStockBeginTime(stockDTO.getStockBeginTime());
 		stock.setStockEndTime(stockDTO.getStockEndTime());
+
+		stock.setItemsBeingBuilt(stockDTO.getItemsBeingBuilt());
+		stock.setItemsBeingBuiltBeginTime(stockDTO.getItemsBeingBuiltBeginTime());
+		stock.setItemsBeingBuiltEndTime(stockDTO.getItemsBeingBuiltEndTime());
 		
 		return stock;
 	}

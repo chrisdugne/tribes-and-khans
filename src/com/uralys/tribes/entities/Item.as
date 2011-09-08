@@ -73,7 +73,7 @@ package com.uralys.tribes.entities
 		}
 	
 		protected var _itemUID:String;
-		protected var _name:String;
+		protected var _name:String = "";
 		protected var _peopleRequired:int;
 		protected var _wood:int;
 		protected var _iron:int;

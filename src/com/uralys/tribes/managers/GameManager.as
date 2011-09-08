@@ -100,7 +100,6 @@ package com.uralys.tribes.managers {
 			
 			for each(var city:City in player.cities)
 			{
-				trace("MAJ des stocks de la forge");
 				// recuperation des stocks de la forge
 				for each(var equipment:Equipment in city.equipmentStock){
 					switch(equipment.item.name){
@@ -116,14 +115,15 @@ package com.uralys.tribes.managers {
 					}
 				}
 
-				trace("MAJ des stocks");
+				trace("MAJ des stocks : ("+city.stocks.length+" depots)");
 				// recuperation des stocks
 				for each(var stock:Stock in city.stocks)
 				{
 					// on peut avoir de la triche ici..
 					// car on update la capacite du stock avant le calcul des stepMissed. 
 					// et si le joueur a beaucoup de stepMissed, il va remplir le nouveau stock alors qu'il etait limité à ce moment là
-					updateStockBuildingStatus(stock);
+					updateStockBuildingStatus(city, stock);
+					
 					var stockName:String = Utils.getStockName(stock.stockUID);
 					
 					switch(stockName){
@@ -154,6 +154,9 @@ package com.uralys.tribes.managers {
 							city.bowStockBeginTime = stock.stockBeginTime;
 							city.bowStockEndTime = stock.stockEndTime;
 							city.bowStockNextCapacity = stock.stockNextCapacity;
+							city.bowsBeingBuilt = stock.itemsBeingBuilt;
+							city.bowsBeingBuiltBeginTime = stock.itemsBeingBuiltBeginTime;
+							city.bowsBeingBuiltEndTime = stock.itemsBeingBuiltEndTime;
 							break;
 						case "_sword_stock" :
 							city.swordStockCapacity = stock.stockCapacity;
@@ -161,6 +164,9 @@ package com.uralys.tribes.managers {
 							city.swordStockBeginTime = stock.stockBeginTime;
 							city.swordStockEndTime = stock.stockEndTime;
 							city.swordStockNextCapacity = stock.stockNextCapacity;
+							city.swordsBeingBuilt = stock.itemsBeingBuilt;
+							city.swordsBeingBuiltBeginTime = stock.itemsBeingBuiltBeginTime;
+							city.swordsBeingBuiltEndTime = stock.itemsBeingBuiltEndTime;
 							break;
 						case "_armor_stock" :
 							city.armorStockCapacity = stock.stockCapacity;
@@ -168,6 +174,9 @@ package com.uralys.tribes.managers {
 							city.armorStockBeginTime = stock.stockBeginTime;
 							city.armorStockEndTime = stock.stockEndTime;
 							city.armorStockNextCapacity = stock.stockNextCapacity;
+							city.armorsBeingBuilt = stock.itemsBeingBuilt;
+							city.armorsBeingBuiltBeginTime = stock.itemsBeingBuiltBeginTime;
+							city.armorsBeingBuiltEndTime = stock.itemsBeingBuiltEndTime;
 							break;
 					}
 				}
@@ -195,7 +204,7 @@ package com.uralys.tribes.managers {
 			Session.LOGGED_IN_FORCE_STEPS_DONE = true;
 		}
 		
-		var allCitiesAreFilled:Boolean = false; // pour le catchUpCalculation uniquement
+		private var allCitiesAreFilled:Boolean = false; // pour le catchUpCalculation uniquement
 		public function calculateStep(player:Player, catchUpCalculation:Boolean = false):void
 		{
 			(player.cities.getItemAt(0) as City).gold += player.nbLands;
@@ -217,12 +226,12 @@ package com.uralys.tribes.managers {
 			{
 				trace("--------------");
 				trace("city : " + city.name);
-				trace("wheatEarned : " + city.wheatEarned + " | wheatSpent : " + city.wheatSpent);
-				trace("woodEarned : " + city.woodEarned + " | woodSpent : " + city.woodSpent);
-				trace("ironEarned : " + city.ironEarned + " | ironSpent : " + city.ironSpent);
-				city.wheat += city.wheatEarned - city.wheatSpent;
-				city.wood += city.woodEarned - city.woodSpent;
-				city.iron += city.ironEarned - city.ironSpent;
+				trace("wheatEarned : " + city.wheatEarned);
+				trace("woodEarned : " + city.woodEarned);
+				trace("ironEarned : " + city.ironEarned);
+				city.wheat += city.wheatEarned;
+				city.wood += city.woodEarned;
+				city.iron += city.ironEarned;
 				
 				// limitation des stocks
 				
@@ -233,13 +242,6 @@ package com.uralys.tribes.managers {
 				if(city.iron > city.ironStockCapacity)
 					city.iron = city.ironStockCapacity;
 				
-				// petite correction, avec les arrondis on arrive parfois a etre negatif de peu. (a verifier)
-				// en tout cas on force le zero, sinon dans city.reset ca casse tout.
-				if(city.wood < 0)
-					city.wood = 0;
-				if(city.iron < 0)
-					city.iron = 0;
-				
 				var starvation:Boolean = false;
 				
 				if(city.wheat < 0){
@@ -247,22 +249,18 @@ package com.uralys.tribes.managers {
 					city.wheat = 0;
 				}
 				
-				var armyRaised:int = city.armyRaised - city.armyReleased;
-				city.population = calculatePopulation(city.population, starvation, armyRaised);
-				trace("city.population : " + city.population);
+				city.population = calculatePopulation(city.population, starvation);
 				
 				if(!catchUpCalculation)
-				{
-					refreshCitySmithsAndEquipmentsAndStocks(city, true);
-				}
+					refreshCitySmithsAndEquipmentsAndStocks(city);
 				// else catchUpCalculation : on ne refresh surtout pas smith et equipment, ils sont necessaires pour updateCityWorkersEarningsAndSpendings
 				
 				city.reset();
-				updateCityWorkersEarningsAndSpendings(true, catchUpCalculation, true, city, starvation);
+				refreshCityWorkersOnResources(true, city, starvation);
 			}
 		}
 		
-		private function updateStockBuildingStatus(stock:Stock):void
+		private function updateStockBuildingStatus(city:City, stock:Stock):void
 		{
 			var now:Number = new Date().getTime();
 			
@@ -271,44 +269,52 @@ package com.uralys.tribes.managers {
 				stock.stockCapacity = stock.stockNextCapacity;
 				stock.peopleBuildingStock = 0;
 			}
+
+			// init pour passage de 1.2.14 a 1.2.15 : toRemove apres
+			if(stock.itemsBeingBuiltBeginTime == 0){
+				stock.itemsBeingBuilt = 0;
+				stock.itemsBeingBuiltBeginTime = -1;
+				stock.itemsBeingBuiltEndTime = 1;
+			}
+			else	
+				
+			if(stock.itemsBeingBuiltBeginTime != -1 && now > stock.itemsBeingBuiltEndTime){
+				stock.itemsBeingBuiltBeginTime = -1;
+				
+				switch(Utils.getItem(Utils.getStockItem(stock.stockUID)).name)
+				{
+					case "bow" :
+						city.bowStock += stock.itemsBeingBuilt;
+						city.bowWorkers = 0;
+						break;
+					case "sword" :
+						city.swordStock += stock.itemsBeingBuilt;
+						city.swordWorkers = 0;
+						break;
+					case "armor" :
+						city.armorStock += stock.itemsBeingBuilt;
+						city.armorWorkers = 0;
+						break;
+				}
+				
+				stock.itemsBeingBuilt = 0;
+			}
 		}
 		
-		private function refreshCitySmithsAndEquipmentsAndStocks(city:City, needProduction:Boolean):void
+		private function refreshCitySmithsAndEquipmentsAndStocks(city:City):void
 		{
-			trace("refreshCitySmithsAndEquipmentsAndStocks");
 			for each(var equipment:Equipment in city.equipmentStock)
 			{
 				switch(equipment.item.name)
 				{
 					case "bow" :
 						equipment.size = city.bowStock;
-						
-						if(needProduction)
-							equipment.size += city.bowWorkers * equipment.item.peopleRequired;
-						
-						if(equipment.size > city.bowStockCapacity)
-							equipment.size = city.bowStockCapacity;
-						
 						break;
 					case "sword" :
 						equipment.size = city.swordStock;
-						
-						if(needProduction)
-							equipment.size += city.swordWorkers * equipment.item.peopleRequired;
-						
-						if(equipment.size > city.swordStockCapacity)
-							equipment.size = city.swordStockCapacity;
-						
 						break;
 					case "armor" :
 						equipment.size = city.armorStock;
-						
-						if(needProduction)
-							equipment.size += city.armorWorkers * equipment.item.peopleRequired;
-						
-						if(equipment.size > city.armorStockCapacity)
-							equipment.size = city.armorStockCapacity;
-						
 						break;
 				}
 			}
@@ -646,168 +652,12 @@ package com.uralys.tribes.managers {
 		
 		//-------------------------------------------------------------------------------//
 		
-		public function updateCityWorkersEarningsAndSpendings(fromSaveStep:Boolean, catchUpCalculation:Boolean, forceCalculation:Boolean, city:City, starvation:Boolean):void
+		public function refreshCityWorkersOnResources(forceCalculation:Boolean, city:City, starvation:Boolean):void
 		{
 			trace("--------");
-			trace("updateCityWorkersEarningsAndSpendings");
+			trace("refreshCityResources");
 			if(!forceCalculation && city.calculationDone)
 				return;
-			
-			// recuperations des workers pour chaque item de la forge
-			// et verification si on peut laisser autant de smith (si les stocks sont suffisants)
-			var woodSpendingForThisStep:int;
-			var ironSpendingForThisStep:int;
-			
-			for each(var smith:Smith in city.smiths)
-			{
-				switch(smith.item.name){
-					case "bow" :
-						trace("------");
-						trace("Bows");
-						trace("smith.people : " + smith.people);
-						trace("depense en bois : " + (Numbers.BOW_WOOD * smith.people) + " | city.wood : " + city.wood);
-						trace("depense en fer : " + (Numbers.BOW_IRON * smith.people) + " | city.iron : " + city.iron);
-						trace("capacite de stock restante : " + (city.bowStockCapacity - city.bowStock));
-						
-						city.bowWorkers = -1;
-						// la depense en bois pour les arcs est plus grande que le stock de bois
-						if(Numbers.BOW_WOOD * smith.people > city.wood)
-							city.bowWorkers = Math.floor(city.wood/Numbers.BOW_WOOD);
-						
-						// la depense en fer pour les arcs est plus grande que le stock de fer
-						if(Numbers.BOW_IRON * smith.people > city.iron)
-							city.bowWorkers = Math.floor(city.iron/Numbers.BOW_IRON);
-
-						
-						if(city.bowWorkers == -1) // ressources suffisantes
-							city.bowWorkers = smith.people;
-
-						// bowStockCapacity insuffisante !
-						if(city.bowStockCapacity - city.bowStock < city.bowWorkers)
-							city.bowWorkers = city.bowStockCapacity - city.bowStock;
-
-						trace("city.bowWorkers : " + city.bowWorkers);
-
-						if(fromSaveStep){
-							trace("fromSaveStep : updating bowStock");
-							city.bowStock += city.bowWorkers;
-						}
-						
-						trace("final : city.bowWorkers : " + city.bowWorkers);
-						trace("final : city.bowStock : " + city.bowStock);
-						
-						// on rajoute les depenses pour ce step
-						woodSpendingForThisStep += Numbers.BOW_WOOD * city.bowWorkers;
-						ironSpendingForThisStep += Numbers.BOW_IRON * city.bowWorkers;
-
-						break;
-					case "sword" :		
-						
-						var woodRemaining:int = city.wood - woodSpendingForThisStep;
-						var ironRemaining:int = city.iron - ironSpendingForThisStep;
-						
-						trace("------");
-						trace("Swords");
-						trace("smith.people : " + smith.people);
-						trace("depense en bois : " + (Numbers.SWORD_WOOD * smith.people) + " | woodRemaining : " + woodRemaining);
-						trace("depense en fer : " + (Numbers.SWORD_IRON * smith.people) + " | ironRemaining : " + ironRemaining);
-						trace("capacite de stock restante : " + (city.swordStockCapacity - city.swordStock));
-						
-						city.swordWorkers = -1;
-						
-						// la depense en bois pour les epees est plus grande que le stock de bois
-						if(Numbers.SWORD_WOOD * smith.people > woodRemaining)
-							city.swordWorkers = Math.floor(woodRemaining/Numbers.SWORD_WOOD);
-						
-						// la depense en fer pour les epees est plus grande que le stock de fer
-						if(Numbers.SWORD_IRON * smith.people > ironRemaining)
-							city.swordWorkers = Math.floor(ironRemaining/Numbers.SWORD_IRON);
-						
-						trace("city.swordWorkers : " + city.swordWorkers);
-						
-						if(city.swordWorkers == -1) // stock suffisant
-							city.swordWorkers = smith.people;
-						
-						// swordStockCapacity insuffisante !
-						if(city.swordStockCapacity - city.swordStock < city.swordWorkers)
-							city.swordWorkers = city.swordStockCapacity - city.swordStock;
-						
-						trace("updating swordStock");
-						city.swordStock += city.swordWorkers;
-						
-						trace("final : city.swordWorkers : " + city.swordWorkers);
-						trace("final : city.swordStock : " + city.swordStock);
-						
-						// on rajoute les depenses pour ce step
-						woodSpendingForThisStep += Numbers.SWORD_WOOD * city.swordWorkers;
-						ironSpendingForThisStep += Numbers.SWORD_IRON * city.swordWorkers;
-						
-						break;
-					case "armor" :				
-						
-						var woodRemaining:int = city.wood - woodSpendingForThisStep;
-						var ironRemaining:int = city.iron - ironSpendingForThisStep;
-
-						trace("------");
-						trace("Armors");
-						trace("smith.people : " + smith.people);
-						trace("depense en bois : " + (Numbers.ARMOR_WOOD * smith.people) + " | woodRemaining : " + woodRemaining);
-						trace("depense en fer : " + (Numbers.ARMOR_IRON * smith.people) + " | ironRemaining : " + ironRemaining);
-						trace("capacite de stock restante : " + (city.armorStockCapacity - city.armorStock));
-						
-						city.armorWorkers = -1;
-						
-						// la depense en bois pour les armoures est plus grande que le stock de bois
-						if(Numbers.ARMOR_WOOD * smith.people > woodRemaining)
-							city.armorWorkers = Math.floor(woodRemaining/Numbers.ARMOR_WOOD);
-						
-						// la depense en fer pour les armoures est plus grande que le stock de fer
-						if(Numbers.ARMOR_IRON * smith.people > ironRemaining)
-							city.armorWorkers = Math.floor(ironRemaining/Numbers.ARMOR_IRON);
-						
-						trace("city.armorWorkers : " + city.armorWorkers);
-						if(city.armorWorkers == -1) // stock suffisant
-							city.armorWorkers = smith.people;
-						
-						// armorStockCapacity insuffisante !
-						if(city.armorStockCapacity - city.armorStock < city.armorWorkers)
-							city.armorWorkers = city.armorStockCapacity - city.armorStock;
-						
-						trace("updating armorStock");
-						city.armorStock += city.armorWorkers;
-						
-						trace("final : city.armorWorkers : " + city.armorWorkers);
-						trace("final : city.armorStock : " + city.armorStock);
-						
-						// on rajoute les depenses pour ce step
-						woodSpendingForThisStep += Numbers.ARMOR_WOOD * city.armorWorkers;
-						ironSpendingForThisStep += Numbers.ARMOR_IRON * city.armorWorkers;
-						
-						break;
-				}
-			}
-			
-			if(starvation){
-				city.bowWorkers *= 2/3;
-				city.swordWorkers *= 2/3;
-				city.armorWorkers *= 2/3;
-				city.peopleCreatingWheat = 1/3 * city.population;
-				city.peopleCreatingWood *= 2/3;
-				city.peopleCreatingIron *= 2/3;
-			}
-			
-			// calcul des depenses prevues avec les choix du tour precedent
-			city.woodSpent += city.bowWorkers * Numbers.BOW_WOOD;
-			city.woodSpent += city.swordWorkers * Numbers.SWORD_WOOD;
-			city.woodSpent += city.armorWorkers * Numbers.ARMOR_WOOD;
-			
-			city.ironSpent += city.bowWorkers * Numbers.BOW_IRON;
-			city.ironSpent += city.swordWorkers * Numbers.SWORD_IRON;
-			city.ironSpent += city.armorWorkers * Numbers.ARMOR_IRON;
-
-			
-			city.wheatSpent = city.population * Numbers.FEED_COEFF;
-			city.wheatSpent += city.unitsToFeed * Numbers.FEED_COEFF;
 			
 			city.refreshUnemployed();
 			Session.board.cityForm.updateWorkersProgressBar();
@@ -834,7 +684,7 @@ package com.uralys.tribes.managers {
 		}
 		
 		
-		private function calculatePopulation(population:int, starvation:Boolean, armyRaised:int):int 
+		private function calculatePopulation(population:int, starvation:Boolean):int 
 		{
 			trace("------");
 			trace("calculatePopulation");
@@ -994,7 +844,7 @@ package com.uralys.tribes.managers {
 
 		public function saveCity(city:City):void
 		{
-			refreshCitySmithsAndEquipmentsAndStocks(city, false);
+			refreshCitySmithsAndEquipmentsAndStocks(city);
 			
 			var gameWrapper:RemoteObject = getGameWrapper();
 			gameWrapper.saveCity(city);			
@@ -1002,7 +852,7 @@ package com.uralys.tribes.managers {
 
 		public function buildCity(city:City, merchant:Unit):void
 		{
-			refreshCitySmithsAndEquipmentsAndStocks(city, false);
+			refreshCitySmithsAndEquipmentsAndStocks(city);
 			
 			cityBeingSaved = city;
 			

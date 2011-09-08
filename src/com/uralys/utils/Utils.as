@@ -10,7 +10,6 @@ import com.uralys.tribes.entities.Ally;
 import com.uralys.tribes.entities.Item;
 import com.uralys.tribes.entities.Message;
 import com.uralys.tribes.entities.Player;
-import com.uralys.tribes.entities.Item;
 
 import flash.display.BitmapData;
 import flash.display.Sprite;
@@ -313,6 +312,17 @@ public class Utils
 			return stockUID.substr(stockUID.indexOf("__")+1); 
 		}
 
+		public static function getStockItem(stockUID:String):String
+		{
+			var stockName:String = getStockName(stockUID);
+			var start:int = stockName.indexOf("_")+1;
+			var end:int = stockName.indexOf("_",2);
+			trace(start);
+			trace(end);
+			trace("getStockItem " + stockName + " " + stockName.substring(start, end));
+			return stockName.substring(start, end);
+		}
+
 		//----------------------------------------------------------------------------------------------------
 		
 		public static function containsPlayer(collection:ArrayCollection, player:Player):Boolean
@@ -352,8 +362,8 @@ public class Utils
 					return item;
 			}
 			
-			// never
-			return null;
+			// wheat - wood - iron 
+			return new Item();
 		}
 }
 }

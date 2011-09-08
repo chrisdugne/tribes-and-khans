@@ -214,8 +214,6 @@ package com.uralys.tribes.entities
 		protected var _unemployed:int;
 		protected var _availableAsSmith:int;
 		protected var _armiesToFeed:int;
-		protected var _armyRaised:int;
-		protected var _armyReleased:int;
 
 		public function set unitsToFeed(o:int):void{
 			_armiesToFeed = o;
@@ -223,26 +221,6 @@ package com.uralys.tribes.entities
 
 		public function get unitsToFeed():int{
 			return _armiesToFeed;
-		}
-
-		public function get armyRaised():int{
-			return _armyRaised;
-		}
-
-		public function set armyRaised(o:int):void{
-			_armyRaised = o;
-			refreshUnemployed();
-			refreshAvailableAsSmith();
-		}
-
-		public function get armyReleased():int{
-			return _armyReleased;
-		}
-
-		public function set armyReleased(o:int):void{
-			_armyReleased = o;
-			refreshUnemployed();
-			refreshAvailableAsSmith();
 		}
 
 		public function get unemployed():int{
@@ -267,8 +245,6 @@ package com.uralys.tribes.entities
 							- bowWorkers
 							- swordWorkers
 							- armorWorkers
-							- armyRaised
-							+ armyReleased;
 		}
 
 		public function get availableAsSmith():int{
@@ -284,19 +260,14 @@ package com.uralys.tribes.entities
 			availableAsSmith = _population - peopleCreatingWheat
 										   - peopleCreatingWood
 										   - peopleCreatingIron
-										   - armyRaised
-										   + armyReleased;
 		}
 		
 		//---------------------------------------------------------------//
 		
 		// resources management
 		protected var _wheatEarned:int;
-		protected var _wheatSpent:int;
 		protected var _woodEarned:int;
-		protected var _woodSpent:int;
 		protected var _ironEarned:int;
-		protected var _ironSpent:int;
 		
 		private var _wheatStockCapacity:int;
 		private var _wheatStockNextCapacity:int;
@@ -360,14 +331,6 @@ package com.uralys.tribes.entities
 			_wheatSold = o;
 		}
 
-		public function get wheatSpent():int{
-			return _wheatSpent;
-		}
-		
-		public function set wheatSpent(o:int):void{
-			_wheatSpent = o;
-		}
-
 		public function get woodEarned():int{
 			return _woodEarned;
 		}
@@ -390,14 +353,6 @@ package com.uralys.tribes.entities
 		
 		public function set woodSold(o:int):void{
 			_woodSold = o;
-		}
-
-		public function get woodSpent():int{
-			return _woodSpent;
-		}
-		
-		public function set woodSpent(o:int):void{
-			_woodSpent = o;
 		}
 
 		public function get ironEarned():int{
@@ -424,14 +379,6 @@ package com.uralys.tribes.entities
 			_ironSold = o;
 		}
 
-		public function get ironSpent():int{
-			return _ironSpent;
-		}
-		
-		public function set ironSpent(o:int):void{
-			_ironSpent = o;
-		}
-	
 		public function get goldEarned():int{
 			return _goldEarned;
 		}
@@ -903,14 +850,9 @@ package com.uralys.tribes.entities
 
 		public function reset():void
 		{
-			woodSpent = 0;
-			ironSpent = 0;
-			wheatSpent = 0;
 			wheatEarned = 0;
 			woodEarned = 0;
 			ironEarned = 0;
-			armyRaised = 0;
-			armyReleased = 0;
 			unitsToFeed = 0;
 		}
 	}

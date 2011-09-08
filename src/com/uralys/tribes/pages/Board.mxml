@@ -8,7 +8,8 @@
 		 creationComplete="init()" >
 	
 	<fx:Declarations>
-		<s:State name="classic"/>
+		<s:State name="board"/>
+		<s:State name="city"/>
 		<s:State name="moveUnit"/>
 	</fx:Declarations>
 	
@@ -80,7 +81,7 @@
 				
 				initBoard();
 				
-				currentState = 'classic';
+				currentState = 'board';
 			}
 			
 			//---------------------------------------------------------------------------------------------------//
@@ -492,7 +493,7 @@
 				}
 
 				selectedUnit = null;
-				currentState = "classic";
+				currentState = "board";
 				newMoveAdded = false;
 				removingMoves = false;
 				
@@ -545,7 +546,7 @@
 				}
 				
 				// on calcule si ce n'a pas été fait avant
-				GameManager.getInstance().updateCityWorkersEarningsAndSpendings(false, false, false, selectedCity, false);
+				GameManager.getInstance().refreshCityWorkersOnResources(false, selectedCity, false);
 				
 				enterCityForm.includeInLayout = true;
 				enterCityForm.visible = true;				
@@ -575,6 +576,8 @@
 				cityForm.refreshBuildings();
 				goLeft.play();
 				appearCity.play();
+				
+				currentState = "city";
 			}
 			
 			private function buildCity():void
@@ -656,6 +659,8 @@
 				GameManager.getInstance().saveCity(selectedCity);
 				hideCity.play();
 				comeBack.play();
+				
+				currentState = "board";
 			}
 			
 //			
@@ -999,7 +1004,7 @@
 					bottom="44"/>
 
 		<s:VGroup top="150" right="95"
-				  excludeFrom="classic"
+				  includeIn="moveUnit"
 				  horizontalAlign="center">
 			<s:Label text="{Translations.WAY_SELECTION.getItemAt(Session.LANGUAGE)}"/>
 			<s:Button label="{Translations.VALIDATE.getItemAt(Session.LANGUAGE)}" click="{validateUnitMoves(false)}" visible="{selectedUnit != null}" enabled="{newMoveAdded}" skinClass="com.uralys.tribes.skins.CustomButtonSkin"/>
@@ -1171,6 +1176,7 @@
 		 		  visible="{Session.WAIT_FOR_SERVER}"
 				  x="{boardImage.x+50}"
 				  y="{boardImage.y+Session.MAP_HEIGHT - 16}"
+				  excludeFrom="city"
 				  rotation="2"/>
 	
 	<!-- ====================================================================================== -->

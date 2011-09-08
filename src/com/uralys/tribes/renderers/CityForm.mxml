@@ -1034,8 +1034,8 @@
 			</s:HGroup>
 			<s:HGroup verticalAlign="top">
 				<mx:Spacer width="-25"/>
-				<s:Label text="({(city.wheat + city.wheatEarned) &lt; city.wheatStockCapacity ? (city.wheat + city.wheatEarned) : city.wheatStockCapacity})" 
-						 color="{Numbers.GREEN}"/>
+				<s:Label text="({(city.wheat + city.wheatEarned - city.wheatRequiredToFeed()) &gt; city.wheatStockCapacity ? city.wheatStockCapacity : (city.wheat + city.wheatEarned - city.wheatRequiredToFeed())})" 
+						 color="{(city.wheat + city.wheatEarned - city.wheatRequiredToFeed()) &lt; 0 ? Numbers.RED : Numbers.GREEN}"/>
 				
 				<mx:Spacer width="87"/>
 				<s:Label text="({(city.wood + city.woodEarned) &lt; city.woodStockCapacity ? (city.wood + city.woodEarned) : city.woodStockCapacity})" 
@@ -1090,9 +1090,14 @@
 									</s:HGroup>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-									<s:Label text="+ {city.wheatEarned}" 
-											 styleName="numberLabel" 
-											 color="{Numbers.GREEN}"/>
+									<s:HGroup verticalAlign="middle">
+										<s:Label text="+ {city.wheatEarned}" 
+												 styleName="numberLabel" 
+												 color="{Numbers.GREEN}"/>
+										<s:Spacer width="5"/>
+										<s:Label text="(- {city.wheatRequiredToFeed()})" 
+												 color="{Numbers.RED}"/>
+										</s:HGroup>
 								</mx:GridItem>
 							</mx:GridRow>
 							<mx:GridRow >
@@ -1221,260 +1226,6 @@
 					</s:Scroller>
 
 				</s:NavigatorContent>
-				
-				<!-- =============================================================================================== -->
-				<!-- Old Forge Tab 
-				
-				<s:NavigatorContent label="{Translations.FORGE.getItemAt(Session.LANGUAGE)}"
-									show="{updateSmithsProgressBar()}">
-					<s:VGroup width="100%" horizontalAlign="center">
-						<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle">
-						  <mx:GridRow >
-							  <mx:GridItem/>
-							  <mx:GridItem horizontalAlign="center">
-								  <s:Label text="{Translations.WORKERS.getItemAt(Session.LANGUAGE)}" />
-							  </mx:GridItem>
-							  <mx:GridItem horizontalAlign="center">
-								  <s:Label text="{Translations.WOOD_SPENT.getItemAt(Session.LANGUAGE)}" />
-							  </mx:GridItem>
-							  <mx:GridItem horizontalAlign="center">
-								  <s:Label text="{Translations.IRON_SPENT.getItemAt(Session.LANGUAGE)}" />
-							  </mx:GridItem>
-						  </mx:GridRow>
-						  <mx:GridRow >
-							  <mx:GridItem horizontalAlign="center">
-								  <mx:Image toolTip=" "
-											toolTipCreate="{onCreateForgeToolTip(event, Translations.BOW.getItemAt(Session.LANGUAGE) as String, Numbers.BOW_WOOD, Numbers.BOW_IRON)}"
-											source="{ImageContainer.BOW}"/>
-							  </mx:GridItem>
-							  <mx:GridItem horizontalAlign="center" verticalAlign="middle">
-								  <s:HGroup verticalAlign="middle">
-									  <s:Label text="{city.bowWorkers}" 
-											   styleName="numberLabel" 
-											   textAlign="right"
-											   minWidth="60"/>
-									  <s:Image source="{ImageContainer.MERCHANTS}"/>
-									  <s:HSlider id="bowWorkersSlider"
-												 showDataTip="false"
-												 liveDragging="true" 
-												 change="bowWorkersCheck(event)"
-												 value="{city.bowWorkers}"
-												 maximum="{city.bowStockCapacity - city.bowStock &lt; city.availableAsSmith ? (city.bowStockCapacity - city.bowStock) : city.availableAsSmith}"
-												 snapInterval="1"/>
-								  </s:HGroup>
-							  </mx:GridItem>
-							  <mx:GridItem horizontalAlign="center" verticalAlign="middle">
-								  <s:Label text="{Numbers.BOW_WOOD * city.bowWorkers}" styleName="numberLabel"/>
-							  </mx:GridItem>
-							  <mx:GridItem horizontalAlign="center" verticalAlign="middle">
-								  <s:Label text="{Numbers.BOW_IRON * city.bowWorkers}" styleName="numberLabel"/>
-							  </mx:GridItem>
-						  </mx:GridRow>
-							<mx:GridRow verticalAlign="middle">
-								<mx:GridItem horizontalAlign="center">
-									<mx:Image toolTip=" "
-											  toolTipCreate="{onCreateForgeToolTip(event, Translations.SWORD.getItemAt(Session.LANGUAGE) as String, Numbers.SWORD_WOOD, Numbers.SWORD_IRON)}"
-											  source="{ImageContainer.SWORD}"/>
-								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-									<s:HGroup verticalAlign="middle">
-										<s:Label text="{city.swordWorkers}" 
-												 styleName="numberLabel" 
-												 textAlign="right"
-												 minWidth="60"/>
-										<s:Image source="{ImageContainer.MERCHANTS}"/>
-										<s:HSlider id="swordWorkersSlider"
-												   showDataTip="false"
-												   liveDragging="true" 
-												   change="swordWorkersCheck(event)"
-												   value="{city.swordWorkers}"
-												   maximum="{city.swordStockCapacity - city.swordStock &lt; city.availableAsSmith ? (city.swordStockCapacity - city.swordStock) : city.availableAsSmith}"
-												   snapInterval="1"/>
-									</s:HGroup>
-								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-									<s:Label text="{Numbers.SWORD_WOOD * city.swordWorkers}" styleName="numberLabel"/>
-								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-									<s:Label text="{Numbers.SWORD_IRON * city.swordWorkers}" styleName="numberLabel"/>
-								</mx:GridItem>
-							</mx:GridRow>
-							<mx:GridRow >
-								<mx:GridItem horizontalAlign="center">
-									<mx:Image toolTip=" "
-											  toolTipCreate="{onCreateForgeToolTip(event, Translations.ARMOR.getItemAt(Session.LANGUAGE) as String, Numbers.ARMOR_WOOD, Numbers.ARMOR_IRON)}"
-											  source="{ImageContainer.ARMOR}"/>
-								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-									<s:HGroup verticalAlign="middle">
-										<s:Label text="{city.armorWorkers}" 
-												 styleName="numberLabel" 
-												 textAlign="right"
-												 minWidth="60"/>
-										<s:Image source="{ImageContainer.MERCHANTS}"/>
-										<s:HSlider id="armorWorkersSlider"
-												   showDataTip="false"
-												   liveDragging="true" 
-												   change="armorWorkersCheck(event)"
-												   value="{city.armorWorkers}"
-												   maximum="{city.armorStockCapacity - city.armorStock &lt; city.availableAsSmith ? (city.armorStockCapacity - city.armorStock) : city.availableAsSmith}"
-												   snapInterval="1"/>
-									</s:HGroup>
-								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-									<s:Label text="{Numbers.ARMOR_WOOD * city.armorWorkers}" styleName="numberLabel"/>
-								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-									<s:Label text="{Numbers.ARMOR_IRON * city.armorWorkers}" styleName="numberLabel"/>
-								</mx:GridItem>
-							</mx:GridRow>
-						<mx:GridRow>
-							<mx:GridItem colSpan="4">
-							  <mx:HRule width="100%"/>
-							</mx:GridItem>
-						</mx:GridRow >
-						<mx:GridRow >
-							<mx:GridItem/>
-							<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-								<s:Label text="{Translations.TOTAL_SPENDING.getItemAt(Session.LANGUAGE)}"/>
-							</mx:GridItem>
-							<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-								<s:Label text="{Numbers.SWORD_WOOD * city.swordWorkers 
-										 	   +Numbers.ARMOR_WOOD * city.armorWorkers
-										 	   +Numbers.BOW_WOOD * city.bowWorkers}" 
-										 		styleName="numberLabel"/>
-							</mx:GridItem>
-							<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-								<s:Label text="{Numbers.SWORD_IRON * city.swordWorkers
-										 +Numbers.ARMOR_IRON * city.armorWorkers
-										 +Numbers.BOW_IRON * city.bowWorkers}" 
-										 styleName="numberLabel"/>
-							</mx:GridItem>
-						</mx:GridRow>
-					  </mx:Grid>
-						
-						<s:HGroup width="100%" horizontalAlign="center" bottom="0"
-								  verticalAlign="middle"
-								  visible="{city.unemployed + city.bowWorkers + city.swordWorkers + city.armorWorkers &gt; 0}">
-							<s:Label text="{Translations.SMITHS.getItemAt(Session.LANGUAGE)}"/>
-							<mx:Spacer width="10"/>
-							<s:Label text="{city.bowWorkers + city.swordWorkers + city.armorWorkers}"
-									 textAlign="right"
-									 minWidth="40"/>
-							<mx:Spacer width="4"/>
-							<s:VGroup>
-								<mx:Spacer height="12"/>
-								<mx:ProgressBar width="250"
-												height="100%"
-												label="" 
-												id="smithsProgressBar"
-												mode="manual"
-												barSkin="{WorkersProgressBarSkin}"
-												trackSkin="{WorkersProgressTrackSkin}"
-												trackHeight="18"
-												creationComplete="{updateSmithsProgressBar()}"/>
-							</s:VGroup>
-							<mx:Spacer width="4"/>
-							<s:Label text="{city.unemployed}"
-									 textAlign="right"
-									 minWidth="40"/>
-							<mx:Spacer width="4"/>
-							<s:Label text="{Translations.UNEMPLOYED.getItemAt(Session.LANGUAGE)}" />
-						</s:HGroup>
-					</s:VGroup>
-				</s:NavigatorContent>
-				-->
-				
-				
-				<!-- =============================================================================================== -->
-				<!-- Equipment Tab 
-				
-				<s:NavigatorContent label="{Translations.EQUIPMENT.getItemAt(Session.LANGUAGE)}">
-					<s:VGroup width="100%" horizontalAlign="center">
-						<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle">
-							<mx:GridRow >
-								<mx:GridItem >
-								</mx:GridItem >
-								<mx:GridItem horizontalAlign="center">
-									<s:Label text="{Translations.STOCK.getItemAt(Session.LANGUAGE)}" />
-								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
-									<s:Label text="{Translations.PRODUCTION.getItemAt(Session.LANGUAGE)}" />
-								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
-									<s:Label text="{Translations.ARMY.getItemAt(Session.LANGUAGE)}" />
-								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center">
-									<s:Label text="{Translations.PREVISION.getItemAt(Session.LANGUAGE)}" />
-								</mx:GridItem>
-							</mx:GridRow>
-							<mx:GridRow >
-								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-									<mx:Image toolTip="{Translations.BOW.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.BOW}"/>
-								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-									<s:Label text="{city.bowStock}/{city.bowStockCapacity}" styleName="numberLabel"/>
-								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-									<s:Label text="+ {city.bowWorkers}" styleName="numberLabel"/>
-								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-									<s:Label text="{(city.bowsRestored - city.bowsEquiped >= 0 ? '+' : '-')} {Math.abs(city.bowsRestored - city.bowsEquiped)}" 
-											 styleName="numberLabel" 
-											 color="{city.bowsRestored - city.bowsEquiped >= 0 ? Numbers.GREEN : Numbers.RED}"/>
-								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-									<s:Label text="{(city.bowStock + city.bowWorkers + city.bowsRestored - city.bowsEquiped)}" 
-											 styleName="numberLabel" 
-											 color="{city.bowStock + city.bowWorkers + city.bowsRestored - city.bowsEquiped >= 0 ? Numbers.GREEN : Numbers.RED}"/>
-								</mx:GridItem>
-							</mx:GridRow>
-							<mx:GridRow >
-								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-									<mx:Image toolTip="{Translations.SWORD.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.SWORD}"/>
-								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-									<s:Label text="{city.swordStock}/{city.swordStockCapacity}" styleName="numberLabel"/>
-								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-									<s:Label text="+ {city.swordWorkers}" styleName="numberLabel"/>
-								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-									<s:Label text="{(city.swordsRestored - city.swordsEquiped >= 0 ? '+' : '-')} {Math.abs(city.swordsRestored - city.swordsEquiped)}" 
-											 styleName="numberLabel" 
-											 color="{city.swordsRestored - city.swordsEquiped >= 0 ? Numbers.GREEN : Numbers.RED}"/>
-								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-									<s:Label text="{(city.swordStock + city.swordWorkers + city.swordsRestored - city.swordsEquiped)}" 
-											 styleName="numberLabel" 
-											 color="{city.swordStock + city.swordWorkers + city.swordsRestored - city.swordsEquiped >= 0 ? Numbers.GREEN : Numbers.RED}"/>
-								</mx:GridItem>
-							</mx:GridRow>
-							<mx:GridRow >
-								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-									<mx:Image toolTip="{Translations.ARMOR.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.ARMOR}"/>
-								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-									<s:Label text="{city.armorStock}/{city.armorStockCapacity}" styleName="numberLabel"/>
-								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-									<s:Label text="+ {city.armorWorkers}" styleName="numberLabel"/>
-								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-									<s:Label text="{(city.armorsRestored - city.armorsEquiped >= 0 ? '+' : '-')} {Math.abs(city.armorsRestored - city.armorsEquiped)}" 
-											 styleName="numberLabel" 
-											 color="{city.armorsRestored - city.armorsEquiped >= 0 ? Numbers.GREEN : Numbers.RED}"/>
-								</mx:GridItem>
-								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-									<s:Label text="{(city.armorStock + city.armorWorkers + city.armorsRestored - city.armorsEquiped)}" 
-											 styleName="numberLabel" 
-											 color="{city.armorStock + city.armorWorkers + city.armorsRestored - city.armorsEquiped >= 0 ? Numbers.GREEN : Numbers.RED}"/>
-								</mx:GridItem>
-							</mx:GridRow>
-						</mx:Grid>
-					</s:VGroup>
-				</s:NavigatorContent>
-				-->
 				
 				<!-- =============================================================================================== -->
 				<!-- Marche -->

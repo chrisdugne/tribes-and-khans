@@ -1,6 +1,8 @@
 
 package com.uralys.tribes.entities
 {
+	import com.uralys.tribes.commons.Numbers;
+	
 	import mx.collections.ArrayCollection;
 
 	[Bindable]
@@ -847,6 +849,10 @@ package com.uralys.tribes.entities
 		}
 		
 		//---------------------------------------------------------------//
+
+		public function wheatRequiredToFeed():int{
+			return (_population + unitsToFeed) * Numbers.FEED_COEFF;
+		}
 
 		public function reset():void
 		{

@@ -33,7 +33,6 @@
 
 			[Bindable] public var smiths:int;
 			[Bindable] public var stock:int;
-			[Bindable] public var stockBeingBuilt:int;
 			[Bindable] public var stockCapacity:int;
 			[Bindable] public var weaponsAdded:int;
 
@@ -49,6 +48,8 @@
 				// init des players pour la 1.2
 				if(isNaN(beginTime) || beginTime == 0)
 					beginTime = -1;
+				
+				trace(beginTime);
 				
 				if(beginTime == -1)
 					currentState = "upgradeEnabled";
@@ -165,7 +166,7 @@
 			  horizontalAlign="center">
 		<mx:Spacer width="20%"/>
 		<mx:Image source="{ImageContainer.UPGRADE_ARROW}"/>
-		<s:Label text="{stock + stockBeingBuilt + smiths * item.peopleRequired}/{stockCapacity}"
+		<s:Label text="{stock + smiths * item.peopleRequired}/{stockCapacity}"
 				 color="{Numbers.GREEN}"/>
 		<mx:Spacer width="100%"/>
 		<s:Button skinClass="{CustomButtonSkin}"

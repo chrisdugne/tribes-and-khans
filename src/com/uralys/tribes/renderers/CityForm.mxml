@@ -444,15 +444,22 @@
 
 				public function refreshBuildings():void	
 				{
-					if(wheatBuildingRenderer == null)
-						return;
+					if(wheatBuildingRenderer != null){
+						wheatBuildingRenderer.refresh();
+						woodBuildingRenderer.refresh();
+						ironBuildingRenderer.refresh();
+						bowBuildingRenderer.refresh();
+						swordBuildingRenderer.refresh();
+						armorBuildingRenderer.refresh();
 						
-					wheatBuildingRenderer.refresh();
-					woodBuildingRenderer.refresh();
-					ironBuildingRenderer.refresh();
-					bowBuildingRenderer.refresh();
-					swordBuildingRenderer.refresh();
-					armorBuildingRenderer.refresh();
+					}
+					
+					if(bowsBuildingRenderer != null){
+						bowsBuildingRenderer.refresh();
+						swordsBuildingRenderer.refresh();
+						armorsBuildingRenderer.refresh();
+					}
+					
 				}
 				
 				//-------------------------------------------------------------------------//
@@ -1178,7 +1185,6 @@
 								<renderers:SmithRenderer smiths="@{city.bowWorkers}"
 														 item="{Utils.getItem('bow')}"
 														 stock="{city.bowStock}"
-														 stockBeingBuilt="{city.bowsBeingBuilt}"
 														 stockCapacity="{city.bowStockCapacity}"
 														 weaponsAdded="@{city.bowsBeingBuilt}"
 														 beginTime="@{city.bowsBeingBuiltBeginTime}"
@@ -1195,7 +1201,6 @@
 								<renderers:SmithRenderer smiths="@{city.swordWorkers}"
 														 item="{Utils.getItem('sword')}"
 														 stock="{city.swordStock}"
-														 stockBeingBuilt="{city.swordsBeingBuilt}"
 														 stockCapacity="{city.swordStockCapacity}"
 														 weaponsAdded="@{city.swordsBeingBuilt}"
 														 beginTime="@{city.swordsBeingBuiltBeginTime}"
@@ -1212,7 +1217,6 @@
 								<renderers:SmithRenderer smiths="@{city.armorWorkers}"
 														 item="{Utils.getItem('armor')}"
 														 stock="{city.armorStock}"
-														 stockBeingBuilt="{city.armorsBeingBuilt}"
 														 stockCapacity="{city.armorStockCapacity}"
 														 weaponsAdded="@{city.armorsBeingBuilt}"
 														 beginTime="@{city.armorsBeingBuiltBeginTime}"

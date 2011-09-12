@@ -201,9 +201,9 @@
 					city.wheat += city.wheatBought;
 					city.wood += city.woodBought;
 					city.iron += city.ironBought;
-					city.bowStock += city.bowsBought;
-					city.swordStock += city.swordsBought;
-					city.armorStock += city.armorsBought;
+					city.bows += city.bowsBought;
+					city.swords += city.swordsBought;
+					city.armors += city.armorsBought;
 					
 					city.goldSpent = 0;
 					city.wheatBought = 0;
@@ -260,8 +260,8 @@
 					city.goldEarned -= (int)(city.bowsSold * Numbers.BOW_PRICE_SELL);
 					city.bowsSold = bowsMarketSellSlider.value;
 					
-					if((city.bowStock-city.bowsSold) < 0)
-						city.bowsSold = city.bowStock;
+					if((city.bows-city.bowsSold) < 0)
+						city.bowsSold = city.bows;
 					
 					city.goldEarned += (int)(city.bowsSold * Numbers.BOW_PRICE_SELL);
 				}
@@ -271,8 +271,8 @@
 					city.goldEarned -= (int)(city.swordsSold * Numbers.SWORD_PRICE_SELL);
 					city.swordsSold = swordsMarketSellSlider.value;
 					
-					if((city.swordStock-city.swordsSold) < 0)
-						city.swordsSold = city.swordStock;
+					if((city.swords-city.swordsSold) < 0)
+						city.swordsSold = city.swords;
 					
 					city.goldEarned += (int)(city.swordsSold * Numbers.SWORD_PRICE_SELL);
 				}
@@ -283,8 +283,8 @@
 					city.goldEarned -= (int)(city.armorsSold * Numbers.ARMOR_PRICE_SELL);
 					city.armorsSold = armorsMarketSellSlider.value;
 					
-					if((city.armorStock-city.armorsSold) < 0)
-						city.armorsSold = city.armorStock;
+					if((city.armors-city.armorsSold) < 0)
+						city.armorsSold = city.armors;
 					
 					city.goldEarned += (int)(city.armorsSold * Numbers.ARMOR_PRICE_SELL);
 				}
@@ -297,9 +297,9 @@
 					city.wheat -= city.wheatSold;
 					city.wood -= city.woodSold;
 					city.iron -= city.ironSold;
-					city.bowStock -= city.bowsSold;
-					city.swordStock -= city.swordsSold;
-					city.armorStock -= city.armorsSold;
+					city.bows -= city.bowsSold;
+					city.swords -= city.swordsSold;
+					city.armors -= city.armorsSold;
 					
 					city.goldEarned = 0;
 					city.wheatSold = 0;
@@ -608,19 +608,19 @@
 					if(newNbBows > previousNbBows){
 						// on ajoute des arcs a la caravane
 						
-						if(city.bowStock < newNbBows - previousNbBows){
+						if(city.bows < newNbBows - previousNbBows){
 							// la reserve en arcs n'est pas assez grande
-							newNbBows = city.bowStock + previousNbBows;
-							city.bowStock = 0;
+							newNbBows = city.bows + previousNbBows;
+							city.bows = 0;
 						}
 						else{	
 							// on pioche dans la reserve d'arcs
-							city.bowStock -= newNbBows - previousNbBows;
+							city.bows -= newNbBows - previousNbBows;
 						}
 					}
 					else{
 						// on enleve des arcs de la caravane
-						city.bowStock += previousNbBows - newNbBows;
+						city.bows += previousNbBows - newNbBows;
 					}
 					
 					city.merchant.bows = newNbBows;
@@ -636,19 +636,19 @@
 					if(newNbSwords > previousNbSwords){
 						// on ajoute des epees a la caravane
 						
-						if(city.swordStock < newNbSwords - previousNbSwords){
+						if(city.swords < newNbSwords - previousNbSwords){
 							// la reserve en epees n'est pas assez grande
-							newNbSwords = city.swordStock + previousNbSwords;
-							city.swordStock = 0;
+							newNbSwords = city.swords + previousNbSwords;
+							city.swords = 0;
 						}
 						else{	
 							// on pioche dans la reserve d'epees
-							city.swordStock -= newNbSwords - previousNbSwords;
+							city.swords -= newNbSwords - previousNbSwords;
 						}
 					}
 					else{
 						// on enleve des epees de la caravane
-						city.swordStock += previousNbSwords - newNbSwords;
+						city.swords += previousNbSwords - newNbSwords;
 					}
 					
 					city.merchant.swords = newNbSwords;
@@ -663,19 +663,19 @@
 					if(newNbArmors > previousNbArmors){
 						// on ajoute des armures a la caravane
 						
-						if(city.armorStock < newNbArmors - previousNbArmors){
+						if(city.armors < newNbArmors - previousNbArmors){
 							// la reserve en armures n'est pas assez grande
-							newNbArmors = city.armorStock + previousNbArmors;
-							city.armorStock = 0;
+							newNbArmors = city.armors + previousNbArmors;
+							city.armors = 0;
 						}
 						else{	
 							// on pioche dans la reserve d'armures
-							city.armorStock -= newNbArmors - previousNbArmors;
+							city.armors -= newNbArmors - previousNbArmors;
 						}
 					}
 					else{
 						// on enleve des armures de la caravane
-						city.armorStock += previousNbArmors - newNbArmors;
+						city.armors += previousNbArmors - newNbArmors;
 					}
 					
 					city.merchant.armors = newNbArmors;
@@ -691,10 +691,10 @@
 					var previousNbBowsInArmy:int = city.army.bows;
 					var newNbBowsInArmy:int = bowsArmySlider.value;
 					
-					if(city.bowStock + previousNbBowsInArmy - newNbBowsInArmy > city.bowStockCapacity)
-						newNbBowsInArmy = previousNbBowsInArmy - city.bowStockCapacity - city.bowStock;
+					if(city.bows + previousNbBowsInArmy - newNbBowsInArmy > city.bowStockCapacity)
+						newNbBowsInArmy = previousNbBowsInArmy - city.bowStockCapacity - city.bows;
 					
-					city.bowStock += previousNbBowsInArmy - newNbBowsInArmy;
+					city.bows += previousNbBowsInArmy - newNbBowsInArmy;
 					city.army.bows = newNbBowsInArmy;
 					bowsArmySlider.value = city.army.bows;
 				}
@@ -704,10 +704,10 @@
 					var previousNbSwordsInArmy:int = city.army.swords;
 					var newNbSwordsInArmy:int = swordsArmySlider.value;
 					
-					if(city.swordStock + previousNbSwordsInArmy - newNbSwordsInArmy > city.swordStockCapacity)
-						newNbSwordsInArmy = previousNbSwordsInArmy - city.swordStockCapacity - city.swordStock;
+					if(city.swords + previousNbSwordsInArmy - newNbSwordsInArmy > city.swordStockCapacity)
+						newNbSwordsInArmy = previousNbSwordsInArmy - city.swordStockCapacity - city.swords;
 					
-					city.swordStock += previousNbSwordsInArmy - newNbSwordsInArmy;
+					city.swords += previousNbSwordsInArmy - newNbSwordsInArmy;
 					city.army.swords = newNbSwordsInArmy;
 					swordsArmySlider.value = city.army.swords;
 				}
@@ -717,10 +717,10 @@
 					var previousNbArmorsInArmy:int = city.army.armors;
 					var newNbArmorsInArmy:int = armorsArmySlider.value;
 					
-					if(city.armorStock + previousNbArmorsInArmy - newNbArmorsInArmy > city.armorStockCapacity)
-						newNbArmorsInArmy = previousNbArmorsInArmy - city.armorStockCapacity - city.armorStock;
+					if(city.armors + previousNbArmorsInArmy - newNbArmorsInArmy > city.armorStockCapacity)
+						newNbArmorsInArmy = previousNbArmorsInArmy - city.armorStockCapacity - city.armors;
 					
-					city.armorStock += previousNbArmorsInArmy - newNbArmorsInArmy;
+					city.armors += previousNbArmorsInArmy - newNbArmorsInArmy;
 					city.army.armors = newNbArmorsInArmy;
 					armorsArmySlider.value = city.army.armors;
 				}
@@ -806,32 +806,32 @@
 					// on enleve des arcs a l'armee
 					var nbBowsRestored:int = city.army.bows;
 					
-					if(nbBowsRestored + city.bowStock > city.bowStockCapacity){
+					if(nbBowsRestored + city.bows > city.bowStockCapacity){
 						trace("les arcs debordent");
-						city.bowStock = city.bowStockCapacity;
+						city.bows = city.bowStockCapacity;
 					}
 					else
-						city.bowStock += city.army.bows;
+						city.bows += city.army.bows;
 					
 					// on enleve des epees a l'armee
 					var nbSwordsRestored:int = city.army.swords;
 					
-					if(nbSwordsRestored + city.swordStock > city.swordStockCapacity){
+					if(nbSwordsRestored + city.swords > city.swordStockCapacity){
 						trace("les epees debordent");
-						city.swordStock = city.swordStockCapacity;
+						city.swords = city.swordStockCapacity;
 					}
 					else
-						city.swordStock += city.army.swords;
+						city.swords += city.army.swords;
 					
 					// on enleve des armures a l'armee
 					var nbArmorsRestored:int = city.army.armors;
 					
-					if(nbArmorsRestored + city.armorStock > city.armorStockCapacity){
+					if(nbArmorsRestored + city.armors > city.armorStockCapacity){
 						trace("les armures debordent");
-						city.armorStock = city.armorStockCapacity;
+						city.armors = city.armorStockCapacity;
 					}
 					else
-						city.armorStock += city.army.armors;
+						city.armors += city.army.armors;
 					
 					//---------------------------------//
 					
@@ -902,29 +902,29 @@
 					// on enleve des arcs a l'armee
 					var nbBowsRestored:int = city.merchant.bows;
 					
-					if(nbBowsRestored + city.bowStock > city.bowStockCapacity){
-						city.bowStock = city.bowStockCapacity;
+					if(nbBowsRestored + city.bows > city.bowStockCapacity){
+						city.bows = city.bowStockCapacity;
 					}
 					else
-						city.bowStock += nbBowsRestored;
+						city.bows += nbBowsRestored;
 					
 					// on enleve des epees a l'armee
 					var nbSwordsRestored:int = city.merchant.swords;
 					
-					if(nbSwordsRestored + city.swordStock > city.swordStockCapacity){
-						city.swordStock = city.swordStockCapacity;
+					if(nbSwordsRestored + city.swords > city.swordStockCapacity){
+						city.swords = city.swordStockCapacity;
 					}
 					else
-						city.swordStock += nbSwordsRestored;
+						city.swords += nbSwordsRestored;
 					
 					// on enleve des armures a l'armee
 					var nbArmorsRestored:int = city.merchant.armors;
 					
-					if(nbArmorsRestored + city.armorStock > city.armorStockCapacity){
-						city.armorStock = city.armorStockCapacity;
+					if(nbArmorsRestored + city.armors > city.armorStockCapacity){
+						city.armors = city.armorStockCapacity;
 					}
 					else
-						city.armorStock += nbArmorsRestored;
+						city.armors += nbArmorsRestored;
 					
 					//---------------------------------//
 					
@@ -1180,11 +1180,11 @@
 							
 							<mx:Spacer height="15"/>
 							<s:HGroup width="100%" verticalAlign="middle">
-								<s:Label text="{city.bowStock}/{city.bowStockCapacity}" styleName="numberLabel"/>
+								<s:Label text="{city.bows}/{city.bowStockCapacity}" styleName="numberLabel"/>
 								<mx:Image toolTip="{Translations.BOW.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.BOW}"/>
 								<renderers:SmithRenderer smiths="@{city.bowWorkers}"
 														 item="{Utils.getItem('bow')}"
-														 stock="{city.bowStock}"
+														 stock="{city.bows}"
 														 stockCapacity="{city.bowStockCapacity}"
 														 weaponsAdded="@{city.bowsBeingBuilt}"
 														 beginTime="@{city.bowsBeingBuiltBeginTime}"
@@ -1196,11 +1196,11 @@
 
 							<mx:Spacer height="15"/>
 							<s:HGroup width="100%" verticalAlign="middle">
-								<s:Label text="{city.swordStock}/{city.swordStockCapacity}" styleName="numberLabel"/>
+								<s:Label text="{city.swords}/{city.swordStockCapacity}" styleName="numberLabel"/>
 								<mx:Image toolTip="{Translations.SWORD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.SWORD}"/>
 								<renderers:SmithRenderer smiths="@{city.swordWorkers}"
 														 item="{Utils.getItem('sword')}"
-														 stock="{city.swordStock}"
+														 stock="{city.swords}"
 														 stockCapacity="{city.swordStockCapacity}"
 														 weaponsAdded="@{city.swordsBeingBuilt}"
 														 beginTime="@{city.swordsBeingBuiltBeginTime}"
@@ -1212,11 +1212,11 @@
 
 							<mx:Spacer height="15"/>
 							<s:HGroup width="100%" verticalAlign="middle">
-								<s:Label text="{city.armorStock}/{city.armorStockCapacity}" styleName="numberLabel"/>
+								<s:Label text="{city.armors}/{city.armorStockCapacity}" styleName="numberLabel"/>
 								<mx:Image toolTip="{Translations.ARMOR.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.ARMOR}"/>
 								<renderers:SmithRenderer smiths="@{city.armorWorkers}"
 														 item="{Utils.getItem('armor')}"
-														 stock="{city.armorStock}"
+														 stock="{city.armors}"
 														 stockCapacity="{city.armorStockCapacity}"
 														 weaponsAdded="@{city.armorsBeingBuilt}"
 														 beginTime="@{city.armorsBeingBuiltBeginTime}"
@@ -1376,7 +1376,7 @@
 															   liveDragging="true" 
 															   change="bowsMarketBuyCheck(event)"
 															   value="{city.bowsBought}"
-															   maximum="{city.bowStockCapacity - city.bowStock &lt; city.gold/Numbers.BOW_PRICE_BUY ? (city.bowStockCapacity - city.bowStock) : city.gold/Numbers.BOW_PRICE_BUY}"
+															   maximum="{city.bowStockCapacity - city.bows &lt; city.gold/Numbers.BOW_PRICE_BUY ? (city.bowStockCapacity - city.bows) : city.gold/Numbers.BOW_PRICE_BUY}"
 															   snapInterval="1"/>
 												</s:HGroup>
 											</mx:GridItem>
@@ -1410,7 +1410,7 @@
 															   liveDragging="true" 
 															   change="swordsMarketBuyCheck(event)"
 															   value="{city.swordsBought}"
-															   maximum="{city.swordStockCapacity - city.swordStock &lt; city.gold/Numbers.SWORD_PRICE_BUY ? (city.swordStockCapacity - city.swordStock) : city.gold/Numbers.SWORD_PRICE_BUY}"
+															   maximum="{city.swordStockCapacity - city.swords &lt; city.gold/Numbers.SWORD_PRICE_BUY ? (city.swordStockCapacity - city.swords) : city.gold/Numbers.SWORD_PRICE_BUY}"
 															   snapInterval="1"/>
 												</s:HGroup>
 											</mx:GridItem>
@@ -1438,7 +1438,7 @@
 															   liveDragging="true" 
 															   change="armorsMarketBuyCheck(event)"
 															   value="{city.armorsBought}"
-															   maximum="{city.armorStockCapacity - city.armorStock &lt; city.gold/Numbers.ARMOR_PRICE_BUY ? (city.armorStockCapacity - city.armorStock) : city.gold/Numbers.ARMOR_PRICE_BUY}"
+															   maximum="{city.armorStockCapacity - city.armors &lt; city.gold/Numbers.ARMOR_PRICE_BUY ? (city.armorStockCapacity - city.armors) : city.gold/Numbers.ARMOR_PRICE_BUY}"
 															   snapInterval="1"/>
 												</s:HGroup>
 											</mx:GridItem>
@@ -1615,7 +1615,7 @@
 															   liveDragging="true" 
 															   change="bowsMarketSellCheck(event)"
 															   value="{city.bowsSold}"
-															   maximum="{city.bowStock}"
+															   maximum="{city.bows}"
 															   snapInterval="1"/>
 												</s:HGroup>
 											</mx:GridItem>
@@ -1646,7 +1646,7 @@
 															   liveDragging="true" 
 															   change="swordsMarketSellCheck(event)"
 															   value="{city.swordsSold}"
-															   maximum="{city.swordStock}"
+															   maximum="{city.swords}"
 															   snapInterval="1"/>
 												</s:HGroup>
 											</mx:GridItem>
@@ -1677,7 +1677,7 @@
 															   liveDragging="true" 
 															   change="armorsMarketSellCheck(event)"
 															   value="{city.armorsSold}"
-															   maximum="{city.armorStock}"
+															   maximum="{city.armors}"
 															   snapInterval="1"/>
 												</s:HGroup>
 											</mx:GridItem>
@@ -1908,13 +1908,13 @@
 															   liveDragging="true" 
 															   change="bowsMerchantCheck(event)"
 															   value="{city.merchant.bows}"
-															   maximum="{city.bowStock + city.merchant.bows}"
+															   maximum="{city.bows + city.merchant.bows}"
 															   snapInterval="1"
 															   enabled="{city.merchant.moves.length == 1 || city.merchant.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
 												</s:HGroup>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-												<s:Label text="{city.bowStock}" />
+												<s:Label text="{city.bows}" />
 											</mx:GridItem>
 										</mx:GridRow>
 										<mx:GridRow >
@@ -1932,13 +1932,13 @@
 															   liveDragging="true" 
 															   change="swordsMerchantCheck(event)"
 															   value="{city.merchant.swords}"
-															   maximum="{city.swordStock + city.merchant.swords}"
+															   maximum="{city.swords + city.merchant.swords}"
 															   snapInterval="1"
 															   enabled="{city.merchant.moves.length == 1 || city.merchant.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
 												</s:HGroup>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-												<s:Label text="{city.swordStock}" />
+												<s:Label text="{city.swords}" />
 											</mx:GridItem>
 										</mx:GridRow>
 										<mx:GridRow >
@@ -1956,13 +1956,13 @@
 															   liveDragging="true" 
 															   change="armorsMerchantCheck(event)"
 															   value="{city.merchant.armors}"
-															   maximum="{city.armorStock + city.merchant.armors}"
+															   maximum="{city.armors + city.merchant.armors}"
 															   snapInterval="1"
 															   enabled="{city.merchant.moves.length == 1 || city.merchant.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
 												</s:HGroup>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-												<s:Label text="{city.armorStock}" />
+												<s:Label text="{city.armors}" />
 											</mx:GridItem>
 										</mx:GridRow>
 										<mx:GridRow>
@@ -2054,13 +2054,13 @@
 												   liveDragging="true" 
 												   change="bowsArmyCheck(event)"
 												   value="{city.army.bows}"
-												   maximum="{city.bowStock + city.army.bows}"
+												   maximum="{city.bows + city.army.bows}"
 												   snapInterval="1"
 												   enabled="{city.army.moves.length == 1 || city.army.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
 									</s:HGroup>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-									<s:Label text="{city.bowStock}" />
+									<s:Label text="{city.bows}" />
 								</mx:GridItem>
 							</mx:GridRow>
 							<mx:GridRow >
@@ -2078,13 +2078,13 @@
 												   liveDragging="true" 
 												   change="swordsArmyCheck(event)"
 												   value="{city.army.swords}"
-												   maximum="{city.swordStock + city.army.swords}"
+												   maximum="{city.swords + city.army.swords}"
 												   snapInterval="1"
 												   enabled="{city.army.moves.length == 1 || city.army.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
 									</s:HGroup>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-									<s:Label text="{city.swordStock}" />
+									<s:Label text="{city.swords}" />
 								</mx:GridItem>
 							</mx:GridRow>
 							<mx:GridRow >
@@ -2102,13 +2102,13 @@
 												   liveDragging="true" 
 												   change="armorsArmyCheck(event)"
 												   value="{city.army.armors}"
-												   maximum="{city.armorStock + city.army.armors}"
+												   maximum="{city.armors + city.army.armors}"
 												   snapInterval="1"
 												   enabled="{city.army.moves.length == 1 || city.army.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
 									</s:HGroup>
 								</mx:GridItem>
 								<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-									<s:Label text="{city.armorStock}" />
+									<s:Label text="{city.armors}" />
 								</mx:GridItem>
 							</mx:GridRow>
 							<mx:GridRow>

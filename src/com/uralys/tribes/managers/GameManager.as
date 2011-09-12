@@ -9,7 +9,7 @@ package com.uralys.tribes.managers {
 	import com.uralys.tribes.core.Pager;
 	import com.uralys.tribes.core.UnitMover;
 	import com.uralys.tribes.entities.Ally;
-	import com.uralys.tribes.entities.Case;
+	import com.uralys.tribes.entities.Cell;
 	import com.uralys.tribes.entities.City;
 	import com.uralys.tribes.entities.DataContainer4UnitSaved;
 	import com.uralys.tribes.entities.Equipment;
@@ -100,21 +100,6 @@ package com.uralys.tribes.managers {
 			
 			for each(var city:City in player.cities)
 			{
-				// recuperation des stocks de la forge
-				for each(var equipment:Equipment in city.equipmentStock){
-					switch(equipment.item.name){
-						case "bow" :
-							city.bowStock = equipment.size;
-							break;
-						case "sword" :
-							city.swordStock = equipment.size;
-							break;
-						case "armor" :
-							city.armorStock = equipment.size;
-							break;
-					}
-				}
-
 				trace("MAJ des stocks : ("+city.stocks.length+" depots)");
 				// recuperation des stocks
 				for each(var stock:Stock in city.stocks)
@@ -252,7 +237,7 @@ package com.uralys.tribes.managers {
 				city.population = calculatePopulation(city.population, starvation);
 				
 				if(!catchUpCalculation)
-					refreshCitySmithsAndEquipmentsAndStocks(city);
+					refreshStocks(city);
 				// else catchUpCalculation : on ne refresh surtout pas smith et equipment, ils sont necessaires pour updateCityWorkersEarningsAndSpendings
 				
 				city.reset();
@@ -284,15 +269,15 @@ package com.uralys.tribes.managers {
 				switch(Utils.getItem(Utils.getStockItem(stock.stockUID)).name)
 				{
 					case "bow" :
-						city.bowStock += stock.itemsBeingBuilt;
+						city.bows += stock.itemsBeingBuilt;
 						city.bowWorkers = 0;
 						break;
 					case "sword" :
-						city.swordStock += stock.itemsBeingBuilt;
+						city.swords += stock.itemsBeingBuilt;
 						city.swordWorkers = 0;
 						break;
 					case "armor" :
-						city.armorStock += stock.itemsBeingBuilt;
+						city.armors += stock.itemsBeingBuilt;
 						city.armorWorkers = 0;
 						break;
 				}
@@ -301,39 +286,8 @@ package com.uralys.tribes.managers {
 			}
 		}
 		
-		private function refreshCitySmithsAndEquipmentsAndStocks(city:City):void
+		private function refreshStocks(city:City):void
 		{
-			for each(var equipment:Equipment in city.equipmentStock)
-			{
-				switch(equipment.item.name)
-				{
-					case "bow" :
-						equipment.size = city.bowStock;
-						break;
-					case "sword" :
-						equipment.size = city.swordStock;
-						break;
-					case "armor" :
-						equipment.size = city.armorStock;
-						break;
-				}
-			}
-			
-			for each(var smith:Smith in city.smiths)
-			{
-				switch(smith.item.name){
-					case "bow" :
-						smith.people = city.bowWorkers;
-						break;
-					case "sword" :
-						smith.people = city.swordWorkers;
-						break;
-					case "armor" :
-						smith.people = city.armorWorkers;
-						break;
-				}
-			}
-
 			for each(var stock:Stock in city.stocks)
 			{
 				var stockName:String = Utils.getStockName(stock.stockUID);
@@ -366,6 +320,7 @@ package com.uralys.tribes.managers {
 						stock.stockNextCapacity = city.bowStockNextCapacity;
 						stock.stockBeginTime = city.bowStockBeginTime;
 						stock.stockEndTime = city.bowStockEndTime;
+						stock.smiths = city.bowWorkers;
 						stock.itemsBeingBuilt = city.bowsBeingBuilt;
 						stock.itemsBeingBuiltBeginTime = city.bowsBeingBuiltBeginTime;
 						stock.itemsBeingBuiltEndTime = city.bowsBeingBuiltEndTime;
@@ -376,6 +331,7 @@ package com.uralys.tribes.managers {
 						stock.stockNextCapacity = city.swordStockNextCapacity;
 						stock.stockBeginTime = city.swordStockBeginTime;
 						stock.stockEndTime = city.swordStockEndTime;
+						stock.smiths = city.swordWorkers;
 						stock.itemsBeingBuilt = city.swordsBeingBuilt;
 						stock.itemsBeingBuiltBeginTime = city.swordsBeingBuiltBeginTime;
 						stock.itemsBeingBuiltEndTime = city.swordsBeingBuiltEndTime;
@@ -386,6 +342,7 @@ package com.uralys.tribes.managers {
 						stock.stockNextCapacity = city.armorStockNextCapacity;
 						stock.stockBeginTime = city.armorStockBeginTime;
 						stock.stockEndTime = city.armorStockEndTime;
+						stock.smiths = city.armorWorkers;
 						stock.itemsBeingBuilt = city.armorsBeingBuilt;
 						stock.itemsBeingBuiltBeginTime = city.armorsBeingBuiltBeginTime;
 						stock.itemsBeingBuiltEndTime = city.armorsBeingBuiltEndTime;
@@ -844,7 +801,7 @@ package com.uralys.tribes.managers {
 
 		public function saveCity(city:City):void
 		{
-			refreshCitySmithsAndEquipmentsAndStocks(city);
+			refreshStocks(city);
 			
 			var gameWrapper:RemoteObject = getGameWrapper();
 			gameWrapper.saveCity(city);			
@@ -852,7 +809,7 @@ package com.uralys.tribes.managers {
 
 		public function buildCity(city:City, merchant:Unit):void
 		{
-			refreshCitySmithsAndEquipmentsAndStocks(city);
+			refreshStocks(city);
 			
 			cityBeingSaved = city;
 			
@@ -1080,7 +1037,7 @@ package com.uralys.tribes.managers {
 				Session.map[Session.firstCaseX+i] = [];
 				for(var j:int=0; j < Session.nbTilesByEdge; j++)
 				{
-					Session.map[Session.firstCaseX+i][Session.firstCaseY+j] = new Case(Session.firstCaseX+i,Session.firstCaseY+j);
+					Session.map[Session.firstCaseX+i][Session.firstCaseY+j] = new Cell(Session.firstCaseX+i,Session.firstCaseY+j);
 				}
 			}
 
@@ -1094,10 +1051,10 @@ package com.uralys.tribes.managers {
 			// on en profite aussi pour rafraichir les villes en Session
 			
 			var citiesLoaded:ArrayCollection = new ArrayCollection();
-			for each(var _case:Case in Session.CASES_LOADED)
+			for each(var _case:Cell in Session.CASES_LOADED)
 			{
 				Session.map[_case.x][_case.y] = _case;
-				(Session.map[_case.x][_case.y] as Case).forceRefresh(true);
+				(Session.map[_case.x][_case.y] as Cell).forceRefresh(true);
 				
 				if(_case.city != null)
 					citiesLoaded.addItem(_case.city);
@@ -1179,14 +1136,14 @@ package com.uralys.tribes.managers {
 					catch(e:Error){trace("not able to addTimer for this unit");};
 				}
 				
-				for each(var caseAltered:Case in casesAltered)
+				for each(var caseAltered:Cell in casesAltered)
 				{
-					trace("caseAltered : " + caseAltered.caseUID);
+					trace("caseAltered : " + caseAltered.cellUID);
 					if(caseAltered.challenger != null)
 						trace("challengerUID : " + caseAltered.challenger.playerUID);
 					trace("timeFromChallenging : " + caseAltered.timeFromChallenging);
 					try{
-						var caseInSession:Case = (Session.map[caseAltered.x][caseAltered.y] as Case);
+						var caseInSession:Cell = (Session.map[caseAltered.x][caseAltered.y] as Cell);
 						
 						if(caseInSession != null){
 							Session.map[caseAltered.x][caseAltered.y].recordedMoves = caseAltered.recordedMoves;

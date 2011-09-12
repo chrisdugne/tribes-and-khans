@@ -19,7 +19,7 @@ package com.uralys.tribes.entities
 		public function initNewMove(unitUID:String, i:int, j:int, __timeFrom:Number = -1, __timeTo:Number = -1):void{
 			_timeFrom = __timeFrom == -1 ? new Date().getTime() : __timeFrom;
 			_moveUID = "NEW_"+timeFrom+"_"+i+"_"+j+"_"+unitUID; // a noter que le timeFrom vaut 'now' ici, mais ca sert a rien
-			_caseUID = "case_"+i+"_"+j;
+			_cellUID = "cell_"+i+"_"+j;
 			_unitUID = unitUID;
 			_timeTo = __timeTo;
 		}
@@ -27,23 +27,24 @@ package com.uralys.tribes.entities
 		//--------------------------------------------------------------//
 		
 		protected var _moveUID:String;
-		protected var _unitUID:String;
-		protected var _caseUID:String;
+
+		protected var _cellUID:String;
 		protected var _timeFrom:Number;
 		protected var _timeTo:Number;
-		protected var _value:int;
-		protected var _gathering:Gathering;
+		
+		protected var _unitUID:String;
+		protected var _hidden:Boolean;
 		
 		//--------------------------------------------------------------//
 		
-		public function get gathering():Gathering
+		public function get hidden():Boolean
 		{
-			return _gathering;
+			return _hidden;
 		}
 		
-		public function set gathering(value:Gathering):void
+		public function set hidden(value:Boolean):void
 		{
-			_gathering = value;
+			_hidden = value;
 		}
 		
 		public function get moveUID():String {
@@ -62,12 +63,12 @@ package com.uralys.tribes.entities
 			_unitUID = o;
 		}
 		
-		public function get caseUID():String {
-			return _caseUID;
+		public function get cellUID():String {
+			return _cellUID;
 		}
 		
-		public function set caseUID(o:String):void {
-			_caseUID = o;
+		public function set cellUID(o:String):void {
+			_cellUID = o;
 		}
 		
 		public function get timeFrom():Number {
@@ -86,22 +87,14 @@ package com.uralys.tribes.entities
 			_timeTo = o;
 		}
 		
-		public function get value():int {
-			return _value;
-		}
-		
-		public function set value(o:int):void {
-			_value = o;
-		}
-		
 		//--------------------------------------------------------------//
 		
 		public function getX():int {
-			return Utils.getXFromCaseUID(_caseUID);
+			return Utils.getXFromCaseUID(_cellUID);
 		}
 
 		public function getY():int {
-			return Utils.getYFromCaseUID(_caseUID);
+			return Utils.getYFromCaseUID(_cellUID);
 		}
 
 

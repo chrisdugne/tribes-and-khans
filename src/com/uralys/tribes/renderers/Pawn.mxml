@@ -13,7 +13,7 @@
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;
 			import com.uralys.tribes.core.BoardDrawer;
-			import com.uralys.tribes.entities.Case;
+			import com.uralys.tribes.entities.Cell;
 			import com.uralys.tribes.entities.Move;
 			import com.uralys.tribes.entities.Unit;
 			import com.uralys.tribes.skins.ClassicProgressBarSkin;
@@ -30,7 +30,7 @@
 			
 			[Bindable] public var timeTo:Number;	
 			[Bindable] public var status:int;	
-			[Bindable] public var _case:Case;	
+			[Bindable] public var _case:Cell;	
 			[Bindable] public var unit:Unit;
 			
 			//----------------------------------------------------------------------------------//

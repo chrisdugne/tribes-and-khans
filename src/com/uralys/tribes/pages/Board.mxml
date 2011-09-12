@@ -24,9 +24,8 @@
 			import com.uralys.tribes.core.BoardDrawer;
 			import com.uralys.tribes.core.Pager;
 			import com.uralys.tribes.core.UnitMover;
-			import com.uralys.tribes.entities.Case;
+			import com.uralys.tribes.entities.Cell;
 			import com.uralys.tribes.entities.City;
-			import com.uralys.tribes.entities.Conflict;
 			import com.uralys.tribes.entities.Equipment;
 			import com.uralys.tribes.entities.Game;
 			import com.uralys.tribes.entities.Move;
@@ -38,7 +37,6 @@
 			import com.uralys.tribes.skins.ClassicProgressBarSkin;
 			import com.uralys.tribes.skins.CustomProgressTrackSkin;
 			import com.uralys.tribes.windows.MessageWindow;
-			import com.uralys.tribes.windows.ReportsWindow;
 			import com.uralys.utils.Utils;
 			
 			import flash.sampler.getInvocationCount;
@@ -104,7 +102,7 @@
 			public function onMyUnitClick(event:ItemClickEvent):void
 			{
 				var unit:Unit = event.currentTarget.selectedItem;
-				unit.currentCaseUID = (unit.moves.getItemAt(0) as com.uralys.tribes.entities.Move).caseUID;
+				unit.currentCaseUID = (unit.moves.getItemAt(0) as com.uralys.tribes.entities.Move).cellUID;
 				
 				placeBoard(Utils.getXFromCaseUID(unit.currentCaseUID), Utils.getYFromCaseUID(unit.currentCaseUID));
 				var caseBeingLoaded:Boolean = reloadCurrentCases();
@@ -191,8 +189,8 @@
 					var displayProgress:Boolean = move.timeFrom < now && move.timeTo > now;
 					BoardDrawer.getInstance().addMoveImages(move, xPreviousMove, yPreviousMove, displayProgress);
 					
-					xPreviousMove = Utils.getXFromCaseUID(move.caseUID);
-					yPreviousMove = Utils.getYFromCaseUID(move.caseUID); 
+					xPreviousMove = Utils.getXFromCaseUID(move.cellUID);
+					yPreviousMove = Utils.getYFromCaseUID(move.cellUID); 
 				}	
 			}
 			
@@ -591,9 +589,9 @@
 				city.iron = selectedUnit.iron - (Numbers.CITY_IRON_BASE_PRICE + selectedUnit.size * 10);
 				city.population = selectedUnit.size;
 				
-				city.bowStock = selectedUnit.bows;
-				city.swordStock = selectedUnit.swords;
-				city.armorStock = selectedUnit.armors;
+				city.bows = selectedUnit.bows;
+				city.swords = selectedUnit.swords;
+				city.armors = selectedUnit.armors;
 				
 				city.x = Session.CURRENT_CASE_SELECTED.x;
 				city.y = Session.CURRENT_CASE_SELECTED.y;

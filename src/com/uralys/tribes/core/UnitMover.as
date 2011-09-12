@@ -3,7 +3,7 @@ package com.uralys.tribes.core
 	import com.uralys.tribes.commons.Numbers;
 	import com.uralys.tribes.commons.Session;
 	import com.uralys.tribes.commons.Translations;
-	import com.uralys.tribes.entities.Case;
+	import com.uralys.tribes.entities.Cell;
 	import com.uralys.tribes.entities.City;
 	import com.uralys.tribes.entities.Move;
 	import com.uralys.tribes.entities.Unit;
@@ -103,7 +103,7 @@ package com.uralys.tribes.core
 				timers.remove(e.currentTarget);
 				
 				// refresh de la case dont on part : suppression du move dans case.recordedMoves et dans unit.moves
-				var caseToRefresh:Case = Session.map[moveToPerform.getX()][moveToPerform.getY()] as Case;		
+				var caseToRefresh:Cell = Session.map[moveToPerform.getX()][moveToPerform.getY()] as Cell;		
 				caseToRefresh.forceRefresh();
 				
 				// efface le 'pion' de la case
@@ -118,7 +118,7 @@ package com.uralys.tribes.core
 				
 				
 				// refresh de la nouvelle case active : ajout de l'unité sur la case
-				var newCaseToRefresh:Case = Session.map[newCurrentMove.getX()][newCurrentMove.getY()] as Case;
+				var newCaseToRefresh:Cell = Session.map[newCurrentMove.getX()][newCurrentMove.getY()] as Cell;
 				newCaseToRefresh.forceRefresh();
 	
 				// affiche le 'pion' de la case
@@ -176,19 +176,19 @@ package com.uralys.tribes.core
 				unit.moves.addItem(newMove);
 				
 				// ajout du newMove dans les recordedMoves de la case courante
-				var caseSelected:Case = Session.map[Utils.getXFromCaseUID(newMove.caseUID)][Utils.getYFromCaseUID(newMove.caseUID)] as Case;
+				var caseSelected:Cell = Session.map[Utils.getXFromCaseUID(newMove.cellUID)][Utils.getYFromCaseUID(newMove.cellUID)] as Cell;
 				caseSelected.recordedMoves.addItem(newMove);
 				
 				// refresh du recordedMove qui correspond a lastMove sur la case du lastMove pour enregistrer le nouveau timeTo
-				var previousMoveX:int = Utils.getXFromCaseUID(previousMove.caseUID);
-				var previousMoveY:int = Utils.getYFromCaseUID(previousMove.caseUID);
-				var caseOfLastMove:Case = Session.map[previousMoveX][previousMoveY] as Case;
+				var previousMoveX:int = Utils.getXFromCaseUID(previousMove.cellUID);
+				var previousMoveY:int = Utils.getYFromCaseUID(previousMove.cellUID);
+				var caseOfLastMove:Cell = Session.map[previousMoveX][previousMoveY] as Cell;
 				caseOfLastMove.refreshRecordedMove(previousMove);
 				
 				previousMove = newMove;
 				moveBeginsNow = false;
 				
-				unit.finalCaseUIDExpected = newMove.caseUID;
+				unit.finalCaseUIDExpected = newMove.cellUID;
 			}
 		}
 
@@ -234,7 +234,7 @@ package com.uralys.tribes.core
 			
 			
 			trace("nbMoves remaining : " + unit.moves.length);
-			unit.currentCaseUID = (unit.moves.getItemAt(0) as Move).caseUID;
+			unit.currentCaseUID = (unit.moves.getItemAt(0) as Move).cellUID;
 			
 			trace("unit.currentCaseUID : " + unit.currentCaseUID);
 			trace("refreshMoves DONE");
@@ -254,8 +254,8 @@ package com.uralys.tribes.core
 			
 			try{
 				// si l'unite VA dans une ville et que la finalCase n'est PAS cette ville (sinon nouveau depart depuis la ville)
-				if(unit.finalCaseUIDExpected != (Session.map[lastMove.getX()][lastMove.getY()] as Case).caseUID
-				&& (Session.map[lastMove.getX()][lastMove.getY()] as Case).city != null)
+				if(unit.finalCaseUIDExpected != (Session.map[lastMove.getX()][lastMove.getY()] as Cell).cellUID
+				&& (Session.map[lastMove.getX()][lastMove.getY()] as Cell).city != null)
 				{
 					lastMoveIsInCity = true;
 				}
@@ -273,8 +273,8 @@ package com.uralys.tribes.core
 			}
 			
 			var lastMove:com.uralys.tribes.entities.Move = movesPending.getItemAt(movesPending.length-1) as com.uralys.tribes.entities.Move;
-			var lastMoveX:int = Utils.getXFromCaseUID(lastMove.caseUID);
-			var lastMoveY:int = Utils.getYFromCaseUID(lastMove.caseUID);
+			var lastMoveX:int = Utils.getXFromCaseUID(lastMove.cellUID);
+			var lastMoveY:int = Utils.getYFromCaseUID(lastMove.cellUID);
 			
 			var distance:int = Math.abs(lastMoveX - Session.COORDINATE_X) + Math.abs(lastMoveY - Session.COORDINATE_Y);
 			
@@ -301,7 +301,7 @@ package com.uralys.tribes.core
 				Session.REMOVING_MOVES_ENABLE = false
 				
 				try{
-					if((Session.map[Session.COORDINATE_X][Session.COORDINATE_Y] as Case).city != null){
+					if((Session.map[Session.COORDINATE_X][Session.COORDINATE_Y] as Cell).city != null){
 						lastMoveIsInCity = true;
 					}
 				}

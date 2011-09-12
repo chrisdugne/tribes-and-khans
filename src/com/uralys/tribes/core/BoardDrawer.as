@@ -4,12 +4,10 @@ package com.uralys.tribes.core
 	import com.uralys.tribes.commons.Numbers;
 	import com.uralys.tribes.commons.Session;
 	import com.uralys.tribes.commons.Translations;
-	import com.uralys.tribes.entities.Case;
+	import com.uralys.tribes.entities.Cell;
 	import com.uralys.tribes.entities.City;
-	import com.uralys.tribes.entities.Conflict;
 	import com.uralys.tribes.entities.Game;
 	import com.uralys.tribes.entities.Move;
-	import com.uralys.tribes.entities.MoveConflict;
 	import com.uralys.tribes.entities.Player;
 	import com.uralys.tribes.entities.Unit;
 	import com.uralys.tribes.managers.GameManager;
@@ -115,7 +113,7 @@ package com.uralys.tribes.core
 			{
 				for(var i:int=0; i < Session.nbTilesByEdge; i++)
 				{
-					var _case:Case = Session.map[Session.firstCaseX+i][Session.firstCaseY+j];
+					var _case:Cell = Session.map[Session.firstCaseX+i][Session.firstCaseY+j];
 					
 					if(_case.type == 1)
 						drawCase(_case); 
@@ -126,7 +124,7 @@ package com.uralys.tribes.core
 			{
 				for(var i:int=0; i < Session.nbTilesByEdge; i++)
 				{
-					var _case:Case = Session.map[Session.firstCaseX+i][Session.firstCaseY+j];
+					var _case:Cell = Session.map[Session.firstCaseX+i][Session.firstCaseY+j];
 					
 					if(_case.type == 1)
 						drawCity(_case.city);
@@ -135,7 +133,7 @@ package com.uralys.tribes.core
 				// draw forests grounds
 				for(var i:int=0; i < Session.nbTilesByEdge; i++)
 				{
-					var _case:Case = Session.map[Session.firstCaseX+i][Session.firstCaseY+j];
+					var _case:Cell = Session.map[Session.firstCaseX+i][Session.firstCaseY+j];
 					
 					if(_case.type == 0){
 						drawCase(_case);
@@ -149,9 +147,9 @@ package com.uralys.tribes.core
 				// draw units
 				for(var i:int=0; i < Session.nbTilesByEdge; i++)
 				{
-					var _case:Case = Session.map[Session.firstCaseX+i][Session.firstCaseY+j];
+					var _case:Cell = Session.map[Session.firstCaseX+i][Session.firstCaseY+j];
 					
-					if(_case.caseUID.indexOf("case_") == -1)
+					if(_case.cellUID.indexOf("case_") == -1)
 						continue;
 					
 					refreshUnits(_case);
@@ -171,9 +169,9 @@ package com.uralys.tribes.core
 				// draw lands
 				for(var i:int=0; i < Session.nbTilesByEdge; i++)
 				{
-					var _case:Case = Session.map[Session.firstCaseX+i][Session.firstCaseY+j];
+					var _case:Cell = Session.map[Session.firstCaseX+i][Session.firstCaseY+j];
 					
-					if(_case.caseUID.indexOf("case_") == -1)
+					if(_case.cellUID.indexOf("case_") == -1)
 						continue;
 					
 					
@@ -183,7 +181,7 @@ package com.uralys.tribes.core
 		}
 
 			
-		private function drawCase(_case:Case):void
+		private function drawCase(_case:Cell):void
 		{
 			var image:Image = new Image();
 			var placeForet:Boolean = false;
@@ -244,7 +242,7 @@ package com.uralys.tribes.core
 		// ---------------------------------------------------------------------//
 		// affichage des pions (armées-marchands)
 		
-		public function refreshUnits(_case:Case):void
+		public function refreshUnits(_case:Cell):void
 		{
 			try{
 				Session.board.pawnLayer.removeElement(_case.pawn);	
@@ -316,7 +314,7 @@ package com.uralys.tribes.core
 		
 		//------------------------------------------------------------------------------------//
 		
-		private function drawLandAndBounds(_case:Case):void
+		private function drawLandAndBounds(_case:Cell):void
 		{
 			if(_case.landOwner != null)
 			{
@@ -469,11 +467,11 @@ package com.uralys.tribes.core
 		// click et roll-over sur les tuiles-images
 		
 		protected function tileIsClicked(event:MouseEvent):void{
-			BoardClickAnalyser.getInstance().clickOnCase(event.currentTarget.data as Case);
+			BoardClickAnalyser.getInstance().clickOnCase(event.currentTarget.data as Cell);
 		}
 		
 		protected function tileIsRolledOn(event:MouseEvent):void{
-			BoardClickAnalyser.getInstance().rollOnCase(event.currentTarget.data as Case);
+			BoardClickAnalyser.getInstance().rollOnCase(event.currentTarget.data as Cell);
 		}
 
 		protected function cityIsRolledOn(event:MouseEvent):void{
@@ -487,8 +485,8 @@ package com.uralys.tribes.core
 			//------------------------------------------------------//
 
 			var moveHighlight:MoveHighLight = new MoveHighLight();
-			moveHighlight.x = Utils.getXPixel(Utils.getXFromCaseUID(move.caseUID));
-			moveHighlight.y = Utils.getYPixel(Utils.getYFromCaseUID(move.caseUID));
+			moveHighlight.x = Utils.getXPixel(Utils.getXFromCaseUID(move.cellUID));
+			moveHighlight.y = Utils.getYPixel(Utils.getYFromCaseUID(move.cellUID));
 			moveHighlight.image.scaleX = scale;
 			moveHighlight.image.scaleY = scale;
 			
@@ -504,7 +502,7 @@ package com.uralys.tribes.core
 				GraphicsUtil.drawArrow(
 					Session.board.highlighters.graphics,
 					new Point((Utils.getXPixel(xPreviousMove)+Utils.getLandWidth()/2), (Utils.getYPixel(yPreviousMove)+Utils.getLandHeight()/2)),
-					new Point((Utils.getXPixel(Utils.getXFromCaseUID(move.caseUID))+Utils.getLandWidth()/2), (Utils.getYPixel(Utils.getYFromCaseUID(move.caseUID))+Utils.getLandHeight()/2))
+					new Point((Utils.getXPixel(Utils.getXFromCaseUID(move.cellUID))+Utils.getLandWidth()/2), (Utils.getYPixel(Utils.getYFromCaseUID(move.cellUID))+Utils.getLandHeight()/2))
 				);
 			}
 		}

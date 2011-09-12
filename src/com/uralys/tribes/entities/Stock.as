@@ -11,11 +11,13 @@ package com.uralys.tribes.entities
 		protected var _stockUID:String;
 		
 		protected var _stockCapacity:Number;
+		
 		protected var _peopleBuildingStock:int;
 		protected var _stockBeginTime:Number;
 		protected var _stockEndTime:Number;
 		protected var _stockNextCapacity:int;
 		
+		protected var _smiths:int;
 		protected var _itemsBeingBuilt:int;
 		protected var _itemsBeingBuiltBeginTime:Number;
 		protected var _itemsBeingBuiltEndTime:Number;
@@ -69,6 +71,16 @@ package com.uralys.tribes.entities
 		
 		public function set stockNextCapacity(o:int):void {
 			_stockNextCapacity = o;
+		}
+
+		public function get smiths():int
+		{
+			return _smiths;
+		}
+
+		public function set smiths(value:int):void
+		{
+			_smiths = value;
 		}
 
 		public function get itemsBeingBuilt():int

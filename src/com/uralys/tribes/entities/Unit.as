@@ -24,7 +24,7 @@ package com.uralys.tribes.entities
 		
 		// on ne peut pas le mettre dans le constructeur, car BlazeDS l'utilise aussi
 		public function initNewUnit(i:int = 0, j:int = 0):void{
-			_currentCaseUID = (Session.map[i][j] as Case).caseUID;
+			_currentCaseUID = (Session.map[i][j] as Cell).cellUID;
 			_finalCaseUIDExpected = _currentCaseUID;
 			_unitUID = Session.player.uralysUID+"_"+(Session.player.units.length+1)+"_"+(new Date().getTime());
 			_status = TO_BE_CREATED;
@@ -353,9 +353,9 @@ package com.uralys.tribes.entities
 			trace("currentCaseUID : " + currentCaseUID);
 			
 			var lastMove:Move = moves.getItemAt(moves.length-1) as Move;
-			trace("lastMove.caseUID : " + lastMove.caseUID);
+			trace("lastMove.caseUID : " + lastMove.cellUID);
 			
-			if(lastMove.caseUID != currentCaseUID){
+			if(lastMove.cellUID != currentCaseUID){
 				trace("unité en mouvement : pas d'interception");
 				return false;
 			}
@@ -371,7 +371,7 @@ package com.uralys.tribes.entities
 			
 			if(moveOfTheNewUnitResultingFromTheInterception == null)
 				return false;
-			else if(moveOfTheNewUnitResultingFromTheInterception.caseUID == lastMove.caseUID){
+			else if(moveOfTheNewUnitResultingFromTheInterception.cellUID == lastMove.cellUID){
 				trace("moveOfTheNewUnitResultingFromTheInterception is on the same case : INTERCEPTED_ON_THIS_CASE");
 				return true;
 			}

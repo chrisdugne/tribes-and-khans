@@ -16,24 +16,30 @@ package com.uralys.tribes.entities
 
 		protected var _cityUID:String;
 		protected var _ownerUID:String;
-		protected var _forgeUID:String;
 		protected var _name:String;
-		protected var _population:int;
-		protected var _wheat:int;
-		protected var _wood:int;
-		protected var _iron:int;
-		protected var _gold:int;
-		protected var _peopleCreatingWheat:int;
-		protected var _peopleCreatingWood:int;
-		protected var _peopleCreatingIron:int;
-		protected var _x:int;
-		protected var _y:int;
-		protected var _equipmentStock:ArrayCollection = new ArrayCollection();
-		protected var _smiths:ArrayCollection = new ArrayCollection();
-		protected var _stocks:ArrayCollection = new ArrayCollection();
-		
+
 		protected var _beginTime:Number;
 		protected var _endTime:Number;
+		
+		protected var _population:int;
+		
+		protected var _wheat:int;
+		protected var _peopleCreatingWheat:int;
+		protected var _wood:int;
+		protected var _peopleCreatingWood:int;
+		protected var _iron:int;
+		protected var _peopleCreatingIron:int;
+
+		protected var _x:int;
+		protected var _y:int;
+		protected var _gold:int;
+
+		protected var _bows:int;
+		protected var _swords:int;
+		protected var _armors:int;
+
+		protected var _stocks:ArrayCollection = new ArrayCollection();
+		
 		
 		//---------------------------------------------------------------------------//
 		
@@ -43,14 +49,6 @@ package com.uralys.tribes.entities
 	
 		public function set cityUID(o:String):void {
 			_cityUID = o;
-		}
-
-		public function get forgeUID():String {
-			return _forgeUID;
-		}
-	
-		public function set forgeUID(o:String):void {
-			_forgeUID = o;
 		}
 
 		public function get ownerUID():String {
@@ -157,26 +155,6 @@ package com.uralys.tribes.entities
 			_y = o;
 		}
 	
-		public function get radius():int {
-			return Math.sqrt(_population)/2;
-		}
-	
-		public function get equipmentStock():ArrayCollection {
-			return _equipmentStock;
-		}
-	
-		public function set equipmentStock(o:ArrayCollection):void {
-			_equipmentStock = o;
-		}
-	
-		public function get smiths():ArrayCollection {
-			return _smiths;
-		}
-	
-		public function set smiths(o:ArrayCollection):void {
-			_smiths = o;
-		}
-	
 		public function get stocks():ArrayCollection {
 			return _stocks;
 		}
@@ -203,6 +181,36 @@ package com.uralys.tribes.entities
 		public function set endTime(value:Number):void
 		{
 			_endTime = value;
+		}
+		
+		public function get bows():int
+		{
+			return _bows;
+		}
+		
+		public function set bows(value:int):void
+		{
+			_bows = value;
+		}
+		
+		public function get swords():int
+		{
+			return _swords;
+		}
+		
+		public function set swords(value:int):void
+		{
+			_swords = value;
+		}
+		
+		public function get armors():int
+		{
+			return _armors;
+		}
+		
+		public function set armors(value:int):void
+		{
+			_armors = value;
 		}
 		
 	
@@ -568,7 +576,6 @@ package com.uralys.tribes.entities
 
 		//---------------------------------------------------------------//
 
-		private var _bowStock:int; // stock dans la ville au debut du tour
 		private var _bowStockCapacity:int;
 		private var _bowStockNextCapacity:int;
 		private var _bowStockBuilders:int;
@@ -580,14 +587,6 @@ package com.uralys.tribes.entities
 		private var _bowsBeingBuiltBeginTime:Number;
 		private var _bowsBeingBuiltEndTime:Number;
 		
-		public function set bowStock(o:int):void{
-			_bowStock = o;
-		}
-
-		public function get bowStock():int{
-			return _bowStock;
-		}
-
 		public function set bowWorkers(o:int):void{
 			_bowWorkers = o;
 		}
@@ -662,7 +661,6 @@ package com.uralys.tribes.entities
 		
 		//---------------------------------------------------------------//
 		
-		private var _swordStock:int;
 		private var _swordStockCapacity:int;
 		private var _swordStockNextCapacity:int;
 		private var _swordStockBuilders:int;
@@ -674,14 +672,6 @@ package com.uralys.tribes.entities
 		private var _swordsBeingBuiltBeginTime:Number;
 		private var _swordsBeingBuiltEndTime:Number;
 		
-		public function set swordStock(o:int):void{
-			_swordStock = o;
-		}
-
-		public function get swordStock():int{
-			return _swordStock;
-		}
-
 		public function set swordWorkers(o:int):void{
 			_swordWorkers = o;
 		}
@@ -756,7 +746,6 @@ package com.uralys.tribes.entities
 		
 		//---------------------------------------------------------------//
 		
-		private var _armorStock:int;
 		private var _armorStockCapacity:int;
 		private var _armorStockNextCapacity:int;
 		private var _armorStockBuilders:int;
@@ -768,14 +757,6 @@ package com.uralys.tribes.entities
 		private var _armorsBeingBuiltBeginTime:Number;
 		private var _armorsBeingBuiltEndTime:Number;
 		
-		public function set armorStock(o:int):void{
-			_armorStock = o;
-		}
-
-		public function get armorStock():int{
-			return _armorStock;
-		}
-
 		public function set armorWorkers(o:int):void{
 			_armorWorkers = o;
 		}

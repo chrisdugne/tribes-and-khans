@@ -10,59 +10,6 @@
 			</s:fill>
 		</s:Rect>
 	
-	<fx:Script>
-		<![CDATA[
-			import com.uralys.tribes.commons.Session;
-			import com.uralys.tribes.commons.Translations;
-			import com.uralys.tribes.core.BoardDrawer;
-			import com.uralys.tribes.entities.Conflict;
-			import com.uralys.tribes.entities.MoveConflict;
-			
-			public var conflict:Conflict;
-			
-			[Bindable] public var allyBows:int
-			[Bindable] public var allySwords:int
-			[Bindable] public var allyArmors:int
-			[Bindable] public var allySize:int
-			[Bindable] public var allyValue:int 
-
-			[Bindable] public var ennemyBows:int
-			[Bindable] public var ennemySwords:int
-			[Bindable] public var ennemyArmors:int
-			[Bindable] public var ennemySize:int
-			[Bindable] public var ennemyValue:int 
-			
-			public function createReport():void{
-				
-				for each(var moveConflict:MoveConflict in conflict.moveAllies){
-					allyBows += moveConflict.armyBows;
-					allySwords += moveConflict.armySwords;
-					allyArmors += moveConflict.armyArmors;
-					allySize += moveConflict.armySize;
-					
-					allyValue += moveConflict.armySize;
-					allyValue += moveConflict.armyBows >  moveConflict.armySize ? moveConflict.armySize : moveConflict.armyBows;
-					allyValue += 2*(moveConflict.armySwords >  moveConflict.armySize ? moveConflict.armySize : moveConflict.armySwords);
-					allyValue += 3*(moveConflict.armyArmors >  moveConflict.armySize ? moveConflict.armySize : moveConflict.armyArmors);
-				}
-				
-				
-				for each(var moveConflict:MoveConflict in conflict.moveEnnemies){
-					ennemyBows += moveConflict.armyBows;
-					ennemySwords += moveConflict.armySwords;
-					ennemyArmors += moveConflict.armyArmors;
-					ennemySize += moveConflict.armySize;
-					
-					ennemyValue += moveConflict.armySize;
-					ennemyValue += moveConflict.armyBows >  moveConflict.armySize ? moveConflict.armySize : moveConflict.armyBows;
-					ennemyValue += 2*(moveConflict.armySwords >  moveConflict.armySize ? moveConflict.armySize : moveConflict.armySwords);
-					ennemyValue += 3*(moveConflict.armyArmors >  moveConflict.armySize ? moveConflict.armySize : moveConflict.armyArmors);
-				}
-			}
-		]]>
-	</fx:Script>
-	
-	
 	<s:VGroup width="100%" horizontalAlign="center">
 		<s:Label text="{allyValue > ennemyValue ? Translations.VICTORY.getItemAt(Session.LANGUAGE) : (ennemyValue > allyValue ? Translations.DEFEAT.getItemAt(Session.LANGUAGE)+'...' : Translations.DRAW.getItemAt(Session.LANGUAGE))}" color="#FFFFFF" />
 		<s:Label text="{Translations.YOUR_ARMY.getItemAt(Session.LANGUAGE)}" color="#FFFFFF" />

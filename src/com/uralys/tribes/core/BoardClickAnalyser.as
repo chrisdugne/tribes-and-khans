@@ -2,7 +2,7 @@ package com.uralys.tribes.core
 {
 	import com.uralys.tribes.commons.Numbers;
 	import com.uralys.tribes.commons.Session;
-	import com.uralys.tribes.entities.Case;
+	import com.uralys.tribes.entities.Cell;
 	import com.uralys.tribes.entities.City;
 	import com.uralys.tribes.entities.Player;
 	import com.uralys.tribes.entities.Unit;
@@ -37,7 +37,7 @@ package com.uralys.tribes.core
 
 		//=====================================================================================//
 		
-		public function rollOnCase(_case:Case):void{
+		public function rollOnCase(_case:Cell):void{
 			Session.COORDINATE_X = _case.x;
 			Session.COORDINATE_Y = _case.y;			
 		}
@@ -47,23 +47,23 @@ package com.uralys.tribes.core
 			Session.COORDINATE_Y = city.y;			
 		}
 		
-		public function clickOnCase(_case:Case):void
+		public function clickOnCase(_cell:Cell):void
 		{
 			var thereIsACity:Boolean = false;
 			var thereIsAMerchantThatCanBuildACityHere:Boolean = false;
 			
-			if(_case.city != null 
-			&& _case.city.cityUID != "new")
+			if(_cell.city != null 
+			&& _cell.city.cityUID != "new")
 				thereIsACity = true;
 
-			if(_case.merchants != null
-			&& _case.merchants.mayBuildAcity())
+			if(_cell.merchants != null
+			&& _cell.merchants.mayBuildAcity())
 				thereIsAMerchantThatCanBuildACityHere = true;
 			
 			if(thereIsACity)
-				clickOnCity(_case.city);
+				clickOnCity(_cell.city);
 			else if(thereIsAMerchantThatCanBuildACityHere)
-				Session.board.showBuildCity(_case.merchants);
+				Session.board.showBuildCity(_cell.merchants);
 		}
 		
 		

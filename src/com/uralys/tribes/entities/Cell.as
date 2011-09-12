@@ -11,12 +11,12 @@ package com.uralys.tribes.entities
 	import mx.controls.Image;
 	
 	[Bindable]
-	[RemoteClass(alias="com.uralys.tribes.entities.Case")]
-	public class Case
+	[RemoteClass(alias="com.uralys.tribes.entities.Cell")]
+	public class Cell
 	{
 		//--------------------------------------------------------------//
 
-		public function Case(i:int = 0, j:int = 0){
+		public function Cell(i:int = 0, j:int = 0){
 			_x = i;
 			_y = j;
 			
@@ -24,17 +24,17 @@ package com.uralys.tribes.entities
 				// la difference entre x et y n'est pas paire
 				// c'est une 'non case' : un hexagone intermediaire qui ne fait pas partie du plateau
 				_type = -1;
-				_caseUID = "NON-CASE";
+				_cellUID = "NON-CASE";
 			}
 			else{
 				_type = 0;
-				_caseUID = "empty";
+				_cellUID = "empty";
 			}
 		}
 		
 		//--------------------------------------------------------------//
 		
-		protected var _caseUID:String;
+		protected var _cellUID:String;
 		protected var _x:int;
 		protected var _y:int;
 		protected var _group:int;
@@ -69,12 +69,12 @@ package com.uralys.tribes.entities
 			_challenger = value;
 		}
 
-		public function get caseUID():String {
-			return _caseUID;
+		public function get cellUID():String {
+			return _cellUID;
 		}
 		
-		public function set caseUID(o:String):void {
-			_caseUID = o;
+		public function set cellUID(o:String):void {
+			_cellUID = o;
 		}
 		
 		public function get x():int {

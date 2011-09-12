@@ -494,6 +494,10 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		cityDTO.setWood(city.getWood());
 		cityDTO.setIron(city.getIron());
 		cityDTO.setGold(city.getGold());
+
+		cityDTO.setBows(city.getBows());
+		cityDTO.setArmors(city.getArmors());
+		cityDTO.setSwords(city.getSwords());
 			
 		if(newStep){
 			// securite si il y a eu un pb 
@@ -524,7 +528,8 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		stockDTO.setStockEndTime(stock.getStockEndTime());
 		stockDTO.setStockCapacity(stock.getStockCapacity());
 		stockDTO.setStockNextCapacity(stock.getStockNextCapacity());
-
+		
+		stockDTO.setSmiths(stock.getSmiths());
 		stockDTO.setItemsBeingBuilt(stock.getItemsBeingBuilt());
 		stockDTO.setItemsBeingBuiltBeginTime(stock.getItemsBeingBuiltBeginTime());
 		stockDTO.setItemsBeingBuiltEndTime(stock.getItemsBeingBuiltEndTime());

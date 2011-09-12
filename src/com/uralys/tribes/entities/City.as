@@ -835,12 +835,5 @@ package com.uralys.tribes.entities
 			return (_population + unitsToFeed) * Numbers.FEED_COEFF;
 		}
 
-		public function reset():void
-		{
-			wheatEarned = 0;
-			woodEarned = 0;
-			ironEarned = 0;
-			unitsToFeed = 0;
-		}
 	}
 }

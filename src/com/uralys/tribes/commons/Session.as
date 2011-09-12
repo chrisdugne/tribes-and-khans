@@ -67,7 +67,7 @@ package com.uralys.tribes.commons
 		public static var ITEMS:ArrayCollection = new ArrayCollection();
 
 		// liste de toutes les cases loadees
-		public static var CASES_LOADED:ArrayCollection = new ArrayCollection();
+		public static var CELLS_LOADED:ArrayCollection = new ArrayCollection();
 		
 		//=====================================================//
 		// Board
@@ -112,8 +112,8 @@ package com.uralys.tribes.commons
 		// BoardDrawer
 		
 		// les coordonnees de la case qui est tout en haut à gauche du dernier chargement de cases
-		public static  var firstCaseX:int;
-		public static  var firstCaseY:int;
+		public static  var firstCellX:int;
+		public static  var firstCellY:int;
 
 		// permet d'afficher ou de cacher les bar de progression sur les moves
 		[Bindable] public static  var SHOW_MOVES_PROGRESS_BARS:Boolean = true;

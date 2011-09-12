@@ -26,11 +26,9 @@
 			import com.uralys.tribes.core.UnitMover;
 			import com.uralys.tribes.entities.Cell;
 			import com.uralys.tribes.entities.City;
-			import com.uralys.tribes.entities.Equipment;
 			import com.uralys.tribes.entities.Game;
 			import com.uralys.tribes.entities.Move;
 			import com.uralys.tribes.entities.Player;
-			import com.uralys.tribes.entities.Smith;
 			import com.uralys.tribes.entities.Unit;
 			import com.uralys.tribes.managers.GameManager;
 			import com.uralys.tribes.renderers.Pawn;
@@ -89,7 +87,7 @@
 				var city:City = event.currentTarget.selectedItem;
 				
 				placeBoard(city.x, city.y);
-				var caseBeingLoaded:Boolean = reloadCurrentCases();
+				var caseBeingLoaded:Boolean = reloadCurrentCells();
 				
 				if(!caseBeingLoaded){
 					BoardClickAnalyser.getInstance().clickOnCase(Session.map[city.x][city.y]);
@@ -105,7 +103,7 @@
 				unit.currentCaseUID = (unit.moves.getItemAt(0) as com.uralys.tribes.entities.Move).cellUID;
 				
 				placeBoard(Utils.getXFromCaseUID(unit.currentCaseUID), Utils.getYFromCaseUID(unit.currentCaseUID));
-				var caseBeingLoaded:Boolean = reloadCurrentCases();
+				var caseBeingLoaded:Boolean = reloadCurrentCells();
 				
 				if(!caseBeingLoaded){
 					BoardClickAnalyser.getInstance().clickOnCase(Session.map[Utils.getXFromCaseUID(unit.currentCaseUID)][Utils.getYFromCaseUID(unit.currentCaseUID)]);
@@ -116,7 +114,7 @@
 			
 			//---------------------------------------------------------------------------------------------------//
 
-			public function reloadCurrentCases(force:Boolean = false, refreshLandOwners:Boolean = false):Boolean{
+			public function reloadCurrentCells(force:Boolean = false, refreshLandOwners:Boolean = false):Boolean{
 				return checkToLoadCases(Utils.getXPixel(Session.CENTER_X), Utils.getYPixel(Session.CENTER_Y), force, refreshLandOwners);
 			}
 			
@@ -144,7 +142,7 @@
 				|| force)
 				{
 					trace("  ==>  LOAD");
-					GameManager.getInstance().loadCases(Session.CENTER_X, Session.CENTER_Y, refreshLandOwners);
+					GameManager.getInstance().loadCells(Session.CENTER_X, Session.CENTER_Y, refreshLandOwners);
 					return true;
 				}
 				
@@ -400,7 +398,7 @@
 				
 				isDragging = false;
 				Mouse.show();
-				reloadCurrentCases();
+				reloadCurrentCells();
 			}
 			
 			// ------------------------------------------------------------------------// 
@@ -1137,7 +1135,7 @@
 					  visible="{!Session.MOVE_A_UNIT &amp;&amp; !Session.WAIT_FOR_SERVER}"
 					  x="{boardImage.x + 95}"
 					  y="{boardImage.y - 13}"
-					  click="reloadCurrentCases(true, true)"/>
+					  click="reloadCurrentCells(true, true)"/>
 		</s:Group>
 	</s:Group>
 	

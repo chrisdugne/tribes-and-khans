@@ -14,10 +14,8 @@
 				import com.uralys.tribes.commons.Translations;
 				import com.uralys.tribes.core.BoardDrawer;
 				import com.uralys.tribes.entities.City;
-				import com.uralys.tribes.entities.Equipment;
 				import com.uralys.tribes.entities.Item;
 				import com.uralys.tribes.entities.Move;
-				import com.uralys.tribes.entities.Smith;
 				import com.uralys.tribes.entities.Unit;
 				import com.uralys.tribes.managers.GameManager;
 				import com.uralys.tribes.skins.CustomButtonSkin;
@@ -1162,9 +1160,9 @@
 						</mx:Grid>
 						<mx:Spacer height="10"/>
 						<s:HGroup width="100%" horizontalAlign="center" bottom="0"
-								  includeInLayout="{city.wheat + city.wheatEarned &lt; 0}">
+								  includeInLayout="{(city.wheat + city.wheatEarned - city.wheatRequiredToFeed()) &lt; 0}">
 							<s:Label text="{Translations.STARVATION.getItemAt(Session.LANGUAGE)}"
-									 visible="{city.wheat + city.wheatEarned &lt; 0}"
+									 visible="{(city.wheat + city.wheatEarned - city.wheatRequiredToFeed()) &lt; 0}"
 									 id="labelStarvation"
 									 color="{Numbers.RED}"/>
 						</s:HGroup>

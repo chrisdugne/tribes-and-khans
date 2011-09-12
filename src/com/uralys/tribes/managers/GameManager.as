@@ -11,13 +11,11 @@ package com.uralys.tribes.managers {
 	import com.uralys.tribes.entities.Ally;
 	import com.uralys.tribes.entities.Cell;
 	import com.uralys.tribes.entities.City;
-	import com.uralys.tribes.entities.DataContainer4UnitSaved;
-	import com.uralys.tribes.entities.Equipment;
+	import com.uralys.tribes.entities.ObjectsAltered;
 	import com.uralys.tribes.entities.Game;
 	import com.uralys.tribes.entities.Item;
 	import com.uralys.tribes.entities.Move;
 	import com.uralys.tribes.entities.Player;
-	import com.uralys.tribes.entities.Smith;
 	import com.uralys.tribes.entities.Stock;
 	import com.uralys.tribes.entities.Unit;
 	import com.uralys.tribes.pages.Board;
@@ -45,14 +43,14 @@ package com.uralys.tribes.managers {
 		//============================================================================================//
 		
 		private var savePlayerResponder:CallResponder;
-		private var loadCasesResponder:CallResponder;
+		private var loadCellsResponder:CallResponder;
 
 		// -  ================================================================================
 		
 		public function GameManager()
 		{
 			savePlayerResponder = new CallResponder();
-			loadCasesResponder = new CallResponder();
+			loadCellsResponder = new CallResponder();
 		}
 		
 		private function getGameWrapper():RemoteObject
@@ -108,62 +106,6 @@ package com.uralys.tribes.managers {
 					// car on update la capacite du stock avant le calcul des stepMissed. 
 					// et si le joueur a beaucoup de stepMissed, il va remplir le nouveau stock alors qu'il etait limité à ce moment là
 					updateStockBuildingStatus(city, stock);
-					
-					var stockName:String = Utils.getStockName(stock.stockUID);
-					
-					switch(stockName){
-						case "_wheat_stock" :
-							city.wheatStockCapacity = stock.stockCapacity;
-							city.wheatStockBuilders = stock.peopleBuildingStock;
-							city.wheatStockBeginTime = stock.stockBeginTime;
-							city.wheatStockEndTime = stock.stockEndTime;
-							city.wheatStockNextCapacity = stock.stockNextCapacity;
-							break;
-						case "_wood_stock" :
-							city.woodStockCapacity = stock.stockCapacity;
-							city.woodStockBuilders = stock.peopleBuildingStock;
-							city.woodStockBeginTime = stock.stockBeginTime;
-							city.woodStockEndTime = stock.stockEndTime;
-							city.woodStockNextCapacity = stock.stockNextCapacity;
-							break;
-						case "_iron_stock" :
-							city.ironStockCapacity = stock.stockCapacity;
-							city.ironStockBuilders = stock.peopleBuildingStock;
-							city.ironStockBeginTime = stock.stockBeginTime;
-							city.ironStockEndTime = stock.stockEndTime;
-							city.ironStockNextCapacity = stock.stockNextCapacity;
-							break;
-						case "_bow_stock" :
-							city.bowStockCapacity = stock.stockCapacity;
-							city.bowStockBuilders = stock.peopleBuildingStock;
-							city.bowStockBeginTime = stock.stockBeginTime;
-							city.bowStockEndTime = stock.stockEndTime;
-							city.bowStockNextCapacity = stock.stockNextCapacity;
-							city.bowsBeingBuilt = stock.itemsBeingBuilt;
-							city.bowsBeingBuiltBeginTime = stock.itemsBeingBuiltBeginTime;
-							city.bowsBeingBuiltEndTime = stock.itemsBeingBuiltEndTime;
-							break;
-						case "_sword_stock" :
-							city.swordStockCapacity = stock.stockCapacity;
-							city.swordStockBuilders = stock.peopleBuildingStock;
-							city.swordStockBeginTime = stock.stockBeginTime;
-							city.swordStockEndTime = stock.stockEndTime;
-							city.swordStockNextCapacity = stock.stockNextCapacity;
-							city.swordsBeingBuilt = stock.itemsBeingBuilt;
-							city.swordsBeingBuiltBeginTime = stock.itemsBeingBuiltBeginTime;
-							city.swordsBeingBuiltEndTime = stock.itemsBeingBuiltEndTime;
-							break;
-						case "_armor_stock" :
-							city.armorStockCapacity = stock.stockCapacity;
-							city.armorStockBuilders = stock.peopleBuildingStock;
-							city.armorStockBeginTime = stock.stockBeginTime;
-							city.armorStockEndTime = stock.stockEndTime;
-							city.armorStockNextCapacity = stock.stockNextCapacity;
-							city.armorsBeingBuilt = stock.itemsBeingBuilt;
-							city.armorsBeingBuiltBeginTime = stock.itemsBeingBuiltBeginTime;
-							city.armorsBeingBuiltEndTime = stock.itemsBeingBuiltEndTime;
-							break;
-					}
 				}
 			}
 			
@@ -189,6 +131,65 @@ package com.uralys.tribes.managers {
 			Session.LOGGED_IN_FORCE_STEPS_DONE = true;
 		}
 		
+		private function refreshCityStock(city:City, stock:Stock):void
+		{
+			var stockName:String = Utils.getStockName(stock.stockUID);
+			
+			switch(stockName){
+				case "_wheat_stock" :
+					city.wheatStockCapacity = stock.stockCapacity;
+					city.wheatStockBuilders = stock.peopleBuildingStock;
+					city.wheatStockBeginTime = stock.stockBeginTime;
+					city.wheatStockEndTime = stock.stockEndTime;
+					city.wheatStockNextCapacity = stock.stockNextCapacity;
+					break;
+				case "_wood_stock" :
+					city.woodStockCapacity = stock.stockCapacity;
+					city.woodStockBuilders = stock.peopleBuildingStock;
+					city.woodStockBeginTime = stock.stockBeginTime;
+					city.woodStockEndTime = stock.stockEndTime;
+					city.woodStockNextCapacity = stock.stockNextCapacity;
+					break;
+				case "_iron_stock" :
+					city.ironStockCapacity = stock.stockCapacity;
+					city.ironStockBuilders = stock.peopleBuildingStock;
+					city.ironStockBeginTime = stock.stockBeginTime;
+					city.ironStockEndTime = stock.stockEndTime;
+					city.ironStockNextCapacity = stock.stockNextCapacity;
+					break;
+				case "_bow_stock" :
+					city.bowStockCapacity = stock.stockCapacity;
+					city.bowStockBuilders = stock.peopleBuildingStock;
+					city.bowStockBeginTime = stock.stockBeginTime;
+					city.bowStockEndTime = stock.stockEndTime;
+					city.bowStockNextCapacity = stock.stockNextCapacity;
+					city.bowsBeingBuilt = stock.itemsBeingBuilt;
+					city.bowsBeingBuiltBeginTime = stock.itemsBeingBuiltBeginTime;
+					city.bowsBeingBuiltEndTime = stock.itemsBeingBuiltEndTime;
+					break;
+				case "_sword_stock" :
+					city.swordStockCapacity = stock.stockCapacity;
+					city.swordStockBuilders = stock.peopleBuildingStock;
+					city.swordStockBeginTime = stock.stockBeginTime;
+					city.swordStockEndTime = stock.stockEndTime;
+					city.swordStockNextCapacity = stock.stockNextCapacity;
+					city.swordsBeingBuilt = stock.itemsBeingBuilt;
+					city.swordsBeingBuiltBeginTime = stock.itemsBeingBuiltBeginTime;
+					city.swordsBeingBuiltEndTime = stock.itemsBeingBuiltEndTime;
+					break;
+				case "_armor_stock" :
+					city.armorStockCapacity = stock.stockCapacity;
+					city.armorStockBuilders = stock.peopleBuildingStock;
+					city.armorStockBeginTime = stock.stockBeginTime;
+					city.armorStockEndTime = stock.stockEndTime;
+					city.armorStockNextCapacity = stock.stockNextCapacity;
+					city.armorsBeingBuilt = stock.itemsBeingBuilt;
+					city.armorsBeingBuiltBeginTime = stock.itemsBeingBuiltBeginTime;
+					city.armorsBeingBuiltEndTime = stock.itemsBeingBuiltEndTime;
+					break;
+			}
+		}
+		
 		private var allCitiesAreFilled:Boolean = false; // pour le catchUpCalculation uniquement
 		public function calculateStep(player:Player, catchUpCalculation:Boolean = false):void
 		{
@@ -211,10 +212,10 @@ package com.uralys.tribes.managers {
 			{
 				trace("--------------");
 				trace("city : " + city.name);
-				trace("wheatEarned : " + city.wheatEarned);
+				trace("wheatEarned : " + city.wheatEarned + " | city.wheatRequiredToFeed() : " + city.wheatRequiredToFeed());
 				trace("woodEarned : " + city.woodEarned);
 				trace("ironEarned : " + city.ironEarned);
-				city.wheat += city.wheatEarned;
+				city.wheat += city.wheatEarned - city.wheatRequiredToFeed();
 				city.wood += city.woodEarned;
 				city.iron += city.ironEarned;
 				
@@ -237,15 +238,14 @@ package com.uralys.tribes.managers {
 				city.population = calculatePopulation(city.population, starvation);
 				
 				if(!catchUpCalculation)
-					refreshStocks(city);
+					refreshStocksForServerSide(city);
 				// else catchUpCalculation : on ne refresh surtout pas smith et equipment, ils sont necessaires pour updateCityWorkersEarningsAndSpendings
 				
-				city.reset();
 				refreshCityWorkersOnResources(true, city, starvation);
 			}
 		}
 		
-		private function updateStockBuildingStatus(city:City, stock:Stock):void
+		public function updateStockBuildingStatus(city:City, stock:Stock):void
 		{
 			var now:Number = new Date().getTime();
 			
@@ -284,9 +284,11 @@ package com.uralys.tribes.managers {
 				
 				stock.itemsBeingBuilt = 0;
 			}
+			
+			refreshCityStock(city,stock);
 		}
 		
-		private function refreshStocks(city:City):void
+		private function refreshStocksForServerSide(city:City):void
 		{
 			for each(var stock:Stock in city.stocks)
 			{
@@ -444,38 +446,10 @@ package com.uralys.tribes.managers {
 			if(unit == null)
 				return;
 			
-			var bows:Equipment = new Equipment();
-			var swords:Equipment = new Equipment();
-			var armors:Equipment = new Equipment();
-			
-			bows.size = unit.bows;
-			swords.size = unit.swords;
-			armors.size = unit.armors;
-			
-			bows.item = Utils.getItem("bow");
-			swords.item = Utils.getItem("sword");
-			armors.item = Utils.getItem("armor");
-			
-			bows.equimentUID = unit.unitUID + "_" + bows.item.itemUID; 
-			swords.equimentUID = unit.unitUID + "_" + swords.item.itemUID; 
-			armors.equimentUID = unit.unitUID + "_" + armors.item.itemUID; 
-			
-			unit.equipments.addItem(bows);
-			unit.equipments.addItem(swords);
-			unit.equipments.addItem(armors);
-			
-			
 			var gameWrapper:RemoteObject = getGameWrapper();
 			gameWrapper.createUnit.addEventListener("result", unitSaved);
 			gameWrapper.createUnit(Session.player.uralysUID, unit, cityUID);
 			currentUnitBeingSaved = unit;
-			
-			//unit.status = Unit.FREE;
-			
-			for each(var equipment:Equipment in unit.equipments){
-				if(equipment.equimentUID.indexOf("NEW_") != -1)
-					equipment.equimentUID = equipment.equimentUID.substring(4);
-			}
 			
 			for each(var move:Move in unit.moves){
 				if(move.moveUID.indexOf("NEW_") != -1)
@@ -490,8 +464,6 @@ package com.uralys.tribes.managers {
 			if(unit == null)
 				return;
 			
-			refreshUnitEquipmentForServerSide(unit);
-			
 			var gameWrapper:RemoteObject = getGameWrapper();
 			gameWrapper.updateUnit.addEventListener("result", unitSaved);
 			gameWrapper.updateUnit(unit, cityUID);
@@ -499,23 +471,6 @@ package com.uralys.tribes.managers {
 		}
 
 		
-		private function refreshUnitEquipmentForServerSide(unit:Unit):void
-		{
-			for each(var equipment:Equipment in unit.equipments){
-				switch(equipment.item.name){
-					case "bow" :
-						equipment.size = unit.bows;
-						break;
-					case "sword" :
-						equipment.size = unit.swords;
-						break;
-					case "armor" :
-						equipment.size = unit.armors;
-						break;
-				}
-			}
-		}
-
 		public function prepareUnitForClientSide(unit:Unit):Boolean
 		{
 			var now:Number = new Date().getTime();
@@ -546,26 +501,7 @@ package com.uralys.tribes.managers {
 				trace("bug ! endTime etait != -1 et pourtant on a une Unit.DESTROYED (la case n'e contient pas de move pour cette unit, car il n'y a plus de move pour cette unit !)");
 				return false;
 			}
-				
 			
-			if(unit.type == 1)
-			{
-				for each(var equipment:Equipment in unit.equipments){
-					switch(equipment.item.name){
-						case "bow" :
-							unit.bows += equipment.size;
-							break;
-						case "sword" :
-							unit.swords += equipment.size;
-							break;
-						case "armor" :
-							unit.armors += equipment.size;
-							break;
-					}
-				}
-			}
-
-
 			unit.ownerStatus = Unit.PLAYER;
 			unit.isModified = false;	
 			
@@ -616,8 +552,6 @@ package com.uralys.tribes.managers {
 			if(!forceCalculation && city.calculationDone)
 				return;
 			
-			city.refreshUnemployed();
-			Session.board.cityForm.updateWorkersProgressBar();
 			//Session.board.cityForm.updateSmithsProgressBar();
 	
 			// attribution autoamtique des unemployed :  a mettre en place pour les comptes premium :p
@@ -628,14 +562,20 @@ package com.uralys.tribes.managers {
 //			city.refreshUnemployed();
 			
 			// calcul des resources gagnees avec le precedent choix de peopleCreatingXXX
-			city.wheatEarned = Numbers.WHEAT_EARNING_COEFF * city.peopleCreatingWheat;
+
 			city.woodEarned = Numbers.WOOD_EARNING_COEFF * city.peopleCreatingWood;
 			city.ironEarned = Numbers.IRON_EARNING_COEFF * city.peopleCreatingIron;
 			
 			if(starvation){
+				city.peopleCreatingWheat = city.population/5;
 				city.woodEarned /= 2;
 				city.ironEarned /= 2;
 			}
+
+			city.wheatEarned = Numbers.WHEAT_EARNING_COEFF * city.peopleCreatingWheat;
+
+			city.refreshUnemployed();
+			Session.board.cityForm.updateWorkersProgressBar();
 			
 			city.calculationDone = true;
 		}
@@ -730,10 +670,10 @@ package com.uralys.tribes.managers {
 		public function initMap(centerX:int, centerY:int):void
 		{
 			Session.WAIT_FOR_SERVER = true;
-			loadCases(centerX, centerY, true);
+			loadCells(centerX, centerY, true);
 		}
 		
-		public function loadCases(centerX:int, centerY:int, refreshLandOwners:Boolean):void
+		public function loadCells(centerX:int, centerY:int, refreshLandOwners:Boolean):void
 		{
 			Session.WAIT_FOR_SERVER = true;
 			
@@ -742,15 +682,15 @@ package com.uralys.tribes.managers {
 			var groups:Array = Utils.getGroups(centerX, centerY);
 			groups.sort(Array.NUMERIC);
 			
-			Session.firstCaseX = (groups[0]%27) * 15; // modulo 27
-			Session.firstCaseY = ((int)(groups[0]/27)) * 15; // divisé par 27
+			Session.firstCellX = (groups[0]%27) * 15; // modulo 27
+			Session.firstCellY = ((int)(groups[0]/27)) * 15; // divisé par 27
 			
 			
 			trace("-------------------------------------");
 			trace("loadCases center : [ " + centerX + " | " + centerY + " ]");
 			trace(groups);
-			trace("Session.firstCaseX : " + Session.firstCaseX);
-			trace("Session.firstCaseY : " + Session.firstCaseY);
+			trace("Session.firstCaseX : " + Session.firstCellX);
+			trace("Session.firstCaseY : " + Session.firstCellY);
 			
 			var caseUIDs:ArrayCollection = new ArrayCollection();
 			Session.nbTilesByEdge = Math.sqrt(groups.length) * 15;
@@ -759,14 +699,14 @@ package com.uralys.tribes.managers {
 			trace("-------------------------------------");
 			
 			
-			Session.LEFT_LIMIT_LOADED  	 = Utils.getXPixel(Session.firstCaseX) + Session.MAP_WIDTH/2;
-			Session.RIGHT_LIMIT_LOADED	 = Utils.getXPixel(Session.firstCaseX + Session.nbTilesByEdge) - Session.MAP_WIDTH/2;
-			Session.TOP_LIMIT_LOADED 	 = Utils.getYPixel(Session.firstCaseY) + Session.MAP_HEIGHT/2;
-			Session.BOTTOM_LIMIT_LOADED	 = Utils.getYPixel(Session.firstCaseY + Session.nbTilesByEdge) - Session.MAP_HEIGHT/2;
+			Session.LEFT_LIMIT_LOADED  	 = Utils.getXPixel(Session.firstCellX) + Session.MAP_WIDTH/2;
+			Session.RIGHT_LIMIT_LOADED	 = Utils.getXPixel(Session.firstCellX + Session.nbTilesByEdge) - Session.MAP_WIDTH/2;
+			Session.TOP_LIMIT_LOADED 	 = Utils.getYPixel(Session.firstCellY) + Session.MAP_HEIGHT/2;
+			Session.BOTTOM_LIMIT_LOADED	 = Utils.getYPixel(Session.firstCellY + Session.nbTilesByEdge) - Session.MAP_HEIGHT/2;
 			
 			var gameWrapper:RemoteObject = getGameWrapper();
-			loadCasesResponder.addEventListener("result", casesLoaded);
-			loadCasesResponder.token = gameWrapper.loadCases(groups, refreshLandOwners);
+			loadCellsResponder.addEventListener("result", cellsLoaded);
+			loadCellsResponder.token = gameWrapper.loadCases(groups, refreshLandOwners);
 		}
 
 		public function savePlayer(player:Player):void{
@@ -801,7 +741,7 @@ package com.uralys.tribes.managers {
 
 		public function saveCity(city:City):void
 		{
-			refreshStocks(city);
+			refreshStocksForServerSide(city);
 			
 			var gameWrapper:RemoteObject = getGameWrapper();
 			gameWrapper.saveCity(city);			
@@ -809,7 +749,7 @@ package com.uralys.tribes.managers {
 
 		public function buildCity(city:City, merchant:Unit):void
 		{
-			refreshStocks(city);
+			refreshStocksForServerSide(city);
 			
 			cityBeingSaved = city;
 			
@@ -828,7 +768,7 @@ package com.uralys.tribes.managers {
 				}
 			}
 			
-			Session.board.reloadCurrentCases(true);
+			Session.board.reloadCurrentCells(true);
 		}
 		
 		//----------------------------------------------------------------------//
@@ -1018,14 +958,14 @@ package com.uralys.tribes.managers {
 		}
 		
 		
-		private function casesLoaded(event:ResultEvent):void
+		private function cellsLoaded(event:ResultEvent):void
 		{
-			trace("casesLoaded");
+			trace("cellsLoaded");
 			
 			//------------------------------------------------//
 
-			Session.CASES_LOADED = event.result as ArrayCollection;
-			trace("received : " + Session.CASES_LOADED.length + " cases");
+			Session.CELLS_LOADED = event.result as ArrayCollection;
+			trace("received : " + Session.CELLS_LOADED.length + " cases");
 			
 			//------------------------------------------------//
 			// init du tableau
@@ -1034,10 +974,10 @@ package com.uralys.tribes.managers {
 			
 			for(var i:int=0; i < Session.nbTilesByEdge; i++)
 			{
-				Session.map[Session.firstCaseX+i] = [];
+				Session.map[Session.firstCellX+i] = [];
 				for(var j:int=0; j < Session.nbTilesByEdge; j++)
 				{
-					Session.map[Session.firstCaseX+i][Session.firstCaseY+j] = new Cell(Session.firstCaseX+i,Session.firstCaseY+j);
+					Session.map[Session.firstCellX+i][Session.firstCellY+j] = new Cell(Session.firstCellX+i,Session.firstCellY+j);
 				}
 			}
 
@@ -1051,13 +991,13 @@ package com.uralys.tribes.managers {
 			// on en profite aussi pour rafraichir les villes en Session
 			
 			var citiesLoaded:ArrayCollection = new ArrayCollection();
-			for each(var _case:Cell in Session.CASES_LOADED)
+			for each(var _cell:Cell in Session.CELLS_LOADED)
 			{
-				Session.map[_case.x][_case.y] = _case;
-				(Session.map[_case.x][_case.y] as Cell).forceRefresh(true);
+				Session.map[_cell.x][_cell.y] = _cell;
+				(Session.map[_cell.x][_cell.y] as Cell).forceRefresh(true);
 				
-				if(_case.city != null)
-					citiesLoaded.addItem(_case.city);
+				if(_cell.city != null)
+					citiesLoaded.addItem(_cell.city);
 			}
 
 			for each(var _cityLoaded:City in citiesLoaded)
@@ -1136,24 +1076,24 @@ package com.uralys.tribes.managers {
 					catch(e:Error){trace("not able to addTimer for this unit");};
 				}
 				
-				for each(var caseAltered:Cell in casesAltered)
+				for each(var cellAltered:Cell in casesAltered)
 				{
-					trace("caseAltered : " + caseAltered.cellUID);
-					if(caseAltered.challenger != null)
-						trace("challengerUID : " + caseAltered.challenger.playerUID);
-					trace("timeFromChallenging : " + caseAltered.timeFromChallenging);
+					trace("caseAltered : " + cellAltered.cellUID);
+					if(cellAltered.challenger != null)
+						trace("challengerUID : " + cellAltered.challenger.playerUID);
+					trace("timeFromChallenging : " + cellAltered.timeFromChallenging);
 					try{
-						var caseInSession:Cell = (Session.map[caseAltered.x][caseAltered.y] as Cell);
+						var caseInSession:Cell = (Session.map[cellAltered.x][cellAltered.y] as Cell);
 						
 						if(caseInSession != null){
-							Session.map[caseAltered.x][caseAltered.y].recordedMoves = caseAltered.recordedMoves;
-							Session.map[caseAltered.x][caseAltered.y].challenger = caseAltered.challenger;
-							Session.map[caseAltered.x][caseAltered.y].timeFromChallenging = caseAltered.timeFromChallenging;
+							Session.map[cellAltered.x][cellAltered.y].recordedMoves = cellAltered.recordedMoves;
+							Session.map[cellAltered.x][cellAltered.y].challenger = cellAltered.challenger;
+							Session.map[cellAltered.x][cellAltered.y].timeFromChallenging = cellAltered.timeFromChallenging;
 						}
 						else
-							Session.map[caseAltered.x][caseAltered.y] = caseAltered;
+							Session.map[cellAltered.x][cellAltered.y] = cellAltered;
 						
-						Session.map[caseAltered.x][caseAltered.y].forceRefresh();
+						Session.map[cellAltered.x][cellAltered.y].forceRefresh();
 					}
 					catch(e:Error){trace("----");trace(e.message);trace("----");trace("not able to refresh this case");};
 				}

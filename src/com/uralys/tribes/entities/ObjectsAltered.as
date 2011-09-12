@@ -2,9 +2,9 @@ package com.uralys.tribes.entities
 {
 	import mx.collections.ArrayCollection;
 
-	public class DataContainer4UnitSaved
+	public class ObjectsAltered
 	{
-		public function DataContainer4UnitSaved(){}
+		public function ObjectsAltered(){}
 
 		//--------------------------------------------------------------//
 		

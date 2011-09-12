@@ -69,6 +69,12 @@ public class Translations{
 									["Minimum 3 caractères pour le mot de passe",
 									"Password must be at least 3 characters",
 									"Password must be at least 3 characters"]);
+
+	[Bindable]
+	public static var LESS_THAN_A_MINUTE:ArrayCollection = new ArrayCollection(
+									["Moins d'un minute",
+									"Less than a minute",
+									"Less than a minute"]);
 	
 	//-----------------------------------------------------------------------------------//
 

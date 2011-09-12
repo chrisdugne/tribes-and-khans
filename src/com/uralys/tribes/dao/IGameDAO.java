@@ -9,10 +9,8 @@ import com.uralys.tribes.entities.Player;
 import com.uralys.tribes.entities.Stock;
 import com.uralys.tribes.entities.Unit;
 import com.uralys.tribes.entities.dto.AllyDTO;
-import com.uralys.tribes.entities.dto.CaseDTO;
+import com.uralys.tribes.entities.dto.CellDTO;
 import com.uralys.tribes.entities.dto.CityDTO;
-import com.uralys.tribes.entities.dto.ConflictDTO;
-import com.uralys.tribes.entities.dto.GatheringDTO;
 import com.uralys.tribes.entities.dto.ItemDTO;
 import com.uralys.tribes.entities.dto.PlayerDTO;
 import com.uralys.tribes.entities.dto.UnitDTO;
@@ -28,8 +26,8 @@ public interface IGameDAO {
 	//-----------------------------------------------------------------------------------//
 	
 	public List<ItemDTO> loadItems();
-	public List<CaseDTO> loadCases(int[] groups, boolean refreshLandOwners);
-	public CaseDTO getCase(int i, int j);
+	public List<CellDTO> loadCases(int[] groups, boolean refreshLandOwners);
+	public CellDTO getCase(int i, int j);
 
 	//-----------------------------------------------------------------------------------//
 	
@@ -37,8 +35,6 @@ public interface IGameDAO {
 	public void updatePlayerPoints(Player player);
 	public void updateAllyPoints(Ally ally);
 	public void updateCityResources(City city, boolean newStep);
-	public void updateSmith(String smithUID, int people);
-	public void updateEquipmentStock(String equipmentUID, int size);
 	public void updateStock(Stock stock);
 
 	//-----------------------------------------------------------------------------------//
@@ -69,27 +65,14 @@ public interface IGameDAO {
 	public String createMove(Move move);
 	public void setTimeToForMove(String moveUID, long timeTo);
 	public void setNewGatheringForMoveAndDeletePreviousGathering(String moveUID, String gatheringUID);
-	public void setValueForMove(String moveUID, int value);
+	public void setHiddenForMove(String moveUID, boolean hidden);
 	public void deleteMove(String moveUID, boolean keepGatheringBecauseItIsLinkedWithAnotherMoveNow);
 	public void deleteMoves(String unitUID);
 
 	//-----------------------------------------------------------------------------------//
 	
 	public void resetChallenger(String caseUID);
-	public CaseDTO tryToSetChallenger(Unit unitArriving, long timeFromChallenging);
-
-	//-----------------------------------------------------------------------------------//
-	
-	public void addUnitInGatheringAndSetNewArmy(String gatheringUID, String unitUID, String newUnitUID);
-
-	//-----------------------------------------------------------------------------------//
-	
-	public ConflictDTO getConflict(String conflictUID);
-	public GatheringDTO getGathering(String gatheringUID);
-
-	//-----------------------------------------------------------------------------------//
-	
-	public String createConflict(String caseUID, String unitUID, String unitUID2);
+	public CellDTO tryToSetChallenger(Unit unitArriving, long timeFromChallenging);
 
 	//-----------------------------------------------------------------------------------//
 	

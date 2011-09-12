@@ -16,16 +16,13 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.uralys.tribes.dao.impl.UniversalDAO;
 import com.uralys.tribes.entities.dto.AllyDTO;
-import com.uralys.tribes.entities.dto.CaseDTO;
+import com.uralys.tribes.entities.dto.CellDTO;
 import com.uralys.tribes.entities.dto.CityDTO;
-import com.uralys.tribes.entities.dto.EquipmentDTO;
-import com.uralys.tribes.entities.dto.GatheringDTO;
 import com.uralys.tribes.entities.dto.ItemDTO;
 import com.uralys.tribes.entities.dto.MessageDTO;
 import com.uralys.tribes.entities.dto.MoveDTO;
 import com.uralys.tribes.entities.dto.PlayerDTO;
 import com.uralys.tribes.entities.dto.ServerDataDTO;
-import com.uralys.tribes.entities.dto.SmithDTO;
 import com.uralys.tribes.entities.dto.StockDTO;
 import com.uralys.tribes.entities.dto.UnitDTO;
 import com.uralys.utils.Utils;
@@ -540,20 +537,14 @@ public class DataviewerServlet extends HttpServlet {
 			return CityDTO.class;
 		else if(dto.equals("stock"))
 			return StockDTO.class;
-		else if(dto.equals("smith"))
-			return SmithDTO.class;
 		else if(dto.equals("unit"))
 			return UnitDTO.class;
 		else if(dto.equals("case"))
-			return CaseDTO.class;
-		else if(dto.equals("equipment"))
-			return EquipmentDTO.class;
+			return CellDTO.class;
 		else if(dto.equals("item"))
 			return ItemDTO.class;
 		else if(dto.equals("move"))
 			return MoveDTO.class;
-		else if(dto.equals("gathering"))
-			return GatheringDTO.class;
 		else if(dto.equals("message"))
 			return MessageDTO.class;
 		else if(dto.equals("serverdata"))

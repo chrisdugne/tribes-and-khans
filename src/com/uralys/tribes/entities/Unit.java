@@ -7,13 +7,6 @@ public class Unit {
 
 	//-----------------------------------------------------------------------------------//
 	
-	public final static int TO_BE_CREATED = -1;
-	public final static int INTERCEPTED = 1;
-	public final static int FREE = 2;
-	public final static int DESTROYED = 3;
-
-	//-----------------------------------------------------------------------------------//
-
 	public final static int ARMY = 1;
 	public final static int MERCHANT = 2;
 	
@@ -27,7 +20,6 @@ public class Unit {
 	
 	private String unitUID;
 	private int value;
-	private int status = FREE;
 	private int type;
 	private Player player;
 
@@ -39,15 +31,18 @@ public class Unit {
 	private int iron;
 	private int gold;
 	
+	private int bows;
+	private int swords;
+	private int armors;
+	
 	private long beginTime;
 	private long endTime;
-
-	private String gatheringUIDExpected;
-	private String finalCaseUIDExpected;
 	
-	private List<Move> moves = new ArrayList<Move>();
-	private List<Equipment> equipments = new ArrayList<Equipment>();
+	private String caseUIDExpectedForLand;
+	private String unitMetUID;
 
+	private List<Move> moves = new ArrayList<Move>();
+	
 	//-----------------------------------------------------------------------------------//
 	
 	
@@ -73,14 +68,6 @@ public class Unit {
 
 	public void setValue(int value) {
 		this.value = value;
-	}
-
-	public int getStatus() {
-		return status;
-	}
-
-	public void setStatus(int status) {
-		this.status = status;
 	}
 
 	public List<Move> getMoves() {
@@ -147,12 +134,44 @@ public class Unit {
 		this.gold = gold;
 	}
 
-	public List<Equipment> getEquipments() {
-		return equipments;
+	public int getBows() {
+		return bows;
 	}
 
-	public void setEquipments(List<Equipment> equipments) {
-		this.equipments = equipments;
+	public void setBows(int bows) {
+		this.bows = bows;
+	}
+
+	public int getSwords() {
+		return swords;
+	}
+
+	public void setSwords(int swords) {
+		this.swords = swords;
+	}
+
+	public int getArmors() {
+		return armors;
+	}
+
+	public void setArmors(int armors) {
+		this.armors = armors;
+	}
+
+	public String getCaseUIDExpectedForLand() {
+		return caseUIDExpectedForLand;
+	}
+
+	public void setCaseUIDExpectedForLand(String caseUIDExpectedForLand) {
+		this.caseUIDExpectedForLand = caseUIDExpectedForLand;
+	}
+
+	public String getUnitMetUID() {
+		return unitMetUID;
+	}
+
+	public void setUnitMetUID(String unitMetUID) {
+		this.unitMetUID = unitMetUID;
 	}
 
 	public long getBeginTime() {
@@ -161,14 +180,6 @@ public class Unit {
 	
 	public void setBeginTime(long beginTime) {
 		this.beginTime = beginTime;
-	}
-	
-	public String getFinalCaseUIDExpected() {
-		return finalCaseUIDExpected;
-	}
-
-	public void setFinalCaseUIDExpected(String finalCaseUIDExpected) {
-		this.finalCaseUIDExpected = finalCaseUIDExpected;
 	}
 
 	public long getEndTime() {
@@ -180,15 +191,6 @@ public class Unit {
 	}
 	
 	//-----------------------------------------------------------------------------------//
-	
-
-	public String getGatheringUIDExpected() {
-		return gatheringUIDExpected;
-	}
-
-	public void setGatheringUIDExpected(String gatheringUIDExpected) {
-		this.gatheringUIDExpected = gatheringUIDExpected;
-	}
 
 	public boolean equals(Unit unit){
 		return unit.getUnitUID().equals(unitUID);

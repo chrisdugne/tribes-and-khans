@@ -27,17 +27,17 @@ public class PlayerDTO {
 	private String uralysUID;
 	
 	@Persistent private String name;
-	@Persistent private Integer nbConnections;
-	
 	@Persistent private String allyUID; 
 
+	@Persistent private Integer nbConnections;
 	@Persistent private boolean musicOn; 
+
 	@Persistent private List<String> cityUIDs = new ArrayList<String>();
-	@Persistent private List<String> cityBeingOwnedUIDs = new ArrayList<String>();
 	@Persistent private List<String> unitUIDs = new ArrayList<String>();
+	@Persistent private List<String> cityBeingOwnedUIDs = new ArrayList<String>();
+	@Persistent private List<String> messageUIDs = new ArrayList<String>();
 	@Persistent private List<String> meetingsUIDs = new ArrayList<String>();
 
-	@Persistent private List<String> messageUIDs = new ArrayList<String>();
 	@Persistent private Long lastStep;
 
 	@Persistent private Integer nbLands; 
@@ -164,10 +164,6 @@ public class PlayerDTO {
 	
 	public List<CityDTO> getCities() {
 		return UniversalDAO.getInstance().getListDTO(cityUIDs, CityDTO.class);		
-	}
-	
-	public List<ConflictDTO> getMeetings() {
-		return UniversalDAO.getInstance().getListDTO(meetingsUIDs, ConflictDTO.class);		
 	}
 
 	public AllyDTO getAlly() {

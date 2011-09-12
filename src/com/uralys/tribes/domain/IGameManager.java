@@ -3,9 +3,9 @@ package com.uralys.tribes.domain;
 import java.util.List;
 
 import com.uralys.tribes.entities.Ally;
-import com.uralys.tribes.entities.Case;
+import com.uralys.tribes.entities.Cell;
 import com.uralys.tribes.entities.City;
-import com.uralys.tribes.entities.DataContainer4UnitSaved;
+import com.uralys.tribes.entities.ObjectsAltered;
 import com.uralys.tribes.entities.Item;
 import com.uralys.tribes.entities.Player;
 import com.uralys.tribes.entities.Unit;
@@ -26,8 +26,8 @@ public interface IGameManager {
 
 	//-----------------------------------------------------------------------------------//
 	
-	public DataContainer4UnitSaved createUnit(String uralysUID, Unit unit, String cityUID, boolean needReplacing);
-	public DataContainer4UnitSaved updateUnit(Unit unit, String cityUID, boolean needReplacing);
+	public ObjectsAltered createUnit(String uralysUID, Unit unit, String cityUID);
+	public ObjectsAltered updateUnit(Unit unit, String cityUID, boolean needReplacing);
 
 	//-----------------------------------------------------------------------------------//
 	
@@ -38,8 +38,8 @@ public interface IGameManager {
 	//-----------------------------------------------------------------------------------//
 	
 	public List<Item> loadItems();
-	public List<Case> loadCases(int[] groups, boolean refreshLandOwners);
-	public Case getCase(int x, int y);
+	public List<Cell> loadCases(int[] groups, boolean refreshLandOwners);
+	public Cell getCase(int x, int y);
 
 	//-----------------------------------------------------------------------------------//
 	

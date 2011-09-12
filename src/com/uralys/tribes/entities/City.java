@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class City {
+	
 	//-----------------------------------------------------------------------------------//
 
 	private String cityUID;
@@ -26,8 +27,10 @@ public class City {
 	private int y;
 	private int gold;
 
-	private List<Equipment> equipmentStock = new ArrayList<Equipment>();
-	private List<Smith> smiths = new ArrayList<Smith>();
+	private int bows;
+	private int swords;
+	private int armors;
+
 	private List<Stock> stocks = new ArrayList<Stock>();
 	
 	//-----------------------------------------------------------------------------------//
@@ -120,22 +123,6 @@ public class City {
 		this.peopleCreatingIron = peopleCreatingIron;
 	}
 
-	public List<Equipment> getEquipmentStock() {
-		return equipmentStock;
-	}
-
-	public void setEquipmentStock(List<Equipment> equipmentStock) {
-		this.equipmentStock = equipmentStock;
-	}
-
-	public List<Smith> getSmiths() {
-		return smiths;
-	}
-
-	public void setSmiths(List<Smith> smiths) {
-		this.smiths = smiths;
-	}
-
 	public int getGold() {
 		return gold;
 	}
@@ -173,6 +160,30 @@ public class City {
 
 	public void setStocks(List<Stock> stocks) {
 		this.stocks = stocks;
+	}
+
+	public int getBows() {
+		return bows;
+	}
+
+	public void setBows(int bows) {
+		this.bows = bows;
+	}
+
+	public int getSwords() {
+		return swords;
+	}
+
+	public void setSwords(int swords) {
+		this.swords = swords;
+	}
+
+	public int getArmors() {
+		return armors;
+	}
+
+	public void setArmors(int armors) {
+		this.armors = armors;
 	}
 
 	

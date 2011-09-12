@@ -13,7 +13,7 @@ import javax.jdo.annotations.PrimaryKey;
 import com.uralys.tribes.dao.impl.UniversalDAO;
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
-public class CaseDTO {
+public class CellDTO {
 	
 	//-----------------------------------------------------------------------------------//
 

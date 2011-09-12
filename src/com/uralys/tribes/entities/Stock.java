@@ -6,13 +6,14 @@ public class Stock {
 
 	private String stockUID;
 
-	private long stockCapacity;
+	private Integer stockCapacity;
 
-	private int peopleBuildingStock;
-	private long stockBeginTime;
-	private long stockEndTime;
-	private long stockNextCapacity;
+	private Integer peopleBuildingStock;
+	private Long stockBeginTime;
+	private Long stockEndTime;
+	private Integer stockNextCapacity;
 
+	private Integer smiths;
 	private Integer itemsBeingBuilt;
 	private Long itemsBeingBuiltBeginTime;
 	private Long itemsBeingBuiltEndTime;
@@ -25,34 +26,34 @@ public class Stock {
 	public void setStockUID(String stockUID) {
 		this.stockUID = stockUID;
 	}
-	public long getStockCapacity() {
+	public Integer getStockCapacity() {
 		return stockCapacity;
 	}
-	public void setStockCapacity(long stockCapacity) {
+	public void setStockCapacity(Integer stockCapacity) {
 		this.stockCapacity = stockCapacity;
 	}
-	public int getPeopleBuildingStock() {
+	public Integer getPeopleBuildingStock() {
 		return peopleBuildingStock;
 	}
-	public void setPeopleBuildingStock(int peopleBuildingStock) {
+	public void setPeopleBuildingStock(Integer peopleBuildingStock) {
 		this.peopleBuildingStock = peopleBuildingStock;
 	}
-	public long getStockBeginTime() {
+	public Long getStockBeginTime() {
 		return stockBeginTime;
 	}
-	public void setStockBeginTime(long stockBeginTime) {
+	public void setStockBeginTime(Long stockBeginTime) {
 		this.stockBeginTime = stockBeginTime;
 	}
-	public long getStockEndTime() {
+	public Long getStockEndTime() {
 		return stockEndTime;
 	}
-	public void setStockEndTime(long stockEndTime) {
+	public void setStockEndTime(Long stockEndTime) {
 		this.stockEndTime = stockEndTime;
 	}
-	public long getStockNextCapacity() {
+	public Integer getStockNextCapacity() {
 		return stockNextCapacity;
 	}
-	public void setStockNextCapacity(long stockNextCapacity) {
+	public void setStockNextCapacity(Integer stockNextCapacity) {
 		this.stockNextCapacity = stockNextCapacity;
 	}
 	public Integer getItemsBeingBuilt() {
@@ -72,5 +73,11 @@ public class Stock {
 	}
 	public void setItemsBeingBuiltEndTime(Long itemsBeingBuiltEndTime) {
 		this.itemsBeingBuiltEndTime = itemsBeingBuiltEndTime;
+	}
+	public Integer getSmiths() {
+		return smiths;
+	}
+	public void setSmiths(Integer smiths) {
+		this.smiths = smiths;
 	}
 }

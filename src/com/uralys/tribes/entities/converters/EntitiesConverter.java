@@ -5,31 +5,21 @@ import java.util.List;
 
 import com.uralys.tribes.dao.impl.UniversalDAO;
 import com.uralys.tribes.entities.Ally;
-import com.uralys.tribes.entities.Case;
+import com.uralys.tribes.entities.Cell;
 import com.uralys.tribes.entities.City;
-import com.uralys.tribes.entities.Conflict;
-import com.uralys.tribes.entities.Equipment;
-import com.uralys.tribes.entities.Gathering;
 import com.uralys.tribes.entities.Item;
 import com.uralys.tribes.entities.Message;
 import com.uralys.tribes.entities.Move;
-import com.uralys.tribes.entities.MoveConflict;
 import com.uralys.tribes.entities.Player;
-import com.uralys.tribes.entities.Smith;
 import com.uralys.tribes.entities.Stock;
 import com.uralys.tribes.entities.Unit;
 import com.uralys.tribes.entities.dto.AllyDTO;
-import com.uralys.tribes.entities.dto.CaseDTO;
+import com.uralys.tribes.entities.dto.CellDTO;
 import com.uralys.tribes.entities.dto.CityDTO;
-import com.uralys.tribes.entities.dto.ConflictDTO;
-import com.uralys.tribes.entities.dto.EquipmentDTO;
-import com.uralys.tribes.entities.dto.GatheringDTO;
 import com.uralys.tribes.entities.dto.ItemDTO;
 import com.uralys.tribes.entities.dto.MessageDTO;
-import com.uralys.tribes.entities.dto.MoveConflictDTO;
 import com.uralys.tribes.entities.dto.MoveDTO;
 import com.uralys.tribes.entities.dto.PlayerDTO;
-import com.uralys.tribes.entities.dto.SmithDTO;
 import com.uralys.tribes.entities.dto.StockDTO;
 import com.uralys.tribes.entities.dto.UnitDTO;
 import com.uralys.utils.Utils;
@@ -46,20 +36,11 @@ public class EntitiesConverter {
 		Move move = new Move();
 
 		move.setMoveUID(moveDTO.getMoveUID());
-		move.setCaseUID(moveDTO.getCaseUID());
+		move.setCellUID(moveDTO.getCellUID());
 		move.setTimeFrom(moveDTO.getTimeFrom());
 		move.setTimeTo(moveDTO.getTimeTo());
 		move.setUnitUID(moveDTO.getUnitUID());
-		move.setValue(moveDTO.getValue());
-
-		if(requireLinkedGathering){
-			try {
-				move.setGathering(convertGatheringDTO(moveDTO.getGathering()));
-			} catch (Exception e) {
-				Utils.print("LOADCASES : move.getGathering DOES NOT EXIST | gathering " + moveDTO.getGatheringUID());
-			}
-			
-		}
+		move.setHidden(moveDTO.isHidden());
 
 		return move;
 	}
@@ -97,16 +78,6 @@ public class EntitiesConverter {
 		}
 
 		player.setCities(cities);
-
-		// -----------------------------------------------------------------------------------//
-
-		List<Conflict> conflicts = new ArrayList<Conflict>();
-
-		for (ConflictDTO conflictDTO : playerDTO.getMeetings()) {
-			conflicts.add(convertConflictDTO(conflictDTO));
-		}
-
-		player.setConflicts(conflicts);
 
 		// -----------------------------------------------------------------------------------//
 
@@ -192,6 +163,9 @@ public class EntitiesConverter {
 		city.setX(cityDTO.getX());
 		city.setY(cityDTO.getY());
 		city.setGold(cityDTO.getGold());
+		city.setBows(cityDTO.getBows());
+		city.setSwords(cityDTO.getSwords());
+		city.setArmors(cityDTO.getArmors());
 		city.setBeginTime(cityDTO.getBeginTime());
 		city.setEndTime(cityDTO.getEndTime());
 
@@ -207,26 +181,6 @@ public class EntitiesConverter {
 			city.setStocks(stocks);
 			
 			// ---------------------------------//
-			
-			List<Equipment> equipmentStock = new ArrayList<Equipment>();
-			
-			for (EquipmentDTO equipmentDTO : cityDTO.getEquipmentStock()) {
-				equipmentStock.add(convertEquipmentDTO(equipmentDTO));
-			}
-			
-			city.setEquipmentStock(equipmentStock);
-			
-			// ---------------------------------//
-			
-			List<Smith> smiths = new ArrayList<Smith>();
-			
-			for (SmithDTO smithDTO : cityDTO.getSmiths()) {
-				smiths.add(convertSmithDTO(smithDTO));
-			}
-			
-			city.setSmiths(smiths);
-			
-			// ---------------------------------//			
 		}
 
 		return city;
@@ -255,29 +209,23 @@ public class EntitiesConverter {
 		unit.setUnitUID(unitDTO.getUnitUID());
 		unit.setSize(unitDTO.getSize());
 		unit.setSpeed(unitDTO.getSpeed());
-		unit.setValue(unitDTO.getValue());
-		unit.setGold(unitDTO.getGold());
-		unit.setIron(unitDTO.getIron());
+
 		unit.setWheat(unitDTO.getWheat());
 		unit.setWood(unitDTO.getWood());
+		unit.setIron(unitDTO.getIron());
+		unit.setGold(unitDTO.getGold());
+		unit.setBows(unitDTO.getBows());
+		unit.setSwords(unitDTO.getSwords());
+		unit.setArmors(unitDTO.getArmors());
 
 		unit.setType(unitDTO.getType());
 		unit.setPlayer(convertPlayerDTO(unitDTO.getPlayer(), false));
 
 		unit.setBeginTime(unitDTO.getBeginTime());
 		unit.setEndTime(unitDTO.getEndTime());
-		unit.setGatheringUIDExpected(unitDTO.getGatheringUIDExpected());
-		unit.setFinalCaseUIDExpected(unitDTO.getFinalCaseUIDExpected());
 
-		// -----------------------------------------------------------------------------------//
-
-		List<Equipment> equipments = new ArrayList<Equipment>();
-
-		for (EquipmentDTO equipmentDTO : unitDTO.getEquipments()) {
-			equipments.add(convertEquipmentDTO(equipmentDTO));
-		}
-
-		unit.setEquipments(equipments);
+		unit.setUnitMetUID(unitDTO.getUnitMetUID());
+		unit.setCaseUIDExpectedForLand(unitDTO.getCaseUIDExpectedForLand());
 
 		// -----------------------------------------------------------------------------------//
 
@@ -290,53 +238,6 @@ public class EntitiesConverter {
 				Move move = convertMoveDTO(moveDTO, requireLinkedGatherings);
 				moves.add(move);
 			}
-			
-			if(requireLinkedMoveFromGathering && unit.getGatheringUIDExpected() != null)
-			{
-				GatheringDTO gathering = null;
-				
-				try{
-					gathering = (GatheringDTO) UniversalDAO.getInstance().getObjectDTO(unit.getGatheringUIDExpected(), GatheringDTO.class);
-				}
-				catch (Exception e) {
-					// ce cas semble survenir pour certaines unites endTime<now qui ont ete en conflit
-					// elles ont un getGatheringUIDExpected, mais le gathering a ŽtŽ supprimŽ ?
-					// bref comme elles sont perimes de toute facon, on n'a pas besoin du 'moveToAdd' (qui n'existe pas de toute maniere)
-				}
-				
-				if(gathering != null)
-				{
-					UnitDTO newUnit;
-					try{
-						newUnit = (UnitDTO) UniversalDAO.getInstance().getObjectDTO(gathering.getNewUnitUID(), UnitDTO.class);
-					}
-					catch(Exception e){
-						newUnit = null;
-					}
-					
-					if(newUnit != null){
-						// il arrive qu'il y ait des unit qui nont pas de move...
-						// dans ce cas bug : l'armee sera supprimee par flex lors de la prochaine connexion du joueur.
-						if(newUnit.getMoves().size() != 0){
-							Move moveToAdd = convertMoveDTO(newUnit.getMoves().get(0), requireLinkedGatherings);
-							
-							int indexOfTheMoveToAdd = 0;
-							for(Move moveRecorded : moves){
-								indexOfTheMoveToAdd++;
-								if(moveRecorded.getTimeTo() == moveToAdd.getTimeFrom()){
-									break;
-								}
-							}
-							
-							if(indexOfTheMoveToAdd < moves.size())
-								moveToAdd.setTimeTo(moves.get(indexOfTheMoveToAdd).getTimeFrom());
-							
-							moves.add(indexOfTheMoveToAdd, moveToAdd);					
-						}
-					}
-					//else : pas de newUnit pour ce gathering => il y a eu un conflit qui se termine en DRAW : autodestruction des 2 armees
-				}
-			}
 
 			unit.setMoves(moves);
 		}
@@ -348,14 +249,14 @@ public class EntitiesConverter {
 
 	// -----------------------------------------------------------------------------------//
 
-	public static Case convertCaseDTO(CaseDTO caseDTO) {
+	public static Cell convertCaseDTO(CellDTO caseDTO) {
 
 		if (caseDTO == null)
 			return null;
 
-		Case _case = new Case();
+		Cell _case = new Cell();
 
-		_case.setCaseUID(caseDTO.getCaseUID());
+		_case.setCellUID(caseDTO.getCaseUID());
 		_case.setX(caseDTO.getX());
 		_case.setGroup(caseDTO.getGroupCase());
 		_case.setY(caseDTO.getY());
@@ -417,23 +318,6 @@ public class EntitiesConverter {
 	}
 
 	// -----------------------------------------------------------------------------------//
-
-	public static Equipment convertEquipmentDTO(EquipmentDTO equipmentDTO) {
-
-		if (equipmentDTO == null)
-			return null;
-
-		Equipment equipment = new Equipment();
-
-		equipment.setEquimentUID(equipmentDTO.getEquimentUID());
-		equipment.setSize(equipmentDTO.getSize());
-
-		equipment.setItem(convertItemDTO(equipmentDTO.getItem()));
-
-		return equipment;
-	}
-
-	// -----------------------------------------------------------------------------------//
 	
 	public static Stock convertStockDTO(StockDTO stockDTO) {
 		
@@ -449,6 +333,7 @@ public class EntitiesConverter {
 		stock.setStockBeginTime(stockDTO.getStockBeginTime());
 		stock.setStockEndTime(stockDTO.getStockEndTime());
 
+		stock.setSmiths(stockDTO.getSmiths());
 		stock.setItemsBeingBuilt(stockDTO.getItemsBeingBuilt());
 		stock.setItemsBeingBuiltBeginTime(stockDTO.getItemsBeingBuiltBeginTime());
 		stock.setItemsBeingBuiltEndTime(stockDTO.getItemsBeingBuiltEndTime());
@@ -503,82 +388,5 @@ public class EntitiesConverter {
 	}
 		
 	// -----------------------------------------------------------------------------------//
-
-	public static Smith convertSmithDTO(SmithDTO smithDTO) {
-
-		if (smithDTO == null)
-			return null;
-
-		Smith smith = new Smith();
-
-		smith.setSmithUID(smithDTO.getSmithUID());
-		smith.setPeople(smithDTO.getPeople());
-
-		smith.setItem(convertItemDTO(smithDTO.getItem()));
-
-		return smith;
-	}
-
-	// -----------------------------------------------------------------------------------//
-
-	public static Conflict convertConflictDTO(ConflictDTO conflictDTO) {
-
-		if (conflictDTO == null)
-			return null;
-
-		Conflict conflict = new Conflict();
-		conflict.setConflictUID(conflictDTO.getConflictUID());
-		conflict.setCaseUID(conflictDTO.getCaseUID());
-
-		// -----------------------------------------------------------------------------------//
-
-		List<Unit> units = new ArrayList<Unit>();
-
-		for (UnitDTO unitDTO : conflictDTO.getUnits()) {
-			units.add(convertUnitDTO(unitDTO, true, false, false));
-		}
-
-		conflict.setUnits(units);
-
-		// ------------------------------------------------------------------------------------//
-
-		return conflict;
-	}
-
-	// -----------------------------------------------------------------------------------//
-
-	public static Gathering convertGatheringDTO(GatheringDTO gatheringDTO) {
-		if (gatheringDTO == null)
-			return null;
-
-		Gathering gathering = new Gathering();
-
-		gathering.setNewUnitUID(gatheringDTO.getNewUnitUID());
-		gathering.setAllyUID(gatheringDTO.getAllyUID());
-		gathering.setGatheringUID(gatheringDTO.getGatheringUID());
-		gathering.setUnitUIDs(gatheringDTO.getUnitUIDs());
-
-		return gathering;
-	}
-
-	// -----------------------------------------------------------------------------------//
-
-	public static MoveConflict convertMoveConflictDTO(MoveConflictDTO moveConflictDTO) 
-	{
-		if (moveConflictDTO == null)
-			return null;
-
-		MoveConflict moveConflict = new MoveConflict();
-
-		moveConflict.setArmyArmors(moveConflictDTO.getArmyArmors());
-		moveConflict.setArmyBows(moveConflictDTO.getArmyBows());
-		moveConflict.setArmySize(moveConflictDTO.getArmySize());
-		moveConflict.setArmySwords(moveConflictDTO.getArmySwords());
-		moveConflict.setxFrom(moveConflictDTO.getxFrom());
-		moveConflict.setyFrom(moveConflictDTO.getyFrom());
-		moveConflict.setArmyStanding(moveConflictDTO.getArmyStanding());
-
-		return moveConflict;
-	}
 
 }

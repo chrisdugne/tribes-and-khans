@@ -3,7 +3,7 @@ package com.uralys.tribes.entities;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Case {
+public class Cell {
 
 	//-----------------------------------------------------------------------------------//
 
@@ -14,7 +14,7 @@ public class Case {
 	
 	//-----------------------------------------------------------------------------------//
 
-	private String caseUID;
+	private String cellUID;
 
 	private int group;
 	private int x;
@@ -31,9 +31,9 @@ public class Case {
 
 	//-----------------------------------------------------------------------------------//
 
-	public Case() {}
+	public Cell() {}
 
-	public Case(int i, int j) {
+	public Cell(int i, int j) {
 		x = i;
 		y = j;
 		recordedMoves = new ArrayList<Move>();
@@ -45,12 +45,12 @@ public class Case {
 		return x;
 	}
 
-	public String getCaseUID() {
-		return caseUID;
+	public String getCellUID() {
+		return cellUID;
 	}
 
-	public void setCaseUID(String caseUID) {
-		this.caseUID = caseUID;
+	public void setCellUID(String cellUID) {
+		this.cellUID = cellUID;
 	}
 
 	public void setX(int x) {

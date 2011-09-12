@@ -6,12 +6,11 @@ public class Move {
 	
 	private String moveUID;
 
-	private String caseUID;
+	private String cellUID;
 	private long timeFrom;
 	private long timeTo;
 	private String unitUID;
-	private Gathering gathering = new Gathering();
-	private int value;
+	private boolean hidden;
 	
 	//-----------------------------------------------------------------------------------//
 
@@ -21,7 +20,7 @@ public class Move {
 	{
 		this.timeFrom = timeFrom;
 		this.timeTo = timeTo;
-		this.caseUID = "case_"+i+"_"+j;
+		this.cellUID = "cell_"+i+"_"+j;
 	}
 
 	//-----------------------------------------------------------------------------------//
@@ -32,11 +31,11 @@ public class Move {
 	public void setMoveUID(String moveUID) {
 		this.moveUID = moveUID;
 	}
-	public String getCaseUID() {
-		return caseUID;
+	public String getCellUID() {
+		return cellUID;
 	}
-	public void setCaseUID(String caseUID) {
-		this.caseUID = caseUID;
+	public void setCellUID(String cellUID) {
+		this.cellUID = cellUID;
 	}
 	public long getTimeFrom() {
 		return timeFrom;
@@ -56,17 +55,11 @@ public class Move {
 	public void setUnitUID(String unitUID) {
 		this.unitUID = unitUID;
 	}
-	public Gathering getGathering() {
-		return gathering;
+	public boolean isHidden() {
+		return hidden;
 	}
-	public void setGathering(Gathering gathering) {
-		this.gathering = gathering;
-	}
-	public int getValue() {
-		return value;
-	}
-	public void setValue(int value) {
-		this.value = value;
+	public void setHidden(boolean hidden) {
+		this.hidden = hidden;
 	}
 	
 	//-----------------------------------------------------------------------------------//

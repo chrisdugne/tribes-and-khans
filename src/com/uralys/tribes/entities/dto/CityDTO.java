@@ -44,13 +44,15 @@ public class CityDTO {
 	@Persistent private int iron;
 	@Persistent private int peopleCreatingIron;
 
+	@Persistent private int bows;
+	@Persistent private int swords;
+	@Persistent private int armors;
+
 	@Persistent private Integer gold;
 
 	@Persistent private int x;
 	@Persistent private int y;
 	
-	@Persistent private List<String> smithUIDs = new ArrayList<String>();
-	@Persistent private List<String> equipmentStockUIDs = new ArrayList<String>();
 	@Persistent private List<String> stockUIDs = new ArrayList<String>();
 	
 	//-----------------------------------------------------------------------------------//
@@ -159,6 +161,24 @@ public class CityDTO {
 	public void setPopulationLost(Integer populationLost) {
 		this.populationLost = populationLost;
 	}
+	public int getBows() {
+		return bows;
+	}
+	public void setBows(int bows) {
+		this.bows = bows;
+	}
+	public int getSwords() {
+		return swords;
+	}
+	public void setSwords(int swords) {
+		this.swords = swords;
+	}
+	public int getArmors() {
+		return armors;
+	}
+	public void setArmors(int armors) {
+		this.armors = armors;
+	}
 	public long getBeginTime() {
 		return beginTime;
 	}
@@ -172,29 +192,6 @@ public class CityDTO {
 		this.endTime = endTime;
 	}
 	
-	//-----------------------------------------------------------------------------------//
-	
-	public List<SmithDTO> getSmiths() {
-		return UniversalDAO.getInstance().getListDTO(smithUIDs, SmithDTO.class);
-	}
-	public List<String> getSmithUIDs() {
-		return smithUIDs;
-	}
-	public void setSmithUIDs(List<String> smithUIDs) {
-		this.smithUIDs = smithUIDs;
-	}
-	
-	//-----------------------------------------------------------------------------------//
-	
-	public List<EquipmentDTO> getEquipmentStock() {
-		return UniversalDAO.getInstance().getListDTO(equipmentStockUIDs, EquipmentDTO.class);
-	}
-	public List<String> getEquipmentStockUIDs() {
-		return equipmentStockUIDs;
-	}
-	public void setEquipmentStockUIDs(List<String> equipmentStockUIDs) {
-		this.equipmentStockUIDs = equipmentStockUIDs;
-	}
 	//-----------------------------------------------------------------------------------//
 	
 	public List<StockDTO> getStocks() {

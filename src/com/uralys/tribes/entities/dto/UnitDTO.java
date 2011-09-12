@@ -26,26 +26,29 @@ public class UnitDTO {
     @Extension(vendorName="datanucleus", key="gae.pk-name", value="true")
 	private String unitUID;
 	
-	@Persistent private int value;
-	
 	@Persistent private long beginTime;
 	@Persistent private long endTime;
 
-	@Persistent private String gatheringUIDExpected;
-	@Persistent private String finalCaseUIDExpected;
-
-	@Persistent private int type;
-	@Persistent private String playerUID;
-	
-	@Persistent private int size;
-	@Persistent private int speed;
-	
 	@Persistent private int wheat;
 	@Persistent private int wood;
 	@Persistent private int iron;
 	@Persistent private int gold;
 	
-	@Persistent private List<String> equipmentUIDs = new ArrayList<String>();
+	@Persistent private int bows;
+	@Persistent private int swords;
+	@Persistent private int armors;
+
+	// la case en fin de chemin qui est sera peut etre colonisee
+	@Persistent private String caseUIDExpectedForLand;
+
+	// l'armee avec laquelle il y aura soit un conflit soit un gathering, si elle existe sur le chemin
+	@Persistent private String unitMetUID;
+
+	@Persistent private int type;
+	@Persistent private int speed;
+	@Persistent private int size;
+	@Persistent private String playerUID;
+	
 	@Persistent private List<String> moveUIDs = new ArrayList<String>();
 	
 	//-----------------------------------------------------------------------------------//
@@ -55,31 +58,6 @@ public class UnitDTO {
 	}
 	public void setKey(String key) {
 		this.key = key; 
-	}
-	
-	public String getUnitUID() {
-		return unitUID;
-	}
-	public void setUnitUID(String armyUID) {
-		this.unitUID = armyUID;
-	}
-	public int getSize() {
-		return size;
-	}
-	public void setSize(int size) {
-		this.size = size;
-	}
-	public int getSpeed() {
-		return speed;
-	}
-	public void setSpeed(int speed) {
-		this.speed = speed;
-	}
-	public int getValue() {
-		return value;
-	}
-	public void setValue(int value) { 
-		this.value = value;
 	}
 	public int getWheat() {
 		return wheat;
@@ -105,6 +83,42 @@ public class UnitDTO {
 	public void setGold(int gold) {
 		this.gold = gold;
 	}
+	public int getBows() {
+		return bows;
+	}
+	public void setBows(int bows) {
+		this.bows = bows;
+	}
+	public int getSwords() {
+		return swords;
+	}
+	public void setSwords(int swords) {
+		this.swords = swords;
+	}
+	public int getArmors() {
+		return armors;
+	}
+	public void setArmors(int armors) {
+		this.armors = armors;
+	}
+	public String getUnitUID() {
+		return unitUID;
+	}
+	public void setUnitUID(String armyUID) {
+		this.unitUID = armyUID;
+	}
+	public int getSize() {
+		return size;
+	}
+	public void setSize(int size) {
+		this.size = size;
+	}
+	public int getSpeed() {
+		return speed;
+	}
+	public void setSpeed(int speed) {
+		this.speed = speed;
+	}
 	public int getType() {
 		return type;
 	}
@@ -123,45 +137,32 @@ public class UnitDTO {
 	public void setEndTime(long endTime) {
 		this.endTime = endTime;
 	}
-	public String getGatheringUIDExpected() {
-		return gatheringUIDExpected;
-	}
-	public void setGatheringUIDExpected(String gatheringUIDExpected) {
-		this.gatheringUIDExpected = gatheringUIDExpected;
-	}
-	public String getFinalCaseUIDExpected() {
-		return finalCaseUIDExpected;
-	}
-	public void setFinalCaseUIDExpected(String finalCaseUIDExpected) {
-		this.finalCaseUIDExpected = finalCaseUIDExpected;
-	}
 	public String getPlayerUID() {
 		return playerUID;
 	}
 	public void setPlayerUID(String playerUID) {
 		this.playerUID = playerUID;
 	}
-
+	public String getUnitMetUID() {
+		return unitMetUID;
+	}
+	public void setUnitMetUID(String unitMetUID) {
+		this.unitMetUID = unitMetUID;
+	}
+	public String getCaseUIDExpectedForLand() {
+		return caseUIDExpectedForLand;
+	}
+	public void setCaseUIDExpectedForLand(String caseUIDExpectedForLand) {
+		this.caseUIDExpectedForLand = caseUIDExpectedForLand;
+	}
+	
 	//-----------------------------------------------------------------------------------//
-
+	
 	public PlayerDTO getPlayer() {
 		return (PlayerDTO) UniversalDAO.getInstance().getObjectDTO(playerUID, PlayerDTO.class);
 	}
 	
 	//-----------------------------------------------------------------------------------//
-
-	public List<EquipmentDTO> getEquipments() {
-		return UniversalDAO.getInstance().getListDTO(equipmentUIDs, EquipmentDTO.class);
-	}
-	public List<String> getEquipmentUIDs() {
-		return equipmentUIDs;
-	}
-	public void setEquipmentUIDs(List<String> equipmentUIDs) {
-		this.equipmentUIDs = equipmentUIDs;
-	}	
-
-	//-----------------------------------------------------------------------------------//
-	
 	
 	public List<MoveDTO> getMoves() {
 		return UniversalDAO.getInstance().getListDTO(moveUIDs, MoveDTO.class);

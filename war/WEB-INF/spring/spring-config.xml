@@ -26,9 +26,18 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 		class="com.uralys.tribes.dao.impl.GameDAO"
 		parent="mainDao"/>
 
+	<bean id="movesManager" class="com.uralys.tribes.domain.impl.MovesManager">
+		<constructor-arg index="0">
+			<ref bean="gameDao" />
+		</constructor-arg>
+	</bean>
+	
 	<bean id="gameDomain" class="com.uralys.tribes.domain.impl.GameManager">
 		<constructor-arg index="0">
 			<ref bean="gameDao" />
+		</constructor-arg>
+		<constructor-arg index="1">
+			<ref bean="movesManager" />
 		</constructor-arg>
 	</bean>
 	

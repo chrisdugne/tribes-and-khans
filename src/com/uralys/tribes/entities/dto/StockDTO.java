@@ -21,60 +21,67 @@ public class StockDTO {
     @Extension(vendorName="datanucleus", key="gae.pk-name", value="true")
 	private String stockUID;
 
-	@Persistent private long stockCapacity;
+	@Persistent private Integer stockCapacity;
 
-	@Persistent private int peopleBuildingStock;
-	@Persistent private long stockBeginTime;
-	@Persistent private long stockEndTime;
-	@Persistent private long stockNextCapacity;
+	@Persistent private Integer peopleBuildingStock;
+	@Persistent private Long stockBeginTime;
+	@Persistent private Long stockEndTime;
+	@Persistent private Integer stockNextCapacity;
 
+	@Persistent private Integer smiths;
 	@Persistent private Integer itemsBeingBuilt;
 	@Persistent private Long itemsBeingBuiltBeginTime;
 	@Persistent private Long itemsBeingBuiltEndTime;
 	
-	//-----------------------------------------------------------------------------------//
-
-	public String getKey() { 
+	//-----------------------------------------------------------------------------------//
+	
+	public String getKey() {
 		return key;
 	}
 	public void setKey(String key) {
-		this.key = key; 
+		this.key = key;
 	}
 	public String getStockUID() {
 		return stockUID;
 	}
-	public void setStockUID(String equimentUID) {
-		this.stockUID = equimentUID;
+	public void setStockUID(String stockUID) {
+		this.stockUID = stockUID;
 	}
-	public long getStockCapacity() {
+	public Integer getStockCapacity() {
 		return stockCapacity;
 	}
-	public void setStockCapacity(long stockCapacity) {
+	public void setStockCapacity(Integer stockCapacity) {
 		this.stockCapacity = stockCapacity;
 	}
-	public int getPeopleBuildingStock() {
+	public Integer getPeopleBuildingStock() {
 		return peopleBuildingStock;
 	}
-	public void setPeopleBuildingStock(int peopleCreatingBuilding) {
-		this.peopleBuildingStock = peopleCreatingBuilding;
+	public void setPeopleBuildingStock(Integer peopleBuildingStock) {
+		this.peopleBuildingStock = peopleBuildingStock;
 	}
-	public long getStockBeginTime() {
+	public Long getStockBeginTime() {
 		return stockBeginTime;
 	}
-	public void setStockBeginTime(long stockBeginTime) {
+	public void setStockBeginTime(Long stockBeginTime) {
 		this.stockBeginTime = stockBeginTime;
 	}
-	public long getStockEndTime() {
+	public Long getStockEndTime() {
 		return stockEndTime;
 	}
-	public void setStockEndTime(long stockEndTime) {
+	public void setStockEndTime(Long stockEndTime) {
 		this.stockEndTime = stockEndTime;
 	}
-	public long getStockNextCapacity() {
+	public Integer getStockNextCapacity() {
 		return stockNextCapacity;
 	}
-	public void setStockNextCapacity(long stockNextCapacity) {
+	public void setStockNextCapacity(Integer stockNextCapacity) {
 		this.stockNextCapacity = stockNextCapacity;
+	}
+	public Integer getSmiths() {
+		return smiths;
+	}
+	public void setSmiths(Integer smiths) {
+		this.smiths = smiths;
 	}
 	public Integer getItemsBeingBuilt() {
 		return itemsBeingBuilt;
@@ -94,4 +101,8 @@ public class StockDTO {
 	public void setItemsBeingBuiltEndTime(Long itemsBeingBuiltEndTime) {
 		this.itemsBeingBuiltEndTime = itemsBeingBuiltEndTime;
 	}
+	
+	//-----------------------------------------------------------------------------------//
+
+
 }

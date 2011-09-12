@@ -7,11 +7,10 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
-import com.uralys.tribes.dao.impl.UniversalDAO;
-
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 public class MoveDTO {
 
+	//-----------------------------------------------------------------------------------//
 
     @PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
@@ -22,13 +21,11 @@ public class MoveDTO {
     @Extension(vendorName="datanucleus", key="gae.pk-name", value="true")
 	private String moveUID;
 
-
-	@Persistent private String caseUID;
+	@Persistent private String cellUID;
 	@Persistent private long timeFrom;
 	@Persistent private long timeTo;
 	@Persistent private String unitUID;
-	@Persistent private String gatheringUID;
-	@Persistent private int value;
+	@Persistent private boolean hidden;
 
 	//-----------------------------------------------------------------------------------//
 
@@ -44,11 +41,11 @@ public class MoveDTO {
 	public void setMoveUID(String moveUID) {
 		this.moveUID = moveUID;
 	}
-	public String getCaseUID() {
-		return caseUID;
+	public String getCellUID() {
+		return cellUID;
 	}
-	public void setCaseUID(String caseUID) {
-		this.caseUID = caseUID;
+	public void setCellUID(String cellUID) {
+		this.cellUID = cellUID;
 	}
 	public long getTimeFrom() {
 		return timeFrom;
@@ -68,22 +65,11 @@ public class MoveDTO {
 	public void setUnitUID(String unitUID) {
 		this.unitUID = unitUID;
 	}
-	public int getValue() {
-		return value;
+	public boolean isHidden() {
+		return hidden;
 	}
-	public void setValue(int value) {
-		this.value = value;
-	}
-	public String getGatheringUID() {
-		return gatheringUID;
-	}
-	public void setGatheringUID(String gatheringUID) {
-		this.gatheringUID = gatheringUID;
+	public void setHidden(boolean hidden) {
+		this.hidden = hidden;
 	}
 	
-	//-----------------------------------------------------------------------------------//
-
-	public GatheringDTO getGathering() {
-		return (GatheringDTO) UniversalDAO.getInstance().getObjectDTO(gatheringUID, GatheringDTO.class);
-	}
 }

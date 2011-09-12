@@ -3,19 +3,19 @@ package com.uralys.tribes.entities;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DataContainer4UnitSaved {
+public class ObjectsAltered {
 
-	public DataContainer4UnitSaved(){};
+	public ObjectsAltered(){};
 	
 	//------------------------------------------------------------------------------------------//
 
-	private List<Case> casesAltered = new ArrayList<Case>();
+	private List<Cell> casesAltered = new ArrayList<Cell>();
 	private List<Unit> unitsAltered = new ArrayList<Unit>();
 	private String cityUID;
 
 	//------------------------------------------------------------------------------------------//
 
-	public List<Case> getCasesAltered() {
+	public List<Cell> getCasesAltered() {
 		return casesAltered;
 	}
 	
@@ -27,7 +27,7 @@ public class DataContainer4UnitSaved {
 		this.unitsAltered = unitsAltered;
 	}
 
-	public void setCasesAltered(List<Case> casesAltered) {
+	public void setCasesAltered(List<Cell> casesAltered) {
 		this.casesAltered = casesAltered;
 	}
 	
@@ -42,12 +42,12 @@ public class DataContainer4UnitSaved {
 	
 	//------------------------------------------------------------------------------------------//
 	
-	public void addCaseAltered(Case caseToRecord){
+	public void addCaseAltered(Cell caseToRecord){
 
 		int indexAlreadyrecorded = -1;
-		for(Case caseRecorded : casesAltered)
+		for(Cell caseRecorded : casesAltered)
 		{
-			if(caseRecorded.getCaseUID().equals(caseToRecord))
+			if(caseRecorded.getCellUID().equals(caseToRecord))
 			{
 				indexAlreadyrecorded = casesAltered.indexOf(caseRecorded);
 				break;

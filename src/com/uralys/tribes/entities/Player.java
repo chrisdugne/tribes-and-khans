@@ -14,7 +14,6 @@ public class Player
 	
 	private List<City> cities = new ArrayList<City>();
 	private List<Unit> units = new ArrayList<Unit>();
-	private List<Conflict> conflicts = new ArrayList<Conflict>();
 	private List<Message> newMessages = new ArrayList<Message>();
 	private List<Message> readMessages = new ArrayList<Message>();
 	private List<Message> archivedMessages = new ArrayList<Message>();
@@ -71,12 +70,6 @@ public class Player
 	}
 	public void setNbLands(Integer nbLands) {
 		this.nbLands = nbLands;
-	}
-	public List<Conflict> getConflicts() {
-		return conflicts;
-	}
-	public void setConflicts(List<Conflict> conflicts) {
-		this.conflicts = conflicts;
 	}
 	public Ally getAlly() {
 		return ally;

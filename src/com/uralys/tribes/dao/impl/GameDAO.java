@@ -14,26 +14,21 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.uralys.tribes.commons.Constants;
 import com.uralys.tribes.dao.IGameDAO;
 import com.uralys.tribes.entities.Ally;
-import com.uralys.tribes.entities.Case;
+import com.uralys.tribes.entities.Cell;
 import com.uralys.tribes.entities.City;
-import com.uralys.tribes.entities.Equipment;
 import com.uralys.tribes.entities.Message;
 import com.uralys.tribes.entities.Move;
 import com.uralys.tribes.entities.Player;
 import com.uralys.tribes.entities.Stock;
 import com.uralys.tribes.entities.Unit;
 import com.uralys.tribes.entities.dto.AllyDTO;
-import com.uralys.tribes.entities.dto.CaseDTO;
+import com.uralys.tribes.entities.dto.CellDTO;
 import com.uralys.tribes.entities.dto.CityDTO;
-import com.uralys.tribes.entities.dto.ConflictDTO;
-import com.uralys.tribes.entities.dto.EquipmentDTO;
-import com.uralys.tribes.entities.dto.GatheringDTO;
 import com.uralys.tribes.entities.dto.ItemDTO;
 import com.uralys.tribes.entities.dto.MessageDTO;
 import com.uralys.tribes.entities.dto.MoveDTO;
 import com.uralys.tribes.entities.dto.PlayerDTO;
 import com.uralys.tribes.entities.dto.ServerDataDTO;
-import com.uralys.tribes.entities.dto.SmithDTO;
 import com.uralys.tribes.entities.dto.StockDTO;
 import com.uralys.tribes.entities.dto.UnitDTO;
 import com.uralys.tribes.utils.TribesUtils;
@@ -44,9 +39,9 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	//-----------------------------------------------------------------------//
 	// local
 
-	private static String ITEM_UID_BOW = "_bow";
-	private static String ITEM_UID_SWORD = "_sword";
-	private static String ITEM_UID_ARMOR = "_armor";
+//	private static String ITEM_UID_BOW = "_bow";
+//	private static String ITEM_UID_SWORD = "_sword";
+//	private static String ITEM_UID_ARMOR = "_armor";
 
 	private static String WHEAT_STOCK_ID = "_wheat_stock";
 	private static String WOOD_STOCK_ID = "_wood_stock";
@@ -206,25 +201,10 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		//--------------------------------------//
 		// init Equipment
 		
-		String bowsStockUID = createEquipment(cityUID, ITEM_UID_BOW, 0);
-		String swordsStockUID = createEquipment(cityUID, ITEM_UID_SWORD, 0);
-		String armorsStockUID = createEquipment(cityUID, ITEM_UID_ARMOR, 0);
+		city.setBows(0);
+		city.setSwords(0);
+		city.setArmors(0);
 		
-		city.getEquipmentStockUIDs().add(bowsStockUID);
-		city.getEquipmentStockUIDs().add(swordsStockUID);
-		city.getEquipmentStockUIDs().add(armorsStockUID);
-		
-		//--------------------------------------//
-		// init Smith 
-		
-		String bowWorkersUID = createSmith(ITEM_UID_BOW);
-		String swordWorkersUID = createSmith(ITEM_UID_SWORD);
-		String armorWorkersUID = createSmith(ITEM_UID_ARMOR);
-		
-		city.getSmithUIDs().add(bowWorkersUID);
-		city.getSmithUIDs().add(swordWorkersUID);
-		city.getSmithUIDs().add(armorWorkersUID);
-
 		//--------------------------------------//
 		// init Stocks
 		
@@ -249,7 +229,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		//--------------------------------------//
 		// creation des cases autour de la ville
 
-		createOrRefreshCase(city.getX(), city.getY(), cityUID, Case.CITY, playerUID, pm);
+		createOrRefreshCase(city.getX(), city.getY(), cityUID, Cell.CITY, playerUID, pm);
 		
 		//--------------------------------------//
 
@@ -274,14 +254,14 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	 * 15*15*27*27 = 405*405
 	 * 
 	 */
-	private CaseDTO createCase(int x, int y, String cityUID, int type, String landOwnerUID, PersistenceManager pm) 
+	private CellDTO createCase(int x, int y, String cityUID, int type, String landOwnerUID, PersistenceManager pm) 
 	{
-		CaseDTO _case = new CaseDTO();
+		CellDTO _case = new CellDTO();
 
 		String caseUID = "case_"+x+"_"+y;
 		int group = TribesUtils.getGroup(x,y); 
 		
-		Key key = KeyFactory.createKey(CaseDTO.class.getSimpleName(), caseUID);
+		Key key = KeyFactory.createKey(CellDTO.class.getSimpleName(), caseUID);
 
 		_case.setKey(KeyFactory.keyToString(key));
 		_case.setCaseUID(caseUID);
@@ -356,19 +336,19 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<CaseDTO> loadCases(int[] groups, boolean refreshLandOwners) 
+	public List<CellDTO> loadCases(int[] groups, boolean refreshLandOwners) 
 	{
 		long now = new Date().getTime();
 
-		List<CaseDTO> result = new ArrayList<CaseDTO>();
+		List<CellDTO> result = new ArrayList<CellDTO>();
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		
 		for(int group : groups){
-			Query query = pm.newQuery("select from " + CaseDTO.class.getName() + " where groupCase == :group");
-			Collection<? extends CaseDTO> cases = (Collection<? extends CaseDTO>) query.execute(group);
+			Query query = pm.newQuery("select from " + CellDTO.class.getName() + " where groupCase == :group");
+			Collection<? extends CellDTO> cases = (Collection<? extends CellDTO>) query.execute(group);
 			
 			if(refreshLandOwners){
-				for(CaseDTO _case : cases)
+				for(CellDTO _case : cases)
 				{
 					if(_case.getChallengerUID() != null)
 					{
@@ -390,7 +370,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	private void newLandOwner(String caseUID) 
 	{
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
-		CaseDTO _case = pm.getObjectById(CaseDTO.class, caseUID);
+		CellDTO _case = pm.getObjectById(CellDTO.class, caseUID);
 		
 		if(_case.getLandOwnerUID() != null){
 			PlayerDTO owner = pm.getObjectById(PlayerDTO.class, _case.getLandOwnerUID());
@@ -409,20 +389,20 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	
 	//==================================================================================================//
 
-	public CaseDTO getCase(int i, int j) {
+	public CellDTO getCase(int i, int j) {
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		try{
-			return pm.getObjectById(CaseDTO.class, "case_"+i+"_"+j);
+			return pm.getObjectById(CellDTO.class, "case_"+i+"_"+j);
 		}
 		catch(JDOObjectNotFoundException e){
-			return createCase(i, j, null, Case.FOREST, null, pm);
+			return createCase(i, j, null, Cell.FOREST, null, pm);
 		}
 	}
 
 	private void createOrRefreshCase(int x, int y, String cityUID, int type, String landOwnerUID, PersistenceManager pm) 
 	{
 		try{
-			CaseDTO caseDTO = pm.getObjectById(CaseDTO.class, "case_"+x+"_"+y);
+			CellDTO caseDTO = pm.getObjectById(CellDTO.class, "case_"+x+"_"+y);
 			caseDTO.setLandOwnerUID(landOwnerUID);
 			caseDTO.setType(type);
 			caseDTO.setCityUID(cityUID);
@@ -535,23 +515,6 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		pm.close();
 	}
 	
-	
-	public void updateSmith(String smithUID, int people){
-		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
-		SmithDTO smithDTO = pm.getObjectById(SmithDTO.class, smithUID);
-		
-		smithDTO.setPeople(people);
-		pm.close();
-	}
-	
-	public void updateEquipmentStock(String stockUID, int size){
-		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
-		EquipmentDTO equipmentDTO = pm.getObjectById(EquipmentDTO.class, stockUID);
-		
-		equipmentDTO.setSize(size);
-		pm.close();
-	}
-	
 	public void updateStock(Stock stock){
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		StockDTO stockDTO = pm.getObjectById(StockDTO.class, stock.getStockUID());
@@ -588,41 +551,25 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		unitDTO.setKey(KeyFactory.keyToString(key));
 		unitDTO.setUnitUID(unit.getUnitUID());
 		unitDTO.setPlayerUID(unit.getPlayer().getUralysUID());
+		
+		unitDTO.setType(unit.getType());
 		unitDTO.setSize(unit.getSize());
 		unitDTO.setSpeed(unit.getSpeed());
+		
 		unitDTO.setWheat(unit.getWheat());
 		unitDTO.setWood(unit.getWood());
 		unitDTO.setIron(unit.getIron());
 		unitDTO.setGold(unit.getGold());
 
-		unitDTO.setValue(unit.getValue());
-		unitDTO.setType(unit.getType());
-		
+		unitDTO.setBows(unit.getBows());
+		unitDTO.setSwords(unit.getSwords());
+		unitDTO.setArmors(unit.getArmors());
+
 		unitDTO.setBeginTime(unit.getBeginTime());
 		unitDTO.setEndTime(-1);
 		
-		unitDTO.setFinalCaseUIDExpected(unit.getFinalCaseUIDExpected());
-		unitDTO.setGatheringUIDExpected(unit.getGatheringUIDExpected());
-
-		//--------------------------------------//
-		// init Equipment
-		
-		for(Equipment equipment : unit.getEquipments()){
-			if(equipment.getItem().getName().equals("bow")){
-				String bowsStockUID = createEquipment(unit.getUnitUID(), ITEM_UID_BOW, equipment.getSize());
-				unitDTO.getEquipmentUIDs().add(bowsStockUID);
-			}
-			else if(equipment.getItem().getName().equals("sword")){
-				String swordsStockUID = createEquipment(unit.getUnitUID(), ITEM_UID_SWORD, equipment.getSize());
-				unitDTO.getEquipmentUIDs().add(swordsStockUID);
-			}
-			else if(equipment.getItem().getName().equals("armor")){
-				String armorsStockUID = createEquipment(unit.getUnitUID(), ITEM_UID_ARMOR, equipment.getSize());
-				unitDTO.getEquipmentUIDs().add(armorsStockUID);
-			}
-		}
-		
-		//--------------------------------------//
+		unitDTO.setCaseUIDExpectedForLand(unit.getCaseUIDExpectedForLand());
+		unitDTO.setUnitMetUID(unit.getUnitMetUID());
 
 		if(cityUID != null)
 		{
@@ -653,7 +600,6 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		}
 		
 		unitDTO.setSize(unit.getSize());
-		unitDTO.setValue(unit.getValue());
 		unitDTO.setSpeed(unit.getSpeed());
 	
 		unitDTO.setWheat(unit.getWheat());
@@ -661,17 +607,16 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		unitDTO.setIron(unit.getIron());
 		unitDTO.setGold(unit.getGold());
 
-		unitDTO.setGatheringUIDExpected(unit.getGatheringUIDExpected());
-		unitDTO.setFinalCaseUIDExpected(unit.getFinalCaseUIDExpected());
+		unitDTO.setBows(unit.getBows());
+		unitDTO.setSwords(unit.getSwords());
+		unitDTO.setArmors(unit.getArmors());
+
+		unitDTO.setCaseUIDExpectedForLand(unit.getCaseUIDExpectedForLand());
+		unitDTO.setUnitMetUID(unit.getUnitMetUID());
 		unitDTO.setBeginTime(unit.getBeginTime());
 		unitDTO.setEndTime(unit.getEndTime());
 
 		pm.close();
-		
-		for(Equipment equipment : unit.getEquipments()){
-			updateEquipmentStock(equipment.getEquimentUID(), equipment.getSize());
-		}
-		
 	}
 
 
@@ -719,16 +664,6 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 				continue;
 			}
 			
-			if(unitDTO.getEquipmentUIDs().size() > 0){
-				Query query = pm.newQuery("select from " + EquipmentDTO.class.getName() + " where :uids.contains(key)");
-				List<EquipmentDTO> equipments = (List<EquipmentDTO>) query.execute(unitDTO.getEquipmentUIDs());
-				
-				for(EquipmentDTO equipmentDTO : equipments){
-					if(debug)Utils.print("delete equipmentDTO : " + equipmentDTO.getEquimentUID());
-					pm.deletePersistent(equipmentDTO);
-				}
-			}
-
 			if(unitDTO.getMoveUIDs().size() > 0){
 				Query query = pm.newQuery("select from " + MoveDTO.class.getName() + " where :uids.contains(key)");
 				List<MoveDTO> moves = (List<MoveDTO>) query.execute(unitDTO.getMoveUIDs());
@@ -754,16 +689,6 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		if(debug)Utils.print("delete unit : " + unitUID);
 		UnitDTO unitDTO = pm.getObjectById(UnitDTO.class, unitUID);
 		
-		if(unitDTO.getEquipmentUIDs().size() > 0){
-			Query query = pm.newQuery("select from " + EquipmentDTO.class.getName() + " where :uids.contains(key)");
-			List<EquipmentDTO> equipments = (List<EquipmentDTO>) query.execute(unitDTO.getEquipmentUIDs());
-			
-			for(EquipmentDTO equipmentDTO : equipments){
-				if(debug)Utils.print("delete equipmentDTO : " + equipmentDTO.getEquimentUID());
-				pm.deletePersistent(equipmentDTO);
-			}
-		}
-		
 		if(unitDTO.getMoveUIDs().size() > 0){
 			Query query = pm.newQuery("select from " + MoveDTO.class.getName() + " where :uids.contains(key)");
 			List<MoveDTO> moves = (List<MoveDTO>) query.execute(unitDTO.getMoveUIDs());
@@ -778,12 +703,12 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	}
 	
 
-	public void setValueForMove(String moveUID, int value) {
+	public void setHiddenForMove(String moveUID, boolean hidden) {
 
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		MoveDTO moveDTO = pm.getObjectById(MoveDTO.class, moveUID);
 		
-		moveDTO.setValue(value);
+		moveDTO.setHidden(hidden);
 		
 		pm.close();
 	}
@@ -843,7 +768,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 
 				cityDTO.setOwnerUID(newOwner.getUralysUID());
 
-				CaseDTO _case = pm.getObjectById(CaseDTO.class, "case_"+cityDTO.getX()+"_"+cityDTO.getY());
+				CellDTO _case = pm.getObjectById(CellDTO.class, "case_"+cityDTO.getX()+"_"+cityDTO.getY());
 				_case.setLandOwnerUID(newOwner.getUralysUID());
 			}
 			
@@ -861,16 +786,16 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 
 	public void setNewGatheringForMoveAndDeletePreviousGathering(String moveUID, String gatheringUID)
 	{
-		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
-		String uid = moveUID.contains("NEW") ? moveUID.substring(4) : moveUID;
-		MoveDTO moveDTO = pm.getObjectById(MoveDTO.class, uid);
-
-		GatheringDTO previousGatheringDTO = pm.getObjectById(GatheringDTO.class, moveDTO.getGatheringUID());
-		pm.deletePersistent(previousGatheringDTO);
-
-		moveDTO.setGatheringUID(gatheringUID);
-		
-		pm.close();
+//		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+//		String uid = moveUID.contains("NEW") ? moveUID.substring(4) : moveUID;
+//		MoveDTO moveDTO = pm.getObjectById(MoveDTO.class, uid);
+//
+//		GatheringDTO previousGatheringDTO = pm.getObjectById(GatheringDTO.class, moveDTO.getGatheringUID());
+//		pm.deletePersistent(previousGatheringDTO);
+//
+//		moveDTO.setGatheringUID(gatheringUID);
+//		
+//		pm.close();
 	}
 	
 	public String createMove(Move move) 
@@ -883,37 +808,14 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 
 		moveDTO.setKey(KeyFactory.keyToString(key));
 		moveDTO.setMoveUID(moveUID);
-		moveDTO.setCaseUID(move.getCaseUID());
+		moveDTO.setCellUID(move.getCellUID());
 		moveDTO.setTimeFrom(move.getTimeFrom());
 		moveDTO.setTimeTo(move.getTimeTo());
 		moveDTO.setUnitUID(move.getUnitUID());
-		moveDTO.setValue(move.getValue());
-		
-		if(debug)Utils.print("move.getGathering().getGatheringUID() : " + move.getGathering().getGatheringUID());
-		if(move.getGathering().getGatheringUID().equals("notcreatedyet")){
-			GatheringDTO gatheringDTO = new GatheringDTO(); 
-			
-			String gatheringUID = Utils.generateUID();
-			Key key2 = KeyFactory.createKey(GatheringDTO.class.getSimpleName(), gatheringUID);
-			
-			gatheringDTO.setKey(KeyFactory.keyToString(key2));
-			gatheringDTO.setGatheringUID(gatheringUID);
-			gatheringDTO.setAllyUID(move.getGathering().getAllyUID());
-			gatheringDTO.setUnitUIDs(move.getGathering().getUnitUIDs());
-
-			if(debug)Utils.print("creating gathering "+gatheringUID+" for unit " + gatheringDTO.getUnitUIDs().get(0));
-			if(move.getGathering().getUnitUIDs().size() > 1)
-				if(debug)Utils.print("and unit " + gatheringDTO.getUnitUIDs().get(1));
-			
-			pm.makePersistent(gatheringDTO);
-			move.getGathering().setGatheringUID(gatheringUID);
-		}
-
-		moveDTO.setGatheringUID(move.getGathering().getGatheringUID());
 		
 		pm.makePersistent(moveDTO);
 		
-		CaseDTO _case = pm.getObjectById(CaseDTO.class, move.getCaseUID());
+		CellDTO _case = pm.getObjectById(CellDTO.class, move.getCellUID());
 		_case.getMoveUIDs().add(moveUID);
 		
 		UnitDTO _unit = pm.getObjectById(UnitDTO.class, move.getUnitUID());
@@ -945,88 +847,18 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 
 			PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 			MoveDTO moveDTO = pm.getObjectById(MoveDTO.class, moveUID);
-			CaseDTO caseDTO = pm.getObjectById(CaseDTO.class, moveDTO.getCaseUID());
+			CellDTO caseDTO = pm.getObjectById(CellDTO.class, moveDTO.getCellUID());
 			UnitDTO unitDTO = pm.getObjectById(UnitDTO.class, moveDTO.getUnitUID());
 			
 			caseDTO.getMoveUIDs().remove(moveUID);
 			unitDTO.getMoveUIDs().remove(moveUID);
 			
-			if(!keepGatheringBecauseItIsLinkedWithAnotherMoveNow && moveDTO.getGatheringUID() != null)
-			{
-				if(debug)Utils.print("delete gatheringDTO : " + moveDTO.getGatheringUID());
-				GatheringDTO gatheringDTO = pm.getObjectById(GatheringDTO.class, moveDTO.getGatheringUID());
-				
-				if(gatheringDTO.getUnitUIDs().size() == 1){
-					pm.deletePersistent(gatheringDTO);
-				}
-				else
-					gatheringDTO.getUnitUIDs().remove(moveDTO.getUnitUID());
-			}
-				
 			pm.deletePersistent(moveDTO);
 			pm.close();			
 		}
 		catch(Exception e){
 			// le move n'existe pas encore
 		}
-	}
-
-	public void addUnitInGatheringAndSetNewArmy(String gatheringUID, String unitUID, String newUnitUID) 
-	{
-		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
-		GatheringDTO gathering = pm.getObjectById(GatheringDTO.class, gatheringUID);
-		
-		gathering.getUnitUIDs().add(unitUID);
-		gathering.setNewUnitUID(newUnitUID);
-		
-		pm.close();
-	}
-
-	public ConflictDTO getConflict(String conflictUID) 
-	{
-		if(conflictUID == null)
-			return null;
-		
-		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
-		return pm.getObjectById(ConflictDTO.class, conflictUID);
-	}
-
-	public GatheringDTO getGathering(String gatheringUID) 
-	{
-		if(gatheringUID == null)
-			return null;
-		try{
-			PersistenceManager pm = PMF.getInstance().getPersistenceManager();
-			return pm.getObjectById(GatheringDTO.class, gatheringUID);			
-		}
-		catch (Exception e) {
-			// il arrive que le gathering n'existe plus...
-			return null;
-		}
-	}
-
-	public String createConflict(String caseUID, String unitUID, String unitUID2) {
-
-		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
-		ConflictDTO conflictDTO = new ConflictDTO(); 
-		
-		String conflictUID = Utils.generateUID();
-		Key key = KeyFactory.createKey(ConflictDTO.class.getSimpleName(), conflictUID);
-		
-		conflictDTO.setKey(KeyFactory.keyToString(key));
-		conflictDTO.setConflictUID(conflictUID);
-		conflictDTO.setCaseUID(caseUID);
-		
-		List<String> unitUIDs = new ArrayList<String>();
-		unitUIDs.add(unitUID);
-		unitUIDs.add(unitUID2);
-		
-		conflictDTO.setUnitUIDs(unitUIDs);
-		
-		pm.makePersistent(conflictDTO);
-		pm.close();
-		
-		return conflictUID;
 	}
 
 	public void changeName(String uralysUID, String newName) 
@@ -1056,10 +888,10 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		}
 		
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
-		CaseDTO _case;
+		CellDTO _case;
 		
 		try{
-			_case = pm.getObjectById(CaseDTO.class, caseUID);
+			_case = pm.getObjectById(CellDTO.class, caseUID);
 		}
 		catch (Exception e) {
 			if(debug)Utils.print("la case n'existe pas : pas de challenger");
@@ -1089,14 +921,14 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		pm.close();
 	}
 	
-	public CaseDTO tryToSetChallenger(Unit unit, long timeFromChallenging)
+	public CellDTO tryToSetChallenger(Unit unit, long timeFromChallenging)
 	{
 		if(debug)Utils.print("tryToSetChallenger");
 
-		int x = TribesUtils.getX(unit.getFinalCaseUIDExpected());
-		int y = TribesUtils.getY(unit.getFinalCaseUIDExpected());
+		int x = TribesUtils.getX(unit.getCaseUIDExpectedForLand());
+		int y = TribesUtils.getY(unit.getCaseUIDExpectedForLand());
 
-		CaseDTO finalCase = null;
+		CellDTO finalCase = null;
 		
 		// TODO : on peut optimiser ici et ne pas faire ˆ chaque fois les 6 getCases
 		if(unit.getPlayer().getUralysUID().equals(getCase(x-1, y-1).getLandOwnerUID())
@@ -1109,10 +941,10 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 
 			PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 			try{
-				finalCase = pm.getObjectById(CaseDTO.class, "case_"+x+"_"+y);
+				finalCase = pm.getObjectById(CellDTO.class, "case_"+x+"_"+y);
 			}
 			catch(JDOObjectNotFoundException e){
-				finalCase = createCase(x, y, null, Case.FOREST, null, pm);
+				finalCase = createCase(x, y, null, Cell.FOREST, null, pm);
 			}
 			
 			// le challenger possede deja cette contree
@@ -1131,50 +963,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	//==================================================================================================//
 	// PRIVATE METHODS
 	
-	
-	private String createEquipment(String unitUID, String item, int size) {
-		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
-		
-		EquipmentDTO bowsStock = new EquipmentDTO();
-
-		String equipmentUID = unitUID+"_"+item;
-		
-		Key key = KeyFactory.createKey(EquipmentDTO.class.getSimpleName(), equipmentUID);
-
-		bowsStock.setKey(KeyFactory.keyToString(key));
-		bowsStock.setEquimentUID(equipmentUID);
-		bowsStock.setItemUID(item);
-		bowsStock.setSize(size);
-		
-		pm.makePersistent(bowsStock);
-		pm.close();
-		
-		return equipmentUID;
-	}
-	
-	
-	private String createSmith(String item) {
-		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
-		
-		SmithDTO smith = new SmithDTO();
-		
-		String smithUID = Utils.generateUID();
-		
-		Key key = KeyFactory.createKey(SmithDTO.class.getSimpleName(), smithUID);
-		
-		smith.setKey(KeyFactory.keyToString(key));
-		smith.setSmithUID(smithUID);
-		smith.setItemUID(item);
-		smith.setPeople(0);
-		
-		pm.makePersistent(smith);
-		pm.close();
-		
-		return smithUID;
-	}
-	
-	
-	private String createStock(String cityUID, String stockId, int capacity) {
+	private String createStock(String cityUID, String stockId, Integer capacity) {
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		
 		StockDTO stock = new StockDTO();
@@ -1189,9 +978,10 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		stock.setStockCapacity(capacity);
 		stock.setStockNextCapacity(0);
 		stock.setPeopleBuildingStock(0);
-		stock.setStockBeginTime(-1);
+		stock.setStockBeginTime(-1l);
 		stock.setStockEndTime(new Date().getTime());
 		
+		stock.setSmiths(0);
 		stock.setItemsBeingBuilt(0);
 		stock.setItemsBeingBuiltBeginTime(-1l);
 		stock.setItemsBeingBuiltEndTime(new Date().getTime());

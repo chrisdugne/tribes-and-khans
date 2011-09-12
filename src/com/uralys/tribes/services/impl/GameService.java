@@ -5,9 +5,9 @@ import java.util.List;
 
 import com.uralys.tribes.domain.IGameManager;
 import com.uralys.tribes.entities.Ally;
-import com.uralys.tribes.entities.Case;
+import com.uralys.tribes.entities.Cell;
 import com.uralys.tribes.entities.City;
-import com.uralys.tribes.entities.DataContainer4UnitSaved;
+import com.uralys.tribes.entities.ObjectsAltered;
 import com.uralys.tribes.entities.Item;
 import com.uralys.tribes.entities.Player;
 import com.uralys.tribes.entities.Unit;
@@ -88,18 +88,18 @@ public class GameService implements IGameService {
 		
 	}
 
-	public DataContainer4UnitSaved createUnit(String uralysUID, Unit unit,
+	public ObjectsAltered createUnit(String uralysUID, Unit unit,
 			String cityUID)
 	{
 		try {
-			return gameManager.createUnit(uralysUID, unit, cityUID, true);
+			return gameManager.createUnit(uralysUID, unit, cityUID);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
 
-	public DataContainer4UnitSaved updateUnit(Unit unit, String cityUID)
+	public ObjectsAltered updateUnit(Unit unit, String cityUID)
 	{
 		try {
 			return gameManager.updateUnit(unit, cityUID, true);
@@ -139,12 +139,12 @@ public class GameService implements IGameService {
 		return gameManager.loadItems();
 	}
 
-	public List<Case> loadCases(int[] groups, boolean refreshLandOwners) {
+	public List<Cell> loadCases(int[] groups, boolean refreshLandOwners) {
 		try {
 			return gameManager.loadCases(groups, refreshLandOwners);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ArrayList<Case>();
+			return new ArrayList<Cell>();
 		}
 	}
 

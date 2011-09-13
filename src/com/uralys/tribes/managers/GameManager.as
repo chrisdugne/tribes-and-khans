@@ -11,10 +11,10 @@ package com.uralys.tribes.managers {
 	import com.uralys.tribes.entities.Ally;
 	import com.uralys.tribes.entities.Cell;
 	import com.uralys.tribes.entities.City;
-	import com.uralys.tribes.entities.ObjectsAltered;
 	import com.uralys.tribes.entities.Game;
 	import com.uralys.tribes.entities.Item;
 	import com.uralys.tribes.entities.Move;
+	import com.uralys.tribes.entities.ObjectsAltered;
 	import com.uralys.tribes.entities.Player;
 	import com.uralys.tribes.entities.Stock;
 	import com.uralys.tribes.entities.Unit;
@@ -451,6 +451,8 @@ package com.uralys.tribes.managers {
 			gameWrapper.createUnit(Session.player.uralysUID, unit, cityUID);
 			currentUnitBeingSaved = unit;
 			
+			unit.status = Unit.FREE;
+			
 			for each(var move:Move in unit.moves){
 				if(move.moveUID.indexOf("NEW_") != -1)
 					move.moveUID = move.moveUID.substring(4);
@@ -632,8 +634,11 @@ package com.uralys.tribes.managers {
 		
 		public function validateMerchants(city:City):void
 		{
-			if(city.merchant.status == Unit.TO_BE_CREATED)
+
+			if(city.merchant.status == Unit.TO_BE_CREATED){
 				createUnit(city.merchant, city.cityUID);
+				city.population -= city.merchant.size; 
+			}
 			else{
 				city.merchant.refreshLastMoveBeforeReplacingUnit();
 				updateUnit(city.merchant, city.cityUID);
@@ -644,8 +649,11 @@ package com.uralys.tribes.managers {
 		
 		public function validateArmy(city:City):void
 		{
-			if(city.army.status == Unit.TO_BE_CREATED)
+				
+			if(city.army.status == Unit.TO_BE_CREATED){
 				createUnit(city.army, city.cityUID);
+				city.population -= city.army.size; 
+			}
 			else{
 				city.army.refreshLastMoveBeforeReplacingUnit();
 				updateUnit(city.army, city.cityUID);
@@ -716,8 +724,9 @@ package com.uralys.tribes.managers {
 
 		public function deleteUnit (unit:Unit):void
 		{
-			if(unit.status == Unit.TO_BE_CREATED)
+			if(unit.status == Unit.TO_BE_CREATED){
 				return;
+			}
 			
 			var gameWrapper:RemoteObject = getGameWrapper();
 			gameWrapper.deleteUnit(Session.player.uralysUID, unit);

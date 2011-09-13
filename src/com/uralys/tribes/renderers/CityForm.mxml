@@ -105,19 +105,8 @@
 					if(workersProgressBar == null)
 						return;
 					
-					workersProgressBar.setProgress(city.peopleCreatingWheat 
-												 + city.peopleCreatingWood
-												 + city.peopleCreatingIron
-												 + city.wheatStockBuilders
-												 + city.woodStockBuilders
-												 + city.ironStockBuilders
-												 + city.bowStockBuilders
-												 + city.swordStockBuilders
-												 + city.armorStockBuilders
-												 + city.bowWorkers
-												 + city.swordWorkers
-												 + city.armorWorkers
-												 , city.population);
+					city.refreshUnemployed();
+					workersProgressBar.setProgress(city.workers, city.population);
 				}
 				
 				//-------------------------------------------------------------------------//
@@ -730,6 +719,9 @@
 					var previousArmySize:int = city.army.size;
 					city.army.size = armySlider.value;
 					
+					if(city.army.status != Unit.TO_BE_CREATED)
+						city.population -= city.army.size - previousArmySize;
+					
 					updateWorkersProgressBar();
 				}
 				
@@ -739,6 +731,9 @@
 				{
 					var previousMerchantSize:int = city.merchant.size;
 					city.merchant.size = merchantsSlider.value;
+
+					if(city.merchant.status != Unit.TO_BE_CREATED)
+						city.population -= city.merchant.size - previousMerchantSize; 
 					
 					updateWorkersProgressBar();
 				}
@@ -856,6 +851,8 @@
 					GameManager.getInstance().deleteUnit(city.army);
 					
 					city.army = null;
+					
+					updateWorkersProgressBar();
 				}
 				
 				protected function newMerchants():void
@@ -950,6 +947,8 @@
 					GameManager.getInstance().deleteUnit(city.merchant);
 					
 					city.merchant = null;
+					
+					updateWorkersProgressBar();
 				}
 				
 				
@@ -978,8 +977,6 @@
 				<mx:Spacer width="20"/>
 				<s:Label text="{city.population}" styleName="numberLabel"/>
 				<mx:Spacer width="6"/>
-				
-				<mx:Image width="30" height="30" toolTip="{Translations.ARMY_POPULATION.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.QUESTION}"/>
 			</s:HGroup>
 			<s:HGroup width="100%" horizontalAlign="center" bottom="0"
 					  verticalAlign="middle">
@@ -1017,17 +1014,17 @@
 			</s:HGroup>
 			<s:HGroup horizontalAlign="center" verticalAlign="middle">
 				
-				<mx:Image toolTip="{Translations.WHEAT.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WHEAT}"/>
+				<mx:Image toolTip="{Translations.WHEAT.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WHEAT}" width="25" height="25"/>
 				<mx:Spacer width="10"/>
 				<s:Label text="{city.wheat}/{city.wheatStockCapacity}" styleName="numberLabel"/>
 				
 				<mx:Spacer width="15"/>
-				<mx:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}"/>
+				<mx:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}" width="25" height="25"/>
 				<mx:Spacer width="10"/>
 				<s:Label text="{city.wood}/{city.woodStockCapacity}" styleName="numberLabel"/>
 				
 				<mx:Spacer width="15"/>
-				<mx:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}"/>
+				<mx:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}" width="25" height="25"/>
 				<mx:Spacer width="10"/>
 				<s:Label text="{city.iron}/{city.ironStockCapacity}" styleName="numberLabel"/>
 

@@ -13,7 +13,9 @@
 	</fx:Declarations>
 	
 	<fx:Script>
-		<![CDATA[
+		<![CDATA[		
+			//-------------------------------------------------------------------------------------//
+			
 			import com.uralys.tribes.commons.Numbers;
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;
@@ -29,7 +31,7 @@
 			import mx.core.mx_internal;
 		
 			//-------------------------------------------------------------------------------------//
-
+	
 			[Bindable] public var item:Item;
 
 			[Bindable] public var smiths:int;

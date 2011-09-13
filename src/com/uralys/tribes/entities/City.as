@@ -243,20 +243,40 @@ package com.uralys.tribes.entities
 		
 		public function refreshUnemployed():void{
 			unemployed = _population 
-							- peopleCreatingWheat 
-							- peopleCreatingWood 
-							- peopleCreatingIron 
-							- wheatStockBuilders
-							- woodStockBuilders
-							- ironStockBuilders
-							- bowStockBuilders
-							- swordStockBuilders
-							- armorStockBuilders
-							- bowWorkers
-							- swordWorkers
-							- armorWorkers
+						- workers;
 		}
 
+		public function get workers():int{
+			var nbWorkers:int = peopleCreatingWheat 
+					+ peopleCreatingWood 
+					+ peopleCreatingIron 
+					+ wheatStockBuilders
+					+ woodStockBuilders
+					+ ironStockBuilders
+					+ bowStockBuilders
+					+ swordStockBuilders
+					+ armorStockBuilders
+					+ bowWorkers
+					+ swordWorkers
+					+ armorWorkers;
+			
+			trace("workers : army : " + (army == null));
+			trace("workers : merchant : " + (merchant == null));
+			if(army)
+				trace("army.status : " + army.status);
+			if(merchant)
+				trace("merchant.status : " + merchant.status);
+			
+			if(army != null && army.status == Unit.TO_BE_CREATED)
+				nbWorkers += army.size;
+			
+			if(merchant != null && merchant.status == Unit.TO_BE_CREATED)
+				nbWorkers += merchant.size;
+			
+			return nbWorkers;
+		}
+		
+		
 		public function get availableAsSmith():int{
 			return _availableAsSmith;
 		}

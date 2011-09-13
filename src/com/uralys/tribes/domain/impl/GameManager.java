@@ -248,6 +248,7 @@ public class GameManager implements IGameManager {
 	
 	public void deleteUnit(String uralysUID, Unit unit)
 	{
+		Utils.print("manager deleteUnit");
 		if(unit.getMoves().size() != 0){
 			ArrayList<Move> dummyMoves = new ArrayList<Move>();
 			dummyMoves.add(unit.getMoves().get(0));			

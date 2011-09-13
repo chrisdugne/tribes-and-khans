@@ -576,12 +576,6 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		unitDTO.setCaseUIDExpectedForLand(unit.getCaseUIDExpectedForLand());
 		unitDTO.setUnitMetUID(unit.getUnitMetUID());
 
-		if(cityUID != null)
-		{
-			CityDTO city = pm.getObjectById(CityDTO.class, cityUID);
-			city.setPopulation(city.getPopulation() - unit.getSize());
-		}
-		
 		//--------------------------------------//
 		
 		pm.makePersistent(unitDTO);
@@ -598,11 +592,6 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		if(debug)Utils.print("dao.updateUnit, unit.getEndTime() : " + unit.getEndTime());
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		UnitDTO unitDTO = pm.getObjectById(UnitDTO.class, unit.getUnitUID());
-		
-		if(cityUID != null){
-			CityDTO city = pm.getObjectById(CityDTO.class, cityUID);
-			city.setPopulation(city.getPopulation() - unit.getSize() + unitDTO.getSize());
-		}
 		
 		unitDTO.setSize(unit.getSize());
 		unitDTO.setSpeed(unit.getSpeed());

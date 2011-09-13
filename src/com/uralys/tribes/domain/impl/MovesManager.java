@@ -12,6 +12,7 @@ import com.uralys.tribes.entities.Player;
 import com.uralys.tribes.entities.Unit;
 import com.uralys.tribes.entities.converters.EntitiesConverter;
 import com.uralys.tribes.utils.TribesUtils;
+import com.uralys.utils.Utils;
 
 public class MovesManager implements IMovesManager{
 
@@ -27,6 +28,8 @@ public class MovesManager implements IMovesManager{
 
 	public ObjectsAltered refreshUnitWay(Unit unit) 
 	{
+		Utils.print("--------------------");
+		Utils.print("refreshUnitWay");
 		DataContainer dataContainer = new DataContainer();
 		return dataContainer.objectsAltered;
 	}

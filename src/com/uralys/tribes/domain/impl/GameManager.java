@@ -223,8 +223,7 @@ public class GameManager implements IGameManager {
 		gameDao.createUnit(unit, cityUID);
 		gameDao.linkNewUnit(uralysUID, unit.getUnitUID());
 
-		if(debug)Utils.print("refreshUnitWay for the unit");
-		return movesManager.refreshUnitWay(unit);
+		return movesManager.refreshUnitMoves(unit);
 	}
 
 	public ObjectsAltered updateUnit(Unit unit, String cityUID, boolean needReplacing)
@@ -240,7 +239,7 @@ public class GameManager implements IGameManager {
 		
 		if(needReplacing){
 			if(debug)Utils.print("refreshUnitWay for the unit");
-			return movesManager.refreshUnitWay(unit);
+			return movesManager.refreshUnitMoves(unit);
 		}
 
 		return null;
@@ -252,7 +251,7 @@ public class GameManager implements IGameManager {
 		if(unit.getMoves().size() != 0){
 			ArrayList<Move> dummyMoves = new ArrayList<Move>();
 			dummyMoves.add(unit.getMoves().get(0));			
-			movesManager.refreshUnitWay(unit);
+			movesManager.refreshUnitMoves(unit);
 		}
 		
 		gameDao.deleteUnit(uralysUID, unit.getUnitUID());

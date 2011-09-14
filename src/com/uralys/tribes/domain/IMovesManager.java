@@ -7,7 +7,7 @@ public interface IMovesManager {
 
 	//-----------------------------------------------------------------------------------//
 	
-	public ObjectsAltered refreshUnitWay(Unit unit);
+	public ObjectsAltered refreshUnitMoves(Unit unit);
 	
 	//-----------------------------------------------------------------------------------//
 	

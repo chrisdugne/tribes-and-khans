@@ -28,7 +28,7 @@ public class EntitiesConverter {
 
 	// -----------------------------------------------------------------------------------//
 
-	public static Move convertMoveDTO(MoveDTO moveDTO, boolean requireLinkedGathering) 
+	public static Move convertMoveDTO(MoveDTO moveDTO) 
 	{
 		if (moveDTO == null)
 			return null;
@@ -84,7 +84,7 @@ public class EntitiesConverter {
 		List<Unit> units = new ArrayList<Unit>();
 
 		for (UnitDTO unitDTO : playerDTO.getUnits()) {
-			units.add(convertUnitDTO(unitDTO, true, true, false));
+			units.add(convertUnitDTO(unitDTO, true));
 		}
 
 		player.setUnits(units);
@@ -199,7 +199,7 @@ public class EntitiesConverter {
 	 * requireLinkedGatherings est forcement false si requireMoves est false
 	 * 
 	 */
-	public static Unit convertUnitDTO(UnitDTO unitDTO, boolean requireMoves, boolean requireLinkedMoveFromGathering, boolean requireLinkedGatherings) 
+	public static Unit convertUnitDTO(UnitDTO unitDTO, boolean requireMoves) 
 	{
 		if (unitDTO == null)
 			return null;
@@ -235,7 +235,7 @@ public class EntitiesConverter {
 			List<Move> moves = new ArrayList<Move>();
 
 			for (MoveDTO moveDTO : unitDTO.getMoves()) {
-				Move move = convertMoveDTO(moveDTO, requireLinkedGatherings);
+				Move move = convertMoveDTO(moveDTO);
 				moves.add(move);
 			}
 
@@ -274,7 +274,7 @@ public class EntitiesConverter {
 		List<String> unitUIDs = new ArrayList<String>();
 
 		for (MoveDTO moveDTO : caseDTO.getMoves()) {
-			Move move = convertMoveDTO(moveDTO, true);
+			Move move = convertMoveDTO(moveDTO);
 			moves.add(move);
 			unitUIDs.add(move.getUnitUID());
 		}
@@ -286,7 +286,7 @@ public class EntitiesConverter {
 		List<Unit> units = new ArrayList<Unit>();
 
 		for (UnitDTO unitDTO : UniversalDAO.getInstance().getListDTO(unitUIDs, UnitDTO.class)) {
-			units.add(convertUnitDTO(unitDTO, true, false, false));
+			units.add(convertUnitDTO(unitDTO, true));
 		}
 
 		_case.setUnits(units);

@@ -26,7 +26,7 @@ public interface IGameDAO {
 	//-----------------------------------------------------------------------------------//
 	
 	public List<ItemDTO> loadItems();
-	public List<CellDTO> loadCases(int[] groups, boolean refreshLandOwners);
+	public List<CellDTO> loadCells(int[] groups, boolean refreshLandOwners);
 	public CellDTO getCase(int i, int j);
 
 	//-----------------------------------------------------------------------------------//

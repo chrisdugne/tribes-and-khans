@@ -250,7 +250,7 @@ public class EntitiesConverter {
 
 	// -----------------------------------------------------------------------------------//
 
-	public static Cell convertCaseDTO(CellDTO caseDTO) {
+	public static Cell convertCellDTO(CellDTO caseDTO) {
 
 		if (caseDTO == null)
 			return null;
@@ -259,7 +259,7 @@ public class EntitiesConverter {
 
 		_case.setCellUID(caseDTO.getCaseUID());
 		_case.setX(caseDTO.getX());
-		_case.setGroup(caseDTO.getGroupCase());
+		_case.setGroup(caseDTO.getGroupCell());
 		_case.setY(caseDTO.getY());
 		_case.setType(caseDTO.getType());
 

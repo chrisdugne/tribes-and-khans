@@ -38,8 +38,8 @@ public interface IGameManager {
 	//-----------------------------------------------------------------------------------//
 	
 	public List<Item> loadItems();
-	public List<Cell> loadCases(int[] groups, boolean refreshLandOwners);
-	public Cell getCase(int x, int y);
+	public List<Cell> loadCells(int[] groups, boolean refreshLandOwners);
+//	public Cell getCase(int x, int y);
 
 	//-----------------------------------------------------------------------------------//
 	

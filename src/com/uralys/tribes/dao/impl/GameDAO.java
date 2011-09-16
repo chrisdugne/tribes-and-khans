@@ -267,7 +267,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		_case.setCaseUID(caseUID);
 		_case.setX(x);
 		_case.setY(y);
-		_case.setGroupCase(group);
+		_case.setGroupCell(group);
 		_case.setCityUID(cityUID);
 		_case.setLandOwnerUID(landOwnerUID);
 		_case.setChallengerUID(null);
@@ -336,7 +336,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<CellDTO> loadCases(int[] groups, boolean refreshLandOwners) 
+	public List<CellDTO> loadCells(int[] groups, boolean refreshLandOwners) 
 	{
 		long now = new Date().getTime();
 
@@ -344,23 +344,23 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		
 		for(int group : groups){
-			Query query = pm.newQuery("select from " + CellDTO.class.getName() + " where groupCase == :group");
-			Collection<? extends CellDTO> cases = (Collection<? extends CellDTO>) query.execute(group);
+			Query query = pm.newQuery("select from " + CellDTO.class.getName() + " where groupCell == :group");
+			Collection<? extends CellDTO> cells = (Collection<? extends CellDTO>) query.execute(group);
 			
 			if(refreshLandOwners){
-				for(CellDTO _case : cases)
+				for(CellDTO _cell : cells)
 				{
-					if(_case.getChallengerUID() != null)
+					if(_cell.getChallengerUID() != null)
 					{
-						if(now - _case.getTimeFromChallenging() > Constants.LAND_TIME*60*1000)
+						if(now - _cell.getTimeFromChallenging() > Constants.LAND_TIME*60*1000)
 						{
-							newLandOwner(_case.getCaseUID());
+							newLandOwner(_cell.getCaseUID());
 						}
 					}
 				}
 			}
 			
-			result.addAll(cases);
+			result.addAll(cells);
 		}
 		
 		pm.close();

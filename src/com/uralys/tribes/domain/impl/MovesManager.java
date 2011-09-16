@@ -310,7 +310,7 @@ public class MovesManager implements IMovesManager{
 	}
 	
 	private Cell getCell(String caseUID) {
-		return EntitiesConverter.convertCaseDTO(gameDao.getCase(TribesUtils.getX(caseUID),TribesUtils.getY(caseUID)));
+		return EntitiesConverter.convertCellDTO(gameDao.getCase(TribesUtils.getX(caseUID),TribesUtils.getY(caseUID)));
 	}
 
 	private Unit getUnit(String unitUID, DataContainer dataContainer) {

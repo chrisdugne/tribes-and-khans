@@ -225,6 +225,7 @@ public class EntitiesConverter {
 		unit.setEndTime(unitDTO.getEndTime());
 
 		unit.setUnitMetUID(unitDTO.getUnitMetUID());
+		unit.setUnitNextUID(unitDTO.getUnitNextUID());
 		unit.setCaseUIDExpectedForLand(unitDTO.getCaseUIDExpectedForLand());
 
 		// -----------------------------------------------------------------------------------//

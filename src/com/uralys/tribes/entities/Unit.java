@@ -40,6 +40,7 @@ public class Unit {
 	
 	private String caseUIDExpectedForLand;
 	private String unitMetUID;
+	private String unitNextUID;
 
 	private List<Move> moves = new ArrayList<Move>();
 	
@@ -172,6 +173,14 @@ public class Unit {
 
 	public void setUnitMetUID(String unitMetUID) {
 		this.unitMetUID = unitMetUID;
+	}
+
+	public String getUnitNextUID() {
+		return unitNextUID;
+	}
+
+	public void setUnitNextUID(String unitNextUID) {
+		this.unitNextUID = unitNextUID;
 	}
 
 	public long getBeginTime() {

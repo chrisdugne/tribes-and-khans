@@ -44,6 +44,9 @@ public class UnitDTO {
 	// l'armee avec laquelle il y aura soit un conflit soit un gathering, si elle existe sur le chemin
 	@Persistent private String unitMetUID;
 
+	// l'armee qui va etre crŽŽe suite ˆ ce croisement, si elle existe.
+	@Persistent private String unitNextUID;
+
 	@Persistent private int type;
 	@Persistent private int speed;
 	@Persistent private int size;
@@ -148,6 +151,12 @@ public class UnitDTO {
 	}
 	public void setUnitMetUID(String unitMetUID) {
 		this.unitMetUID = unitMetUID;
+	}
+	public String getUnitNextUID() {
+		return unitNextUID;
+	}
+	public void setUnitNextUID(String unitNextUID) {
+		this.unitNextUID = unitNextUID;
 	}
 	public String getCaseUIDExpectedForLand() {
 		return caseUIDExpectedForLand;

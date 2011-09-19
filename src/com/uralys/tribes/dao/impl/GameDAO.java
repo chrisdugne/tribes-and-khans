@@ -159,7 +159,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		city.setGold(cityFromFlex == null ? 100 : cityFromFlex.getGold());
 		city.setBeginTime(cityFromFlex == null ? now : cityFromFlex.getBeginTime());
 		city.setEndTime(-1);
-		city.setPeopleCreatingWheat(0);
+		city.setPeopleCreatingWheat(city.getPopulation()/5);
 		city.setPeopleCreatingWood(0);
 		city.setPeopleCreatingIron(0);
 		city.setTimeToChangeOwner(-1l);
@@ -258,7 +258,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	{
 		CellDTO _case = new CellDTO();
 
-		String caseUID = "case_"+x+"_"+y;
+		String caseUID = "cell_"+x+"_"+y;
 		int group = TribesUtils.getGroup(x,y); 
 		
 		Key key = KeyFactory.createKey(CellDTO.class.getSimpleName(), caseUID);
@@ -392,7 +392,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	public CellDTO getCase(int i, int j) {
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		try{
-			return pm.getObjectById(CellDTO.class, "case_"+i+"_"+j);
+			return pm.getObjectById(CellDTO.class, "cell_"+i+"_"+j);
 		}
 		catch(JDOObjectNotFoundException e){
 			return createCase(i, j, null, Cell.FOREST, null, pm);
@@ -402,7 +402,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	private void createOrRefreshCase(int x, int y, String cityUID, int type, String landOwnerUID, PersistenceManager pm) 
 	{
 		try{
-			CellDTO caseDTO = pm.getObjectById(CellDTO.class, "case_"+x+"_"+y);
+			CellDTO caseDTO = pm.getObjectById(CellDTO.class, "cell_"+x+"_"+y);
 			caseDTO.setLandOwnerUID(landOwnerUID);
 			caseDTO.setType(type);
 			caseDTO.setCityUID(cityUID);
@@ -762,7 +762,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 
 				cityDTO.setOwnerUID(newOwner.getUralysUID());
 
-				CellDTO _case = pm.getObjectById(CellDTO.class, "case_"+cityDTO.getX()+"_"+cityDTO.getY());
+				CellDTO _case = pm.getObjectById(CellDTO.class, "cell_"+cityDTO.getX()+"_"+cityDTO.getY());
 				_case.setLandOwnerUID(newOwner.getUralysUID());
 			}
 			
@@ -935,7 +935,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 
 			PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 			try{
-				finalCase = pm.getObjectById(CellDTO.class, "case_"+x+"_"+y);
+				finalCase = pm.getObjectById(CellDTO.class, "cell_"+x+"_"+y);
 			}
 			catch(JDOObjectNotFoundException e){
 				finalCase = createCase(x, y, null, Cell.FOREST, null, pm);

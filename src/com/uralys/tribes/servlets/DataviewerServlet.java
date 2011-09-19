@@ -25,6 +25,7 @@ import com.uralys.tribes.entities.dto.PlayerDTO;
 import com.uralys.tribes.entities.dto.ServerDataDTO;
 import com.uralys.tribes.entities.dto.StockDTO;
 import com.uralys.tribes.entities.dto.UnitDTO;
+import com.uralys.tribes.entities.dto.UralysProfileDTO;
 import com.uralys.utils.Utils;
 
 
@@ -133,16 +134,14 @@ public class DataviewerServlet extends HttpServlet {
 
 				//-----------------------------------------------------------------------------------//				// - HERE : add a line for every new DTO
 				
+				" <OPTION VALUE=\"account\">UralysProfileDTO" +
 				" <OPTION VALUE=\"player\">PlayerDTO" +
 				" <OPTION VALUE=\"ally\">AllyDTO" +
 				" <OPTION VALUE=\"city\">CityDTO" +
 				" <OPTION VALUE=\"stock\">StockDTO" +
 				" <OPTION VALUE=\"unit\">UnitDTO" +
-				" <OPTION VALUE=\"smith\">SmithDTO" +
-				" <OPTION VALUE=\"equipment\">EquipmentDTO" +
-				" <OPTION VALUE=\"case\">CaseDTO" +
+				" <OPTION VALUE=\"cell\">CellDTO" +
 				" <OPTION VALUE=\"move\">MoveDTO" +
-				" <OPTION VALUE=\"gathering\">GatheringDTO" +
 				" <OPTION VALUE=\"message\">MessageDTO" +
 				" <OPTION VALUE=\"item\">ItemDTO" +
 				" <OPTION VALUE=\"serverdata\">ServerDataDTO" +
@@ -485,6 +484,9 @@ public class DataviewerServlet extends HttpServlet {
 					} catch (IllegalAccessException e) {
 						e.printStackTrace();
 						table += "<td> ___PROBLEM___ </td>";
+					} catch (NullPointerException e) {
+						e.printStackTrace();
+						table += "<td> ___NULL___ </td>";
 					}
 				}
 			
@@ -529,7 +531,9 @@ public class DataviewerServlet extends HttpServlet {
 		//-----------------------------------------------------------------------------------//
 		// - HERE : add a condition for every new DTO
 
-		if(dto.equals("player"))
+		if(dto.equals("account"))
+			return UralysProfileDTO.class;
+		else if(dto.equals("player"))
 			return PlayerDTO.class;
 		else if(dto.equals("ally"))
 			return AllyDTO.class;
@@ -539,7 +543,7 @@ public class DataviewerServlet extends HttpServlet {
 			return StockDTO.class;
 		else if(dto.equals("unit"))
 			return UnitDTO.class;
-		else if(dto.equals("case"))
+		else if(dto.equals("cell"))
 			return CellDTO.class;
 		else if(dto.equals("item"))
 			return ItemDTO.class;

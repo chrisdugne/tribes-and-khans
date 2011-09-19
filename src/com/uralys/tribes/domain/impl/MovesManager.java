@@ -33,17 +33,24 @@ public class MovesManager implements IMovesManager{
 
 	public ObjectsAltered refreshUnitMoves(Unit unit) 
 	{
-		//-------------------------------------------------------//
-		// - 0 : init des donnees pour le calcul
-		
 		Utils.print("--------------------");
 		Utils.print("refreshUnitMoves");
+
+		//-------------------------------------------------------//
+		// - 0 : init des donnees pour le calcul
+
+		Utils.print("--------------------");
+		Utils.print(" 0 : init des donnees pour le calcul");
+		
 		DataContainer dataContainer = new DataContainer();
 		String allyUIDOfUnitArriving = unit.getPlayer().getAlly() == null ? unit.getPlayer().getUralysUID() : unit.getPlayer().getAlly().getAllyUID();
 		
 		//-------------------------------------------------------//
 		// - 1 : on verifie si on a croisé une unitMet avant
 		//		 on fera un refreshUnitWay de cet unitMet
+
+		Utils.print("--------------------");
+		Utils.print(" 1 : on verifie si on a croisé une unitMet avant");
 		
 		Unit unitToReplace = null;
 		if(unit.getUnitMetUID() != null)
@@ -61,10 +68,16 @@ public class MovesManager implements IMovesManager{
 		//-------------------------------------------------------//
 		// - 2 : on supprime les anciens moves
 
+		Utils.print("--------------------");
+		Utils.print(" 2 : on supprime les anciens moves");
+		
 		gameDao.deleteMoves(unit.getUnitUID());
 		
 		//-------------------------------------------------------//
 		// - 3 : on verifie si on croise une unit sur le trajet
+
+		Utils.print("--------------------");
+		Utils.print(" 3 : on verifie si on croise une unit sur le trajet");
 		
 		boolean foundAMeeting = false;
 		for(Move move : unit.getMoves())
@@ -97,6 +110,9 @@ public class MovesManager implements IMovesManager{
 		
 		//-------------------------------------------------------//
 		// - 4 : on enregistre tous les nouveaux moves
+
+		Utils.print("--------------------");
+		Utils.print(" 4 : on enregistre tous les nouveaux moves");
 		
 		for(Move move : unit.getMoves()){
 			gameDao.createMove(move);

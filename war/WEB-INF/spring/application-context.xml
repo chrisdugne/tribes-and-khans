@@ -34,5 +34,6 @@
         </flex:message-broker>
         
         <flex:remoting-destination destination-id="GameWrapper" ref="gameServiceBean" />
+        <flex:remoting-destination destination-id="UralysAccountWrapper" ref="profileServiceBean" />
 
 </beans>

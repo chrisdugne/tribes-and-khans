@@ -177,6 +177,15 @@ public class Utils {
 			return false;
 		}
 	}
+
+	public static boolean checkEmail(String email) {
+		try {
+			return Pattern.matches("^[a-z][\\w.-]+@\\w[\\w.-]+\\.[\\w.-]*[a-z][a-z]$", email );
+		} catch ( Exception e ) {
+			return false;
+		}
+	}
+	
 	/************************************************* END OF MISCELLANEOUS METHODS *********************************************************/
 
 	public static void main(String[] args){

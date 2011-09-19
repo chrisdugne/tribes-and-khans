@@ -50,5 +50,26 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 	
 	<!--  end of GameService -->
 	<!-- ============================================================================================================================== -->
+	<!--  (ProfileService) -->
+		
+	<bean id="profileDao" 
+		class="com.uralys.tribes.dao.impl.ProfileDAO"
+		parent="mainDao"/>
+
+	<bean id="profileDomain" class="com.uralys.tribes.domain.impl.ProfileManager">
+		<constructor-arg index="0">
+			<ref bean="profileDao" />
+		</constructor-arg>
+	</bean>
+	
+	<bean id="profileServiceBean" 
+		class="com.uralys.tribes.services.impl.ProfileService">
+		<constructor-arg index="0">
+			<ref bean="profileDomain" />
+		</constructor-arg>
+	</bean>
+	
+	<!--  end of ProfileService -->
+	<!-- ============================================================================================================================== -->
 
 </beans>

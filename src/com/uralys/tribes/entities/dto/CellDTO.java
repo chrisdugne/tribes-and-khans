@@ -26,7 +26,7 @@ public class CellDTO {
     @Extension(vendorName="datanucleus", key="gae.pk-name", value="true")
 	private String caseUID;
 	
-	@Persistent private int groupCell;
+	@Persistent private Integer groupCell;
 	@Persistent private int x;
 	@Persistent private int y;
 	

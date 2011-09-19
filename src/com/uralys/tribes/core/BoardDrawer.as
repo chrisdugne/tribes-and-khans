@@ -149,7 +149,7 @@ package com.uralys.tribes.core
 				{
 					var _cell:Cell = Session.map[Session.firstCellX+i][Session.firstCellY+j];
 					
-					if(_cell.cellUID.indexOf("case_") == -1)
+					if(_cell.cellUID.indexOf("cell_") == -1)
 						continue;
 					
 					refreshUnits(_cell);
@@ -171,7 +171,7 @@ package com.uralys.tribes.core
 				{
 					var _cell:Cell = Session.map[Session.firstCellX+i][Session.firstCellY+j];
 					
-					if(_cell.cellUID.indexOf("case_") == -1)
+					if(_cell.cellUID.indexOf("cell_") == -1)
 						continue;
 					
 					

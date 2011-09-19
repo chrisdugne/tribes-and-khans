@@ -765,9 +765,9 @@
 					
 					// le contenu de la case sera refreshed au retour par unitSaved, 
 					// mais si on refresh maintenant, on va pouvoir afficher la case lors du validateArmy() ou validateMerchant()
-					Session.CURRENT_CASE_SELECTED.units.addItem(newUnit);
-					Session.CURRENT_CASE_SELECTED.recordedMoves.addItem(moveInCity);
-					Session.CURRENT_CASE_SELECTED.forceRefresh();
+					Session.CURRENT_CELL_SELECTED.units.addItem(newUnit);
+					Session.CURRENT_CELL_SELECTED.recordedMoves.addItem(moveInCity);
+					Session.CURRENT_CELL_SELECTED.forceRefresh();
 					
 					return newUnit;
 				}
@@ -832,21 +832,21 @@
 
 					// on enleve le move dans la case de la ville et on refresh le contenu de la case pour afficher dans le menu des unites de droite
 					var indexToRemove:int = -1;
-					for each(var recordedMovesInTheCity:Move in Session.CURRENT_CASE_SELECTED.recordedMoves){
+					for each(var recordedMovesInTheCity:Move in Session.CURRENT_CELL_SELECTED.recordedMoves){
 						trace("recordedMove.unitUID: " + recordedMovesInTheCity.unitUID);
 						
 						if(recordedMovesInTheCity.unitUID == city.army.unitUID)
 						{
-							indexToRemove = Session.CURRENT_CASE_SELECTED.recordedMoves.getItemIndex(recordedMovesInTheCity);
+							indexToRemove = Session.CURRENT_CELL_SELECTED.recordedMoves.getItemIndex(recordedMovesInTheCity);
 							break;
 						}
 					}
 
 					if(indexToRemove >= 0)
-						Session.CURRENT_CASE_SELECTED.recordedMoves.removeItemAt(indexToRemove);
+						Session.CURRENT_CELL_SELECTED.recordedMoves.removeItemAt(indexToRemove);
 					
-					Session.CURRENT_CASE_SELECTED.forceRefresh();
-					BoardDrawer.getInstance().refreshUnits(Session.CURRENT_CASE_SELECTED);
+					Session.CURRENT_CELL_SELECTED.forceRefresh();
+					BoardDrawer.getInstance().refreshUnits(Session.CURRENT_CELL_SELECTED);
 					
 					GameManager.getInstance().deleteUnit(city.army);
 					
@@ -929,20 +929,20 @@
 					
 					// on enleve le move dans la case de la ville et on refresh le contenu de la case pour afficher dans le menu des unites de droite
 					var indexToRemove:int = -1;
-					for each(var recordedMovesInTheCity:Move in Session.CURRENT_CASE_SELECTED.recordedMoves){
+					for each(var recordedMovesInTheCity:Move in Session.CURRENT_CELL_SELECTED.recordedMoves){
 						
 						trace("recordedMove.unitUID: " + recordedMovesInTheCity.unitUID);
 						if(recordedMovesInTheCity.unitUID == city.merchant.unitUID){
-							indexToRemove = Session.CURRENT_CASE_SELECTED.recordedMoves.getItemIndex(recordedMovesInTheCity);
+							indexToRemove = Session.CURRENT_CELL_SELECTED.recordedMoves.getItemIndex(recordedMovesInTheCity);
 							break;
 						}
 					}
 					
 					if(indexToRemove >= 0)
-						Session.CURRENT_CASE_SELECTED.recordedMoves.removeItemAt(indexToRemove);
+						Session.CURRENT_CELL_SELECTED.recordedMoves.removeItemAt(indexToRemove);
 					
-					Session.CURRENT_CASE_SELECTED.forceRefresh();
-					BoardDrawer.getInstance().refreshUnits(Session.CURRENT_CASE_SELECTED);
+					Session.CURRENT_CELL_SELECTED.forceRefresh();
+					BoardDrawer.getInstance().refreshUnits(Session.CURRENT_CELL_SELECTED);
 					
 					GameManager.getInstance().deleteUnit(city.merchant);
 					

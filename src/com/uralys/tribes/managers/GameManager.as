@@ -507,9 +507,9 @@ package com.uralys.tribes.managers {
 			unit.ownerStatus = Unit.PLAYER;
 			unit.isModified = false;	
 			
-			// ici unit.isIntercepted a besoin que le currentCaseUID soit set.
+			// ici unit.isIntercepted a besoin que le currentCellUID soit set.
 			if(unit.endTime != -1
-				&& unit.isInterceptedOnThisCase)
+				&& unit.isInterceptedOnThisCell)
 			{
 				trace("Unit.INTERCEPTED_ON_THIS_CASE");
 				unit.status = Unit.INTERCEPTED_ON_THIS_CASE;
@@ -644,7 +644,7 @@ package com.uralys.tribes.managers {
 				updateUnit(city.merchant, city.cityUID);
 			}
 			
-			BoardDrawer.getInstance().refreshUnits(Session.CURRENT_CASE_SELECTED);
+			BoardDrawer.getInstance().refreshUnits(Session.CURRENT_CELL_SELECTED);
 		}
 		
 		public function validateArmy(city:City):void
@@ -659,7 +659,7 @@ package com.uralys.tribes.managers {
 				updateUnit(city.army, city.cityUID);
 			}
 			
-			BoardDrawer.getInstance().refreshUnits(Session.CURRENT_CASE_SELECTED);
+			BoardDrawer.getInstance().refreshUnits(Session.CURRENT_CELL_SELECTED);
 		}
 		
 		//============================================================================================//
@@ -695,10 +695,10 @@ package com.uralys.tribes.managers {
 			
 			
 			trace("-------------------------------------");
-			trace("loadCases center : [ " + centerX + " | " + centerY + " ]");
+			trace("loadCells center : [ " + centerX + " | " + centerY + " ]");
 			trace(groups);
-			trace("Session.firstCaseX : " + Session.firstCellX);
-			trace("Session.firstCaseY : " + Session.firstCellY);
+			trace("Session.firstCellX : " + Session.firstCellX);
+			trace("Session.firstCellY : " + Session.firstCellY);
 			
 			var caseUIDs:ArrayCollection = new ArrayCollection();
 			Session.nbTilesByEdge = Math.sqrt(groups.length) * 15;
@@ -714,7 +714,7 @@ package com.uralys.tribes.managers {
 			
 			var gameWrapper:RemoteObject = getGameWrapper();
 			loadCellsResponder.addEventListener("result", cellsLoaded);
-			loadCellsResponder.token = gameWrapper.loadCases(groups, refreshLandOwners);
+			loadCellsResponder.token = gameWrapper.loadCells(groups, refreshLandOwners);
 		}
 
 		public function savePlayer(player:Player):void{

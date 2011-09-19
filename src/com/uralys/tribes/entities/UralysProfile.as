@@ -2,7 +2,7 @@ package com.uralys.tribes.entities
 {
 
 [Bindable]
-[RemoteClass(alias="com.uralys.entities.UralysProfile")]
+[RemoteClass(alias="com.uralys.tribes.entities.UralysProfile")]
 public class UralysProfile
 {
 	public function UralysProfile(){}

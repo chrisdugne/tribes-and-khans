@@ -346,7 +346,7 @@ package com.uralys.tribes.entities
 		
 		// memes commentaires que pour getLastMove
 		// une interception c'est un conflit sur la case sur laquelle on est actuellement. On est Unit.FREE si le conflit est sur une case plus loin.
-		public function get isInterceptedOnThisCase():Boolean
+		public function get isInterceptedOnThisCell():Boolean
 		{
 			trace("test isIntercepted");
 			trace("trace nbMoves : " + moves.length);

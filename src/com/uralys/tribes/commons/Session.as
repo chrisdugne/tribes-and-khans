@@ -19,7 +19,7 @@ package com.uralys.tribes.commons
 
 		//=====================================================//
 		
-		[Bindable] public static var VERSION:String = "1.3.0";
+		[Bindable] public static var VERSION:String = "1.3.1";
 		[Bindable] public static var LOGGED_IN:Boolean = false; 
 		[Bindable] public static var CONNECTED_TO_FACEBOOK:Boolean = false;
 		
@@ -96,7 +96,7 @@ package com.uralys.tribes.commons
 		[Bindable] public static var CENTER_X:int;
 		[Bindable] public static var CENTER_Y:int;
 
-		[Bindable] public static var CURRENT_CASE_SELECTED:Cell;
+		[Bindable] public static var CURRENT_CELL_SELECTED:Cell;
 		[Bindable] public static var MOVE_A_UNIT:Boolean;
 		[Bindable] public static var REMOVING_MOVES_ENABLE:Boolean;
 		

@@ -34,14 +34,14 @@ public class MovesManager implements IMovesManager{
 
 	public ObjectsAltered refreshUnitMoves(Unit unit) 
 	{
-		Utils.print("--------------------");
-		Utils.print("refreshUnitMoves");
+		if(debug)Utils.print("--------------------");
+		if(debug)Utils.print("refreshUnitMoves");
 
 		//-------------------------------------------------------//
 		// - 0 : init des donnees pour le calcul
 
-		Utils.print("--------------------");
-		Utils.print(" 0 : init des donnees pour le calcul");
+		if(debug)Utils.print("--------------------");
+		if(debug)Utils.print(" 0 : init des donnees pour le calcul");
 		
 		DataContainer dataContainer = new DataContainer();
 		
@@ -49,24 +49,24 @@ public class MovesManager implements IMovesManager{
 		// - 1 : on verifie si on a croisé une unitMet avant
 		//		 on fera un refreshUnitMoves pour cet unitMet
 
-		Utils.print("--------------------");
-		Utils.print(" 1 : on verifie si on a croisé une unitMet avant");
+		if(debug)Utils.print("--------------------");
+		if(debug)Utils.print(" 1 : on verifie si on a croisé une unitMet avant");
 		
 		Unit unitToReplace = resetPreviousMeeting(unit, dataContainer);
 
 		//-------------------------------------------------------//
 		// - 2 : on supprime les anciens moves
 
-		Utils.print("--------------------");
-		Utils.print(" 2 : on supprime les anciens moves");
+		if(debug)Utils.print("--------------------");
+		if(debug)Utils.print(" 2 : on supprime les anciens moves");
 		
 		gameDao.deleteMoves(unit.getUnitUID());
 		
 		//-------------------------------------------------------//
 		// - 3 : on verifie si on croise une unit sur le trajet
 
-		Utils.print("--------------------");
-		Utils.print(" 3 : on verifie si on croise une unit sur le trajet");
+		if(debug)Utils.print("--------------------");
+		if(debug)Utils.print(" 3 : on verifie si on croise une unit sur le trajet");
 		
 		Object[] result = getMoveMetAndLastMove(unit, dataContainer);
 		
@@ -80,15 +80,15 @@ public class MovesManager implements IMovesManager{
 			resolveMeeting(unit, moveMet, dataContainer);
 		}
 		else{
-			Utils.print("--------------------");
-			Utils.print(" 4 : pas de meeting");
+			if(debug)Utils.print("--------------------");
+			if(debug)Utils.print(" 4 : pas de meeting");
 		}
 		
 		//-------------------------------------------------------//
 		// - 5 : on enregistre tous les nouveaux moves
 
-		Utils.print("--------------------");
-		Utils.print(" 5 : on enregistre tous les nouveaux moves");
+		if(debug)Utils.print("--------------------");
+		if(debug)Utils.print(" 5 : on enregistre tous les nouveaux moves");
 		
 		for(Move move : unit.getMoves()){
 			gameDao.createMove(move);
@@ -100,8 +100,8 @@ public class MovesManager implements IMovesManager{
 		//      - tryToSetChallenger
 		//      - set des dataContainer.objectsAltered
 		
-		Utils.print("--------------------");
-		Utils.print(" 6 : setChallengerAndUpdateUnit");
+		if(debug)Utils.print("--------------------");
+		if(debug)Utils.print(" 6 : setChallengerAndUpdateUnit");
 
 		setChallengerAndUpdateUnit(unit, moveMet, lastMove, dataContainer);
 
@@ -109,8 +109,8 @@ public class MovesManager implements IMovesManager{
 		// - 6 : on replace l'ancienne unitMet si elle existait
 
 		if(unitToReplace != null){
-			Utils.print("--------------------------------");
-			Utils.print(" 6 : replace previous unitMet");
+			if(debug)Utils.print("--------------------------------");
+			if(debug)if(debug)	Utils.print(" 6 : replace previous unitMet");
 			
 			refreshUnitMoves(unitToReplace);
 		}
@@ -121,10 +121,8 @@ public class MovesManager implements IMovesManager{
 	}
 	
 
-	
-
-
 	//==================================================================================================//
+
 
 	private void setChallengerAndUpdateUnit(Unit unit, Move moveMet, Move lastMove, DataContainer dataContainer) 
 	{
@@ -153,8 +151,8 @@ public class MovesManager implements IMovesManager{
 	//-----------------------------------------------------------------------------------//
 		private void resolveMeeting(Unit unit, Move moveMet, DataContainer dataContainer) 
 	{
-		Utils.print("--------------------");
-		Utils.print(" 4 : on calcule le resultat du meeting");
+		if(debug)Utils.print("--------------------");
+		if(debug)Utils.print(" 4 : on calcule le resultat du meeting");
 		
 		Unit unitMet = getUnit(moveMet.getUnitUID(), dataContainer);
 		Unit nextUnit;

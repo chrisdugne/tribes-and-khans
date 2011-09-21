@@ -188,7 +188,7 @@ package com.uralys.tribes.core
 				previousMove = newMove;
 				moveBeginsNow = false;
 				
-				unit.finalCaseUIDExpected = newMove.cellUID;
+				unit.cellUIDExpectedForLand = newMove.cellUID;
 			}
 		}
 
@@ -243,6 +243,7 @@ package com.uralys.tribes.core
 
 		public function resetPendingMoves(unit:Unit)
 		{
+			trace("resetPendingMoves");
 			movesPending = new ArrayCollection();
 			moveBeginsNow = unit.moves.length == 1;
 			
@@ -253,8 +254,10 @@ package com.uralys.tribes.core
 			lastMoveIsInCity = false;
 			
 			try{
-				// si l'unite VA dans une ville et que la finalCase n'est PAS cette ville (sinon nouveau depart depuis la ville)
-				if(unit.finalCaseUIDExpected != (Session.map[lastMove.getX()][lastMove.getY()] as Cell).cellUID
+				// si l'unite VA dans une ville 
+				// et que la finalCase n'est PAS cette ville (sinon nouveau depart depuis la ville)
+				if(unit.moves.length > 1
+				&& unit.cellUIDExpectedForLand != (Session.map[lastMove.getX()][lastMove.getY()] as Cell).cellUID
 				&& (Session.map[lastMove.getX()][lastMove.getY()] as Cell).city != null)
 				{
 					lastMoveIsInCity = true;
@@ -262,6 +265,7 @@ package com.uralys.tribes.core
 			}
 			catch(e:Error){}
 			
+			trace("lastMoveIsInCity : " + lastMoveIsInCity);
 		}
 
 		private var lastMoveIsInCity:Boolean = false;

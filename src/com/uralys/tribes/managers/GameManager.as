@@ -459,7 +459,7 @@ package com.uralys.tribes.managers {
 			}
 		}
 		
-		public function updateUnit(unit:Unit, cityUID:String = null):void
+		public function updateUnit(unit:Unit):void
 		{
 			trace("gameManager.updateUnit : " + unit.unitUID);
 			
@@ -468,7 +468,7 @@ package com.uralys.tribes.managers {
 			
 			var gameWrapper:RemoteObject = getGameWrapper();
 			gameWrapper.updateUnit.addEventListener("result", unitSaved);
-			gameWrapper.updateUnit(unit, cityUID);
+			gameWrapper.updateUnit(unit);
 			currentUnitBeingSaved = unit;
 		}
 
@@ -641,7 +641,7 @@ package com.uralys.tribes.managers {
 			}
 			else{
 				city.merchant.refreshLastMoveBeforeReplacingUnit();
-				updateUnit(city.merchant, city.cityUID);
+				updateUnit(city.merchant);
 			}
 			
 			BoardDrawer.getInstance().refreshUnits(Session.CURRENT_CELL_SELECTED);
@@ -656,7 +656,7 @@ package com.uralys.tribes.managers {
 			}
 			else{
 				city.army.refreshLastMoveBeforeReplacingUnit();
-				updateUnit(city.army, city.cityUID);
+				updateUnit(city.army);
 			}
 			
 			BoardDrawer.getInstance().refreshUnits(Session.CURRENT_CELL_SELECTED);
@@ -1087,7 +1087,7 @@ package com.uralys.tribes.managers {
 				
 				for each(var cellAltered:Cell in casesAltered)
 				{
-					trace("caseAltered : " + cellAltered.cellUID);
+					trace("cellAltered : " + cellAltered.cellUID);
 					if(cellAltered.challenger != null)
 						trace("challengerUID : " + cellAltered.challenger.playerUID);
 					trace("timeFromChallenging : " + cellAltered.timeFromChallenging);

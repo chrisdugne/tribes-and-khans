@@ -23,9 +23,11 @@ package com.uralys.tribes.entities
 		public function Unit(){}
 		
 		// on ne peut pas le mettre dans le constructeur, car BlazeDS l'utilise aussi
+
+		
 		public function initNewUnit(i:int = 0, j:int = 0):void{
 			_currentCaseUID = (Session.map[i][j] as Cell).cellUID;
-			_finalCaseUIDExpected = _currentCaseUID;
+			_cellUIDExpectedForLand = _currentCaseUID;
 			_unitUID = Session.player.uralysUID+"_"+(Session.player.units.length+1)+"_"+(new Date().getTime());
 			_status = TO_BE_CREATED;
 			_beginTime = new Date().getTime();
@@ -34,29 +36,39 @@ package com.uralys.tribes.entities
 		
 		//==========================================================================//
 		
-		private var _beginTime:Number;
-		private var _endTime:Number;
-		private var _gatheringUIDExpected:String;
-		private var _conflictUIDExpected:String;
-		private var _finalCaseUIDExpected:String;
-		
-		private var _status:int;
-		private var _currentCaseUID:String;
-		private var _player:Player;
-		
 		protected var _unitUID:String;
+		protected var _value:int;
+		protected var _type:int; // 1 armee,  2 marchand
+		private var _player:Player;
+
 		protected var _size:int;
 		protected var _speed:int;
-		protected var _value:int;
+
 		protected var _wheat:int;
 		protected var _wood:int;
 		protected var _iron:int;
 		protected var _gold:int;
+
+		protected var _bows:int;
+		protected var _swords:int;
+		protected var _armors:int;
+
+		private var _beginTime:Number;
+		private var _endTime:Number;
+
+		private var _cellUIDExpectedForLand:String;
+		private var _unitMetUID:String;
+		private var _unitNextUID:String;
+		
+		protected var _moves:ArrayCollection = new ArrayCollection();
+
+		//==========================================================================//
+
+		private var _status:int;
+		private var _currentCaseUID:String;
+		
 		protected var _radius:int;
 		
-		protected var _equipments:ArrayCollection = new ArrayCollection();
-		protected var _moves:ArrayCollection = new ArrayCollection();
-		protected var _conflicts:ArrayCollection = new ArrayCollection();
 		
 		//==========================================================================//
 		
@@ -94,6 +106,14 @@ package com.uralys.tribes.entities
 		public function set speed(o:int):void {
 			isModified = true;
 			_speed = o;
+		}
+
+		public function get type():int {
+			return _type;
+		}
+	
+		public function set type(o:int):void {
+			_type = o;
 		}
 	
 		public function get value():int {
@@ -160,15 +180,6 @@ package com.uralys.tribes.entities
 			_radius = o;
 		}
 		
-		public function get equipments():ArrayCollection {
-			return _equipments;
-		}
-		
-		public function set equipments(o:ArrayCollection):void {
-			isModified = true;
-			_equipments = o;
-		}
-		
 		public function get moves():ArrayCollection {
 			return _moves;
 		}
@@ -176,15 +187,6 @@ package com.uralys.tribes.entities
 		public function set moves(o:ArrayCollection):void {
 			isModified = true;
 			_moves = o;
-		}
-		
-		public function get conflicts():ArrayCollection {
-			return _conflicts;
-		}
-		
-		public function set conflicts(o:ArrayCollection):void {
-			isModified = true;
-			_conflicts = o;
 		}
 		
 		public function get status():int {
@@ -225,43 +227,39 @@ package com.uralys.tribes.entities
 			_endTime = value;
 		}
 		
-		public function get gatheringUIDExpected():String
+		public function get cellUIDExpectedForLand():String
 		{
-			return _gatheringUIDExpected;
+			return _cellUIDExpectedForLand;
 		}
 		
-		public function set gatheringUIDExpected(value:String):void
+		public function set cellUIDExpectedForLand(value:String):void
 		{
-			_gatheringUIDExpected = value;
+			_cellUIDExpectedForLand = value;
 		}
 		
-		public function get conflictUIDExpected():String
+		public function get unitNextUID():String
 		{
-			return _conflictUIDExpected;
+			return _unitNextUID;
 		}
 		
-		public function set conflictUIDExpected(value:String):void
+		public function set unitNextUID(value:String):void
 		{
-			_conflictUIDExpected = value;
+			_unitNextUID = value;
 		}
 		
-		public function get finalCaseUIDExpected():String
+		public function get unitMetUID():String
 		{
-			return _finalCaseUIDExpected;
+			return _unitMetUID;
 		}
 		
-		public function set finalCaseUIDExpected(value:String):void
+		public function set unitMetUID(value:String):void
 		{
-			_finalCaseUIDExpected = value;
+			_unitMetUID = value;
 		}
+
 		
 		//==========================================================================//
 
-		private var _bows:int;
-		private var _swords:int;
-		private var _armors:int;
-
-		
 		public function get bows():int{
 			return _bows;
 		}
@@ -314,8 +312,6 @@ package com.uralys.tribes.entities
 		
 		public static const ARMY:int = 1;
 		public static const MERCHANT:int = 2;
-		
-		public var type:int; // 1 armee,  2 marchand
 		
 		public var landExpected:int = -1;
 		//public var tmpLandSquare:Rect;
@@ -385,18 +381,20 @@ package com.uralys.tribes.entities
 		{
 			// manipulation d'une unite : initialisation du deplacement
 			var move:Move = moves.getItemAt(moves.length-1) as Move;
-			
-			// raison du test :
-			//		on test si le move est bien celui de l'unite, et non le move rajoute de la newUnit resultant du gathering avec une autre armee
-			// 		(auquel cas ce move ne compte pas dans le nouveau calcul du deplacement)
-			// comment on test : 
-			//		les moveUIDs de l'unite continennement unitUID, contrairement à newUnitUID
-			// resultat :
-			// 		si on trouve le move d'une newUnit, on prend celui d'avant (qui sera le move precedent le gathering et donc bien le dernier move de l'unite)
-			if(move.moveUID.indexOf(unitUID) == -1){
-				trace("move d'une future newUnit liée : on le zappe");
-				move = moves.getItemAt(moves.length-2) as Move;
-			}
+
+//			1.2 : deprecated
+//			
+//			// raison du test :
+//			//		on test si le move est bien celui de l'unite, et non le move rajoute de la newUnit resultant du gathering avec une autre armee
+//			// 		(auquel cas ce move ne compte pas dans le nouveau calcul du deplacement)
+//			// comment on test : 
+//			//		les moveUIDs de l'unite continennement unitUID, contrairement à newUnitUID
+//			// resultat :
+//			// 		si on trouve le move d'une newUnit, on prend celui d'avant (qui sera le move precedent le gathering et donc bien le dernier move de l'unite)
+//			if(move.moveUID.indexOf(unitUID) == -1){
+//				trace("move d'une future newUnit liée : on le zappe");
+//				move = moves.getItemAt(moves.length-2) as Move;
+//			}
 			
 			return move;
 		}
@@ -406,19 +404,26 @@ package com.uralys.tribes.entities
 		// retourne le dernier move reel de l'unité
 		public function removeLastMove():Move
 		{
-			var needToRemoveHiddenMove:Boolean = false;
+//			1.2 : deprecated
+//
+//			var needToRemoveHiddenMove:Boolean = false;
+//			var move:Move = moves.getItemAt(moves.length-1) as Move;
+//			
+//			if(move.moveUID.indexOf(unitUID) == -1){
+//				trace("move d'une future newUnit liée : il faut aussi l'enlever");
+//				needToRemoveHiddenMove = true;
+//			}
+//			
+//			moves.removeItemAt(moves.length-1);
+//			if(needToRemoveHiddenMove)
+//				moves.removeItemAt(moves.length-1);
+//			
+//			return move;
+			
 			var move:Move = moves.getItemAt(moves.length-1) as Move;
-			
-			if(move.moveUID.indexOf(unitUID) == -1){
-				trace("move d'une future newUnit liée : il faut aussi l'enlever");
-				needToRemoveHiddenMove = true;
-			}
-			
 			moves.removeItemAt(moves.length-1);
-			if(needToRemoveHiddenMove)
-				moves.removeItemAt(moves.length-1);
-			
 			return move;
+			
 		}
 		
 		/*

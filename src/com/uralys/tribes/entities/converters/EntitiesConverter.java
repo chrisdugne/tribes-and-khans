@@ -1,6 +1,7 @@
 package com.uralys.tribes.entities.converters;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.uralys.tribes.dao.impl.UniversalDAO;
@@ -97,6 +98,9 @@ public class EntitiesConverter {
 		
 		for (MessageDTO message : playerDTO.getMessages()) 
 		{
+			if(message.getTime() > new Date().getTime())
+				continue;
+			
 			switch (message.getStatus()) 
 			{
 				case Message.UNREAD:
@@ -226,7 +230,8 @@ public class EntitiesConverter {
 
 		unit.setUnitMetUID(unitDTO.getUnitMetUID());
 		unit.setUnitNextUID(unitDTO.getUnitNextUID());
-		unit.setCaseUIDExpectedForLand(unitDTO.getCaseUIDExpectedForLand());
+		unit.setMessageUID(unitDTO.getMessageUID());
+		unit.setCellUIDExpectedForLand(unitDTO.getCellUIDExpectedForLand());
 
 		// -----------------------------------------------------------------------------------//
 
@@ -250,37 +255,37 @@ public class EntitiesConverter {
 
 	// -----------------------------------------------------------------------------------//
 
-	public static Cell convertCellDTO(CellDTO caseDTO) {
+	public static Cell convertCellDTO(CellDTO cellDTO) {
 
-		if (caseDTO == null)
+		if (cellDTO == null)
 			return null;
 
-		Cell _case = new Cell();
+		Cell _cell = new Cell();
 
-		_case.setCellUID(caseDTO.getCaseUID());
-		_case.setX(caseDTO.getX());
-		_case.setGroup(caseDTO.getGroupCell());
-		_case.setY(caseDTO.getY());
-		_case.setType(caseDTO.getType());
+		_cell.setCellUID(cellDTO.getCellUID());
+		_cell.setX(cellDTO.getX());
+		_cell.setGroup(cellDTO.getGroupCell());
+		_cell.setY(cellDTO.getY());
+		_cell.setType(cellDTO.getType());
 
-		_case.setCity(convertCityDTO(caseDTO.getCity(), false));
+		_cell.setCity(convertCityDTO(cellDTO.getCity(), false));
 
-		_case.setLandOwner(convertPlayerDTO(caseDTO.getLandOwner(), false));
-		_case.setChallenger(convertPlayerDTO(caseDTO.getChallenger(), false));
-		_case.setTimeFromChallenging(caseDTO.getTimeFromChallenging());
+		_cell.setLandOwner(convertPlayerDTO(cellDTO.getLandOwner(), false));
+		_cell.setChallenger(convertPlayerDTO(cellDTO.getChallenger(), false));
+		_cell.setTimeFromChallenging(cellDTO.getTimeFromChallenging());
 
 		// -----------------------------------------------------------------------------------//
 
 		List<Move> moves = new ArrayList<Move>();
 		List<String> unitUIDs = new ArrayList<String>();
 
-		for (MoveDTO moveDTO : caseDTO.getMoves()) {
+		for (MoveDTO moveDTO : cellDTO.getMoves()) {
 			Move move = convertMoveDTO(moveDTO);
 			moves.add(move);
 			unitUIDs.add(move.getUnitUID());
 		}
 
-		_case.setRecordedMoves(moves);
+		_cell.setRecordedMoves(moves);
 
 		// -----------------------------------------------------------------------------------//
 
@@ -290,11 +295,11 @@ public class EntitiesConverter {
 			units.add(convertUnitDTO(unitDTO, true));
 		}
 
-		_case.setUnits(units);
+		_cell.setUnits(units);
 
 		// -----------------------------------------------------------------------------------//
 
-		return _case;
+		return _cell;
 	}
 
 	// -----------------------------------------------------------------------------------//

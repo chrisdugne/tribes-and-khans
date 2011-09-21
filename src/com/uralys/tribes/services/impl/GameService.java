@@ -99,10 +99,10 @@ public class GameService implements IGameService {
 		}
 	}
 
-	public ObjectsAltered updateUnit(Unit unit, String cityUID)
+	public ObjectsAltered updateUnit(Unit unit)
 	{
 		try {
-			return gameManager.updateUnit(unit, cityUID, true);
+			return gameManager.updateUnit(unit, true);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

@@ -39,7 +39,7 @@ public class UnitDTO {
 	@Persistent private int armors;
 
 	// la case en fin de chemin qui est sera peut etre colonisee
-	@Persistent private String caseUIDExpectedForLand;
+	@Persistent private String cellUIDExpectedForLand;
 
 	// l'armee avec laquelle il y aura soit un conflit soit un gathering, si elle existe sur le chemin
 	@Persistent private String unitMetUID;
@@ -47,6 +47,9 @@ public class UnitDTO {
 	// l'armee qui va etre crŽŽe suite ˆ ce croisement, si elle existe.
 	@Persistent private String unitNextUID;
 
+	// le message qui contient le rapport de disparition de cette unit
+	@Persistent private String messageUID;
+	
 	@Persistent private int type;
 	@Persistent private int speed;
 	@Persistent private int size;
@@ -158,11 +161,17 @@ public class UnitDTO {
 	public void setUnitNextUID(String unitNextUID) {
 		this.unitNextUID = unitNextUID;
 	}
-	public String getCaseUIDExpectedForLand() {
-		return caseUIDExpectedForLand;
+	public String getCellUIDExpectedForLand() {
+		return cellUIDExpectedForLand;
 	}
-	public void setCaseUIDExpectedForLand(String caseUIDExpectedForLand) {
-		this.caseUIDExpectedForLand = caseUIDExpectedForLand;
+	public void setCaseUIDExpectedForLand(String cellUIDExpectedForLand) {
+		this.cellUIDExpectedForLand = cellUIDExpectedForLand;
+	}
+	public String getMessageUID() {
+		return messageUID;
+	}
+	public void setMessageUID(String messageUID) {
+		this.messageUID = messageUID;
 	}
 	
 	//-----------------------------------------------------------------------------------//

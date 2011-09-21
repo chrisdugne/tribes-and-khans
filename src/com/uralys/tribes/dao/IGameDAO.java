@@ -40,7 +40,7 @@ public interface IGameDAO {
 	//-----------------------------------------------------------------------------------//
 	
 	public void createUnit(Unit unit, String cityUID);
-	public void updateUnit(Unit unit, String cityUID);
+	public void updateUnit(Unit unit);
 
 	//-----------------------------------------------------------------------------------//
 	

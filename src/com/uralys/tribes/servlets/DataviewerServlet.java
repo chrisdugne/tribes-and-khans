@@ -485,7 +485,6 @@ public class DataviewerServlet extends HttpServlet {
 						e.printStackTrace();
 						table += "<td> ___PROBLEM___ </td>";
 					} catch (NullPointerException e) {
-						e.printStackTrace();
 						table += "<td> ___NULL___ </td>";
 					}
 				}

@@ -38,9 +38,10 @@ public class Unit {
 	private long beginTime;
 	private long endTime;
 	
-	private String caseUIDExpectedForLand;
+	private String cellUIDExpectedForLand;
 	private String unitMetUID;
 	private String unitNextUID;
+	private String messageUID;
 
 	private List<Move> moves = new ArrayList<Move>();
 	
@@ -159,12 +160,12 @@ public class Unit {
 		this.armors = armors;
 	}
 
-	public String getCaseUIDExpectedForLand() {
-		return caseUIDExpectedForLand;
+	public String getCellUIDExpectedForLand() {
+		return cellUIDExpectedForLand;
 	}
 
-	public void setCaseUIDExpectedForLand(String caseUIDExpectedForLand) {
-		this.caseUIDExpectedForLand = caseUIDExpectedForLand;
+	public void setCellUIDExpectedForLand(String cellUIDExpectedForLand) {
+		this.cellUIDExpectedForLand = cellUIDExpectedForLand;
 	}
 
 	public String getUnitMetUID() {
@@ -181,6 +182,14 @@ public class Unit {
 
 	public void setUnitNextUID(String unitNextUID) {
 		this.unitNextUID = unitNextUID;
+	}
+
+	public String getMessageUID() {
+		return messageUID;
+	}
+	
+	public void setMessageUID(String messageUID) {
+		this.messageUID = messageUID;
 	}
 
 	public long getBeginTime() {

@@ -12,6 +12,7 @@ import com.uralys.tribes.entities.ObjectsAltered;
 import com.uralys.tribes.entities.Player;
 import com.uralys.tribes.entities.Unit;
 import com.uralys.tribes.entities.converters.EntitiesConverter;
+import com.uralys.tribes.entities.dto.CellDTO;
 import com.uralys.tribes.utils.TribesUtils;
 import com.uralys.utils.Utils;
 
@@ -43,27 +44,16 @@ public class MovesManager implements IMovesManager{
 		Utils.print(" 0 : init des donnees pour le calcul");
 		
 		DataContainer dataContainer = new DataContainer();
-		String allyUIDOfUnitArriving = unit.getPlayer().getAlly() == null ? unit.getPlayer().getUralysUID() : unit.getPlayer().getAlly().getAllyUID();
+		String allyUID = getAllyUID(unit);
 		
 		//-------------------------------------------------------//
 		// - 1 : on verifie si on a croisé une unitMet avant
-		//		 on fera un refreshUnitWay de cet unitMet
+		//		 on fera un refreshUnitMoves pour cet unitMet
 
 		Utils.print("--------------------");
 		Utils.print(" 1 : on verifie si on a croisé une unitMet avant");
 		
-		Unit unitToReplace = null;
-		if(unit.getUnitMetUID() != null)
-		{
-			unitToReplace = getUnit(unit.getUnitMetUID(), dataContainer);
-			Unit unitNextToDelete = getUnit(unit.getUnitNextUID(), dataContainer);
-			
-			if(debug)Utils.print("found a unitToReplace, deleting the previous nextUnit : " + unitToReplace.getUnitMetUID());
-			deleteUnit(unitNextToDelete);
-			
-			unitToReplace.setUnitMetUID(null);
-			unit.setUnitMetUID(null);
-		}
+		Unit unitToReplace = resetPreviousMeeting(unit, dataContainer);
 
 		//-------------------------------------------------------//
 		// - 2 : on supprime les anciens moves
@@ -79,10 +69,12 @@ public class MovesManager implements IMovesManager{
 		Utils.print("--------------------");
 		Utils.print(" 3 : on verifie si on croise une unit sur le trajet");
 		
-		boolean foundAMeeting = false;
+		Move moveMet = null;
+		Move lastMove = null;
+		
 		for(Move move : unit.getMoves())
 		{
-			if(foundAMeeting){
+			if(moveMet != null){
 				if(debug)Utils.print("foundAMeeting avant : move devient hidden, continue");
 				move.setHidden(true);
 				continue;
@@ -94,35 +86,182 @@ public class MovesManager implements IMovesManager{
 
 			//-----------------------------------------------------------------------------------//
 
-			boolean[] attackOrDefendACity = checkAttackOrDefendACity(cell, dataContainer, allyUIDOfUnitArriving);
+			boolean[] attackOrDefendACity = checkAttackOrDefendACity(cell, dataContainer, allyUID);
 			boolean attackACity = attackOrDefendACity[0];
-			boolean defendACity = attackOrDefendACity[1];
+			//boolean defendACity = attackOrDefendACity[1];
 			
 			//-----------------------------------------------------------------------------------//
 			
 			if(cell.getRecordedMoves().size() == 0 && attackACity)
 				;//attackACityWithNoArmyInDefense
 				
-			Move moveMet = getMoveMet(move, cell, unit, dataContainer);
+			moveMet = getMoveMet(move, cell, unit, dataContainer);
 			
-			foundAMeeting = moveMet != null;
+			//-----------------------------------------------------------------------------------//
+			
+			// on met à jour le contenu de la cellule, puisqu'elle va etre renvoyee à Flex tout de suite
+			// la vrai sauvegarde du recordedMove se fera lors du gameDao.createMove dans l'etape 4
+			cell.getRecordedMoves().add(move);
+			dataContainer.objectsAltered.addCellAltered(cell);
+			lastMove = move;
 		}
 		
 		//-------------------------------------------------------//
-		// - 4 : on enregistre tous les nouveaux moves
+		// - 4 : on calcule le resultat du meeting s'il y en a eu un
+
+		if(moveMet != null){
+			Utils.print("--------------------");
+			Utils.print(" 4 : on calcule le resultat du meeting");
+			
+			Unit unitMet = getUnit(moveMet.getUnitUID(), dataContainer);
+			Unit nextUnit;
+			Object[] nextUnitAndReport;
+
+			if(debug)Utils.print("meeting avec : " + moveMet.getMoveUID());
+			
+			if(isGathering(unit, unitMet)){
+				if(debug)Utils.print("gathering");
+				nextUnitAndReport = createNextUnitFromGathering(unit, unitMet);
+			}
+			else{
+				if(debug)Utils.print("conflict");
+				nextUnitAndReport = createNextUnitFromConflict(unit, unitMet);
+			}
+
+			nextUnit = (Unit) nextUnitAndReport[0];
+
+			unit.setMessageUID((String) nextUnitAndReport[1]);
+			unit.setUnitNextUID(nextUnit.getUnitUID());
+			unit.setUnitMetUID(unitMet.getUnitUID());
+			
+			unitMet.setMessageUID((String) nextUnitAndReport[1]);
+			unitMet.setUnitNextUID(nextUnit.getUnitUID());
+			unitMet.setUnitMetUID(unit.getUnitUID());
+			
+			
+			if(debug)Utils.print("meeting avec : " + moveMet.getMoveUID());
+			gameDao.updateUnit(unitMet);
+		}
+		
+		//-------------------------------------------------------//
+		// - 5 : on enregistre tous les nouveaux moves
 
 		Utils.print("--------------------");
-		Utils.print(" 4 : on enregistre tous les nouveaux moves");
+		Utils.print(" 5 : on enregistre tous les nouveaux moves");
 		
 		for(Move move : unit.getMoves()){
 			gameDao.createMove(move);
 		}
+
+		//-------------------------------------------------------//
+		// - 6 : finition 
+		//		- updateUnit
+		//      - tryToSetChallenger
+		//      - set des dataContainer.objectsAltered
+		
+		Utils.print("--------------------");
+		Utils.print(" 6 : finition");
+
+		// on enregistre la derniere case où on tombe si il n'y a pas de meeting
+		if(moveMet == null){
+			unit.setCellUIDExpectedForLand(lastMove.getCellUID());
+
+			// on set le nouveau challenger sur la case finale, si elle touche le royaume
+			if(unit.getType() == Unit.ARMY)
+			{
+				CellDTO finalCell = gameDao.tryToSetChallenger(unit, lastMove.getTimeFrom());
+				if(finalCell != null){
+					// refresh la derniere case dans 'objectsAltered' pour set challenger et timeFromChallenging
+					dataContainer.objectsAltered.addCellAltered(EntitiesConverter.convertCellDTO(finalCell));
+				}
+			}
+		}
+
+		// on enregistre tous les parametres modifiés sur notre unitArriving
+		gameDao.updateUnit(unit);
+		
+		// et on enregistre l'unite dans les datacontainer.unitsAltered
+		dataContainer.objectsAltered.addUnitAltered(unit);
+
+		//-------------------------------------------------------//
+		// - 6 : on replace l'ancienne unitMet si elle existait
+
+		if(unitToReplace != null){
+			Utils.print("--------------------------------");
+			Utils.print(" 6 : replace previous unitMet");
+			
+			refreshUnitMoves(unitToReplace);
+		}
+		
+		//-------------------------------------------------------//
 		
 		return dataContainer.objectsAltered;
+	}
+	
+	//-------------------------------------------------------------------------------------//
+
+	private Unit resetPreviousMeeting(Unit unit, DataContainer dataContainer) 
+	{
+		Unit unitToReplace = null;
+
+		if(unit.getUnitMetUID() != null)
+		{
+			if(debug)Utils.print("-----");
+			if(debug)Utils.print("resetPreviousMeeting");
+			
+			unitToReplace = getUnit(unit.getUnitMetUID(), dataContainer);
+			Unit unitNextToDelete = getUnit(unit.getUnitNextUID(), dataContainer);
+			
+			if(debug)Utils.print("found a unitToReplace, deleting the previous nextUnit : " + unitToReplace.getUnitMetUID());
+			deleteUnit(unitNextToDelete);
+			
+			if(debug)Utils.print("deleting the messages");
+			List<String> unitMessage = new ArrayList<String>();
+			unitMessage.add(unit.getMessageUID());
+			gameDao.deleteMessages(unit.getPlayer().getUralysUID(), unitMessage);
+			
+			List<String> unitToReplaceMessage = new ArrayList<String>();
+			unitToReplaceMessage.add(unitToReplace.getMessageUID());
+			gameDao.deleteMessages(unitToReplace.getPlayer().getUralysUID(), unitToReplaceMessage);
+			
+			unitToReplace.setUnitMetUID(null); // on va faire un refreshMoves de cette unit plus tard. c'est là qu'on fera son updateUnit
+			unitToReplace.setMessageUID(null);
+			
+			unit.setUnitMetUID(null);
+			unit.setMessageUID(null);
+		}
+		
+		return unitToReplace;
 	}
 
 	//-------------------------------------------------------------------------------------//
 
+	private String getAllyUID(Unit unit) {
+		return unit.getPlayer().getAlly() == null ? unit.getPlayer().getUralysUID() : unit.getPlayer().getAlly().getAllyUID();
+	}
+
+	//-------------------------------------------------------------------------------------//
+	
+	private Object[] createNextUnitFromConflict(Unit unit, Unit unitMet) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	//-------------------------------------------------------------------------------------//
+	
+	private Object[] createNextUnitFromGathering(Unit unit, Unit unitMet) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	//-------------------------------------------------------------------------------------//
+	
+	private boolean isGathering(Unit unit, Unit unitMet) {
+		return getAllyUID(unit).equals(getAllyUID(unitMet)); 
+	}
+
+	//-------------------------------------------------------------------------------------//
+	
 	// on doit choisir le plus grand timeFrom  avec timeFrom < celui auquel on arrive
 	// et s'il n'y en a pas, le timeFrom le plus petit
 	private Move getMoveMet(Move move, Cell cell, Unit unit, DataContainer dataContainer) 
@@ -276,7 +415,7 @@ public class MovesManager implements IMovesManager{
 
 	//-------------------------------------------------------------------------------------//
 	
-	private boolean[] checkAttackOrDefendACity(Cell cell, DataContainer dataContainer, String allyUIDOfUnitArriving) 
+	private boolean[] checkAttackOrDefendACity(Cell cell, DataContainer dataContainer, String allyUID)
 	{
 		boolean[] result = new boolean[2];
 		result[0] = false;
@@ -287,7 +426,7 @@ public class MovesManager implements IMovesManager{
 			Player playerOfTheCity = getPlayer(cell.getCity().getOwnerUID(), dataContainer);
 			String allyUIDOfTheCity = playerOfTheCity.getAlly() == null ? playerOfTheCity.getUralysUID() : playerOfTheCity.getAlly().getAllyUID(); 
 			
-			if(!allyUIDOfTheCity.equals(allyUIDOfUnitArriving))
+			if(!allyUIDOfTheCity.equals(allyUID))
 			{
 				result[0] = true;
 				if(debug)Utils.print("attackACity !!");

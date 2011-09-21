@@ -264,7 +264,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		Key key = KeyFactory.createKey(CellDTO.class.getSimpleName(), caseUID);
 
 		_case.setKey(KeyFactory.keyToString(key));
-		_case.setCaseUID(caseUID);
+		_case.setCellUID(caseUID);
 		_case.setX(x);
 		_case.setY(y);
 		_case.setGroupCell(group);
@@ -354,7 +354,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 					{
 						if(now - _cell.getTimeFromChallenging() > Constants.LAND_TIME*60*1000)
 						{
-							newLandOwner(_cell.getCaseUID());
+							newLandOwner(_cell.getCellUID());
 						}
 					}
 				}
@@ -573,7 +573,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		unitDTO.setBeginTime(unit.getBeginTime());
 		unitDTO.setEndTime(-1);
 		
-		unitDTO.setCaseUIDExpectedForLand(unit.getCaseUIDExpectedForLand());
+		unitDTO.setCaseUIDExpectedForLand(unit.getCellUIDExpectedForLand());
 		unitDTO.setUnitMetUID(unit.getUnitMetUID());
 
 		//--------------------------------------//
@@ -587,7 +587,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		return pm.getObjectById(UnitDTO.class, unitUID);
 	}
 	
-	public void updateUnit(Unit unit, String cityUID)
+	public void updateUnit(Unit unit)
 	{
 		if(debug)Utils.print("dao.updateUnit, unit.getEndTime() : " + unit.getEndTime());
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
@@ -605,7 +605,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		unitDTO.setSwords(unit.getSwords());
 		unitDTO.setArmors(unit.getArmors());
 
-		unitDTO.setCaseUIDExpectedForLand(unit.getCaseUIDExpectedForLand());
+		unitDTO.setCaseUIDExpectedForLand(unit.getCellUIDExpectedForLand());
 		unitDTO.setUnitMetUID(unit.getUnitMetUID());
 		unitDTO.setBeginTime(unit.getBeginTime());
 		unitDTO.setEndTime(unit.getEndTime());
@@ -809,8 +809,8 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		
 		pm.makePersistent(moveDTO);
 		
-		CellDTO _case = pm.getObjectById(CellDTO.class, move.getCellUID());
-		_case.getMoveUIDs().add(moveUID);
+		CellDTO _cell = pm.getObjectById(CellDTO.class, move.getCellUID());
+		_cell.getMoveUIDs().add(moveUID);
 		
 		UnitDTO _unit = pm.getObjectById(UnitDTO.class, move.getUnitUID());
 		_unit.getMoveUIDs().add(moveUID);
@@ -919,8 +919,8 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	{
 		if(debug)Utils.print("tryToSetChallenger");
 
-		int x = TribesUtils.getX(unit.getCaseUIDExpectedForLand());
-		int y = TribesUtils.getY(unit.getCaseUIDExpectedForLand());
+		int x = TribesUtils.getX(unit.getCellUIDExpectedForLand());
+		int y = TribesUtils.getY(unit.getCellUIDExpectedForLand());
 
 		CellDTO finalCase = null;
 		
@@ -945,7 +945,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			if(finalCase.getLandOwnerUID() != null && finalCase.getLandOwnerUID().equals(unit.getPlayer().getUralysUID()))
 				return null;
 			
-			if(debug)Utils.print("finalCase : " + finalCase.getCaseUID());
+			if(debug)Utils.print("finalCase : " + finalCase.getCellUID());
 			finalCase.setChallengerUID(unit.getPlayer().getUralysUID());
 			finalCase.setTimeFromChallenging(timeFromChallenging);
 			pm.close();

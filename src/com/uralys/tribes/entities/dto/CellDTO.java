@@ -24,7 +24,7 @@ public class CellDTO {
 
 	@Persistent
     @Extension(vendorName="datanucleus", key="gae.pk-name", value="true")
-	private String caseUID;
+	private String cellUID;
 	
 	@Persistent private Integer groupCell;
 	@Persistent private int x;
@@ -73,11 +73,11 @@ public class CellDTO {
 	public void setLandOwnerUID(String landOwnerUID) {
 		this.landOwnerUID = landOwnerUID;
 	}
-	public String getCaseUID() {
-		return caseUID;
+	public String getCellUID() {
+		return cellUID;
 	}
-	public void setCaseUID(String caseUID) {
-		this.caseUID = caseUID;
+	public void setCellUID(String cellUID) {
+		this.cellUID = cellUID;
 	}
 	public int getGroupCell() {
 		return groupCell;

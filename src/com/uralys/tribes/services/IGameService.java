@@ -39,7 +39,7 @@ public interface IGameService {
 	
 	//-----------------------------------------------------------------------------------//
 	public ObjectsAltered createUnit(String uralysUID, Unit unit, String cityUID);
-	public ObjectsAltered updateUnit(Unit unit, String cityUID);
+	public ObjectsAltered updateUnit(Unit unit);
 
 	//-----------------------------------------------------------------------------------//
 	

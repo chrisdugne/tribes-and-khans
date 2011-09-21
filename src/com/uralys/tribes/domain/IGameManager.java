@@ -27,7 +27,7 @@ public interface IGameManager {
 	//-----------------------------------------------------------------------------------//
 	
 	public ObjectsAltered createUnit(String uralysUID, Unit unit, String cityUID);
-	public ObjectsAltered updateUnit(Unit unit, String cityUID, boolean needReplacing);
+	public ObjectsAltered updateUnit(Unit unit, boolean needReplacing);
 
 	//-----------------------------------------------------------------------------------//
 	

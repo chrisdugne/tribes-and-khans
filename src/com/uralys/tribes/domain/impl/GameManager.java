@@ -226,12 +226,12 @@ public class GameManager implements IGameManager {
 		return movesManager.refreshUnitMoves(unit);
 	}
 
-	public ObjectsAltered updateUnit(Unit unit, String cityUID, boolean needReplacing)
+	public ObjectsAltered updateUnit(Unit unit, boolean needReplacing)
 	{
 		if(debug)Utils.print("-----------------------------------");
 		if(debug)Utils.print("gamemanager updateUnit : " + unit.getUnitUID());
 
-		gameDao.updateUnit(unit, cityUID);
+		gameDao.updateUnit(unit);
 		
 		if(unit.getEndTime() < new Date().getTime() && unit.getEndTime() != -1){
 			needReplacing = false;

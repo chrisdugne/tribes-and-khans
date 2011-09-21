@@ -42,14 +42,14 @@ public class ObjectsAltered {
 	
 	//------------------------------------------------------------------------------------------//
 	
-	public void addCaseAltered(Cell caseToRecord){
+	public void addCellAltered(Cell cell){
 
 		int indexAlreadyrecorded = -1;
-		for(Cell caseRecorded : casesAltered)
+		for(Cell cellRecorded : casesAltered)
 		{
-			if(caseRecorded.getCellUID().equals(caseToRecord))
+			if(cellRecorded.getCellUID().equals(cell))
 			{
-				indexAlreadyrecorded = casesAltered.indexOf(caseRecorded);
+				indexAlreadyrecorded = casesAltered.indexOf(cellRecorded);
 				break;
 			}
 		}
@@ -57,17 +57,17 @@ public class ObjectsAltered {
 		if(indexAlreadyrecorded >= 0)
 			casesAltered.remove(indexAlreadyrecorded);
 		
-		casesAltered.add(caseToRecord);
+		casesAltered.add(cell);
 	}
 	
 	//------------------------------------------------------------------------------------------//
 	
-	public void addUnitAltered(Unit unitToRecord){
+	public void addUnitAltered(Unit unit){
 		
 		int indexAlreadyrecorded = -1;
 		for(Unit unitRecorded : unitsAltered)
 		{
-			if(unitRecorded.getUnitUID().equals(unitToRecord))
+			if(unitRecorded.getUnitUID().equals(unit))
 			{
 				indexAlreadyrecorded = unitsAltered.indexOf(unitRecorded);
 				break;
@@ -77,6 +77,6 @@ public class ObjectsAltered {
 		if(indexAlreadyrecorded >= 0)
 			unitsAltered.remove(indexAlreadyrecorded);
 		
-		unitsAltered.add(unitToRecord);
+		unitsAltered.add(unit);
 	}
 }

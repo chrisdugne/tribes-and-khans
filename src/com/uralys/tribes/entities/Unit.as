@@ -37,7 +37,6 @@ package com.uralys.tribes.entities
 		//==========================================================================//
 		
 		protected var _unitUID:String;
-		protected var _value:int;
 		protected var _type:int; // 1 armee,  2 marchand
 		private var _player:Player;
 
@@ -88,7 +87,7 @@ package com.uralys.tribes.entities
 		public function set size(o:int):void {
 			isModified = true;
 			_size = o;
-			refreshValue();
+			//refreshValue();
 		}
 	
 		public function get currentCaseUID():String {
@@ -117,23 +116,23 @@ package com.uralys.tribes.entities
 		}
 	
 		public function get value():int {
-			return _value;
+			return type == MERCHANT ? size/10 : (size
+												+ (bows > size ? size : bows) 
+												+ (swords > size ? size : swords) *2 
+												+ (armors > size ? size : armors) *3
+												); 
 		}
 
-		public function refreshValue():void {
-			value = size 
-					+ (bows > size ? size : bows) 
-					+ (swords > size ? size : swords) *2 
-					+ (armors > size ? size : armors) *3;
-			
-			if(type == MERCHANT)
-				value = value/10;
-		}
+//		public function refreshValue():void {
+//			value = size 
+//					+ (bows > size ? size : bows) 
+//					+ (swords > size ? size : swords) *2 
+//					+ (armors > size ? size : armors) *3;
+//			
+//			if(type == MERCHANT)
+//				value = value/10;
+//		}
 	
-		public function set value(o:int):void {
-			isModified = true;
-			_value = o;
-		}
 		
 		public function get wheat():int {
 			return _wheat;
@@ -267,7 +266,7 @@ package com.uralys.tribes.entities
 		public function set bows(o:int):void{
 			isModified = true;
 			_bows = o;
-			refreshValue();
+			//refreshValue();
 		}
 
 		public function get swords():int{
@@ -277,7 +276,7 @@ package com.uralys.tribes.entities
 		public function set swords(o:int):void{
 			isModified = true;
 			_swords = o;
-			refreshValue();
+			//refreshValue();
 		}
 
 		public function get armors():int{
@@ -287,7 +286,7 @@ package com.uralys.tribes.entities
 		public function set armors(o:int):void{
 			isModified = true;
 			_armors = o;
-			refreshValue();
+			//refreshValue();
 		}
 
 		//==========================================================================//

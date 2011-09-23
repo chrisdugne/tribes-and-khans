@@ -441,14 +441,14 @@ package com.uralys.tribes.managers {
 		
 		//-------------------------------------------------------------------------//
 
-		public function createUnit(unit:Unit, cityUID):void
+		public function createUnit(unit:Unit):void
 		{
 			if(unit == null)
 				return;
 			
 			var gameWrapper:RemoteObject = getGameWrapper();
 			gameWrapper.createUnit.addEventListener("result", unitSaved);
-			gameWrapper.createUnit(Session.player.uralysUID, unit, cityUID);
+			gameWrapper.createUnit(Session.player.uralysUID, unit);
 			currentUnitBeingSaved = unit;
 			
 			unit.status = Unit.FREE;
@@ -632,31 +632,14 @@ package com.uralys.tribes.managers {
 //			return population + populationEvolution - armyRaised;
 		}
 		
-		public function validateMerchants(city:City):void
+		public function validateUnit(unit:Unit):void
 		{
-
-			if(city.merchant.status == Unit.TO_BE_CREATED){
-				createUnit(city.merchant, city.cityUID);
-				city.population -= city.merchant.size; 
+			if(unit.status == Unit.TO_BE_CREATED){
+				createUnit(unit);
 			}
 			else{
-				city.merchant.refreshLastMoveBeforeReplacingUnit();
-				updateUnit(city.merchant);
-			}
-			
-			BoardDrawer.getInstance().refreshUnits(Session.CURRENT_CELL_SELECTED);
-		}
-		
-		public function validateArmy(city:City):void
-		{
-				
-			if(city.army.status == Unit.TO_BE_CREATED){
-				createUnit(city.army, city.cityUID);
-				city.population -= city.army.size; 
-			}
-			else{
-				city.army.refreshLastMoveBeforeReplacingUnit();
-				updateUnit(city.army);
+				unit.refreshLastMoveBeforeReplacingUnit();
+				updateUnit(unit);
 			}
 			
 			BoardDrawer.getInstance().refreshUnits(Session.CURRENT_CELL_SELECTED);

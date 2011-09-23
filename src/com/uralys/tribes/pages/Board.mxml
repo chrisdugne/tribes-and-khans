@@ -642,14 +642,20 @@
 				if(selectedCity.merchant != null 
 				&& (selectedCity.merchant.moves.length == 1 || selectedCity.merchant.status == Unit.INTERCEPTED_ON_THIS_CASE))
 				{
-					GameManager.getInstance().validateMerchants(selectedCity);
+					GameManager.getInstance().validateUnit(selectedCity.merchant);
+	
+					if(selectedCity.merchant.status == Unit.TO_BE_CREATED)
+						selectedCity.population -= selectedCity.merchant.size; 
 				}
 
 				// IDEM pour army
 				if(selectedCity.army != null 
 				&& (selectedCity.army.moves.length == 1 || selectedCity.army.status == Unit.INTERCEPTED_ON_THIS_CASE))
 				{
-					GameManager.getInstance().validateArmy(selectedCity);
+					GameManager.getInstance().validateUnit(selectedCity.army);
+					
+					if(selectedCity.army.status == Unit.TO_BE_CREATED)
+						selectedCity.population -= selectedCity.army.size; 
 				}
 				
 				GameManager.getInstance().saveCity(selectedCity);

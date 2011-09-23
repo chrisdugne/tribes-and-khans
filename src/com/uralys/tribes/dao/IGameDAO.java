@@ -39,7 +39,7 @@ public interface IGameDAO {
 
 	//-----------------------------------------------------------------------------------//
 	
-	public void createUnit(Unit unit, String cityUID);
+	public void createUnit(Unit unit);
 	public void updateUnit(Unit unit);
 
 	//-----------------------------------------------------------------------------------//
@@ -57,7 +57,7 @@ public interface IGameDAO {
 	
 	public String createCity(City city, String playerUID);
 	public CityDTO createNewFirstCity(String playerUID);
-	public void refreshCityOwner(String cityUID, String newOwnerUID, long timeToChangeOwner, int populationLost);
+	public void cityIsTaken(String cityUID, String newOwnerUID, long timeToChangeOwner, int populationLost);
 	public void checkCityOwner(String cityUID);
 
 	//-----------------------------------------------------------------------------------//
@@ -94,7 +94,7 @@ public interface IGameDAO {
 
 	//-----------------------------------------------------------------------------------//
 	
-	public void sendMessage(String senderUID, String recipientUID, String message);
+	public String sendMessage(String string, String uralysUID, String report, long time);
 	public void markAsRead(List<String> messageUIDs);
 	public void archiveMessages(List<String> messageUIDs);
 	public void deleteMessages(String uralysUID, List<String> messageUIDs);

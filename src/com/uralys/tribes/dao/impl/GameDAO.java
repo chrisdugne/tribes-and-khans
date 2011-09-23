@@ -546,7 +546,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		return cityUID;
 	}
 
-	public void createUnit(Unit unit, String cityUID)
+	public void createUnit(Unit unit)
 	{
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		UnitDTO unitDTO = new UnitDTO(); 
@@ -719,7 +719,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	
 	//========================================================================================//
 
-	public void refreshCityOwner(String cityUID, String newOwnerUID, long timeToChangeOwner, int populationLost)
+	public void cityIsTaken(String cityUID, String newOwnerUID, long timeToChangeOwner, int populationLost)
 	{
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		CityDTO cityDTO = pm.getObjectById(CityDTO.class, cityUID);
@@ -1060,7 +1060,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 
 	//------------------------------------------------------------------------------//
 	
-	public void sendMessage(String senderUID, String recipientUID, String message)
+	public String sendMessage(String senderUID, String recipientUID, String message, long time)
 	{
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		PlayerDTO senderDTO = pm.getObjectById(PlayerDTO.class, senderUID);
@@ -1080,12 +1080,14 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		messageDTO.setSenderUID(senderUID);
 		messageDTO.setSenderName(senderDTO.getName());
 		
-		messageDTO.setTime(new Date().getTime());
+		messageDTO.setTime(time == -1 ? new Date().getTime() : time);
 		
 		recepientDTO.getMessageUIDs().add(messageUID);
 		
 		pm.makePersistent(messageDTO);
 		pm.close();
+		
+		return messageUID;
 	}
 		
 
@@ -1180,7 +1182,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		AllyDTO allyDTO = pm.getObjectById(AllyDTO.class, allyUID);
 		
 		allyDTO.getInvitedUIDs().add(uralysUID);
-		sendMessage(allyDTO.getPlayerUIDs().get(0), uralysUID, inviteInAllyMessage);
+		sendMessage(allyDTO.getPlayerUIDs().get(0), uralysUID, inviteInAllyMessage, -1);
 		
 		pm.close();
 	}

@@ -19,7 +19,6 @@ public class Unit {
 	//-----------------------------------------------------------------------------------//
 	
 	private String unitUID;
-	private int value;
 	private int type;
 	private Player player;
 
@@ -62,14 +61,6 @@ public class Unit {
 
 	public void setUnitUID(String unitUID) {
 		this.unitUID = unitUID;
-	}
-
-	public int getValue() {
-		return value;
-	}
-
-	public void setValue(int value) {
-		this.value = value;
 	}
 
 	public List<Move> getMoves() {

@@ -88,11 +88,10 @@ public class GameService implements IGameService {
 		
 	}
 
-	public ObjectsAltered createUnit(String uralysUID, Unit unit,
-			String cityUID)
+	public ObjectsAltered createUnit(String uralysUID, Unit unit)
 	{
 		try {
-			return gameManager.createUnit(uralysUID, unit, cityUID);
+			return gameManager.createUnit(uralysUID, unit);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

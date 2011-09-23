@@ -38,7 +38,7 @@ public interface IGameService {
 	public void deleteMove(String moveUID);
 	
 	//-----------------------------------------------------------------------------------//
-	public ObjectsAltered createUnit(String uralysUID, Unit unit, String cityUID);
+	public ObjectsAltered createUnit(String uralysUID, Unit unit);
 	public ObjectsAltered updateUnit(Unit unit);
 
 	//-----------------------------------------------------------------------------------//

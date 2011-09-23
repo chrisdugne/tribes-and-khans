@@ -215,12 +215,12 @@ public class GameManager implements IGameManager {
 	
 	//==================================================================================================//
 
-	public ObjectsAltered createUnit(String uralysUID, Unit unit, String cityUID)
+	public ObjectsAltered createUnit(String uralysUID, Unit unit)
 	{
 		if(debug)Utils.print("-----------------------------------");
 		if(debug)Utils.print("gamemanager createUnit : " + unit.getUnitUID() + " for uralysUID : " + uralysUID);
 		
-		gameDao.createUnit(unit, cityUID);
+		gameDao.createUnit(unit);
 		gameDao.linkNewUnit(uralysUID, unit.getUnitUID());
 
 		return movesManager.refreshUnitMoves(unit);
@@ -375,7 +375,7 @@ public class GameManager implements IGameManager {
 	//==================================================================================================//
 
 	public void sendMessage(String senderUID, String recipientUID, String message){
-		gameDao.sendMessage(senderUID, recipientUID, message);
+		gameDao.sendMessage(senderUID, recipientUID, message, -1);
 	}
 
 	public void markAsRead(List<String> messageUIDs) {

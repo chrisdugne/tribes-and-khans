@@ -11,6 +11,7 @@ import javax.jdo.Query;
 
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.Text;
 import com.uralys.tribes.commons.Constants;
 import com.uralys.tribes.dao.IGameDAO;
 import com.uralys.tribes.entities.Ally;
@@ -1063,8 +1064,16 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	public String sendMessage(String senderUID, String recipientUID, String message, long time)
 	{
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
-		PlayerDTO senderDTO = pm.getObjectById(PlayerDTO.class, senderUID);
 		PlayerDTO recepientDTO = pm.getObjectById(PlayerDTO.class, recipientUID);
+
+		String senderName;
+		if(senderUID.equals("uralys")){
+			senderName = senderUID;
+		}
+		else{
+			PlayerDTO senderDTO = pm.getObjectById(PlayerDTO.class, senderUID);
+			senderName = senderDTO.getName();
+		}
 		
 		MessageDTO messageDTO = new MessageDTO();
 		
@@ -1074,11 +1083,11 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		messageDTO.setKey(KeyFactory.keyToString(key));
 		messageDTO.setMessageUID(messageUID);
 		
-		messageDTO.setContent(message);
+		messageDTO.setContent(new Text(message));
 		messageDTO.setStatus(Message.UNREAD);
 		
 		messageDTO.setSenderUID(senderUID);
-		messageDTO.setSenderName(senderDTO.getName());
+		messageDTO.setSenderName(senderName);
 		
 		messageDTO.setTime(time == -1 ? new Date().getTime() : time);
 		
@@ -1131,8 +1140,8 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		player.getMessageUIDs().removeAll(messageUIDs);
 		
 		for(MessageDTO message : messages){
-			if(message.getContent().contains("____allyInvitation")){
-				AllyDTO ally = pm.getObjectById(AllyDTO.class, Utils.getAllyUID(message.getContent()));
+			if(message.getContent().getValue().toString().contains("____allyInvitation")){
+				AllyDTO ally = pm.getObjectById(AllyDTO.class, Utils.getAllyUID(message.getContent().toString()));
 				ally.getInvitedUIDs().remove(uralysUID);
 			}
 		}

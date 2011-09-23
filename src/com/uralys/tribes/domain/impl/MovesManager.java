@@ -194,15 +194,15 @@ public class MovesManager implements IMovesManager{
 
 		nextUnit = (Unit) nextUnitAndReport[0];
 		String report = (String) nextUnitAndReport[1];
-		finalizeNextUnitCreation(unit, unitMet, nextUnit, report, lastMove);
+		finalizeNextUnitCreation(unit, unitMet, nextUnit, report, lastMove, dataContainer);
 		
-		if(debug)Utils.print("meeting avec : " + moveMet.getMoveUID());
 		gameDao.updateUnit(unitMet);	
+		dataContainer.objectsAltered.addUnitAltered(unitMet);
 	}
 
 	//-----------------------------------------------------------------------------------//
 	
-	private void finalizeNextUnitCreation(Unit unit, Unit unitMet, Unit nextUnit, String report, Move lastMove) 
+	private void finalizeNextUnitCreation(Unit unit, Unit unitMet, Unit nextUnit, String report, Move lastMove, DataContainer dataContainer) 
 	{
 		nextUnit.setUnitUID(nextUnit.getPlayer().getUralysUID()+"_"+Utils.generatePassword(3)+"_"+lastMove.getTimeFrom());
 
@@ -232,8 +232,10 @@ public class MovesManager implements IMovesManager{
 		moves.add(firstMoveForNextUnit);
 		nextUnit.setMoves(moves);
 		
-		gameDao.createUnit(unit);
-		gameDao.linkNewUnit(nextUnit.getPlayer().getUralysUID(), unit.getUnitUID());
+		gameDao.createUnit(nextUnit);
+		dataContainer.objectsAltered.addUnitAltered(nextUnit);
+		
+		gameDao.linkNewUnit(nextUnit.getPlayer().getUralysUID(), nextUnit.getUnitUID());
 		gameDao.createMove(firstMoveForNextUnit);
 
 		unit.setMessageUID(gameDao.sendMessage("uralys", unit.getPlayer().getUralysUID(), report, lastMove.getTimeFrom()));

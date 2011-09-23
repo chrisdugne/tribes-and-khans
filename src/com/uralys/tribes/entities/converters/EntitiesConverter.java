@@ -136,7 +136,7 @@ public class EntitiesConverter {
 		Message message = new Message();
 		
 		message.setMessageUID(messageDTO.getMessageUID());
-		message.setContent(messageDTO.getContent());
+		message.setContent(messageDTO.getContent().getValue());
 		message.setSenderUID(messageDTO.getSenderUID());
 		message.setSenderName(messageDTO.getSenderName());
 		message.setStatus(messageDTO.getStatus());

@@ -66,7 +66,7 @@
 			<s:Label color="#FFFFFF" 
 					 left="20" 
 					 verticalCenter="2"
-					 text="{army.value} pts"/>
+					 text="{army.getValue()} pts"/>
 		</s:HGroup>
 		<s:HGroup y="60"
 				  visible="{army.ownerStatus == Unit.PLAYER || army.ownerStatus == Unit.ALLY}">

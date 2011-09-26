@@ -38,13 +38,17 @@ package com.uralys.tribes.entities
 		protected var _x:int;
 		protected var _y:int;
 		protected var _group:int;
-		protected var _recordedMoves:ArrayCollection = new ArrayCollection();
-		protected var _units:ArrayCollection;
+		//protected var _recordedMoves:ArrayCollection = new ArrayCollection();
+		//protected var _units:ArrayCollection;
 		protected var _type:int; // type = -1 pour les 'non-cases'
 		protected var _city:City;
 		protected var _landOwner:Player;
 		protected var _challenger:Player;
 		protected var _timeFromChallenging:Number;
+				
+		protected var _unit:Unit;
+		protected var _timeToChangeUnit:Number;
+		protected var _nextCellUID:String;
 		
 		//--------------------------------------------------------------//
 		
@@ -93,21 +97,21 @@ package com.uralys.tribes.entities
 			_y = o;
 		}
 		
-		public function get recordedMoves():ArrayCollection {
-			return _recordedMoves;
-		}
-		
-		public function set recordedMoves(o:ArrayCollection):void {
-			_recordedMoves = o;
-		}
-		
-		public function get units():ArrayCollection {
-			return _units;
-		}
-		
-		public function set units(o:ArrayCollection):void {
-			_units = o;
-		}
+//		public function get recordedMoves():ArrayCollection {
+//			return _recordedMoves;
+//		}
+//		
+//		public function set recordedMoves(o:ArrayCollection):void {
+//			_recordedMoves = o;
+//		}
+//		
+//		public function get units():ArrayCollection {
+//			return _units;
+//		}
+//		
+//		public function set units(o:ArrayCollection):void {
+//			_units = o;
+//		}
 		
 		public function get type():int {
 			return _type;
@@ -144,15 +148,15 @@ package com.uralys.tribes.entities
 		//--------------------------------------------------------------//
 		// Flex only
 		
-		public function refreshRecordedMove(moveToRefresh:Move):void
-		{
-			for each(var recordedMove:Move in recordedMoves){
-				if(recordedMove.moveUID == moveToRefresh.moveUID){
-					recordedMove.timeTo = moveToRefresh.timeTo;
-					return;
-				}
-			}
-		}
+//		public function refreshRecordedMove(moveToRefresh:Move):void
+//		{
+//			for each(var recordedMove:Move in recordedMoves){
+//				if(recordedMove.moveUID == moveToRefresh.moveUID){
+//					recordedMove.timeTo = moveToRefresh.timeTo;
+//					return;
+//				}
+//			}
+//		}
 
 		//----------------------------------------//
 		
@@ -181,85 +185,92 @@ package com.uralys.tribes.entities
 			pawn.timeTo = -1;
 			pawn.refreshProgress();
 			
-			for each(var move:Move in recordedMoves)
-			{
-				var unitInPlayer:Unit = Session.player.getUnit(move.unitUID);
-				var unit:Unit = unitInPlayer == null ? getUnit(move.unitUID) : unitInPlayer;
-				
-				if(unit == null) // move futur
-					continue;
-				
-				
-				if(globalRefresh){
-					GameManager.getInstance().registerUnitInSession(unit);
-				}
-				
-				if(unit.status != Unit.DESTROYED && move.timeFrom <= now && (move.timeTo > now || move.timeTo == -1))
-				{
-					// c'est le move actif, on recupere les unites qui sont sur la case
-					foundUnitsOnThisCase = true;
-					
-					pawn.unit = unit;
-					
-					
-					if(unitInPlayer != null)
-						unit.ownerStatus = Unit.PLAYER;
-
-					else if(Session.player.ally != null && Utils.containsPlayer(Session.player.ally.players, unit.player))
-						unit.ownerStatus = Unit.ALLY;	
-					
-					else
-						unit.ownerStatus = Unit.ENNEMY;				
-					
-					
-					switch(unit.type){
-						case 1:
-							army = unit;
-							break;
-						case 2:
-							merchants = unit;
-							break;
-					}
-					
-					if(unit.ownerStatus == Unit.PLAYER && unit.status == Unit.FREE){
-						// garder en tete qu'il y a un seul pion de visible
-						// donc si il y a marchand et armee, on affiche la barre qui a le plus petit temps
-						if(pawn.timeTo == -1 || pawn.timeTo > move.timeTo)
-							pawn.timeTo = move.timeTo;
-					}
-					
-					unit.isModified = false;
-				}
-				else if(move.timeTo != -1 && move.timeTo < now){
-					// move perimé
-					
-					if(unit.ownerStatus == Unit.PLAYER){
-						// on refresh unit dans Session.player.units : on enleve ce move terminé
-						var indexToRemove:int = -1;
-						for each (var moveInUnit:Move in unit.moves)
-						{
-							if(moveInUnit.moveUID == move.moveUID){
-								indexToRemove = unit.moves.getItemIndex(moveInUnit);
-								break;
-							}
-						}
-						
-						if(indexToRemove >= 0)
-							unit.moves.removeItemAt(indexToRemove);
-					}
-					
-					// on stock le move a supprimer de recordedMoves pour le supprimer apres cette boucle.
-					recordedMovesToDelete.addItem(move);
-					
-					// on stock le move dans la liste à supprimer
-					Session.movesToDelete.addItem(move);
-				}
-			}
-			
-			// on degage les move perimes des recordedMoves de la case
-			for each (var moveToRemoveFromRecordedMoves:Move in recordedMovesToDelete)
-				recordedMoves.removeItemAt(recordedMoves.getItemIndex(moveToRemoveFromRecordedMoves));
-			
+//
+//			for each(var move:Move in recordedMoves)
+//			{
+//				trace("etude de " + move.moveUID);
+//				
+//				var unitInPlayer:Unit = Session.player.getUnit(move.unitUID);
+//				var unit:Unit = unitInPlayer == null ? getUnit(move.unitUID) : unitInPlayer;
+//				
+//				if(unit == null) // move futur
+//					continue;
+//				
+//				
+//				if(globalRefresh){
+//					GameManager.getInstance().registerUnitInSession(unit);
+//				}
+//				
+//				if(unit.status != Unit.DESTROYED && move.timeFrom <= now && (move.timeTo > now || move.timeTo == -1))
+//				{
+//					trace(" == >  + MOVE ACTIF");
+//					
+//					// c'est le move actif, on recupere les unites qui sont sur la case
+//					foundUnitsOnThisCase = true;
+//					
+//					pawn.unit = unit;
+//					
+//					
+//					if(unitInPlayer != null)
+//						unit.ownerStatus = Unit.PLAYER;
+//
+//					else if(Session.player.ally != null && Utils.containsPlayer(Session.player.ally.players, unit.player))
+//						unit.ownerStatus = Unit.ALLY;	
+//					
+//					else
+//						unit.ownerStatus = Unit.ENNEMY;				
+//					
+//					
+//					switch(unit.type){
+//						case 1:
+//							army = unit;
+//							break;
+//						case 2:
+//							merchants = unit;
+//							break;
+//					}
+//					
+//					if(unit.ownerStatus == Unit.PLAYER && unit.status == Unit.FREE){
+//						// garder en tete qu'il y a un seul pion de visible
+//						// donc si il y a marchand et armee, on affiche la barre qui a le plus petit temps
+//						if(pawn.timeTo == -1 || pawn.timeTo > move.timeTo)
+//							pawn.timeTo = move.timeTo;
+//					}
+//					
+//					unit.isModified = false;
+//				}
+//				else if(move.timeTo != -1 && move.timeTo < now){
+//					// move perimé
+//					
+//					trace(" == >  + MOVE perimé");
+//					
+//					if(unit.ownerStatus == Unit.PLAYER){
+//						// on refresh unit dans Session.player.units : on enleve ce move terminé
+//						var indexToRemove:int = -1;
+//						for each (var moveInUnit:Move in unit.moves)
+//						{
+//							if(moveInUnit.moveUID == move.moveUID){
+//								indexToRemove = unit.moves.getItemIndex(moveInUnit);
+//								break;
+//							}
+//						}
+//						
+//						if(indexToRemove >= 0)
+//							unit.moves.removeItemAt(indexToRemove);
+//					}
+//					
+//					// on stock le move a supprimer de recordedMoves pour le supprimer apres cette boucle.
+//					recordedMovesToDelete.addItem(move);
+//					
+//					// on stock le move dans la liste à supprimer
+//					Session.movesToDelete.addItem(move);
+//				}
+//			}
+//			
+//			// on degage les move perimes des recordedMoves de la case
+//			for each (var moveToRemoveFromRecordedMoves:Move in recordedMovesToDelete)
+//				recordedMoves.removeItemAt(recordedMoves.getItemIndex(moveToRemoveFromRecordedMoves));
+//			
 			// cette fois ci si le move actif a ete trouve, on set le timer (si c'est bien une unité du joueur)
 			if(_challenger != null 
 			&& ((army != null && army.ownerStatus == Unit.PLAYER) || (merchants != null && merchants.ownerStatus == Unit.PLAYER)))
@@ -280,21 +291,21 @@ package com.uralys.tribes.entities
 		
 		//--------------------------------------------------------------//
 		
-		private function getUnit(unitUID:String):Unit
-		{
-			for each(var unit:Unit in _units)
-			{
-				// si c'est une unite ennemie, elle ne peut pas etre modifiee
-				// sinon, on va la trouver dans 'unitInPlayer' et on prendra donc celle qui sera manipule dans la Session
-				// donc pas d'importance sur le set false ici, juste pour que graphiquement ca colle si cest une unite ennemie 
-				unit.isModified = false; 
-				
-				if(unit.unitUID == unitUID || unit.unitUID.substr(4) == unitUID)
-					return unit;
-			}
-			
-			return null;
-		}	
+//		private function getUnit(unitUID:String):Unit
+//		{
+//			for each(var unit:Unit in _units)
+//			{
+//				// si c'est une unite ennemie, elle ne peut pas etre modifiee
+//				// sinon, on va la trouver dans 'unitInPlayer' et on prendra donc celle qui sera manipule dans la Session
+//				// donc pas d'importance sur le set false ici, juste pour que graphiquement ca colle si cest une unite ennemie 
+//				unit.isModified = false; 
+//				
+//				if(unit.unitUID == unitUID || unit.unitUID.substr(4) == unitUID)
+//					return unit;
+//			}
+//			
+//			return null;
+//		}	
 
 		//--------------------------------------------------------------//
 		

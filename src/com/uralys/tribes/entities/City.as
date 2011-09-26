@@ -260,13 +260,6 @@ package com.uralys.tribes.entities
 					+ swordWorkers
 					+ armorWorkers;
 			
-			trace("workers : army : " + (army == null));
-			trace("workers : merchant : " + (merchant == null));
-			if(army)
-				trace("army.status : " + army.status);
-			if(merchant)
-				trace("merchant.status : " + merchant.status);
-			
 			if(army != null && army.status == Unit.TO_BE_CREATED)
 				nbWorkers += army.size;
 			

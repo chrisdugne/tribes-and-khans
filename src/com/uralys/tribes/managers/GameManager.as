@@ -68,6 +68,9 @@ package com.uralys.tribes.managers {
 		
 		public function refreshPlayer(player:Player):void
 		{
+			trace("------------");
+			trace("refreshPlayer");
+			trace("------------");
 			Session.WAIT_FOR_SERVER = true;
 			var gameWrapper:RemoteObject = getGameWrapper();
 			gameWrapper.getPlayer.addEventListener("result", receivedPlayerToRefresh);
@@ -76,8 +79,19 @@ package com.uralys.tribes.managers {
 		
 		private function receivedPlayerToRefresh(event:ResultEvent):void
 		{
+			trace("------------");
+			trace("receivedPlayerToRefresh");
+			trace("------------");
+			var player:Player = event.result as Player
 			Session.WAIT_FOR_SERVER = false;
-			calculateSteps(event.result as Player);
+			calculateSteps(player);
+			
+			if(Session.player.playerUID == player.playerUID){
+				Session.player = player;
+				Session.board.refreshUnits();
+			}
+			
+			Session.board.reloadCurrentCells(true, true);
 		}
 
 		//============================================================================================//
@@ -476,25 +490,24 @@ package com.uralys.tribes.managers {
 		public function prepareUnitForClientSide(unit:Unit):Boolean
 		{
 			var now:Number = new Date().getTime();
+			
 			trace("------------------");
 			trace("prepareUnitForClientSide : " + unit.unitUID);
 			trace("unit.playerUID : " + unit.player.playerUID);
 			trace("unit.endTime : " + unit.endTime);
 			trace("now : " + now);
 			
-			
-
 			if(unit.endTime != -1 && unit.endTime < now)
 			{
 				unit.status = Unit.DESTROYED;
-				trace("Unit.DESTROYED");
+				trace(" ====> Unit.DESTROYED");
 				return false;
 			}
 
 			else if(unit.beginTime > now)
 			{
 				unit.status = Unit.FUTURE;
-				trace("Unit.FUTURE");
+				trace(" ====> Unit.FUTURE");
 				return false;
 			}
 
@@ -511,14 +524,15 @@ package com.uralys.tribes.managers {
 			if(unit.endTime != -1
 				&& unit.isInterceptedOnThisCell)
 			{
-				trace("Unit.INTERCEPTED_ON_THIS_CASE");
+				trace(" ====> Unit.INTERCEPTED_ON_THIS_CASE");
 				unit.status = Unit.INTERCEPTED_ON_THIS_CASE;
 			}
 				
 			else{
-				trace("Unit.FREE");
+				trace(" ====> Unit.FREE");
 				unit.status = Unit.FREE;
 			}
+			
 			return true;
 		}
 		
@@ -980,7 +994,6 @@ package com.uralys.tribes.managers {
 			// et remplir Session.movesToDelete
 			// et Session.allUnits
 			// on affecte dans le forceRefresh le _move du actif sur la case. (ca suppose 1 seul pion visible par case)
-			// on en profite aussi pour rafraichir les villes en Session
 			
 			var citiesLoaded:ArrayCollection = new ArrayCollection();
 			for each(var _cell:Cell in Session.CELLS_LOADED)
@@ -991,6 +1004,8 @@ package com.uralys.tribes.managers {
 				if(_cell.city != null)
 					citiesLoaded.addItem(_cell.city);
 			}
+
+			// on en profite aussi pour rafraichir les villes en Session
 
 			for each(var _cityLoaded:City in citiesLoaded)
 			{
@@ -1045,6 +1060,7 @@ package com.uralys.tribes.managers {
 
 				for each(var unitAltered:Unit in unitsAltered)
 				{
+					trace("-----");
 					trace("unitAltered : " + unitAltered.unitUID);
 					if(unitAltered.player.playerUID != Session.player.playerUID)
 						continue;
@@ -1055,7 +1071,7 @@ package com.uralys.tribes.managers {
 					
 					var unitInPlayer:Unit = Session.player.getUnit(unitAltered.unitUID);
 					
-					if(unitInPlayer == null && unitAltered.player.playerUID == Session.player.playerUID && unitAltered.status != Unit.DESTROYED)
+					if(unitInPlayer == null && unitAltered.status != Unit.DESTROYED)
 						Session.player.units.addItem(unitAltered);
 					else{
 						Session.player.refreshUnit(unitAltered);
@@ -1078,9 +1094,10 @@ package com.uralys.tribes.managers {
 						var caseInSession:Cell = (Session.map[cellAltered.x][cellAltered.y] as Cell);
 						
 						if(caseInSession != null){
-							Session.map[cellAltered.x][cellAltered.y].recordedMoves = cellAltered.recordedMoves;
+						//	Session.map[cellAltered.x][cellAltered.y].recordedMoves = cellAltered.recordedMoves;
 							Session.map[cellAltered.x][cellAltered.y].challenger = cellAltered.challenger;
 							Session.map[cellAltered.x][cellAltered.y].timeFromChallenging = cellAltered.timeFromChallenging;
+						//	Session.map[cellAltered.x][cellAltered.y].units = cellAltered.units;
 						}
 						else
 							Session.map[cellAltered.x][cellAltered.y] = cellAltered;

@@ -58,6 +58,7 @@ package com.uralys.tribes.entities
 		private var _cellUIDExpectedForLand:String;
 		private var _unitMetUID:String;
 		private var _unitNextUID:String;
+		private var _messageUID:String;
 		
 		protected var _moves:ArrayCollection = new ArrayCollection();
 
@@ -115,7 +116,7 @@ package com.uralys.tribes.entities
 			_type = o;
 		}
 	
-		public function get value():int {
+		public function getValue():int {
 			return type == MERCHANT ? size/10 : (size
 												+ (bows > size ? size : bows) 
 												+ (swords > size ? size : swords) *2 
@@ -256,6 +257,15 @@ package com.uralys.tribes.entities
 			_unitMetUID = value;
 		}
 
+		public function get messageUID():String
+		{
+			return _messageUID;
+		}
+		
+		public function set messageUID(value:String):void
+		{
+			_messageUID = value;
+		}
 		
 		//==========================================================================//
 

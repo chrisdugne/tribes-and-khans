@@ -97,6 +97,7 @@ package com.uralys.tribes.core
 		private function moveIsDone(e:TimerEvent):void
 		{
 			try{
+				trace("moveIsDone");
 				var moves:Array = timers.get(e.currentTarget) as Array;
 				var moveToPerform:Move = moves.shift() as Move;
 				
@@ -176,14 +177,14 @@ package com.uralys.tribes.core
 				unit.moves.addItem(newMove);
 				
 				// ajout du newMove dans les recordedMoves de la case courante
-				var caseSelected:Cell = Session.map[Utils.getXFromCaseUID(newMove.cellUID)][Utils.getYFromCaseUID(newMove.cellUID)] as Cell;
-				caseSelected.recordedMoves.addItem(newMove);
+				//var caseSelected:Cell = Session.map[Utils.getXFromCaseUID(newMove.cellUID)][Utils.getYFromCaseUID(newMove.cellUID)] as Cell;
+				//caseSelected.recordedMoves.addItem(newMove);
 				
 				// refresh du recordedMove qui correspond a lastMove sur la case du lastMove pour enregistrer le nouveau timeTo
-				var previousMoveX:int = Utils.getXFromCaseUID(previousMove.cellUID);
-				var previousMoveY:int = Utils.getYFromCaseUID(previousMove.cellUID);
-				var caseOfLastMove:Cell = Session.map[previousMoveX][previousMoveY] as Cell;
-				caseOfLastMove.refreshRecordedMove(previousMove);
+				//var previousMoveX:int = Utils.getXFromCaseUID(previousMove.cellUID);
+				//var previousMoveY:int = Utils.getYFromCaseUID(previousMove.cellUID);
+				//var caseOfLastMove:Cell = Session.map[previousMoveX][previousMoveY] as Cell;
+				//caseOfLastMove.refreshRecordedMove(previousMove);
 				
 				previousMove = newMove;
 				moveBeginsNow = false;

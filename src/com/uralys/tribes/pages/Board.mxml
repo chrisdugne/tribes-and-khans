@@ -263,6 +263,10 @@
 				
 				for each(var unit:Unit in Session.player.units)
 				{
+					trace(unit.unitUID);
+					trace("unit.status : " + unit.status);
+					trace("unit.currentCaseUID : " + (unit.currentCaseUID) == null ? 'null' : unit.currentCaseUID);
+					
 					if(unitBeingMovedUID != null
 					&& unitBeingMovedUID == unit.unitUID){
 						// pas forcemement le meilleur endroit, mais ils est appele a chaque UnitMover.moveIsDone
@@ -270,7 +274,7 @@
 						UnitMover.getInstance().refreshMoves(unit);
 					}
 					
-					if(unit.status == Unit.DESTROYED)
+					if(unit.status == Unit.DESTROYED != unit.status == Unit.FUTURE)
 						continue;
 
 					if(unit.type == 2){
@@ -1141,7 +1145,7 @@
 					  visible="{!Session.MOVE_A_UNIT &amp;&amp; !Session.WAIT_FOR_SERVER}"
 					  x="{boardImage.x + 95}"
 					  y="{boardImage.y - 13}"
-					  click="reloadCurrentCells(true, true)"/>
+					  click="{GameManager.getInstance().refreshPlayer(Session.player)}"/>
 		</s:Group>
 	</s:Group>
 	

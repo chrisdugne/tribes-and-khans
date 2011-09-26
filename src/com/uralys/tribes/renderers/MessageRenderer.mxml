@@ -47,6 +47,7 @@
 				 color="#ffffff"/>
 		<s:Spacer width="100%"/>
 		<s:Image source="{ImageContainer.EDIT_WHITE}" click="{openWriteMessage()}"
+				 visible="{(data as Message).senderName != 'uralys'}"
 	/>
 	</s:HGroup>
 	

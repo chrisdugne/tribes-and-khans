@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.uralys.tribes.dao.impl.UniversalDAO;
 import com.uralys.tribes.entities.Ally;
 import com.uralys.tribes.entities.Cell;
 import com.uralys.tribes.entities.City;
@@ -85,7 +84,7 @@ public class EntitiesConverter {
 		List<Unit> units = new ArrayList<Unit>();
 
 		for (UnitDTO unitDTO : playerDTO.getUnits()) {
-			units.add(convertUnitDTO(unitDTO, true));
+			units.add(convertUnitDTO(unitDTO));
 		}
 
 		player.setUnits(units);
@@ -192,18 +191,7 @@ public class EntitiesConverter {
 
 	// -----------------------------------------------------------------------------------//
 
-	/*
-	 * requireMoves : pour greffer les moves dans Unit.moves
-	 * requireLinkedGatherings : pour coller le Gathering dans chaque Move
-	 * requireLinkedMoveFromGathering : pour coller dans les moves le Move supplementaire qui correspond a celui du gathering
-	 * si requireLinkedMoveFromGathering est false, on recupere uniquement les moves enregistres par le joueur
-	 * si requireLinkedMoveFromGathering est true, on recupere tous les moves prevus pour cette unit, gathering/conflit compris
-	 * 
-	 * 
-	 * requireLinkedGatherings est forcement false si requireMoves est false
-	 * 
-	 */
-	public static Unit convertUnitDTO(UnitDTO unitDTO, boolean requireMoves) 
+	public static Unit convertUnitDTO(UnitDTO unitDTO) 
 	{
 		if (unitDTO == null)
 			return null;
@@ -235,18 +223,14 @@ public class EntitiesConverter {
 
 		// -----------------------------------------------------------------------------------//
 
-		// pour eviter le loop infini : pas besoin des moves pour les units dans
-		// le gathering
-		if (requireMoves) {
-			List<Move> moves = new ArrayList<Move>();
+		List<Move> moves = new ArrayList<Move>();
 
-			for (MoveDTO moveDTO : unitDTO.getMoves()) {
-				Move move = convertMoveDTO(moveDTO);
-				moves.add(move);
-			}
-
-			unit.setMoves(moves);
+		for (MoveDTO moveDTO : unitDTO.getMoves()) {
+			Move move = convertMoveDTO(moveDTO);
+			moves.add(move);
 		}
+
+		unit.setMoves(moves);
 
 		// -----------------------------------------------------------------------------------//
 
@@ -276,26 +260,21 @@ public class EntitiesConverter {
 
 		// -----------------------------------------------------------------------------------//
 
-		List<Move> moves = new ArrayList<Move>();
-		List<String> unitUIDs = new ArrayList<String>();
-
-		for (MoveDTO moveDTO : cellDTO.getMoves()) {
-			Move move = convertMoveDTO(moveDTO);
-			moves.add(move);
-			unitUIDs.add(move.getUnitUID());
+		_cell.setUnit(null);
+		_cell.setTimeToChangeUnit(0);
+		_cell.setNextCellUID(null);
+		
+		long now = new Date().getTime();
+		
+		for(MoveDTO move : cellDTO.getMoves())
+		{
+			if(move.getTimeFrom() <= now && (move.getTimeTo() > now || move.getTimeTo() == -1))
+			{
+				_cell.setUnit(convertUnitDTO(move.getUnit()));
+				_cell.setTimeToChangeUnit(move.getTimeTo());
+				_cell.setNextCellUID(move.getNextMove().getCellUID());
+			}
 		}
-
-		_cell.setRecordedMoves(moves);
-
-		// -----------------------------------------------------------------------------------//
-
-		List<Unit> units = new ArrayList<Unit>();
-
-		for (UnitDTO unitDTO : UniversalDAO.getInstance().getListDTO(unitUIDs, UnitDTO.class)) {
-			units.add(convertUnitDTO(unitDTO, true));
-		}
-
-		_cell.setUnits(units);
 
 		// -----------------------------------------------------------------------------------//
 

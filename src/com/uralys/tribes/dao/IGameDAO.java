@@ -62,7 +62,7 @@ public interface IGameDAO {
 
 	//-----------------------------------------------------------------------------------//
 	
-	public String createMove(Move move);
+	public String createMove(Move move, String nextMoveUID);
 	public void setTimeToForMove(String moveUID, long timeTo);
 	public void setNewGatheringForMoveAndDeletePreviousGathering(String moveUID, String gatheringUID);
 	public void setHiddenForMove(String moveUID, boolean hidden);

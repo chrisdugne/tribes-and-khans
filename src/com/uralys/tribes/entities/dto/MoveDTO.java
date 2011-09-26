@@ -7,6 +7,8 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import com.uralys.tribes.dao.impl.UniversalDAO;
+
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 public class MoveDTO {
 
@@ -25,6 +27,7 @@ public class MoveDTO {
 	@Persistent private long timeFrom;
 	@Persistent private long timeTo;
 	@Persistent private String unitUID;
+	@Persistent private String nextMoveUID;
 	@Persistent private boolean hidden;
 
 	//-----------------------------------------------------------------------------------//
@@ -65,11 +68,34 @@ public class MoveDTO {
 	public void setUnitUID(String unitUID) {
 		this.unitUID = unitUID;
 	}
+	public String getNextMoveUID() {
+		return nextMoveUID;
+	}
+	public void setNextMoveUID(String nextMoveUID) {
+		this.nextMoveUID = nextMoveUID;
+	}
 	public boolean isHidden() {
 		return hidden;
 	}
 	public void setHidden(boolean hidden) {
 		this.hidden = hidden;
 	}
+
+	//-----------------------------------------------------------------------------------//
 	
+	public UnitDTO getUnit() {
+		return (UnitDTO) UniversalDAO.getInstance().getObjectDTO(unitUID, UnitDTO.class);
+	}
+	
+	//-----------------------------------------------------------------------------------//
+	
+	public MoveDTO getNextMove() 
+	{
+		if(nextMoveUID == null)
+			return null;
+		
+		return (MoveDTO) UniversalDAO.getInstance().getObjectDTO(nextMoveUID, MoveDTO.class);
+	}
+
+	//-----------------------------------------------------------------------------------//
 }

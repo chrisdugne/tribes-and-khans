@@ -1,8 +1,5 @@
 package com.uralys.tribes.entities;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Cell {
 
 	//-----------------------------------------------------------------------------------//
@@ -20,14 +17,16 @@ public class Cell {
 	private int x;
 	private int y;
 	
-	private List<Move> recordedMoves;
-	private List<Unit> units;
 	private int type;
 	private City city;
 	
 	private Player landOwner;
 	private Player challenger;
 	private long timeFromChallenging;
+	
+	private Unit unit;
+	private long timeToChangeUnit;
+	private String nextCellUID;
 
 	//-----------------------------------------------------------------------------------//
 
@@ -36,7 +35,6 @@ public class Cell {
 	public Cell(int i, int j) {
 		x = i;
 		y = j;
-		recordedMoves = new ArrayList<Move>();
 	}
 
 	//-----------------------------------------------------------------------------------//
@@ -63,22 +61,6 @@ public class Cell {
 
 	public void setY(int y) {
 		this.y = y;
-	}
-
-	public List<Move> getRecordedMoves() {
-		return recordedMoves;
-	}
-
-	public void setRecordedMoves(List<Move> moves) {
-		this.recordedMoves = moves;
-	}
-
-	public List<Unit> getUnits() {
-		return units;
-	}
-
-	public void setUnits(List<Unit> units) {
-		this.units = units;
 	}
 
 	public int getType() {
@@ -127,6 +109,30 @@ public class Cell {
 
 	public void setGroup(int group) {
 		this.group = group;
+	}
+
+	public Unit getUnit() {
+		return unit;
+	}
+
+	public void setUnit(Unit unit) {
+		this.unit = unit;
+	}
+
+	public long getTimeToChangeUnit() {
+		return timeToChangeUnit;
+	}
+
+	public void setTimeToChangeUnit(long timeToChangeUnit) {
+		this.timeToChangeUnit = timeToChangeUnit;
+	}
+
+	public String getNextCellUID() {
+		return nextCellUID;
+	}
+
+	public void setNextCellUID(String nextCellUID) {
+		this.nextCellUID = nextCellUID;
 	}
 	
 	//-----------------------------------------------------------------------------------//

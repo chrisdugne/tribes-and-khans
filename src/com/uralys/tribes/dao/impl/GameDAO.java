@@ -793,7 +793,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 //		pm.close();
 	}
 	
-	public String createMove(Move move) 
+	public String createMove(Move move, String nextMoveUID) 
 	{
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		MoveDTO moveDTO = new MoveDTO(); 
@@ -803,6 +803,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 
 		moveDTO.setKey(KeyFactory.keyToString(key));
 		moveDTO.setMoveUID(moveUID);
+		moveDTO.setNextMoveUID(nextMoveUID);
 		moveDTO.setCellUID(move.getCellUID());
 		moveDTO.setTimeFrom(move.getTimeFrom());
 		moveDTO.setTimeTo(move.getTimeTo());

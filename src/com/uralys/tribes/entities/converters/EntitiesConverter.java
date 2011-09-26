@@ -261,7 +261,7 @@ public class EntitiesConverter {
 		// -----------------------------------------------------------------------------------//
 
 		_cell.setUnit(null);
-		_cell.setTimeToChangeUnit(0);
+		_cell.setTimeToChangeUnit(-1);
 		_cell.setNextCellUID(null);
 		
 		long now = new Date().getTime();
@@ -272,7 +272,7 @@ public class EntitiesConverter {
 			{
 				_cell.setUnit(convertUnitDTO(move.getUnit()));
 				_cell.setTimeToChangeUnit(move.getTimeTo());
-				_cell.setNextCellUID(move.getNextMove().getCellUID());
+				_cell.setNextCellUID(move.getNextMove() != null ? move.getNextMove().getCellUID() : null);
 			}
 		}
 

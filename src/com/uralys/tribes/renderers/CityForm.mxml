@@ -767,7 +767,7 @@
 					// mais si on refresh maintenant, on va pouvoir afficher la case lors du validateArmy() ou validateMerchant()
 					//Session.CURRENT_CELL_SELECTED.units.addItem(newUnit);
 					//Session.CURRENT_CELL_SELECTED.recordedMoves.addItem(moveInCity);
-					Session.CURRENT_CELL_SELECTED.forceRefresh();
+					Session.CURRENT_CELL_SELECTED.refresh();
 					
 					return newUnit;
 				}
@@ -845,7 +845,7 @@
 //					if(indexToRemove >= 0)
 //						Session.CURRENT_CELL_SELECTED.recordedMoves.removeItemAt(indexToRemove);
 					
-					Session.CURRENT_CELL_SELECTED.forceRefresh();
+					Session.CURRENT_CELL_SELECTED.refresh();
 					BoardDrawer.getInstance().refreshUnits(Session.CURRENT_CELL_SELECTED);
 					
 					GameManager.getInstance().deleteUnit(city.army);
@@ -941,7 +941,7 @@
 //					if(indexToRemove >= 0)
 //						Session.CURRENT_CELL_SELECTED.recordedMoves.removeItemAt(indexToRemove);
 					
-					Session.CURRENT_CELL_SELECTED.forceRefresh();
+					Session.CURRENT_CELL_SELECTED.refresh();
 					BoardDrawer.getInstance().refreshUnits(Session.CURRENT_CELL_SELECTED);
 					
 					GameManager.getInstance().deleteUnit(city.merchant);

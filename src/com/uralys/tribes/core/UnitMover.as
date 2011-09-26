@@ -37,116 +37,137 @@ package com.uralys.tribes.core
 		
 		// ============================================================================================
 	
-		public function refreshTimers():void
+		public function resetTimers():void
 		{
-			trace("refreshTimers for " + Session.allUnits.length); 
 			for each(var timer:Timer in timers.keySet()){
 				timer.stop();
 			}
 			
 			timers.removeAll();
-			
-			for each(var unit:Unit in Session.allUnits){
-				addTimer(unit.moves.toArray());
-			}
+//			trace("refreshTimers for " + Session.allUnits.length); 
+//			
+//			
+//			for each(var unit:Unit in Session.allUnits){
+//				addTimer(unit.moves.toArray());
+//			}
 		}
 			
 		// ============================================================================================
 
 		
-		public function addTimer(moves:Array):void
+//		public function addTimer(moves:Array):void
+//		{
+//			var now:Number = new Date().getTime();
+//			
+//			// on degage les moves perimés
+//			while(moves.length > 0  && moves[0].timeTo != -1 && moves[0].timeTo < now){
+//				moves.shift();
+//			}
+//
+//			if(moves.length == 0)
+//				return;
+//			
+//			var firstMove:Move = moves[0] as Move; 
+//			
+//			if(firstMove.timeTo == -1)
+//				return;
+//			
+//			for each (var movesListened:Array in timers.values())
+//			{
+//				var moveListened:Move = movesListened[0] as Move;
+//				
+//				if(firstMove.moveUID == moveListened.moveUID){
+//					trace(firstMove.moveUID + " est deja ecouté, refreshing registered moves");
+//					timers.refresh(movesListened, moves);
+//					return;
+//				}
+//			}
+//			
+//			var timeToWait:Number = firstMove.timeTo - new Date().getTime();
+//			trace("listening move " + firstMove.moveUID);
+//			
+//			var t:Timer = new Timer(timeToWait, 1);
+//			t.addEventListener(TimerEvent.TIMER_COMPLETE, moveIsDone);
+//			t.start();
+//			
+//			timers.put(t, moves);
+//		}
+		
+		// ============================================================================================
+		
+//		private function moveIsDone(e:TimerEvent):void
+//		{
+//			try{
+//				trace("moveIsDone");
+//				var moves:Array = timers.get(e.currentTarget) as Array;
+//				var moveToPerform:Move = moves.shift() as Move;
+//				
+//				timers.remove(e.currentTarget);
+//				
+//				// refresh de la case dont on part : suppression du move dans case.recordedMoves et dans unit.moves
+//				var caseToRefresh:Cell = Session.map[moveToPerform.getX()][moveToPerform.getY()] as Cell;		
+//				caseToRefresh.refresh();
+//				
+//				// efface le 'pion' de la case
+//				BoardDrawer.getInstance().refreshUnits(caseToRefresh);
+//				
+//				// on recupere le suivant
+//				var newCurrentMove:Move = moves[0] as Move;
+//				
+//				// on ecoute le nouveau move si son timeTo n'est pas illimité
+//				if(newCurrentMove.timeTo != -1)
+//					addTimer(moves);
+//				
+//				
+//				// refresh de la nouvelle case active : ajout de l'unité sur la case
+//				var newCaseToRefresh:Cell = Session.map[newCurrentMove.getX()][newCurrentMove.getY()] as Cell;
+//				newCaseToRefresh.refresh();
+//	
+//				// affiche le 'pion' de la case
+//				BoardDrawer.getInstance().refreshUnits(newCaseToRefresh);
+//				
+//				// refresh du status de toutes les unites
+//				GameManager.getInstance().refreshStatusOfAllUnitsInSession();
+//				
+//				// on refresh les villes au cas ou le deplacement fait partir/arriver une unite de/dans une ville
+//				Session.board.refreshUnitsInCity(moveToPerform.unitUID);
+//				
+//				// on refresh les moves si ils sont affiches
+//				if(Session.MOVE_A_UNIT){
+//					BoardDrawer.getInstance().removeAllUnitMovesImages();
+//					Session.board.onUnitClick();
+//				}
+//				
+//				// l'unité a bougé : au cas ou on enleve le 'build here'
+//				Session.board.buildCityForm.visible = false;
+//				Session.board.buildCityForm.includeInLayout = false;
+//				
+//			}
+//			catch(e:Error){
+//				trace("error on moveIsDone");
+//			}
+//		}
+		
+		public function listenTo(cell:Cell, timeToChangeUnit:Number):void
 		{
-			var now:Number = new Date().getTime();
-			
-			// on degage les moves perimés
-			while(moves.length > 0  && moves[0].timeTo != -1 && moves[0].timeTo < now){
-				moves.shift();
-			}
-
-			if(moves.length == 0)
-				return;
-			
-			var firstMove:Move = moves[0] as Move; 
-			
-			if(firstMove.timeTo == -1)
-				return;
-			
-			for each (var movesListened:Array in timers.values())
-			{
-				var moveListened:Move = movesListened[0] as Move;
-				
-				if(firstMove.moveUID == moveListened.moveUID){
-					trace(firstMove.moveUID + " est deja ecouté, refreshing registered moves");
-					timers.refresh(movesListened, moves);
-					return;
-				}
-			}
-			
-			var timeToWait:Number = firstMove.timeTo - new Date().getTime();
-			trace("listening move " + firstMove.moveUID);
+			var timeToWait:Number = timeToChangeUnit - new Date().getTime();
+			trace("listening cell " + cell.cellUID);
 			
 			var t:Timer = new Timer(timeToWait, 1);
 			t.addEventListener(TimerEvent.TIMER_COMPLETE, moveIsDone);
 			t.start();
 			
-			timers.put(t, moves);
+			timers.put(t, cell);
 		}
 		
-		// ============================================================================================
-		
-		private function moveIsDone(e:TimerEvent):void
+		protected static function moveIsDone(e:TimerEvent):void
 		{
-			try{
-				trace("moveIsDone");
-				var moves:Array = timers.get(e.currentTarget) as Array;
-				var moveToPerform:Move = moves.shift() as Move;
-				
-				timers.remove(e.currentTarget);
-				
-				// refresh de la case dont on part : suppression du move dans case.recordedMoves et dans unit.moves
-				var caseToRefresh:Cell = Session.map[moveToPerform.getX()][moveToPerform.getY()] as Cell;		
-				caseToRefresh.forceRefresh();
-				
-				// efface le 'pion' de la case
-				BoardDrawer.getInstance().refreshUnits(caseToRefresh);
-				
-				// on recupere le suivant
-				var newCurrentMove:Move = moves[0] as Move;
-				
-				// on ecoute le nouveau move si son timeTo n'est pas illimité
-				if(newCurrentMove.timeTo != -1)
-					addTimer(moves);
-				
-				
-				// refresh de la nouvelle case active : ajout de l'unité sur la case
-				var newCaseToRefresh:Cell = Session.map[newCurrentMove.getX()][newCurrentMove.getY()] as Cell;
-				newCaseToRefresh.forceRefresh();
-	
-				// affiche le 'pion' de la case
-				BoardDrawer.getInstance().refreshUnits(newCaseToRefresh);
-				
-				// refresh du status de toutes les unites
-				GameManager.getInstance().refreshStatusOfAllUnitsInSession();
-				
-				// on refresh les villes au cas ou le deplacement fait partir/arriver une unite de/dans une ville
-				Session.board.refreshUnitsInCity(moveToPerform.unitUID);
-				
-				// on refresh les moves si ils sont affiches
-				if(Session.MOVE_A_UNIT){
-					BoardDrawer.getInstance().removeAllUnitMovesImages();
-					Session.board.onUnitClick();
-				}
-				
-				// l'unité a bougé : au cas ou on enleve le 'build here'
-				Session.board.buildCityForm.visible = false;
-				Session.board.buildCityForm.includeInLayout = false;
-				
-			}
-			catch(e:Error){
-				trace("error on moveIsDone");
-			}
+			var cell:Cell = timers.get(e.currentTarget) as Cell;
+			timers.remove(e.currentTarget);
+			
+			GameManager.getInstance().refreshCell(cell);
 		}
-
+		
 		// ============================================================================================
 		
 		private var movesPending:ArrayCollection;

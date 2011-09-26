@@ -30,7 +30,7 @@
 			
 			[Bindable] public var timeTo:Number;	
 			[Bindable] public var status:int;	
-			[Bindable] public var _case:Cell;	
+			[Bindable] public var cell:Cell;	
 			[Bindable] public var unit:Unit;
 			
 			//----------------------------------------------------------------------------------//
@@ -40,7 +40,7 @@
 			
 			//----------------------------------------------------------------------------------//
 			
-			public function refreshProgress():void
+			public function resetProgress():void
 			{			
 				Session.timer.removeEventListener( TimerEvent.TIMER, updateProgress );
 				
@@ -74,14 +74,14 @@
 			{
 				timeTo = -1;
 
-				if(_case.landOwner != null && Session.player.playerUID == _case.landOwner.playerUID)
+				if(cell.landOwner != null && Session.player.playerUID == cell.landOwner.playerUID)
 					Session.player.nbLands--;
-				else if(Session.player.playerUID == _case.challenger.playerUID)
+				else if(Session.player.playerUID == cell.challenger.playerUID)
 					Session.player.nbLands++;
 
-				_case.landOwner = _case.challenger;
-				_case.timeFromChallenging = -1;
-				_case.challenger = null;
+				cell.landOwner = cell.challenger;
+				cell.timeFromChallenging = -1;
+				cell.challenger = null;
 				BoardDrawer.getInstance().redrawAllLands();
 			}
 			

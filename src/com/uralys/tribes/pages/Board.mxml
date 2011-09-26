@@ -393,7 +393,7 @@
 						Session.CURRENT_SELECTION_Y = Session.COORDINATE_Y;
 						
 						Session.CURRENT_CELL_SELECTED = Session.map[Session.CURRENT_SELECTION_X][Session.CURRENT_SELECTION_Y];
-						Session.CURRENT_CELL_SELECTED.tryRefresh();
+						//Session.CURRENT_CELL_SELECTED.tryRefresh();
 					}
 					catch(e:Error){
 						// au chargement Session.map peut etre null, et la souris etre sur une image de bord
@@ -627,7 +627,7 @@
 				
 				try{
 					Session.CURRENT_CELL_SELECTED.merchants = null;
-					Session.CURRENT_CELL_SELECTED.forceRefresh();
+					Session.CURRENT_CELL_SELECTED.refresh();
 				}
 				catch(e:Error){}
 				

@@ -485,7 +485,78 @@ package com.uralys.tribes.managers {
 			gameWrapper.updateUnit(unit);
 			currentUnitBeingSaved = unit;
 		}
-
+		
+		private var currentUnitBeingSaved:Unit;
+		private var cityBeingSaved:City;
+		private function unitSaved(event:ResultEvent):void
+		{
+			trace("--------");
+			trace("unitSaved");
+			
+			currentUnitBeingSaved.isModified = false;
+			Session.board.cityForm.currentState = Session.board.cityForm.normalState.name;
+			
+			if(event.result != null)
+			{
+				var casesAltered:ArrayCollection = event.result.casesAltered;
+				var unitsAltered:ArrayCollection = event.result.unitsAltered;
+				
+				if(cityBeingSaved != null){
+					cityBeingSaved.cityUID = event.result.cityUID as String;
+					cityBeingSaved = null;
+				}
+				
+				for each(var unitAltered:Unit in unitsAltered)
+				{
+					trace("-----");
+					trace("unitAltered : " + unitAltered.unitUID);
+					if(unitAltered.player.playerUID != Session.player.playerUID)
+						continue;
+					
+					var unitIsAlive:Boolean = prepareUnitForClientSide(unitAltered);
+					if(!unitIsAlive)
+						continue;
+					
+					var unitInPlayer:Unit = Session.player.getUnit(unitAltered.unitUID);
+					
+					if(unitInPlayer == null && unitAltered.status != Unit.DESTROYED)
+						Session.player.units.addItem(unitAltered);
+					else{
+						Session.player.refreshUnit(unitAltered);
+					}
+				}
+				
+				for each(var cellAltered:Cell in casesAltered)
+				{
+					trace("cellAltered : " + cellAltered.cellUID);
+					if(cellAltered.challenger != null)
+						trace("challengerUID : " + cellAltered.challenger.playerUID);
+					trace("timeFromChallenging : " + cellAltered.timeFromChallenging);
+					try{
+						var caseInSession:Cell = (Session.map[cellAltered.x][cellAltered.y] as Cell);
+						
+						if(caseInSession != null){
+							//	Session.map[cellAltered.x][cellAltered.y].recordedMoves = cellAltered.recordedMoves;
+							Session.map[cellAltered.x][cellAltered.y].challenger = cellAltered.challenger;
+							Session.map[cellAltered.x][cellAltered.y].timeFromChallenging = cellAltered.timeFromChallenging;
+							//	Session.map[cellAltered.x][cellAltered.y].units = cellAltered.units;
+						}
+						else
+							Session.map[cellAltered.x][cellAltered.y] = cellAltered;
+						
+						Session.map[cellAltered.x][cellAltered.y].forceRefresh();
+					}
+					catch(e:Error){trace("----");trace(e.message);trace("----");trace("not able to refresh this case");};
+				}
+				
+				refreshStatusOfAllUnitsInSession();
+				
+				// on refresh les villes au cas ou le deplacement fait partir/arriver une unite de/dans une ville
+				Session.board.refreshUnitsInCity();
+			}
+			
+			trace("--------");
+		}
 		
 		public function prepareUnitForClientSide(unit:Unit):Boolean
 		{
@@ -662,7 +733,6 @@ package com.uralys.tribes.managers {
 		//============================================================================================//
 		// DATA MANAGEMENT
 		//============================================================================================//
-		//  ASKING SERVER
 		
 		public function loadItems():void
 		{
@@ -671,48 +741,20 @@ package com.uralys.tribes.managers {
 			gameWrapper.loadItems.addEventListener("result", itemsLoaded);
 			gameWrapper.loadItems();
 		} 
-
-		public function initMap(centerX:int, centerY:int):void
-		{
-			Session.WAIT_FOR_SERVER = true;
-			loadCells(centerX, centerY, true);
-		}
 		
-		public function loadCells(centerX:int, centerY:int, refreshLandOwners:Boolean):void
+		private function itemsLoaded(event:ResultEvent):void
 		{
-			Session.WAIT_FOR_SERVER = true;
+			Session.ITEMS = event.result as ArrayCollection;
+			Numbers.loadItemData();
 			
-			trace("-------------------------------------");
-
-			var groups:Array = Utils.getGroups(centerX, centerY);
-			groups.sort(Array.NUMERIC);
-			
-			Session.firstCellX = (groups[0]%27) * 15; // modulo 27
-			Session.firstCellY = ((int)(groups[0]/27)) * 15; // divisé par 27
-			
-			
-			trace("-------------------------------------");
-			trace("loadCells center : [ " + centerX + " | " + centerY + " ]");
-			trace(groups);
-			trace("Session.firstCellX : " + Session.firstCellX);
-			trace("Session.firstCellY : " + Session.firstCellY);
-			
-			var caseUIDs:ArrayCollection = new ArrayCollection();
-			Session.nbTilesByEdge = Math.sqrt(groups.length) * 15;
-
-			trace("nbTilesByEdge : " + Session.nbTilesByEdge);
-			trace("-------------------------------------");
-			
-			
-			Session.LEFT_LIMIT_LOADED  	 = Utils.getXPixel(Session.firstCellX) + Session.MAP_WIDTH/2;
-			Session.RIGHT_LIMIT_LOADED	 = Utils.getXPixel(Session.firstCellX + Session.nbTilesByEdge) - Session.MAP_WIDTH/2;
-			Session.TOP_LIMIT_LOADED 	 = Utils.getYPixel(Session.firstCellY) + Session.MAP_HEIGHT/2;
-			Session.BOTTOM_LIMIT_LOADED	 = Utils.getYPixel(Session.firstCellY + Session.nbTilesByEdge) - Session.MAP_HEIGHT/2;
-			
-			var gameWrapper:RemoteObject = getGameWrapper();
-			loadCellsResponder.addEventListener("result", cellsLoaded);
-			loadCellsResponder.token = gameWrapper.loadCells(groups, refreshLandOwners);
+			if(Session.GAME_OVER){
+				initMap(100, 100);
+			}
+			else
+				calculateSteps(Session.player);
 		}
+
+		//============================================================================================//
 
 		public function savePlayer(player:Player):void{
 			var gameWrapper:RemoteObject = getGameWrapper();
@@ -947,22 +989,50 @@ package com.uralys.tribes.managers {
 			gameWrapper.deleteMove(move.moveUID);
 		}
 
-		//============================================================================================//
-		//  RESULTS FROM SERVER	
+		//--------------------------------------------------------------------------------//
 		
-		
-		private function itemsLoaded(event:ResultEvent):void
+		public function initMap(centerX:int, centerY:int):void
 		{
-			Session.ITEMS = event.result as ArrayCollection;
-			Numbers.loadItemData();
-			
-			if(Session.GAME_OVER){
-				initMap(100, 100);
-			}
-			else
-				calculateSteps(Session.player);
+			Session.WAIT_FOR_SERVER = true;
+			loadCells(centerX, centerY, true);
 		}
+
 		
+		public function loadCells(centerX:int, centerY:int, refreshLandOwners:Boolean):void
+		{
+			Session.WAIT_FOR_SERVER = true;
+			
+			trace("-------------------------------------");
+			
+			var groups:Array = Utils.getGroups(centerX, centerY);
+			groups.sort(Array.NUMERIC);
+			
+			Session.firstCellX = (groups[0]%27) * 15; // modulo 27
+			Session.firstCellY = ((int)(groups[0]/27)) * 15; // divisé par 27
+			
+			
+			trace("-------------------------------------");
+			trace("loadCells center : [ " + centerX + " | " + centerY + " ]");
+			trace(groups);
+			trace("Session.firstCellX : " + Session.firstCellX);
+			trace("Session.firstCellY : " + Session.firstCellY);
+			
+			var caseUIDs:ArrayCollection = new ArrayCollection();
+			Session.nbTilesByEdge = Math.sqrt(groups.length) * 15;
+			
+			trace("nbTilesByEdge : " + Session.nbTilesByEdge);
+			trace("-------------------------------------");
+			
+			
+			Session.LEFT_LIMIT_LOADED  	 = Utils.getXPixel(Session.firstCellX) + Session.MAP_WIDTH/2;
+			Session.RIGHT_LIMIT_LOADED	 = Utils.getXPixel(Session.firstCellX + Session.nbTilesByEdge) - Session.MAP_WIDTH/2;
+			Session.TOP_LIMIT_LOADED 	 = Utils.getYPixel(Session.firstCellY) + Session.MAP_HEIGHT/2;
+			Session.BOTTOM_LIMIT_LOADED	 = Utils.getYPixel(Session.firstCellY + Session.nbTilesByEdge) - Session.MAP_HEIGHT/2;
+			
+			var gameWrapper:RemoteObject = getGameWrapper();
+			loadCellsResponder.addEventListener("result", cellsLoaded);
+			loadCellsResponder.token = gameWrapper.loadCells(groups, refreshLandOwners);
+		}
 		
 		private function cellsLoaded(event:ResultEvent):void
 		{
@@ -986,6 +1056,11 @@ package com.uralys.tribes.managers {
 					Session.map[Session.firstCellX+i][Session.firstCellY+j] = new Cell(Session.firstCellX+i,Session.firstCellY+j);
 				}
 			}
+			
+			//------------------------------------------------//
+			
+			// on reset tous les timers pour les moves des unites du plateau
+			UnitMover.getInstance().resetTimers();
 
 			//------------------------------------------------//
 			// affectation des vraies cases
@@ -999,7 +1074,7 @@ package com.uralys.tribes.managers {
 			for each(var _cell:Cell in Session.CELLS_LOADED)
 			{
 				Session.map[_cell.x][_cell.y] = _cell;
-				(Session.map[_cell.x][_cell.y] as Cell).forceRefresh(true);
+				(Session.map[_cell.x][_cell.y] as Cell).refresh();
 				
 				if(_cell.city != null)
 					citiesLoaded.addItem(_cell.city);
@@ -1024,9 +1099,6 @@ package com.uralys.tribes.managers {
 			// on place le plateau au bon endroit
 			Session.board.placeBoard(Session.CENTER_X, Session.CENTER_Y);
 			
-			// on enregistre tous les timers pour les moves des unites du plateau
-			UnitMover.getInstance().refreshTimers();
-			
 			// on affiche tout, et on affecte les images aux pions des cases
 			BoardDrawer.getInstance().refreshDisplay();
 			
@@ -1038,83 +1110,16 @@ package com.uralys.tribes.managers {
 			
 		}
 		
-		private var currentUnitBeingSaved:Unit;
-		private var cityBeingSaved:City;
-		private function unitSaved(event:ResultEvent):void
+		//===================================================================================//
+		
+		public function refreshCell(cell:Cell):void
 		{
-			trace("--------");
-			trace("unitSaved");
+			// TODO Auto Generated method stub
 			
-			currentUnitBeingSaved.isModified = false;
-			Session.board.cityForm.currentState = Session.board.cityForm.normalState.name;
-			
-			if(event.result != null)
-			{
-				var casesAltered:ArrayCollection = event.result.casesAltered;
-				var unitsAltered:ArrayCollection = event.result.unitsAltered;
-
-				if(cityBeingSaved != null){
-					cityBeingSaved.cityUID = event.result.cityUID as String;
-					cityBeingSaved = null;
-				}
-
-				for each(var unitAltered:Unit in unitsAltered)
-				{
-					trace("-----");
-					trace("unitAltered : " + unitAltered.unitUID);
-					if(unitAltered.player.playerUID != Session.player.playerUID)
-						continue;
-					
-					var unitIsAlive:Boolean = prepareUnitForClientSide(unitAltered);
-					if(!unitIsAlive)
-						continue;
-					
-					var unitInPlayer:Unit = Session.player.getUnit(unitAltered.unitUID);
-					
-					if(unitInPlayer == null && unitAltered.status != Unit.DESTROYED)
-						Session.player.units.addItem(unitAltered);
-					else{
-						Session.player.refreshUnit(unitAltered);
-					}
-						
-					
-					try{
-						UnitMover.getInstance().addTimer(unitAltered.moves.toArray());
-					}
-					catch(e:Error){trace("not able to addTimer for this unit");};
-				}
-				
-				for each(var cellAltered:Cell in casesAltered)
-				{
-					trace("cellAltered : " + cellAltered.cellUID);
-					if(cellAltered.challenger != null)
-						trace("challengerUID : " + cellAltered.challenger.playerUID);
-					trace("timeFromChallenging : " + cellAltered.timeFromChallenging);
-					try{
-						var caseInSession:Cell = (Session.map[cellAltered.x][cellAltered.y] as Cell);
-						
-						if(caseInSession != null){
-						//	Session.map[cellAltered.x][cellAltered.y].recordedMoves = cellAltered.recordedMoves;
-							Session.map[cellAltered.x][cellAltered.y].challenger = cellAltered.challenger;
-							Session.map[cellAltered.x][cellAltered.y].timeFromChallenging = cellAltered.timeFromChallenging;
-						//	Session.map[cellAltered.x][cellAltered.y].units = cellAltered.units;
-						}
-						else
-							Session.map[cellAltered.x][cellAltered.y] = cellAltered;
-						
-						Session.map[cellAltered.x][cellAltered.y].forceRefresh();
-					}
-					catch(e:Error){trace("----");trace(e.message);trace("----");trace("not able to refresh this case");};
-				}
-
-				refreshStatusOfAllUnitsInSession();
-				
-				// on refresh les villes au cas ou le deplacement fait partir/arriver une unite de/dans une ville
-				Session.board.refreshUnitsInCity();
-			}
-
-			trace("--------");
 		}
+
+		//===================================================================================//
+	
 
 		public function refreshStatusOfAllUnitsInSession():void
 		{

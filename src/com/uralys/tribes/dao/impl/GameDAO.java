@@ -186,7 +186,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 					cityY++;
 				}
 				
-				if(getCase(cityX, cityY).getLandOwnerUID() == null)
+				if(getCell(cityX, cityY).getLandOwnerUID() == null)
 					caseFound = true;
 			}
 			
@@ -230,7 +230,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		//--------------------------------------//
 		// creation des cases autour de la ville
 
-		createOrRefreshCase(city.getX(), city.getY(), cityUID, Cell.CITY, playerUID, pm);
+		createOrRefreshCell(city.getX(), city.getY(), cityUID, Cell.CITY, playerUID, pm);
 		
 		//--------------------------------------//
 
@@ -255,7 +255,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	 * 15*15*27*27 = 405*405
 	 * 
 	 */
-	private CellDTO createCase(int x, int y, String cityUID, int type, String landOwnerUID, PersistenceManager pm) 
+	private CellDTO createCell(int x, int y, String cityUID, int type, String landOwnerUID, PersistenceManager pm) 
 	{
 		CellDTO _case = new CellDTO();
 
@@ -390,26 +390,31 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	
 	//==================================================================================================//
 
-	public CellDTO getCase(int i, int j) {
+	public CellDTO getCell(String cellUID) {
+		return getCell(TribesUtils.getX(cellUID), TribesUtils.getY(cellUID));
+	}
+
+		
+	public CellDTO getCell(int i, int j) {
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		try{
 			return pm.getObjectById(CellDTO.class, "cell_"+i+"_"+j);
 		}
 		catch(JDOObjectNotFoundException e){
-			return createCase(i, j, null, Cell.FOREST, null, pm);
+			return createCell(i, j, null, Cell.FOREST, null, pm);
 		}
 	}
 
-	private void createOrRefreshCase(int x, int y, String cityUID, int type, String landOwnerUID, PersistenceManager pm) 
+	private void createOrRefreshCell(int x, int y, String cityUID, int type, String landOwnerUID, PersistenceManager pm) 
 	{
 		try{
-			CellDTO caseDTO = pm.getObjectById(CellDTO.class, "cell_"+x+"_"+y);
-			caseDTO.setLandOwnerUID(landOwnerUID);
-			caseDTO.setType(type);
-			caseDTO.setCityUID(cityUID);
+			CellDTO cellDTO = pm.getObjectById(CellDTO.class, "cell_"+x+"_"+y);
+			cellDTO.setLandOwnerUID(landOwnerUID);
+			cellDTO.setType(type);
+			cellDTO.setCityUID(cityUID);
 		}
 		catch(JDOObjectNotFoundException e){
-			createCase(x, y, cityUID, type, landOwnerUID, pm);
+			createCell(x, y, cityUID, type, landOwnerUID, pm);
 		}
 	}
 
@@ -927,12 +932,12 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		CellDTO finalCase = null;
 		
 		// TODO : on peut optimiser ici et ne pas faire ˆ chaque fois les 6 getCases
-		if(unit.getPlayer().getUralysUID().equals(getCase(x-1, y-1).getLandOwnerUID())
-		|| unit.getPlayer().getUralysUID().equals(getCase(x-1, y+1).getLandOwnerUID())
-		|| unit.getPlayer().getUralysUID().equals(getCase(x, y-2).getLandOwnerUID())
-		|| unit.getPlayer().getUralysUID().equals(getCase(x, y+2).getLandOwnerUID())
-		|| unit.getPlayer().getUralysUID().equals(getCase(x+1, y-1).getLandOwnerUID())
-		|| unit.getPlayer().getUralysUID().equals(getCase(x+1, y+1).getLandOwnerUID()))
+		if(unit.getPlayer().getUralysUID().equals(getCell(x-1, y-1).getLandOwnerUID())
+		|| unit.getPlayer().getUralysUID().equals(getCell(x-1, y+1).getLandOwnerUID())
+		|| unit.getPlayer().getUralysUID().equals(getCell(x, y-2).getLandOwnerUID())
+		|| unit.getPlayer().getUralysUID().equals(getCell(x, y+2).getLandOwnerUID())
+		|| unit.getPlayer().getUralysUID().equals(getCell(x+1, y-1).getLandOwnerUID())
+		|| unit.getPlayer().getUralysUID().equals(getCell(x+1, y+1).getLandOwnerUID()))
 		{
 
 			PersistenceManager pm = PMF.getInstance().getPersistenceManager();
@@ -940,7 +945,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 				finalCase = pm.getObjectById(CellDTO.class, "cell_"+x+"_"+y);
 			}
 			catch(JDOObjectNotFoundException e){
-				finalCase = createCase(x, y, null, Cell.FOREST, null, pm);
+				finalCase = createCell(x, y, null, Cell.FOREST, null, pm);
 			}
 			
 			// le challenger possede deja cette contree

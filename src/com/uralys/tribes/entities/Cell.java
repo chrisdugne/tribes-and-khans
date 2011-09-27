@@ -24,7 +24,9 @@ public class Cell {
 	private Player challenger;
 	private long timeFromChallenging;
 	
-	private Unit unit;
+	private Unit army;
+	private Unit caravan;
+	
 	private long timeToChangeUnit;
 	private String nextCellUID;
 
@@ -111,12 +113,20 @@ public class Cell {
 		this.group = group;
 	}
 
-	public Unit getUnit() {
-		return unit;
+	public Unit getArmy() {
+		return army;
 	}
 
-	public void setUnit(Unit unit) {
-		this.unit = unit;
+	public void setArmy(Unit army) {
+		this.army = army;
+	}
+
+	public Unit getCaravan() {
+		return caravan;
+	}
+
+	public void setCaravan(Unit caravan) {
+		this.caravan = caravan;
 	}
 
 	public long getTimeToChangeUnit() {

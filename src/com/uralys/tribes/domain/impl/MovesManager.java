@@ -790,7 +790,7 @@ public class MovesManager implements IMovesManager{
 	private CellDTO getCell(String cellUID, DataContainer dataContainer) 
 	{
 		if(dataContainer.cellsLoaded.get(cellUID) == null){
-			dataContainer.cellsLoaded.put(cellUID, gameDao.getCase(TribesUtils.getX(cellUID),TribesUtils.getY(cellUID)));
+			dataContainer.cellsLoaded.put(cellUID, gameDao.getCell(TribesUtils.getX(cellUID),TribesUtils.getY(cellUID)));
 		}
 		
 		return dataContainer.cellsLoaded.get(cellUID);

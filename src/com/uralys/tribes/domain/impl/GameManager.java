@@ -288,14 +288,24 @@ public class GameManager implements IGameManager {
 
 	public List<Cell> loadCells(int[] groups, boolean refreshLandOwners) 
 	{
-		List<Cell> cases = new ArrayList<Cell>();
+		List<Cell> cells = new ArrayList<Cell>();
 	
 		List<CellDTO> casesLoaded = gameDao.loadCells(groups, refreshLandOwners);
-		for(CellDTO caseDTO : casesLoaded){
-			cases.add(EntitiesConverter.convertCellDTO(caseDTO));
+		for(CellDTO cellDTO : casesLoaded){
+			cells.add(EntitiesConverter.convertCellDTO(cellDTO));
 		}
 
-		return cases;
+		return cells;
+	}
+
+	public List<Cell> getNewCells(Cell cell) 
+	{
+		List<Cell> cells = new ArrayList<Cell>();
+		
+		cells.add(EntitiesConverter.convertCellDTO(gameDao.getCell(cell.getX(), cell.getY())));
+		cells.add(EntitiesConverter.convertCellDTO(gameDao.getCell(cell.getNextCellUID())));
+
+		return cells;
 	}
 
 	//==================================================================================================//

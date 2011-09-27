@@ -260,7 +260,8 @@ public class EntitiesConverter {
 
 		// -----------------------------------------------------------------------------------//
 
-		_cell.setUnit(null);
+		_cell.setArmy(null);
+		_cell.setCaravan(null);
 		_cell.setTimeToChangeUnit(-1);
 		_cell.setNextCellUID(null);
 		
@@ -270,9 +271,21 @@ public class EntitiesConverter {
 		{
 			if(move.getTimeFrom() <= now && (move.getTimeTo() > now || move.getTimeTo() == -1))
 			{
-				_cell.setUnit(convertUnitDTO(move.getUnit()));
-				_cell.setTimeToChangeUnit(move.getTimeTo());
-				_cell.setNextCellUID(move.getNextMove() != null ? move.getNextMove().getCellUID() : null);
+				switch(move.getUnit().getType()){
+					case Unit.ARMY :
+						_cell.setArmy(convertUnitDTO(move.getUnit()));
+						break;
+					case Unit.CARAVAN :
+						_cell.setCaravan(convertUnitDTO(move.getUnit()));
+						break;
+				}
+				
+				// on va ecouter la premiere des unitŽs qui va se dŽplacer 
+				if(_cell.getTimeToChangeUnit() == -1 || _cell.getTimeToChangeUnit() > move.getTimeTo())
+				{
+					_cell.setTimeToChangeUnit(move.getTimeTo());
+					_cell.setNextCellUID(move.getNextMove() != null ? move.getNextMove().getCellUID() : null);
+				}
 			}
 		}
 

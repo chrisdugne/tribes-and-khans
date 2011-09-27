@@ -242,19 +242,19 @@ package com.uralys.tribes.core
 		// ---------------------------------------------------------------------//
 		// affichage des pions (armées-marchands)
 		
-		public function refreshUnits(_cell:Cell):void
+		public function refreshUnits(cell:Cell):void
 		{
 			try{
-				Session.board.pawnLayer.removeElement(_cell.pawn);	
+				Session.board.pawnLayer.removeElement(cell.pawn);	
 			}
 			catch(e:Error){}
 			
 			var imageUnit:Image;
 			
-			if(_cell.army){
+			if(cell.army){
 				imageUnit = new Image();
 				
-				switch(_cell.army.ownerStatus){
+				switch(cell.army.ownerStatus){
 					case Unit.PLAYER:
 						imageUnit.source = ImageContainer.getImage(ImageContainer.ARMY_PLAYER);
 						break;
@@ -266,10 +266,10 @@ package com.uralys.tribes.core
 						break;
 				}
 			}
-			else if(_cell.merchants){
+			else if(cell.caravan){
 				imageUnit = new Image();
 
-				switch(_cell.merchants.ownerStatus){
+				switch(cell.caravan.ownerStatus){
 					case Unit.PLAYER:
 						imageUnit.source = ImageContainer.getImage(ImageContainer.MERCHANT_PLAYER);
 						break;
@@ -285,15 +285,15 @@ package com.uralys.tribes.core
 				return; // no unit
 			}
 			
-			_cell.pawn.x = (Utils.getXPixel(_cell.x) + 15*scale);
-			_cell.pawn.y = (Utils.getYPixel(_cell.y) - 10*scale);
+			cell.pawn.x = (Utils.getXPixel(cell.x) + 15*scale);
+			cell.pawn.y = (Utils.getYPixel(cell.y) - 10*scale);
 			imageUnit.scaleX = scale;
 			imageUnit.scaleY = scale;
 			imageUnit.mouseEnabled = false;
 			
-			_cell.pawn.addElement(imageUnit);
+			cell.pawn.addElement(imageUnit);
 			
-			Session.board.pawnLayer.addElement(_cell.pawn);
+			Session.board.pawnLayer.addElement(cell.pawn);
 		}
 		
 		public function drawCity(city:City):void

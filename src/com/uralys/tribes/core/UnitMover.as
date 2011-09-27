@@ -148,9 +148,9 @@ package com.uralys.tribes.core
 //			}
 //		}
 		
-		public function listenTo(cell:Cell, timeToChangeUnit:Number):void
+		public function listenTo(cell:Cell):void
 		{
-			var timeToWait:Number = timeToChangeUnit - new Date().getTime();
+			var timeToWait:Number = cell.timeToChangeUnit - new Date().getTime();
 			trace("listening cell " + cell.cellUID);
 			
 			var t:Timer = new Timer(timeToWait, 1);
@@ -165,7 +165,7 @@ package com.uralys.tribes.core
 			var cell:Cell = timers.get(e.currentTarget) as Cell;
 			timers.remove(e.currentTarget);
 			
-			GameManager.getInstance().refreshCell(cell);
+			GameManager.getInstance().refreshCellFromServer(cell);
 		}
 		
 		// ============================================================================================

@@ -56,14 +56,14 @@ package com.uralys.tribes.core
 			&& _cell.city.cityUID != "new")
 				thereIsACity = true;
 
-			if(_cell.merchants != null
-			&& _cell.merchants.mayBuildAcity())
+			if(_cell.caravan != null
+			&& _cell.caravan.mayBuildAcity())
 				thereIsAMerchantThatCanBuildACityHere = true;
 			
 			if(thereIsACity)
 				clickOnCity(_cell.city);
 			else if(thereIsAMerchantThatCanBuildACityHere)
-				Session.board.showBuildCity(_cell.merchants);
+				Session.board.showBuildCity(_cell.caravan);
 		}
 		
 		

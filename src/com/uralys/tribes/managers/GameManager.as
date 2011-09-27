@@ -19,6 +19,7 @@ package com.uralys.tribes.managers {
 	import com.uralys.tribes.entities.Stock;
 	import com.uralys.tribes.entities.Unit;
 	import com.uralys.tribes.pages.Board;
+	import com.uralys.tribes.renderers.Pawn;
 	import com.uralys.utils.Utils;
 	
 	import mx.collections.ArrayCollection;
@@ -1023,7 +1024,6 @@ package com.uralys.tribes.managers {
 			trace("nbTilesByEdge : " + Session.nbTilesByEdge);
 			trace("-------------------------------------");
 			
-			
 			Session.LEFT_LIMIT_LOADED  	 = Utils.getXPixel(Session.firstCellX) + Session.MAP_WIDTH/2;
 			Session.RIGHT_LIMIT_LOADED	 = Utils.getXPixel(Session.firstCellX + Session.nbTilesByEdge) - Session.MAP_WIDTH/2;
 			Session.TOP_LIMIT_LOADED 	 = Utils.getYPixel(Session.firstCellY) + Session.MAP_HEIGHT/2;
@@ -1074,7 +1074,7 @@ package com.uralys.tribes.managers {
 			for each(var _cell:Cell in Session.CELLS_LOADED)
 			{
 				Session.map[_cell.x][_cell.y] = _cell;
-				(Session.map[_cell.x][_cell.y] as Cell).refresh();
+				refreshCell(Session.map[_cell.x][_cell.y] as Cell);
 				
 				if(_cell.city != null)
 					citiesLoaded.addItem(_cell.city);
@@ -1114,10 +1114,56 @@ package com.uralys.tribes.managers {
 		
 		public function refreshCell(cell:Cell):void
 		{
-			// TODO Auto Generated method stub
+			trace(cell.cellUID + " : unit : " + ObjectUtil.toString(cell.unit));
+			cell.pawn.cell = cell;
 			
+			Utils.refreshUnit(cell.army);	
+			Utils.refreshUnit(cell.caravan);	
+			
+			if(cell.challenger != null 
+				&& ((cell.army != null && cell.army.ownerStatus == Unit.PLAYER) 
+					|| (cell.caravan != null && cell.caravan.ownerStatus == Unit.PLAYER)))
+			{
+				trace("challenger : set timeTo : " + cell.timeFromChallenging + Numbers.BASE_TIME_FOR_LAND_CONQUEST_MILLIS);
+				cell.pawn.status = Pawn.CONQUERING_LAND;
+				cell.pawn.timeTo = cell.timeFromChallenging + Numbers.BASE_TIME_FOR_LAND_CONQUEST_MILLIS;
+				
+				cell.pawn.resetProgress();
+			}
+			else if(cell.unit != null){
+				cell.pawn.status = Pawn.CLASSIC;
+				cell.pawn.timeTo = cell.timeToChangeUnit;
+				
+				
+				if(cell.unit.player.playerUID == Session.player.playerUID)
+					cell.pawn.resetProgress();
+				
+				if(cell.timeFromChallenging > 0)
+					UnitMover.getInstance().listenTo(cell);
+			}
 		}
 
+		//===================================================================================//
+
+		
+		public function refreshCellFromServer(cell:Cell):void
+		{
+			var gameWrapper:RemoteObject = getGameWrapper();
+			loadCellsResponder.addEventListener("result", newCellsReceived);
+			loadCellsResponder.token = gameWrapper.getNewCells(cell);
+		}
+		
+		private function newCellsReceived(result:ResultEvent):void 
+		{
+			var newCells:ArrayCollection = new ArrayCollection();
+			
+			for each(var cell:Cell in newCells){
+				refreshCell(cell);
+				Session.map[cell.x][cell.y] = cell;
+				BoardDrawer.getInstance().refreshUnits(Session.map[cell.x][cell.y]);
+			}
+		}
+		
 		//===================================================================================//
 	
 
@@ -1136,5 +1182,6 @@ package com.uralys.tribes.managers {
 			else
 				Session.movesToDelete = new ArrayCollection();
 		}
+		
 	}
 }

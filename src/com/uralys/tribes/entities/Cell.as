@@ -45,13 +45,15 @@ package com.uralys.tribes.entities
 		protected var _challenger:Player;
 		protected var _timeFromChallenging:Number;
 				
-		protected var _unit:Unit;
 		protected var _timeToChangeUnit:Number;
 		protected var _nextCellUID:String;
+		protected var _army:Unit;
+		protected var _caravan:Unit;
+		
 		
 		//--------------------------------------------------------------//
 		
-		
+
 		public function get nextCellUID():String
 		{
 			return _nextCellUID;
@@ -70,16 +72,6 @@ package com.uralys.tribes.entities
 		public function set timeToChangeUnit(value:Number):void
 		{
 			_timeToChangeUnit = value;
-		}
-
-		public function get unit():Unit
-		{
-			return _unit;
-		}
-
-		public function set unit(value:Unit):void
-		{
-			_unit = value;
 		}
 
 		public function get timeFromChallenging():Number
@@ -158,59 +150,39 @@ package com.uralys.tribes.entities
 			_landOwner = o;
 		}
 		
+		public function get caravan():Unit
+		{
+			return _caravan;
+		}
+		
+		public function set caravan(value:Unit):void
+		{
+			_caravan = value;
+		}
+		
+		public function get army():Unit
+		{
+			return _army;
+		}
+		
+		public function set army(value:Unit):void
+		{
+			_army = value;
+		}
+		
 		//----------------------------------------//
 		
-		public var army:Unit;
-		public var merchants:Unit;
 		public var pawn:Pawn = new Pawn();
-
-		public function refresh():void
-		{
-			army = null;
-			merchants = null;
-
-			if(unit != null){
-				switch(unit.type)
-				{
-					case Unit.ARMY:
-						army = unit;
-						break;
-
-					case Unit.MERCHANT:
-						merchants = unit;
-						break;
-				}
-			}
-
-			pawn.cell = this;
-			
-			if(_challenger != null 
-			&& ((army != null && army.ownerStatus == Unit.PLAYER) || (merchants != null && merchants.ownerStatus == Unit.PLAYER)))
-			{
-				trace("challenger : set timeTo : " + _timeFromChallenging + Numbers.BASE_TIME_FOR_LAND_CONQUEST_MILLIS);
-				pawn.status = Pawn.CONQUERING_LAND;
-				pawn.timeTo = _timeFromChallenging + Numbers.BASE_TIME_FOR_LAND_CONQUEST_MILLIS;
-
-				pawn.cell = this;
-				pawn.resetProgress();
-			}
-			else if(unit != null){
-				pawn.status = Pawn.CLASSIC;
-				pawn.timeTo = timeToChangeUnit;
-				
-				trace(ObjectUtil.toString(unit));
-				
-				if(unit.player.playerUID == Session.player.playerUID)
-					pawn.resetProgress();
-				
-				if(timeFromChallenging > 0)
-					UnitMover.getInstance().listenTo(this, timeToChangeUnit);
-			}
-			
-			
-		}
 		
 		//--------------------------------------------------------------//
 		
+		public function get unit(){
+			if(army != null)
+				return army
+			else if(caravan != null)
+				return caravan;
+			
+			else return null;
+		}
 	}
 }

@@ -9,16 +9,12 @@ public class ObjectsAltered {
 	
 	//------------------------------------------------------------------------------------------//
 
-	private List<Cell> casesAltered = new ArrayList<Cell>();
+	private Cell cellDeparture;
 	private List<Unit> unitsAltered = new ArrayList<Unit>();
 	private String cityUID;
 
 	//------------------------------------------------------------------------------------------//
 
-	public List<Cell> getCasesAltered() {
-		return casesAltered;
-	}
-	
 	public List<Unit> getUnitsAltered() {
 		return unitsAltered;
 	}
@@ -27,10 +23,6 @@ public class ObjectsAltered {
 		this.unitsAltered = unitsAltered;
 	}
 
-	public void setCasesAltered(List<Cell> casesAltered) {
-		this.casesAltered = casesAltered;
-	}
-	
 	public String getCityUID() {
 		return cityUID;
 	}
@@ -39,25 +31,12 @@ public class ObjectsAltered {
 		this.cityUID = cityBuildUID;
 	}
 	
-	
-	//------------------------------------------------------------------------------------------//
-	
-	public void addCellAltered(Cell cell){
+	public Cell getCellDeparture() {
+		return cellDeparture;
+	}
 
-		int indexAlreadyrecorded = -1;
-		for(Cell cellRecorded : casesAltered)
-		{
-			if(cellRecorded.getCellUID().equals(cell))
-			{
-				indexAlreadyrecorded = casesAltered.indexOf(cellRecorded);
-				break;
-			}
-		}
-		
-		if(indexAlreadyrecorded >= 0)
-			casesAltered.remove(indexAlreadyrecorded);
-		
-		casesAltered.add(cell);
+	public void setCellDeparture(Cell cellDeparture) {
+		this.cellDeparture = cellDeparture;
 	}
 	
 	//------------------------------------------------------------------------------------------//
@@ -67,7 +46,7 @@ public class ObjectsAltered {
 		int indexAlreadyrecorded = -1;
 		for(Unit unitRecorded : unitsAltered)
 		{
-			if(unitRecorded.getUnitUID().equals(unit))
+			if(unitRecorded.getUnitUID().equals(unit.getUnitUID()))
 			{
 				indexAlreadyrecorded = unitsAltered.indexOf(unitRecorded);
 				break;

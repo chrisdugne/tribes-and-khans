@@ -922,7 +922,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		pm.close();
 	}
 	
-	public CellDTO tryToSetChallenger(Unit unit, long timeFromChallenging)
+	public void tryToSetChallenger(Unit unit, long timeFromChallenging)
 	{
 		if(debug)Utils.print("tryToSetChallenger");
 
@@ -950,7 +950,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			
 			// le challenger possede deja cette contree
 			if(finalCase.getLandOwnerUID() != null && finalCase.getLandOwnerUID().equals(unit.getPlayer().getUralysUID()))
-				return null;
+				return;
 			
 			if(debug)Utils.print("finalCase : " + finalCase.getCellUID());
 			finalCase.setChallengerUID(unit.getPlayer().getUralysUID());
@@ -958,7 +958,6 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			pm.close();
 		}
 
-		return finalCase;
 	}
 	
 	//==================================================================================================//

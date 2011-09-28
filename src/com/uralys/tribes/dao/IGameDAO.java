@@ -73,7 +73,7 @@ public interface IGameDAO {
 	//-----------------------------------------------------------------------------------//
 	
 	public void resetChallenger(String caseUID);
-	public CellDTO tryToSetChallenger(Unit unitArriving, long timeFromChallenging);
+	public void tryToSetChallenger(Unit unitArriving, long timeFromChallenging);
 
 	//-----------------------------------------------------------------------------------//
 	

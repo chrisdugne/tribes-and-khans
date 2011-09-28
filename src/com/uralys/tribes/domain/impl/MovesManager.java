@@ -121,6 +121,8 @@ public class MovesManager implements IMovesManager{
 		
 		//-------------------------------------------------------//
 		
+		dataContainer.objectsAltered.setCellDeparture(EntitiesConverter.convertCellDTO(gameDao.getCell(unit.getMoves().get(0).getCellUID())));
+
 		return dataContainer.objectsAltered;
 	}
 
@@ -154,13 +156,7 @@ public class MovesManager implements IMovesManager{
 
 			// on set le nouveau challenger sur la case finale, si elle touche le royaume
 			if(unit.getType() == Unit.ARMY)
-			{
-				CellDTO finalCell = gameDao.tryToSetChallenger(unit, lastMove.getTimeFrom());
-				if(finalCell != null){
-					// refresh la derniere case dans 'objectsAltered' pour set challenger et timeFromChallenging
-					dataContainer.objectsAltered.addCellAltered(EntitiesConverter.convertCellDTO(finalCell));
-				}
-			}
+				gameDao.tryToSetChallenger(unit, lastMove.getTimeFrom());
 		}
 
 		// on enregistre tous les parametres modifiés sur notre unitArriving
@@ -261,7 +257,7 @@ public class MovesManager implements IMovesManager{
 	{
 		Move moveMet = null;
 		Move lastMove = null;
-		
+
 		for(Move move : unit.getMoves())
 		{
 			if(moveMet != null){
@@ -277,10 +273,6 @@ public class MovesManager implements IMovesManager{
 			
 			//-----------------------------------------------------------------------------------//
 			
-			// on met à jour le contenu de la cellule, puisqu'elle va etre renvoyee à Flex tout de suite
-			// la vrai sauvegarde du recordedMove se fera lors du gameDao.createMove dans l'etape 4
-//			cell.getRecordedMoves().add(move);
-			dataContainer.objectsAltered.addCellAltered(EntitiesConverter.convertCellDTO(cell));
 			lastMove = move;
 		}
 		
@@ -790,7 +782,7 @@ public class MovesManager implements IMovesManager{
 	private CellDTO getCell(String cellUID, DataContainer dataContainer) 
 	{
 		if(dataContainer.cellsLoaded.get(cellUID) == null){
-			dataContainer.cellsLoaded.put(cellUID, gameDao.getCell(TribesUtils.getX(cellUID),TribesUtils.getY(cellUID)));
+			dataContainer.cellsLoaded.put(cellUID, gameDao.getCell(cellUID));
 		}
 		
 		return dataContainer.cellsLoaded.get(cellUID);

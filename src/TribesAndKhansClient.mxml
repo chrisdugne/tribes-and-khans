@@ -15,14 +15,13 @@
 	
 	<fx:Script>
 		<![CDATA[ 
-			//-----------------------------------------------------------------------//
-			
 			import com.uralys.tribes.commons.Names;
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;
 			import com.uralys.tribes.core.MusicPlayer;
 			import com.uralys.tribes.core.Pager;
 			import com.uralys.tribes.managers.AccountManager;
+			import com.uralys.tribes.managers.GameManager;
 			import com.uralys.tribes.pages.Home;
 			import com.uralys.tribes.windows.AllyProfileWindow;
 			import com.uralys.tribes.windows.BoardsWindow;
@@ -65,6 +64,8 @@
 				
 				openLoginWindow();
 				openGlobalMessageWindow();
+				
+				GameManager.getInstance().loadItems();
 			}
 			
 			//-----------------------------------------------------------------------//

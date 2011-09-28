@@ -152,7 +152,7 @@ package com.uralys.tribes.core
 					if(_cell.cellUID.indexOf("cell_") == -1)
 						continue;
 					
-					refreshUnits(_cell);
+					refreshCellDisplay(_cell);
 				}
 			}
 
@@ -242,16 +242,29 @@ package com.uralys.tribes.core
 		// ---------------------------------------------------------------------//
 		// affichage des pions (armées-marchands)
 		
-		public function refreshUnits(cell:Cell):void
-		{
+		public function resetCellDisplay(cell:Cell):void{
 			try{
+				trace("resetCellDisplay");
+				Session.board.pawnLayer.removeElement(cell.pawn);	
+			}
+			catch(e:Error){}
+		}
+
+		
+		public function refreshCellDisplay(cell:Cell):void
+		{
+			trace("---");
+			try{
+				trace("boardDrawer refreshCellDisplay");
 				Session.board.pawnLayer.removeElement(cell.pawn);	
 			}
 			catch(e:Error){}
 			
 			var imageUnit:Image;
 			
+			trace("boardDrawer refreshCellDisplay ===> continue");
 			if(cell.army){
+				trace("cell.army : " + cell.army.ownerStatus);
 				imageUnit = new Image();
 				
 				switch(cell.army.ownerStatus){
@@ -267,6 +280,7 @@ package com.uralys.tribes.core
 				}
 			}
 			else if(cell.caravan){
+				trace("cell.caravan : " + cell.caravan.ownerStatus);
 				imageUnit = new Image();
 
 				switch(cell.caravan.ownerStatus){
@@ -282,6 +296,7 @@ package com.uralys.tribes.core
 				}
 			}
 			else{
+				trace("-- no unit - no pawn --");
 				return; // no unit
 			}
 			
@@ -291,9 +306,11 @@ package com.uralys.tribes.core
 			imageUnit.scaleY = scale;
 			imageUnit.mouseEnabled = false;
 			
+			trace("adding pawn on the board");
 			cell.pawn.addElement(imageUnit);
 			
 			Session.board.pawnLayer.addElement(cell.pawn);
+			
 		}
 		
 		public function drawCity(city:City):void

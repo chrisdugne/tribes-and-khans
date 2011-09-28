@@ -353,37 +353,46 @@ package com.uralys.tribes.entities
 		// une interception c'est un conflit sur la case sur laquelle on est actuellement. On est Unit.FREE si le conflit est sur une case plus loin.
 		public function get isInterceptedOnThisCell():Boolean
 		{
-			trace("test isIntercepted");
-			trace("trace nbMoves : " + moves.length);
-			trace("currentCaseUID : " + currentCaseUID);
 			
-			var lastMove:Move = moves.getItemAt(moves.length-1) as Move;
-			trace("lastMove.caseUID : " + lastMove.cellUID);
+			// si ca se revele utile, il faut checker que le prochain move est hidden, si il existe.
+			// dans ce cas on serait INTERCEPTED
+			// pas sur que ce soit pertinent avec le nouvel algo 1.3
 			
-			if(lastMove.cellUID != currentCaseUID){
-				trace("unité en mouvement : pas d'interception");
-				return false;
-			}
+			return false;
 			
-			var moveOfTheNewUnitResultingFromTheInterception:Move = null;
-			trace("lastMove.moveUID : " + lastMove.moveUID);
+			// 1.2 deprecated
 			
-			if(lastMove.moveUID.indexOf(unitUID) == -1){
-				trace("move d'une future newUnit liée : on check la case pour savoir si cest une interception");
-				moveOfTheNewUnitResultingFromTheInterception = moves.getItemAt(moves.length-1) as Move;
-				lastMove = moves.getItemAt(moves.length-2) as Move;
-			}
-			
-			if(moveOfTheNewUnitResultingFromTheInterception == null)
-				return false;
-			else if(moveOfTheNewUnitResultingFromTheInterception.cellUID == lastMove.cellUID){
-				trace("moveOfTheNewUnitResultingFromTheInterception is on the same case : INTERCEPTED_ON_THIS_CASE");
-				return true;
-			}
-			else{
-				trace("moveOfTheNewUnitResultingFromTheInterception is NOT on the same case : NOT INTERCEPTED_ON_THIS_CASE");
-				return false;
-			}
+//			trace("test isIntercepted");
+//			trace("trace nbMoves : " + moves.length);
+//			trace("currentCaseUID : " + currentCaseUID);
+//			
+//			var lastMove:Move = moves.getItemAt(moves.length-1) as Move;
+//			trace("lastMove.caseUID : " + lastMove.cellUID);
+//			
+//			if(lastMove.cellUID != currentCaseUID){
+//				trace("unité en mouvement : pas d'interception");
+//				return false;
+//			}
+//			
+//			var moveOfTheNewUnitResultingFromTheInterception:Move = null;
+//			trace("lastMove.moveUID : " + lastMove.moveUID);
+//			
+//			if(lastMove.moveUID.indexOf(unitUID) == -1){
+//				trace("move d'une future newUnit liée : on check la case pour savoir si cest une interception");
+//				moveOfTheNewUnitResultingFromTheInterception = moves.getItemAt(moves.length-1) as Move;
+//				lastMove = moves.getItemAt(moves.length-2) as Move;
+//			}
+//			
+//			if(moveOfTheNewUnitResultingFromTheInterception == null)
+//				return false;
+//			else if(moveOfTheNewUnitResultingFromTheInterception.cellUID == lastMove.cellUID){
+//				trace("moveOfTheNewUnitResultingFromTheInterception is on the same case : INTERCEPTED_ON_THIS_CASE");
+//				return true;
+//			}
+//			else{
+//				trace("moveOfTheNewUnitResultingFromTheInterception is NOT on the same case : NOT INTERCEPTED_ON_THIS_CASE");
+//				return false;
+//			}
 		}
 		
 		public function get lastMove():Move

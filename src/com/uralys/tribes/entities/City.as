@@ -841,12 +841,32 @@ package com.uralys.tribes.entities
 		public function set armorsBeingBuiltEndTime(o:Number):void {
 			_armorsBeingBuiltEndTime = o;
 		}
+
+
 		
 		//---------------------------------------------------------------//
-
-		public function wheatRequiredToFeed():int{
-			return (_population + unitsToFeed) * Numbers.FEED_COEFF;
+		
+		protected var _wheatRequiredToFeed:int;
+		protected var _wheatExpected:int;
+		
+		public function get wheatRequiredToFeed():int
+		{
+			return _wheatRequiredToFeed;
 		}
 
+		public function set wheatRequiredToFeed(value:int):void
+		{
+			_wheatRequiredToFeed = value;
+		}
+
+		public function get wheatExpected():int
+		{
+			return _wheatExpected;
+		}
+
+		public function set wheatExpected(value:int):void
+		{
+			_wheatExpected = value;
+		}
 	}
 }

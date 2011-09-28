@@ -50,6 +50,9 @@
 					
 					city.wheatEarned = Numbers.WHEAT_EARNING_COEFF * city.peopleCreatingWheat;
 					
+					city.wheatRequiredToFeed = (city.population + city.unitsToFeed) * Numbers.FEED_COEFF;
+					city.wheatExpected = city.wheat + city.wheatEarned - city.wheatRequiredToFeed;
+
 					updateWorkersProgressBar();
 				}
 
@@ -429,7 +432,7 @@
 				
 				//-------------------------------------------------------------------------//
 
-				public function refreshBuildings():void	
+				private function refreshBuildings():void	
 				{
 					if(wheatBuildingRenderer != null){
 						wheatBuildingRenderer.refresh();
@@ -829,9 +832,8 @@
 					
 					Session.player.units.removeItemAt(Session.player.units.getItemIndex(city.army));
 
-					GameManager.getInstance().refreshCell(Session.CURRENT_CELL_SELECTED);
-					BoardDrawer.getInstance().refreshUnits(Session.CURRENT_CELL_SELECTED);
-					
+					Session.CURRENT_CELL_SELECTED.army = null;
+					GameManager.getInstance().refreshCellDisplay(Session.CURRENT_CELL_SELECTED);
 					GameManager.getInstance().deleteUnit(city.army);
 					
 					city.army = null;
@@ -911,9 +913,7 @@
 					// on enleve la caravane de la liste de la ville et du player
 					Session.player.units.removeItemAt(Session.player.units.getItemIndex(city.merchant));
 					
-					GameManager.getInstance().refreshCell(Session.CURRENT_CELL_SELECTED);
-					BoardDrawer.getInstance().refreshUnits(Session.CURRENT_CELL_SELECTED);
-					
+					GameManager.getInstance().refreshCellDisplay(Session.CURRENT_CELL_SELECTED);
 					GameManager.getInstance().deleteUnit(city.merchant);
 					
 					city.merchant = null;
@@ -921,6 +921,16 @@
 					updateWorkersProgressBar();
 				}
 				
+				
+				public function refreshCity():void
+				{
+					updateWorkersProgressBar();
+					//cityForm.updateSmithsProgressBar();
+					refreshBuildings();
+					
+					city.wheatRequiredToFeed = (city.population + city.unitsToFeed) * Numbers.FEED_COEFF;
+					city.wheatExpected = city.wheat + city.wheatEarned - city.wheatRequiredToFeed;
+				}
 				
 			]]>
 		</fx:Script>
@@ -1006,10 +1016,10 @@
 			</s:HGroup>
 			<s:HGroup verticalAlign="top">
 				<mx:Spacer width="-25"/>
-				<s:Label text="({(city.wheat + city.wheatEarned - city.wheatRequiredToFeed()) &gt; city.wheatStockCapacity ? city.wheatStockCapacity : (city.wheat + city.wheatEarned - city.wheatRequiredToFeed())})" 
-						 color="{(city.wheat + city.wheatEarned - city.wheatRequiredToFeed()) &lt; 0 ? Numbers.RED : Numbers.GREEN}"/>
+				<s:Label text="({(city.wheatExpected) &gt; city.wheatStockCapacity ? city.wheatStockCapacity : (city.wheatExpected)})" 
+						 color="{(city.wheatExpected) &lt; 0 ? Numbers.RED : Numbers.GREEN}"/>
 				
-				<mx:Spacer width="87"/>
+				<mx:Spacer width="100"/>
 				<s:Label text="({(city.wood + city.woodEarned) &lt; city.woodStockCapacity ? (city.wood + city.woodEarned) : city.woodStockCapacity})" 
 						 color="{Numbers.GREEN}"/>
 				
@@ -1067,7 +1077,7 @@
 												 styleName="numberLabel" 
 												 color="{Numbers.GREEN}"/>
 										<s:Spacer width="5"/>
-										<s:Label text="(- {city.wheatRequiredToFeed()})" 
+										<s:Label text="(- {city.wheatRequiredToFeed})" 
 												 color="{Numbers.RED}"/>
 										</s:HGroup>
 								</mx:GridItem>
@@ -1127,9 +1137,9 @@
 						</mx:Grid>
 						<mx:Spacer height="10"/>
 						<s:HGroup width="100%" horizontalAlign="center" bottom="0"
-								  includeInLayout="{(city.wheat + city.wheatEarned - city.wheatRequiredToFeed()) &lt; 0}">
+								  includeInLayout="{(city.wheatExpected) &lt; 0}">
 							<s:Label text="{Translations.STARVATION.getItemAt(Session.LANGUAGE)}"
-									 visible="{(city.wheat + city.wheatEarned - city.wheatRequiredToFeed()) &lt; 0}"
+									 visible="{(city.wheatExpected) &lt; 0}"
 									 id="labelStarvation"
 									 color="{Numbers.RED}"/>
 						</s:HGroup>

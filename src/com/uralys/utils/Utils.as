@@ -9,6 +9,7 @@ import com.uralys.tribes.core.BoardDrawer;
 import com.uralys.tribes.entities.Ally;
 import com.uralys.tribes.entities.Item;
 import com.uralys.tribes.entities.Message;
+import com.uralys.tribes.entities.Move;
 import com.uralys.tribes.entities.Player;
 import com.uralys.tribes.entities.Unit;
 
@@ -17,8 +18,6 @@ import flash.display.Sprite;
 
 import mx.collections.ArrayCollection;
 import mx.collections.Sort;
-import com.uralys.tribes.entities.Unit;
-
 import mx.collections.SortField;
 import mx.utils.ObjectUtil;
 
@@ -343,17 +342,21 @@ public class Utils
 		public static function refreshUnit(unit:Unit):void
 		{
 			if(unit != null){
+	
 				if(unit.player.playerUID == Session.player.playerUID)
-					unit.ownerStatus == Unit.PLAYER;
+					unit.ownerStatus = Unit.PLAYER;
 					
 				else if(unit.player.ally != null 
 					&& Session.player.ally != null
 					&& unit.player.ally.allyUID == Session.player.ally.allyUID)
-					unit.ownerStatus == Unit.ALLY;
+					unit.ownerStatus = Unit.ALLY;
 					
 				else
-					unit.ownerStatus == Unit.ENNEMY;
+					unit.ownerStatus = Unit.ENNEMY;
+			
+				unit.currentCaseUID = (unit.moves.getItemAt(0) as Move).cellUID;
 			}
+			
 		}
 		
 		//----------------------------------------------------------------------------------------------------

@@ -199,108 +199,10 @@
 			{
 				FlexGlobals.topLevelApplication.loginWindow.closeWindow();
 				selectedCity = Session.player.cities.getItemAt(0) as City;
-				refreshUnits();
 				
 				if(Session.player.name == "New Player"){
 					showChangeName.play();
 				}
-			}
-			
-			public function refreshUnits():void
-			{
-				var unitUIDsToDelete:ArrayCollection = new ArrayCollection();
-				var uidsToRemove:ArrayCollection = new ArrayCollection();
-				
-				trace("refreshUnits : " + Session.player.units.length);
-				
-				for each(var unit:Unit in Session.player.units)
-				{
-					var unitIsPrepared:Boolean = GameManager.getInstance().prepareUnitForClientSide(unit);
-					trace("status : " + unit.status);
-					
-					if(!unitIsPrepared){
-						trace("unit is not prepared");
-						if(unit.status == Unit.DESTROYED){
-							trace("unit is to be deleted");							
-							unitUIDsToDelete.addItem(unit.unitUID);
-						}
-						
-						uidsToRemove.addItem(unit.unitUID);
-					}
-				}
-				
-				for each(var unitToRemoveUID:String in uidsToRemove){
-					trace("removing : " + unitToRemoveUID);
-					var indexToRremove:int = -1;
-					
-					for each(var unit:Unit in Session.player.units){
-						if(unit.unitUID == unitToRemoveUID){
-							indexToRremove = Session.player.units.getItemIndex(unit);
-							break;
-						}
-					}
-					
-					if(indexToRremove >= 0)
-						Session.player.units.removeItemAt(indexToRremove);
-				}
-				
-				GameManager.getInstance().deleteUnits(unitUIDsToDelete);
-			}
-			
-			
-			//-----------------------------------------------------------//
-			
-			// appelee apres le BoardDrawer.refreshDisplay, qui raffraichit toutes les currentCaseUID des units de toutes les cases.
-			public function refreshUnitsInCity(unitBeingMovedUID:String = null):void
-			{
-				trace("refreshUnitsInCity");
-				
-				for each(var city:City in Session.player.cities){
-					city.merchant = null;
-					city.army = null;
-					city.unitsToFeed = 0;
-				}
-				
-				for each(var unit:Unit in Session.player.units)
-				{
-					trace(unit.unitUID);
-					trace("unit.status : " + unit.status);
-					trace("unit.currentCaseUID : " + (unit.currentCaseUID) == null ? 'null' : unit.currentCaseUID);
-					
-					if(unitBeingMovedUID != null
-					&& unitBeingMovedUID == unit.unitUID){
-						// pas forcemement le meilleur endroit, mais ils est appele a chaque UnitMover.moveIsDone
-						// et ca refresh unit.currentCaseUID
-						UnitMover.getInstance().refreshMoves(unit);
-					}
-					
-					if(unit.status == Unit.DESTROYED != unit.status == Unit.FUTURE)
-						continue;
-
-					if(unit.type == 2){
-						for each(var city:City in Session.player.cities)
-						{
-							if(Utils.getXFromCaseUID(unit.currentCaseUID) == city.x && Utils.getYFromCaseUID(unit.currentCaseUID) == city.y){
-								city.merchant = unit;
-								city.unitsToFeed += unit.size;
-								break;
-							}
-						}
-					}
-					
-					else if(unit.type == 1){
-						for each(var city:City in Session.player.cities)
-						{
-							if(Utils.getXFromCaseUID(unit.currentCaseUID) == city.x && Utils.getYFromCaseUID(unit.currentCaseUID) == city.y){
-								city.army = unit;
-								city.unitsToFeed += unit.size;
-								break;
-							}
-						}
-					}
-					
-				}
-				
 			}
 			
 			//-----------------------------------------------------------//
@@ -438,22 +340,16 @@
 					selectedCity = new City();
 					selectedCity.x = 100;
 					selectedCity.y = 100;
+					
+					GameManager.getInstance().initMap(100, 100);
 				}
 				
 				//------------------------------------------------------------//
 
 				Session.board = this;
+				placeBoard(selectedCity.x, selectedCity.y, false);
 				
-
-				/*
-					1 - loadItems
-					2 - calculate missed steps
-					3 - save lastmissed step
-					4 - load cases
-				*/
-				GameManager.getInstance().loadItems();
-				
-				placeBoard(selectedCity.x, selectedCity.y);
+				GameManager.getInstance().refreshPlayer(Session.player);
 
 				//------------------------------------------------------------//
 			
@@ -571,9 +467,7 @@
 			
 			private function enterCity(event:MouseEvent):void
 			{
-				cityForm.updateWorkersProgressBar();
-				//cityForm.updateSmithsProgressBar();
-				cityForm.refreshBuildings();
+				cityForm.refreshCity();
 				goLeft.play();
 				appearCity.play();
 				
@@ -646,6 +540,7 @@
 				if(selectedCity.merchant != null 
 				&& (selectedCity.merchant.moves.length == 1 || selectedCity.merchant.status == Unit.INTERCEPTED_ON_THIS_CASE))
 				{
+					Session.CURRENT_CELL_SELECTED.caravan = selectedCity.merchant;
 					GameManager.getInstance().validateUnit(selectedCity.merchant);
 	
 					if(selectedCity.merchant.status == Unit.TO_BE_CREATED)
@@ -656,6 +551,7 @@
 				if(selectedCity.army != null 
 				&& (selectedCity.army.moves.length == 1 || selectedCity.army.status == Unit.INTERCEPTED_ON_THIS_CASE))
 				{
+					Session.CURRENT_CELL_SELECTED.army = selectedCity.army;
 					GameManager.getInstance().validateUnit(selectedCity.army);
 					
 					if(selectedCity.army.status == Unit.TO_BE_CREATED)
@@ -834,7 +730,7 @@
 //			}
 //			
 
-			public function placeBoard(x:int, y:int):void
+			public function placeBoard(x:int, y:int, simulateMouseClick:Boolean = true):void
 			{
 				trace("placeBoard  : " + x + " | " + y);
 				mapPositioner.x = Session.MAP_WIDTH/2 
@@ -852,7 +748,8 @@
 				Session.COORDINATE_X = x;
 				Session.COORDINATE_Y = y;
 				
-				mouseUp(); // simule le click sur la case x,y
+				if(simulateMouseClick)
+					mouseUp(); // simule le click sur la case x,y
 			}
 			
 		]]>
@@ -967,7 +864,7 @@
 			
 			<s:Button label="{Translations.REFRESH.getItemAt(Session.LANGUAGE)}" 
 					  id="refreshOpponentButton"
-					  click="{GameManager.getInstance().refreshPlayer(Session.CURRENT_CELL_SELECTED.landOwner)}"
+					  click="{GameManager.getInstance().getPlayer(Session.CURRENT_CELL_SELECTED.landOwner)}"
 					  skinClass="com.uralys.tribes.skins.CustomButtonSkin"
 					  visible="{Session.player.playerUID != Session.CURRENT_CELL_SELECTED.landOwner.playerUID
 					  		&amp;&amp; Session.CURRENT_CELL_SELECTED.landOwner.lastStep &lt; Session.player.lastStep}"/>
@@ -1145,7 +1042,7 @@
 					  visible="{!Session.MOVE_A_UNIT &amp;&amp; !Session.WAIT_FOR_SERVER}"
 					  x="{boardImage.x + 95}"
 					  y="{boardImage.y - 13}"
-					  click="{GameManager.getInstance().refreshPlayer(Session.player)}"/>
+					  click="{GameManager.getInstance().getPlayer(Session.player)}"/>
 		</s:Group>
 	</s:Group>
 	

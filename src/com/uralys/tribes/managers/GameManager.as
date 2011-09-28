@@ -67,7 +67,7 @@ package com.uralys.tribes.managers {
 		// CONTROLS
 		//============================================================================================//
 		
-		public function refreshPlayer(player:Player):void
+		public function getPlayer(player:Player):void
 		{
 			trace("------------");
 			trace("refreshPlayer");
@@ -84,17 +84,69 @@ package com.uralys.tribes.managers {
 			trace("receivedPlayerToRefresh");
 			trace("------------");
 			var player:Player = event.result as Player
+			refreshPlayer(player);
+		}
+		
+		public function refreshPlayer(player:Player):void
+		{
+			trace("------------");
+			trace("refreshPlayer");
+			trace("------------");
 			Session.WAIT_FOR_SERVER = false;
 			calculateSteps(player);
 			
 			if(Session.player.playerUID == player.playerUID){
 				Session.player = player;
-				Session.board.refreshUnits();
+				refreshUnits();
 			}
 			
-			Session.board.reloadCurrentCells(true, true);
+			//Session.board.reloadCurrentCells(true, true);
 		}
 
+		//============================================================================================//
+
+		public function refreshUnits():void
+		{
+			var unitUIDsToDelete:ArrayCollection = new ArrayCollection();
+			var uidsToRemove:ArrayCollection = new ArrayCollection();
+			
+			trace("refreshUnits : " + Session.player.units.length);
+			
+			for each(var unit:Unit in Session.player.units)
+			{
+				Utils.refreshUnit(unit);
+				var unitIsPrepared:Boolean = refreshUnitStatus(unit);
+				trace("status : " + unit.status);
+				
+				if(!unitIsPrepared){
+					trace("unit is not prepared");
+					if(unit.status == Unit.DESTROYED){
+						trace("unit is to be deleted");				
+						unitUIDsToDelete.addItem(unit.unitUID);
+					}
+					
+					uidsToRemove.addItem(unit.unitUID);
+				}
+			}
+			
+			for each(var unitToRemoveUID:String in uidsToRemove){
+				trace("removing : " + unitToRemoveUID);
+				var indexToRremove:int = -1;
+				
+				for each(var unit:Unit in Session.player.units){
+					if(unit.unitUID == unitToRemoveUID){
+						indexToRremove = Session.player.units.getItemIndex(unit);
+						break;
+					}
+				}
+				
+				if(indexToRremove >= 0)
+					Session.player.units.removeItemAt(indexToRremove);
+			}
+			
+			deleteUnits(unitUIDsToDelete);
+		}
+		
 		//============================================================================================//
 		
 		private function calculateSteps(player:Player):void 
@@ -212,6 +264,8 @@ package com.uralys.tribes.managers {
 			
 			if(!catchUpCalculation || !allCitiesAreFilled)
 				allCitiesAreFilled = calculateCitiesStep(player, catchUpCalculation);
+			
+			Session.board.cityForm.refreshCity();
 
 			if(!catchUpCalculation){
 				savePlayer(player);
@@ -225,12 +279,7 @@ package com.uralys.tribes.managers {
 			
 			for each(var city:City in player.cities)
 			{
-				trace("--------------");
-				trace("city : " + city.name);
-				trace("wheatEarned : " + city.wheatEarned + " | city.wheatRequiredToFeed() : " + city.wheatRequiredToFeed());
-				trace("woodEarned : " + city.woodEarned);
-				trace("ironEarned : " + city.ironEarned);
-				city.wheat += city.wheatEarned - city.wheatRequiredToFeed();
+				city.wheat += city.wheatEarned - city.wheatRequiredToFeed;
 				city.wood += city.woodEarned;
 				city.iron += city.ironEarned;
 				
@@ -499,7 +548,7 @@ package com.uralys.tribes.managers {
 			
 			if(event.result != null)
 			{
-				var casesAltered:ArrayCollection = event.result.casesAltered;
+				var cellDeparture:Cell = event.result.cellDeparture;
 				var unitsAltered:ArrayCollection = event.result.unitsAltered;
 				
 				if(cityBeingSaved != null){
@@ -514,7 +563,7 @@ package com.uralys.tribes.managers {
 					if(unitAltered.player.playerUID != Session.player.playerUID)
 						continue;
 					
-					var unitIsAlive:Boolean = prepareUnitForClientSide(unitAltered);
+					var unitIsAlive:Boolean = refreshUnitStatus(unitAltered);
 					if(!unitIsAlive)
 						continue;
 					
@@ -527,39 +576,37 @@ package com.uralys.tribes.managers {
 					}
 				}
 				
-				for each(var cellAltered:Cell in casesAltered)
-				{
-					trace("cellAltered : " + cellAltered.cellUID);
-					if(cellAltered.challenger != null)
-						trace("challengerUID : " + cellAltered.challenger.playerUID);
-					trace("timeFromChallenging : " + cellAltered.timeFromChallenging);
-					try{
-						var caseInSession:Cell = (Session.map[cellAltered.x][cellAltered.y] as Cell);
-						
-						if(caseInSession != null){
-							//	Session.map[cellAltered.x][cellAltered.y].recordedMoves = cellAltered.recordedMoves;
-							Session.map[cellAltered.x][cellAltered.y].challenger = cellAltered.challenger;
-							Session.map[cellAltered.x][cellAltered.y].timeFromChallenging = cellAltered.timeFromChallenging;
-							//	Session.map[cellAltered.x][cellAltered.y].units = cellAltered.units;
-						}
-						else
-							Session.map[cellAltered.x][cellAltered.y] = cellAltered;
-						
-						Session.map[cellAltered.x][cellAltered.y].forceRefresh();
+				trace("----");
+				trace("cellDeparture : " + cellDeparture.cellUID);
+				if(cellDeparture.challenger != null)
+					trace("challengerUID : " + cellDeparture.challenger.playerUID);
+				trace("timeFromChallenging : " + cellDeparture.timeFromChallenging);
+				try{
+					var cellInSession:Cell = (Session.map[cellDeparture.x][cellDeparture.y] as Cell);
+					
+					if(cellInSession != null){
+						cellInSession.challenger = cellDeparture.challenger;
+						cellInSession.timeFromChallenging = cellDeparture.timeFromChallenging;
+						cellInSession.army = cellDeparture.army;
+						cellInSession.caravan = cellDeparture.caravan;
 					}
-					catch(e:Error){trace("----");trace(e.message);trace("----");trace("not able to refresh this case");};
+					else
+						Session.map[cellDeparture.x][cellDeparture.y] = cellDeparture;
+					
+					refreshCellDisplay(Session.map[cellDeparture.x][cellDeparture.y]);
 				}
-				
+				catch(e:Error){trace("----");trace(e.message);trace("----");trace("not able to refresh this case");};
+			
 				refreshStatusOfAllUnitsInSession();
 				
 				// on refresh les villes au cas ou le deplacement fait partir/arriver une unite de/dans une ville
-				Session.board.refreshUnitsInCity();
+				refreshUnitsInCity();
 			}
 			
 			trace("--------");
 		}
 		
-		public function prepareUnitForClientSide(unit:Unit):Boolean
+		public function refreshUnitStatus(unit:Unit):Boolean
 		{
 			var now:Number = new Date().getTime();
 			
@@ -655,7 +702,7 @@ package com.uralys.tribes.managers {
 			city.ironEarned = Numbers.IRON_EARNING_COEFF * city.peopleCreatingIron;
 			
 			if(starvation){
-				city.peopleCreatingWheat = city.population/5;
+				city.peopleCreatingWheat = city.population/3;
 				city.woodEarned /= 2;
 				city.ironEarned /= 2;
 			}
@@ -663,7 +710,7 @@ package com.uralys.tribes.managers {
 			city.wheatEarned = Numbers.WHEAT_EARNING_COEFF * city.peopleCreatingWheat;
 
 			city.refreshUnemployed();
-			Session.board.cityForm.updateWorkersProgressBar();
+			//Session.board.cityForm.updateWorkersProgressBar();
 			
 			city.calculationDone = true;
 		}
@@ -728,7 +775,8 @@ package com.uralys.tribes.managers {
 				updateUnit(unit);
 			}
 			
-			BoardDrawer.getInstance().refreshUnits(Session.CURRENT_CELL_SELECTED);
+			// on vient de set Session.CURRENT_CELL_SELECTED.caravan ou army
+			BoardDrawer.getInstance().refreshCellDisplay(Session.CURRENT_CELL_SELECTED);
 		}
 		
 		//============================================================================================//
@@ -747,12 +795,12 @@ package com.uralys.tribes.managers {
 		{
 			Session.ITEMS = event.result as ArrayCollection;
 			Numbers.loadItemData();
-			
-			if(Session.GAME_OVER){
-				initMap(100, 100);
-			}
-			else
-				calculateSteps(Session.player);
+//			
+//			if(Session.GAME_OVER){
+//				initMap(100, 100);
+//			}
+//			else
+//				calculateSteps(Session.player);
 		}
 
 		//============================================================================================//
@@ -971,24 +1019,24 @@ package com.uralys.tribes.managers {
 		// pour que les appels AMF se fassent 1 par 1, on utilise le deleteNextMove, qui est appele à chaque 'moveDeleted'
 		// (je ne peux pas appeler en meme temps gameWrapper.deleteMove plusieurs fois)
 		
-		private var movesBeingDeleted:Array;
-		private function deleteAllMovesToBeDeleted ():void
-		{
-			trace("deleteAllMovesToBeDeleted");
-			movesBeingDeleted = Session.movesToDelete.toArray();
-			deleteNextMove(movesBeingDeleted.shift());
-		}
-		
-		private function deleteNextMove (move:Move):void{
-			trace("deleteNextMove");
-			if(move == null)
-				return;
-			
-			trace("gameWrapper.deleteMove");
-			var gameWrapper:RemoteObject = getGameWrapper();
-			gameWrapper.deleteMove.addEventListener("result", moveDeleted);
-			gameWrapper.deleteMove(move.moveUID);
-		}
+//		private var movesBeingDeleted:Array;
+//		private function deleteAllMovesToBeDeleted ():void
+//		{
+//			trace("deleteAllMovesToBeDeleted");
+//			movesBeingDeleted = Session.movesToDelete.toArray();
+//			deleteNextMove(movesBeingDeleted.shift());
+//		}
+//		
+//		private function deleteNextMove (move:Move):void{
+//			trace("deleteNextMove");
+//			if(move == null)
+//				return;
+//			
+//			trace("gameWrapper.deleteMove");
+//			var gameWrapper:RemoteObject = getGameWrapper();
+//			gameWrapper.deleteMove.addEventListener("result", moveDeleted);
+//			gameWrapper.deleteMove(move.moveUID);
+//		}
 
 		//--------------------------------------------------------------------------------//
 		
@@ -1036,12 +1084,14 @@ package com.uralys.tribes.managers {
 		
 		private function cellsLoaded(event:ResultEvent):void
 		{
+			trace("-------------------------");
 			trace("cellsLoaded");
 			
 			//------------------------------------------------//
 
 			Session.CELLS_LOADED = event.result as ArrayCollection;
 			trace("received : " + Session.CELLS_LOADED.length + " cases");
+			trace("-------------------------");
 			
 			//------------------------------------------------//
 			// init du tableau
@@ -1096,17 +1146,73 @@ package com.uralys.tribes.managers {
 			
 			//------------------------------------------------//
 
+			// on refresh l'etat des armees dans les villes
+			refreshUnitsInCity();
+
 			// on place le plateau au bon endroit
-			Session.board.placeBoard(Session.CENTER_X, Session.CENTER_Y);
+			Session.board.placeBoard(Session.CENTER_X, Session.CENTER_Y, false);
 			
 			// on affiche tout, et on affecte les images aux pions des cases
 			BoardDrawer.getInstance().refreshDisplay();
 			
-			// on refresh l'etat des armees dans les villes
-			Session.board.refreshUnitsInCity();
-			
 			// on supprime maintenant tous les Session.movesToDelete
-			deleteAllMovesToBeDeleted();
+			//deleteAllMovesToBeDeleted();
+			
+			trace("-------------------------");
+		}
+		
+		//===================================================================================//
+
+		// appelee apres le BoardDrawer.refreshDisplay, qui raffraichit toutes les currentCaseUID des units de toutes les cases.
+		public function refreshUnitsInCity(unitBeingMovedUID:String = null):void
+		{
+			trace("refreshUnitsInCity");
+			
+			for each(var city:City in Session.player.cities){
+				city.merchant = null;
+				city.army = null;
+				city.unitsToFeed = 0;
+			}
+			
+			for each(var unit:Unit in Session.player.units)
+			{
+				trace(unit.unitUID);
+				trace("unit.status : " + unit.status);
+				trace("unit.currentCaseUID : " + (unit.currentCaseUID) == null ? 'null' : unit.currentCaseUID);
+				
+				if(unitBeingMovedUID != null
+					&& unitBeingMovedUID == unit.unitUID){
+					// pas forcemement le meilleur endroit, mais ils est appele a chaque UnitMover.moveIsDone
+					// et ca refresh unit.currentCaseUID
+					UnitMover.getInstance().refreshMoves(unit);
+				}
+				
+				if(unit.status == Unit.DESTROYED != unit.status == Unit.FUTURE)
+					continue;
+				
+				if(unit.type == 2){
+					for each(var city:City in Session.player.cities)
+					{
+						if(Utils.getXFromCaseUID(unit.currentCaseUID) == city.x && Utils.getYFromCaseUID(unit.currentCaseUID) == city.y){
+							city.merchant = unit;
+							city.unitsToFeed += unit.size;
+							break;
+						}
+					}
+				}
+					
+				else if(unit.type == 1){
+					for each(var city:City in Session.player.cities)
+					{
+						if(Utils.getXFromCaseUID(unit.currentCaseUID) == city.x && Utils.getYFromCaseUID(unit.currentCaseUID) == city.y){
+							city.army = unit;
+							city.unitsToFeed += unit.size;
+							break;
+						}
+					}
+				}
+				
+			}
 			
 		}
 		
@@ -1114,7 +1220,6 @@ package com.uralys.tribes.managers {
 		
 		public function refreshCell(cell:Cell):void
 		{
-			trace(cell.cellUID + " : unit : " + ObjectUtil.toString(cell.unit));
 			cell.pawn.cell = cell;
 			
 			Utils.refreshUnit(cell.army);	
@@ -1158,9 +1263,8 @@ package com.uralys.tribes.managers {
 			var newCells:ArrayCollection = new ArrayCollection();
 			
 			for each(var cell:Cell in newCells){
-				refreshCell(cell);
+				refreshCellDisplay(cell);
 				Session.map[cell.x][cell.y] = cell;
-				BoardDrawer.getInstance().refreshUnits(Session.map[cell.x][cell.y]);
 			}
 		}
 		
@@ -1176,12 +1280,19 @@ package com.uralys.tribes.managers {
 			}
 		}
 
-		private function moveDeleted(event:ResultEvent):void{
-			if(movesBeingDeleted != null && movesBeingDeleted.length > 0)
-				deleteNextMove(movesBeingDeleted.shift());
-			else
-				Session.movesToDelete = new ArrayCollection();
-		}
+//		private function moveDeleted(event:ResultEvent):void{
+//			if(movesBeingDeleted != null && movesBeingDeleted.length > 0)
+//				deleteNextMove(movesBeingDeleted.shift());
+//			else
+//				Session.movesToDelete = new ArrayCollection();
+//		}
 		
+		public function refreshCellDisplay(cell:Cell):void
+		{
+			trace("refreshCellDisplay");
+			BoardDrawer.getInstance().resetCellDisplay(cell);
+			refreshCell(cell);
+			BoardDrawer.getInstance().refreshCellDisplay(cell);
+		}
 	}
 }

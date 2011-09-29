@@ -7,7 +7,7 @@ import java.util.List;
 import com.uralys.tribes.dao.IGameDAO;
 import com.uralys.tribes.domain.IMovesManager;
 import com.uralys.tribes.entities.Move;
-import com.uralys.tribes.entities.ObjectsAltered;
+import com.uralys.tribes.entities.MoveResult;
 import com.uralys.tribes.entities.Player;
 import com.uralys.tribes.entities.Unit;
 import com.uralys.tribes.entities.converters.EntitiesConverter;
@@ -39,7 +39,7 @@ public class MovesManager implements IMovesManager{
 
 	//==================================================================================================//
 
-	public ObjectsAltered refreshUnitMoves(Unit unit) 
+	public MoveResult refreshUnitMoves(Unit unit) 
 	{
 		if(debug)Utils.print("--------------------");
 		if(debug)Utils.print("refreshUnitMoves");
@@ -120,10 +120,12 @@ public class MovesManager implements IMovesManager{
 		}
 		
 		//-------------------------------------------------------//
-		
-		dataContainer.objectsAltered.setCellDeparture(EntitiesConverter.convertCellDTO(gameDao.getCell(unit.getMoves().get(0).getCellUID())));
 
-		return dataContainer.objectsAltered;
+		MoveResult moveResult = new MoveResult();
+		moveResult.setUnit(unit);
+		moveResult.setCellDeparture(EntitiesConverter.convertCellDTO(gameDao.getCell(unit.getMoves().get(0).getCellUID())));
+
+		return moveResult;
 	}
 
 	//==================================================================================================//
@@ -161,9 +163,6 @@ public class MovesManager implements IMovesManager{
 
 		// on enregistre tous les parametres modifiés sur notre unitArriving
 		gameDao.updateUnit(unit);
-		
-		// et on enregistre l'unite dans les datacontainer.unitsAltered
-		dataContainer.objectsAltered.addUnitAltered(unit);
 	}
 	
 	//-----------------------------------------------------------------------------------//
@@ -197,7 +196,6 @@ public class MovesManager implements IMovesManager{
 		finalizeNextUnitCreation(unit, unitMet, nextUnit, report, lastMove, dataContainer);
 		
 		gameDao.updateUnit(unitMet);	
-		dataContainer.objectsAltered.addUnitAltered(unitMet);
 	}
 
 	//-----------------------------------------------------------------------------------//
@@ -237,7 +235,6 @@ public class MovesManager implements IMovesManager{
 		//------------------------------------------------//
 
 		gameDao.createUnit(nextUnit);
-		dataContainer.objectsAltered.addUnitAltered(nextUnit);
 		
 		gameDao.linkNewUnit(nextUnit.getPlayer().getUralysUID(), nextUnit.getUnitUID());
 		gameDao.createMove(firstMoveForNextUnit, null);
@@ -811,7 +808,6 @@ public class MovesManager implements IMovesManager{
 		private HashMap<String, CellDTO> cellsLoaded = new HashMap<String, CellDTO>();
 		private HashMap<String, Unit> unitsLoaded = new HashMap<String, Unit>();
 		private HashMap<String, Player> playerAlreadyLoaded = new HashMap<String, Player>();
-		private ObjectsAltered objectsAltered = new ObjectsAltered();
 	}
 
 }

@@ -669,7 +669,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 				List<MoveDTO> moves = (List<MoveDTO>) query.execute(unitDTO.getMoveUIDs());
 				
 				for(MoveDTO moveDTO : moves){
-					deleteMove(moveDTO.getMoveUID(), false);
+					deleteMove(moveDTO.getMoveUID());
 				}
 			}
 			
@@ -694,7 +694,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			List<MoveDTO> moves = (List<MoveDTO>) query.execute(unitDTO.getMoveUIDs());
 			
 			for(MoveDTO moveDTO : moves){
-				deleteMove(moveDTO.getMoveUID(), false);
+				deleteMove(moveDTO.getMoveUID());
 			}
 		}
 		
@@ -804,6 +804,10 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		MoveDTO moveDTO = new MoveDTO(); 
 		
 		String moveUID = move.getMoveUID().contains("NEW") ? move.getMoveUID().substring(4) : move.getMoveUID();
+		
+		if(nextMoveUID != null)
+			nextMoveUID = nextMoveUID.contains("NEW") ? nextMoveUID.substring(4) : nextMoveUID;
+	
 		Key key = KeyFactory.createKey(MoveDTO.class.getSimpleName(), moveUID);
 
 		moveDTO.setKey(KeyFactory.keyToString(key));
@@ -833,12 +837,12 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		UnitDTO unitDTO = pm.getObjectById(UnitDTO.class, unitUID);
 		
 		for(MoveDTO moveDTO : unitDTO.getMoves()){
-			deleteMove(moveDTO.getMoveUID(), false);
+			deleteMove(moveDTO.getMoveUID());
 		}
 	}
 
 		
-	public void deleteMove(String moveUID, boolean keepGatheringBecauseItIsLinkedWithAnotherMoveNow) 
+	public void deleteMove(String moveUID) 
 	{
 		try{
 			if(moveUID.contains("NEW"))

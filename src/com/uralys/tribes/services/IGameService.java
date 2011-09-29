@@ -5,7 +5,7 @@ import java.util.List;
 import com.uralys.tribes.entities.Ally;
 import com.uralys.tribes.entities.Cell;
 import com.uralys.tribes.entities.City;
-import com.uralys.tribes.entities.ObjectsAltered;
+import com.uralys.tribes.entities.MoveResult;
 import com.uralys.tribes.entities.Item;
 import com.uralys.tribes.entities.Player;
 import com.uralys.tribes.entities.Unit;
@@ -39,8 +39,8 @@ public interface IGameService {
 	
 	//-----------------------------------------------------------------------------------//
 	
-	public ObjectsAltered createUnit(String uralysUID, Unit unit);
-	public ObjectsAltered updateUnit(Unit unit);
+	public MoveResult createUnit(String uralysUID, Unit unit);
+	public MoveResult updateUnit(Unit unit);
 
 	//-----------------------------------------------------------------------------------//
 	

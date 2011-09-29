@@ -1,13 +1,13 @@
 package com.uralys.tribes.domain;
 
-import com.uralys.tribes.entities.ObjectsAltered;
+import com.uralys.tribes.entities.MoveResult;
 import com.uralys.tribes.entities.Unit;
 
 public interface IMovesManager {
 
 	//-----------------------------------------------------------------------------------//
 	
-	public ObjectsAltered refreshUnitMoves(Unit unit);
+	public MoveResult refreshUnitMoves(Unit unit);
 	
 	//-----------------------------------------------------------------------------------//
 	

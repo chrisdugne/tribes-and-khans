@@ -12,7 +12,7 @@ import com.uralys.tribes.entities.Cell;
 import com.uralys.tribes.entities.City;
 import com.uralys.tribes.entities.Item;
 import com.uralys.tribes.entities.Move;
-import com.uralys.tribes.entities.ObjectsAltered;
+import com.uralys.tribes.entities.MoveResult;
 import com.uralys.tribes.entities.Player;
 import com.uralys.tribes.entities.Stock;
 import com.uralys.tribes.entities.Unit;
@@ -215,7 +215,7 @@ public class GameManager implements IGameManager {
 	
 	//==================================================================================================//
 
-	public ObjectsAltered createUnit(String uralysUID, Unit unit)
+	public MoveResult createUnit(String uralysUID, Unit unit)
 	{
 		if(debug)Utils.print("-----------------------------------");
 		if(debug)Utils.print("gamemanager createUnit : " + unit.getUnitUID() + " for uralysUID : " + uralysUID);
@@ -226,7 +226,7 @@ public class GameManager implements IGameManager {
 		return movesManager.refreshUnitMoves(unit);
 	}
 
-	public ObjectsAltered updateUnit(Unit unit, boolean needReplacing)
+	public MoveResult updateUnit(Unit unit, boolean needReplacing)
 	{
 		if(debug)Utils.print("-----------------------------------");
 		if(debug)Utils.print("gamemanager updateUnit : " + unit.getUnitUID());
@@ -264,11 +264,7 @@ public class GameManager implements IGameManager {
 	//==================================================================================================//
 
 	public void deleteMove(String moveUID) {
-		deleteMove(moveUID, false);
-	}
-	
-	private void deleteMove(String moveUID, boolean keepGatheringBecauseItIsLinkedWithAnotherMoveNow) {
-		gameDao.deleteMove(moveUID, keepGatheringBecauseItIsLinkedWithAnotherMoveNow);
+		gameDao.deleteMove(moveUID);
 	}
 	
 	//==================================================================================================//

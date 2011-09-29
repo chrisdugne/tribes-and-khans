@@ -7,7 +7,7 @@ import com.uralys.tribes.domain.IGameManager;
 import com.uralys.tribes.entities.Ally;
 import com.uralys.tribes.entities.Cell;
 import com.uralys.tribes.entities.City;
-import com.uralys.tribes.entities.ObjectsAltered;
+import com.uralys.tribes.entities.MoveResult;
 import com.uralys.tribes.entities.Item;
 import com.uralys.tribes.entities.Player;
 import com.uralys.tribes.entities.Unit;
@@ -88,7 +88,7 @@ public class GameService implements IGameService {
 		
 	}
 
-	public ObjectsAltered createUnit(String uralysUID, Unit unit)
+	public MoveResult createUnit(String uralysUID, Unit unit)
 	{
 		try {
 			return gameManager.createUnit(uralysUID, unit);
@@ -98,7 +98,7 @@ public class GameService implements IGameService {
 		}
 	}
 
-	public ObjectsAltered updateUnit(Unit unit)
+	public MoveResult updateUnit(Unit unit)
 	{
 		try {
 			return gameManager.updateUnit(unit, true);

@@ -67,7 +67,7 @@ public interface IGameDAO {
 	public void setTimeToForMove(String moveUID, long timeTo);
 	public void setNewGatheringForMoveAndDeletePreviousGathering(String moveUID, String gatheringUID);
 	public void setHiddenForMove(String moveUID, boolean hidden);
-	public void deleteMove(String moveUID, boolean keepGatheringBecauseItIsLinkedWithAnotherMoveNow);
+	public void deleteMove(String moveUID);
 	public void deleteMoves(String unitUID);
 
 	//-----------------------------------------------------------------------------------//

@@ -6,6 +6,7 @@ package com.uralys.utils
 import com.uralys.tribes.commons.Numbers;
 import com.uralys.tribes.commons.Session;
 import com.uralys.tribes.core.BoardDrawer;
+import com.uralys.tribes.core.UnitMover;
 import com.uralys.tribes.entities.Ally;
 import com.uralys.tribes.entities.Item;
 import com.uralys.tribes.entities.Message;
@@ -337,27 +338,6 @@ public class Utils
 			return false;
 		}
 
-		//----------------------------------------------------------------------------------------------------
-
-		public static function refreshUnit(unit:Unit):void
-		{
-			if(unit != null){
-	
-				if(unit.player.playerUID == Session.player.playerUID)
-					unit.ownerStatus = Unit.PLAYER;
-					
-				else if(unit.player.ally != null 
-					&& Session.player.ally != null
-					&& unit.player.ally.allyUID == Session.player.ally.allyUID)
-					unit.ownerStatus = Unit.ALLY;
-					
-				else
-					unit.ownerStatus = Unit.ENNEMY;
-			
-				unit.currentCaseUID = (unit.moves.getItemAt(0) as Move).cellUID;
-			}
-			
-		}
 		
 		//----------------------------------------------------------------------------------------------------
 		

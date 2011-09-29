@@ -14,7 +14,7 @@ package com.uralys.tribes.managers {
 	import com.uralys.tribes.entities.Game;
 	import com.uralys.tribes.entities.Item;
 	import com.uralys.tribes.entities.Move;
-	import com.uralys.tribes.entities.ObjectsAltered;
+	import com.uralys.tribes.entities.MoveResult;
 	import com.uralys.tribes.entities.Player;
 	import com.uralys.tribes.entities.Stock;
 	import com.uralys.tribes.entities.Unit;
@@ -114,7 +114,8 @@ package com.uralys.tribes.managers {
 			
 			for each(var unit:Unit in Session.player.units)
 			{
-				Utils.refreshUnit(unit);
+				refreshUnit(unit);
+				
 				var unitIsPrepared:Boolean = refreshUnitStatus(unit);
 				trace("status : " + unit.status);
 				
@@ -548,33 +549,24 @@ package com.uralys.tribes.managers {
 			
 			if(event.result != null)
 			{
-				var cellDeparture:Cell = event.result.cellDeparture;
-				var unitsAltered:ArrayCollection = event.result.unitsAltered;
+				var moveResult:MoveResult = event.result as MoveResult;
 				
-				if(cityBeingSaved != null){
-					cityBeingSaved.cityUID = event.result.cityUID as String;
-					cityBeingSaved = null;
-				}
+				var cellDeparture:Cell = moveResult.cellDeparture;
+				var unitAltered:Unit = moveResult.unit;
 				
-				for each(var unitAltered:Unit in unitsAltered)
-				{
-					trace("-----");
-					trace("unitAltered : " + unitAltered.unitUID);
-					if(unitAltered.player.playerUID != Session.player.playerUID)
-						continue;
-					
-					var unitIsAlive:Boolean = refreshUnitStatus(unitAltered);
-					if(!unitIsAlive)
-						continue;
-					
-					var unitInPlayer:Unit = Session.player.getUnit(unitAltered.unitUID);
-					
-					if(unitInPlayer == null && unitAltered.status != Unit.DESTROYED)
-						Session.player.units.addItem(unitAltered);
-					else{
-						Session.player.refreshUnit(unitAltered);
-					}
+				trace("-----");
+				trace("unitAltered : " + unitAltered.unitUID);
+
+				refreshUnit(unitAltered);
+
+				var unitInPlayer:Unit = Session.player.getUnit(unitAltered.unitUID);
+				
+				if(unitInPlayer == null)
+					Session.player.units.addItem(unitAltered);
+				else{
+					Session.player.refreshUnit(unitAltered);
 				}
+
 				
 				trace("----");
 				trace("cellDeparture : " + cellDeparture.cellUID);
@@ -597,7 +589,7 @@ package com.uralys.tribes.managers {
 				}
 				catch(e:Error){trace("----");trace(e.message);trace("----");trace("not able to refresh this case");};
 			
-				refreshStatusOfAllUnitsInSession();
+				//refreshStatusOfAllUnitsInSession();
 				
 				// on refresh les villes au cas ou le deplacement fait partir/arriver une unite de/dans une ville
 				refreshUnitsInCity();
@@ -611,7 +603,7 @@ package com.uralys.tribes.managers {
 			var now:Number = new Date().getTime();
 			
 			trace("------------------");
-			trace("prepareUnitForClientSide : " + unit.unitUID);
+			trace("refreshUnitStatus : " + unit.unitUID);
 			trace("unit.playerUID : " + unit.player.playerUID);
 			trace("unit.endTime : " + unit.endTime);
 			trace("now : " + now);
@@ -630,12 +622,6 @@ package com.uralys.tribes.managers {
 				return false;
 			}
 
-			if(!UnitMover.getInstance().refreshMoves(unit)){
-				unit.status = Unit.DESTROYED;
-				trace("bug ! endTime etait != -1 et pourtant on a une Unit.DESTROYED (la case n'e contient pas de move pour cette unit, car il n'y a plus de move pour cette unit !)");
-				return false;
-			}
-			
 			unit.ownerStatus = Unit.PLAYER;
 			unit.isModified = false;	
 			
@@ -1037,6 +1023,12 @@ package com.uralys.tribes.managers {
 //			gameWrapper.deleteMove.addEventListener("result", moveDeleted);
 //			gameWrapper.deleteMove(move.moveUID);
 //		}
+		
+		public function deleteMove(moveUID:String):void
+		{
+			var gameWrapper:RemoteObject = getGameWrapper();
+			gameWrapper.deleteMove(moveUID);
+		}
 
 		//--------------------------------------------------------------------------------//
 		
@@ -1164,7 +1156,7 @@ package com.uralys.tribes.managers {
 		//===================================================================================//
 
 		// appelee apres le BoardDrawer.refreshDisplay, qui raffraichit toutes les currentCaseUID des units de toutes les cases.
-		public function refreshUnitsInCity(unitBeingMovedUID:String = null):void
+		public function refreshUnitsInCity():void
 		{
 			trace("refreshUnitsInCity");
 			
@@ -1176,17 +1168,6 @@ package com.uralys.tribes.managers {
 			
 			for each(var unit:Unit in Session.player.units)
 			{
-				trace(unit.unitUID);
-				trace("unit.status : " + unit.status);
-				trace("unit.currentCaseUID : " + (unit.currentCaseUID) == null ? 'null' : unit.currentCaseUID);
-				
-				if(unitBeingMovedUID != null
-					&& unitBeingMovedUID == unit.unitUID){
-					// pas forcemement le meilleur endroit, mais ils est appele a chaque UnitMover.moveIsDone
-					// et ca refresh unit.currentCaseUID
-					UnitMover.getInstance().refreshMoves(unit);
-				}
-				
 				if(unit.status == Unit.DESTROYED != unit.status == Unit.FUTURE)
 					continue;
 				
@@ -1222,8 +1203,8 @@ package com.uralys.tribes.managers {
 		{
 			cell.pawn.cell = cell;
 			
-			Utils.refreshUnit(cell.army);	
-			Utils.refreshUnit(cell.caravan);	
+			refreshUnit(cell.army);	
+			refreshUnit(cell.caravan);	
 			
 			if(cell.challenger != null 
 				&& ((cell.army != null && cell.army.ownerStatus == Unit.PLAYER) 
@@ -1269,16 +1250,36 @@ package com.uralys.tribes.managers {
 		}
 		
 		//===================================================================================//
-	
-
-		public function refreshStatusOfAllUnitsInSession():void
+		
+		public function refreshUnit(unit:Unit):void
 		{
-			for each(var unit:Unit in Session.player.units)
-			{
-				if(unit.endTime != -1 && unit.endTime < new Date().getTime())
-					unit.status = Unit.DESTROYED;
+			if(unit != null){
+				
+				if(unit.player.playerUID == Session.player.playerUID)
+					unit.ownerStatus = Unit.PLAYER;
+					
+				else if(unit.player.ally != null 
+					&& Session.player.ally != null
+					&& unit.player.ally.allyUID == Session.player.ally.allyUID)
+					unit.ownerStatus = Unit.ALLY;
+					
+				else
+					unit.ownerStatus = Unit.ENNEMY;
+				
+				unit.currentCaseUID = (unit.moves.getItemAt(0) as Move).cellUID;
+				
+				UnitMover.getInstance().refreshMoves(unit);
 			}
+			
 		}
+//		public function refreshStatusOfAllUnitsInSession():void
+//		{
+//			for each(var unit:Unit in Session.player.units)
+//			{
+//				if(unit.endTime != -1 && unit.endTime < new Date().getTime())
+//					unit.status = Unit.DESTROYED;
+//			}
+//		}
 
 //		private function moveDeleted(event:ResultEvent):void{
 //			if(movesBeingDeleted != null && movesBeingDeleted.length > 0)

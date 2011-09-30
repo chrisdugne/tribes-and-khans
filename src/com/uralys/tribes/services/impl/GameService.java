@@ -146,6 +146,15 @@ public class GameService implements IGameService {
 			return new ArrayList<Cell>();
 		}
 	}
+	
+	public List<Cell> getNewCells(Cell cell) {
+		try {
+			return gameManager.getNewCells(cell);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ArrayList<Cell>();
+		}
+	}
 
 	// -----------------------------------------------------------------------------------//
 

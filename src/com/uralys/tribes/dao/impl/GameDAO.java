@@ -356,6 +356,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 						if(now - _cell.getTimeFromChallenging() > Constants.LAND_TIME*60*1000)
 						{
 							newLandOwner(_cell.getCellUID());
+							_cell.setChallengerUID(null);
 						}
 					}
 				}
@@ -371,19 +372,19 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	private void newLandOwner(String caseUID) 
 	{
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
-		CellDTO _case = pm.getObjectById(CellDTO.class, caseUID);
+		CellDTO _cell = pm.getObjectById(CellDTO.class, caseUID);
 		
-		if(_case.getLandOwnerUID() != null){
-			PlayerDTO owner = pm.getObjectById(PlayerDTO.class, _case.getLandOwnerUID());
+		if(_cell.getLandOwnerUID() != null){
+			PlayerDTO owner = pm.getObjectById(PlayerDTO.class, _cell.getLandOwnerUID());
 			decreaseLandsCount(owner, pm);
 		}
 		
-		PlayerDTO challenger = pm.getObjectById(PlayerDTO.class, _case.getChallengerUID());
+		PlayerDTO challenger = pm.getObjectById(PlayerDTO.class, _cell.getChallengerUID());
 		increaseLandsCount(challenger, pm);
 		
-		_case.setLandOwnerUID(_case.getChallengerUID());
-		_case.setChallengerUID(null);
-		_case.setTimeFromChallenging(-1);
+		_cell.setLandOwnerUID(_cell.getChallengerUID());
+		_cell.setChallengerUID(null);
+		_cell.setTimeFromChallenging(-1);
 		
 		pm.close();
 	}
@@ -398,7 +399,19 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	public CellDTO getCell(int i, int j) {
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		try{
-			return pm.getObjectById(CellDTO.class, "cell_"+i+"_"+j);
+			CellDTO cell =  pm.getObjectById(CellDTO.class, "cell_"+i+"_"+j);
+			long now = new Date().getTime();
+			
+			if(cell.getChallengerUID() != null)
+			{
+				if(now - cell.getTimeFromChallenging() > Constants.LAND_TIME*60*1000)
+				{
+					newLandOwner(cell.getCellUID());
+					cell.setChallengerUID(null);
+				}
+			}
+			
+			return cell;
 		}
 		catch(JDOObjectNotFoundException e){
 			return createCell(i, j, null, Cell.FOREST, null, pm);

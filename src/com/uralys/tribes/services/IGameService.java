@@ -46,6 +46,7 @@ public interface IGameService {
 	
 	public List<Item> loadItems();
 	public List<Cell> loadCells(int[] groups, boolean refreshLandOwners);
+	public List<Cell> getNewCells(Cell cell);
 	
 	//-----------------------------------------------------------------------------------//		public void changeName(String uralysUID, String newName);
 	public void changeCityName(String cityUID, String newName);

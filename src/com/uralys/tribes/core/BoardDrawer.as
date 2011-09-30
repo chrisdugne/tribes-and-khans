@@ -306,7 +306,7 @@ package com.uralys.tribes.core
 			imageUnit.scaleY = scale;
 			imageUnit.mouseEnabled = false;
 			
-			trace("adding pawn on the board");
+			trace("adding pawn on the board (timeTo : "+cell.pawn.timeTo+")");
 			cell.pawn.addElement(imageUnit);
 			
 			Session.board.pawnLayer.addElement(cell.pawn);
@@ -502,8 +502,8 @@ package com.uralys.tribes.core
 			//------------------------------------------------------//
 
 			var moveHighlight:MoveHighLight = new MoveHighLight();
-			moveHighlight.x = Utils.getXPixel(Utils.getXFromCaseUID(move.cellUID));
-			moveHighlight.y = Utils.getYPixel(Utils.getYFromCaseUID(move.cellUID));
+			moveHighlight.x = Utils.getXPixel(Utils.getXFromCellUID(move.cellUID));
+			moveHighlight.y = Utils.getYPixel(Utils.getYFromCellUID(move.cellUID));
 			moveHighlight.image.scaleX = scale;
 			moveHighlight.image.scaleY = scale;
 			
@@ -519,7 +519,7 @@ package com.uralys.tribes.core
 				GraphicsUtil.drawArrow(
 					Session.board.highlighters.graphics,
 					new Point((Utils.getXPixel(xPreviousMove)+Utils.getLandWidth()/2), (Utils.getYPixel(yPreviousMove)+Utils.getLandHeight()/2)),
-					new Point((Utils.getXPixel(Utils.getXFromCaseUID(move.cellUID))+Utils.getLandWidth()/2), (Utils.getYPixel(Utils.getYFromCaseUID(move.cellUID))+Utils.getLandHeight()/2))
+					new Point((Utils.getXPixel(Utils.getXFromCellUID(move.cellUID))+Utils.getLandWidth()/2), (Utils.getYPixel(Utils.getYFromCellUID(move.cellUID))+Utils.getLandHeight()/2))
 				);
 			}
 		}

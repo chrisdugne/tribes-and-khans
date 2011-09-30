@@ -41,7 +41,8 @@
 			//----------------------------------------------------------------------------------//
 			
 			public function resetProgress():void
-			{			
+			{
+				trace("Pawn resetProgress | timeTo : " + timeTo);
 				Session.timer.removeEventListener( TimerEvent.TIMER, updateProgress );
 				
 				if(timeTo != -1){
@@ -110,6 +111,6 @@
 					trackSkin="{CustomProgressTrackSkin}"
 					barSkin="{status == CONQUERING_LAND ? ConqueringLandProgressBarSkin : ClassicProgressBarSkin}"
 					label="--:--" 
-					visible="{Session.SHOW_MOVES_PROGRESS_BARS &amp;&amp; timeTo != -1 &amp;&amp; unit.ownerStatus == Unit.PLAYER}"
+					visible="{Session.SHOW_MOVES_PROGRESS_BARS &amp;&amp; timeTo != -1}"
 					labelPlacement="top"/>
 </s:Group>

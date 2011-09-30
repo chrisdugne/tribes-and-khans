@@ -76,7 +76,7 @@
 					 color="#000000" 
 					 left="10" 
 					 verticalCenter="2"
-					 text="[ {Utils.getXFromCaseUID(data.currentCaseUID)} , {Utils.getYFromCaseUID(data.currentCaseUID)} ]"
+					 text="[ {Utils.getXFromCellUID(data.currentCaseUID)} , {Utils.getYFromCellUID(data.currentCaseUID)} ]"
 					 />
 			<mx:Image source="{ImageContainer.CITY_BUTTON_RIGHT}"/>
 		</s:HGroup>

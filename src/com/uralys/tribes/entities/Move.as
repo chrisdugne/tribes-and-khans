@@ -90,11 +90,11 @@ package com.uralys.tribes.entities
 		//--------------------------------------------------------------//
 		
 		public function getX():int {
-			return Utils.getXFromCaseUID(_cellUID);
+			return Utils.getXFromCellUID(_cellUID);
 		}
 
 		public function getY():int {
-			return Utils.getYFromCaseUID(_cellUID);
+			return Utils.getYFromCellUID(_cellUID);
 		}
 
 

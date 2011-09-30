@@ -102,11 +102,11 @@
 				var unit:Unit = event.currentTarget.selectedItem;
 				unit.currentCaseUID = (unit.moves.getItemAt(0) as com.uralys.tribes.entities.Move).cellUID;
 				
-				placeBoard(Utils.getXFromCaseUID(unit.currentCaseUID), Utils.getYFromCaseUID(unit.currentCaseUID));
+				placeBoard(Utils.getXFromCellUID(unit.currentCaseUID), Utils.getYFromCellUID(unit.currentCaseUID));
 				var caseBeingLoaded:Boolean = reloadCurrentCells();
 				
 				if(!caseBeingLoaded){
-					BoardClickAnalyser.getInstance().clickOnCase(Session.map[Utils.getXFromCaseUID(unit.currentCaseUID)][Utils.getYFromCaseUID(unit.currentCaseUID)]);
+					BoardClickAnalyser.getInstance().clickOnCase(Session.map[Utils.getXFromCellUID(unit.currentCaseUID)][Utils.getYFromCellUID(unit.currentCaseUID)]);
 				}
 				
 				return;
@@ -164,7 +164,7 @@
 				if(Session.MOVE_A_UNIT)
 					return;
 				
-				placeBoard(Utils.getXFromCaseUID(selectedUnit.currentCaseUID), Utils.getYFromCaseUID(selectedUnit.currentCaseUID));
+				placeBoard(Utils.getXFromCellUID(selectedUnit.currentCaseUID), Utils.getYFromCellUID(selectedUnit.currentCaseUID));
 				
 				Session.MOVE_A_UNIT = true;
 				currentState = "moveUnit";
@@ -186,8 +186,8 @@
 					var displayProgress:Boolean = move.timeFrom < now && move.timeTo > now;
 					BoardDrawer.getInstance().addMoveImages(move, xPreviousMove, yPreviousMove, displayProgress);
 					
-					xPreviousMove = Utils.getXFromCaseUID(move.cellUID);
-					yPreviousMove = Utils.getYFromCaseUID(move.cellUID); 
+					xPreviousMove = Utils.getXFromCellUID(move.cellUID);
+					yPreviousMove = Utils.getYFromCellUID(move.cellUID); 
 				}	
 			}
 			

@@ -1,5 +1,4 @@
 
-
 package com.uralys.utils
 {
 
@@ -8,6 +7,7 @@ import com.uralys.tribes.commons.Session;
 import com.uralys.tribes.core.BoardDrawer;
 import com.uralys.tribes.core.UnitMover;
 import com.uralys.tribes.entities.Ally;
+import com.uralys.tribes.entities.Cell;
 import com.uralys.tribes.entities.Item;
 import com.uralys.tribes.entities.Message;
 import com.uralys.tribes.entities.Move;
@@ -91,21 +91,21 @@ public class Utils
 
 		//---------------------------------------------------------------------//
 		
-		public static function getXFromCaseUID(caseUID:String):int {
+		public static function getXFromCellUID(cellUID:String):int {
 			
-			var firstIndex:int = caseUID.indexOf("_");
-			var secondIndex:int = caseUID.indexOf("_",firstIndex+1);
+			var firstIndex:int = cellUID.indexOf("_");
+			var secondIndex:int = cellUID.indexOf("_",firstIndex+1);
 			var lengthBetweenIndexes:int = secondIndex - firstIndex;
 			
-			return parseInt(caseUID.substr(firstIndex+1, lengthBetweenIndexes));
+			return parseInt(cellUID.substr(firstIndex+1, lengthBetweenIndexes));
 		}
 		
-		public static function getYFromCaseUID(caseUID:String):int {
+		public static function getYFromCellUID(cellUID:String):int {
 			
-			var firstIndex:int = caseUID.indexOf("_");
-			var secondIndex:int = caseUID.indexOf("_",firstIndex+1);
+			var firstIndex:int = cellUID.indexOf("_");
+			var secondIndex:int = cellUID.indexOf("_",firstIndex+1);
 			
-			return parseInt(caseUID.substr(secondIndex+1));
+			return parseInt(cellUID.substr(secondIndex+1));
 		}
 		
 		
@@ -370,5 +370,9 @@ public class Utils
 			return new Item();
 		}
 		
+		public static function getCellInSession(cellUID:String):Cell
+		{
+			return Session.map[getXFromCellUID(cellUID)][getYFromCellUID(cellUID)];
+		}
 }
 }

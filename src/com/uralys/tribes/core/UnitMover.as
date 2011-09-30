@@ -6,6 +6,7 @@ package com.uralys.tribes.core
 	import com.uralys.tribes.entities.Cell;
 	import com.uralys.tribes.entities.City;
 	import com.uralys.tribes.entities.Move;
+	import com.uralys.tribes.entities.Player;
 	import com.uralys.tribes.entities.Unit;
 	import com.uralys.tribes.managers.GameManager;
 	import com.uralys.utils.Map;
@@ -148,19 +149,41 @@ package com.uralys.tribes.core
 //			}
 //		}
 		
+		// ============================================================================================
+		
 		public function listenTo(cell:Cell):void
 		{
-			var timeToWait:Number = cell.timeToChangeUnit - new Date().getTime();
-			trace("listening cell " + cell.cellUID);
+			var timeToWait:Number;
+			if(cell.timeToChangeUnit > 0){
+				timeToWait = cell.timeToChangeUnit - new Date().getTime();
+				trace("listening cell.timeToChangeUnit " + cell.cellUID);
+			}
+			else if(cell.timeFromChallenging > 0){
+				timeToWait = cell.timeFromChallenging - new Date().getTime();
+				trace("listening cell.timeFromChallenging " + cell.cellUID);
+			}
+			else{
+				trace(cell.cellUID + " does not listen anything");
+				return;
+			}
 			
-			var t:Timer = new Timer(timeToWait, 1);
-			t.addEventListener(TimerEvent.TIMER_COMPLETE, moveIsDone);
-			t.start();
-			
-			timers.put(t, cell);
+			if(timeToWait > 0){
+				trace("adding timer, timeToWait : " + timeToWait);
+				var t:Timer = new Timer(timeToWait, 1);
+				t.addEventListener(TimerEvent.TIMER_COMPLETE, pawnTimerIsDone);
+				t.start();
+				
+				timers.put(t, cell);
+				
+				// affichage de la barre de progression temporelle du pion.
+				if(cell.unit.player.playerUID == Session.player.playerUID)
+					cell.pawn.resetProgress();
+			}
+			else
+				trace("timeToWait < 0");
 		}
 		
-		protected static function moveIsDone(e:TimerEvent):void
+		protected static function pawnTimerIsDone(e:TimerEvent):void
 		{
 			var cell:Cell = timers.get(e.currentTarget) as Cell;
 			timers.remove(e.currentTarget);
@@ -276,8 +299,8 @@ package com.uralys.tribes.core
 			}
 			
 			var lastMove:com.uralys.tribes.entities.Move = movesPending.getItemAt(movesPending.length-1) as com.uralys.tribes.entities.Move;
-			var lastMoveX:int = Utils.getXFromCaseUID(lastMove.cellUID);
-			var lastMoveY:int = Utils.getYFromCaseUID(lastMove.cellUID);
+			var lastMoveX:int = Utils.getXFromCellUID(lastMove.cellUID);
+			var lastMoveY:int = Utils.getYFromCellUID(lastMove.cellUID);
 			
 			var distance:int = Math.abs(lastMoveX - Session.COORDINATE_X) + Math.abs(lastMoveY - Session.COORDINATE_Y);
 			

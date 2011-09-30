@@ -176,7 +176,7 @@ package com.uralys.tribes.entities
 		
 		//--------------------------------------------------------------//
 		
-		public function get unit(){
+		public function get unit():Unit{
 			if(army != null)
 				return army
 			else if(caravan != null)

@@ -43,16 +43,7 @@ package com.uralys.tribes.managers {
 
 		//============================================================================================//
 		
-		private var savePlayerResponder:CallResponder;
-		private var loadCellsResponder:CallResponder;
-
-		// -  ================================================================================
-		
-		public function GameManager()
-		{
-			savePlayerResponder = new CallResponder();
-			loadCellsResponder = new CallResponder();
-		}
+		public function GameManager(){}
 		
 		private function getGameWrapper():RemoteObject
 		{
@@ -570,15 +561,23 @@ package com.uralys.tribes.managers {
 				
 				trace("----");
 				trace("cellDeparture : " + cellDeparture.cellUID);
-				if(cellDeparture.challenger != null)
+				trace("timeToChangeUnit : " + cellDeparture.timeToChangeUnit);
+				trace("nextCellUID : " + cellDeparture.nextCellUID);
+				
+				if(cellDeparture.challenger != null){
 					trace("challengerUID : " + cellDeparture.challenger.playerUID);
-				trace("timeFromChallenging : " + cellDeparture.timeFromChallenging);
+					trace("timeFromChallenging : " + cellDeparture.timeFromChallenging);
+				}
+				
 				try{
 					var cellInSession:Cell = (Session.map[cellDeparture.x][cellDeparture.y] as Cell);
 					
 					if(cellInSession != null){
+						trace("found Cell in Session");
 						cellInSession.challenger = cellDeparture.challenger;
 						cellInSession.timeFromChallenging = cellDeparture.timeFromChallenging;
+						cellInSession.timeToChangeUnit = cellDeparture.timeToChangeUnit;
+						cellInSession.nextCellUID = cellDeparture.nextCellUID;
 						cellInSession.army = cellDeparture.army;
 						cellInSession.caravan = cellDeparture.caravan;
 					}
@@ -793,7 +792,7 @@ package com.uralys.tribes.managers {
 
 		public function savePlayer(player:Player):void{
 			var gameWrapper:RemoteObject = getGameWrapper();
-			savePlayerResponder.token = gameWrapper.savePlayer(player);
+			gameWrapper.savePlayer(player);
 		}
 
 		public function deleteUnit (unit:Unit):void
@@ -1070,8 +1069,8 @@ package com.uralys.tribes.managers {
 			Session.BOTTOM_LIMIT_LOADED	 = Utils.getYPixel(Session.firstCellY + Session.nbTilesByEdge) - Session.MAP_HEIGHT/2;
 			
 			var gameWrapper:RemoteObject = getGameWrapper();
-			loadCellsResponder.addEventListener("result", cellsLoaded);
-			loadCellsResponder.token = gameWrapper.loadCells(groups, refreshLandOwners);
+			gameWrapper.loadCells.addEventListener("result", cellsLoaded);
+			gameWrapper.loadCells(groups, refreshLandOwners);
 		}
 		
 		private function cellsLoaded(event:ResultEvent):void
@@ -1174,7 +1173,7 @@ package com.uralys.tribes.managers {
 				if(unit.type == 2){
 					for each(var city:City in Session.player.cities)
 					{
-						if(Utils.getXFromCaseUID(unit.currentCaseUID) == city.x && Utils.getYFromCaseUID(unit.currentCaseUID) == city.y){
+						if(Utils.getXFromCellUID(unit.currentCaseUID) == city.x && Utils.getYFromCellUID(unit.currentCaseUID) == city.y){
 							city.merchant = unit;
 							city.unitsToFeed += unit.size;
 							break;
@@ -1185,7 +1184,7 @@ package com.uralys.tribes.managers {
 				else if(unit.type == 1){
 					for each(var city:City in Session.player.cities)
 					{
-						if(Utils.getXFromCaseUID(unit.currentCaseUID) == city.x && Utils.getYFromCaseUID(unit.currentCaseUID) == city.y){
+						if(Utils.getXFromCellUID(unit.currentCaseUID) == city.x && Utils.getYFromCellUID(unit.currentCaseUID) == city.y){
 							city.army = unit;
 							city.unitsToFeed += unit.size;
 							break;
@@ -1202,48 +1201,57 @@ package com.uralys.tribes.managers {
 		public function refreshCell(cell:Cell):void
 		{
 			cell.pawn.cell = cell;
+			cell.pawn.timeTo = -1;
 			
 			refreshUnit(cell.army);	
 			refreshUnit(cell.caravan);	
 			
-			if(cell.challenger != null 
-				&& ((cell.army != null && cell.army.ownerStatus == Unit.PLAYER) 
-					|| (cell.caravan != null && cell.caravan.ownerStatus == Unit.PLAYER)))
+			if(cell.unit != null)
 			{
-				trace("challenger : set timeTo : " + cell.timeFromChallenging + Numbers.BASE_TIME_FOR_LAND_CONQUEST_MILLIS);
-				cell.pawn.status = Pawn.CONQUERING_LAND;
-				cell.pawn.timeTo = cell.timeFromChallenging + Numbers.BASE_TIME_FOR_LAND_CONQUEST_MILLIS;
+				var cellIsToListen:Boolean = false;
 				
-				cell.pawn.resetProgress();
-			}
-			else if(cell.unit != null){
-				cell.pawn.status = Pawn.CLASSIC;
-				cell.pawn.timeTo = cell.timeToChangeUnit;
+				if(cell.timeToChangeUnit > 0){
+					trace("move : set timeTo : " + cell.timeToChangeUnit);
+					cell.pawn.status = Pawn.CLASSIC;
+					cell.pawn.timeTo = cell.timeToChangeUnit;
+					cellIsToListen = true;
+				}
+				else if(cell.timeFromChallenging > 0){
+					trace("challenger : set timeTo : " + (cell.timeFromChallenging + Numbers.BASE_TIME_FOR_LAND_CONQUEST_MILLIS));
+					cell.pawn.status = Pawn.CONQUERING_LAND;
+					cell.pawn.timeTo = cell.timeFromChallenging + Numbers.BASE_TIME_FOR_LAND_CONQUEST_MILLIS;
+					cellIsToListen = true;
+				}
 				
-				
-				if(cell.unit.player.playerUID == Session.player.playerUID)
-					cell.pawn.resetProgress();
-				
-				if(cell.timeFromChallenging > 0)
+				if(cellIsToListen){
 					UnitMover.getInstance().listenTo(cell);
+				}
 			}
 		}
 
 		//===================================================================================//
 
-		
 		public function refreshCellFromServer(cell:Cell):void
 		{
+			trace("----------");
+			trace("refreshCellFromServer : " + cell.cellUID + " | " + cell.nextCellUID);
+			BoardDrawer.getInstance().resetCellDisplay(cell);
+			BoardDrawer.getInstance().resetCellDisplay(Utils.getCellInSession(cell.nextCellUID));
+			cell.pawn = null;
+			
 			var gameWrapper:RemoteObject = getGameWrapper();
-			loadCellsResponder.addEventListener("result", newCellsReceived);
-			loadCellsResponder.token = gameWrapper.getNewCells(cell);
+			gameWrapper.getNewCells.addEventListener("result", newCellsReceived);
+			gameWrapper.getNewCells(cell);
 		}
 		
-		private function newCellsReceived(result:ResultEvent):void 
+		private function newCellsReceived(event:ResultEvent):void 
 		{
-			var newCells:ArrayCollection = new ArrayCollection();
+			trace("----------");
+			trace("newCellsReceived");
+			var newCells:ArrayCollection = event.result as ArrayCollection;
 			
 			for each(var cell:Cell in newCells){
+				trace("cell : " + cell.cellUID);
 				refreshCellDisplay(cell);
 				Session.map[cell.x][cell.y] = cell;
 			}

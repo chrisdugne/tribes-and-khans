@@ -1235,6 +1235,7 @@ package com.uralys.tribes.managers {
 		{
 			trace("----------");
 			trace("refreshCellFromServer : " + cell.cellUID + " | " + cell.nextCellUID);
+			
 			BoardDrawer.getInstance().resetCellDisplay(cell);
 			BoardDrawer.getInstance().resetCellDisplay(Utils.getCellInSession(cell.nextCellUID));
 			cell.pawn = null;
@@ -1255,6 +1256,8 @@ package com.uralys.tribes.managers {
 				refreshCellDisplay(cell);
 				Session.map[cell.x][cell.y] = cell;
 			}
+			
+			Session.board.simulateClick(); // rafraichit l'information sur la case courante.
 		}
 		
 		//===================================================================================//

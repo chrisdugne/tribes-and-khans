@@ -276,6 +276,10 @@
 					onUnitClick();
 			}
 				
+			public function simulateClick():void{
+				mouseUp();
+			}
+			
 			protected function mouseUp(event:MouseEvent = null):void
 			{
 				mayDrag = false;

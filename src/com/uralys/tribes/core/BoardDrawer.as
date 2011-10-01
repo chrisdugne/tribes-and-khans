@@ -255,16 +255,14 @@ package com.uralys.tribes.core
 		{
 			trace("---");
 			try{
-				trace("boardDrawer refreshCellDisplay");
 				Session.board.pawnLayer.removeElement(cell.pawn);	
 			}
 			catch(e:Error){}
 			
 			var imageUnit:Image;
 			
-			trace("boardDrawer refreshCellDisplay ===> continue");
+			trace("boardDrawer refreshCellDisplay ===> " + cell.cellUID);
 			if(cell.army){
-				trace("cell.army : " + cell.army.ownerStatus);
 				imageUnit = new Image();
 				
 				switch(cell.army.ownerStatus){
@@ -280,7 +278,6 @@ package com.uralys.tribes.core
 				}
 			}
 			else if(cell.caravan){
-				trace("cell.caravan : " + cell.caravan.ownerStatus);
 				imageUnit = new Image();
 
 				switch(cell.caravan.ownerStatus){

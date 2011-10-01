@@ -17,11 +17,11 @@ package com.uralys.tribes.commons
 	
 		// temps de deplacement de base (pour une vitesse de base de 3 cases par heure)
 		[Bindable]
-		public static var BASE_TIME_PER_MOVE_MILLIS:int = Session.isLocal ? 1000*3 : 20*60*1000;
-//		public static var BASE_TIME_PER_MOVE_MILLIS:int = 20*60*1000;
+		//public static var BASE_TIME_PER_MOVE_MILLIS:int = Session.isLocal ? 1000*3 : 20*60*1000;
+		public static var BASE_TIME_PER_MOVE_MILLIS:int = 20*60*1000;
 		[Bindable]
-		public static var BASE_TIME_FOR_LAND_CONQUEST_MILLIS:int = Session.isLocal ? 2*1000 : 60*60*1000;
-//		public static var BASE_TIME_FOR_LAND_CONQUEST_MILLIS:int = 60*60*1000;
+		//public static var BASE_TIME_FOR_LAND_CONQUEST_MILLIS:int = Session.isLocal ? 2*1000 : 60*60*1000;
+		public static var BASE_TIME_FOR_LAND_CONQUEST_MILLIS:int = 60*60*1000;
 	
 		// une ville se construit en 12h
 		[Bindable]

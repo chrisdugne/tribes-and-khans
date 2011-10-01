@@ -158,8 +158,8 @@ package com.uralys.tribes.core
 				timeToWait = cell.timeToChangeUnit - new Date().getTime();
 				trace("listening cell.timeToChangeUnit " + cell.cellUID);
 			}
-			else if(cell.timeFromChallenging > 0){
-				timeToWait = cell.timeFromChallenging - new Date().getTime();
+			else if(cell.timeFromChallenging > 0){ 
+				timeToWait = cell.timeFromChallenging + Numbers.BASE_TIME_FOR_LAND_CONQUEST_MILLIS - new Date().getTime();
 				trace("listening cell.timeFromChallenging " + cell.cellUID);
 			}
 			else{
@@ -175,9 +175,11 @@ package com.uralys.tribes.core
 				
 				timers.put(t, cell);
 				
-				// affichage de la barre de progression temporelle du pion.
-				if(cell.unit.player.playerUID == Session.player.playerUID)
-					cell.pawn.resetProgress();
+				// on enleve la presence de la barre pour les pions qui ne sont pas les siens
+				if(cell.unit.player.playerUID != Session.player.playerUID)
+					cell.pawn.timeTo = -1;
+				
+				cell.pawn.resetProgress();
 			}
 			else
 				trace("timeToWait < 0");

@@ -205,7 +205,12 @@ public class MovesManager implements IMovesManager{
 		nextUnit.setUnitUID(nextUnit.getPlayer().getUralysUID()+"_"+Utils.generatePassword(3)+"_"+lastMove.getTimeFrom());
 
 		nextUnit.setBeginTime(lastMove.getTimeFrom());
-		nextUnit.setEndTime(-1);
+		
+		if(nextUnit.getSize() > 0)
+			nextUnit.setEndTime(-1);
+		else
+			nextUnit.setEndTime(nextUnit.getBeginTime()); // draw
+		
 		unit.setEndTime(lastMove.getTimeFrom());
 		unitMet.setEndTime(lastMove.getTimeFrom());
 		
@@ -296,7 +301,7 @@ public class MovesManager implements IMovesManager{
 			unitToReplace = getUnit(unit.getUnitMetUID(), dataContainer);
 			Unit unitNextToDelete = getUnit(unit.getUnitNextUID(), dataContainer);
 			
-			if(debug)Utils.print("found a unitToReplace, deleting the previous nextUnit : " + unitToReplace.getUnitMetUID());
+			if(debug)Utils.print("found a unitToReplace, deleting the previous nextUnit : " + unitToReplace.getUnitUID());
 			deleteUnit(unitNextToDelete);
 			
 			if(debug)Utils.print("deleting the messages");

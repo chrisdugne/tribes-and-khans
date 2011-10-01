@@ -349,14 +349,14 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			Collection<? extends CellDTO> cells = (Collection<? extends CellDTO>) query.execute(group);
 			
 			if(refreshLandOwners){
-				for(CellDTO _cell : cells)
+				for(CellDTO cell : cells)
 				{
-					if(_cell.getChallengerUID() != null)
+					System.out.println("cell : " + cell.getCellUID() + " | " + cell.getChallengerUID());
+					if(cell.getChallengerUID() != null)
 					{
-						if(now - _cell.getTimeFromChallenging() > Constants.LAND_TIME*60*1000)
+						if(now - cell.getTimeFromChallenging() > Constants.LAND_TIME*60*1000)
 						{
-							newLandOwner(_cell.getCellUID());
-							_cell.setChallengerUID(null);
+							cell = newLandOwner(cell.getCellUID());
 						}
 					}
 				}
@@ -369,24 +369,26 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		return result;
 	}
 
-	private void newLandOwner(String caseUID) 
+	private CellDTO newLandOwner(String cellUID) 
 	{
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
-		CellDTO _cell = pm.getObjectById(CellDTO.class, caseUID);
+		CellDTO cell = pm.getObjectById(CellDTO.class, cellUID);
 		
-		if(_cell.getLandOwnerUID() != null){
-			PlayerDTO owner = pm.getObjectById(PlayerDTO.class, _cell.getLandOwnerUID());
+		if(cell.getLandOwnerUID() != null){
+			PlayerDTO owner = pm.getObjectById(PlayerDTO.class, cell.getLandOwnerUID());
 			decreaseLandsCount(owner, pm);
 		}
 		
-		PlayerDTO challenger = pm.getObjectById(PlayerDTO.class, _cell.getChallengerUID());
+		PlayerDTO challenger = pm.getObjectById(PlayerDTO.class, cell.getChallengerUID());
 		increaseLandsCount(challenger, pm);
 		
-		_cell.setLandOwnerUID(_cell.getChallengerUID());
-		_cell.setChallengerUID(null);
-		_cell.setTimeFromChallenging(-1);
+		cell.setLandOwnerUID(cell.getChallengerUID());
+		cell.setChallengerUID(null);
+		cell.setTimeFromChallenging(-1);
 		
 		pm.close();
+		
+		return cell;
 	}
 	
 	//==================================================================================================//
@@ -406,8 +408,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			{
 				if(now - cell.getTimeFromChallenging() > Constants.LAND_TIME*60*1000)
 				{
-					newLandOwner(cell.getCellUID());
-					cell.setChallengerUID(null);
+					cell = newLandOwner(cell.getCellUID());
 				}
 			}
 			
@@ -626,6 +627,8 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 
 		unitDTO.setCaseUIDExpectedForLand(unit.getCellUIDExpectedForLand());
 		unitDTO.setUnitMetUID(unit.getUnitMetUID());
+		unitDTO.setUnitNextUID(unit.getUnitNextUID());
+		unitDTO.setMessageUID(unit.getMessageUID());
 		unitDTO.setBeginTime(unit.getBeginTime());
 		unitDTO.setEndTime(unit.getEndTime());
 

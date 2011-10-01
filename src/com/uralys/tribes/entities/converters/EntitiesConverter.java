@@ -244,26 +244,26 @@ public class EntitiesConverter {
 		if (cellDTO == null)
 			return null;
 
-		Cell _cell = new Cell();
+		Cell cell = new Cell();
 
-		_cell.setCellUID(cellDTO.getCellUID());
-		_cell.setX(cellDTO.getX());
-		_cell.setGroup(cellDTO.getGroupCell());
-		_cell.setY(cellDTO.getY());
-		_cell.setType(cellDTO.getType());
+		cell.setCellUID(cellDTO.getCellUID());
+		cell.setX(cellDTO.getX());
+		cell.setGroup(cellDTO.getGroupCell());
+		cell.setY(cellDTO.getY());
+		cell.setType(cellDTO.getType());
 
-		_cell.setCity(convertCityDTO(cellDTO.getCity(), false));
+		cell.setCity(convertCityDTO(cellDTO.getCity(), false));
 
-		_cell.setLandOwner(convertPlayerDTO(cellDTO.getLandOwner(), false));
-		_cell.setChallenger(convertPlayerDTO(cellDTO.getChallenger(), false));
-		_cell.setTimeFromChallenging(cellDTO.getTimeFromChallenging());
+		cell.setLandOwner(convertPlayerDTO(cellDTO.getLandOwner(), false));
+		cell.setChallenger(convertPlayerDTO(cellDTO.getChallenger(), false));
+		cell.setTimeFromChallenging(cellDTO.getTimeFromChallenging());
 
 		// -----------------------------------------------------------------------------------//
 
-		_cell.setArmy(null);
-		_cell.setCaravan(null);
-		_cell.setTimeToChangeUnit(-1);
-		_cell.setNextCellUID(null);
+		cell.setArmy(null);
+		cell.setCaravan(null);
+		cell.setTimeToChangeUnit(-1);
+		cell.setNextCellUID(null);
 		
 		long now = new Date().getTime();
 		
@@ -271,27 +271,31 @@ public class EntitiesConverter {
 		{
 			if(move.getTimeFrom() <= now && (move.getTimeTo() > now || move.getTimeTo() == -1))
 			{
-				switch(move.getUnit().getType()){
+				UnitDTO unit = move.getUnit();
+				if(unit.getEndTime() != -1 && unit.getEndTime() < new Date().getTime())
+					continue; // on ne prend pas cette unite, puisqu'elle est perimee (par exemple dans le cas d'un gathering). Elle sera detruite au prochain getPlayer
+				
+				switch(unit.getType()){
 					case Unit.ARMY :
-						_cell.setArmy(convertUnitDTO(move.getUnit()));
+						cell.setArmy(convertUnitDTO(unit));
 						break;
 					case Unit.CARAVAN :
-						_cell.setCaravan(convertUnitDTO(move.getUnit()));
+						cell.setCaravan(convertUnitDTO(unit));
 						break;
 				}
 				
 				// on va ecouter la premiere des unitŽs qui va se dŽplacer 
-				if(_cell.getTimeToChangeUnit() == -1 || _cell.getTimeToChangeUnit() > move.getTimeTo())
+				if(move.getTimeTo() != -1 && cell.getTimeToChangeUnit() == -1 || cell.getTimeToChangeUnit() > move.getTimeTo())
 				{
-					_cell.setTimeToChangeUnit(move.getTimeTo());
-					_cell.setNextCellUID(move.getNextMove() != null ? move.getNextMove().getCellUID() : null);
+					cell.setTimeToChangeUnit(move.getTimeTo());
+					cell.setNextCellUID(move.getNextMove() != null ? move.getNextMove().getCellUID() : null);
 				}
 			}
 		}
 
 		// -----------------------------------------------------------------------------------//
 
-		return _cell;
+		return cell;
 	}
 
 	// -----------------------------------------------------------------------------------//

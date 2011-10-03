@@ -1144,6 +1144,7 @@ package com.uralys.tribes.managers {
 			Session.board.placeBoard(Session.CENTER_X, Session.CENTER_Y, false);
 			
 			// on affiche tout, et on affecte les images aux pions des cases
+			//FlexGlobals.topLevelApplication.callLater(BoardDrawer.getInstance().refreshDisplay);
 			BoardDrawer.getInstance().refreshDisplay();
 			
 			// on supprime maintenant tous les Session.movesToDelete

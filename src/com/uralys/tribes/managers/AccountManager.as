@@ -101,7 +101,7 @@ package com.uralys.tribes.managers {
 		
 		
 		private function resultLogin(event:ResultEvent):void
-		{
+		{ 
 			Session.uralysProfile = event.result as UralysProfile;
 			Session.LANGUAGE = Session.uralysProfile.language;
 			

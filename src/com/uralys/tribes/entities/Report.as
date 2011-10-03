@@ -6,43 +6,63 @@ package com.uralys.tribes.entities
 	[RemoteClass(alias="com.uralys.tribes.entities.Report")]
 	public class Report
 	{	
-		
-		public function get reportUID():String {
-			return _reportUID;
+		private var _reportType:int;
+		private var _cellUID:String;
+		private var _unit1:UnitReport;
+		private var _unit2:UnitReport;
+		private var _nextUnit:UnitReport;
+
+		public function get reportType():int
+		{
+			return _reportType;
 		}
-		
-		public function set reportUID(o:String):void {
-			_reportUID = o;
+
+		public function set reportType(value:int):void
+		{
+			_reportType = value;
 		}
-		
-		public function get playerUID():String {
-			return _playerUID;
+
+		public function get unit1():UnitReport
+		{
+			return _unit1;
 		}
-		
-		public function set playerUID(o:String):void {
-			_playerUID = o;
+
+		public function set unit1(value:UnitReport):void
+		{
+			_unit1 = value;
 		}
-		
-		public function get status():int {
-			return _status;
+
+		public function get nextUnit():UnitReport
+		{
+			return _nextUnit;
 		}
-		
-		public function set status(o:int):void {
-			_status = o;
+
+		public function set nextUnit(value:UnitReport):void
+		{
+			_nextUnit = value;
 		}
-		
-		public function get report():String {
-			return _report;
+
+		public function get unit2():UnitReport
+		{
+			return _unit2;
 		}
-		
-		public function set report(o:String):void {
-			_report = o;
+
+		public function set unit2(value:UnitReport):void
+		{
+			_unit2 = value;
 		}
-		
-		protected var _reportUID:String;
-		protected var _playerUID:String;
-		protected var _status:int;
-		protected var _report:String;
+
+		public function get cellUID():String
+		{
+			return _cellUID;
+		}
+
+		public function set cellUID(value:String):void
+		{
+			_cellUID = value;
+		}
+
 
 	}
+		
 }

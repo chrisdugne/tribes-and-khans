@@ -22,6 +22,8 @@ package com.uralys.tribes.entities
 		protected var _senderName:String;
 		protected var _status:int;
 		protected var _time:Number;
+
+		protected var _report:Report;
 		
 		//--------------------------------------------------------------//
 		
@@ -73,6 +75,17 @@ package com.uralys.tribes.entities
 		public function set time(o:Number):void {
 			_time = o;
 		}
+
+		public function get report():Report
+		{
+			return _report;
+		}
+
+		public function set report(value:Report):void
+		{
+			_report = value;
+		}
+
 		
 		//-------------------------------------------------//
 		

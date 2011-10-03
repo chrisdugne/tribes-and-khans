@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
 				xmlns:s="library://ns.adobe.com/flex/spark" 
 				xmlns:mx="library://ns.adobe.com/flex/mx" 
-				xmlns:renderers="com.uralys.tribes.renderers.*"
-				paddingTop="10">
+				xmlns:renderers="com.uralys.tribes.renderers.*">
+	
+	<fx:Declarations>
+		<s:State name="classic"/>	
+		<s:State name="invitation"/>	
+		<s:State name="report"/>	
+	</fx:Declarations>
+	
 	<fx:Script>
 		<![CDATA[
 			//-------------------------------------------------//
@@ -18,40 +24,64 @@
 			
 			//-------------------------------------------------//
 			
-			[Bindable] public var message:Message;
+ 			private var _message:Message;
 			
 			//-------------------------------------------------//
 			
 			public var refuse:Function;
 			public var accept:Function;
+
+			[Bindable]
+			public function get message():Message
+			{
+				return _message;
+			}
+
+			public function set message(value:Message):void
+			{
+				_message = value;
+				
+				if(Utils.isClassicMessage(message))
+					currentState = "classic";
+				else if(Utils.isInviteMessage(message))
+					currentState = "invitation";
+				else if(Utils.isReportMessage(message))
+					currentState = "report";
+				
+				trace(currentState);
+			}
+
 		
 			//-------------------------------------------------//
 
 		]]>
 	</fx:Script>
-	<s:Label text="{message.date}"
-			 color="#ffffff"/>
-	<s:Spacer height="30"/>
 	
 	<!-- classic message -->
-	<s:Scroller height="290"
-				includeInLayout="{Utils.isClassicMessage(message)}">
-		<s:Group width="100%" height="100%">
-			<s:Label minWidth="250"
-					 maxWidth="300"
-					 width="90%"
-					 text="{message.content}"
-					 visible="{Utils.isClassicMessage(message)}"
-					 color="#ffffff"/>
-		</s:Group>
-	</s:Scroller>
+	<s:VGroup width="100%" height="100%"
+		paddingTop="10"
+		includeIn="classic">
+
+		<s:Label text="{message.date}" color="#ffffff"/>
+		<s:Spacer height="30"/>
+		
+		<s:Scroller height="290">
+			<s:Group width="100%" height="100%">
+				<s:Label minWidth="250"
+						 maxWidth="300"
+						 width="90%"
+						 text="{message.content}"
+						 visible="{Utils.isClassicMessage(message)}"
+						 color="#ffffff"/>
+			</s:Group>
+		</s:Scroller>
+	</s:VGroup>
 	
 	<!-- ally invitation -->
 	<s:VGroup width="100%"
 			  height="100%"
 			  horizontalAlign="center"
-			  visible="{Utils.isInviteMessage(message)}"
-			  includeInLayout="{Utils.isInviteMessage(message)}">
+			  includeIn="invitation">
 		
 		<s:Label text="{Translations.JOIN_ALLY.getItemAt(Session.LANGUAGE)}"
 				 color="#ffffff"/>
@@ -73,4 +103,11 @@
 					  skinClass="com.uralys.tribes.skins.CustomButtonSkin"/>
 		</s:HGroup>
 	</s:VGroup>
-</s:VGroup>
+	
+	<!-- Report -->
+	<renderers:ReportRenderer
+			width="100%"
+			height="100%"
+			report="{message.report}"
+			includeIn="report"/>
+</s:Group>

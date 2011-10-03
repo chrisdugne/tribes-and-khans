@@ -343,16 +343,20 @@ public class Utils
 		
 		public static function isClassicMessage(message:Message):Boolean
 		{
-			if(message.content.indexOf("____allyInvitation") != -1)
-				return false;
-			
-			return true;
+			return !isReportMessage(message) && !isInviteMessage(message);
 		}
 
 		public static function isInviteMessage(message:Message):Boolean
 		{
-			return message.content.indexOf("____allyInvitation") != -1;
+			return !isReportMessage(message) && message.content.indexOf("____allyInvitation") != -1;
 		}
+
+		public static function isReportMessage(message:Message):Boolean
+		{
+			return message.report != null; 
+		}
+
+		//----------------------------------------------------------------------------------------------------
 
 		public static function createDummyAlly(content:String):Ally{
 			return new Ally(content);

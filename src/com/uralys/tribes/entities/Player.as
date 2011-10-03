@@ -29,7 +29,13 @@ package com.uralys.tribes.entities
 		
 		//-------------------------------------------------------//
 
-		public function Player(){}
+		public function Player(playerUID:String = null, playerName:String = null)
+		{
+			if(playerUID != null)
+				this.uralysUID = playerUID;
+			if(playerName != null)
+				this.name = playerName;
+		}
 
 		//-------------------------------------------------------//
 		

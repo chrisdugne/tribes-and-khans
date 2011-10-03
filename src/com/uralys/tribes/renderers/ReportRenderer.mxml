@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
+				xmlns:s="library://ns.adobe.com/flex/spark" 
+				xmlns:mx="library://ns.adobe.com/flex/mx" 
+				xmlns:renderers="com.uralys.tribes.renderers.*"
+				paddingTop="10">
+	<fx:Script>
+		<![CDATA[
+			import com.uralys.tribes.commons.Numbers;
+			import com.uralys.tribes.commons.Session;
+			import com.uralys.tribes.commons.Translations;
+			import com.uralys.tribes.entities.Player;
+			import com.uralys.tribes.entities.Report;
+			import com.uralys.tribes.entities.Unit;
+			
+			//-------------------------------------------------//
+			
+ 			[Bindable] public var report:Report;
+			
+			//-------------------------------------------------//
+
+
+		]]>
+	</fx:Script>
+	<s:Label text="{report.reportType == Numbers.REPORT_GROUND_FIGHT ? (Translations.CONFLICT.getItemAt(Session.LANGUAGE) as String) : (Translations.GATHERING.getItemAt(Session.LANGUAGE) as String)} {report.reportType == Numbers.REPORT_GROUND_GATHERING ? '' : (' : ' + (report.nextUnit.ownerUID == Session.player.playerUID) ? (Translations.VICTORY.getItemAt(Session.LANGUAGE) as String) : (Translations.DEFEAT.getItemAt(Session.LANGUAGE) as String))}"
+			 color="#ffffff"/>
+	<s:Label text="Cell : {report.cellUID}"
+			 color="#ffffff"/>
+	<s:HGroup>
+		<renderers:PlayerName player="{new Player(report.unit1.ownerUID, report.unit1.ownerName)}"/>
+	</s:HGroup>
+	<s:HGroup>
+		<s:Image source="{report.unit1.type == Unit.ARMY ? ImageContainer.WARRIOR1 : ImageContainer.MERCHANTS}"/>
+		<s:Label text="{report.unit1.size}" color="#ffffff"/>
+		<s:Image source="{ImageContainer.BOW}"/>
+		<s:Label text="{report.unit1.bows}" color="#ffffff"/>
+		<s:Image source="{ImageContainer.SWORD}"/>
+		<s:Label text="{report.unit1.swords}" color="#ffffff"/>
+		<s:Image source="{ImageContainer.ARMOR}"/>
+		<s:Label text="{report.unit1.armors}" color="#ffffff"/>
+		<s:Label text="{report.unit1.value} pts" color="#ffffff"/>
+	</s:HGroup>
+	<s:HGroup>
+		<s:Image source="{ImageContainer.WHEAT}"/>
+		<s:Label text="{report.unit1.wheat}" color="#ffffff"/>
+		<s:Image source="{ImageContainer.WOOD}"/>
+		<s:Label text="{report.unit1.wood}" color="#ffffff"/>
+		<s:Image source="{ImageContainer.IRON}"/>
+		<s:Label text="{report.unit1.iron}" color="#ffffff"/>
+		<s:Image source="{ImageContainer.GOLD}"/>
+		<s:Label text="{report.unit1.gold}" color="#ffffff"/>
+	</s:HGroup>
+	
+	<s:HGroup>
+		<renderers:PlayerName player="{new Player(report.unit2.ownerUID, report.unit2.ownerName)}"/>
+	</s:HGroup>
+	<s:HGroup>
+		<s:Image source="{report.unit2.type == Unit.ARMY ? ImageContainer.WARRIOR1 : ImageContainer.MERCHANTS}"/>
+		<s:Label text="{report.unit2.size}" color="#ffffff"/>
+		<s:Image source="{ImageContainer.BOW}"/>
+		<s:Label text="{report.unit2.bows}" color="#ffffff"/>
+		<s:Image source="{ImageContainer.SWORD}"/>
+		<s:Label text="{report.unit2.swords}" color="#ffffff"/>
+		<s:Image source="{ImageContainer.ARMOR}"/>
+		<s:Label text="{report.unit2.armors}" color="#ffffff"/>
+		<s:Label text="{report.unit2.value} pts" color="#ffffff"/>
+	</s:HGroup>
+	<s:HGroup>
+		<s:Image source="{ImageContainer.WHEAT}"/>
+		<s:Label text="{report.unit2.wheat}" color="#ffffff"/>
+		<s:Image source="{ImageContainer.WOOD}"/>
+		<s:Label text="{report.unit2.wood}" color="#ffffff"/>
+		<s:Image source="{ImageContainer.IRON}"/>
+		<s:Label text="{report.unit2.iron}" color="#ffffff"/>
+		<s:Image source="{ImageContainer.GOLD}"/>
+		<s:Label text="{report.unit2.gold}" color="#ffffff"/>
+	</s:HGroup>
+	
+	<s:HGroup>
+		<s:Label text="{report.reportType == Numbers.REPORT_GROUND_FIGHT ? Translations.WINNER.getItemAt(Session.LANGUAGE) : Translations.OWNER.getItemAt(Session.LANGUAGE)} : "  color="#ffffff"/>
+		<renderers:PlayerName player="{new Player(report.nextUnit.ownerUID, report.nextUnit.ownerName)}"/>
+	</s:HGroup>
+	<s:HGroup>
+		<s:Image source="{report.nextUnit.type == Unit.ARMY ? ImageContainer.WARRIOR1 : ImageContainer.MERCHANTS}"/>
+		<s:Label text="{report.nextUnit.size}" color="#ffffff"/>
+		<s:Image source="{ImageContainer.BOW}"/>
+		<s:Label text="{report.nextUnit.bows}" color="#ffffff"/>
+		<s:Image source="{ImageContainer.SWORD}"/>
+		<s:Label text="{report.nextUnit.swords}" color="#ffffff"/>
+		<s:Image source="{ImageContainer.ARMOR}"/>
+		<s:Label text="{report.nextUnit.armors}" color="#ffffff"/>
+		<s:Label text="{report.nextUnit.value} pts" color="#ffffff"/>
+	</s:HGroup>
+	<s:HGroup>
+		<s:Image source="{ImageContainer.WHEAT}"/>
+		<s:Label text="{report.nextUnit.wheat}" color="#ffffff"/>
+		<s:Image source="{ImageContainer.WOOD}"/>
+		<s:Label text="{report.nextUnit.wood}" color="#ffffff"/>
+		<s:Image source="{ImageContainer.IRON}"/>
+		<s:Label text="{report.nextUnit.iron}" color="#ffffff"/>
+		<s:Image source="{ImageContainer.GOLD}"/>
+		<s:Label text="{report.nextUnit.gold}" color="#ffffff"/>
+	</s:HGroup>
+	
+</s:VGroup>

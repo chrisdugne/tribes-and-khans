@@ -813,6 +813,30 @@ public class Translations{
 									"Conflict",
 									"Conflict"]);
 	
+	[Bindable]
+	public static var GATHERING:ArrayCollection = new ArrayCollection(
+									["Rassemblement",
+									"Gathering",
+									"Gathering"]);
+	
+	[Bindable]
+	public static var RESULT:ArrayCollection = new ArrayCollection(
+									["Résultat",
+									"Result",
+									"Result"]);
+	
+	[Bindable]
+	public static var WINNER:ArrayCollection = new ArrayCollection(
+									["Vainqueur",
+									"Winner",
+									"Winner"]);
+	
+	[Bindable]
+	public static var OWNER:ArrayCollection = new ArrayCollection(
+									["Chef",
+									"Owner",
+									"Owner"]);
+	
 	//-----------------------------------------------------------------------------------//
 
 	[Bindable]

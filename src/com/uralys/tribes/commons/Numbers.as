@@ -110,7 +110,11 @@ package com.uralys.tribes.commons
 		[Bindable] public static var LAKE:int = 3;
 		[Bindable] public static var ROCK:int = 4;
 		
-	
+		//==================================================================================================//
+		
+		[Bindable] public static var REPORT_GROUND_FIGHT:int = 1;
+		[Bindable] public static var REPORT_GROUND_GATHERING:int = 2;
+		
 		//==================================================================================================//
 		// Item data
 		

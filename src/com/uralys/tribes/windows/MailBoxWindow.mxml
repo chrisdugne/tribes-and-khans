@@ -225,10 +225,11 @@
 						  verticalAlign="middle">
 					<s:List dataProvider="{Session.player.newMessages}"
 							id="newMessagesList"
-							height="90%"
+							height="400"
 							width="40%"
 							selectionColor="#000101"
 							rollOverColor="#000101"
+							visible="{Session.player.newMessages.length &gt; 0}"
 							itemRenderer="com.uralys.tribes.renderers.MessageRenderer"
 							skinClass="com.uralys.tribes.skins.CustomListSkin"/>
 					<s:VGroup width="60%" height="70%"
@@ -247,11 +248,12 @@
 						  verticalAlign="middle">
 					<s:List dataProvider="{Session.player.readMessages}"
 							id="readMessagesList"
-							height="90%"
+							height="400"
 							width="40%"
 							selectionColor="#000101"
 							rollOverColor="#000101"
 							itemRenderer="com.uralys.tribes.renderers.MessageRenderer"
+							visible="{Session.player.readMessages.length &gt; 0}"
 							skinClass="com.uralys.tribes.skins.CustomListSkin"/>
 					<s:VGroup width="60%" height="90%"
 							  horizontalAlign="center"
@@ -284,11 +286,12 @@
 						  verticalAlign="middle">
 					<s:List dataProvider="{Session.player.archivedMessages}"
 							id="archivedMessagesList"
-							height="90%"
+							height="400"
 							width="40%"
 							selectionColor="#000101"
 							rollOverColor="#000101"
 							itemRenderer="com.uralys.tribes.renderers.MessageRenderer"
+							visible="{Session.player.archivedMessages.length &gt; 0}"
 							skinClass="com.uralys.tribes.skins.CustomListSkin"/>
 					<s:VGroup width="60%" height="70%"
 							  horizontalAlign="center"

@@ -10,7 +10,6 @@ public class Move {
 	private long timeFrom;
 	private long timeTo;
 	private String unitUID;
-	private boolean hidden;
 	
 	//-----------------------------------------------------------------------------------//
 
@@ -54,12 +53,6 @@ public class Move {
 	}
 	public void setUnitUID(String unitUID) {
 		this.unitUID = unitUID;
-	}
-	public boolean isHidden() {
-		return hidden;
-	}
-	public void setHidden(boolean hidden) {
-		this.hidden = hidden;
 	}
 	
 	//-----------------------------------------------------------------------------------//

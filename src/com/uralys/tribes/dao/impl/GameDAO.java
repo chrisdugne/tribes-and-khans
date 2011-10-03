@@ -20,6 +20,7 @@ import com.uralys.tribes.entities.City;
 import com.uralys.tribes.entities.Message;
 import com.uralys.tribes.entities.Move;
 import com.uralys.tribes.entities.Player;
+import com.uralys.tribes.entities.Report;
 import com.uralys.tribes.entities.Stock;
 import com.uralys.tribes.entities.Unit;
 import com.uralys.tribes.entities.dto.AllyDTO;
@@ -351,7 +352,6 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			if(refreshLandOwners){
 				for(CellDTO cell : cells)
 				{
-					System.out.println("cell : " + cell.getCellUID() + " | " + cell.getChallengerUID());
 					if(cell.getChallengerUID() != null)
 					{
 						if(now - cell.getTimeFromChallenging() > Constants.LAND_TIME*60*1000)
@@ -718,17 +718,6 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		pm.close();
 	}
 	
-
-	public void setHiddenForMove(String moveUID, boolean hidden) {
-
-		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
-		MoveDTO moveDTO = pm.getObjectById(MoveDTO.class, moveUID);
-		
-		moveDTO.setHidden(hidden);
-		
-		pm.close();
-	}
-	
 	public void setTimeToForMove(String moveUID, long timeTo) 
 	{
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
@@ -800,20 +789,6 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 
 	//========================================================================================//
 
-	public void setNewGatheringForMoveAndDeletePreviousGathering(String moveUID, String gatheringUID)
-	{
-//		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
-//		String uid = moveUID.contains("NEW") ? moveUID.substring(4) : moveUID;
-//		MoveDTO moveDTO = pm.getObjectById(MoveDTO.class, uid);
-//
-//		GatheringDTO previousGatheringDTO = pm.getObjectById(GatheringDTO.class, moveDTO.getGatheringUID());
-//		pm.deletePersistent(previousGatheringDTO);
-//
-//		moveDTO.setGatheringUID(gatheringUID);
-//		
-//		pm.close();
-	}
-	
 	public String createMove(Move move, String nextMoveUID) 
 	{
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
@@ -1086,20 +1061,11 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 
 	//------------------------------------------------------------------------------//
 	
-	public String sendMessage(String senderUID, String recipientUID, String message, long time)
+	public String sendReport(Report report, String recipientUID, long time)
 	{
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		PlayerDTO recepientDTO = pm.getObjectById(PlayerDTO.class, recipientUID);
 
-		String senderName;
-		if(senderUID.equals("uralys")){
-			senderName = senderUID;
-		}
-		else{
-			PlayerDTO senderDTO = pm.getObjectById(PlayerDTO.class, senderUID);
-			senderName = senderDTO.getName();
-		}
-		
 		MessageDTO messageDTO = new MessageDTO();
 		
 		String messageUID = Utils.generateUID();
@@ -1108,13 +1074,99 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		messageDTO.setKey(KeyFactory.keyToString(key));
 		messageDTO.setMessageUID(messageUID);
 		
+		messageDTO.setStatus(Message.UNREAD);
+		
+		messageDTO.setSenderUID("uralys");
+		messageDTO.setSenderName("uralys");
+		
+		messageDTO.setTime(time);
+		messageDTO.setReportCellUID(report.getCellUID());
+		
+		messageDTO.setReport(true);
+		messageDTO.setReportType(report.getReportType());
+		
+		messageDTO.setUnit1_unitUID(report.getUnit1().getUnitUID());
+		messageDTO.setUnit1_ownerUID(report.getUnit1().getOwnerUID());
+		messageDTO.setUnit1_ownerName(report.getUnit1().getOwnerName());
+		messageDTO.setUnit1_size(report.getUnit1().getSize());
+		messageDTO.setUnit1_type(report.getUnit1().getType());
+		messageDTO.setUnit1_bows(report.getUnit1().getBows());
+		messageDTO.setUnit1_swords(report.getUnit1().getSwords());
+		messageDTO.setUnit1_armors(report.getUnit1().getArmors());
+		messageDTO.setUnit1_value(report.getUnit1().getValue());
+
+		messageDTO.setUnit1_wheat(report.getUnit1().getWheat());
+		messageDTO.setUnit1_wood(report.getUnit1().getWood());
+		messageDTO.setUnit1_iron(report.getUnit1().getIron());
+		messageDTO.setUnit1_gold(report.getUnit1().getGold());
+		
+		messageDTO.setUnit1_attackACity(report.getUnit1().isDefendACity());
+		messageDTO.setUnit1_defendACity(report.getUnit1().isAttackACity());
+
+
+		messageDTO.setUnit2_unitUID(report.getUnit2().getUnitUID());
+		messageDTO.setUnit2_ownerUID(report.getUnit2().getOwnerUID());
+		messageDTO.setUnit2_ownerName(report.getUnit2().getOwnerName());
+		messageDTO.setUnit2_size(report.getUnit2().getSize());
+		messageDTO.setUnit2_type(report.getUnit2().getType());
+		messageDTO.setUnit2_bows(report.getUnit2().getBows());
+		messageDTO.setUnit2_swords(report.getUnit2().getSwords());
+		messageDTO.setUnit2_armors(report.getUnit2().getArmors());
+		messageDTO.setUnit2_value(report.getUnit2().getValue());
+
+		messageDTO.setUnit2_wheat(report.getUnit2().getWheat());
+		messageDTO.setUnit2_wood(report.getUnit2().getWood());
+		messageDTO.setUnit2_iron(report.getUnit2().getIron());
+		messageDTO.setUnit2_gold(report.getUnit2().getGold());
+		
+		messageDTO.setNextUnit_unitUID(report.getNextUnit().getUnitUID());
+		messageDTO.setNextUnit_ownerUID(report.getNextUnit().getOwnerUID());
+		messageDTO.setNextUnit_ownerName(report.getNextUnit().getOwnerName());
+		messageDTO.setNextUnit_size(report.getNextUnit().getSize());
+		messageDTO.setNextUnit_type(report.getUnit1().getType());
+		messageDTO.setNextUnit_bows(report.getNextUnit().getBows());
+		messageDTO.setNextUnit_swords(report.getNextUnit().getSwords());
+		messageDTO.setNextUnit_armors(report.getNextUnit().getArmors());
+		messageDTO.setNextUnit_value(report.getNextUnit().getValue());
+		
+		messageDTO.setNextUnit_wheat(report.getNextUnit().getWheat());
+		messageDTO.setNextUnit_wood(report.getNextUnit().getWood());
+		messageDTO.setNextUnit_iron(report.getNextUnit().getIron());
+		messageDTO.setNextUnit_gold(report.getNextUnit().getGold());
+		
+		recepientDTO.getMessageUIDs().add(messageUID);
+		
+		pm.makePersistent(messageDTO);
+		pm.close();
+		
+		return messageUID;
+	}
+	
+	
+	public String sendMessage(String senderUID, String recipientUID, String message)
+	{
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		PlayerDTO recepientDTO = pm.getObjectById(PlayerDTO.class, recipientUID);
+
+		PlayerDTO senderDTO = pm.getObjectById(PlayerDTO.class, senderUID);
+		String senderName = senderDTO.getName();
+		
+		MessageDTO messageDTO = new MessageDTO();
+		
+		String messageUID = Utils.generateUID();
+		Key key = KeyFactory.createKey(MessageDTO.class.getSimpleName(), messageUID);
+		
+		messageDTO.setKey(KeyFactory.keyToString(key));
+		messageDTO.setMessageUID(messageUID);
+
+		messageDTO.setReport(false);
 		messageDTO.setContent(new Text(message));
 		messageDTO.setStatus(Message.UNREAD);
 		
 		messageDTO.setSenderUID(senderUID);
 		messageDTO.setSenderName(senderName);
 		
-		messageDTO.setTime(time == -1 ? new Date().getTime() : time);
+		messageDTO.setTime(new Date().getTime());
 		
 		recepientDTO.getMessageUIDs().add(messageUID);
 		
@@ -1165,7 +1217,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		player.getMessageUIDs().removeAll(messageUIDs);
 		
 		for(MessageDTO message : messages){
-			if(message.getContent().getValue().toString().contains("____allyInvitation")){
+			if(!message.isReport() && message.getContent().getValue().toString().contains("____allyInvitation")){
 				AllyDTO ally = pm.getObjectById(AllyDTO.class, Utils.getAllyUID(message.getContent().toString()));
 				ally.getInvitedUIDs().remove(uralysUID);
 			}
@@ -1216,7 +1268,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		AllyDTO allyDTO = pm.getObjectById(AllyDTO.class, allyUID);
 		
 		allyDTO.getInvitedUIDs().add(uralysUID);
-		sendMessage(allyDTO.getPlayerUIDs().get(0), uralysUID, inviteInAllyMessage, -1);
+		sendMessage(allyDTO.getPlayerUIDs().get(0), uralysUID, inviteInAllyMessage);
 		
 		pm.close();
 	}

@@ -381,7 +381,7 @@ public class GameManager implements IGameManager {
 	//==================================================================================================//
 
 	public void sendMessage(String senderUID, String recipientUID, String message){
-		gameDao.sendMessage(senderUID, recipientUID, message, -1);
+		gameDao.sendMessage(senderUID, recipientUID, message);
 	}
 
 	public void markAsRead(List<String> messageUIDs) {

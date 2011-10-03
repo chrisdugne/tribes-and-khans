@@ -16,9 +16,17 @@ public class Message {
 	private String senderName;
 	private int status;
 	private long time;
+	
+	private Report report;
 
 	//-----------------------------------------------------------------------------------//
 
+	public Report getReport() {
+		return report;
+	}
+	public void setReport(Report report) {
+		this.report = report;
+	}
 	public String getMessageUID() {
 		return messageUID;
 	}

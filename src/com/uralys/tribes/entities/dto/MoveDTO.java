@@ -28,7 +28,6 @@ public class MoveDTO {
 	@Persistent private long timeTo;
 	@Persistent private String unitUID;
 	@Persistent private String nextMoveUID;
-	@Persistent private boolean hidden;
 
 	//-----------------------------------------------------------------------------------//
 
@@ -73,12 +72,6 @@ public class MoveDTO {
 	}
 	public void setNextMoveUID(String nextMoveUID) {
 		this.nextMoveUID = nextMoveUID;
-	}
-	public boolean isHidden() {
-		return hidden;
-	}
-	public void setHidden(boolean hidden) {
-		this.hidden = hidden;
 	}
 
 	//-----------------------------------------------------------------------------------//

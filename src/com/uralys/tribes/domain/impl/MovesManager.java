@@ -9,6 +9,7 @@ import com.uralys.tribes.domain.IMovesManager;
 import com.uralys.tribes.entities.Move;
 import com.uralys.tribes.entities.MoveResult;
 import com.uralys.tribes.entities.Player;
+import com.uralys.tribes.entities.Report;
 import com.uralys.tribes.entities.Unit;
 import com.uralys.tribes.entities.converters.EntitiesConverter;
 import com.uralys.tribes.entities.dto.AllyDTO;
@@ -43,6 +44,8 @@ public class MovesManager implements IMovesManager{
 	{
 		if(debug)Utils.print("--------------------");
 		if(debug)Utils.print("refreshUnitMoves");
+		if(debug)Utils.print("unit : " + unit.getUnitUID());
+		if(debug)Utils.print("player : " + unit.getPlayer().getUralysUID());
 
 		//-------------------------------------------------------//
 		// - 0 : init des donnees pour le calcul
@@ -112,7 +115,7 @@ public class MovesManager implements IMovesManager{
 		//--------------------------------------------------------------//
 		// - 7 : on replace l'ancienne unitMet si elle existait, et qu'elle est differente de la nouvelle (sinon on loop sans stop)
 
-		if(unitToReplace != null && !unitToReplace.getUnitUID().equals(moveMet.getUnitUID())){
+		if(moveMet != null && unitToReplace != null && !unitToReplace.getUnitUID().equals(moveMet.getUnitUID())){
 			if(debug)Utils.print("--------------------------------");
 			if(debug)if(debug)	Utils.print(" 7 : replace previous unitMet");
 			
@@ -184,7 +187,7 @@ public class MovesManager implements IMovesManager{
 		
 		if(isGathering(unit, unitMet)){
 			if(debug)Utils.print("gathering");
-			nextUnitAndReport = createNextUnitFromGathering(unit, unitMet);
+			nextUnitAndReport = createNextUnitFromGathering(unit, unitMet, lastMove.getCellUID());
 		}
 		else{
 			if(debug)Utils.print("conflict");
@@ -192,7 +195,7 @@ public class MovesManager implements IMovesManager{
 		}
 
 		nextUnit = (Unit) nextUnitAndReport[0];
-		String report = (String) nextUnitAndReport[1];
+		Report report = (Report) nextUnitAndReport[1];
 		finalizeNextUnitCreation(unit, unitMet, nextUnit, report, lastMove, dataContainer);
 		
 		gameDao.updateUnit(unitMet);	
@@ -200,7 +203,7 @@ public class MovesManager implements IMovesManager{
 
 	//-----------------------------------------------------------------------------------//
 	
-	private void finalizeNextUnitCreation(Unit unit, Unit unitMet, Unit nextUnit, String report, Move lastMove, DataContainer dataContainer) 
+	private void finalizeNextUnitCreation(Unit unit, Unit unitMet, Unit nextUnit, Report report, Move lastMove, DataContainer dataContainer) 
 	{
 		nextUnit.setUnitUID(nextUnit.getPlayer().getUralysUID()+"_"+Utils.generatePassword(3)+"_"+lastMove.getTimeFrom());
 
@@ -232,7 +235,6 @@ public class MovesManager implements IMovesManager{
 		firstMoveForNextUnit.setCellUID(lastMove.getCellUID());
 		firstMoveForNextUnit.setTimeFrom(lastMove.getTimeFrom());
 		firstMoveForNextUnit.setTimeTo(-1);
-		firstMoveForNextUnit.setHidden(false);
 		
 		moves.add(firstMoveForNextUnit);
 		nextUnit.setMoves(moves);
@@ -247,10 +249,10 @@ public class MovesManager implements IMovesManager{
 		//------------------------------------------------//
 		// envoi des rapports de combats
 		
-		unit.setMessageUID(gameDao.sendMessage("uralys", unit.getPlayer().getUralysUID(), report, lastMove.getTimeFrom()));
+		unit.setMessageUID(gameDao.sendReport(report, unit.getPlayer().getUralysUID(), lastMove.getTimeFrom()));
 
 		if(!unit.getPlayer().getUralysUID().equals(unitMet.getPlayer().getUralysUID()))
-			unitMet.setMessageUID(gameDao.sendMessage("uralys", unitMet.getPlayer().getUralysUID(), report, lastMove.getTimeFrom()));
+			unitMet.setMessageUID(gameDao.sendReport(report, unitMet.getPlayer().getUralysUID(), lastMove.getTimeFrom()));
 	}
 
 	//-----------------------------------------------------------------------------------//
@@ -262,18 +264,8 @@ public class MovesManager implements IMovesManager{
 
 		for(Move move : unit.getMoves())
 		{
-			if(moveMet != null){
-				if(debug)Utils.print("foundAMeeting avant : move devient hidden, continue");
-				move.setHidden(true);
-				continue;
-			}
-			
-			//-----------------------------------------------------------------------------------//
-
 			CellDTO cell = getCell(move.getCellUID(), dataContainer);
 			moveMet = getMoveMet(move, cell, unit, dataContainer);
-			
-			//-----------------------------------------------------------------------------------//
 			
 			lastMove = move;
 		}
@@ -301,17 +293,23 @@ public class MovesManager implements IMovesManager{
 			unitToReplace = getUnit(unit.getUnitMetUID(), dataContainer);
 			Unit unitNextToDelete = getUnit(unit.getUnitNextUID(), dataContainer);
 			
-			if(debug)Utils.print("found a unitToReplace, deleting the previous nextUnit : " + unitToReplace.getUnitUID());
+			if(debug)Utils.print("found a unitToReplace, deleting the previous nextUnit : " + unitNextToDelete.getUnitUID());
 			deleteUnit(unitNextToDelete);
 			
 			if(debug)Utils.print("deleting the messages");
-			List<String> unitMessage = new ArrayList<String>();
-			unitMessage.add(unit.getMessageUID());
-			gameDao.deleteMessages(unit.getPlayer().getUralysUID(), unitMessage);
 			
-			List<String> unitToReplaceMessage = new ArrayList<String>();
-			unitToReplaceMessage.add(unitToReplace.getMessageUID());
-			gameDao.deleteMessages(unitToReplace.getPlayer().getUralysUID(), unitToReplaceMessage);
+			if(unit.getMessageUID() != null){
+				List<String> unitMessage = new ArrayList<String>();
+				unitMessage.add(unit.getMessageUID());
+				gameDao.deleteMessages(unit.getPlayer().getUralysUID(), unitMessage);
+			}
+			
+			// un messageUID peut etre null : dans le cas d'un gathering, on envoie un seul message, pas 2 au meme joueur.
+			if(unitToReplace.getMessageUID() != null){
+				List<String> unitToReplaceMessage = new ArrayList<String>();
+				unitToReplaceMessage.add(unitToReplace.getMessageUID());
+				gameDao.deleteMessages(unitToReplace.getPlayer().getUralysUID(), unitToReplaceMessage);
+			}
 			
 			unitToReplace.setUnitMetUID(null); // on va faire un refreshMoves de cette unit plus tard. c'est lˆ qu'on fera son updateUnit
 			unitToReplace.setMessageUID(null);
@@ -334,7 +332,7 @@ public class MovesManager implements IMovesManager{
 	private Object[] createNextUnitFromConflict(Unit unit, Unit unitMet, Move lastMove, DataContainer dataContainer) 
 	{
 		Unit nextUnit = new Unit();
-		StringBuffer report =  new StringBuffer();
+		Report report =  new Report();
 		
 		//------------------------------------//
 
@@ -345,7 +343,7 @@ public class MovesManager implements IMovesManager{
 		
 		//------------------------------------//
 
-		initReport(report, unit, unitMet, MovesManager.REPORT_GROUND_FIGHT, attackACity, defendACity);
+		initReport(report, lastMove.getCellUID(), unit, unitMet, MovesManager.REPORT_GROUND_FIGHT, attackACity, defendACity);
 		
 		//------------------------------------//
 		
@@ -379,7 +377,7 @@ public class MovesManager implements IMovesManager{
 		Object[] result = new Object[2];
 		
 		result[0] = nextUnit;
-		result[1] = report.toString();
+		result[1] = report;
 		
 		return result;
 	}
@@ -443,14 +441,14 @@ public class MovesManager implements IMovesManager{
 
 	//-------------------------------------------------------------------------------------//
 	
-	private Object[] createNextUnitFromGathering(Unit unit, Unit unitMet) 
+	private Object[] createNextUnitFromGathering(Unit unit, Unit unitMet, String cellUID) 
 	{
 		Unit nextUnit = new Unit();
-		StringBuffer report =  new StringBuffer();
+		Report report =  new Report();
 
 		//------------------------------------//
 
-		initReport(report, unit, unitMet, MovesManager.REPORT_GROUND_GATHERING, false, false);
+		initReport(report, cellUID, unit, unitMet, MovesManager.REPORT_GROUND_GATHERING, false, false);
 		
 		//------------------------------------//
 		
@@ -483,61 +481,71 @@ public class MovesManager implements IMovesManager{
 		Object[] result = new Object[2];
 		
 		result[0] = nextUnit;
-		result[1] = report.toString();
+		result[1] = report;
 		
 		return result;
 	}
 
 	//-------------------------------------------------------------------------------------//
 
-	private void initReport(StringBuffer report, Unit unit, Unit unitMet, int reportType, boolean attackACity, boolean defendACity) 
+	private void initReport(Report report, String cellUID, Unit unit, Unit unitMet, int reportType, boolean attackACity, boolean defendACity) 
 	{
-		report.append("<fight>\n");
-		report.append("<reportType>"+reportType+"</reportType>\n");
+		report.setReportType(reportType);
+		report.setCellUID(cellUID);
 		
-		
-		report.append("<unit1>\n");
-		report.append("<uid>"+unit.getUnitUID()+"</uid>\n");
-		report.append("<ownerUID>"+unit.getPlayer().getUralysUID()+"</ownerUID>\n");
-		report.append("<ownerName>"+unit.getPlayer().getName()+"</ownerName>\n");
-		report.append("<size>"+unit.getSize()+"</size>\n");
-		report.append("<bows>"+unit.getBows()+"</bows>\n");
-		report.append("<swords>"+unit.getSwords()+"</swords>\n");
-		report.append("<armors>"+unit.getArmors()+"</armors>\n");
-		report.append("<value>"+getValue(unit)+"</value>\n");
-		
-		report.append("<attackACity>"+attackACity+"</attackACity>\n");
-		report.append("<defendACity>"+defendACity+"</defendACity>\n");
-		report.append("</unit1>\n");
+		report.getUnit1().setUnitUID(unit.getUnitUID());
+		report.getUnit1().setOwnerUID(unit.getPlayer().getUralysUID());
+		report.getUnit1().setOwnerName(unit.getPlayer().getName());
+		report.getUnit1().setSize(unit.getSize());
+		report.getUnit1().setType(unit.getType());
+		report.getUnit1().setBows(unit.getBows());
+		report.getUnit1().setSwords(unit.getSwords());
+		report.getUnit1().setArmors(unit.getArmors());
+		report.getUnit1().setValue(getValue(unit));
 
-		report.append("<unit2>\n");
-		report.append("<uid>"+unitMet.getUnitUID()+"</uid>\n");
-		report.append("<ownerUID>"+unitMet.getPlayer().getUralysUID()+"</ownerUID>\n");
-		report.append("<ownerName>"+unitMet.getPlayer().getName()+"</ownerName>\n");
-		report.append("<size>"+unitMet.getSize()+"</size>\n");
-		report.append("<bows>"+unitMet.getBows()+"</bows>\n");
-		report.append("<swords>"+unitMet.getSwords()+"</swords>\n");
-		report.append("<armors>"+unitMet.getArmors()+"</armors>\n");
-		report.append("<value>"+getValue(unitMet)+"</value>\n");
-		report.append("</unit2>\n");
+		report.getUnit1().setWheat(unit.getWheat());
+		report.getUnit1().setWood(unit.getWood());
+		report.getUnit1().setIron(unit.getIron());
+		report.getUnit1().setGold(unit.getGold());
+		
+		report.getUnit1().setAttackACity(attackACity);
+		report.getUnit1().setDefendACity(defendACity);
+
+		report.getUnit2().setUnitUID(unitMet.getUnitUID());
+		report.getUnit2().setOwnerUID(unit.getPlayer().getUralysUID());
+		report.getUnit2().setOwnerName(unitMet.getPlayer().getName());
+		report.getUnit2().setSize(unitMet.getSize());
+		report.getUnit2().setType(unitMet.getType());
+		report.getUnit2().setBows(unitMet.getBows());
+		report.getUnit2().setSwords(unitMet.getSwords());
+		report.getUnit2().setArmors(unitMet.getArmors());
+		report.getUnit2().setValue(getValue(unitMet));
+
+		report.getUnit2().setWheat(unitMet.getWheat());
+		report.getUnit2().setWood(unitMet.getWood());
+		report.getUnit2().setIron(unitMet.getIron());
+		report.getUnit2().setGold(unitMet.getGold());
+		
 	}
 	
 	//-------------------------------------------------------------------------------------//
 
-	private void finalizeReport(StringBuffer report, Unit nextUnit) 
+	private void finalizeReport(Report report, Unit nextUnit) 
 	{
-		report.append("<nextUnit>\n");
-		report.append("<uid>"+nextUnit.getUnitUID()+"</uid>\n");
-		report.append("<ownerUID>"+nextUnit.getPlayer().getUralysUID()+"</ownerUID>\n");
-		report.append("<ownerName>"+nextUnit.getPlayer().getName()+"</ownerName>\n");
-		report.append("<size>"+nextUnit.getSize()+"</size>\n");
-		report.append("<bows>"+nextUnit.getBows()+"</bows>\n");
-		report.append("<swords>"+nextUnit.getSwords()+"</swords>\n");
-		report.append("<armors>"+nextUnit.getArmors()+"</armors>\n");
-		report.append("<value>"+getValue(nextUnit)+"</value>\n");
-		report.append("</nextUnit>\n");
-		
-		report.append("</fight>");		
+		report.getNextUnit().setUnitUID(nextUnit.getUnitUID());
+		report.getNextUnit().setOwnerUID(nextUnit.getPlayer().getUralysUID());
+		report.getNextUnit().setOwnerName(nextUnit.getPlayer().getName());
+		report.getNextUnit().setSize(nextUnit.getSize());
+		report.getNextUnit().setType(nextUnit.getType());
+		report.getNextUnit().setBows(nextUnit.getBows());
+		report.getNextUnit().setSwords(nextUnit.getSwords());
+		report.getNextUnit().setArmors(nextUnit.getArmors());
+		report.getNextUnit().setValue(getValue(nextUnit));
+
+		report.getNextUnit().setWheat(nextUnit.getWheat());
+		report.getNextUnit().setWood(nextUnit.getWood());
+		report.getNextUnit().setIron(nextUnit.getIron());
+		report.getNextUnit().setGold(nextUnit.getGold());	
 	}
 
 	//-------------------------------------------------------------------------------------//
@@ -587,7 +595,8 @@ public class MovesManager implements IMovesManager{
 			}
 		}
 		
-		if(debug)Utils.print("moveMet : " + (moveSelected == null ? "None" : moveSelected.getMoveUID()));
+		if(debug)Utils.print("----------");
+		if(debug)Utils.print("====>  moveMet : " + (moveSelected == null ? "None" : moveSelected.getMoveUID()));
 		return moveSelected;
 	}
 
@@ -613,21 +622,27 @@ public class MovesManager implements IMovesManager{
 		
 		for(MoveDTO recordedMoveDTO : cell.getMoves())
 		{
+			if(debug)Utils.print("-------");
+			if(debug)Utils.print("checking : " + recordedMoveDTO.getMoveUID());
+		
 			Move recordedMove = EntitiesConverter.convertMoveDTO(recordedMoveDTO);
+			Unit unitMet = getUnit(recordedMove.getUnitUID(), dataContainer);
 			
-			if(recordedMove.isHidden()){
+			if(isHidden(recordedMove, unitMet.getEndTime())){
 				if(debug)Utils.print("move hidden, continue");
 				continue;
 			}
 			
 			if(meetingExpected(move, recordedMove))
 			{
-				Unit unitMet = getUnit(recordedMove.getUnitUID(), dataContainer);
 				boolean sameAlly = areOnSameAlly(unit, unitMet);
 				boolean sameType = areOfSameType(unit, unitMet);
-				
-				if(sameAlly && sameType){
-					if(debug)Utils.print("sameAlly + sameType, continue");
+
+				if(debug)Utils.print("sameAlly : " + sameAlly);
+				if(debug)Utils.print("sameType : " + sameType);
+
+				if(sameAlly && !sameType){
+					if(debug)Utils.print("sameAlly + !sameType, continue");
 					continue;
 				}
 				
@@ -657,12 +672,25 @@ public class MovesManager implements IMovesManager{
 	}
 
 	//-------------------------------------------------------------------------------------//
+
+	private boolean isHidden(Move move, long unitEndTime) {
+		return unitEndTime != -1 && move.getTimeFrom() > unitEndTime;
+	}
+
+	//-------------------------------------------------------------------------------------//
 	
 	private boolean areOnSameAlly(Unit unit, Unit unitMet) 
 	{
-		return unit.getPlayer().getAlly() != null 
-			 && unitMet.getPlayer().getAlly() != null 
-			 && unitMet.getPlayer().getAlly().getAllyUID().equals(unit.getPlayer().getAlly().getAllyUID());
+		if(unit.getPlayer().getAlly() == null){
+			return unit.getPlayer().getUralysUID().equals(unitMet.getPlayer().getUralysUID());
+		}
+		else{
+			if(unitMet.getPlayer().getAlly() == null) 
+				return false;
+			else
+				return unitMet.getPlayer().getAlly().getAllyUID().equals(unit.getPlayer().getAlly().getAllyUID());
+			
+		}
 	}
 
 	private boolean areOfSameType(Unit unit, Unit unitMet) {

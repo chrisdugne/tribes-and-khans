@@ -6,6 +6,7 @@ import com.uralys.tribes.entities.Ally;
 import com.uralys.tribes.entities.City;
 import com.uralys.tribes.entities.Move;
 import com.uralys.tribes.entities.Player;
+import com.uralys.tribes.entities.Report;
 import com.uralys.tribes.entities.Stock;
 import com.uralys.tribes.entities.Unit;
 import com.uralys.tribes.entities.dto.AllyDTO;
@@ -65,8 +66,6 @@ public interface IGameDAO {
 	
 	public String createMove(Move move, String nextMoveUID);
 	public void setTimeToForMove(String moveUID, long timeTo);
-	public void setNewGatheringForMoveAndDeletePreviousGathering(String moveUID, String gatheringUID);
-	public void setHiddenForMove(String moveUID, boolean hidden);
 	public void deleteMove(String moveUID);
 	public void deleteMoves(String unitUID);
 
@@ -95,7 +94,8 @@ public interface IGameDAO {
 
 	//-----------------------------------------------------------------------------------//
 	
-	public String sendMessage(String string, String uralysUID, String report, long time);
+	public String sendMessage(String senderUID, String recipientUID, String message);
+	public String sendReport(Report report, String recipientUID, long time);
 	public void markAsRead(List<String> messageUIDs);
 	public void archiveMessages(List<String> messageUIDs);
 	public void deleteMessages(String uralysUID, List<String> messageUIDs);

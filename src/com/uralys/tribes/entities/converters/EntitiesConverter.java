@@ -11,6 +11,7 @@ import com.uralys.tribes.entities.Item;
 import com.uralys.tribes.entities.Message;
 import com.uralys.tribes.entities.Move;
 import com.uralys.tribes.entities.Player;
+import com.uralys.tribes.entities.Report;
 import com.uralys.tribes.entities.Stock;
 import com.uralys.tribes.entities.Unit;
 import com.uralys.tribes.entities.dto.AllyDTO;
@@ -40,7 +41,6 @@ public class EntitiesConverter {
 		move.setTimeFrom(moveDTO.getTimeFrom());
 		move.setTimeTo(moveDTO.getTimeTo());
 		move.setUnitUID(moveDTO.getUnitUID());
-		move.setHidden(moveDTO.isHidden());
 
 		return move;
 	}
@@ -135,11 +135,72 @@ public class EntitiesConverter {
 		Message message = new Message();
 		
 		message.setMessageUID(messageDTO.getMessageUID());
-		message.setContent(messageDTO.getContent().getValue());
 		message.setSenderUID(messageDTO.getSenderUID());
 		message.setSenderName(messageDTO.getSenderName());
 		message.setStatus(messageDTO.getStatus());
 		message.setTime(messageDTO.getTime());
+		
+		if(messageDTO.isReport()){
+
+			Report report = new Report();
+			
+			report.setReportType(messageDTO.getReportType());
+			report.setCellUID(messageDTO.getReportCellUID());
+			
+			report.getUnit1().setUnitUID(messageDTO.getUnit1_unitUID());
+			report.getUnit1().setOwnerUID(messageDTO.getUnit1_ownerUID());
+			report.getUnit1().setOwnerName(messageDTO.getUnit1_ownerName());
+			report.getUnit1().setSize(messageDTO.getUnit1_size());
+			report.getUnit1().setType(messageDTO.getUnit1_type());
+			report.getUnit1().setBows(messageDTO.getUnit1_bows());
+			report.getUnit1().setSwords(messageDTO.getUnit1_swords());
+			report.getUnit1().setArmors(messageDTO.getUnit1_armors());
+			report.getUnit1().setValue(messageDTO.getUnit1_value());
+
+			report.getUnit1().setWheat(messageDTO.getUnit1_wheat());
+			report.getUnit1().setWood(messageDTO.getUnit1_wood());
+			report.getUnit1().setIron(messageDTO.getUnit1_iron());
+			report.getUnit1().setGold(messageDTO.getUnit1_gold());
+			
+			report.getUnit1().setAttackACity(messageDTO.isUnit1_defendACity());
+			report.getUnit1().setDefendACity(messageDTO.isUnit1_attackACity());
+
+
+			report.getUnit2().setUnitUID(messageDTO.getUnit2_unitUID());
+			report.getUnit2().setOwnerUID(messageDTO.getUnit2_ownerUID());
+			report.getUnit2().setOwnerName(messageDTO.getUnit2_ownerName());
+			report.getUnit2().setSize(messageDTO.getUnit2_size());
+			report.getUnit2().setType(messageDTO.getUnit2_type());
+			report.getUnit2().setBows(messageDTO.getUnit2_bows());
+			report.getUnit2().setSwords(messageDTO.getUnit2_swords());
+			report.getUnit2().setArmors(messageDTO.getUnit2_armors());
+			report.getUnit2().setValue(messageDTO.getUnit2_value());
+
+			report.getUnit2().setWheat(messageDTO.getUnit2_wheat());
+			report.getUnit2().setWood(messageDTO.getUnit2_wood());
+			report.getUnit2().setIron(messageDTO.getUnit2_iron());
+			report.getUnit2().setGold(messageDTO.getUnit2_gold());
+			
+			report.getNextUnit().setUnitUID(messageDTO.getNextUnit_unitUID());
+			report.getNextUnit().setOwnerUID(messageDTO.getNextUnit_ownerUID());
+			report.getNextUnit().setOwnerName(messageDTO.getNextUnit_ownerName());
+			report.getNextUnit().setSize(messageDTO.getNextUnit_size());
+			report.getNextUnit().setType(messageDTO.getNextUnit_type());
+			report.getNextUnit().setBows(messageDTO.getNextUnit_bows());
+			report.getNextUnit().setSwords(messageDTO.getNextUnit_swords());
+			report.getNextUnit().setArmors(messageDTO.getNextUnit_armors());
+			report.getNextUnit().setValue(messageDTO.getNextUnit_value());
+			
+			report.getNextUnit().setWheat(messageDTO.getNextUnit_wheat());
+			report.getNextUnit().setWood(messageDTO.getNextUnit_wood());
+			report.getNextUnit().setIron(messageDTO.getNextUnit_iron());
+			report.getNextUnit().setGold(messageDTO.getNextUnit_gold());
+			
+			message.setReport(report);
+		}
+		else{
+			message.setContent(messageDTO.getContent().getValue());
+		}
 		
 		return message;
 	}

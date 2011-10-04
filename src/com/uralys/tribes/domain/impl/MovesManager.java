@@ -101,7 +101,7 @@ public class MovesManager implements IMovesManager{
 			Move move = unit.getMoves().get(i);
 			String nextMoveUID = i == unit.getMoves().size() - 1 ? null : unit.getMoves().get(i+1).getMoveUID(); 
 			
-			gameDao.createMove(move, nextMoveUID);
+			gameDao.createMove(move, nextMoveUID, null);
 		}
 
 		//-------------------------------------------------------//
@@ -133,18 +133,52 @@ public class MovesManager implements IMovesManager{
 
 	//==================================================================================================//
 
-	private void checkIfACityWithNoDefenseIsTaken(Unit unit, Move lastMove, DataContainer dataContainer) 
-	{
-		String allyUID = getAllyUID(unit);
-		boolean[] attackOrDefendACity = checkAttackOrDefendACity(lastMove.getCellUID(), dataContainer, allyUID);
-		boolean attackACity = attackOrDefendACity[0];
-		if(attackACity){
-			//attackACityWithNoArmyInDefense
-			CellDTO cell = getCell(lastMove.getCellUID(), dataContainer);
-			if(getValue(unit) > cell.getCity().getPopulation()/10)
-				gameDao.cityIsTaken(cell.getCity().getCityUID(), unit.getPlayer().getUralysUID(), lastMove.getTimeFrom(), cell.getCity().getPopulation()/10);
-		}
-	}
+//	private void checkIfACityWithNoDefenseIsTaken(Unit unit, Move lastMove, DataContainer dataContainer) 
+//	{
+//		String allyUID = getAllyUID(unit);
+//		boolean[] attackOrDefendACity = checkAttackOrDefendACity(lastMove.getCellUID(), dataContainer, allyUID);
+//		boolean attackACity = attackOrDefendACity[0];
+//		if(attackACity){
+//			if(debug)Utils.print("attackACityWithNoArmyInDefense !!");
+//			CellDTO cell = getCell(lastMove.getCellUID(), dataContainer);
+//			
+//			if(debug)Utils.print("getValue(unit) : " + getValue(unit));
+//			if(debug)Utils.print("cell.getCity().getPopulation()/10 : " + cell.getCity().getPopulation()/10);
+//			
+//			Report report = new Report();
+//			Unit dummyUnit = dummyUnitMet(cell.getCity(), dataContainer);
+//			
+//			initReport(report, lastMove.getCellUID(), unit, dummyUnit, REPORT_GROUND_FIGHT, true, false);
+//			
+//			if(getValue(unit) > getValue(dummyUnit)){
+//				gameDao.cityIsTaken(cell.getCity().getCityUID(), unit.getPlayer().getUralysUID(), lastMove.getTimeFrom(), getValue(dummyUnit));
+//			}
+//			else{
+//				
+//			}
+//			
+//			//------------------------------------------------//
+//			// envoi des rapports de combats
+//			
+//			unit.setMessageUID(gameDao.sendReport(report, unit.getPlayer().getUralysUID(), lastMove.getTimeFrom()));
+//			gameDao.sendReport(report, dummyUnit.getPlayer().getUralysUID(), lastMove.getTimeFrom());
+//		}
+//	}
+//
+//	private Unit dummyUnitMet(CityDTO city, DataContainer dataContainer) 
+//	{
+//		Unit dummyUnit = new Unit();
+//		Player cityOwner = getPlayer(city.getOwnerUID(), dataContainer);
+//		
+//		dummyUnit.setUnitUID(city.getCityUID());
+//		dummyUnit.getPlayer().setUralysUID(cityOwner.getUralysUID());
+//		dummyUnit.getPlayer().setName(cityOwner.getName());
+//		
+//		dummyUnit.setSize(city.getPopulation());
+//		dummyUnit.setType(Unit.CITY);
+//
+//		return dummyUnit;
+//	}
 
 	//-----------------------------------------------------------------------------------//
 
@@ -172,8 +206,8 @@ public class MovesManager implements IMovesManager{
 		private void resolveMeeting(Unit unit, Move moveMet, Move lastMove, DataContainer dataContainer) 
 	{
 		if(moveMet == null){		
-			if(debug)Utils.print(" pas de meeting : checkIfACityWithNoDefenseIsTaken");
-			checkIfACityWithNoDefenseIsTaken(unit, lastMove, dataContainer);
+			if(debug)Utils.print(" pas de meeting !");
+//			checkIfACityWithNoDefenseIsTaken(unit, lastMove, dataContainer);
 			return;
 		}
 
@@ -205,46 +239,51 @@ public class MovesManager implements IMovesManager{
 	
 	private void finalizeNextUnitCreation(Unit unit, Unit unitMet, Unit nextUnit, Report report, Move lastMove, DataContainer dataContainer) 
 	{
-		nextUnit.setUnitUID(nextUnit.getPlayer().getUralysUID()+"_"+Utils.generatePassword(3)+"_"+lastMove.getTimeFrom());
+		if(nextUnit != null)
+		{
+			nextUnit.setUnitUID(nextUnit.getPlayer().getUralysUID()+"_"+Utils.generatePassword(3)+"_"+lastMove.getTimeFrom());
+			nextUnit.setCellUIDExpectedForLand(lastMove.getCellUID());
+			
+			nextUnit.setBeginTime(lastMove.getTimeFrom());
+			
+			if(nextUnit.getSize() > 0)
+				nextUnit.setEndTime(-1);
+			else
+				nextUnit.setEndTime(nextUnit.getBeginTime()); // draw
+			
+			unit.setUnitNextUID(nextUnit.getUnitUID());
+			unitMet.setUnitNextUID(nextUnit.getUnitUID());
+			
+			//------------------------------------------------//
+			
+			ArrayList<Move> moves = new ArrayList<Move>();
+			Move firstMoveForNextUnit = new Move();
+			
+			firstMoveForNextUnit.setMoveUID(lastMove.getTimeFrom()+"_"+TribesUtils.getX(lastMove.getCellUID())+"_"+TribesUtils.getY(lastMove.getCellUID())+"_"+nextUnit.getUnitUID());
+			firstMoveForNextUnit.setUnitUID(nextUnit.getUnitUID());
+			firstMoveForNextUnit.setCellUID(lastMove.getCellUID());
+			firstMoveForNextUnit.setTimeFrom(lastMove.getTimeFrom());
+			firstMoveForNextUnit.setTimeTo(-1);
+			
+			moves.add(firstMoveForNextUnit);
+			nextUnit.setMoves(moves);
+			
+			//------------------------------------------------//
+			
+			gameDao.createUnit(nextUnit, null);
+			gameDao.linkNewUnit(nextUnit.getPlayer().getUralysUID(), nextUnit.getUnitUID());
+			gameDao.createMove(firstMoveForNextUnit, null, null);
+			
+		}
+		// else : attaque/defense d'une cityUnit (ville sans defense) => pas de nextUnit
+		
+		//------------------------------------------------//
 
-		nextUnit.setBeginTime(lastMove.getTimeFrom());
-		
-		if(nextUnit.getSize() > 0)
-			nextUnit.setEndTime(-1);
-		else
-			nextUnit.setEndTime(nextUnit.getBeginTime()); // draw
-		
 		unit.setEndTime(lastMove.getTimeFrom());
-		unitMet.setEndTime(lastMove.getTimeFrom());
-		
-		unit.setUnitNextUID(nextUnit.getUnitUID());
 		unit.setUnitMetUID(unitMet.getUnitUID());
-		
-		unitMet.setUnitNextUID(nextUnit.getUnitUID());
+
+		unitMet.setEndTime(lastMove.getTimeFrom());
 		unitMet.setUnitMetUID(unit.getUnitUID());
-		
-		nextUnit.setCellUIDExpectedForLand(lastMove.getCellUID());
-		
-		//------------------------------------------------//
-
-		ArrayList<Move> moves = new ArrayList<Move>();
-		Move firstMoveForNextUnit = new Move();
-		
-		firstMoveForNextUnit.setMoveUID(lastMove.getTimeFrom()+"_"+TribesUtils.getX(lastMove.getCellUID())+"_"+TribesUtils.getY(lastMove.getCellUID())+"_"+nextUnit.getUnitUID());
-		firstMoveForNextUnit.setUnitUID(nextUnit.getUnitUID());
-		firstMoveForNextUnit.setCellUID(lastMove.getCellUID());
-		firstMoveForNextUnit.setTimeFrom(lastMove.getTimeFrom());
-		firstMoveForNextUnit.setTimeTo(-1);
-		
-		moves.add(firstMoveForNextUnit);
-		nextUnit.setMoves(moves);
-		
-		//------------------------------------------------//
-
-		gameDao.createUnit(nextUnit);
-		
-		gameDao.linkNewUnit(nextUnit.getPlayer().getUralysUID(), nextUnit.getUnitUID());
-		gameDao.createMove(firstMoveForNextUnit, null);
 
 		//------------------------------------------------//
 		// envoi des rapports de combats
@@ -291,10 +330,14 @@ public class MovesManager implements IMovesManager{
 			if(debug)Utils.print("resetPreviousMeeting");
 			
 			unitToReplace = getUnit(unit.getUnitMetUID(), dataContainer);
-			Unit unitNextToDelete = getUnit(unit.getUnitNextUID(), dataContainer);
 			
-			if(debug)Utils.print("found a unitToReplace, deleting the previous nextUnit : " + unitNextToDelete.getUnitUID());
-			deleteUnit(unitNextToDelete);
+			if(unit.getUnitNextUID() != null){
+				Unit unitNextToDelete = getUnit(unit.getUnitNextUID(), dataContainer);
+				
+				if(debug)Utils.print("found a unitToReplace, deleting the previous nextUnit : " + unitNextToDelete.getUnitUID());
+				deleteUnit(unitNextToDelete);
+			}
+			// else : annulation d'une attaque de cityUnit par exemple
 			
 			if(debug)Utils.print("deleting the messages");
 			
@@ -331,7 +374,7 @@ public class MovesManager implements IMovesManager{
 	
 	private Object[] createNextUnitFromConflict(Unit unit, Unit unitMet, Move lastMove, DataContainer dataContainer) 
 	{
-		Unit nextUnit = new Unit();
+		Unit nextUnit = null;
 		Report report =  new Report();
 		
 		//------------------------------------//
@@ -339,7 +382,8 @@ public class MovesManager implements IMovesManager{
 		String allyUID = getAllyUID(unit);
 		boolean[] attackOrDefendACity = checkAttackOrDefendACity(lastMove.getCellUID(), dataContainer, allyUID);
 		boolean attackACity = attackOrDefendACity[0];
-		boolean defendACity = attackOrDefendACity[1];
+		boolean defendACity = attackOrDefendACity[1] && unit.getType() == Unit.ARMY;
+		if(debug)Utils.print("defendACity : " + defendACity);
 		
 		//------------------------------------//
 
@@ -347,31 +391,33 @@ public class MovesManager implements IMovesManager{
 		
 		//------------------------------------//
 		
-		Object[] fightResult = fight(unit, unitMet, lastMove, defendACity, defendACity, dataContainer);
+		Object[] fightResult = fight(unit, unitMet, lastMove, attackACity, defendACity, dataContainer);
 		Unit unitRemaining = (Unit) fightResult[0];
 		double rateRemaining = (Double) fightResult[1];
 		
 		//------------------------------------//
 
-		nextUnit.setSpeed(unitRemaining.getSpeed());
-		nextUnit.setType(unitRemaining.getType());
-		nextUnit.setSize((int)(unitRemaining.getSize()*rateRemaining));
+		if(unit.getType() != Unit.CITY && unit.getType() != Unit.CITY)
+		{
+			nextUnit = new Unit();
+			nextUnit.setSpeed(unitRemaining.getSpeed());
+			nextUnit.setType(unitRemaining.getType());
+			nextUnit.setSize((int)(unitRemaining.getSize()*rateRemaining));
+			
+			nextUnit.setArmors((int)((unit.getArmors() + unitMet.getArmors())*rateRemaining));
+			nextUnit.setBows((int)((unit.getBows() + unitMet.getBows())*rateRemaining));
+			nextUnit.setSwords((int)((unit.getSwords() + unitMet.getSwords())*rateRemaining));
+			
+			nextUnit.setWheat(unit.getWheat() + unitMet.getWheat());
+			nextUnit.setWood(unit.getWood() + unitMet.getWood());
+			nextUnit.setIron(unit.getIron() + unitMet.getIron());
+			nextUnit.setGold(unit.getGold() + unitMet.getGold());
+			
+			nextUnit.setPlayer(unitRemaining.getPlayer());
 
-		nextUnit.setArmors((int)((unit.getArmors() + unitMet.getArmors())*rateRemaining));
-		nextUnit.setBows((int)((unit.getBows() + unitMet.getBows())*rateRemaining));
-		nextUnit.setSwords((int)((unit.getSwords() + unitMet.getSwords())*rateRemaining));
+			finalizeReport(report, nextUnit);
+		}
 
-		nextUnit.setWheat(unit.getWheat() + unitMet.getWheat());
-		nextUnit.setWood(unit.getWood() + unitMet.getWood());
-		nextUnit.setIron(unit.getIron() + unitMet.getIron());
-		nextUnit.setGold(unit.getGold() + unitMet.getGold());
-
-		nextUnit.setPlayer(unitRemaining.getPlayer());
-
-		//------------------------------------//
-
-		finalizeReport(report, nextUnit);
-		
 		//------------------------------------//
 
 		Object[] result = new Object[2];
@@ -383,6 +429,7 @@ public class MovesManager implements IMovesManager{
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------------------//
+	
 	private Object[] fight(Unit unit, Unit unitMet, Move lastMove, boolean attackACity, boolean defendACity, DataContainer dataContainer) 
 	{
 		Unit unitRemaining;
@@ -394,7 +441,9 @@ public class MovesManager implements IMovesManager{
 		int valueOfTheUnit = getValue(unit);
 		int valueOfTheEnnemy = getValue(unitMet);
 
-		if(attackACity){
+		boolean attackADefendedCity = attackACity && unitMet.getType() == Unit.ARMY;
+		
+		if(attackADefendedCity){
 			if(debug)Utils.print(" - bonus pour l'ennemy dans sa ville " + unitMet.getUnitUID());	
 			valueOfTheEnnemy += city.getPopulation()/10;
 		}
@@ -402,6 +451,7 @@ public class MovesManager implements IMovesManager{
 			if(debug)Utils.print(" - bonus pour la unit dans sa ville " + unit.getUnitUID());	
 			valueOfTheUnit += city.getPopulation()/10;
 		}
+		// sinon, si on attaque une ville, elle n'est pas defendue, c'est la cityUnit
 
 		if(valueOfTheEnnemy > valueOfTheUnit)
 		{
@@ -551,10 +601,15 @@ public class MovesManager implements IMovesManager{
 	//-------------------------------------------------------------------------------------//
 
 	private int getValue(Unit unit) {
-		return unit.getSize() 
-		+ unit.getBows()
-		+ unit.getSwords()*2
-		+ unit.getArmors()*3;
+		
+		if(unit.getType() == Unit.CITY){
+			return unit.getSize()/10;
+		}
+		else
+			return unit.getSize() 
+			+ unit.getBows()
+			+ unit.getSwords()*2
+			+ unit.getArmors()*3;
 	}
 
 	//-------------------------------------------------------------------------------------//
@@ -778,7 +833,7 @@ public class MovesManager implements IMovesManager{
 			}
 			else{
 				result[1] = true;
-				if(debug)Utils.print("defendACity !!");
+				if(debug)Utils.print("may defendACity");
 			}
 		}
 		if(!result[0])
@@ -788,13 +843,13 @@ public class MovesManager implements IMovesManager{
 	}
 
 	//-----------------------------------------------------------------------------------//	
-	private Player getPlayer(String uralysUID, DataContainer datacontainer) 
+	private Player getPlayer(String uralysUID, DataContainer dataContainer) 
 	{
-		if(datacontainer.playerAlreadyLoaded.get(uralysUID) == null){
-			datacontainer.playerAlreadyLoaded.put(uralysUID, EntitiesConverter.convertPlayerDTO(gameDao.getPlayer(uralysUID), false));
+		if(dataContainer.playerAlreadyLoaded.get(uralysUID) == null){
+			dataContainer.playerAlreadyLoaded.put(uralysUID, EntitiesConverter.convertPlayerDTO(gameDao.getPlayer(uralysUID), false));
 		}
 		
-		return datacontainer.playerAlreadyLoaded.get(uralysUID);
+		return dataContainer.playerAlreadyLoaded.get(uralysUID);
 	}
 	
 	@SuppressWarnings("unused")

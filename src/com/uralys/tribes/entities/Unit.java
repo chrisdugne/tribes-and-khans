@@ -9,6 +9,7 @@ public class Unit {
 	
 	public final static int ARMY = 1;
 	public final static int CARAVAN = 2;
+	public final static int CITY = 3;
 	
 	//-----------------------------------------------------------------------------------//
 	

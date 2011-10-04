@@ -220,7 +220,7 @@ public class GameManager implements IGameManager {
 		if(debug)Utils.print("-----------------------------------");
 		if(debug)Utils.print("gamemanager createUnit : " + unit.getUnitUID() + " for uralysUID : " + uralysUID);
 		
-		gameDao.createUnit(unit);
+		gameDao.createUnit(unit, null);
 		gameDao.linkNewUnit(uralysUID, unit.getUnitUID());
 
 		return movesManager.refreshUnitMoves(unit);

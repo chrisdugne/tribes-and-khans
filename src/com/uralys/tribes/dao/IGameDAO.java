@@ -2,6 +2,8 @@ package com.uralys.tribes.dao;
 
 import java.util.List;
 
+import javax.jdo.PersistenceManager;
+
 import com.uralys.tribes.entities.Ally;
 import com.uralys.tribes.entities.City;
 import com.uralys.tribes.entities.Move;
@@ -41,7 +43,7 @@ public interface IGameDAO {
 
 	//-----------------------------------------------------------------------------------//
 	
-	public void createUnit(Unit unit);
+	public void createUnit(Unit unit, PersistenceManager pm);
 	public void updateUnit(Unit unit);
 
 	//-----------------------------------------------------------------------------------//
@@ -64,7 +66,7 @@ public interface IGameDAO {
 
 	//-----------------------------------------------------------------------------------//
 	
-	public String createMove(Move move, String nextMoveUID);
+	public String createMove(Move move, String nextMoveUID, PersistenceManager pm);
 	public void setTimeToForMove(String moveUID, long timeTo);
 	public void deleteMove(String moveUID);
 	public void deleteMoves(String unitUID);

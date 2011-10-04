@@ -83,7 +83,7 @@ package com.uralys.tribes.core
 
 		//=====================================================================================//
 		
-		private var currentUnitMoveHighLights:ArrayCollection = new ArrayCollection();;
+		private var currentUnitMoveHighLights:ArrayCollection = new ArrayCollection();
 		
 		//=====================================================================================//
 

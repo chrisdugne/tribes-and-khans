@@ -164,7 +164,7 @@
 				if(Session.MOVE_A_UNIT)
 					return;
 				
-				placeBoard(Utils.getXFromCellUID(selectedUnit.currentCaseUID), Utils.getYFromCellUID(selectedUnit.currentCaseUID));
+				//placeBoard(Utils.getXFromCellUID(selectedUnit.currentCaseUID), Utils.getYFromCellUID(selectedUnit.currentCaseUID));
 				
 				Session.MOVE_A_UNIT = true;
 				currentState = "moveUnit";

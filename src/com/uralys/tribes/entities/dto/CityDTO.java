@@ -32,10 +32,11 @@ public class CityDTO {
 	@Persistent private long beginTime;
 	@Persistent private long endTime;
 
-	@Persistent private Long timeToChangeOwner;
-	@Persistent private String nextOwnerUID;
 	@Persistent private String ownerUID;
-	@Persistent private Integer populationLost;
+
+//	@Persistent private Long timeToChangeOwner;
+//	@Persistent private String nextOwnerUID;
+//	@Persistent private Integer populationLost;
 	
 	@Persistent private int wheat;
 	@Persistent private int peopleCreatingWheat;
@@ -137,30 +138,30 @@ public class CityDTO {
 	public void setGold(Integer gold) {
 		this.gold = gold;
 	}
-	public Long getTimeToChangeOwner() {
-		return timeToChangeOwner;
-	}
-	public void setTimeToChangeOwner(Long timeToChangeOwner) {
-		this.timeToChangeOwner = timeToChangeOwner;
-	}
-	public String getNextOwnerUID() {
-		return nextOwnerUID;
-	}
-	public void setNextOwnerUID(String nextOwnerUID) {
-		this.nextOwnerUID = nextOwnerUID;
-	}
+//	public Long getTimeToChangeOwner() {
+//		return timeToChangeOwner;
+//	}
+//	public void setTimeToChangeOwner(Long timeToChangeOwner) {
+//		this.timeToChangeOwner = timeToChangeOwner;
+//	}
+//	public String getNextOwnerUID() {
+//		return nextOwnerUID;
+//	}
+//	public void setNextOwnerUID(String nextOwnerUID) {
+//		this.nextOwnerUID = nextOwnerUID;
+//	}
 	public String getOwnerUID() {
 		return ownerUID;
 	}
 	public void setOwnerUID(String ownerUID) {
 		this.ownerUID = ownerUID;
 	}
-	public Integer getPopulationLost() {
-		return populationLost;
-	}
-	public void setPopulationLost(Integer populationLost) {
-		this.populationLost = populationLost;
-	}
+//	public Integer getPopulationLost() {
+//		return populationLost;
+//	}
+//	public void setPopulationLost(Integer populationLost) {
+//		this.populationLost = populationLost;
+//	}
 	public int getBows() {
 		return bows;
 	}

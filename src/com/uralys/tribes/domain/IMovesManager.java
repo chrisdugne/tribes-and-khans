@@ -7,7 +7,7 @@ public interface IMovesManager {
 
 	//-----------------------------------------------------------------------------------//
 	
-	public MoveResult refreshUnitMoves(Unit unit);
+	public MoveResult refreshUnitMoves(Unit unit, boolean creation);
 	
 	//-----------------------------------------------------------------------------------//
 	

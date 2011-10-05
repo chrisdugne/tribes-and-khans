@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.jdo.PersistenceManager;
+
 import com.uralys.tribes.dao.IGameDAO;
+import com.uralys.tribes.dao.impl.PMF;
 import com.uralys.tribes.domain.IGameManager;
 import com.uralys.tribes.domain.IMovesManager;
 import com.uralys.tribes.entities.Ally;
@@ -121,11 +124,11 @@ public class GameManager implements IGameManager {
 			return null;
 		
 		// on reattribue les villes 
-		List<String> cityUIDs = new ArrayList<String>();
-		cityUIDs.addAll(playerDTO.getCityUIDs());
-		cityUIDs.addAll(playerDTO.getCityBeingOwnedUIDs());
+//		List<String> cityUIDs = new ArrayList<String>();
+//		cityUIDs.addAll(playerDTO.getCityUIDs());
+//		cityUIDs.addAll(playerDTO.getCityBeingOwnedUIDs());
 			
-		checkCityOwners(cityUIDs);
+		checkCityOwners(uralysUID);
 		
 		//refresh du player
 		playerDTO = gameDao.getPlayer(uralysUID);
@@ -180,14 +183,39 @@ public class GameManager implements IGameManager {
 		return player;
 	}
 
-	private void checkCityOwners(List<String> cityUIDs) 
+	private void checkCityOwners(String uralysUID) 
 	{
 		if(debug)Utils.print("-------------------------------------------------");
 		if(debug)Utils.print("checkCityOwners");
-		for(String cityUID : cityUIDs){
+		
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		PlayerDTO playerDTO = pm.getObjectById(PlayerDTO.class, uralysUID);
+		long now = new Date().getTime();
+		
+		List<String> citiesToRemoveFromBeingOwned = new ArrayList<String>();
+		
+		for(int i = 0; i < playerDTO.getCityBeingOwnedUIDs().size(); i++)
+		{
+			String[] cityBeingOwnedData = playerDTO.getCityBeingOwnedUIDs().get(i).split("_");
+			String cityUID = cityBeingOwnedData[0];
+			long timeToChangeOwner = Long.parseLong(cityBeingOwnedData[1]);
+			int populationLost = Integer.parseInt(cityBeingOwnedData[2]);
+			
 			if(debug)Utils.print("city : " + cityUID);
-			gameDao.checkCityOwner(cityUID);
+			if(debug)Utils.print("timeToChangeOwner : " + timeToChangeOwner + " | now : " + now);
+			if(debug)Utils.print("populationLost : " + populationLost);
+			
+			if(timeToChangeOwner != -1 && timeToChangeOwner < now){
+				gameDao.changeCityOwner(cityUID, playerDTO.getUralysUID(), populationLost, pm);
+				citiesToRemoveFromBeingOwned.add(playerDTO.getCityBeingOwnedUIDs().get(i));
+			}
 		}
+		
+		for(String cityToRemove : citiesToRemoveFromBeingOwned){
+			playerDTO.getCityBeingOwnedUIDs().remove(cityToRemove);
+		}
+		
+		pm.close();
 	}
 
 	//==================================================================================================//
@@ -223,7 +251,7 @@ public class GameManager implements IGameManager {
 		gameDao.createUnit(unit, null);
 		gameDao.linkNewUnit(uralysUID, unit.getUnitUID());
 
-		return movesManager.refreshUnitMoves(unit);
+		return movesManager.refreshUnitMoves(unit, true);
 	}
 
 	public MoveResult updateUnit(Unit unit, boolean needReplacing)
@@ -239,7 +267,7 @@ public class GameManager implements IGameManager {
 		
 		if(needReplacing){
 			if(debug)Utils.print("refreshUnitWay for the unit");
-			return movesManager.refreshUnitMoves(unit);
+			return movesManager.refreshUnitMoves(unit, false);
 		}
 
 		return null;
@@ -251,7 +279,7 @@ public class GameManager implements IGameManager {
 		if(unit.getMoves().size() != 0){
 			ArrayList<Move> dummyMoves = new ArrayList<Move>();
 			dummyMoves.add(unit.getMoves().get(0));			
-			movesManager.refreshUnitMoves(unit);
+			movesManager.refreshUnitMoves(unit, false);
 		}
 		
 		gameDao.deleteUnit(uralysUID, unit.getUnitUID());
@@ -484,16 +512,11 @@ public class GameManager implements IGameManager {
 		return allies;
 	}
 	
-	
 	//==================================================================================================//
 
 	public static void main(String[] args){
 		
 	}
-//
-//	public Cell getCase(int x, int y) {
-//		return EntitiesConverter.convertCaseDTO(gameDao.getCase(x,y));
-//	}
 
 	//==============================================================================================================//
 	

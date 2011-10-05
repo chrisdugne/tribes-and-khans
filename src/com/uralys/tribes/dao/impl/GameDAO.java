@@ -224,9 +224,9 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		city.setPeopleCreatingWheat(city.getPopulation()/5);
 		city.setPeopleCreatingWood(0);
 		city.setPeopleCreatingIron(0);
-		city.setTimeToChangeOwner(-1l);
-		city.setNextOwnerUID(null);
-		city.setPopulationLost(null);
+//		city.setTimeToChangeOwner(-1l);
+//		city.setNextOwnerUID(null);
+//		city.setPopulationLost(null);
 
 		int cityX = 0; 
 		int cityY = 0; 
@@ -805,63 +805,66 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 
 	public void cityIsTaken(String cityUID, String newOwnerUID, long timeToChangeOwner, int populationLost)
 	{
-		if(debug)Utils.print("cityIsTaken : populationLost : " + populationLost);
+		if(debug)Utils.print("---------------------------");
+		if(debug)Utils.print("cityIsTaken");
 		
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
-		CityDTO cityDTO = pm.getObjectById(CityDTO.class, cityUID);
 		PlayerDTO playerDTO = pm.getObjectById(PlayerDTO.class, newOwnerUID);
 
-		cityDTO.setTimeToChangeOwner(timeToChangeOwner);
-		cityDTO.setNextOwnerUID(newOwnerUID);
-		cityDTO.setPopulationLost(populationLost);
+		String cityBeingOwnData = cityUID + "_" + timeToChangeOwner + "_" + populationLost;
+		if(debug)Utils.print("cityIsTaken : cityBeingOwnData : " + cityBeingOwnData);
+		playerDTO.getCityBeingOwnedUIDs().add(cityBeingOwnData);
 		
-		if(!playerDTO.getCityBeingOwnedUIDs().contains(cityDTO.getCityUID()))
-			playerDTO.getCityBeingOwnedUIDs().add(cityDTO.getCityUID());
+		pm.close();
+	}
+
+	public void removeCityBeingOwned(String uralysUID, String cityUID)
+	{
+		if(debug)Utils.print("---------------------------");
+		if(debug)Utils.print("removeCityBeingOwned | uralysUID : " + uralysUID + " | cityUID : " + cityUID);
+	
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		PlayerDTO player = pm.getObjectById(PlayerDTO.class, uralysUID);
 		
+		int indexToRemove = 0;
+		for(String cityBeingOwned : player.getCityBeingOwnedUIDs()){
+			if(cityBeingOwned.startsWith(cityUID))
+				break;
+			
+			indexToRemove++;
+		}
+		
+		if(debug)Utils.print("indexToRemove : " + indexToRemove);
+		player.getCityBeingOwnedUIDs().remove(indexToRemove);
 		pm.close();
 	}
 	
-	public void checkCityOwner(String cityUID)
+	public void changeCityOwner(String cityUID, String newOwnerUID, int populationLost, PersistenceManager pm)
 	{
-		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		if(debug)Utils.print("-------------------------------------------------");
+		if(debug)Utils.print("dao.changeCityOwner | cityUID : " + cityUID);
+		
 		CityDTO cityDTO = pm.getObjectById(CityDTO.class, cityUID);
-
-		if(debug)Utils.print("cityDTO.getTimeToChangeOwner() : " + cityDTO.getTimeToChangeOwner());
-		if(debug)Utils.print("now : " + new Date().getTime());
 		
-		if(cityDTO.getTimeToChangeOwner() != -1 && cityDTO.getTimeToChangeOwner() < new Date().getTime())
-		{
-			if(!cityDTO.getOwnerUID().equals(cityDTO.getNextOwnerUID()))
-			{
-				// changing owner !
-				PlayerDTO previousOwner = pm.getObjectById(PlayerDTO.class, cityDTO.getOwnerUID());
-				previousOwner.getCityUIDs().remove(cityUID);
-				previousOwner.setNbCities(previousOwner.getNbCities() - 1);
-				previousOwner.setNbPopulation(previousOwner.getNbPopulation() - cityDTO.getPopulation());
-				decreaseLandsCount(previousOwner, pm);
-				
-				PlayerDTO newOwner = pm.getObjectById(PlayerDTO.class, cityDTO.getNextOwnerUID());
-				newOwner.getCityUIDs().add(cityUID);
-				newOwner.getCityBeingOwnedUIDs().remove(cityUID);
-				newOwner.setNbCities(newOwner.getNbCities() + 1);
-				increaseLandsCount(newOwner, pm);
+		PlayerDTO previousOwner = pm.getObjectById(PlayerDTO.class, cityDTO.getOwnerUID());
+		previousOwner.getCityUIDs().remove(cityUID);
+		previousOwner.setNbCities(previousOwner.getNbCities() - 1);
+		previousOwner.setNbPopulation(previousOwner.getNbPopulation() - cityDTO.getPopulation());
+		decreaseLandsCount(previousOwner, pm);
 
-				cityDTO.setOwnerUID(newOwner.getUralysUID());
-
-				CellDTO _case = pm.getObjectById(CellDTO.class, "cell_"+cityDTO.getX()+"_"+cityDTO.getY());
-				_case.setLandOwnerUID(newOwner.getUralysUID());
-			}
-			
-			cityDTO.setPopulation(cityDTO.getPopulation() - cityDTO.getPopulationLost());
-			
-			cityDTO.setPopulationLost(null);
-			cityDTO.setNextOwnerUID(null);
-			cityDTO.setTimeToChangeOwner(-1L);
-		}
+		PlayerDTO newOwner = pm.getObjectById(PlayerDTO.class, newOwnerUID);
+		newOwner.getCityUIDs().add(cityUID);
+		newOwner.getCityBeingOwnedUIDs().remove(cityUID);
+		newOwner.setNbCities(newOwner.getNbCities() + 1);
+		increaseLandsCount(newOwner, pm);
 		
-		pm.close();
+		cityDTO.setPopulation(cityDTO.getPopulation() - populationLost);
+		cityDTO.setOwnerUID(newOwnerUID);
+		
+		CellDTO cell = pm.getObjectById(CellDTO.class, "cell_"+cityDTO.getX()+"_"+cityDTO.getY());
+		cell.setLandOwnerUID(newOwner.getUralysUID());
 	}
-
+	
 	//========================================================================================//
 
 	public String createMove(Move move, String nextMoveUID, PersistenceManager pm) 
@@ -961,47 +964,47 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		pm.close();
 	}
 
-	public void resetChallenger(String caseUID)
-	{
-		if(debug)Utils.print("resetChallenger : caseUID : " + caseUID);
-		if(caseUID == null){
-			if(debug)Utils.print("resetChallenger : caseUID is NULL");
-			return;
-		}
-		
-		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
-		CellDTO _case;
-		
-		try{
-			_case = pm.getObjectById(CellDTO.class, caseUID);
-		}
-		catch (Exception e) {
-			if(debug)Utils.print("la case n'existe pas : pas de challenger");
-			return;
-		}
-		
-		_case.setChallengerUID(null);
-		_case.setTimeFromChallenging(-1);
-		
-		CityDTO city = _case.getCity();
-		if(city != null){
-			if(debug)Utils.print("resetChallenger : city : " + city.getCityUID());
-			CityDTO _city = pm.getObjectById(CityDTO.class, city.getCityUID());
-			if(debug)Utils.print("city.getNextOwnerUID() : " + city.getNextOwnerUID());
-			
-			if(city.getNextOwnerUID() != null){
-				if(debug)Utils.print("reset the attacker cityBeingOwnedUIDs");
-				PlayerDTO _attacker = pm.getObjectById(PlayerDTO.class, city.getNextOwnerUID());
-				_attacker.getCityBeingOwnedUIDs().remove(city.getCityUID());
-			}
-
-			_city.setNextOwnerUID(null);
-			_city.setPopulationLost(null);
-			_city.setTimeToChangeOwner(-1l);
-		}
-		
-		pm.close();
-	}
+//	public void resetChallenger(String caseUID)
+//	{
+//		if(debug)Utils.print("resetChallenger : caseUID : " + caseUID);
+//		if(caseUID == null){
+//			if(debug)Utils.print("resetChallenger : caseUID is NULL");
+//			return;
+//		}
+//		
+//		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+//		CellDTO _case;
+//		
+//		try{
+//			_case = pm.getObjectById(CellDTO.class, caseUID);
+//		}
+//		catch (Exception e) {
+//			if(debug)Utils.print("la case n'existe pas : pas de challenger");
+//			return;
+//		}
+//		
+//		_case.setChallengerUID(null);
+//		_case.setTimeFromChallenging(-1);
+//		
+//		CityDTO city = _case.getCity();
+//		if(city != null){
+//			if(debug)Utils.print("resetChallenger : city : " + city.getCityUID());
+//			CityDTO _city = pm.getObjectById(CityDTO.class, city.getCityUID());
+//			if(debug)Utils.print("city.getNextOwnerUID() : " + city.getNextOwnerUID());
+//			
+//			if(city.getNextOwnerUID() != null){
+//				if(debug)Utils.print("reset the attacker cityBeingOwnedUIDs");
+//				PlayerDTO _attacker = pm.getObjectById(PlayerDTO.class, city.getNextOwnerUID());
+//				_attacker.getCityBeingOwnedUIDs().remove(city.getCityUID());
+//			}
+//
+//			_city.setNextOwnerUID(null);
+//			_city.setPopulationLost(null);
+//			_city.setTimeToChangeOwner(-1l);
+//		}
+//		
+//		pm.close();
+//	}
 	
 	public void tryToSetChallenger(Unit unit, long timeFromChallenging)
 	{
@@ -1458,5 +1461,4 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		
 		return (List<AllyDTO>) q.execute();
 	}
-
 }

@@ -62,7 +62,7 @@ public interface IGameDAO {
 	public String createCity(City city, String playerUID);
 	public CityDTO createNewFirstCity(String playerUID);
 	public void cityIsTaken(String cityUID, String newOwnerUID, long timeToChangeOwner, int populationLost);
-	public void checkCityOwner(String cityUID);
+	//public void checkCityOwner(String cityUID);
 
 	//-----------------------------------------------------------------------------------//
 	
@@ -73,7 +73,7 @@ public interface IGameDAO {
 
 	//-----------------------------------------------------------------------------------//
 	
-	public void resetChallenger(String caseUID);
+	//public void resetChallenger(String caseUID);
 	public void tryToSetChallenger(Unit unitArriving, long timeFromChallenging);
 
 	//-----------------------------------------------------------------------------------//
@@ -115,6 +115,11 @@ public interface IGameDAO {
 	public List<AllyDTO> getTopAlliesByArmies();
 	public List<AllyDTO> getTopAlliesByPopulation();
 	public List<AllyDTO> getTopAlliesByLands();
+	
+	//-----------------------------------------------------------------------------------//
+
+	public void changeCityOwner(String cityUID, String newOwnerUID, int populationLost, PersistenceManager pm);
+	public void removeCityBeingOwned(String uralysUID, String cityUID);
 	
 	//-----------------------------------------------------------------------------------//
 	

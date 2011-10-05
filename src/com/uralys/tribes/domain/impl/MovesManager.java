@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.uralys.tribes.dao.IGameDAO;
 import com.uralys.tribes.domain.IMovesManager;
+import com.uralys.tribes.entities.Cell;
 import com.uralys.tribes.entities.Move;
 import com.uralys.tribes.entities.MoveResult;
 import com.uralys.tribes.entities.Player;
@@ -40,7 +41,7 @@ public class MovesManager implements IMovesManager{
 
 	//==================================================================================================//
 
-	public MoveResult refreshUnitMoves(Unit unit) 
+	public MoveResult refreshUnitMoves(Unit unit, boolean creation) 
 	{
 		if(debug)Utils.print("--------------------");
 		if(debug)Utils.print("refreshUnitMoves");
@@ -62,15 +63,20 @@ public class MovesManager implements IMovesManager{
 		if(debug)Utils.print("--------------------");
 		if(debug)Utils.print(" 1 : on verifie si on a croisŽ une unitMet avant");
 		
-		Unit unitToReplace = resetPreviousMeeting(unit, dataContainer);
+		Unit unitToReset = creation ? getUnit(getCell(unit.getMoves().get(0).getCellUID(), dataContainer).getCityUID(), dataContainer) : unit;
+		Unit unitToReplace = resetPreviousMeeting(unitToReset, dataContainer);
 
 		//-------------------------------------------------------//
 		// - 2 : on supprime les anciens moves
 
 		if(debug)Utils.print("--------------------");
-		if(debug)Utils.print(" 2 : on supprime les anciens moves");
 		
-		gameDao.deleteMoves(unit.getUnitUID());
+		if(!creation){
+			if(debug)Utils.print(" 2 : on supprime les anciens moves");
+			gameDao.deleteMoves(unit.getUnitUID());
+		}
+		else
+			if(debug)Utils.print(" 2  : creation : pas d'anciens moves");
 		
 		//-------------------------------------------------------//
 		// - 3 : on verifie si on croise une unit sur le trajet
@@ -115,11 +121,13 @@ public class MovesManager implements IMovesManager{
 		//--------------------------------------------------------------//
 		// - 7 : on replace l'ancienne unitMet si elle existait, et qu'elle est differente de la nouvelle (sinon on loop sans stop)
 
-		if(moveMet != null && unitToReplace != null && !unitToReplace.getUnitUID().equals(moveMet.getUnitUID())){
-			if(debug)Utils.print("--------------------------------");
-			if(debug)if(debug)	Utils.print(" 7 : replace previous unitMet");
-			
-			refreshUnitMoves(unitToReplace);
+		if(unitToReplace != null ){
+			if(moveMet == null || !unitToReplace.getUnitUID().equals(moveMet.getUnitUID())){
+				if(debug)Utils.print("--------------------------------");
+				if(debug)if(debug)	Utils.print(" 7 : replace previous unitMet");
+				
+				refreshUnitMoves(unitToReplace, false);
+			}
 		}
 		
 		//-------------------------------------------------------//
@@ -132,55 +140,6 @@ public class MovesManager implements IMovesManager{
 	}
 
 	//==================================================================================================//
-
-//	private void checkIfACityWithNoDefenseIsTaken(Unit unit, Move lastMove, DataContainer dataContainer) 
-//	{
-//		String allyUID = getAllyUID(unit);
-//		boolean[] attackOrDefendACity = checkAttackOrDefendACity(lastMove.getCellUID(), dataContainer, allyUID);
-//		boolean attackACity = attackOrDefendACity[0];
-//		if(attackACity){
-//			if(debug)Utils.print("attackACityWithNoArmyInDefense !!");
-//			CellDTO cell = getCell(lastMove.getCellUID(), dataContainer);
-//			
-//			if(debug)Utils.print("getValue(unit) : " + getValue(unit));
-//			if(debug)Utils.print("cell.getCity().getPopulation()/10 : " + cell.getCity().getPopulation()/10);
-//			
-//			Report report = new Report();
-//			Unit dummyUnit = dummyUnitMet(cell.getCity(), dataContainer);
-//			
-//			initReport(report, lastMove.getCellUID(), unit, dummyUnit, REPORT_GROUND_FIGHT, true, false);
-//			
-//			if(getValue(unit) > getValue(dummyUnit)){
-//				gameDao.cityIsTaken(cell.getCity().getCityUID(), unit.getPlayer().getUralysUID(), lastMove.getTimeFrom(), getValue(dummyUnit));
-//			}
-//			else{
-//				
-//			}
-//			
-//			//------------------------------------------------//
-//			// envoi des rapports de combats
-//			
-//			unit.setMessageUID(gameDao.sendReport(report, unit.getPlayer().getUralysUID(), lastMove.getTimeFrom()));
-//			gameDao.sendReport(report, dummyUnit.getPlayer().getUralysUID(), lastMove.getTimeFrom());
-//		}
-//	}
-//
-//	private Unit dummyUnitMet(CityDTO city, DataContainer dataContainer) 
-//	{
-//		Unit dummyUnit = new Unit();
-//		Player cityOwner = getPlayer(city.getOwnerUID(), dataContainer);
-//		
-//		dummyUnit.setUnitUID(city.getCityUID());
-//		dummyUnit.getPlayer().setUralysUID(cityOwner.getUralysUID());
-//		dummyUnit.getPlayer().setName(cityOwner.getName());
-//		
-//		dummyUnit.setSize(city.getPopulation());
-//		dummyUnit.setType(Unit.CITY);
-//
-//		return dummyUnit;
-//	}
-
-	//-----------------------------------------------------------------------------------//
 
 	/**
 	 * 	- updateUnit
@@ -207,7 +166,6 @@ public class MovesManager implements IMovesManager{
 	{
 		if(moveMet == null){		
 			if(debug)Utils.print(" pas de meeting !");
-//			checkIfACityWithNoDefenseIsTaken(unit, lastMove, dataContainer);
 			return;
 		}
 
@@ -322,20 +280,25 @@ public class MovesManager implements IMovesManager{
 
 	private Unit resetPreviousMeeting(Unit unit, DataContainer dataContainer) 
 	{
-		Unit unitToReplace = null;
+		Unit previousUnitMet = null;
 
 		if(unit.getUnitMetUID() != null)
 		{
 			if(debug)Utils.print("-----");
 			if(debug)Utils.print("resetPreviousMeeting");
 			
-			unitToReplace = getUnit(unit.getUnitMetUID(), dataContainer);
+			previousUnitMet = getUnit(unit.getUnitMetUID(), dataContainer);
 			
 			if(unit.getUnitNextUID() != null){
 				Unit unitNextToDelete = getUnit(unit.getUnitNextUID(), dataContainer);
 				
 				if(debug)Utils.print("found a unitToReplace, deleting the previous nextUnit : " + unitNextToDelete.getUnitUID());
 				deleteUnit(unitNextToDelete);
+				
+				CellDTO cell = getCell(unitNextToDelete.getMoves().get(0).getCellUID(), dataContainer);
+				if(cell.getType() == Cell.CITY){
+					gameDao.removeCityBeingOwned(unitNextToDelete.getPlayer().getUralysUID(), cell.getCityUID());
+				}
 			}
 			// else : annulation d'une attaque de cityUnit par exemple
 			
@@ -348,20 +311,26 @@ public class MovesManager implements IMovesManager{
 			}
 			
 			// un messageUID peut etre null : dans le cas d'un gathering, on envoie un seul message, pas 2 au meme joueur.
-			if(unitToReplace.getMessageUID() != null){
+			if(previousUnitMet.getMessageUID() != null){
 				List<String> unitToReplaceMessage = new ArrayList<String>();
-				unitToReplaceMessage.add(unitToReplace.getMessageUID());
-				gameDao.deleteMessages(unitToReplace.getPlayer().getUralysUID(), unitToReplaceMessage);
+				unitToReplaceMessage.add(previousUnitMet.getMessageUID());
+				gameDao.deleteMessages(previousUnitMet.getPlayer().getUralysUID(), unitToReplaceMessage);
 			}
 			
-			unitToReplace.setUnitMetUID(null); // on va faire un refreshMoves de cette unit plus tard. c'est lˆ qu'on fera son updateUnit
-			unitToReplace.setMessageUID(null);
+			previousUnitMet.setUnitMetUID(null);
+			previousUnitMet.setUnitNextUID(null);
+			previousUnitMet.setMessageUID(null);
+			previousUnitMet.setEndTime(-1);
+			
+			gameDao.updateUnit(previousUnitMet);
 			
 			unit.setUnitMetUID(null);
+			unit.setUnitNextUID(null);
 			unit.setMessageUID(null);
+			unit.setEndTime(-1);
 		}
 		
-		return unitToReplace;
+		return previousUnitMet;
 	}
 
 	//-------------------------------------------------------------------------------------//
@@ -397,8 +366,10 @@ public class MovesManager implements IMovesManager{
 		
 		//------------------------------------//
 
-		if(unit.getType() != Unit.CITY && unit.getType() != Unit.CITY)
-		{
+		if(unitRemaining.getType() != Unit.CITY)
+		{	
+			if(debug)Utils.print("unitRemaining is not a cityUnit ==> generating the nextUnit");
+		
 			nextUnit = new Unit();
 			nextUnit.setSpeed(unitRemaining.getSpeed());
 			nextUnit.setType(unitRemaining.getType());
@@ -416,6 +387,9 @@ public class MovesManager implements IMovesManager{
 			nextUnit.setPlayer(unitRemaining.getPlayer());
 
 			finalizeReport(report, nextUnit);
+		}
+		else{
+			if(debug)Utils.print("unitRemaining is a cityUnit ==> nextUnit not required");
 		}
 
 		//------------------------------------//
@@ -674,6 +648,7 @@ public class MovesManager implements IMovesManager{
 		if(debug)Utils.print("---------------------");
 		if(debug)Utils.print("getPossibleMoves");
 		ArrayList<Move> movesPossible = new ArrayList<Move>(); 
+		ArrayList<Move> movesPossibleToCancel = new ArrayList<Move>(); 
 		
 		for(MoveDTO recordedMoveDTO : cell.getMoves())
 		{
@@ -706,11 +681,17 @@ public class MovesManager implements IMovesManager{
 					// ici, la unitMet va devenir une autre unit : nextUnit
 					if(debug)Utils.print("check de la nextUnit...");
 					
-					if(recordedMove.getTimeFrom() > move.getTimeFrom()){
+					if(recordedMove.getTimeFrom() > move.getTimeFrom())
+					{
 						//mais ce apres l'arrivee de notre nouveau move
 						// on croise donc l'unite, et on devra calculer une nouvelle nextUnit si c'est ce move qui est choisi
 						if(debug)Utils.print("movePossible !");
 						movesPossible.add(recordedMove);
+						
+						Unit unitNext = getUnit(unitMet.getUnitNextUID(), dataContainer);
+						Move moveToRemoveFromPossibleOnes = unitNext.getMoves().get(0);
+						if(debug)Utils.print("il ne faudra pas tenir compte de ce move : " + moveToRemoveFromPossibleOnes.getMoveUID());
+						movesPossibleToCancel.add(moveToRemoveFromPossibleOnes);
 					}
 					else
 						if(debug)Utils.print("on croisera la nextUnit");
@@ -723,6 +704,7 @@ public class MovesManager implements IMovesManager{
 			}
 		}
 		
+		movesPossible.removeAll(movesPossibleToCancel);
 		return movesPossible;
 	}
 

@@ -61,7 +61,7 @@ package com.uralys.tribes.managers {
 		public function getPlayer(player:Player):void
 		{
 			trace("------------");
-			trace("refreshPlayer");
+			trace("refreshing : getPlayer");
 			trace("------------");
 			Session.WAIT_FOR_SERVER = true;
 			var gameWrapper:RemoteObject = getGameWrapper();

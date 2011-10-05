@@ -61,7 +61,7 @@ public class MovesManager implements IMovesManager{
 		//		 on fera un refreshUnitMoves pour cet unitMet
 
 		if(debug)Utils.print("--------------------");
-		if(debug)Utils.print(" 1 : on verifie si on a croisŽ une unitMet avant");
+		if(debug)Utils.print(" 1 : on verifie si on a croisŽ une unitMet avant (creation : "+creation+")");
 		
 		Unit unitToReset = creation ? getUnit(getCell(unit.getMoves().get(0).getCellUID(), dataContainer).getCityUID(), dataContainer) : unit;
 		Unit unitToReplace = resetPreviousMeeting(unitToReset, dataContainer);
@@ -188,21 +188,23 @@ public class MovesManager implements IMovesManager{
 
 		nextUnit = (Unit) nextUnitAndReport[0];
 		Report report = (Report) nextUnitAndReport[1];
-		finalizeNextUnitCreation(unit, unitMet, nextUnit, report, lastMove, dataContainer);
+		
+		long timeOfTheMeeting = moveMet.getTimeFrom() > lastMove.getTimeFrom() ? moveMet.getTimeFrom() : lastMove.getTimeFrom();
+		finalizeNextUnitCreation(unit, unitMet, nextUnit, report, lastMove, dataContainer, timeOfTheMeeting);
 		
 		gameDao.updateUnit(unitMet);	
 	}
 
 	//-----------------------------------------------------------------------------------//
 	
-	private void finalizeNextUnitCreation(Unit unit, Unit unitMet, Unit nextUnit, Report report, Move lastMove, DataContainer dataContainer) 
+	private void finalizeNextUnitCreation(Unit unit, Unit unitMet, Unit nextUnit, Report report, Move lastMove, DataContainer dataContainer, long timeOfTheMeeting) 
 	{
 		if(nextUnit != null)
 		{
 			nextUnit.setUnitUID(nextUnit.getPlayer().getUralysUID()+"_"+Utils.generatePassword(3)+"_"+lastMove.getTimeFrom());
 			nextUnit.setCellUIDExpectedForLand(lastMove.getCellUID());
 			
-			nextUnit.setBeginTime(lastMove.getTimeFrom());
+			nextUnit.setBeginTime(timeOfTheMeeting);
 			
 			if(nextUnit.getSize() > 0)
 				nextUnit.setEndTime(-1);
@@ -220,7 +222,7 @@ public class MovesManager implements IMovesManager{
 			firstMoveForNextUnit.setMoveUID(lastMove.getTimeFrom()+"_"+TribesUtils.getX(lastMove.getCellUID())+"_"+TribesUtils.getY(lastMove.getCellUID())+"_"+nextUnit.getUnitUID());
 			firstMoveForNextUnit.setUnitUID(nextUnit.getUnitUID());
 			firstMoveForNextUnit.setCellUID(lastMove.getCellUID());
-			firstMoveForNextUnit.setTimeFrom(lastMove.getTimeFrom());
+			firstMoveForNextUnit.setTimeFrom(timeOfTheMeeting);
 			firstMoveForNextUnit.setTimeTo(-1);
 			
 			moves.add(firstMoveForNextUnit);
@@ -237,10 +239,12 @@ public class MovesManager implements IMovesManager{
 		
 		//------------------------------------------------//
 
-		unit.setEndTime(lastMove.getTimeFrom());
+		if(unit.getType() != Unit.CITY)
+			unit.setEndTime(timeOfTheMeeting);
 		unit.setUnitMetUID(unitMet.getUnitUID());
 
-		unitMet.setEndTime(lastMove.getTimeFrom());
+		if(unitMet.getType() != Unit.CITY)
+			unitMet.setEndTime(timeOfTheMeeting);
 		unitMet.setUnitMetUID(unit.getUnitUID());
 
 		//------------------------------------------------//
@@ -296,7 +300,8 @@ public class MovesManager implements IMovesManager{
 				deleteUnit(unitNextToDelete);
 				
 				CellDTO cell = getCell(unitNextToDelete.getMoves().get(0).getCellUID(), dataContainer);
-				if(cell.getType() == Cell.CITY){
+				if(cell.getType() == Cell.CITY && !unitNextToDelete.getPlayer().getUralysUID().equals(unit.getPlayer().getUralysUID())){
+					// si le proprietaire de la nextUnit n'est pas celui de unit est quon est sur une ville : on remove le CityBeingOwned
 					gameDao.removeCityBeingOwned(unitNextToDelete.getPlayer().getUralysUID(), cell.getCityUID());
 				}
 			}
@@ -328,6 +333,8 @@ public class MovesManager implements IMovesManager{
 			unit.setUnitNextUID(null);
 			unit.setMessageUID(null);
 			unit.setEndTime(-1);
+
+			gameDao.updateUnit(unit);
 		}
 		
 		return previousUnitMet;

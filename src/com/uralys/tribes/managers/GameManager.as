@@ -91,7 +91,6 @@ package com.uralys.tribes.managers {
 				refreshUnits();
 			}
 			
-			//Session.board.reloadCurrentCells(true, true);
 		}
 
 		//============================================================================================//
@@ -1236,6 +1235,13 @@ package com.uralys.tribes.managers {
 		{
 			trace("----------");
 			trace("refreshCellFromServer : " + cell.cellUID + " | " + cell.nextCellUID);
+
+			if(Utils.getCellInSession(cell.nextCellUID).city != null){
+				trace("nextCellUID is a city : refreshPlayer");
+				getPlayer(Session.player);
+				return;	
+			}
+			
 			
 			BoardDrawer.getInstance().resetCellDisplay(cell);
 			BoardDrawer.getInstance().resetCellDisplay(Utils.getCellInSession(cell.nextCellUID));

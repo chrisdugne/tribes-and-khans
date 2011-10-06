@@ -34,10 +34,7 @@ public class CityDTO {
 
 	@Persistent private String ownerUID;
 
-//	@Persistent private Long timeToChangeOwner;
-//	@Persistent private String nextOwnerUID;
-//	@Persistent private Integer populationLost;
-	
+
 	@Persistent private int wheat;
 	@Persistent private int peopleCreatingWheat;
 	@Persistent private int wood;
@@ -54,6 +51,7 @@ public class CityDTO {
 	@Persistent private int x;
 	@Persistent private int y;
 	
+	@Persistent private List<String> nextOwnerUIDs = new ArrayList<String>();
 	@Persistent private List<String> stockUIDs = new ArrayList<String>();
 	
 	//-----------------------------------------------------------------------------------//
@@ -138,30 +136,12 @@ public class CityDTO {
 	public void setGold(Integer gold) {
 		this.gold = gold;
 	}
-//	public Long getTimeToChangeOwner() {
-//		return timeToChangeOwner;
-//	}
-//	public void setTimeToChangeOwner(Long timeToChangeOwner) {
-//		this.timeToChangeOwner = timeToChangeOwner;
-//	}
-//	public String getNextOwnerUID() {
-//		return nextOwnerUID;
-//	}
-//	public void setNextOwnerUID(String nextOwnerUID) {
-//		this.nextOwnerUID = nextOwnerUID;
-//	}
 	public String getOwnerUID() {
 		return ownerUID;
 	}
 	public void setOwnerUID(String ownerUID) {
 		this.ownerUID = ownerUID;
 	}
-//	public Integer getPopulationLost() {
-//		return populationLost;
-//	}
-//	public void setPopulationLost(Integer populationLost) {
-//		this.populationLost = populationLost;
-//	}
 	public int getBows() {
 		return bows;
 	}
@@ -191,6 +171,12 @@ public class CityDTO {
 	}
 	public void setEndTime(long endTime) {
 		this.endTime = endTime;
+	}
+	public List<String> getNextOwnerUIDs() {
+		return nextOwnerUIDs;
+	}
+	public void setNextOwnerUIDs(List<String> nextOwnerUIDs) {
+		this.nextOwnerUIDs = nextOwnerUIDs;
 	}
 	
 	//-----------------------------------------------------------------------------------//

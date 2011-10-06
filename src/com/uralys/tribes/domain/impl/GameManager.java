@@ -22,6 +22,7 @@ import com.uralys.tribes.entities.Unit;
 import com.uralys.tribes.entities.converters.EntitiesConverter;
 import com.uralys.tribes.entities.dto.AllyDTO;
 import com.uralys.tribes.entities.dto.CellDTO;
+import com.uralys.tribes.entities.dto.CityDTO;
 import com.uralys.tribes.entities.dto.ItemDTO;
 import com.uralys.tribes.entities.dto.PlayerDTO;
 import com.uralys.utils.Utils;
@@ -123,14 +124,10 @@ public class GameManager implements IGameManager {
 		if(playerDTO == null)
 			return null;
 		
-		// on reattribue les villes 
-//		List<String> cityUIDs = new ArrayList<String>();
-//		cityUIDs.addAll(playerDTO.getCityUIDs());
-//		cityUIDs.addAll(playerDTO.getCityBeingOwnedUIDs());
-			
-		checkCityOwners(uralysUID);
+		checkCitiesBeingOwned(uralysUID);
+		checkCitiesBeingLost(uralysUID);
 		
-		//refresh du player
+		//refresh du player apres les changements de propriete des villes
 		playerDTO = gameDao.getPlayer(uralysUID);
 		
 		Player player = EntitiesConverter.convertPlayerDTO(playerDTO, true);
@@ -183,10 +180,12 @@ public class GameManager implements IGameManager {
 		return player;
 	}
 
-	private void checkCityOwners(String uralysUID) 
+	//==================================================================================================//
+
+	private void checkCitiesBeingOwned(String uralysUID) 
 	{
 		if(debug)Utils.print("-------------------------------------------------");
-		if(debug)Utils.print("checkCityOwners");
+		if(debug)Utils.print("verif des villes que "+uralysUID+" va gagner");
 		
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		PlayerDTO playerDTO = pm.getObjectById(PlayerDTO.class, uralysUID);
@@ -214,8 +213,24 @@ public class GameManager implements IGameManager {
 		for(String cityToRemove : citiesToRemoveFromBeingOwned){
 			playerDTO.getCityBeingOwnedUIDs().remove(cityToRemove);
 		}
+
 		
 		pm.close();
+	}	
+	
+	private void checkCitiesBeingLost(String uralysUID) 
+	{
+		if(debug)Utils.print("-------------------------------------------------");
+		if(debug)Utils.print("verif des villes que "+uralysUID+" va perdre");
+		
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		PlayerDTO playerDTO = pm.getObjectById(PlayerDTO.class, uralysUID);
+		
+		for(CityDTO city : playerDTO.getCities()){
+			for(String nextOwnerUID : city.getNextOwnerUIDs()){
+				checkCitiesBeingOwned(nextOwnerUID);
+			}
+		}
 	}
 
 	//==================================================================================================//

@@ -543,7 +543,7 @@ public class MovesManager implements IMovesManager{
 		report.getUnit1().setDefendACity(defendACity);
 
 		report.getUnit2().setUnitUID(unitMet.getUnitUID());
-		report.getUnit2().setOwnerUID(unit.getPlayer().getUralysUID());
+		report.getUnit2().setOwnerUID(unitMet.getPlayer().getUralysUID());
 		report.getUnit2().setOwnerName(unitMet.getPlayer().getName());
 		report.getUnit2().setSize(unitMet.getSize());
 		report.getUnit2().setType(unitMet.getType());

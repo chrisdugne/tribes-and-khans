@@ -28,6 +28,7 @@ public class UnitDTO {
 	
 	@Persistent private long beginTime;
 	@Persistent private long endTime;
+	@Persistent private Long lastShotTime;
 
 	@Persistent private int wheat;
 	@Persistent private int wood;
@@ -164,8 +165,14 @@ public class UnitDTO {
 	public String getCellUIDExpectedForLand() {
 		return cellUIDExpectedForLand;
 	}
-	public void setCaseUIDExpectedForLand(String cellUIDExpectedForLand) {
+	public void setCellUIDExpectedForLand(String cellUIDExpectedForLand) {
 		this.cellUIDExpectedForLand = cellUIDExpectedForLand;
+	}
+	public Long getLastShotTime() {
+		return lastShotTime;
+	}
+	public void setLastShotTime(Long lastShotTime) {
+		this.lastShotTime = lastShotTime;
 	}
 	public String getMessageUID() {
 		return messageUID;

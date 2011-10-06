@@ -219,7 +219,7 @@ package com.uralys.tribes.entities
 		// 	only on flex side
 		//===============================================================================================//
 		
-		public var merchant:Unit;
+		public var caravan:Unit;
 		public var army:Unit;
 		protected var _unemployed:int;
 		protected var _availableAsSmith:int;
@@ -263,8 +263,8 @@ package com.uralys.tribes.entities
 			if(army != null && army.status == Unit.TO_BE_CREATED)
 				nbWorkers += army.size;
 			
-			if(merchant != null && merchant.status == Unit.TO_BE_CREATED)
-				nbWorkers += merchant.size;
+			if(caravan != null && caravan.status == Unit.TO_BE_CREATED)
+				nbWorkers += caravan.size;
 			
 			return nbWorkers;
 		}

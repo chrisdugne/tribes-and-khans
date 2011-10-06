@@ -1160,7 +1160,7 @@ package com.uralys.tribes.managers {
 			trace("refreshUnitsInCity");
 			
 			for each(var city:City in Session.player.cities){
-				city.merchant = null;
+				city.caravan = null;
 				city.army = null;
 				city.unitsToFeed = 0;
 			}
@@ -1174,7 +1174,7 @@ package com.uralys.tribes.managers {
 					for each(var city:City in Session.player.cities)
 					{
 						if(Utils.getXFromCellUID(unit.currentCaseUID) == city.x && Utils.getYFromCellUID(unit.currentCaseUID) == city.y){
-							city.merchant = unit;
+							city.caravan = unit;
 							city.unitsToFeed += unit.size;
 							break;
 						}
@@ -1271,7 +1271,9 @@ package com.uralys.tribes.managers {
 		
 		public function refreshUnit(unit:Unit):void
 		{
-			if(unit != null){
+			if(unit != null)
+			{
+				unit.refreshValue();
 				
 				if(unit.player.playerUID == Session.player.playerUID)
 					unit.ownerStatus = Unit.PLAYER;

@@ -541,14 +541,14 @@
 				trace("saveCityAndGoBackToBoard");
 				// on force la validation du marchand si il existe et qu'il reste dans la ville
 				// si il est en mouvement, on ne peut pas l'editer donc pas besoin d'appeler le validateMerchants (qui casserait tout en placant le timeTo à -1) 
-				if(selectedCity.merchant != null 
-				&& (selectedCity.merchant.moves.length == 1 || selectedCity.merchant.status == Unit.INTERCEPTED_ON_THIS_CASE))
+				if(selectedCity.caravan != null 
+				&& (selectedCity.caravan.moves.length == 1 || selectedCity.caravan.status == Unit.INTERCEPTED_ON_THIS_CASE))
 				{
-					Session.CURRENT_CELL_SELECTED.caravan = selectedCity.merchant;
-					GameManager.getInstance().validateUnit(selectedCity.merchant);
+					Session.CURRENT_CELL_SELECTED.caravan = selectedCity.caravan;
+					GameManager.getInstance().validateUnit(selectedCity.caravan);
 	
-					if(selectedCity.merchant.status == Unit.TO_BE_CREATED)
-						selectedCity.population -= selectedCity.merchant.size; 
+					if(selectedCity.caravan.status == Unit.TO_BE_CREATED)
+						selectedCity.population -= selectedCity.caravan.size; 
 				}
 
 				// IDEM pour army

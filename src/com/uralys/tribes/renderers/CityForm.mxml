@@ -482,7 +482,7 @@
 				
 				protected function wheatMerchantCheck(event:Event):void
 				{
-					var previousNbWheat:int = city.merchant.wheat;
+					var previousNbWheat:int = city.caravan.wheat;
 					var newNbWheat:int = wheatMerchantSlider.value;
 					
 					if(newNbWheat > previousNbWheat){
@@ -503,14 +503,14 @@
 						city.wheat += previousNbWheat - newNbWheat;
 					}
 					
-					city.merchant.wheat = newNbWheat;
-					wheatMerchantSlider.value = city.merchant.wheat;
+					city.caravan.wheat = newNbWheat;
+					wheatMerchantSlider.value = city.caravan.wheat;
 				}
 				
 				
 				protected function woodMerchantCheck(event:Event):void
 				{
-					var previousNbWood:int = city.merchant.wood;
+					var previousNbWood:int = city.caravan.wood;
 					var newNbWood:int = woodMerchantSlider.value;
 					
 					if(newNbWood > previousNbWood){
@@ -531,14 +531,14 @@
 						city.wood += previousNbWood - newNbWood;
 					}
 					
-					city.merchant.wood = newNbWood;
-					woodMerchantSlider.value = city.merchant.wood;
+					city.caravan.wood = newNbWood;
+					woodMerchantSlider.value = city.caravan.wood;
 				}
 				
 				
 				protected function ironMerchantCheck(event:Event):void
 				{
-					var previousNbIron:int = city.merchant.iron;
+					var previousNbIron:int = city.caravan.iron;
 					var newNbIron:int = ironMerchantSlider.value;
 					
 					if(newNbIron > previousNbIron){
@@ -559,13 +559,13 @@
 						city.iron += previousNbIron - newNbIron;
 					}
 					
-					city.merchant.iron = newNbIron;
-					ironMerchantSlider.value = city.merchant.iron;
+					city.caravan.iron = newNbIron;
+					ironMerchantSlider.value = city.caravan.iron;
 				}
 				
 				protected function goldMerchantCheck(event:Event):void
 				{
-					var previousNbGold:int = city.merchant.gold;
+					var previousNbGold:int = city.caravan.gold;
 					var newNbGold:int = goldMerchantSlider.value;
 					
 					if(newNbGold > previousNbGold){
@@ -586,14 +586,14 @@
 						city.gold += previousNbGold - newNbGold;
 					}
 					
-					city.merchant.gold = newNbGold;
-					goldMerchantSlider.value = city.merchant.gold;
+					city.caravan.gold = newNbGold;
+					goldMerchantSlider.value = city.caravan.gold;
 				}
 				
 				
 				protected function bowsMerchantCheck(event:Event):void
 				{
-					var previousNbBows:int = city.merchant.bows;
+					var previousNbBows:int = city.caravan.bows;
 					var newNbBows:int = bowsMerchantSlider.value;
 					
 					if(newNbBows > previousNbBows){
@@ -614,14 +614,14 @@
 						city.bows += previousNbBows - newNbBows;
 					}
 					
-					city.merchant.bows = newNbBows;
-					bowsMerchantSlider.value = city.merchant.bows;
+					city.caravan.bows = newNbBows;
+					bowsMerchantSlider.value = city.caravan.bows;
 				}
 				
 				
 				protected function swordsMerchantCheck(event:Event):void
 				{
-					var previousNbSwords:int = city.merchant.swords;
+					var previousNbSwords:int = city.caravan.swords;
 					var newNbSwords:int = swordsMerchantSlider.value;
 					
 					if(newNbSwords > previousNbSwords){
@@ -642,13 +642,13 @@
 						city.swords += previousNbSwords - newNbSwords;
 					}
 					
-					city.merchant.swords = newNbSwords;
-					swordsMerchantSlider.value = city.merchant.swords;
+					city.caravan.swords = newNbSwords;
+					swordsMerchantSlider.value = city.caravan.swords;
 				}
 				
 				protected function armorsMerchantCheck(event:Event):void
 				{
-					var previousNbArmors:int = city.merchant.armors;
+					var previousNbArmors:int = city.caravan.armors;
 					var newNbArmors:int = armorsMerchantSlider.value;
 					
 					if(newNbArmors > previousNbArmors){
@@ -669,8 +669,8 @@
 						city.armors += previousNbArmors - newNbArmors;
 					}
 					
-					city.merchant.armors = newNbArmors;
-					armorsMerchantSlider.value = city.merchant.armors;
+					city.caravan.armors = newNbArmors;
+					armorsMerchantSlider.value = city.caravan.armors;
 				}
 				
 				
@@ -726,6 +726,7 @@
 					if(city.army.status != Unit.TO_BE_CREATED)
 						city.population -= city.army.size - previousArmySize;
 					
+					city.army.refreshValue();
 					updateWorkersProgressBar();
 				}
 				
@@ -733,12 +734,13 @@
 
 				protected function merchantsCheck(event:Event):void
 				{
-					var previousMerchantSize:int = city.merchant.size;
-					city.merchant.size = merchantsSlider.value;
+					var previousMerchantSize:int = city.caravan.size;
+					city.caravan.size = merchantsSlider.value;
 
-					if(city.merchant.status != Unit.TO_BE_CREATED)
-						city.population -= city.merchant.size - previousMerchantSize; 
+					if(city.caravan.status != Unit.TO_BE_CREATED)
+						city.population -= city.caravan.size - previousMerchantSize; 
 					
+					city.caravan.refreshValue();
 					updateWorkersProgressBar();
 				}
 				
@@ -848,7 +850,7 @@
 					if(newMerchant == null)
 						return;
 					
-					city.merchant = newMerchant;
+					city.caravan = newMerchant;
 					
 					merchantsSlider.value = 50;
 					merchantsCheck(null);
@@ -856,33 +858,33 @@
 
 				protected function deleteMerchant():void
 				{
-					trace("delete merchant" + city.merchant.unitUID);
+					trace("delete merchant" + city.caravan.unitUID);
 					
-					if(city.merchant.status != Unit.TO_BE_CREATED){
+					if(city.caravan.status != Unit.TO_BE_CREATED){
 						// pour une caravane deja existante : on reajuste la pop, ils peuvent travailler des ce tour
 						// faille : si on a enleve des unites avant elles sont dans armyReleased et ne seront pas utilisees ce tour
-						city.population += city.merchant.size;
+						city.population += city.caravan.size;
 					}
 					
 					//---------------------------------//
 					// on remet les provisions transportees dans les stocks de la ville
 
-					city.wheat += city.merchant.wheat;
+					city.wheat += city.caravan.wheat;
 					if(city.wheatStockCapacity < city.wheat)
 						city.wheat = city.wheatStockCapacity;
 					
-					city.wood += city.merchant.wood;
+					city.wood += city.caravan.wood;
 					if(city.woodStockCapacity < city.wood)
 						city.wood = city.woodStockCapacity;
 					
-					city.iron += city.merchant.iron;
+					city.iron += city.caravan.iron;
 					if(city.ironStockCapacity < city.iron)
 						city.iron = city.ironStockCapacity;
 					
-					city.gold += city.merchant.gold;
+					city.gold += city.caravan.gold;
 
 					// on enleve des arcs a l'armee
-					var nbBowsRestored:int = city.merchant.bows;
+					var nbBowsRestored:int = city.caravan.bows;
 					
 					if(nbBowsRestored + city.bows > city.bowStockCapacity){
 						city.bows = city.bowStockCapacity;
@@ -891,7 +893,7 @@
 						city.bows += nbBowsRestored;
 					
 					// on enleve des epees a l'armee
-					var nbSwordsRestored:int = city.merchant.swords;
+					var nbSwordsRestored:int = city.caravan.swords;
 					
 					if(nbSwordsRestored + city.swords > city.swordStockCapacity){
 						city.swords = city.swordStockCapacity;
@@ -900,7 +902,7 @@
 						city.swords += nbSwordsRestored;
 					
 					// on enleve des armures a l'armee
-					var nbArmorsRestored:int = city.merchant.armors;
+					var nbArmorsRestored:int = city.caravan.armors;
 					
 					if(nbArmorsRestored + city.armors > city.armorStockCapacity){
 						city.armors = city.armorStockCapacity;
@@ -912,12 +914,12 @@
 					
 					
 					// on enleve la caravane de la liste de la ville et du player
-					Session.player.units.removeItemAt(Session.player.units.getItemIndex(city.merchant));
+					Session.player.units.removeItemAt(Session.player.units.getItemIndex(city.caravan));
 					
 					GameManager.getInstance().refreshCellDisplay(Session.CURRENT_CELL_SELECTED);
-					GameManager.getInstance().deleteUnit(city.merchant);
+					GameManager.getInstance().deleteUnit(city.caravan);
 					
-					city.merchant = null;
+					city.caravan = null;
 					
 					updateWorkersProgressBar();
 				}
@@ -1705,7 +1707,7 @@
 									<s:Button label="{Translations.NEW_MERCHANTS.getItemAt(Session.LANGUAGE)}" 
 											  click="newMerchants()"
 											  skinClass="com.uralys.tribes.skins.CustomButtonSkin"
-											  enabled="{city.merchant == null &amp;&amp; Session.player.units.length &lt; Session.player.cities.length*3}"/>
+											  enabled="{city.caravan == null &amp;&amp; Session.player.units.length &lt; Session.player.cities.length*3}"/>
 									<mx:Image width="30" height="30" 
 											  toolTip=" "
 											  toolTipCreate="{onCreateMerchantToolTip(event)}"
@@ -1714,24 +1716,24 @@
 								<s:Button label="{Translations.DELETE.getItemAt(Session.LANGUAGE)}"
 										  skinClass="com.uralys.tribes.skins.CustomButtonSkin"
 										  click="deleteMerchant()"
-										  visible="{city.merchant != null}"
-										  enabled="{city.merchant.moves.length == 1 || city.merchant.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
+										  visible="{city.caravan != null}"
+										  enabled="{city.caravan.moves.length == 1 || city.caravan.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
 								
-								<renderers:UnitRenderer unit="{city.merchant}" visible="{city.merchant != null}"/>
+								<renderers:UnitRenderer unit="{city.caravan}" visible="{city.caravan != null}"/>
 							</s:VGroup>
 							<s:VGroup>
 							<mx:Grid verticalGap="10" 
 									 horizontalGap="10" 
 									 horizontalAlign="center" 
 									 verticalAlign="middle"
-									 visible="{city.merchant != null}">
+									 visible="{city.caravan != null}">
 								<mx:GridRow >
 									<mx:GridItem >
 										<s:Label text="{Translations.NB_CARAVAN.getItemAt(Session.LANGUAGE)}" />
 									</mx:GridItem>
 									<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 										<s:HGroup verticalAlign="middle">
-											<s:Label text="{city.merchant.size}" 
+											<s:Label text="{city.caravan.size}" 
 													 styleName="numberLabel" 
 													 textAlign="right"
 													 minWidth="60"/>
@@ -1740,11 +1742,11 @@
 													   showDataTip="false"
 													   liveDragging="true" 
 													   change="merchantsCheck(event)"
-													   value="{city.merchant.size}"
+													   value="{city.caravan.size}"
 													   minimum="50"
-													   maximum="{city.unemployed + city.merchant.size}"
+													   maximum="{city.unemployed + city.caravan.size}"
 													   snapInterval="1"
-													   enabled="{city.merchant.moves.length == 1 || city.merchant.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
+													   enabled="{city.caravan.moves.length == 1 || city.caravan.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
 										</s:HGroup>
 									</mx:GridItem>
 									<mx:GridItem/>
@@ -1756,9 +1758,9 @@
 								</mx:GridRow >
 							</mx:Grid>
 							<s:Scroller maxHeight="200" width="100%"
-										visible="{city.merchant != null}" >
+										visible="{city.caravan != null}" >
 								<s:Group width="100%"
-										 visible="{city.merchant != null}">
+										 visible="{city.caravan != null}">
 									<mx:Grid verticalGap="10" 
 											 horizontalGap="10" 
 											 horizontalAlign="center" 
@@ -1779,7 +1781,7 @@
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 												<s:HGroup verticalAlign="middle">
-													<s:Label text="{city.merchant.wheat}" 
+													<s:Label text="{city.caravan.wheat}" 
 															 styleName="numberLabel" 
 															 textAlign="right"
 															 minWidth="60"/>
@@ -1787,10 +1789,10 @@
 															   showDataTip="false"
 															   liveDragging="true" 
 															   change="wheatMerchantCheck(event)"
-															   value="{city.merchant.wheat}"
-															   maximum="{city.wheat + city.merchant.wheat}"
+															   value="{city.caravan.wheat}"
+															   maximum="{city.wheat + city.caravan.wheat}"
 															   snapInterval="1"
-															   enabled="{city.merchant.moves.length == 1 || city.merchant.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
+															   enabled="{city.caravan.moves.length == 1 || city.caravan.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
 												</s:HGroup>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
@@ -1803,7 +1805,7 @@
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 												<s:HGroup verticalAlign="middle">
-													<s:Label text="{city.merchant.wood}" 
+													<s:Label text="{city.caravan.wood}" 
 															 styleName="numberLabel" 
 															 textAlign="right"
 															 minWidth="60"/>
@@ -1811,10 +1813,10 @@
 															   showDataTip="false"
 															   liveDragging="true" 
 															   change="woodMerchantCheck(event)"
-															   value="{city.merchant.wood}"
-															   maximum="{city.wood + city.merchant.wood}"
+															   value="{city.caravan.wood}"
+															   maximum="{city.wood + city.caravan.wood}"
 															   snapInterval="1"
-															   enabled="{city.merchant.moves.length == 1 || city.merchant.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
+															   enabled="{city.caravan.moves.length == 1 || city.caravan.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
 												</s:HGroup>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
@@ -1827,7 +1829,7 @@
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 												<s:HGroup verticalAlign="middle">
-													<s:Label text="{city.merchant.iron}" 
+													<s:Label text="{city.caravan.iron}" 
 															 styleName="numberLabel" 
 															 textAlign="right"
 															 minWidth="60"/>
@@ -1835,10 +1837,10 @@
 															   showDataTip="false"
 															   liveDragging="true" 
 															   change="ironMerchantCheck(event)"
-															   value="{city.merchant.iron}"
-															   maximum="{city.iron + city.merchant.iron}"
+															   value="{city.caravan.iron}"
+															   maximum="{city.iron + city.caravan.iron}"
 															   snapInterval="1"
-															   enabled="{city.merchant.moves.length == 1 || city.merchant.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
+															   enabled="{city.caravan.moves.length == 1 || city.caravan.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
 												</s:HGroup>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
@@ -1851,7 +1853,7 @@
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 												<s:HGroup verticalAlign="middle">
-													<s:Label text="{city.merchant.gold}" 
+													<s:Label text="{city.caravan.gold}" 
 															 styleName="numberLabel" 
 															 textAlign="right"
 															 minWidth="60"/>
@@ -1859,10 +1861,10 @@
 															   showDataTip="false"
 															   liveDragging="true" 
 															   change="goldMerchantCheck(event)"
-															   value="{city.merchant.gold}"
-															   maximum="{city.gold + city.merchant.gold}"
+															   value="{city.caravan.gold}"
+															   maximum="{city.gold + city.caravan.gold}"
 															   snapInterval="1"
-															   enabled="{city.merchant.moves.length == 1 || city.merchant.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
+															   enabled="{city.caravan.moves.length == 1 || city.caravan.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
 												</s:HGroup>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
@@ -1875,7 +1877,7 @@
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 												<s:HGroup verticalAlign="middle">
-													<s:Label text="{city.merchant.bows}" 
+													<s:Label text="{city.caravan.bows}" 
 															 styleName="numberLabel" 
 															 textAlign="right"
 															 minWidth="60"/>
@@ -1883,10 +1885,10 @@
 															   showDataTip="false"
 															   liveDragging="true" 
 															   change="bowsMerchantCheck(event)"
-															   value="{city.merchant.bows}"
-															   maximum="{city.bows + city.merchant.bows}"
+															   value="{city.caravan.bows}"
+															   maximum="{city.bows + city.caravan.bows}"
 															   snapInterval="1"
-															   enabled="{city.merchant.moves.length == 1 || city.merchant.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
+															   enabled="{city.caravan.moves.length == 1 || city.caravan.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
 												</s:HGroup>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
@@ -1899,7 +1901,7 @@
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 												<s:HGroup verticalAlign="middle">
-													<s:Label text="{city.merchant.swords}" 
+													<s:Label text="{city.caravan.swords}" 
 															 styleName="numberLabel" 
 															 textAlign="right"
 															 minWidth="60"/>
@@ -1907,10 +1909,10 @@
 															   showDataTip="false"
 															   liveDragging="true" 
 															   change="swordsMerchantCheck(event)"
-															   value="{city.merchant.swords}"
-															   maximum="{city.swords + city.merchant.swords}"
+															   value="{city.caravan.swords}"
+															   maximum="{city.swords + city.caravan.swords}"
 															   snapInterval="1"
-															   enabled="{city.merchant.moves.length == 1 || city.merchant.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
+															   enabled="{city.caravan.moves.length == 1 || city.caravan.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
 												</s:HGroup>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
@@ -1923,7 +1925,7 @@
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 												<s:HGroup verticalAlign="middle">
-													<s:Label text="{city.merchant.armors}" 
+													<s:Label text="{city.caravan.armors}" 
 															 styleName="numberLabel" 
 															 textAlign="right"
 															 minWidth="60"/>
@@ -1931,10 +1933,10 @@
 															   showDataTip="false"
 															   liveDragging="true" 
 															   change="armorsMerchantCheck(event)"
-															   value="{city.merchant.armors}"
-															   maximum="{city.armors + city.merchant.armors}"
+															   value="{city.caravan.armors}"
+															   maximum="{city.armors + city.caravan.armors}"
 															   snapInterval="1"
-															   enabled="{city.merchant.moves.length == 1 || city.merchant.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
+															   enabled="{city.caravan.moves.length == 1 || city.caravan.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
 												</s:HGroup>
 											</mx:GridItem>
 											<mx:GridItem horizontalAlign="center" verticalAlign="middle">

@@ -68,6 +68,7 @@ package com.uralys.tribes.entities
 		private var _currentCaseUID:String;
 		
 		protected var _radius:int;
+		protected var _value:int;
 		
 		
 		//==========================================================================//
@@ -116,23 +117,25 @@ package com.uralys.tribes.entities
 			_type = o;
 		}
 	
-		public function getValue():int {
-			return type == MERCHANT ? size/10 : (size
-												+ (bows > size ? size : bows) 
-												+ (swords > size ? size : swords) *2 
-												+ (armors > size ? size : armors) *3
-												); 
+		public function set value(o:int):void {
+			_value = o;
 		}
 
-//		public function refreshValue():void {
-//			value = size 
-//					+ (bows > size ? size : bows) 
-//					+ (swords > size ? size : swords) *2 
-//					+ (armors > size ? size : armors) *3;
-//			
-//			if(type == MERCHANT)
-//				value = value/10;
-//		}
+		public function get value():int {
+			return _value;
+		}
+
+		public function refreshValue():void 
+		{
+			if(type == MERCHANT)
+				value = size/10;
+			else{
+				value = size 
+						+ (bows > size ? size : bows) 
+						+ (swords > size ? size : swords) *2 
+						+ (armors > size ? size : armors) *3;
+			}
+		}
 	
 		
 		public function get wheat():int {

@@ -30,26 +30,27 @@
 			
 			private function goLeft():void
 			{
-				viewStack.selectedIndex --;
-				if(viewStack.selectedIndex < 0)
+				if(viewStack.selectedIndex == 0)
 					viewStack.selectedIndex = viewStack.numElements-1;
+				else
+					viewStack.selectedIndex --;
 
 			}
 
 			private function goRight():void
 			{
-				viewStack.selectedIndex ++;
-				
-				if(viewStack.selectedIndex > viewStack.numElements-1)
+				if(viewStack.selectedIndex == viewStack.numElements-1)
 					viewStack.selectedIndex = 0;
+				else
+					viewStack.selectedIndex ++;
 				
 			}
 		]]>
 	</fx:Script>
 	
 	<fx:Declarations>
-		<s:Fade id="fade" alphaTo="0"/>
-		<s:Fade id="unfade" alphaTo="1"/>
+		<s:Fade id="fade" alphaTo="0" duration="200"/>
+		<s:Fade id="unfade" alphaTo="1" duration="200"/>
 	</fx:Declarations>
 	
 	<s:Group id="groupDetails" height="60" width="130">
@@ -71,17 +72,18 @@
 					  width="100%"
 					  visible="{unit.ownerStatus == Unit.PLAYER || unit.ownerStatus == Unit.ALLY}">
 			
-			<s:NavigatorContent width="100%" showEffect="unfade" hideEffect="fade">
+			<s:NavigatorContent width="100%" showEffect="{unfade}" hideEffect="{fade}">
 				<s:HGroup width="100%"
 						  horizontalAlign="center">
 					<s:Label color="#FFFFFF" 
 							 left="20" 
 							 verticalCenter="2"
-							 text="{unit.getValue()} pts"/>
+							 text="{unit.value} pts"/>
 				</s:HGroup>
 			</s:NavigatorContent>
 			
-			<s:NavigatorContent width="100%" showEffect="unfade" hideEffect="fade">
+			<s:NavigatorContent width="100%" showEffect="{unfade}" hideEffect="{fade}"
+								alpha="0">
 				<s:HGroup width="100%"
 						  horizontalAlign="center">
 					<s:Image source="{unit.type == Unit.ARMY ? ImageContainer.WARRIOR1 : ImageContainer.MERCHANT1}"/>
@@ -92,7 +94,8 @@
 				</s:HGroup>
 			</s:NavigatorContent>
 			
-			<s:NavigatorContent width="100%" showEffect="unfade" hideEffect="fade">
+			<s:NavigatorContent width="100%" showEffect="{unfade}" hideEffect="{fade}"
+								alpha="0">
 				<s:HGroup width="100%"
 						  horizontalAlign="center">
 					<s:Image source="{ImageContainer.BOW}" width="25"/>
@@ -102,7 +105,8 @@
 				</s:HGroup>
 			</s:NavigatorContent>
 					
-			<s:NavigatorContent width="100%" showEffect="unfade" hideEffect="fade">
+			<s:NavigatorContent width="100%" showEffect="{unfade}" hideEffect="{fade}"
+								alpha="0">
 				<s:HGroup width="100%"
 						  horizontalAlign="center">
 					<s:Image source="{ImageContainer.SWORD}" width="25"/>
@@ -112,7 +116,8 @@
 				</s:HGroup>
 			</s:NavigatorContent>
 						  
-			<s:NavigatorContent width="100%" showEffect="unfade" hideEffect="fade">
+			<s:NavigatorContent width="100%" showEffect="{unfade}" hideEffect="{fade}"
+								alpha="0">
 				<s:HGroup width="100%"
 						  horizontalAlign="center">
 					<s:Image source="{ImageContainer.ARMOR}" width="25"/>
@@ -122,7 +127,8 @@
 				</s:HGroup>
 			</s:NavigatorContent>
 			
-			<s:NavigatorContent width="100%" showEffect="unfade" hideEffect="fade">
+			<s:NavigatorContent width="100%" showEffect="{unfade}" hideEffect="{fade}"
+								alpha="0">
 				<s:HGroup width="100%"
 						  horizontalAlign="center">
 					<s:Image source="{ImageContainer.WHEAT}" width="25"/>
@@ -132,7 +138,8 @@
 				</s:HGroup>
 			</s:NavigatorContent>
 
-			<s:NavigatorContent width="100%" showEffect="unfade" hideEffect="fade">
+			<s:NavigatorContent width="100%" showEffect="{unfade}" hideEffect="{fade}"
+								alpha="0">
 				<s:HGroup width="100%"
 						  horizontalAlign="center">
 					<s:Image source="{ImageContainer.WOOD}" width="25"/>
@@ -142,7 +149,8 @@
 				</s:HGroup>
 			</s:NavigatorContent>
 
-			<s:NavigatorContent width="100%" showEffect="unfade" hideEffect="fade">
+			<s:NavigatorContent width="100%" showEffect="{unfade}" hideEffect="{fade}"
+								alpha="0">
 				<s:HGroup width="100%"
 						  horizontalAlign="center">
 					<s:Image source="{ImageContainer.IRON}" width="25"/>
@@ -152,7 +160,8 @@
 				</s:HGroup>
 			</s:NavigatorContent>
 			
-			<s:NavigatorContent width="100%" showEffect="unfade" hideEffect="fade">
+			<s:NavigatorContent width="100%" showEffect="{unfade}" hideEffect="{fade}"
+								alpha="0">
 				<s:HGroup width="100%"
 						  horizontalAlign="center">
 					<s:Image source="{ImageContainer.GOLD}" width="25"/>

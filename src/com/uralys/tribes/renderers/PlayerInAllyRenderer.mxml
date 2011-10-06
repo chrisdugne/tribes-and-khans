@@ -6,6 +6,7 @@
 				xmlns:renderers="com.uralys.tribes.renderers.*">
 	<fx:Script>
 		<![CDATA[
+			import com.uralys.tribes.main.ImageContainer;
 			//--------------------------------------------------------------------------------//
 
 			import com.uralys.tribes.commons.Session;

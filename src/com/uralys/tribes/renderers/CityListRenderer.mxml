@@ -15,6 +15,7 @@
 	
 	<fx:Script>
 		<![CDATA[
+			import com.uralys.tribes.main.ImageContainer;
 			import com.uralys.tribes.commons.Numbers;
 			
 			import mx.events.ItemClickEvent;

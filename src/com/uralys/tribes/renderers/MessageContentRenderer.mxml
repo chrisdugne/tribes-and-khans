@@ -12,8 +12,6 @@
 	
 	<fx:Script>
 		<![CDATA[
-			//-------------------------------------------------//
-			
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;
 			import com.uralys.tribes.entities.Message;
@@ -21,6 +19,7 @@
 			import com.uralys.utils.Utils;
 			
 			import mx.collections.ArrayCollection;
+			import mx.utils.ObjectUtil;
 			
 			//-------------------------------------------------//
 			
@@ -45,10 +44,11 @@
 					currentState = "classic";
 				else if(Utils.isInviteMessage(message))
 					currentState = "invitation";
-				else if(Utils.isReportMessage(message))
+				else if(Utils.isReportMessage(message)){
+					trace(ObjectUtil.toString(message.report));
 					currentState = "report";
+				}
 				
-				trace(currentState);
 			}
 
 		

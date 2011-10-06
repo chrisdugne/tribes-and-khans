@@ -35,6 +35,7 @@
     
     <fx:Script fb:purpose="styling">
         <![CDATA[         
+			import com.uralys.tribes.main.ImageContainer;
             /* Define the skin elements that should not be colorized. 
             For button, the graphics are colorized but the label is not. */
             static private const exclusions:Array = ["labelDisplay"];

@@ -1,4 +1,4 @@
-package
+package com.uralys.tribes.main
 {
 	import flash.display.Bitmap;
 	import flash.display.Loader;
@@ -179,6 +179,8 @@ public final class ImageContainer
 	[Bindable] public static var URALYS_MINI_LOGO:Bitmap;
 	[Bindable] public static var ONESHEET:Bitmap;
 	[Bindable] public static var EDIT_WHITE:Bitmap;
+	[Bindable] public static var LEFT_ARROW:Bitmap;
+	[Bindable] public static var RIGHT_ARROW:Bitmap;
 
 	//   ======================================================================//
 
@@ -232,7 +234,9 @@ public final class ImageContainer
 		 "webresources/images/logos/fonts.png",
 		 "webresources/images/logos/uralysminilogo.png",
 		 "webresources/images/logos/onesheet.png",
-		 "webresources/images/edit_white.png"
+		 "webresources/images/edit_white.png",
+		 "webresources/images/icons/left.png",
+		 "webresources/images/icons/right.png"
 		 
 		 ]);
 	
@@ -368,11 +372,17 @@ public final class ImageContainer
 			case 37:
 				EDIT_WHITE = event.currentTarget.content;
 				break;
+			case 38:
+				LEFT_ARROW = event.currentTarget.content;
+				break;
+			case 39:
+				RIGHT_ARROW = event.currentTarget.content;
+				break;
 		}
 		
 		currentImage++;
 		
-		if(currentImage < 38)
+		if(currentImage < 40)
 			loadNextImage();
 		else
 			IMAGES_LOADED = true;

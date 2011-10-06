@@ -7,6 +7,7 @@
 	
 		<fx:Script>
 			<![CDATA[
+				import com.uralys.tribes.main.ImageContainer;
 				//----------------------------------------------------------//
 
 				import com.uralys.tribes.commons.Numbers;
@@ -1716,7 +1717,7 @@
 										  visible="{city.merchant != null}"
 										  enabled="{city.merchant.moves.length == 1 || city.merchant.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
 								
-								<renderers:MerchantsRenderer merchant="{city.merchant}" visible="{city.merchant != null}"/>
+								<renderers:UnitRenderer unit="{city.merchant}" visible="{city.merchant != null}"/>
 							</s:VGroup>
 							<s:VGroup>
 							<mx:Grid verticalGap="10" 
@@ -1969,7 +1970,7 @@
 									  visible="{city.army != null}"
 									  enabled="{city.army.moves.length == 1 || city.army.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
 							
-							<renderers:ArmyRenderer army="{city.army}" visible="{city.army != null}"/>
+							<renderers:UnitRenderer unit="{city.army}" visible="{city.army != null}"/>
 						</s:VGroup>
 						<mx:Grid verticalGap="10" 
 								 horizontalGap="10" 

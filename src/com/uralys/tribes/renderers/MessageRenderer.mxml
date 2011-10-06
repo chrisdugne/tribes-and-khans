@@ -7,6 +7,7 @@
 				visible="{(data as Message).status != Message.DELETED}">
 	<fx:Script>
 		<![CDATA[
+			import com.uralys.tribes.main.ImageContainer;
 			//------------------------------------------------------------------------------//
 
 			import com.uralys.tribes.commons.Session;

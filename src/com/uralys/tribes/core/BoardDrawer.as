@@ -44,6 +44,7 @@ package com.uralys.tribes.core
 	import spark.primitives.Ellipse;
 	import spark.primitives.Line;
 	import spark.primitives.Rect;
+	import com.uralys.tribes.main.ImageContainer;
 
 	/**
 		BoardDrawer draws all the entities of the game on the board.

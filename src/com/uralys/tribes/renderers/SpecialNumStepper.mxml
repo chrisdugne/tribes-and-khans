@@ -6,6 +6,7 @@
 	
 	<fx:Script>
 		<![CDATA[
+			import com.uralys.tribes.main.ImageContainer;
 			[Bindable] public var data:int;
 			[Bindable] public var step:int;
 			[Bindable] public var check:Function;

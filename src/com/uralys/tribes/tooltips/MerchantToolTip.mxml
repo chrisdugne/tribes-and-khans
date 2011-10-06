@@ -8,6 +8,7 @@
 	<fx:Script>
 			
 		<![CDATA[
+			import com.uralys.tribes.main.ImageContainer;
 			import com.uralys.tribes.commons.Numbers;
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;

@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+				xmlns:s="library://ns.adobe.com/flex/spark" 
+				xmlns:mx="library://ns.adobe.com/flex/mx" 
+				useHandCursor="true"
+				buttonMode="true"
+				contentBackgroundAlpha="0" 
+				xmlns:renderers="com.uralys.tribes.renderers.*">
+	
+	<s:states>
+		<s:State name="normal" />
+		<s:State name="hovered" />
+		<s:State name="selected" />
+	</s:states>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.uralys.tribes.commons.Numbers;
+			import com.uralys.tribes.commons.Session;
+			import com.uralys.tribes.commons.Translations;
+			import com.uralys.tribes.entities.Unit;
+			import com.uralys.tribes.main.ImageContainer;
+			
+			import mx.core.FlexGlobals;
+			import mx.effects.easing.Quadratic;
+			import mx.events.ItemClickEvent;
+			
+			
+			[Bindable] public var unit:Unit;
+			
+			private function goLeft():void
+			{
+				viewStack.selectedIndex --;
+				if(viewStack.selectedIndex < 0)
+					viewStack.selectedIndex = viewStack.numElements-1;
+
+			}
+
+			private function goRight():void
+			{
+				viewStack.selectedIndex ++;
+				
+				if(viewStack.selectedIndex > viewStack.numElements-1)
+					viewStack.selectedIndex = 0;
+				
+			}
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<s:Fade id="fade" alphaTo="0"/>
+		<s:Fade id="unfade" alphaTo="1"/>
+	</fx:Declarations>
+	
+	<s:Group id="groupDetails" height="60" width="130">
+		<s:Rect left="0" right="0" top="0" bottom="0" radiusX="5" radiusY="5">
+			<s:fill>
+				<s:SolidColor color="{unit.ownerStatus == Unit.PLAYER ? Numbers.colorPlayer : (unit.ownerStatus == Unit.ALLY ? Numbers.colorAlly  : Numbers.colorEnnemy)}" alpha="0.4"/>
+			</s:fill>
+		</s:Rect>
+		<renderers:PlayerName player="{unit.player}" left="5"/>
+		<s:Image source="{unit.type == Unit.ARMY ? ImageContainer.WARRIOR1 : ImageContainer.MERCHANT1}"
+				 right="5"/>
+		
+		<s:Image source="{ImageContainer.LEFT_ARROW}" click="{goLeft()}" left="10" top="30"/>
+		<s:Image source="{ImageContainer.RIGHT_ARROW}" click="{goRight()}" right="10" top="30"/>
+		
+		<mx:ViewStack id="viewStack" 
+					  top="30"
+					  height="30"
+					  width="100%"
+					  visible="{unit.ownerStatus == Unit.PLAYER || unit.ownerStatus == Unit.ALLY}">
+			
+			<s:NavigatorContent width="100%" showEffect="unfade" hideEffect="fade">
+				<s:HGroup width="100%"
+						  horizontalAlign="center">
+					<s:Label color="#FFFFFF" 
+							 left="20" 
+							 verticalCenter="2"
+							 text="{unit.getValue()} pts"/>
+				</s:HGroup>
+			</s:NavigatorContent>
+			
+			<s:NavigatorContent width="100%" showEffect="unfade" hideEffect="fade">
+				<s:HGroup width="100%"
+						  horizontalAlign="center">
+					<s:Image source="{unit.type == Unit.ARMY ? ImageContainer.WARRIOR1 : ImageContainer.MERCHANT1}"/>
+					<s:Label color="#FFFFFF" 
+							 left="20" 
+							 verticalCenter="2"
+							 text="{unit.size}"/>
+				</s:HGroup>
+			</s:NavigatorContent>
+			
+			<s:NavigatorContent width="100%" showEffect="unfade" hideEffect="fade">
+				<s:HGroup width="100%"
+						  horizontalAlign="center">
+					<s:Image source="{ImageContainer.BOW}" width="25"/>
+					<s:Label color="#FFFFFF" 
+							 verticalCenter="2"
+							 text="{unit.bows}"/>
+				</s:HGroup>
+			</s:NavigatorContent>
+					
+			<s:NavigatorContent width="100%" showEffect="unfade" hideEffect="fade">
+				<s:HGroup width="100%"
+						  horizontalAlign="center">
+					<s:Image source="{ImageContainer.SWORD}" width="25"/>
+					<s:Label color="#FFFFFF" 
+							 verticalCenter="2"
+							 text="{unit.swords}"/>
+				</s:HGroup>
+			</s:NavigatorContent>
+						  
+			<s:NavigatorContent width="100%" showEffect="unfade" hideEffect="fade">
+				<s:HGroup width="100%"
+						  horizontalAlign="center">
+					<s:Image source="{ImageContainer.ARMOR}" width="25"/>
+					<s:Label color="#FFFFFF" 
+							 verticalCenter="2"
+							 text="{unit.armors}"/>
+				</s:HGroup>
+			</s:NavigatorContent>
+			
+			<s:NavigatorContent width="100%" showEffect="unfade" hideEffect="fade">
+				<s:HGroup width="100%"
+						  horizontalAlign="center">
+					<s:Image source="{ImageContainer.WHEAT}" width="25"/>
+					<s:Label color="#FFFFFF" 
+							 verticalCenter="2"
+							 text="{unit.wheat}"/>
+				</s:HGroup>
+			</s:NavigatorContent>
+
+			<s:NavigatorContent width="100%" showEffect="unfade" hideEffect="fade">
+				<s:HGroup width="100%"
+						  horizontalAlign="center">
+					<s:Image source="{ImageContainer.WOOD}" width="25"/>
+					<s:Label color="#FFFFFF" 
+							 verticalCenter="2"
+							 text="{unit.wood}"/>
+				</s:HGroup>
+			</s:NavigatorContent>
+
+			<s:NavigatorContent width="100%" showEffect="unfade" hideEffect="fade">
+				<s:HGroup width="100%"
+						  horizontalAlign="center">
+					<s:Image source="{ImageContainer.IRON}" width="25"/>
+					<s:Label color="#FFFFFF" 
+							 verticalCenter="2"
+							 text="{unit.iron}"/>
+				</s:HGroup>
+			</s:NavigatorContent>
+			
+			<s:NavigatorContent width="100%" showEffect="unfade" hideEffect="fade">
+				<s:HGroup width="100%"
+						  horizontalAlign="center">
+					<s:Image source="{ImageContainer.GOLD}" width="25"/>
+					<s:Label color="#FFFFFF" 
+							 verticalCenter="2"
+							 text="{unit.gold}"/>
+				</s:HGroup>
+			</s:NavigatorContent>
+		</mx:ViewStack>
+		
+	</s:Group>
+	
+</s:Group>

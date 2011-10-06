@@ -15,6 +15,7 @@
 	
 	<fx:Script>
 		<![CDATA[
+			import com.uralys.tribes.main.ImageContainer;
 			//---------------------------------------------------------------------------------------//
 			
 			import com.uralys.tribes.commons.Numbers;
@@ -64,7 +65,7 @@
 			//---------------------------------------------------------------------------------------//
 			
 			[Bindable] public var selectedCity:City;
-			[Bindable] private var selectedUnit:Unit;
+			[Bindable] public var selectedUnit:Unit;
 			
 			//----------------------------------------------------------//
 
@@ -889,13 +890,11 @@
 				  width="200">
 			
 			<mx:HRule width="180"/>
-			<renderers:ArmyRenderer army="{Session.CURRENT_CELL_SELECTED.army}" 
-									visible="{Session.CURRENT_CELL_SELECTED != null &amp;&amp; Session.CURRENT_CELL_SELECTED.army !=null &amp;&amp; Session.CURRENT_CELL_SELECTED.army.size > 0}"
-									click="selectedUnit = Session.CURRENT_CELL_SELECTED.army; onUnitClick();"/>
+			<renderers:UnitRenderer unit="{Session.CURRENT_CELL_SELECTED.army}" 
+									visible="{Session.CURRENT_CELL_SELECTED != null &amp;&amp; Session.CURRENT_CELL_SELECTED.army !=null &amp;&amp; Session.CURRENT_CELL_SELECTED.army.size > 0}"/>
 			<mx:HRule width="180"/>
-			<renderers:MerchantsRenderer merchant="{Session.CURRENT_CELL_SELECTED.caravan}" 
-										 visible="{Session.CURRENT_CELL_SELECTED != null &amp;&amp; Session.CURRENT_CELL_SELECTED.caravan !=null &amp;&amp; Session.CURRENT_CELL_SELECTED.caravan.size > 0}"
-										 click="selectedUnit = Session.CURRENT_CELL_SELECTED.caravan; onUnitClick();"/>
+			<renderers:UnitRenderer unit="{Session.CURRENT_CELL_SELECTED.caravan}" 
+									visible="{Session.CURRENT_CELL_SELECTED != null &amp;&amp; Session.CURRENT_CELL_SELECTED.caravan !=null &amp;&amp; Session.CURRENT_CELL_SELECTED.caravan.size > 0}"/>
 		</s:VGroup>
 
 		<s:CheckBox id="checkboxBars"

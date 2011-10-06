@@ -6,6 +6,7 @@
 
 	<fx:Script>
 		<![CDATA[
+			import com.uralys.tribes.main.ImageContainer;
 			
 		]]>
 	</fx:Script>

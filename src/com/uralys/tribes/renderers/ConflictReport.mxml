@@ -3,6 +3,11 @@
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
 		 xmlns:mx="library://ns.adobe.com/flex/mx"
 		 height="285" width="370">
+	<fx:Script>
+		<![CDATA[
+			import com.uralys.tribes.main.ImageContainer;
+		]]>
+	</fx:Script>
 	
 		<s:Rect left="0" right="0" top="0" bottom="0" radiusX="5" radiusY="5">
 			<s:fill>

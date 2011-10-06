@@ -7,13 +7,15 @@
 			   skinClass="com.uralys.tribes.skins.WindowSkin"
 			   close="{closeWindow(true)}"
 			   creationComplete="init()"
-			   width="580"
-			   height="480"
+			   width="800"
+			   height="620"
 			   backgroundAlpha="0.7"
 			   backgroundColor="#000000"
 			   cornerRadius="15" >
 	<fx:Script>
 		<![CDATA[
+			import com.uralys.tribes.main.ImageContainer;
+			
 			//-----------------------------------------------------------------//
 			
 			import com.uralys.tribes.commons.Session;
@@ -226,13 +228,13 @@
 					<s:List dataProvider="{Session.player.newMessages}"
 							id="newMessagesList"
 							height="400"
-							width="40%"
+							width="30%"
 							selectionColor="#000101"
 							rollOverColor="#000101"
 							visible="{Session.player.newMessages.length &gt; 0}"
 							itemRenderer="com.uralys.tribes.renderers.MessageRenderer"
 							skinClass="com.uralys.tribes.skins.CustomListSkin"/>
-					<s:VGroup width="60%" height="70%"
+					<s:VGroup width="70%" height="70%"
 							  horizontalAlign="center"
 							  paddingTop="5">
 						<renderers:MessageContentRenderer message="{newMessagesList.selectedItem as Message}"
@@ -249,13 +251,13 @@
 					<s:List dataProvider="{Session.player.readMessages}"
 							id="readMessagesList"
 							height="400"
-							width="40%"
+							width="30%"
 							selectionColor="#000101"
 							rollOverColor="#000101"
 							itemRenderer="com.uralys.tribes.renderers.MessageRenderer"
 							visible="{Session.player.readMessages.length &gt; 0}"
 							skinClass="com.uralys.tribes.skins.CustomListSkin"/>
-					<s:VGroup width="60%" height="90%"
+					<s:VGroup width="70%" height="90%"
 							  horizontalAlign="center"
 							  paddingTop="5"
 							  contentBackgroundAlpha="0">
@@ -287,13 +289,13 @@
 					<s:List dataProvider="{Session.player.archivedMessages}"
 							id="archivedMessagesList"
 							height="400"
-							width="40%"
+							width="30%"
 							selectionColor="#000101"
 							rollOverColor="#000101"
 							itemRenderer="com.uralys.tribes.renderers.MessageRenderer"
 							visible="{Session.player.archivedMessages.length &gt; 0}"
 							skinClass="com.uralys.tribes.skins.CustomListSkin"/>
-					<s:VGroup width="60%" height="70%"
+					<s:VGroup width="70%" height="70%"
 							  horizontalAlign="center"
 							  paddingTop="5"
 							  contentBackgroundAlpha="0">

@@ -1,6 +1,11 @@
 
 package com.uralys.tribes.entities
 {
+	import com.uralys.tribes.commons.Numbers;
+	import com.uralys.tribes.commons.Session;
+	import com.uralys.tribes.commons.Translations;
+	
+	import mx.messaging.management.Attribute;
 
 	[Bindable]
 	[RemoteClass(alias="com.uralys.tribes.entities.Report")]
@@ -60,6 +65,41 @@ package com.uralys.tribes.entities
 		public function set cellUID(value:String):void
 		{
 			_cellUID = value;
+		}
+
+		//----------------------------------------------
+
+		public function get title():String
+		{
+			var victory:Boolean = nextUnit.ownerUID == Session.player.playerUID;
+			var playerOwnsUnit1 = unit1.ownerUID ==  Session.player.playerUID;
+			
+			var _title:String =  reportType == Numbers.REPORT_GROUND_FIGHT 
+								? (Translations.CONFLICT.getItemAt(Session.LANGUAGE) as String) 
+								: (Translations.GATHERING.getItemAt(Session.LANGUAGE) as String)
+			
+			if(reportType != Numbers.REPORT_GROUND_GATHERING)
+			{
+				if(victory){
+					_title += " : " + (Translations.VICTORY.getItemAt(Session.LANGUAGE) as String);
+					
+					if(playerOwnsUnit1 && unit1.attackACity
+					|| !playerOwnsUnit1 && unit1.defendACity){
+						_title += " : " + (Translations.CITY_IS_TAKEN.getItemAt(Session.LANGUAGE) as String);
+					}
+				}
+				else{
+					_title += " : " + (Translations.DEFEAT.getItemAt(Session.LANGUAGE) as String);
+
+					if(playerOwnsUnit1 && unit1.defendACity
+					|| !playerOwnsUnit1 && unit1.attackACity){
+						_title += " : " + (Translations.CITY_IS_LOST.getItemAt(Session.LANGUAGE) as String);
+					}
+				}
+				
+			}
+			
+			return _title;
 		}
 
 

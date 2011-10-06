@@ -135,6 +135,12 @@ public class Translations{
 									"Save Changes"]);
 
 	[Bindable]
+	public static var CELL:ArrayCollection = new ArrayCollection(
+									["Case",
+									"Cell",
+									"Cell"]);
+
+	[Bindable]
 	public static var WAY_SELECTION:ArrayCollection = new ArrayCollection(
 									["Edition du chemin de l'unité",
 									"Unit way edition",
@@ -472,6 +478,18 @@ public class Translations{
 									["Ville en construction",
 									"City being built",
 									"City being built"]);
+
+	[Bindable]
+	public static var CITY_IS_TAKEN:ArrayCollection = new ArrayCollection(
+									["La ville a été prise !",
+									"City taken !",
+									"City taken !"]);
+
+	[Bindable]
+	public static var CITY_IS_LOST:ArrayCollection = new ArrayCollection(
+									["La ville a été perdue...",
+									"City lost...",
+									"City lost..."]);
 
 	[Bindable]
 	public static var CITY_BUILDING_DONE:ArrayCollection = new ArrayCollection(

@@ -65,7 +65,7 @@
 			//---------------------------------------------------------------------------------------//
 			
 			[Bindable] public var selectedCity:City;
-			[Bindable] public var selectedUnit:Unit;
+			[Bindable] private var selectedUnit:Unit;
 			
 			//----------------------------------------------------------//
 
@@ -121,20 +121,20 @@
 			
 			private function checkToLoadCases(x:int, y:int, force:Boolean = false, refreshLandOwners = false):Boolean
 			{
-				trace("-------------------------------------");
-				trace("checkToLoadCases | force : " + force);
-				trace("------");
-				trace("x : " + x);
-				trace("y : " + y);
-				trace("------");
-				trace("Session.LEFT_LIMIT_LOADED : " + Session.LEFT_LIMIT_LOADED);
-				trace("Session.RIGHT_LIMIT_LOADED : " + Session.RIGHT_LIMIT_LOADED);
-				trace("Session.TOP_LIMIT_LOADED : " + Session.TOP_LIMIT_LOADED);
-				trace("Session.BOTTOM_LIMIT_LOADED : " + Session.BOTTOM_LIMIT_LOADED);
-				trace("------");
-				trace("Session.CENTER_X : " + Session.CENTER_X);
-				trace("Session.CENTER_Y : " + Session.CENTER_Y);
-				trace("------");
+//				trace("-------------------------------------");
+//				trace("checkToLoadCases | force : " + force);
+//				trace("------");
+//				trace("x : " + x);
+//				trace("y : " + y);
+//				trace("------");
+//				trace("Session.LEFT_LIMIT_LOADED : " + Session.LEFT_LIMIT_LOADED);
+//				trace("Session.RIGHT_LIMIT_LOADED : " + Session.RIGHT_LIMIT_LOADED);
+//				trace("Session.TOP_LIMIT_LOADED : " + Session.TOP_LIMIT_LOADED);
+//				trace("Session.BOTTOM_LIMIT_LOADED : " + Session.BOTTOM_LIMIT_LOADED);
+//				trace("------");
+//				trace("Session.CENTER_X : " + Session.CENTER_X);
+//				trace("Session.CENTER_Y : " + Session.CENTER_Y);
+//				trace("------");
 				
 				if(x < Session.LEFT_LIMIT_LOADED
 				|| x > Session.RIGHT_LIMIT_LOADED 
@@ -142,7 +142,8 @@
 				|| y > Session.BOTTOM_LIMIT_LOADED
 				|| force)
 				{
-					trace("  ==>  LOAD");
+					trace("-------------------------------------");
+					trace("checkToLoadCases  ==>  LOAD");
 					GameManager.getInstance().loadCells(Session.CENTER_X, Session.CENTER_Y, refreshLandOwners);
 					return true;
 				}
@@ -154,14 +155,10 @@
 			
 			// click sur une armee dans la barre laterale
 			// ou dans la liste sous 'enter city'
-			public function onUnitClick():void
+			public function moveUnit(unit:Unit):void
 			{
-				if(selectedUnit.status == Unit.TO_BE_CREATED)
-					return;
+				selectedUnit = unit;
 
-				if(selectedUnit.ownerStatus != Unit.PLAYER)
-					return;
-				
 				if(Session.MOVE_A_UNIT)
 					return;
 				
@@ -264,25 +261,13 @@
 				}
 			}
 			
-			protected function doubleClick(event:MouseEvent):void
-			{
-				mouseUp(event);
-				
-				if(Session.CURRENT_CELL_SELECTED.army != null)
-					selectedUnit = Session.CURRENT_CELL_SELECTED.army; 
-				else if(Session.CURRENT_CELL_SELECTED.caravan != null)
-					selectedUnit = Session.CURRENT_CELL_SELECTED.caravan; 
-				
-				if(selectedUnit != null)
-					onUnitClick();
-			}
-				
 			public function simulateClick():void{
 				mouseUp();
 			}
 			
 			protected function mouseUp(event:MouseEvent = null):void
 			{
+				trace("mouseUp");
 				mayDrag = false;
 				
 				enterCityForm.visible = false;
@@ -299,7 +284,6 @@
 						Session.CURRENT_SELECTION_Y = Session.COORDINATE_Y;
 						
 						Session.CURRENT_CELL_SELECTED = Session.map[Session.CURRENT_SELECTION_X][Session.CURRENT_SELECTION_Y];
-						//Session.CURRENT_CELL_SELECTED.tryRefresh();
 					}
 					catch(e:Error){
 						// au chargement Session.map peut etre null, et la souris etre sur une image de bord
@@ -392,7 +376,6 @@
 					movesBeingRemoved = [];
 				}
 
-				selectedUnit = null;
 				currentState = "board";
 				newMoveAdded = false;
 				removingMoves = false;
@@ -951,9 +934,7 @@
 						  height="{Numbers.LAND_HEIGHT*400}"
 						  mouseDown="mouseDown(event)"
 						  mouseMove="mouseMove(event)"
-						  mouseUp="mouseUp(event)"
-						  doubleClick="doubleClick(event)"
-						  doubleClickEnabled="true"/>
+						  mouseUp="mouseUp(event)"/>
 					<s:Group id="landLayer"
 							 visible="{Session.LANDS_VISIBLE}"
 							 width="{Numbers.LAND_WIDTH*400}"

@@ -2,16 +2,21 @@
 <s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
 				xmlns:s="library://ns.adobe.com/flex/spark" 
 				xmlns:mx="library://ns.adobe.com/flex/mx" 
+				xmlns:renderers="com.uralys.tribes.renderers.*"
 				useHandCursor="true"
 				buttonMode="true"
-				contentBackgroundAlpha="0" 
-				xmlns:renderers="com.uralys.tribes.renderers.*">
+				contentBackgroundAlpha="0"
+				>
 	
-	<s:states>
-		<s:State name="normal" />
-		<s:State name="hovered" />
-		<s:State name="selected" />
-	</s:states>
+	<fx:Declarations>
+		<s:Fade id="fade" alphaTo="0" duration="200"/>
+		<s:Fade id="unfade" alphaTo="1" duration="200"/>
+		
+		<s:State name="noBows"/>
+		<s:State name="shotEnabled"/>
+		<s:State name="reloading"/>
+		<s:State name="moving"/>
+	</fx:Declarations>
 	
 	<fx:Script>
 		<![CDATA[
@@ -20,15 +25,93 @@
 			import com.uralys.tribes.commons.Translations;
 			import com.uralys.tribes.entities.Unit;
 			import com.uralys.tribes.main.ImageContainer;
+			import com.uralys.tribes.skins.CustomButtonSkin;
+			import com.uralys.tribes.skins.WorkersProgressBarSkin;
+			import com.uralys.tribes.skins.WorkersProgressTrackSkin;
 			
 			import mx.core.FlexGlobals;
 			import mx.effects.easing.Quadratic;
 			import mx.events.ItemClickEvent;
 			
+			//-------------------------------------------------------------------------------------//
 			
-			[Bindable] public var unit:Unit;
+ 			private var _unit:Unit;
 			
-			private function goLeft():void
+			//-------------------------------------------------------------------------------------//
+			
+			private function refresh():void
+			{
+				if(unit.moves.length > 1)
+				{
+					setMoving();
+					currentState = "moving";
+				}
+				else{
+					if(unit.bows > 0 && unit.type == Unit.ARMY)
+					{
+						Session.timer.removeEventListener(TimerEvent.TIMER, setReloading);
+						
+						var now:Number = new Date().getTime();
+						if(now - unit.lastShotTime > Numbers.BASE_TIME_FOR_SHOOTING)
+							currentState = "shotEnabled";
+						else{
+							setReloading();
+							currentState = "reloading";
+						}
+						
+					}
+					else
+						currentState = "noBows";
+				}
+			}
+			
+			//-------------------------------------------------------------------------------------//
+			
+			private function setMoving(event:TimerEvent = null):void
+			{
+				var now:Number = new Date().getTime();
+				var millisRemaining:Number = unit.moves.getItemAt(0).timeTo - now;
+				var millisSpent:Number = now - unit.moves.getItemAt(0).timeFrom;
+				
+				if(millisRemaining <= 0){
+					if(event != null)
+						refresh();
+				}
+				else{
+					var minutes:int = millisRemaining/60/1000;
+					var secondes:int = (millisRemaining - minutes*60*1000) /1000;
+					
+					movingProgressBar.setProgress( millisSpent, unit.moves.getItemAt(0).timeTo - unit.moves.getItemAt(0).timeFrom );
+					movingProgressBar.label = Translations.MOVING.getItemAt(Session.LANGUAGE) + " : " +(minutes>9 ? "" : "0")+minutes+" mn "+(secondes>9 ? "" : "0")+secondes+' s';
+					
+					Session.timer.addEventListener(TimerEvent.TIMER, setMoving);
+				}
+			}
+			
+			private function setReloading(event:TimerEvent = null):void
+			{
+				var now:Number = new Date().getTime();
+				var millisRemaining:Number = Numbers.BASE_TIME_FOR_SHOOTING + unit.lastShotTime - now;
+				var millisSpent:Number = now - unit.lastShotTime;
+				
+				if(millisRemaining <= 0){
+					if(event != null)
+						refresh();
+				}
+				else{
+					var minutes:int = millisRemaining/60/1000;
+					var secondes:int = (millisRemaining - minutes*60*1000) /1000;
+					
+					shootProgressBar.setProgress( millisSpent, Numbers.BASE_TIME_FOR_SHOOTING );
+					shootProgressBar.label = Translations.BOWS.getItemAt(Session.LANGUAGE) + " : " +(minutes>9 ? "" : "0")+minutes+" mn "+(secondes>9 ? "" : "0")+secondes+' s';
+					
+					Session.timer.addEventListener(TimerEvent.TIMER, setReloading);
+				}
+			}
+			
+			//-------------------------------------------------------------------------------------//
+			
+			private function goLeft(viewStack:ViewStack):void
 			{
 				if(viewStack.selectedIndex == 0)
 					viewStack.selectedIndex = viewStack.numElements-1;
@@ -37,7 +120,7 @@
 
 			}
 
-			private function goRight():void
+			private function goRight(viewStack:ViewStack):void
 			{
 				if(viewStack.selectedIndex == viewStack.numElements-1)
 					viewStack.selectedIndex = 0;
@@ -45,15 +128,38 @@
 					viewStack.selectedIndex ++;
 				
 			}
+			
+			//-------------------------------------------------------------------------------------//
+
+			private function moveUnit():void{
+				Session.board.moveUnit(unit);
+			}
+
+			//-------------------------------------------------------------------------------------//
+
+			private function shoot():void{
+				unit.lastShotTime = new Date().getTime();
+				refresh();
+			}
+			
+			//-------------------------------------------------------------------------------------//
+			
+			[Bindable]
+			public function get unit():Unit
+			{
+				return _unit;
+			}
+
+			public function set unit(value:Unit):void
+			{
+				_unit = value;
+				refresh();
+			}
+
 		]]>
 	</fx:Script>
 	
-	<fx:Declarations>
-		<s:Fade id="fade" alphaTo="0" duration="200"/>
-		<s:Fade id="unfade" alphaTo="1" duration="200"/>
-	</fx:Declarations>
-	
-	<s:Group id="groupDetails" height="60" width="130">
+	<s:Group id="groupDetails" height="100" width="130">
 		<s:Rect left="0" right="0" top="0" bottom="0" radiusX="5" radiusY="5">
 			<s:fill>
 				<s:SolidColor color="{unit.ownerStatus == Unit.PLAYER ? Numbers.colorPlayer : (unit.ownerStatus == Unit.ALLY ? Numbers.colorAlly  : Numbers.colorEnnemy)}" alpha="0.4"/>
@@ -63,8 +169,10 @@
 		<s:Image source="{unit.type == Unit.ARMY ? ImageContainer.WARRIOR1 : ImageContainer.MERCHANT1}"
 				 right="5"/>
 		
-		<s:Image source="{ImageContainer.LEFT_ARROW}" click="{goLeft()}" left="10" top="30"/>
-		<s:Image source="{ImageContainer.RIGHT_ARROW}" click="{goRight()}" right="10" top="30"/>
+		<s:Image source="{ImageContainer.LEFT_ARROW}" click="{goLeft(viewStack)}" left="10" top="30"
+				 visible="{unit.ownerStatus == Unit.PLAYER || unit.ownerStatus == Unit.ALLY}"/>
+		<s:Image source="{ImageContainer.RIGHT_ARROW}" click="{goRight(viewStack)}" right="10" top="30"
+				 visible="{unit.ownerStatus == Unit.PLAYER || unit.ownerStatus == Unit.ALLY}"/>
 		
 		<mx:ViewStack id="viewStack" 
 					  top="30"
@@ -172,6 +280,62 @@
 			</s:NavigatorContent>
 		</mx:ViewStack>
 		
+		<s:Image source="{ImageContainer.LEFT_ARROW}" click="{goLeft(actionsViewStack)}" left="10" top="65"
+				 visible="{unit.ownerStatus == Unit.PLAYER &amp;&amp; unit.type == Unit.ARMY &amp;&amp; unit.bows &gt; 0}"/>
+		<s:Image source="{ImageContainer.RIGHT_ARROW}" click="{goRight(actionsViewStack)}" right="10" top="65"
+				 visible="{unit.ownerStatus == Unit.PLAYER &amp;&amp; unit.type == Unit.ARMY &amp;&amp; unit.bows &gt; 0}"/>
+		
+		<mx:ViewStack id="actionsViewStack" 
+					  top="65"
+					  height="30"
+					  width="100%"
+					  visible="{unit.ownerStatus == Unit.PLAYER}">
+			
+			<s:NavigatorContent width="100%" showEffect="{unfade}" hideEffect="{fade}">
+				<s:HGroup verticalAlign="middle" 
+						  horizontalAlign="center" 
+						  width="100%">
+					<s:Button label="{Translations.MOVE.getItemAt(Session.LANGUAGE)}"
+							  excludeFrom="moving"
+							  skinClass="{CustomButtonSkin}"
+							  click="moveUnit()"/>
+					
+					<mx:ProgressBar id="movingProgressBar"
+									width="80%"
+									height="20"
+									mode="manual"
+									barSkin="{WorkersProgressBarSkin}"
+									trackSkin="{WorkersProgressTrackSkin}"
+									label="" 
+									labelPlacement="bottom"
+									includeIn="moving"/>
+				</s:HGroup>
+			</s:NavigatorContent>
+			
+			<s:NavigatorContent width="100%" showEffect="{unfade}" hideEffect="{fade}">
+				<s:HGroup verticalAlign="middle" 
+						  horizontalAlign="center" 
+						  width="100%">
+					
+					<s:Button label="{Translations.SHOOT.getItemAt(Session.LANGUAGE)}"
+							  includeIn="shotEnabled"
+							  skinClass="{CustomButtonSkin}"
+							  click="shoot()"/>
+					
+					<mx:ProgressBar id="shootProgressBar"
+									width="80%"
+									height="20"
+									mode="manual"
+									barSkin="{WorkersProgressBarSkin}"
+									trackSkin="{WorkersProgressTrackSkin}"
+									label="" 
+									labelPlacement="bottom"
+									includeIn="reloading"/>
+				</s:HGroup>
+			</s:NavigatorContent>
+		</mx:ViewStack>
+		
+
 	</s:Group>
 	
 </s:Group>

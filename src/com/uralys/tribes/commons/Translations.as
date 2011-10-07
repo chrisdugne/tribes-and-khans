@@ -172,6 +172,22 @@ public class Translations{
 									["Contrées",
 									"Lands",
 									"Lands"]);
+
+	[Bindable]
+	public static var SHOOT:ArrayCollection = new ArrayCollection(
+									["Tirer",
+									"Shoot",
+									"Shoot"]);
+	[Bindable]
+	public static var MOVING:ArrayCollection = new ArrayCollection(
+									["Déplacement",
+									"Moving",
+									"Moving"]);
+	[Bindable]
+	public static var MOVE:ArrayCollection = new ArrayCollection(
+									["Déplacer",
+									"Move",
+									"Move"]);
 	[Bindable]
 	public static var SHOW_LANDS:ArrayCollection = new ArrayCollection(
 									["Montrer les contrées",
@@ -862,18 +878,33 @@ public class Translations{
 									["Arc",
 									"Bow",
 									"Bow"]);
+	[Bindable]
+	public static var BOWS:ArrayCollection = new ArrayCollection(
+									["Arcs",
+									"Bows",
+									"Bows"]);
 
 	[Bindable]
 	public static var SWORD:ArrayCollection = new ArrayCollection(
 									["Epée",
 									"Sword",
 									"Sword"]);
+	[Bindable]
+	public static var SWORDS:ArrayCollection = new ArrayCollection(
+									["Epées",
+									"Swords",
+									"Swords"]);
 
 	[Bindable]
 	public static var ARMOR:ArrayCollection = new ArrayCollection(
 									["Armure",
 									"Armor",
 									"Armor"]);
+	[Bindable]
+	public static var ARMORS:ArrayCollection = new ArrayCollection(
+									["Armures",
+									"Armors",
+									"Armors"]);
 
 	//-----------------------------------------------------------------------------------//
 	

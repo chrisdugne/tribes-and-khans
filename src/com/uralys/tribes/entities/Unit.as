@@ -31,6 +31,7 @@ package com.uralys.tribes.entities
 			_unitUID = Session.player.uralysUID+"_"+(Session.player.units.length+1)+"_"+(new Date().getTime());
 			_status = TO_BE_CREATED;
 			_beginTime = new Date().getTime();
+			_lastShotTime = new Date().getTime();
 			_endTime = -1;
 		}
 		
@@ -54,6 +55,7 @@ package com.uralys.tribes.entities
 
 		private var _beginTime:Number;
 		private var _endTime:Number;
+		private var _lastShotTime:Number;
 
 		private var _cellUIDExpectedForLand:String;
 		private var _unitMetUID:String;
@@ -228,6 +230,16 @@ package com.uralys.tribes.entities
 		public function set endTime(value:Number):void
 		{
 			_endTime = value;
+		}
+		
+		public function get lastShotTime():Number
+		{
+			return _lastShotTime;
+		}
+		
+		public function set lastShotTime(value:Number):void
+		{
+			_lastShotTime = value;
 		}
 		
 		public function get cellUIDExpectedForLand():String

@@ -40,8 +40,7 @@
 			{
 				trace("Welcome to Tribes and Khans | Version : " + Session.VERSION);
 				
-				if(url == "http://localhost:8888/webresources/flex.debug/TribesAndKhansClient.swf")
-					Session.isLocal = true;
+				Session.isLocal = url == "http://localhost:8888/webresources/flex.debug/TribesAndKhansClient.swf";
 				
 				Session.APPLICATION_WIDTH = FlexGlobals.topLevelApplication.width;
 				Session.dateFormatter.formatString = "DD MMMM YYYY, HHhNN";

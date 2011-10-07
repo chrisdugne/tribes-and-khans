@@ -22,6 +22,9 @@ package com.uralys.tribes.commons
 		[Bindable]
 		//public static var BASE_TIME_FOR_LAND_CONQUEST_MILLIS:int = Session.isLocal ? 2*1000 : 60*60*1000;
 		public static var BASE_TIME_FOR_LAND_CONQUEST_MILLIS:int = 60*60*1000;
+
+		// tir accessible toutes les 10 minutes
+		public static var BASE_TIME_FOR_SHOOTING:int = 10*60*1000;
 	
 		// une ville se construit en 12h
 		[Bindable]

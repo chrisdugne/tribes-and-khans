@@ -49,10 +49,6 @@
 
 			public function refresh():void
 			{
-				// init des players pour la 1.2
-				if(isNaN(beginTime) || beginTime == 0)
-					beginTime = -1;
-				
 				timeLabel.text = '';
 				Session.timer.removeEventListener(TimerEvent.TIMER, setBuilding);
 				

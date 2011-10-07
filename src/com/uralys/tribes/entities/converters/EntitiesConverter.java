@@ -276,6 +276,7 @@ public class EntitiesConverter {
 
 		unit.setBeginTime(unitDTO.getBeginTime());
 		unit.setEndTime(unitDTO.getEndTime());
+		unit.setLastShotTime(unitDTO.getLastShotTime());
 
 		unit.setUnitMetUID(unitDTO.getUnitMetUID());
 		unit.setUnitNextUID(unitDTO.getUnitNextUID());

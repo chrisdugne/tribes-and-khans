@@ -37,6 +37,7 @@ public class Unit {
 	
 	private long beginTime;
 	private long endTime;
+	private Long lastShotTime;
 	
 	private String cellUIDExpectedForLand;
 	private String unitMetUID;
@@ -190,6 +191,14 @@ public class Unit {
 	
 	public void setBeginTime(long beginTime) {
 		this.beginTime = beginTime;
+	}
+
+	public Long getLastShotTime() {
+		return lastShotTime;
+	}
+
+	public void setLastShotTime(Long lastShotTime) {
+		this.lastShotTime = lastShotTime;
 	}
 
 	public long getEndTime() {

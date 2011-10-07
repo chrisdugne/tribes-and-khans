@@ -663,6 +663,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 
 		unitDTO.setBeginTime(unit.getBeginTime());
 		unitDTO.setEndTime(-1);
+		unitDTO.setLastShotTime(unit.getBeginTime());
 		
 		unitDTO.setCellUIDExpectedForLand(unit.getCellUIDExpectedForLand());
 		unitDTO.setUnitMetUID(unit.getUnitMetUID());
@@ -704,6 +705,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		unitDTO.setMessageUID(unit.getMessageUID());
 		unitDTO.setBeginTime(unit.getBeginTime());
 		unitDTO.setEndTime(unit.getEndTime());
+		unitDTO.setLastShotTime(unit.getLastShotTime());
 
 		pm.close();
 	}

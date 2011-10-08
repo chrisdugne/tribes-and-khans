@@ -5,15 +5,16 @@
 				xmlns:renderers="com.uralys.tribes.renderers.*"
 				useHandCursor="true"
 				buttonMode="true"
-				contentBackgroundAlpha="0"
+				contentBackgroundAlpha="0" xmlns:components="com.uralys.tribes.components.*"
 				>
 	
 	<fx:Declarations>
 		<s:Fade id="fade" alphaTo="0" duration="200"/>
 		<s:Fade id="unfade" alphaTo="1" duration="200"/>
 		
-		<s:State name="noBows"/>
+		<s:State name="waiting"/>
 		<s:State name="shotEnabled"/>
+		<s:State name="buildCityEnabled"/>
 		<s:State name="reloading"/>
 		<s:State name="moving"/>
 	</fx:Declarations>
@@ -23,8 +24,10 @@
 			import com.uralys.tribes.commons.Numbers;
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;
+			import com.uralys.tribes.core.UnitMover;
 			import com.uralys.tribes.entities.Unit;
 			import com.uralys.tribes.main.ImageContainer;
+			import com.uralys.tribes.managers.GameManager;
 			import com.uralys.tribes.skins.CustomButtonSkin;
 			import com.uralys.tribes.skins.WorkersProgressBarSkin;
 			import com.uralys.tribes.skins.WorkersProgressTrackSkin;
@@ -36,11 +39,29 @@
 			//-------------------------------------------------------------------------------------//
 			
  			private var _unit:Unit;
+		
+			[Bindable]
+			public function get unit():Unit
+			{
+				return _unit;
+			}
+			
+			public function set unit(value:Unit):void
+			{
+				_unit = value;
+				refresh();
+			}
+			
+			//-------------------------------------------------------------------------------------//
+
+			[Bindable] private var nbActionsAvailable:int;
 			
 			//-------------------------------------------------------------------------------------//
 			
 			private function refresh():void
 			{
+				nbActionsAvailable = 1;
+				
 				if(unit.moves.length > 1)
 				{
 					setMoving();
@@ -49,6 +70,7 @@
 				else{
 					if(unit.bows > 0 && unit.type == Unit.ARMY)
 					{
+						nbActionsAvailable ++;
 						Session.timer.removeEventListener(TimerEvent.TIMER, setReloading);
 						
 						var now:Number = new Date().getTime();
@@ -60,8 +82,13 @@
 						}
 						
 					}
+					else if(Session.CURRENT_CELL_SELECTED.city == null 
+						&& unit.mayBuildAcity()
+						&& (Session.CURRENT_CELL_SELECTED.landOwner == null || unit.player.ally.allyUID == Session.CURRENT_CELL_SELECTED.landOwner.ally.allyUID)){
+						currentState="buildCityEnabled"
+					}
 					else
-						currentState = "noBows";
+						currentState = "waiting";
 				}
 			}
 			
@@ -131,8 +158,21 @@
 			
 			//-------------------------------------------------------------------------------------//
 
+			private function validateMoves():void{
+				UnitMover.getInstance().validateUnitMoves(false);
+				refresh();
+			}
+
+			private function cancel():void{
+				UnitMover.getInstance().validateUnitMoves(true);
+				refresh();
+			}
+
+			//-------------------------------------------------------------------------------------//
+			
 			private function moveUnit():void{
-				Session.board.moveUnit(unit);
+				currentState = "moving";
+				UnitMover.getInstance().moveUnit(unit);
 			}
 
 			//-------------------------------------------------------------------------------------//
@@ -143,17 +183,10 @@
 			}
 			
 			//-------------------------------------------------------------------------------------//
-			
-			[Bindable]
-			public function get unit():Unit
+		
+			private function buildCity():void
 			{
-				return _unit;
-			}
-
-			public function set unit(value:Unit):void
-			{
-				_unit = value;
-				refresh();
+				GameManager.getInstance().buildCity(unit);
 			}
 
 		]]>
@@ -169,121 +202,22 @@
 		<s:Image source="{unit.type == Unit.ARMY ? ImageContainer.WARRIOR1 : ImageContainer.MERCHANT1}"
 				 right="5"/>
 		
-		<s:Image source="{ImageContainer.LEFT_ARROW}" click="{goLeft(viewStack)}" left="10" top="30"
+		<s:Image source="{ImageContainer.LEFT_ARROW}" click="{goLeft(unitDataViewStack)}" left="10" top="30"
 				 visible="{unit.ownerStatus == Unit.PLAYER || unit.ownerStatus == Unit.ALLY}"/>
-		<s:Image source="{ImageContainer.RIGHT_ARROW}" click="{goRight(viewStack)}" right="10" top="30"
+		<s:Image source="{ImageContainer.RIGHT_ARROW}" click="{goRight(unitDataViewStack)}" right="10" top="30"
 				 visible="{unit.ownerStatus == Unit.PLAYER || unit.ownerStatus == Unit.ALLY}"/>
 		
-		<mx:ViewStack id="viewStack" 
-					  top="30"
-					  height="30"
-					  width="100%"
-					  visible="{unit.ownerStatus == Unit.PLAYER || unit.ownerStatus == Unit.ALLY}">
+		<components:UnitDataViewsStack
+			id="unitDataViewStack"
+			top="30"
+			height="30"
+			width="100%"
+			visible="{unit.ownerStatus == Unit.PLAYER || unit.ownerStatus == Unit.ALLY}"/>
 			
-			<s:NavigatorContent width="100%" showEffect="{unfade}" hideEffect="{fade}">
-				<s:HGroup width="100%"
-						  horizontalAlign="center">
-					<s:Label color="#FFFFFF" 
-							 left="20" 
-							 verticalCenter="2"
-							 text="{unit.value} pts"/>
-				</s:HGroup>
-			</s:NavigatorContent>
-			
-			<s:NavigatorContent width="100%" showEffect="{unfade}" hideEffect="{fade}"
-								alpha="0">
-				<s:HGroup width="100%"
-						  horizontalAlign="center">
-					<s:Image source="{unit.type == Unit.ARMY ? ImageContainer.WARRIOR1 : ImageContainer.MERCHANT1}"/>
-					<s:Label color="#FFFFFF" 
-							 left="20" 
-							 verticalCenter="2"
-							 text="{unit.size}"/>
-				</s:HGroup>
-			</s:NavigatorContent>
-			
-			<s:NavigatorContent width="100%" showEffect="{unfade}" hideEffect="{fade}"
-								alpha="0">
-				<s:HGroup width="100%"
-						  horizontalAlign="center">
-					<s:Image source="{ImageContainer.BOW}" width="25"/>
-					<s:Label color="#FFFFFF" 
-							 verticalCenter="2"
-							 text="{unit.bows}"/>
-				</s:HGroup>
-			</s:NavigatorContent>
-					
-			<s:NavigatorContent width="100%" showEffect="{unfade}" hideEffect="{fade}"
-								alpha="0">
-				<s:HGroup width="100%"
-						  horizontalAlign="center">
-					<s:Image source="{ImageContainer.SWORD}" width="25"/>
-					<s:Label color="#FFFFFF" 
-							 verticalCenter="2"
-							 text="{unit.swords}"/>
-				</s:HGroup>
-			</s:NavigatorContent>
-						  
-			<s:NavigatorContent width="100%" showEffect="{unfade}" hideEffect="{fade}"
-								alpha="0">
-				<s:HGroup width="100%"
-						  horizontalAlign="center">
-					<s:Image source="{ImageContainer.ARMOR}" width="25"/>
-					<s:Label color="#FFFFFF" 
-							 verticalCenter="2"
-							 text="{unit.armors}"/>
-				</s:HGroup>
-			</s:NavigatorContent>
-			
-			<s:NavigatorContent width="100%" showEffect="{unfade}" hideEffect="{fade}"
-								alpha="0">
-				<s:HGroup width="100%"
-						  horizontalAlign="center">
-					<s:Image source="{ImageContainer.WHEAT}" width="25"/>
-					<s:Label color="#FFFFFF" 
-							 verticalCenter="2"
-							 text="{unit.wheat}"/>
-				</s:HGroup>
-			</s:NavigatorContent>
-
-			<s:NavigatorContent width="100%" showEffect="{unfade}" hideEffect="{fade}"
-								alpha="0">
-				<s:HGroup width="100%"
-						  horizontalAlign="center">
-					<s:Image source="{ImageContainer.WOOD}" width="25"/>
-					<s:Label color="#FFFFFF" 
-							 verticalCenter="2"
-							 text="{unit.wood}"/>
-				</s:HGroup>
-			</s:NavigatorContent>
-
-			<s:NavigatorContent width="100%" showEffect="{unfade}" hideEffect="{fade}"
-								alpha="0">
-				<s:HGroup width="100%"
-						  horizontalAlign="center">
-					<s:Image source="{ImageContainer.IRON}" width="25"/>
-					<s:Label color="#FFFFFF" 
-							 verticalCenter="2"
-							 text="{unit.iron}"/>
-				</s:HGroup>
-			</s:NavigatorContent>
-			
-			<s:NavigatorContent width="100%" showEffect="{unfade}" hideEffect="{fade}"
-								alpha="0">
-				<s:HGroup width="100%"
-						  horizontalAlign="center">
-					<s:Image source="{ImageContainer.GOLD}" width="25"/>
-					<s:Label color="#FFFFFF" 
-							 verticalCenter="2"
-							 text="{unit.gold}"/>
-				</s:HGroup>
-			</s:NavigatorContent>
-		</mx:ViewStack>
-		
 		<s:Image source="{ImageContainer.LEFT_ARROW}" click="{goLeft(actionsViewStack)}" left="10" top="65"
-				 visible="{unit.ownerStatus == Unit.PLAYER &amp;&amp; unit.type == Unit.ARMY &amp;&amp; unit.bows &gt; 0}"/>
+				 visible="{nbActionsAvailable &gt; 1}"/>
 		<s:Image source="{ImageContainer.RIGHT_ARROW}" click="{goRight(actionsViewStack)}" right="10" top="65"
-				 visible="{unit.ownerStatus == Unit.PLAYER &amp;&amp; unit.type == Unit.ARMY &amp;&amp; unit.bows &gt; 0}"/>
+				 visible="{nbActionsAvailable &gt; 1}"/>
 		
 		<mx:ViewStack id="actionsViewStack" 
 					  top="65"
@@ -292,13 +226,28 @@
 					  visible="{unit.ownerStatus == Unit.PLAYER}">
 			
 			<s:NavigatorContent width="100%" showEffect="{unfade}" hideEffect="{fade}">
-				<s:HGroup verticalAlign="middle" 
+				<s:VGroup verticalAlign="middle" 
 						  horizontalAlign="center" 
 						  width="100%">
+					
 					<s:Button label="{Translations.MOVE.getItemAt(Session.LANGUAGE)}"
-							  excludeFrom="moving"
 							  skinClass="{CustomButtonSkin}"
 							  click="moveUnit()"/>
+
+					<s:Label text="{Translations.WAY_SELECTION.getItemAt(Session.LANGUAGE)}"/>
+
+					<s:Button label="{Translations.VALIDATE.getItemAt(Session.LANGUAGE)}" 
+							  click="{validateMoves()}" 
+							  skinClass="com.uralys.tribes.skins.CustomButtonSkin"/>
+					
+					<s:Button label="{Translations.CANCEL.getItemAt(Session.LANGUAGE)}" 
+							  click="{cancel()}" 
+							  skinClass="com.uralys.tribes.skins.CustomButtonSkin"/>
+					
+					<s:Button label="{Translations.DELETE_LAST_MOVE.getItemAt(Session.LANGUAGE)}" 
+							  click="{UnitMover.getInstance().deleteLastMove()}"
+							  enabled="{Session.REMOVING_MOVES_ENABLE &amp;&amp; unit != null &amp;&amp; unit.moves.length &gt; 2}" 
+							  skinClass="com.uralys.tribes.skins.CustomButtonSkin"/>
 					
 					<mx:ProgressBar id="movingProgressBar"
 									width="80%"
@@ -309,7 +258,10 @@
 									label="" 
 									labelPlacement="bottom"
 									includeIn="moving"/>
-				</s:HGroup>
+				</s:VGroup>
+				
+				
+				
 			</s:NavigatorContent>
 			
 			<s:NavigatorContent width="100%" showEffect="{unfade}" hideEffect="{fade}">
@@ -331,6 +283,20 @@
 									label="" 
 									labelPlacement="bottom"
 									includeIn="reloading"/>
+				</s:HGroup>
+			</s:NavigatorContent>
+
+			<s:NavigatorContent width="100%" showEffect="{unfade}" hideEffect="{fade}">
+				<s:HGroup verticalAlign="middle" 
+						  horizontalAlign="center" 
+						  width="100%">
+					
+					<s:VGroup id="buildCityForm"
+							  top="150" right="95"
+							  includeIn="buildCityEnabled">
+						<s:Button label="{Translations.BUILD_HERE.getItemAt(Session.LANGUAGE)}" click="buildCity()" skinClass="com.uralys.tribes.skins.CustomButtonSkin"/>
+					</s:VGroup>
+					
 				</s:HGroup>
 			</s:NavigatorContent>
 		</mx:ViewStack>

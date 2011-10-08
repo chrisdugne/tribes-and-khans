@@ -735,9 +735,9 @@ public class Translations{
 
 	[Bindable]
 	public static var DELETE_LAST_MOVE:ArrayCollection = new ArrayCollection(
-									["Supprimer le dernier déplacement",
-									"Delete the last move",
-									"Delete the last move"]);
+									["Annuler le dernier",
+									"Cancel the last one",
+									"Cancel the last one"]);
 
 	[Bindable]
 	public static var MUST_VALIDATE_UNIT:ArrayCollection = new ArrayCollection(
@@ -828,12 +828,6 @@ public class Translations{
 									["Vente",
 									"Selling",
 									"Selling"]);
-
-	[Bindable]
-	public static var NB_MERCHANTS:ArrayCollection = new ArrayCollection(
-									["Nb marchands",
-									"Nb merchants",
-									"Nb merchants"]);
 
 	[Bindable]
 	public static var MINIMUM:ArrayCollection = new ArrayCollection(

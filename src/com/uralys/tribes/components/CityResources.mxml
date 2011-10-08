@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:NavigatorContent xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					xmlns:s="library://ns.adobe.com/flex/spark" 
+					xmlns:mx="library://ns.adobe.com/flex/mx"
+					label="{Translations.RESOURCES.getItemAt(Session.LANGUAGE)}">
+ 
+		<fx:Script>
+			<![CDATA[
+				import com.uralys.tribes.commons.Numbers;
+				import com.uralys.tribes.commons.Session;
+				import com.uralys.tribes.commons.Translations;
+				import com.uralys.tribes.entities.City;
+				import com.uralys.tribes.main.ImageContainer;
+				
+				//-------------------------------------------------------------------------//
+				
+				[Bindable] public var city:City;
+				
+				//----------------------------------------------------------//
+				
+				protected function wheatWorkersCheck(event:Event):void	
+				{
+					var peopleAdded:int = wheatWorkersSlider.value - city.peopleCreatingWheat;
+					
+					if(city.unemployed < peopleAdded)
+						wheatWorkersSlider.value = city.peopleCreatingWheat + city.unemployed;
+					
+					city.peopleCreatingWheat = wheatWorkersSlider.value;
+					
+					city.wheatEarned = Numbers.WHEAT_EARNING_COEFF * city.peopleCreatingWheat;
+					
+					city.wheatRequiredToFeed = (city.population + city.unitsToFeed) * Numbers.FEED_COEFF;
+					city.wheatExpected = city.wheat + city.wheatEarned - city.wheatRequiredToFeed;
+					
+					Session.board.cityForm.cityHeader.updateWorkersProgressBar();
+				}
+				
+				protected function pickUpPeopleInPeopleCreatingWheat(peopleToPickUp:int):void{
+					var peopleRequired:int = peopleToPickUp - city.unemployed;
+					wheatWorkersSlider.value = city.peopleCreatingWheat - peopleRequired;
+					wheatWorkersCheck(null);
+				}
+				
+				
+				//-------------------------------------------------------------------------//
+				
+				protected function woodWorkersCheck(event:Event):void	{
+					
+					var peopleAdded:int = woodWorkersSlider.value - city.peopleCreatingWood;
+					
+					if(city.unemployed < peopleAdded)
+						woodWorkersSlider.value = city.peopleCreatingWood + city.unemployed;
+					
+					city.peopleCreatingWood = woodWorkersSlider.value;
+					
+					city.woodEarned = Numbers.WOOD_EARNING_COEFF * city.peopleCreatingWood;
+					
+					if(labelStarvation.visible)
+						city.woodEarned /= 2;
+					
+					Session.board.cityForm.cityHeader.updateWorkersProgressBar();
+				}
+				
+				//-------------------------------------------------------------------------//
+				
+				protected function ironWorkersCheck(event:Event):void	
+				{
+					var peopleAdded:int = ironWorkersSlider.value - city.peopleCreatingIron;
+					
+					if(city.unemployed < peopleAdded)
+						ironWorkersSlider.value = city.peopleCreatingIron + city.unemployed;
+					
+					city.peopleCreatingIron = ironWorkersSlider.value;
+					
+					city.ironEarned = Numbers.IRON_EARNING_COEFF * city.peopleCreatingIron;
+					
+					if(labelStarvation.visible)
+						city.ironEarned /= 2;
+					
+					Session.board.cityForm.cityHeader.updateWorkersProgressBar();
+				}
+			]]>
+		</fx:Script>
+	
+	<s:VGroup horizontalAlign="center">
+		<mx:Grid verticalGap="10" horizontalGap="55" horizontalAlign="center" verticalAlign="middle">
+			<mx:GridRow >
+				<mx:GridItem/>
+				<mx:GridItem horizontalAlign="center" width="100">
+					<s:Label text="{Translations.WORKERS.getItemAt(Session.LANGUAGE)}" />
+				</mx:GridItem>
+				<mx:GridItem horizontalAlign="center">
+					<s:Label text="{Translations.HARVEST.getItemAt(Session.LANGUAGE)}"/>
+				</mx:GridItem>
+			</mx:GridRow>
+			<mx:GridRow>
+				<mx:GridItem horizontalAlign="center">
+					<mx:Image toolTip="{Translations.WHEAT.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WHEAT}"/>
+				</mx:GridItem>
+				<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+					<s:HGroup verticalAlign="middle">
+						<s:Label text="{city.peopleCreatingWheat}"
+								 styleName="numberLabel" 
+								 textAlign="right"
+								 minWidth="60"/>
+						<s:Image source="{ImageContainer.MERCHANTS}"/>
+						<s:HSlider id="wheatWorkersSlider"
+								   showDataTip="false"
+								   liveDragging="true" 
+								   change="wheatWorkersCheck(event)"
+								   value="{city.peopleCreatingWheat}"
+								   maximum="{city.population}"
+								   snapInterval="1"/>
+					</s:HGroup>
+				</mx:GridItem>
+				<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+					<s:HGroup verticalAlign="middle">
+						<s:Label text="+ {city.wheatEarned}" 
+								 styleName="numberLabel" 
+								 color="{Numbers.GREEN}"/>
+						<s:Spacer width="5"/>
+						<s:Label text="(- {city.wheatRequiredToFeed})" 
+								 color="{Numbers.RED}"/>
+					</s:HGroup>
+				</mx:GridItem>
+			</mx:GridRow>
+			<mx:GridRow >
+				<mx:GridItem horizontalAlign="center">
+					<mx:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}"/>
+				</mx:GridItem>
+				<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+					<s:HGroup verticalAlign="middle">
+						<s:Label text="{city.peopleCreatingWood}"
+								 styleName="numberLabel" 
+								 textAlign="right"
+								 minWidth="60"/>
+						<s:Image source="{ImageContainer.MERCHANTS}"/>
+						<s:HSlider id="woodWorkersSlider"
+								   showDataTip="false"
+								   liveDragging="true" 
+								   change="woodWorkersCheck(event)"
+								   value="{city.peopleCreatingWood}"
+								   maximum="{city.population}"
+								   snapInterval="1"/> 
+					</s:HGroup>
+				</mx:GridItem>
+				<mx:GridItem horizontalAlign="center" verticalAlign="middle"> 
+					<s:Label text="+ {city.woodEarned}"
+							 styleName="numberLabel"  
+							 color="{Numbers.GREEN}"/>
+				</mx:GridItem>
+			</mx:GridRow>
+			<mx:GridRow >
+				<mx:GridItem horizontalAlign="center">
+					<mx:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}"/>
+				</mx:GridItem>
+				<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+					<s:HGroup verticalAlign="middle">
+						<s:Label text="{city.peopleCreatingIron}"
+								 styleName="numberLabel" 
+								 textAlign="right"
+								 minWidth="60"/>
+						<s:Image source="{ImageContainer.MERCHANTS}"/>
+						<s:HSlider id="ironWorkersSlider"
+								   showDataTip="false"
+								   liveDragging="true" 
+								   change="ironWorkersCheck(event)"
+								   value="{city.peopleCreatingIron}"
+								   maximum="{city.population}"
+								   snapInterval="1"/>
+					</s:HGroup>
+				</mx:GridItem>
+				<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+					<s:Label text="+ {city.ironEarned}"
+							 styleName="numberLabel" 
+							 color="{Numbers.GREEN}"/>
+				</mx:GridItem>
+			</mx:GridRow>
+		</mx:Grid>
+		<mx:Spacer height="10"/>
+		<s:HGroup width="100%" horizontalAlign="center" bottom="0"
+				  includeInLayout="{(city.wheatExpected) &lt; 0}">
+			<s:Label text="{Translations.STARVATION.getItemAt(Session.LANGUAGE)}"
+					 visible="{(city.wheatExpected) &lt; 0}"
+					 id="labelStarvation"
+					 color="{Numbers.RED}"/>
+		</s:HGroup>
+	</s:VGroup>
+</s:NavigatorContent>

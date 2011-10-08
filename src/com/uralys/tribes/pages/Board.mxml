@@ -5,17 +5,15 @@
 		 xmlns:renderers="com.uralys.tribes.renderers.*"
 		 xmlns:windows="com.uralys.tribes.windows.*" 
 		 width="100%" height="100%"
-		 creationComplete="init()" >
+		 creationComplete="init()" xmlns:components="com.uralys.tribes.components.*" >
 	
 	<fx:Declarations>
 		<s:State name="board"/>
 		<s:State name="city"/>
-		<s:State name="moveUnit"/>
 	</fx:Declarations>
 	
 	<fx:Script>
 		<![CDATA[
-			import com.uralys.tribes.main.ImageContainer;
 			//---------------------------------------------------------------------------------------//
 			
 			import com.uralys.tribes.commons.Numbers;
@@ -31,41 +29,21 @@
 			import com.uralys.tribes.entities.Move;
 			import com.uralys.tribes.entities.Player;
 			import com.uralys.tribes.entities.Unit;
+			import com.uralys.tribes.main.ImageContainer;
 			import com.uralys.tribes.managers.GameManager;
 			import com.uralys.tribes.renderers.Pawn;
 			import com.uralys.tribes.skins.ClassicProgressBarSkin;
 			import com.uralys.tribes.skins.CustomProgressTrackSkin;
-			import com.uralys.tribes.windows.MessageWindow;
 			import com.uralys.utils.Utils;
 			
-			import flash.sampler.getInvocationCount;
-			
-			import mx.collections.ArrayCollection;
 			import mx.containers.TitleWindow;
 			import mx.core.FlexGlobals;
 			import mx.effects.easing.Quadratic;
 			import mx.events.ItemClickEvent;
-			import mx.graphics.GradientEntry;
-			import mx.graphics.GradientStroke;
-			import mx.graphics.LinearGradientStroke;
-			import mx.graphics.RadialGradientStroke;
-			import mx.graphics.SolidColor;
-			import mx.graphics.SolidColorStroke;
-			import mx.managers.CursorManager;
-			import mx.managers.PopUpManager;
-			import mx.utils.ObjectUtil;
 			
-			import spark.components.supportClasses.ItemRenderer;
-			import spark.effects.animation.RepeatBehavior;
-			import spark.filters.GlowFilter;
-			import spark.primitives.Ellipse;
-			import spark.primitives.Line;
-
-
 			//---------------------------------------------------------------------------------------//
 			
 			[Bindable] public var selectedCity:City;
-			[Bindable] private var selectedUnit:Unit;
 			
 			//----------------------------------------------------------//
 
@@ -77,8 +55,6 @@
 				limitUp = Session.MAP_HEIGHT - mapPositioner.height;
 				
 				initBoard();
-				
-				currentState = 'board';
 			}
 			
 			//---------------------------------------------------------------------------------------------------//
@@ -149,44 +125,6 @@
 				}
 				
 				return false;
-			}
-			
-			//---------------------------------------------------------------------//
-			
-			// click sur une armee dans la barre laterale
-			// ou dans la liste sous 'enter city'
-			public function moveUnit(unit:Unit):void
-			{
-				selectedUnit = unit;
-
-				if(Session.MOVE_A_UNIT)
-					return;
-				
-				//placeBoard(Utils.getXFromCellUID(selectedUnit.currentCaseUID), Utils.getYFromCellUID(selectedUnit.currentCaseUID));
-				
-				Session.MOVE_A_UNIT = true;
-				currentState = "moveUnit";
-				
-				refreshCurrentMoves();
-			}
-			
-			private function refreshCurrentMoves():void
-			{
-				UnitMover.getInstance().resetPendingMoves(selectedUnit);
-				BoardDrawer.getInstance().removeAllUnitMovesImages();
-				
-				var xPreviousMove:int = -1;
-				var yPreviousMove:int = -1;
-				var now:Number = new Date().getTime();
-				
-				for each(var move:com.uralys.tribes.entities.Move in selectedUnit.moves)
-				{
-					var displayProgress:Boolean = move.timeFrom < now && move.timeTo > now;
-					BoardDrawer.getInstance().addMoveImages(move, xPreviousMove, yPreviousMove, displayProgress);
-					
-					xPreviousMove = Utils.getXFromCellUID(move.cellUID);
-					yPreviousMove = Utils.getYFromCellUID(move.cellUID); 
-				}	
 			}
 			
 			//-----------------------------------------------------------//
@@ -272,11 +210,9 @@
 				
 				enterCityForm.visible = false;
 				enterCityForm.includeInLayout = false;
-				buildCityForm.visible = false;
-				buildCityForm.includeInLayout = false;
 				
 				if(!isDragging && Session.MOVE_A_UNIT){
-					newMoveAdded = UnitMover.getInstance().recordMove(selectedUnit);
+					//newMoveAdded = UnitMover.getInstance().recordMove();
 				}
 				else{
 					try{
@@ -321,6 +257,8 @@
 			
 			private function initBoard():void
 			{
+				currentState = "board";
+				
 				if(selectedCity == null){
 					FlexGlobals.topLevelApplication.message('GAME OVER ON THIS SERVER', 700);
 					Session.GAME_OVER = true;
@@ -351,63 +289,6 @@
 			}
 	
 			//----------------------------------------------------------------------------------------//
-
-			[Bindable]
-			private var newMoveAdded:Boolean = false;
-			
-			private function validateUnitMoves(cancel:Boolean):void
-			{
-				Session.MOVE_A_UNIT = false;
-				Session.REMOVING_MOVES_ENABLE = true;
-				
-				if(!cancel){
-					if(removingMoves)
-						selectedUnit.moves.getItemAt(selectedUnit.moves.length-1).timeTo = -1;
-					
-					UnitMover.getInstance().validatePendingMoves(selectedUnit);					
-					GameManager.getInstance().updateUnit(selectedUnit);
-					
-				}
-				else if(removingMoves){
-					for(var i:int = movesBeingRemoved.length-1; i >= 0; i--){
-						selectedUnit.moves.addItem(movesBeingRemoved[i]);
-					}
-
-					movesBeingRemoved = [];
-				}
-
-				currentState = "board";
-				newMoveAdded = false;
-				removingMoves = false;
-				
-				BoardDrawer.getInstance().removeAllUnitMovesImages();
-				
-			}
-
-			private var removingMoves:Boolean = false;
-			private var movesBeingRemoved:Array = [];
-			private function deleteLastMove():void
-			{
-				removingMoves = true;
-				newMoveAdded = true;
-				
-				movesBeingRemoved.push(selectedUnit.removeLastMove());
-				refreshCurrentMoves();
-			}
-			
-			//----------------------------------------------------------------------------------------//
-			
-			public function showBuildCity(merchant:Unit):void
-			{
-				if(Session.MOVE_A_UNIT){
-					return;
-				}
-				
-				selectedUnit = merchant;
-				
-				buildCityForm.includeInLayout = true;
-				buildCityForm.visible = true;
-			}
 
 			/**
 			 * le BoardClickListener regarde si il y a une ville dans la case clickee et arrive ici
@@ -461,60 +342,7 @@
 				currentState = "city";
 			}
 			
-			private function buildCity():void
-			{
-				var city:City = new City();
-				city.cityUID = "new";
-				city.name = Translations.CITY_BUILDING_NAME.getItemAt(Session.LANGUAGE) as String;
-				city.gold = selectedUnit.gold;
-				city.wheat = selectedUnit.wheat;
-				city.wood = selectedUnit.wood - (Numbers.CITY_WOOD_BASE_PRICE + selectedUnit.size * 10);
-				city.iron = selectedUnit.iron - (Numbers.CITY_IRON_BASE_PRICE + selectedUnit.size * 10);
-				city.population = selectedUnit.size;
-				
-				city.bows = selectedUnit.bows;
-				city.swords = selectedUnit.swords;
-				city.armors = selectedUnit.armors;
-				
-				city.x = Session.CURRENT_CELL_SELECTED.x;
-				city.y = Session.CURRENT_CELL_SELECTED.y;
-				
-				city.beginTime = new Date().getTime() + Numbers.TIME_TO_BUILD_A_CITY;
-				trace("city.beginTime : " + city.beginTime);
-				
-				try{
-					Session.player.units.removeItemAt(Session.player.units.getItemIndex(selectedUnit));	
-				}
-				catch(e:Error){
-					// cest qd on reclick sur buildcity une deuxieme fois : index -1 outofbounds
-					// todo : empecher l'affichage du bouton build bordel
-					return;
-				}
-				BoardDrawer.getInstance().drawCity(city);
-				
-				Session.player.cities.addItem(city);
-				
-				buildCityForm.visible = false;
-				buildCityForm.includeInLayout = false;
-				
-				selectedUnit.gold = 0;
-				selectedUnit.iron = 0;
-				selectedUnit.wood = 0;
-				selectedUnit.wheat = 0;
-				selectedUnit.armors = 0;
-				selectedUnit.bows = 0;
-				selectedUnit.swords = 0;
-				selectedUnit.endTime = 1;
-				
-				try{
-					Session.CURRENT_CELL_SELECTED.caravan = null;
-					GameManager.getInstance().refreshCell(Session.CURRENT_CELL_SELECTED);
-				}
-				catch(e:Error){}
-				
-				trace("build city on ["+city.x+"]["+city.y+"]");
-				GameManager.getInstance().buildCity(city, selectedUnit);
-			}
+			
 
 			//-----------------------------------------------------------//
 
@@ -738,7 +566,6 @@
 				if(simulateMouseClick)
 					mouseUp(); // simule le click sur la case x,y
 			}
-			
 		]]>
 	</fx:Script>
 	
@@ -817,7 +644,6 @@
 				  x="{boardImage.x+Session.MAP_WIDTH + 65}"
 				  visible="false"
 				  includeInLayout="false"
-				  excludeFrom="moveUnit"
 				  horizontalAlign="center"
 				  paddingTop="5"
 				  width="200">
@@ -867,16 +693,15 @@
 						  ||
 				  		  (Session.CURRENT_CELL_SELECTED.caravan !=null 
 						  &amp;&amp; Session.CURRENT_CELL_SELECTED.caravan.size > 0))}"
-				  excludeFrom="moveUnit"
 				  horizontalAlign="center"
 				  paddingTop="5"
 				  width="200">
 			
 			<mx:HRule width="180"/>
-			<renderers:UnitRenderer unit="{Session.CURRENT_CELL_SELECTED.army}" 
+			<components:UnitRenderer unit="{Session.CURRENT_CELL_SELECTED.army}" 
 									visible="{Session.CURRENT_CELL_SELECTED != null &amp;&amp; Session.CURRENT_CELL_SELECTED.army !=null &amp;&amp; Session.CURRENT_CELL_SELECTED.army.size > 0}"/>
 			<mx:HRule width="180"/>
-			<renderers:UnitRenderer unit="{Session.CURRENT_CELL_SELECTED.caravan}" 
+			<components:UnitRenderer unit="{Session.CURRENT_CELL_SELECTED.caravan}" 
 									visible="{Session.CURRENT_CELL_SELECTED != null &amp;&amp; Session.CURRENT_CELL_SELECTED.caravan !=null &amp;&amp; Session.CURRENT_CELL_SELECTED.caravan.size > 0}"/>
 		</s:VGroup>
 
@@ -891,27 +716,6 @@
 					right="95"
 					bottom="44"/>
 
-		<s:VGroup top="150" right="95"
-				  includeIn="moveUnit"
-				  horizontalAlign="center">
-			<s:Label text="{Translations.WAY_SELECTION.getItemAt(Session.LANGUAGE)}"/>
-			<s:Button label="{Translations.VALIDATE.getItemAt(Session.LANGUAGE)}" click="{validateUnitMoves(false)}" visible="{selectedUnit != null}" enabled="{newMoveAdded}" skinClass="com.uralys.tribes.skins.CustomButtonSkin"/>
-			<s:Button label="{Translations.CANCEL.getItemAt(Session.LANGUAGE)}" click="{validateUnitMoves(true)}" visible="{selectedUnit != null}" skinClass="com.uralys.tribes.skins.CustomButtonSkin"/>
-			<s:Button label="{Translations.DELETE_LAST_MOVE.getItemAt(Session.LANGUAGE)}" 
-					  click="{deleteLastMove()}"
-					  enabled="{Session.REMOVING_MOVES_ENABLE &amp;&amp; selectedUnit != null &amp;&amp; selectedUnit.moves.length &gt; 2}" 
-					  skinClass="com.uralys.tribes.skins.CustomButtonSkin"/>
-		</s:VGroup>
-		
-		<s:VGroup id="buildCityForm"
-				  top="150" right="95"
-				  visible="false"
-				  includeInLayout="false"
-				  excludeFrom="moveUnit">
-			<s:Button label="{Translations.BUILD_HERE.getItemAt(Session.LANGUAGE)}" click="buildCity()" skinClass="com.uralys.tribes.skins.CustomButtonSkin"/>
-		</s:VGroup>
-		
-		
 		<!-- =============================================================================================== -->
 		
 		<s:HGroup width="100%" horizontalAlign="center" paddingTop="5">
@@ -1047,7 +851,7 @@
 					  enabled="{cityForm.currentState != 'recordingUnit'}"/>
 			<mx:Spacer width="450"/>
 		</s:HGroup>
-		<renderers:CityForm 
+		<components:CityForm 
 				id="cityForm"
 			    city="@{selectedCity}"/>
 		<mx:Spacer height="55"/>

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:NavigatorContent xmlns:fx="http://ns.adobe.com/mxml/2009" 
+				xmlns:s="library://ns.adobe.com/flex/spark" 
+				xmlns:mx="library://ns.adobe.com/flex/mx"
+				xmlns:renderers="com.uralys.tribes.renderers.*"
+				label="{Translations.BUILDINGS.getItemAt(Session.LANGUAGE)}"> 
+	<fx:Script>
+		<![CDATA[
+			import com.uralys.tribes.commons.Session;
+			import com.uralys.tribes.commons.Translations;
+			import com.uralys.tribes.entities.City;
+			import com.uralys.tribes.main.ImageContainer;
+			
+			//-------------------------------------------------------------------------//
+			
+			[Bindable] public var city:City;
+			
+			//-------------------------------------------------------------------------//
+			
+			public function refresh():void
+			{				
+				if(wheatBuildingRenderer != null){
+					wheatBuildingRenderer.refresh();
+					woodBuildingRenderer.refresh();
+					ironBuildingRenderer.refresh();
+					bowBuildingRenderer.refresh();
+					swordBuildingRenderer.refresh();
+					armorBuildingRenderer.refresh();
+					
+				}
+			}
+		]]>
+	</fx:Script>
+	
+	<s:Scroller height="100%" width="100%">
+		<s:VGroup width="100%" horizontalAlign="center">
+			
+			<mx:Spacer height="15"/>
+			<s:HGroup width="100%" verticalAlign="middle">
+				<mx:Image toolTip="{Translations.WHEAT.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WHEAT}"/>
+				<renderers:BuildingRenderer stockBuilders="@{city.wheatStockBuilders}"
+											stockCapacity="{city.wheatStockCapacity}"
+											stockNextCapacity="@{city.wheatStockNextCapacity}"
+											stockBeginTime="@{city.wheatStockBeginTime}"
+											stockEndTime="@{city.wheatStockEndTime}"
+											ratioUpgrade="20"
+											city="{city}"
+											id="wheatBuildingRenderer"
+											/>
+			</s:HGroup>
+			
+			<mx:Spacer height="15"/>
+			<s:HGroup width="100%" verticalAlign="middle">
+				<mx:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}"/>
+				<renderers:BuildingRenderer stockBuilders="@{city.woodStockBuilders}"
+											stockCapacity="{city.woodStockCapacity}"
+											stockNextCapacity="@{city.woodStockNextCapacity}"
+											stockBeginTime="@{city.woodStockBeginTime}"
+											stockEndTime="@{city.woodStockEndTime}"
+											ratioUpgrade="20"
+											city="{city}"
+											id="woodBuildingRenderer"
+											/>
+			</s:HGroup>
+			
+			<mx:Spacer height="15"/>
+			<s:HGroup width="100%" verticalAlign="middle">
+				<mx:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}"/>
+				<renderers:BuildingRenderer stockBuilders="@{city.ironStockBuilders}"
+											stockCapacity="{city.ironStockCapacity}"
+											stockNextCapacity="@{city.ironStockNextCapacity}"
+											stockBeginTime="@{city.ironStockBeginTime}"
+											stockEndTime="@{city.ironStockEndTime}"
+											ratioUpgrade="20"
+											city="{city}"
+											id="ironBuildingRenderer"
+											/>
+			</s:HGroup>
+			
+			<mx:Spacer height="15"/>
+			<s:HGroup width="100%" verticalAlign="middle">
+				<mx:Image toolTip="{Translations.BOW.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.BOW}"/>
+				<renderers:BuildingRenderer stockBuilders="@{city.bowStockBuilders}"
+											stockCapacity="{city.bowStockCapacity}"
+											stockNextCapacity="@{city.bowStockNextCapacity}"
+											stockBeginTime="@{city.bowStockBeginTime}"
+											stockEndTime="@{city.bowStockEndTime}"
+											ratioUpgrade="2"
+											city="{city}"
+											id="bowBuildingRenderer"
+											/>
+			</s:HGroup>
+			
+			<mx:Spacer height="15"/>
+			<s:HGroup width="100%" verticalAlign="middle">
+				<mx:Image toolTip="{Translations.SWORD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.SWORD}"/>
+				<renderers:BuildingRenderer stockBuilders="@{city.swordStockBuilders}"
+											stockCapacity="{city.swordStockCapacity}"
+											stockNextCapacity="@{city.swordStockNextCapacity}"
+											stockBeginTime="@{city.swordStockBeginTime}"
+											stockEndTime="@{city.swordStockEndTime}"
+											ratioUpgrade="2"
+											city="{city}"
+											id="swordBuildingRenderer"
+											/>
+			</s:HGroup>
+			
+			<mx:Spacer height="15"/>
+			<s:HGroup width="100%" verticalAlign="middle">
+				<mx:Image toolTip="{Translations.ARMOR.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.ARMOR}"/>
+				<renderers:BuildingRenderer stockBuilders="@{city.armorStockBuilders}"
+											stockCapacity="{city.armorStockCapacity}"
+											stockNextCapacity="@{city.armorStockNextCapacity}"
+											stockBeginTime="@{city.armorStockBeginTime}"
+											stockEndTime="@{city.armorStockEndTime}"
+											ratioUpgrade="2"
+											city="{city}"
+											id="armorBuildingRenderer"
+											/>
+			</s:HGroup>
+		</s:VGroup>
+	</s:Scroller>
+</s:NavigatorContent>

@@ -1,0 +1,569 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	  xmlns:s="library://ns.adobe.com/flex/spark" 
+	  xmlns:mx="library://ns.adobe.com/flex/mx">
+	<fx:Script>
+		<![CDATA[
+			import com.uralys.tribes.commons.Numbers;
+			import com.uralys.tribes.commons.Session;
+			import com.uralys.tribes.commons.Translations;
+			import com.uralys.tribes.entities.City;
+			import com.uralys.tribes.entities.Move;
+			import com.uralys.tribes.entities.Unit;
+			import com.uralys.tribes.main.ImageContainer;
+			import com.uralys.tribes.managers.GameManager;
+			
+			import mx.collections.ArrayCollection;
+			import mx.core.FlexGlobals;
+			
+			[Bindable] public var city:City;
+			[Bindable] public var unit:Unit;
+			
+			//-------------------------------------------------------------------------//
+			
+			public function newUnit(type:int):void
+			{
+				if(city.unemployed < 50){
+					FlexGlobals.topLevelApplication.message(Translations.FREE_PEOPLE.getItemAt(Session.LANGUAGE));
+					return;
+				}
+				
+				var newUnit:Unit = new Unit();
+				newUnit.initNewUnit(city.x, city.y);
+				
+				newUnit.size = 0; 
+				newUnit.speed = type == Unit.ARMY ? Numbers.ARMY_BASE_SPEED : Numbers.MERCHANT_BASE_SPEED;
+				newUnit.type = type;
+				newUnit.player = Session.player;
+				newUnit.ownerStatus = Unit.PLAYER;
+				
+				newUnit.moves = new ArrayCollection();
+				var moveInCity:Move = new Move();
+				moveInCity.initNewMove(newUnit.unitUID, city.x, city.y);
+				newUnit.moves.addItem(moveInCity);
+				
+				Session.player.units.addItem(newUnit);
+				
+				// le contenu de la case sera refreshed au retour par unitSaved, 
+				// mais si on refresh maintenant, on va pouvoir afficher la case lors du validateArmy() ou validateUnit()
+				//GameManager.getInstance().refreshCell(Session.CURRENT_CELL_SELECTED);
+				
+				unit = newUnit;
+				
+				unitSlider.value = 50;
+				unitCheck(null);
+			}
+
+			//-------------------------------------------------------------------------//
+			
+			public function deleteUnit():void
+			{
+				trace("delete unit : " + unit.unitUID);
+				
+				if(unit.status != Unit.TO_BE_CREATED){
+					// pour une caravane deja existante : on reajuste la pop, ils peuvent travailler des ce tour
+					// faille : si on a enleve des unites avant elles sont dans armyReleased et ne seront pas utilisees ce tour
+					city.population += unit.size;
+				}
+				
+				//---------------------------------//
+				// on remet les provisions transportees dans les stocks de la ville
+				
+				city.wheat += unit.wheat;
+				if(city.wheatStockCapacity < city.wheat)
+					city.wheat = city.wheatStockCapacity;
+				
+				city.wood += unit.wood;
+				if(city.woodStockCapacity < city.wood)
+					city.wood = city.woodStockCapacity;
+				
+				city.iron += unit.iron;
+				if(city.ironStockCapacity < city.iron)
+					city.iron = city.ironStockCapacity;
+				
+				city.gold += unit.gold;
+				
+				// on enleve des arcs a l'armee
+				var nbBowsRestored:int = unit.bows;
+				
+				if(nbBowsRestored + city.bows > city.bowStockCapacity){
+					city.bows = city.bowStockCapacity;
+				}
+				else
+					city.bows += nbBowsRestored;
+				
+				// on enleve des epees a l'armee
+				var nbSwordsRestored:int = unit.swords;
+				
+				if(nbSwordsRestored + city.swords > city.swordStockCapacity){
+					city.swords = city.swordStockCapacity;
+				}
+				else
+					city.swords += nbSwordsRestored;
+				
+				// on enleve des armures a l'armee
+				var nbArmorsRestored:int = unit.armors;
+				
+				if(nbArmorsRestored + city.armors > city.armorStockCapacity){
+					city.armors = city.armorStockCapacity;
+				}
+				else
+					city.armors += nbArmorsRestored;
+				
+				//---------------------------------//
+				
+				// on enleve la caravane de la liste de la ville et du player
+				Session.player.units.removeItemAt(Session.player.units.getItemIndex(unit));
+				
+				GameManager.getInstance().refreshCellDisplay(Session.CURRENT_CELL_SELECTED);
+				GameManager.getInstance().deleteUnit(unit);
+				
+				unit = null;
+				
+				Session.board.cityForm.cityHeader.updateWorkersProgressBar();
+			}
+			
+			
+			//-------------------------------------------------------------------------//
+			// unit
+			
+			protected function unitCheck(event:Event):void
+			{
+				var previousUnitSize:int = unit.size;
+				unit.size = unitSlider.value;
+				
+				if(unit.status != Unit.TO_BE_CREATED)
+					city.population -= unit.size - previousUnitSize; 
+				
+				unit.refreshValue();
+				
+				Session.board.cityForm.cityHeader.updateWorkersProgressBar();
+			}
+			
+			protected function wheatUnitCheck(event:Event):void
+			{
+				var previousNbWheat:int = unit.wheat;
+				var newNbWheat:int = wheatUnitSlider.value;
+				
+				if(newNbWheat > previousNbWheat){
+					// on ajoute du ble a la caravane
+					
+					if(city.wheat < newNbWheat - previousNbWheat){
+						// la reserve en ble n'est pas assez grande
+						newNbWheat = city.wheat + previousNbWheat;
+						city.wheat = 0;
+					}
+					else{	
+						// on pioche dans la reserve de ble
+						city.wheat -= newNbWheat - previousNbWheat;
+					}
+				}
+				else{
+					// on enleve du ble de la caravane
+					city.wheat += previousNbWheat - newNbWheat;
+				}
+				
+				unit.wheat = newNbWheat;
+				wheatUnitSlider.value = unit.wheat;
+			}
+			
+			
+			protected function woodUnitCheck(event:Event):void
+			{
+				var previousNbWood:int = unit.wood;
+				var newNbWood:int = woodUnitSlider.value;
+				
+				if(newNbWood > previousNbWood){
+					// on ajoute du bois a la caravane
+					
+					if(city.wood < newNbWood - previousNbWood){
+						// la reserve en bois n'est pas assez grande
+						newNbWood = city.wood + previousNbWood;
+						city.wood = 0;
+					}
+					else{	
+						// on pioche dans la reserve de bois
+						city.wood -= newNbWood - previousNbWood;
+					}
+				}
+				else{
+					// on enleve du bois de la caravane
+					city.wood += previousNbWood - newNbWood;
+				}
+				
+				unit.wood = newNbWood;
+				woodUnitSlider.value = unit.wood;
+			}
+			
+			
+			protected function ironUnitCheck(event:Event):void
+			{
+				var previousNbIron:int = unit.iron;
+				var newNbIron:int = ironUnitSlider.value;
+				
+				if(newNbIron > previousNbIron){
+					// on ajoute du fer a la caravane
+					
+					if(city.iron < newNbIron - previousNbIron){
+						// la reserve en fer n'est pas assez grande
+						newNbIron = city.iron + previousNbIron;
+						city.iron = 0;
+					}
+					else{	
+						// on pioche dans la reserve de fer
+						city.iron -= newNbIron - previousNbIron;
+					}
+				}
+				else{
+					// on enleve du fer de la caravane
+					city.iron += previousNbIron - newNbIron;
+				}
+				
+				unit.iron = newNbIron;
+				ironUnitSlider.value = unit.iron;
+			}
+			
+			protected function goldUnitCheck(event:Event):void
+			{
+				var previousNbGold:int = unit.gold;
+				var newNbGold:int = goldUnitSlider.value;
+				
+				if(newNbGold > previousNbGold){
+					// on ajoute du fer a la caravane
+					
+					if(city.gold < newNbGold - previousNbGold){
+						// la reserve en fer n'est pas assez grande
+						newNbGold = city.gold + previousNbGold;
+						city.gold = 0;
+					}
+					else{	
+						// on pioche dans la reserve de fer
+						city.gold -= newNbGold - previousNbGold;
+					}
+				}
+				else{
+					// on enleve du fer de la caravane
+					city.gold += previousNbGold - newNbGold;
+				}
+				
+				unit.gold = newNbGold;
+				goldUnitSlider.value = unit.gold;
+			}
+			
+			
+			protected function bowsUnitCheck(event:Event):void
+			{
+				var previousNbBows:int = unit.bows;
+				var newNbBows:int = bowsUnitSlider.value;
+				
+				if(newNbBows > previousNbBows){
+					// on ajoute des arcs a la caravane
+					
+					if(city.bows < newNbBows - previousNbBows){
+						// la reserve en arcs n'est pas assez grande
+						newNbBows = city.bows + previousNbBows;
+						city.bows = 0;
+					}
+					else{	
+						// on pioche dans la reserve d'arcs
+						city.bows -= newNbBows - previousNbBows;
+					}
+				}
+				else{
+					// on enleve des arcs de la caravane
+					city.bows += previousNbBows - newNbBows;
+				}
+				
+				unit.bows = newNbBows;
+				bowsUnitSlider.value = unit.bows;
+			}
+			
+			
+			protected function swordsUnitCheck(event:Event):void
+			{
+				var previousNbSwords:int = unit.swords;
+				var newNbSwords:int = swordsUnitSlider.value;
+				
+				if(newNbSwords > previousNbSwords){
+					// on ajoute des epees a la caravane
+					
+					if(city.swords < newNbSwords - previousNbSwords){
+						// la reserve en epees n'est pas assez grande
+						newNbSwords = city.swords + previousNbSwords;
+						city.swords = 0;
+					}
+					else{	
+						// on pioche dans la reserve d'epees
+						city.swords -= newNbSwords - previousNbSwords;
+					}
+				}
+				else{
+					// on enleve des epees de la caravane
+					city.swords += previousNbSwords - newNbSwords;
+				}
+				
+				unit.swords = newNbSwords;
+				swordsUnitSlider.value = unit.swords;
+			}
+			
+			protected function armorsUnitCheck(event:Event):void
+			{
+				var previousNbArmors:int = unit.armors;
+				var newNbArmors:int = armorsUnitSlider.value;
+				
+				if(newNbArmors > previousNbArmors){
+					// on ajoute des armures a la caravane
+					
+					if(city.armors < newNbArmors - previousNbArmors){
+						// la reserve en armures n'est pas assez grande
+						newNbArmors = city.armors + previousNbArmors;
+						city.armors = 0;
+					}
+					else{	
+						// on pioche dans la reserve d'armures
+						city.armors -= newNbArmors - previousNbArmors;
+					}
+				}
+				else{
+					// on enleve des armures de la caravane
+					city.armors += previousNbArmors - newNbArmors;
+				}
+				
+				unit.armors = newNbArmors;
+				armorsUnitSlider.value = unit.armors;
+			}
+			
+		]]>
+	</fx:Script>
+
+	<mx:Grid verticalGap="10" 
+			 horizontalGap="10" 
+			 horizontalAlign="center" 
+			 verticalAlign="middle"
+			 includeInLayout="{unit != null}"
+			 visible="{unit != null}">
+		<mx:GridRow>
+			<mx:GridItem >
+				<s:Label text="{unit.type == Unit.ARMY ? Translations.NB_ARMY.getItemAt(Session.LANGUAGE) : Translations.NB_CARAVAN.getItemAt(Session.LANGUAGE)}" />
+			</mx:GridItem>
+			<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+				<s:HGroup verticalAlign="middle">
+					<s:Label text="{unit.size}" 
+							 styleName="numberLabel" 
+							 textAlign="right"
+							 minWidth="60"/>
+					<mx:Image source="{unit.type == Unit.ARMY ? ImageContainer.WARRIOR1 : ImageContainer.MERCHANT1}"/>
+					<s:HSlider id="unitSlider"
+							   showDataTip="false"
+							   liveDragging="true" 
+							   change="unitCheck(event)"
+							   value="{unit.size}"
+							   minimum="50"
+							   maximum="{city.unemployed + unit.size}"
+							   snapInterval="1"
+							   enabled="{unit.moves.length == 1 || unit.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
+				</s:HGroup>
+			</mx:GridItem>
+			<mx:GridItem/>
+		</mx:GridRow>
+		<mx:GridRow>
+			<mx:GridItem colSpan="3">
+				<mx:HRule width="100%"/>
+			</mx:GridItem>
+		</mx:GridRow >
+	</mx:Grid>
+	<s:Scroller maxHeight="200" width="100%"
+				visible="{unit != null}" >
+		<s:Group width="100%"
+				 visible="{unit != null}">
+			<mx:Grid verticalGap="10" 
+					 horizontalGap="10" 
+					 horizontalAlign="center" 
+					 verticalAlign="middle"
+					 width="100%">
+				<mx:GridRow>
+					<mx:GridItem />
+					<mx:GridItem horizontalAlign="center">
+						<s:Label text="{unit.type == Unit.ARMY ? Translations.EQUIPMENT.getItemAt(Session.LANGUAGE)  : Translations.CARRIAGE.getItemAt(Session.LANGUAGE)}" />
+					</mx:GridItem>
+					<mx:GridItem horizontalAlign="center">
+						<s:Label text="{Translations.AVAILABLE_STOCK.getItemAt(Session.LANGUAGE)}" />
+					</mx:GridItem>
+				</mx:GridRow>
+				<mx:GridRow>
+					<mx:GridItem horizontalAlign="center">
+						<mx:Image toolTip="{Translations.BOW.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.BOW}" width="25" height="25"/>
+					</mx:GridItem>
+					<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+						<s:HGroup verticalAlign="middle">
+							<s:Label text="{unit.bows}" 
+									 styleName="numberLabel" 
+									 textAlign="right"
+									 minWidth="60"/>
+							<s:HSlider id="bowsUnitSlider"
+									   showDataTip="false"
+									   liveDragging="true" 
+									   change="bowsUnitCheck(event)"
+									   value="{unit.bows}"
+									   maximum="{city.bows + unit.bows}"
+									   snapInterval="1"
+									   enabled="{unit.moves.length == 1 || unit.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
+						</s:HGroup>
+					</mx:GridItem>
+					<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+						<s:Label text="{city.bows}" />
+					</mx:GridItem>
+				</mx:GridRow>
+				<mx:GridRow>
+					<mx:GridItem horizontalAlign="center">
+						<mx:Image toolTip="{Translations.SWORD.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.SWORD}" width="25" height="25"/>
+					</mx:GridItem>
+					<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+						<s:HGroup verticalAlign="middle">
+							<s:Label text="{unit.swords}" 
+									 styleName="numberLabel" 
+									 textAlign="right"
+									 minWidth="60"/>
+							<s:HSlider id="swordsUnitSlider"
+									   showDataTip="false"
+									   liveDragging="true" 
+									   change="swordsUnitCheck(event)"
+									   value="{unit.swords}"
+									   maximum="{city.swords + unit.swords}"
+									   snapInterval="1"
+									   enabled="{unit.moves.length == 1 || unit.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
+						</s:HGroup>
+					</mx:GridItem>
+					<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+						<s:Label text="{city.swords}" />
+					</mx:GridItem>
+				</mx:GridRow>
+				<mx:GridRow>
+					<mx:GridItem horizontalAlign="center">
+						<mx:Image toolTip="{Translations.ARMOR.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.ARMOR}" width="25" height="25"/>
+					</mx:GridItem>
+					<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+						<s:HGroup verticalAlign="middle">
+							<s:Label text="{unit.armors}" 
+									 styleName="numberLabel" 
+									 textAlign="right"
+									 minWidth="60"/>
+							<s:HSlider id="armorsUnitSlider"
+									   showDataTip="false"
+									   liveDragging="true" 
+									   change="armorsUnitCheck(event)"
+									   value="{unit.armors}"
+									   maximum="{city.armors + unit.armors}"
+									   snapInterval="1"
+									   enabled="{unit.moves.length == 1 || unit.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
+						</s:HGroup>
+					</mx:GridItem>
+					<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+						<s:Label text="{city.armors}" />
+					</mx:GridItem>
+				</mx:GridRow>
+				<mx:GridRow>
+					<mx:GridItem horizontalAlign="center">
+						<mx:Image toolTip="{Translations.WHEAT.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WHEAT}" width="25" height="25"/>
+					</mx:GridItem>
+					<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+						<s:HGroup verticalAlign="middle">
+							<s:Label text="{unit.wheat}" 
+									 styleName="numberLabel" 
+									 textAlign="right"
+									 minWidth="60"/>
+							<s:HSlider id="wheatUnitSlider"
+									   showDataTip="false"
+									   liveDragging="true" 
+									   change="wheatUnitCheck(event)"
+									   value="{unit.wheat}"
+									   maximum="{city.wheat + unit.wheat}"
+									   snapInterval="1"
+									   enabled="{unit.moves.length == 1 || unit.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
+						</s:HGroup>
+					</mx:GridItem>
+					<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+						<s:Label text="{city.wheat}" />
+					</mx:GridItem>
+				</mx:GridRow>
+				<mx:GridRow>
+					<mx:GridItem horizontalAlign="center">
+						<mx:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}" width="25" height="25"/>
+					</mx:GridItem>
+					<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+						<s:HGroup verticalAlign="middle">
+							<s:Label text="{unit.wood}" 
+									 styleName="numberLabel" 
+									 textAlign="right"
+									 minWidth="60"/>
+							<s:HSlider id="woodUnitSlider"
+									   showDataTip="false"
+									   liveDragging="true" 
+									   change="woodUnitCheck(event)"
+									   value="{unit.wood}"
+									   maximum="{city.wood + unit.wood}"
+									   snapInterval="1"
+									   enabled="{unit.moves.length == 1 || unit.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
+						</s:HGroup>
+					</mx:GridItem>
+					<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+						<s:Label text="{city.wood}" />
+					</mx:GridItem>
+				</mx:GridRow>
+				<mx:GridRow>
+					<mx:GridItem horizontalAlign="center">
+						<mx:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}" width="25" height="25"/>
+					</mx:GridItem>
+					<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+						<s:HGroup verticalAlign="middle">
+							<s:Label text="{unit.iron}" 
+									 styleName="numberLabel" 
+									 textAlign="right"
+									 minWidth="60"/>
+							<s:HSlider id="ironUnitSlider"
+									   showDataTip="false"
+									   liveDragging="true" 
+									   change="ironUnitCheck(event)"
+									   value="{unit.iron}"
+									   maximum="{city.iron + unit.iron}"
+									   snapInterval="1"
+									   enabled="{unit.moves.length == 1 || unit.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
+						</s:HGroup>
+					</mx:GridItem>
+					<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+						<s:Label text="{city.iron}" />
+					</mx:GridItem>
+				</mx:GridRow>
+				<mx:GridRow>
+					<mx:GridItem horizontalAlign="center">
+						<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
+					</mx:GridItem>
+					<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+						<s:HGroup verticalAlign="middle">
+							<s:Label text="{unit.gold}" 
+									 styleName="numberLabel" 
+									 textAlign="right"
+									 minWidth="60"/>
+							<s:HSlider id="goldUnitSlider"
+									   showDataTip="false"
+									   liveDragging="true" 
+									   change="goldUnitCheck(event)"
+									   value="{unit.gold}"
+									   maximum="{city.gold + unit.gold}"
+									   snapInterval="1"
+									   enabled="{unit.moves.length == 1 || unit.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
+						</s:HGroup>
+					</mx:GridItem>
+					<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+						<s:Label text="{city.gold}" />
+					</mx:GridItem>
+				</mx:GridRow>
+				<mx:GridRow>
+					<mx:GridItem colSpan="4">
+						<mx:HRule width="100%"/>
+					</mx:GridItem>
+				</mx:GridRow >
+			</mx:Grid>
+		</s:Group>
+	</s:Scroller>
+</s:VGroup>

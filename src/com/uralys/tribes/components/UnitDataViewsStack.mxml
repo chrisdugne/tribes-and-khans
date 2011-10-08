@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:ViewStack xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			  xmlns:s="library://ns.adobe.com/flex/spark" 
+			  xmlns:mx="library://ns.adobe.com/flex/mx">
+	
+	<fx:Declarations>
+		<s:Fade id="fade" alphaTo="0" duration="200"/>
+		<s:Fade id="unfade" alphaTo="1" duration="200"/>
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.uralys.tribes.entities.Unit;
+			import com.uralys.tribes.main.ImageContainer;
+			
+			[Bindable] public var unit:Unit;
+		]]>
+	</fx:Script>
+	
+		<s:NavigatorContent width="100%" showEffect="{unfade}" hideEffect="{fade}">
+			<s:HGroup width="100%"
+					  horizontalAlign="center">
+				<s:Label color="#FFFFFF" 
+						 left="20" 
+						 verticalCenter="2"
+						 text="{unit.value} pts"/>
+			</s:HGroup>
+		</s:NavigatorContent>
+		
+		<s:NavigatorContent width="100%" showEffect="{unfade}" hideEffect="{fade}"
+							alpha="0">
+			<s:HGroup width="100%"
+					  horizontalAlign="center">
+				<s:Image source="{unit.type == Unit.ARMY ? ImageContainer.WARRIOR1 : ImageContainer.MERCHANT1}"/>
+				<s:Label color="#FFFFFF" 
+						 left="20" 
+						 verticalCenter="2"
+						 text="{unit.size}"/>
+			</s:HGroup>
+		</s:NavigatorContent>
+		
+		<s:NavigatorContent width="100%" showEffect="{unfade}" hideEffect="{fade}"
+							alpha="0">
+			<s:HGroup width="100%"
+					  horizontalAlign="center">
+				<s:Image source="{ImageContainer.BOW}" width="25"/>
+				<s:Label color="#FFFFFF" 
+						 verticalCenter="2"
+						 text="{unit.bows}"/>
+			</s:HGroup>
+		</s:NavigatorContent>
+		
+		<s:NavigatorContent width="100%" showEffect="{unfade}" hideEffect="{fade}"
+							alpha="0">
+			<s:HGroup width="100%"
+					  horizontalAlign="center">
+				<s:Image source="{ImageContainer.SWORD}" width="25"/>
+				<s:Label color="#FFFFFF" 
+						 verticalCenter="2"
+						 text="{unit.swords}"/>
+			</s:HGroup>
+		</s:NavigatorContent>
+		
+		<s:NavigatorContent width="100%" showEffect="{unfade}" hideEffect="{fade}"
+							alpha="0">
+			<s:HGroup width="100%"
+					  horizontalAlign="center">
+				<s:Image source="{ImageContainer.ARMOR}" width="25"/>
+				<s:Label color="#FFFFFF" 
+						 verticalCenter="2"
+						 text="{unit.armors}"/>
+			</s:HGroup>
+		</s:NavigatorContent>
+		
+		<s:NavigatorContent width="100%" showEffect="{unfade}" hideEffect="{fade}"
+							alpha="0">
+			<s:HGroup width="100%"
+					  horizontalAlign="center">
+				<s:Image source="{ImageContainer.WHEAT}" width="25"/>
+				<s:Label color="#FFFFFF" 
+						 verticalCenter="2"
+						 text="{unit.wheat}"/>
+			</s:HGroup>
+		</s:NavigatorContent>
+		
+		<s:NavigatorContent width="100%" showEffect="{unfade}" hideEffect="{fade}"
+							alpha="0">
+			<s:HGroup width="100%"
+					  horizontalAlign="center">
+				<s:Image source="{ImageContainer.WOOD}" width="25"/>
+				<s:Label color="#FFFFFF" 
+						 verticalCenter="2"
+						 text="{unit.wood}"/>
+			</s:HGroup>
+		</s:NavigatorContent>
+		
+		<s:NavigatorContent width="100%" showEffect="{unfade}" hideEffect="{fade}"
+							alpha="0">
+			<s:HGroup width="100%"
+					  horizontalAlign="center">
+				<s:Image source="{ImageContainer.IRON}" width="25"/>
+				<s:Label color="#FFFFFF" 
+						 verticalCenter="2"
+						 text="{unit.iron}"/>
+			</s:HGroup>
+		</s:NavigatorContent>
+		
+		<s:NavigatorContent width="100%" showEffect="{unfade}" hideEffect="{fade}"
+							alpha="0">
+			<s:HGroup width="100%"
+					  horizontalAlign="center">
+				<s:Image source="{ImageContainer.GOLD}" width="25"/>
+				<s:Label color="#FFFFFF" 
+						 verticalCenter="2"
+						 text="{unit.gold}"/>
+			</s:HGroup>
+		</s:NavigatorContent>
+	</mx:ViewStack>

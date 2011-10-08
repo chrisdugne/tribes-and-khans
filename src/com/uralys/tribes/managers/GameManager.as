@@ -828,15 +828,63 @@ package com.uralys.tribes.managers {
 			gameWrapper.saveCity(city);			
 		}
 
-		public function buildCity(city:City, merchant:Unit):void
+		public function buildCity(unit:Unit):void
 		{
+			var city:City = new City();
+			city.cityUID = "new";
+			city.name = Translations.CITY_BUILDING_NAME.getItemAt(Session.LANGUAGE) as String;
+			city.gold = unit.gold;
+			city.wheat = unit.wheat;
+			city.wood = unit.wood - (Numbers.CITY_WOOD_BASE_PRICE + unit.size * 10);
+			city.iron = unit.iron - (Numbers.CITY_IRON_BASE_PRICE + unit.size * 10);
+			city.population = unit.size;
+			
+			city.bows = unit.bows;
+			city.swords = unit.swords;
+			city.armors = unit.armors;
+			
+			city.x = Session.CURRENT_CELL_SELECTED.x;
+			city.y = Session.CURRENT_CELL_SELECTED.y;
+			
+			city.beginTime = new Date().getTime() + Numbers.TIME_TO_BUILD_A_CITY;
+			trace("city.beginTime : " + city.beginTime);
+			
+			try{
+				Session.player.units.removeItemAt(Session.player.units.getItemIndex(unit));	
+			}
+			catch(e:Error){
+				// cest qd on reclick sur buildcity une deuxieme fois : index -1 outofbounds
+				// todo : empecher l'affichage du bouton build bordel
+				return;
+			}
+			BoardDrawer.getInstance().drawCity(city);
+			
+			Session.player.cities.addItem(city);
+			
+			unit.gold = 0;
+			unit.iron = 0;
+			unit.wood = 0;
+			unit.wheat = 0;
+			unit.armors = 0;
+			unit.bows = 0;
+			unit.swords = 0;
+			unit.endTime = 1;
+			
+			try{
+				Session.CURRENT_CELL_SELECTED.caravan = null;
+				refreshCell(Session.CURRENT_CELL_SELECTED);
+			}
+			catch(e:Error){}
+			
+			trace("build city on ["+city.x+"]["+city.y+"]");
+			
 			refreshStocksForServerSide(city);
 			
 			cityBeingSaved = city;
 			
 			var gameWrapper:RemoteObject = getGameWrapper();
 			gameWrapper.buildCity.addEventListener("result", cityBuilt);	
-			gameWrapper.buildCity(city, merchant, Session.player.uralysUID);	
+			gameWrapper.buildCity(city, unit, Session.player.uralysUID);	
 		}
 		
 		private function cityBuilt(event:ResultEvent):void

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		  xmlns:s="library://ns.adobe.com/flex/spark" 
+		  xmlns:mx="library://ns.adobe.com/flex/mx"
+		  horizontalAlign="center">
+	<fx:Script>
+		<![CDATA[
+			import com.uralys.tribes.commons.Numbers;
+			import com.uralys.tribes.commons.Session;
+			import com.uralys.tribes.commons.Translations;
+			import com.uralys.tribes.entities.City;
+			import com.uralys.tribes.main.ImageContainer;
+			import com.uralys.tribes.skins.WorkersProgressBarSkin;
+			import com.uralys.tribes.skins.WorkersProgressTrackSkin;
+			
+			//-------------------------------------------------------------------------//
+
+			[Bindable] public var city:City;
+			
+			//-------------------------------------------------------------------------//
+			
+			public function updateWorkersProgressBar():void
+			{
+				if(workersProgressBar == null)
+					return;
+				
+				city.refreshUnemployed();
+				workersProgressBar.setProgress(city.workers, city.population);
+			}
+		]]>
+	</fx:Script>
+	
+	<s:HGroup horizontalAlign="center" verticalAlign="middle">
+		<s:Label id="cityNameInput" text="{city.name}" fontSize="25"/>
+		<mx:Spacer width="50"/>
+		<s:Label text="Population"/>
+		<mx:Spacer width="20"/>
+		<s:Label text="{city.population}" styleName="numberLabel"/>
+		<mx:Spacer width="6"/>
+	</s:HGroup>
+	<s:HGroup width="100%" horizontalAlign="center" bottom="0"
+			  verticalAlign="middle">
+		<s:Label text="{Translations.WORKERS.getItemAt(Session.LANGUAGE)}"/>
+		<mx:Spacer width="10"/>
+		<s:Label text="{city.peopleCreatingWheat 
+				 + city.peopleCreatingWood
+				 + city.peopleCreatingIron
+				 + city.bowWorkers
+				 + city.swordWorkers
+				 + city.armorWorkers}"
+				 styleName="numberLabel" 
+				 textAlign="right"
+				 minWidth="60"/>
+		<mx:Spacer width="10"/>
+		<s:VGroup>
+			<mx:Spacer height="11"/>
+			<mx:ProgressBar width="200"
+							height="100%"
+							label="" 
+							id="workersProgressBar"
+							mode="manual"
+							barSkin="{WorkersProgressBarSkin}"
+							trackSkin="{WorkersProgressTrackSkin}"
+							trackHeight="24"
+							creationComplete="{updateWorkersProgressBar()}"/>
+		</s:VGroup>
+		<mx:Spacer width="10"/>
+		<s:Label text="{city.unemployed}"
+				 styleName="numberLabel" 
+				 textAlign="right"
+				 minWidth="60"/>
+		<mx:Spacer width="10"/>
+		<s:Label text="{Translations.UNEMPLOYED.getItemAt(Session.LANGUAGE)}" />
+	</s:HGroup>
+	<s:HGroup horizontalAlign="center" verticalAlign="middle">
+		
+		<mx:Image toolTip="{Translations.WHEAT.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WHEAT}" width="25" height="25"/>
+		<mx:Spacer width="10"/>
+		<s:Label text="{city.wheat}/{city.wheatStockCapacity}" styleName="numberLabel"/>
+		
+		<mx:Spacer width="15"/>
+		<mx:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}" width="25" height="25"/>
+		<mx:Spacer width="10"/>
+		<s:Label text="{city.wood}/{city.woodStockCapacity}" styleName="numberLabel"/>
+		
+		<mx:Spacer width="15"/>
+		<mx:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}" width="25" height="25"/>
+		<mx:Spacer width="10"/>
+		<s:Label text="{city.iron}/{city.ironStockCapacity}" styleName="numberLabel"/>
+		
+		<mx:Spacer width="15"/>
+		<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
+		<mx:Spacer width="10"/>
+		<s:Label text="{city.gold}" styleName="numberLabel"/>
+		
+	</s:HGroup>
+	<s:HGroup verticalAlign="top">
+		<mx:Spacer width="-25"/>
+		<s:Label text="({(city.wheatExpected) &gt; city.wheatStockCapacity ? city.wheatStockCapacity : (city.wheatExpected)})" 
+				 color="{(city.wheatExpected) &lt; 0 ? Numbers.RED : Numbers.GREEN}"/>
+		
+		<mx:Spacer width="100"/>
+		<s:Label text="({(city.wood + city.woodEarned) &lt; city.woodStockCapacity ? (city.wood + city.woodEarned) : city.woodStockCapacity})" 
+				 color="{Numbers.GREEN}"/>
+		
+		<mx:Spacer width="87"/>
+		<s:Label text="({(city.iron + city.ironEarned) &lt; city.ironStockCapacity ? (city.iron + city.ironEarned) : city.ironStockCapacity})" 
+				 color="{Numbers.GREEN}"/>
+		
+	</s:HGroup>
+	
+	
+</s:VGroup>

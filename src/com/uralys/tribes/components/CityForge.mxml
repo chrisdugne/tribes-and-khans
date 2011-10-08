@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:NavigatorContent xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					xmlns:s="library://ns.adobe.com/flex/spark" 
+					xmlns:mx="library://ns.adobe.com/flex/mx"
+					xmlns:renderers="com.uralys.tribes.renderers.*"
+					label="{Translations.FORGE.getItemAt(Session.LANGUAGE)}"> 
+	<fx:Script>
+		<![CDATA[
+			import com.uralys.tribes.commons.Session;
+			import com.uralys.tribes.commons.Translations;
+			import com.uralys.tribes.entities.City;
+			import com.uralys.tribes.main.ImageContainer;
+			import com.uralys.tribes.tooltips.ForgeToolTip;
+			import com.uralys.utils.Utils;
+			
+			import mx.events.ToolTipEvent;
+			
+			//-------------------------------------------------------------------------//
+			
+			[Bindable] public var city:City;
+			
+			//----------------------------------------------------------//
+			
+			public function refresh():void
+			{
+				if(bowsBuildingRenderer != null){
+					bowsBuildingRenderer.refresh();
+					swordsBuildingRenderer.refresh();
+					armorsBuildingRenderer.refresh();
+				}
+			}
+			
+			//-------------------------------------------------------------------------//
+			// toolTip creation pour la forge
+			
+			private function onCreateForgeToolTip(e:ToolTipEvent, itemName:String, woodCost:int, ironCost:int):void 
+			{
+				var toolTip:ForgeToolTip = new ForgeToolTip();
+				toolTip.itemName = itemName;
+				toolTip.woodCost = woodCost;
+				toolTip.ironCost = ironCost;
+				
+				e.toolTip = toolTip;
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:VGroup width="100%" horizontalAlign="center">
+		
+		<mx:Spacer height="15"/>
+		<s:HGroup width="100%" verticalAlign="middle">
+			<s:Label text="{city.bows}/{city.bowStockCapacity}" styleName="numberLabel"/>
+			<mx:Image toolTip="{Translations.BOW.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.BOW}"/>
+			<renderers:SmithRenderer smiths="@{city.bowWorkers}"
+									 item="{Utils.getItem('bow')}"
+									 stock="{city.bows}"
+									 stockCapacity="{city.bowStockCapacity}"
+									 weaponsAdded="@{city.bowsBeingBuilt}"
+									 beginTime="@{city.bowsBeingBuiltBeginTime}"
+									 endTime="@{city.bowsBeingBuiltEndTime}"
+									 city="{city}"
+									 id="bowsBuildingRenderer"
+									 />
+		</s:HGroup>
+		
+		<mx:Spacer height="15"/>
+		<s:HGroup width="100%" verticalAlign="middle">
+			<s:Label text="{city.swords}/{city.swordStockCapacity}" styleName="numberLabel"/>
+			<mx:Image toolTip="{Translations.SWORD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.SWORD}"/>
+			<renderers:SmithRenderer smiths="@{city.swordWorkers}"
+									 item="{Utils.getItem('sword')}"
+									 stock="{city.swords}"
+									 stockCapacity="{city.swordStockCapacity}"
+									 weaponsAdded="@{city.swordsBeingBuilt}"
+									 beginTime="@{city.swordsBeingBuiltBeginTime}"
+									 endTime="@{city.swordsBeingBuiltEndTime}"
+									 city="{city}"
+									 id="swordsBuildingRenderer"
+									 />
+		</s:HGroup>
+		
+		<mx:Spacer height="15"/>
+		<s:HGroup width="100%" verticalAlign="middle">
+			<s:Label text="{city.armors}/{city.armorStockCapacity}" styleName="numberLabel"/>
+			<mx:Image toolTip="{Translations.ARMOR.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.ARMOR}"/>
+			<renderers:SmithRenderer smiths="@{city.armorWorkers}"
+									 item="{Utils.getItem('armor')}"
+									 stock="{city.armors}"
+									 stockCapacity="{city.armorStockCapacity}"
+									 weaponsAdded="@{city.armorsBeingBuilt}"
+									 beginTime="@{city.armorsBeingBuiltBeginTime}"
+									 endTime="@{city.armorsBeingBuiltEndTime}"
+									 city="{city}"
+									 id="armorsBuildingRenderer"
+									 />
+		</s:HGroup>
+		
+	</s:VGroup>
+	
+</s:NavigatorContent>

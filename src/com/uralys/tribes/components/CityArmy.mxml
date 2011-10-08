@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:NavigatorContent xmlns:fx="http://ns.adobe.com/mxml/2009" 
+				xmlns:s="library://ns.adobe.com/flex/spark" 
+				xmlns:mx="library://ns.adobe.com/flex/mx"
+				xmlns:components="com.uralys.tribes.components.*"
+				label="{Translations.ARMY.getItemAt(Session.LANGUAGE)}">
+	<fx:Script>
+		<![CDATA[
+			import com.uralys.tribes.commons.Session;
+			import com.uralys.tribes.commons.Translations;
+			import com.uralys.tribes.entities.City;
+			import com.uralys.tribes.entities.Unit;
+			
+			//-------------------------------------------------------------------------//
+			
+			[Bindable] public var city:City;
+			
+			//----------------------------------------------------------//
+			
+		]]>
+	</fx:Script>
+	
+	<s:HGroup width="100%" horizontalAlign="center">
+		<s:VGroup horizontalAlign="center">
+			<s:Button label="{Translations.NEW_ARMY.getItemAt(Session.LANGUAGE)}" 
+					  skinClass="com.uralys.tribes.skins.CustomButtonSkin"
+					  click="{armyCreationGroup.newUnit(Unit.ARMY)}"
+					  enabled="{city.army == null &amp;&amp; Session.player.units.length &lt; Session.player.cities.length*3}"/>
+			<s:Button label="{Translations.DELETE.getItemAt(Session.LANGUAGE)}" 
+					  skinClass="com.uralys.tribes.skins.CustomButtonSkin"
+					  click="{armyCreationGroup.deleteUnit()}"
+					  visible="{city.army != null}"
+					  enabled="{city.army.moves.length == 1 || city.army.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
+		</s:VGroup>
+		<components:UnitCreationGroup id="armyCreationGroup"
+									  unit="@{city.army}"
+									  city="@{city}"/>
+		
+	</s:HGroup>
+</s:NavigatorContent>

@@ -31,6 +31,21 @@ package com.uralys.tribes.core
 			return instance;
 		}
 		
+		// - unit ============================================================================================
+		
+ 		private var _unit:Unit;
+		
+		[Bindable]
+		public function get unit():Unit
+		{
+			return _unit;
+		}
+		
+		public function set unit(value:Unit):void
+		{
+			_unit = value;
+		}
+		
 		// ============================================================================================
 
 		private static var loop:Number = 0;
@@ -45,112 +60,10 @@ package com.uralys.tribes.core
 			}
 			
 			timers.removeAll();
-//			trace("refreshTimers for " + Session.allUnits.length); 
-//			
-//			
-//			for each(var unit:Unit in Session.allUnits){
-//				addTimer(unit.moves.toArray());
-//			}
 		}
 			
 		// ============================================================================================
 
-		
-//		public function addTimer(moves:Array):void
-//		{
-//			var now:Number = new Date().getTime();
-//			
-//			// on degage les moves perimés
-//			while(moves.length > 0  && moves[0].timeTo != -1 && moves[0].timeTo < now){
-//				moves.shift();
-//			}
-//
-//			if(moves.length == 0)
-//				return;
-//			
-//			var firstMove:Move = moves[0] as Move; 
-//			
-//			if(firstMove.timeTo == -1)
-//				return;
-//			
-//			for each (var movesListened:Array in timers.values())
-//			{
-//				var moveListened:Move = movesListened[0] as Move;
-//				
-//				if(firstMove.moveUID == moveListened.moveUID){
-//					trace(firstMove.moveUID + " est deja ecouté, refreshing registered moves");
-//					timers.refresh(movesListened, moves);
-//					return;
-//				}
-//			}
-//			
-//			var timeToWait:Number = firstMove.timeTo - new Date().getTime();
-//			trace("listening move " + firstMove.moveUID);
-//			
-//			var t:Timer = new Timer(timeToWait, 1);
-//			t.addEventListener(TimerEvent.TIMER_COMPLETE, moveIsDone);
-//			t.start();
-//			
-//			timers.put(t, moves);
-//		}
-		
-		// ============================================================================================
-		
-//		private function moveIsDone(e:TimerEvent):void
-//		{
-//			try{
-//				trace("moveIsDone");
-//				var moves:Array = timers.get(e.currentTarget) as Array;
-//				var moveToPerform:Move = moves.shift() as Move;
-//				
-//				timers.remove(e.currentTarget);
-//				
-//				// refresh de la case dont on part : suppression du move dans case.recordedMoves et dans unit.moves
-//				var caseToRefresh:Cell = Session.map[moveToPerform.getX()][moveToPerform.getY()] as Cell;		
-//				caseToRefresh.refresh();
-//				
-//				// efface le 'pion' de la case
-//				BoardDrawer.getInstance().refreshUnits(caseToRefresh);
-//				
-//				// on recupere le suivant
-//				var newCurrentMove:Move = moves[0] as Move;
-//				
-//				// on ecoute le nouveau move si son timeTo n'est pas illimité
-//				if(newCurrentMove.timeTo != -1)
-//					addTimer(moves);
-//				
-//				
-//				// refresh de la nouvelle case active : ajout de l'unité sur la case
-//				var newCaseToRefresh:Cell = Session.map[newCurrentMove.getX()][newCurrentMove.getY()] as Cell;
-//				newCaseToRefresh.refresh();
-//	
-//				// affiche le 'pion' de la case
-//				BoardDrawer.getInstance().refreshUnits(newCaseToRefresh);
-//				
-//				// refresh du status de toutes les unites
-//				GameManager.getInstance().refreshStatusOfAllUnitsInSession();
-//				
-//				// on refresh les villes au cas ou le deplacement fait partir/arriver une unite de/dans une ville
-//				Session.board.refreshUnitsInCity(moveToPerform.unitUID);
-//				
-//				// on refresh les moves si ils sont affiches
-//				if(Session.MOVE_A_UNIT){
-//					BoardDrawer.getInstance().removeAllUnitMovesImages();
-//					Session.board.onUnitClick();
-//				}
-//				
-//				// l'unité a bougé : au cas ou on enleve le 'build here'
-//				Session.board.buildCityForm.visible = false;
-//				Session.board.buildCityForm.includeInLayout = false;
-//				
-//			}
-//			catch(e:Error){
-//				trace("error on moveIsDone");
-//			}
-//		}
-		
-		// ============================================================================================
-		
 		public function listenTo(cell:Cell):void
 		{
 			var timeToWait:Number;
@@ -192,13 +105,119 @@ package com.uralys.tribes.core
 			
 			GameManager.getInstance().refreshCellFromServer(cell);
 		}
+	
+		//----------------------------------------------------------------------------------------//
+		
+		[Bindable]
+		private var newMoveAdded:Boolean = false;
+		
+		public function validateUnitMoves(cancel:Boolean):void
+		{
+			Session.MOVE_A_UNIT = false;
+			Session.REMOVING_MOVES_ENABLE = true;
+			
+			if(!cancel){
+				if(removingMoves)
+					unit.moves.getItemAt(unit.moves.length-1).timeTo = -1;
+				
+				validatePendingMoves();					
+				GameManager.getInstance().updateUnit(unit);
+				
+			}
+			else if(removingMoves){
+				for(var i:int = movesBeingRemoved.length-1; i >= 0; i--){
+					unit.moves.addItem(movesBeingRemoved[i]);
+				}
+				
+				movesBeingRemoved = [];
+			}
+			
+			newMoveAdded = false;
+			removingMoves = false;
+			
+			BoardDrawer.getInstance().removeAllUnitMovesImages();
+		}
+		
+		private var removingMoves:Boolean = false;
+		private var movesBeingRemoved:Array = [];
+		public function deleteLastMove():void
+		{
+			removingMoves = true;
+			newMoveAdded = true;
+			
+			movesBeingRemoved.push(unit.removeLastMove());
+			refreshCurrentMoves();
+		}
 		
 		// ============================================================================================
+
+		/*
+		* supprime les moves perimes de la liste
+		*/
+		public function refreshMoves(unit:Unit):void
+		{
+			trace("refreshMoves : " + unit.moves.length + " moves");
+			
+			var numOfLastIndexToRemove:int = -1;
+			var now:Number = new Date().getTime();
+			
+			for each(var move:Move in unit.moves)
+			{
+				if(now > move.timeTo && move.timeTo != -1)
+					numOfLastIndexToRemove++;
+				else
+					break;
+			}
+			
+			for(var i:int = 0; i <= numOfLastIndexToRemove; i++){
+				GameManager.getInstance().deleteMove(unit.moves.getItemAt(0).moveUID);
+				unit.moves.removeItemAt(0);
+			}
+			
+			trace("refreshMoves DONE");
+		}
+		
+		// ============================================================================================
+		
+		// click sur une armee dans la barre laterale
+		// ou dans la liste sous 'enter city'
+		public function moveUnit(unit:Unit):void
+		{
+			this.unit = unit;
+			
+			if(Session.MOVE_A_UNIT)
+				return;
+			
+			Session.MOVE_A_UNIT = true;
+			
+			refreshCurrentMoves();
+		}
+		
+		//---------------------------------------------------------------------//
+		
+		private function refreshCurrentMoves():void
+		{
+			resetPendingMoves();
+			BoardDrawer.getInstance().removeAllUnitMovesImages();
+			
+			var xPreviousMove:int = -1;
+			var yPreviousMove:int = -1;
+			var now:Number = new Date().getTime();
+			
+			for each(var move:com.uralys.tribes.entities.Move in unit.moves)
+			{
+				var displayProgress:Boolean = move.timeFrom < now && move.timeTo > now;
+				BoardDrawer.getInstance().addMoveImages(move, xPreviousMove, yPreviousMove, displayProgress);
+				
+				xPreviousMove = Utils.getXFromCellUID(move.cellUID);
+				yPreviousMove = Utils.getYFromCellUID(move.cellUID); 
+			}	
+		}
 		
 		private var movesPending:ArrayCollection;
 		private var moveBeginsNow:Boolean;
 		
-		public function validatePendingMoves(unit:Unit)
+		public function validatePendingMoves()
 		{
 			var previousMove:com.uralys.tribes.entities.Move = movesPending.getItemAt(0) as com.uralys.tribes.entities.Move;
 			movesPending.removeItemAt(0);
@@ -239,33 +258,8 @@ package com.uralys.tribes.core
 			}
 		}
 
-		/*
-		 * supprime les moves perimes de la liste
-		 */
-		public function refreshMoves(unit:Unit):void
-		{
-			trace("refreshMoves : " + unit.moves.length + " moves");
-			
-			var numOfLastIndexToRemove:int = -1;
-			var now:Number = new Date().getTime();
-			
-			for each(var move:Move in unit.moves)
-			{
-				if(now > move.timeTo && move.timeTo != -1)
-					numOfLastIndexToRemove++;
-				else
-					break;
-			}
-			
-			for(var i:int = 0; i <= numOfLastIndexToRemove; i++){
-				GameManager.getInstance().deleteMove(unit.moves.getItemAt(0).moveUID);
-				unit.moves.removeItemAt(0);
-			}
 
-			trace("refreshMoves DONE");
-		}
-
-		public function resetPendingMoves(unit:Unit)
+		public function resetPendingMoves()
 		{
 			trace("resetPendingMoves");
 			movesPending = new ArrayCollection();
@@ -293,7 +287,7 @@ package com.uralys.tribes.core
 		}
 
 		private var lastMoveIsInCity:Boolean = false;
-		public function recordMove(unit:Unit):Boolean
+		public function recordMove():Boolean
 		{
 			if(lastMoveIsInCity){
 				FlexGlobals.topLevelApplication.message(Translations.CITY_STOP.getItemAt(Session.LANGUAGE));
@@ -340,5 +334,6 @@ package com.uralys.tribes.core
 			
 			return false;
 		}
+
 	}
 }

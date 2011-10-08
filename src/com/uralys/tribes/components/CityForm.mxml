@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" 
+		 xmlns:forms="com.uralys.renderers.forms.*" 
+		 xmlns:renderers="com.uralys.tribes.renderers.*" 
+		 xmlns:components="com.uralys.tribes.components.*">
+	
+		<fx:Script>
+			<![CDATA[
+				import com.uralys.tribes.commons.Numbers;
+				import com.uralys.tribes.commons.Session;
+				import com.uralys.tribes.commons.Translations;
+				import com.uralys.tribes.entities.City;
+				import com.uralys.tribes.main.ImageContainer;
+				
+				//----------------------------------------------------------//
+				
+				[Bindable]
+				public var city:City;
+
+				//-------------------------------------------------------------------------//
+
+				private function refreshBuildings():void	
+				{
+					buildings.refresh();
+					forge.refresh();
+				}
+				
+				//-------------------------------------------------------------------------//
+				// Armies - Merchants
+
+				public function refreshCity():void
+				{
+					cityHeader.updateWorkersProgressBar();
+					refreshBuildings();
+					
+					city.wheatRequiredToFeed = (city.population + city.unitsToFeed) * Numbers.FEED_COEFF;
+					city.wheatExpected = city.wheat + city.wheatEarned - city.wheatRequiredToFeed;
+				}
+				
+			]]>
+		</fx:Script>
+	
+		<fx:Declarations>
+			<s:Fade id="fader" duration="1000" alphaFrom="1" alphaTo="0"/>
+			<s:Fade id="shower" duration="1000" alphaFrom="0" alphaTo="1"/>
+			
+			<s:State name="normal" id="normalState"/>
+		</fx:Declarations>
+	
+		<mx:Image source="{ImageContainer.FERMIER}" x="950" y="-70" visible="{viewstack.selectedIndex == 0}" hideEffect="fader" showEffect="shower"/>
+		<mx:Image source="{ImageContainer.FORGERON}" x="950" y="-70" visible="{viewstack.selectedIndex == 1 || viewstack.selectedIndex == 2}" hideEffect="fader" showEffect="shower"/>
+		<mx:Image source="{ImageContainer.MARCHANDE}" x="1000" y="-70" visible="{viewstack.selectedIndex == 3}" hideEffect="fader" showEffect="shower"/>
+		<mx:Image source="{ImageContainer.MARCHAND}" x="950" y="-70" visible="{viewstack.selectedIndex == 4}" hideEffect="fader" showEffect="shower"/>
+		<mx:Image source="{ImageContainer.GUERRIER}" x="950" y="-70" visible="{viewstack.selectedIndex == 5}" hideEffect="fader" showEffect="shower"/>
+
+		<s:VGroup width="100%" horizontalAlign="center">
+			
+			<components:CityHeader city="@{city}" id="cityHeader" width="100%"/>
+			
+			<mx:Spacer height="15"/>
+			<s:TabBar id="tabs" dataProvider="{viewstack}"
+					  skinClass="com.uralys.tribes.skins.CustomTabBarSkin"/>
+				
+			<mx:ViewStack id="viewstack" width="650" height="100%">
+				
+				<components:CityResources id="resources" show="{cityHeader.updateWorkersProgressBar()}" city="@{city}"/>
+				<components:CityForge id="forge" city="@{city}"/>
+				<components:CityMarket id="market" city="@{city}"/>
+				<components:CityCaravan id="caravan" city="@{city}"/>
+				<components:CityArmy id="army" city="@{city}"/>
+				<components:CityBuildings id="buildings" city="@{city}"/>
+				
+						
+			</mx:ViewStack>
+		</s:VGroup>
+</s:Group>

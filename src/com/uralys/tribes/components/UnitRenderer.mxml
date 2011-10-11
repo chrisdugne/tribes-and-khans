@@ -3,19 +3,18 @@
 				xmlns:s="library://ns.adobe.com/flex/spark" 
 				xmlns:mx="library://ns.adobe.com/flex/mx" 
 				xmlns:renderers="com.uralys.tribes.renderers.*"
+				xmlns:components="com.uralys.tribes.components.*"
 				useHandCursor="true"
 				buttonMode="true"
-				contentBackgroundAlpha="0" xmlns:components="com.uralys.tribes.components.*"
+				contentBackgroundAlpha="0" 
+				enabled="{!Session.MOVE_A_UNIT || (UnitMover.getInstance().unit == unit)}"
 				>
 	
 	<fx:Declarations>
 		<s:Fade id="fade" alphaTo="0" duration="200"/>
 		<s:Fade id="unfade" alphaTo="1" duration="200"/>
 		
-		<s:State name="waiting"/>
-		<s:State name="shotEnabled"/>
-		<s:State name="buildCityEnabled"/>
-		<s:State name="reloading"/>
+		<s:State name="classic"/>
 		<s:State name="moving"/>
 	</fx:Declarations>
 	
@@ -31,10 +30,15 @@
 			import com.uralys.tribes.skins.CustomButtonSkin;
 			import com.uralys.tribes.skins.WorkersProgressBarSkin;
 			import com.uralys.tribes.skins.WorkersProgressTrackSkin;
+			import com.uralys.utils.Utils;
 			
+			import mx.containers.ViewStack;
 			import mx.core.FlexGlobals;
 			import mx.effects.easing.Quadratic;
 			import mx.events.ItemClickEvent;
+			import mx.utils.ObjectUtil;
+			
+			import spark.components.IItemRenderer;
 			
 			//-------------------------------------------------------------------------------------//
 			
@@ -49,94 +53,95 @@
 			public function set unit(value:Unit):void
 			{
 				_unit = value;
+				
 				refresh();
 			}
 			
 			//-------------------------------------------------------------------------------------//
 
 			[Bindable] private var nbActionsAvailable:int;
+
+			[Bindable] private var shotEnabled:Boolean;
+			[Bindable] private var reloading:Boolean;
+
+			[Bindable] private var buildCityEnabled:Boolean;
+			[Bindable] private var buildingCityInProgress:Boolean;
+			
+			[Bindable] private var moveInProgress:Boolean;
+			[Bindable] private var conqueringInProgress:Boolean;
+
+			[Bindable] private var hidActionViewStack:Boolean;
 			
 			//-------------------------------------------------------------------------------------//
 			
-			private function refresh():void
+			public function refresh():void
 			{
-				nbActionsAvailable = 1;
+				currentState = "classic";
+
+				nbActionsAvailable = 0;
+				navigatorIndexesToshow = [];
 				
-				if(unit.moves.length > 1)
-				{
-					setMoving();
-					currentState = "moving";
+				shotEnabled = false;
+				buildCityEnabled = false;
+				reloading = false;
+				moveInProgress = false;
+				conqueringInProgress = false;
+				hidActionViewStack = false;
+				
+				nbActionsAvailable = 1; // le deplacement
+				navigatorIndexesToshow.push(0);
+				
+				if(unit.moves.length > 1){
+					trace("moveInProgress");
+					moveInProgress = true;
+					callLater(this.actionsViewStack.setMoveInProgress);
 				}
-				else{
+				else
+				{
+					if(unit.timeFromChallenging != -1){
+						nbActionsAvailable ++; // la conquete
+						navigatorIndexesToshow.push(2);
+					
+						callLater(actionsViewStack.setConquestInProgress);
+					}
+					
 					if(unit.bows > 0 && unit.type == Unit.ARMY)
 					{
-						nbActionsAvailable ++;
-						Session.timer.removeEventListener(TimerEvent.TIMER, setReloading);
+						nbActionsAvailable ++; // le tir
+						navigatorIndexesToshow.push(1);
+						
+						Session.timer.removeEventListener(TimerEvent.TIMER, actionsViewStack.setReloading);
 						
 						var now:Number = new Date().getTime();
 						if(now - unit.lastShotTime > Numbers.BASE_TIME_FOR_SHOOTING)
-							currentState = "shotEnabled";
+							 shotEnabled = true;
 						else{
-							setReloading();
-							currentState = "reloading";
+							callLater(actionsViewStack.setReloading);
+							reloading = true;
 						}
 						
 					}
 					else if(Session.CURRENT_CELL_SELECTED.city == null 
 						&& unit.mayBuildAcity()
-						&& (Session.CURRENT_CELL_SELECTED.landOwner == null || unit.player.ally.allyUID == Session.CURRENT_CELL_SELECTED.landOwner.ally.allyUID)){
-						currentState="buildCityEnabled"
+						&& (Session.CURRENT_CELL_SELECTED.landOwner == null || unit.player.ally.allyUID == Session.CURRENT_CELL_SELECTED.landOwner.ally.allyUID))
+					{
+						nbActionsAvailable ++; // la construction d'une ville
+						navigatorIndexesToshow.push(3);
+						
+						buildCityEnabled = true;
 					}
-					else
-						currentState = "waiting";
+					else{
+						trace("noSpecialAction");
+					}
 				}
+				
+				if(thisNavigatorIsHidden(actionsViewStack.selectedIndex))
+					goLeft(actionsViewStack);
 			}
 			
 			//-------------------------------------------------------------------------------------//
 			
-			private function setMoving(event:TimerEvent = null):void
-			{
-				var now:Number = new Date().getTime();
-				var millisRemaining:Number = unit.moves.getItemAt(0).timeTo - now;
-				var millisSpent:Number = now - unit.moves.getItemAt(0).timeFrom;
-				
-				if(millisRemaining <= 0){
-					if(event != null)
-						refresh();
-				}
-				else{
-					var minutes:int = millisRemaining/60/1000;
-					var secondes:int = (millisRemaining - minutes*60*1000) /1000;
-					
-					movingProgressBar.setProgress( millisSpent, unit.moves.getItemAt(0).timeTo - unit.moves.getItemAt(0).timeFrom );
-					movingProgressBar.label = Translations.MOVING.getItemAt(Session.LANGUAGE) + " : " +(minutes>9 ? "" : "0")+minutes+" mn "+(secondes>9 ? "" : "0")+secondes+' s';
-					
-					Session.timer.addEventListener(TimerEvent.TIMER, setMoving);
-				}
-			}
-			
-			private function setReloading(event:TimerEvent = null):void
-			{
-				var now:Number = new Date().getTime();
-				var millisRemaining:Number = Numbers.BASE_TIME_FOR_SHOOTING + unit.lastShotTime - now;
-				var millisSpent:Number = now - unit.lastShotTime;
-				
-				if(millisRemaining <= 0){
-					if(event != null)
-						refresh();
-				}
-				else{
-					var minutes:int = millisRemaining/60/1000;
-					var secondes:int = (millisRemaining - minutes*60*1000) /1000;
-					
-					shootProgressBar.setProgress( millisSpent, Numbers.BASE_TIME_FOR_SHOOTING );
-					shootProgressBar.label = Translations.BOWS.getItemAt(Session.LANGUAGE) + " : " +(minutes>9 ? "" : "0")+minutes+" mn "+(secondes>9 ? "" : "0")+secondes+' s';
-					
-					Session.timer.addEventListener(TimerEvent.TIMER, setReloading);
-				}
-			}
-			
-			//-------------------------------------------------------------------------------------//
+			private var navigatorIndexesToshow:Array;
 			
 			private function goLeft(viewStack:ViewStack):void
 			{
@@ -145,6 +150,9 @@
 				else
 					viewStack.selectedIndex --;
 
+				
+				if(viewStack == actionsViewStack && thisNavigatorIsHidden(viewStack.selectedIndex))
+					goLeft(viewStack);
 			}
 
 			private function goRight(viewStack:ViewStack):void
@@ -154,154 +162,123 @@
 				else
 					viewStack.selectedIndex ++;
 				
+				if(viewStack == actionsViewStack && thisNavigatorIsHidden(viewStack.selectedIndex))
+					goRight(viewStack);
+			}
+			
+			private function thisNavigatorIsHidden(selectedIndex:int):Boolean
+			{
+				var navigatorIsHidden:Boolean = true;
+				for(var i:int = 0; i<navigatorIndexesToshow.length; i++)
+				{
+					if(navigatorIndexesToshow[i] == selectedIndex){
+						navigatorIsHidden = false;
+					}
+				}
+				
+				return navigatorIsHidden;
 			}
 			
 			//-------------------------------------------------------------------------------------//
-
+			
 			private function validateMoves():void{
 				UnitMover.getInstance().validateUnitMoves(false);
 				refresh();
 			}
-
+			
 			private function cancel():void{
 				UnitMover.getInstance().validateUnitMoves(true);
 				refresh();
 			}
 
 			//-------------------------------------------------------------------------------------//
-			
-			private function moveUnit():void{
-				currentState = "moving";
-				UnitMover.getInstance().moveUnit(unit);
-			}
 
-			//-------------------------------------------------------------------------------------//
-
-			private function shoot():void{
-				unit.lastShotTime = new Date().getTime();
-				refresh();
-			}
-			
-			//-------------------------------------------------------------------------------------//
-		
-			private function buildCity():void
+			private function selectVisibleUnit():void
 			{
-				GameManager.getInstance().buildCity(unit);
+				if(Session.CURRENT_CELL_SELECTED != null
+				&& Session.CURRENT_CELL_SELECTED.visibleUnit.unitUID != unit.unitUID)
+				{
+					Session.CURRENT_CELL_SELECTED.visibleUnit = unit;
+					GameManager.getInstance().refreshCellDisplay(Session.CURRENT_CELL_SELECTED);
+				}
 			}
-
+			
 		]]>
 	</fx:Script>
 	
-	<s:Group id="groupDetails" height="100" width="130">
+	<s:Group id="groupDetails" height="100" width="180">
+		<s:Group id="backgroundClickReceiver" height="100" width="180"
+				 click="{selectVisibleUnit()}"/>
+		
 		<s:Rect left="0" right="0" top="0" bottom="0" radiusX="5" radiusY="5">
 			<s:fill>
-				<s:SolidColor color="{unit.ownerStatus == Unit.PLAYER ? Numbers.colorPlayer : (unit.ownerStatus == Unit.ALLY ? Numbers.colorAlly  : Numbers.colorEnnemy)}" alpha="0.4"/>
+				<s:SolidColor color="{(unit.ownerStatus == Unit.PLAYER) ? Numbers.colorPlayer : (unit.ownerStatus == Unit.ALLY ? Numbers.colorAlly  : Numbers.colorEnnemy)}" alpha="0.4"/>
 			</s:fill>
 		</s:Rect>
-		<renderers:PlayerName player="{unit.player}" left="5"/>
-		<s:Image source="{unit.type == Unit.ARMY ? ImageContainer.WARRIOR1 : ImageContainer.MERCHANT1}"
-				 right="5"/>
-		
-		<s:Image source="{ImageContainer.LEFT_ARROW}" click="{goLeft(unitDataViewStack)}" left="10" top="30"
-				 visible="{unit.ownerStatus == Unit.PLAYER || unit.ownerStatus == Unit.ALLY}"/>
-		<s:Image source="{ImageContainer.RIGHT_ARROW}" click="{goRight(unitDataViewStack)}" right="10" top="30"
-				 visible="{unit.ownerStatus == Unit.PLAYER || unit.ownerStatus == Unit.ALLY}"/>
-		
-		<components:UnitDataViewsStack
-			id="unitDataViewStack"
-			top="30"
-			height="30"
-			width="100%"
-			visible="{unit.ownerStatus == Unit.PLAYER || unit.ownerStatus == Unit.ALLY}"/>
+		<s:Group excludeFrom="moving" width="100%">
+			<renderers:PlayerName player="{unit.player}" left="5"/>
 			
-		<s:Image source="{ImageContainer.LEFT_ARROW}" click="{goLeft(actionsViewStack)}" left="10" top="65"
-				 visible="{nbActionsAvailable &gt; 1}"/>
-		<s:Image source="{ImageContainer.RIGHT_ARROW}" click="{goRight(actionsViewStack)}" right="10" top="65"
-				 visible="{nbActionsAvailable &gt; 1}"/>
-		
-		<mx:ViewStack id="actionsViewStack" 
-					  top="65"
-					  height="30"
-					  width="100%"
-					  visible="{unit.ownerStatus == Unit.PLAYER}">
+			<s:Image source="{unit.type == Unit.ARMY ? ImageContainer.WARRIOR1 : ImageContainer.MERCHANT1}"
+					 right="5"/>
 			
-			<s:NavigatorContent width="100%" showEffect="{unfade}" hideEffect="{fade}">
-				<s:VGroup verticalAlign="middle" 
-						  horizontalAlign="center" 
-						  width="100%">
-					
-					<s:Button label="{Translations.MOVE.getItemAt(Session.LANGUAGE)}"
-							  skinClass="{CustomButtonSkin}"
-							  click="moveUnit()"/>
-
-					<s:Label text="{Translations.WAY_SELECTION.getItemAt(Session.LANGUAGE)}"/>
-
-					<s:Button label="{Translations.VALIDATE.getItemAt(Session.LANGUAGE)}" 
-							  click="{validateMoves()}" 
-							  skinClass="com.uralys.tribes.skins.CustomButtonSkin"/>
-					
-					<s:Button label="{Translations.CANCEL.getItemAt(Session.LANGUAGE)}" 
-							  click="{cancel()}" 
-							  skinClass="com.uralys.tribes.skins.CustomButtonSkin"/>
-					
-					<s:Button label="{Translations.DELETE_LAST_MOVE.getItemAt(Session.LANGUAGE)}" 
-							  click="{UnitMover.getInstance().deleteLastMove()}"
-							  enabled="{Session.REMOVING_MOVES_ENABLE &amp;&amp; unit != null &amp;&amp; unit.moves.length &gt; 2}" 
-							  skinClass="com.uralys.tribes.skins.CustomButtonSkin"/>
-					
-					<mx:ProgressBar id="movingProgressBar"
-									width="80%"
-									height="20"
-									mode="manual"
-									barSkin="{WorkersProgressBarSkin}"
-									trackSkin="{WorkersProgressTrackSkin}"
-									label="" 
-									labelPlacement="bottom"
-									includeIn="moving"/>
-				</s:VGroup>
-				
-				
-				
-			</s:NavigatorContent>
+			<s:Image source="{ImageContainer.LEFT_ARROW}" click="{goLeft(unitDataViewStack)}" left="10" top="30"
+					 visible="{unit.ownerStatus == Unit.PLAYER || unit.ownerStatus == Unit.ALLY}"/>
+			<s:Image source="{ImageContainer.RIGHT_ARROW}" click="{goRight(unitDataViewStack)}" right="10" top="30"
+					 visible="{unit.ownerStatus == Unit.PLAYER || unit.ownerStatus == Unit.ALLY}"/>
 			
-			<s:NavigatorContent width="100%" showEffect="{unfade}" hideEffect="{fade}">
-				<s:HGroup verticalAlign="middle" 
-						  horizontalAlign="center" 
-						  width="100%">
-					
-					<s:Button label="{Translations.SHOOT.getItemAt(Session.LANGUAGE)}"
-							  includeIn="shotEnabled"
-							  skinClass="{CustomButtonSkin}"
-							  click="shoot()"/>
-					
-					<mx:ProgressBar id="shootProgressBar"
-									width="80%"
-									height="20"
-									mode="manual"
-									barSkin="{WorkersProgressBarSkin}"
-									trackSkin="{WorkersProgressTrackSkin}"
-									label="" 
-									labelPlacement="bottom"
-									includeIn="reloading"/>
-				</s:HGroup>
-			</s:NavigatorContent>
-
-			<s:NavigatorContent width="100%" showEffect="{unfade}" hideEffect="{fade}">
-				<s:HGroup verticalAlign="middle" 
-						  horizontalAlign="center" 
-						  width="100%">
-					
-					<s:VGroup id="buildCityForm"
-							  top="150" right="95"
-							  includeIn="buildCityEnabled">
-						<s:Button label="{Translations.BUILD_HERE.getItemAt(Session.LANGUAGE)}" click="buildCity()" skinClass="com.uralys.tribes.skins.CustomButtonSkin"/>
-					</s:VGroup>
-					
-				</s:HGroup>
-			</s:NavigatorContent>
-		</mx:ViewStack>
+			<components:UnitDataViewsStack
+				unit="@{unit}"
+				id="unitDataViewStack"
+				top="30"
+				height="30"
+				width="100%"
+				visible="{unit.ownerStatus == Unit.PLAYER || unit.ownerStatus == Unit.ALLY}"/>
+				
+			<s:Image source="{ImageContainer.LEFT_ARROW}" click="{goLeft(actionsViewStack)}" left="10" top="65"
+					 visible="{nbActionsAvailable &gt; 1}"/>
+			<s:Image source="{ImageContainer.RIGHT_ARROW}" click="{goRight(actionsViewStack)}" right="10" top="65"
+					 visible="{nbActionsAvailable &gt; 1}"/>
+			
+			<components:UnitActionViewStack
+				unit="@{unit}"
+				unitRenderer="{this}"
+				currentState="@{currentState}"
+				id="actionsViewStack" 
+				top="65"
+				height="30"
+				width="100%"
+				visible="{unit.ownerStatus == Unit.PLAYER}"
+				shotEnabled="{shotEnabled}"
+				reloading="{reloading}"
+				buildCityEnabled="{buildCityEnabled}"
+				buildingCityInProgress="{buildingCityInProgress}"
+				moveInProgress="{moveInProgress}"
+				conqueringInProgress="{conqueringInProgress}"
+				hidActionViewStack="{hidActionViewStack}"
+				/>
+		</s:Group>
 		
-
+		<s:VGroup verticalAlign="middle" 
+				  horizontalAlign="center" 
+				  width="100%"
+				  includeIn="moving"
+				  paddingTop="7">
+			
+			<s:Button label="{Translations.VALIDATE.getItemAt(Session.LANGUAGE)}" 
+					  click="{validateMoves()}" 
+					  enabled="{UnitMover.newMoveAdded}"
+					  skinClass="com.uralys.tribes.skins.CustomButtonSkin"/>
+			
+			<s:Button label="{Translations.CANCEL.getItemAt(Session.LANGUAGE)}" 
+					  click="{cancel()}" 
+					  skinClass="com.uralys.tribes.skins.CustomButtonSkin"/>
+			
+			<s:Button label="{Translations.DELETE_LAST_MOVE.getItemAt(Session.LANGUAGE)}" 
+					  click="{UnitMover.getInstance().deleteLastMove()}"
+					  enabled="{Session.REMOVING_MOVES_ENABLE &amp;&amp; unit != null &amp;&amp; unit.moves.length &gt; 2}" 
+					  skinClass="com.uralys.tribes.skins.CustomButtonSkin"/>
+			
+		</s:VGroup>
 	</s:Group>
 	
 </s:Group>

@@ -267,7 +267,7 @@
 				 toolTip="{Translations.OPEN_TAB.getItemAt(Session.LANGUAGE)}"
 				 mouseOver="{labelHowTo.setStyle('color', '#ffffff')}"
 				 mouseOut="{labelHowTo.setStyle('color', '#000000')}"/>
-		<mx:Image source="{ImageContainer.QUESTION}" width="20" height="20"
+		<mx:Image source="{ImageContainer.GREEN_QUESTION}"
 				  click="navigateToURL(new URLRequest('http://www.uralys.com/tribes-and-khans.'+ (Session.LANGUAGE == 0 ? 'fr' : 'en') +'.html'), '_new');"
 				  toolTip="{Translations.OPEN_TAB.getItemAt(Session.LANGUAGE)}"
 				  mouseOver="{labelHowTo.setStyle('color', '#ffffff')}"

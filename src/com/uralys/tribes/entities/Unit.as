@@ -13,10 +13,9 @@ package com.uralys.tribes.entities
 		//==========================================================================//
 				
 		public static const TO_BE_CREATED:int = -1;
-		public static const INTERCEPTED_ON_THIS_CASE:int = 1;
-		public static const FREE:int = 2;
-		public static const DESTROYED:int = 3;
-		public static const FUTURE:int = 4;
+		public static const FREE:int = 1;
+		public static const DESTROYED:int = 2;
+		public static const FUTURE:int = 3;
 		
 		//==========================================================================//
 		
@@ -322,7 +321,7 @@ package com.uralys.tribes.entities
 				&& wheat >= Numbers.CITY_WHEAT_BASE_PRICE + size
 				&& wood >= Numbers.CITY_WOOD_BASE_PRICE + size * 10
 				&& iron >= Numbers.CITY_IRON_BASE_PRICE + size * 10
-				&& gold >= Numbers.CITY_GOLD_BASE_PRICE;
+				&& gold >= Numbers.CITY_GOLD_BASE_PRICE + size;
 		}
 		
 		//==========================================================================//
@@ -354,102 +353,24 @@ package com.uralys.tribes.entities
 		public static const ENNEMY:int = 3;
 		
 		public var ownerStatus:int; //
+		public var timeFromChallenging:Number = -1; // = -1 par defaut, set lorsquon a une cell.timeFromChallenging qui se refresh
 
 		//==========================================================================//
 		
-		// memes commentaires que pour getLastMove
-		// une interception c'est un conflit sur la case sur laquelle on est actuellement. On est Unit.FREE si le conflit est sur une case plus loin.
-		public function get isInterceptedOnThisCell():Boolean
-		{
-			
-			// si ca se revele utile, il faut checker que le prochain move est hidden, si il existe.
-			// dans ce cas on serait INTERCEPTED
-			// pas sur que ce soit pertinent avec le nouvel algo 1.3
-			
-			return false;
-			
-			// 1.2 deprecated
-			
-//			trace("test isIntercepted");
-//			trace("trace nbMoves : " + moves.length);
-//			trace("currentCaseUID : " + currentCaseUID);
-//			
-//			var lastMove:Move = moves.getItemAt(moves.length-1) as Move;
-//			trace("lastMove.caseUID : " + lastMove.cellUID);
-//			
-//			if(lastMove.cellUID != currentCaseUID){
-//				trace("unité en mouvement : pas d'interception");
-//				return false;
-//			}
-//			
-//			var moveOfTheNewUnitResultingFromTheInterception:Move = null;
-//			trace("lastMove.moveUID : " + lastMove.moveUID);
-//			
-//			if(lastMove.moveUID.indexOf(unitUID) == -1){
-//				trace("move d'une future newUnit liée : on check la case pour savoir si cest une interception");
-//				moveOfTheNewUnitResultingFromTheInterception = moves.getItemAt(moves.length-1) as Move;
-//				lastMove = moves.getItemAt(moves.length-2) as Move;
-//			}
-//			
-//			if(moveOfTheNewUnitResultingFromTheInterception == null)
-//				return false;
-//			else if(moveOfTheNewUnitResultingFromTheInterception.cellUID == lastMove.cellUID){
-//				trace("moveOfTheNewUnitResultingFromTheInterception is on the same case : INTERCEPTED_ON_THIS_CASE");
-//				return true;
-//			}
-//			else{
-//				trace("moveOfTheNewUnitResultingFromTheInterception is NOT on the same case : NOT INTERCEPTED_ON_THIS_CASE");
-//				return false;
-//			}
-		}
 		
 		public function get lastMove():Move
 		{
 			// manipulation d'une unite : initialisation du deplacement
 			var move:Move = moves.getItemAt(moves.length-1) as Move;
-
-//			1.2 : deprecated
-//			
-//			// raison du test :
-//			//		on test si le move est bien celui de l'unite, et non le move rajoute de la newUnit resultant du gathering avec une autre armee
-//			// 		(auquel cas ce move ne compte pas dans le nouveau calcul du deplacement)
-//			// comment on test : 
-//			//		les moveUIDs de l'unite continennement unitUID, contrairement à newUnitUID
-//			// resultat :
-//			// 		si on trouve le move d'une newUnit, on prend celui d'avant (qui sera le move precedent le gathering et donc bien le dernier move de l'unite)
-//			if(move.moveUID.indexOf(unitUID) == -1){
-//				trace("move d'une future newUnit liée : on le zappe");
-//				move = moves.getItemAt(moves.length-2) as Move;
-//			}
-			
 			return move;
 		}
 		
 		
-		// memes commentaires que pour getLastMove
-		// retourne le dernier move reel de l'unité
 		public function removeLastMove():Move
 		{
-//			1.2 : deprecated
-//
-//			var needToRemoveHiddenMove:Boolean = false;
-//			var move:Move = moves.getItemAt(moves.length-1) as Move;
-//			
-//			if(move.moveUID.indexOf(unitUID) == -1){
-//				trace("move d'une future newUnit liée : il faut aussi l'enlever");
-//				needToRemoveHiddenMove = true;
-//			}
-//			
-//			moves.removeItemAt(moves.length-1);
-//			if(needToRemoveHiddenMove)
-//				moves.removeItemAt(moves.length-1);
-//			
-//			return move;
-			
 			var move:Move = moves.getItemAt(moves.length-1) as Move;
 			moves.removeItemAt(moves.length-1);
 			return move;
-			
 		}
 		
 		/*

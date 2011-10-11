@@ -6,6 +6,7 @@
 				label="{Translations.MERCHANTS.getItemAt(Session.LANGUAGE)}"> 
 	<fx:Script>
 		<![CDATA[
+			import com.uralys.tribes.commons.Numbers;
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;
 			import com.uralys.tribes.entities.City;
@@ -22,9 +23,11 @@
 			//---------------------------------//
 			// toolTip creation pour les marchands
 			
-			private function onCreateMerchantToolTip(e:ToolTipEvent):void {
+			private function onCreateMerchantToolTip(e:ToolTipEvent):void 
+			{
 				var toolTip:MerchantToolTip = new MerchantToolTip();
 				
+				toolTip.caravan = Session.CURRENT_CELL_SELECTED.caravan;
 				e.toolTip = toolTip;
 			}
 			
@@ -32,29 +35,25 @@
 		]]>
 	</fx:Script>
 	
-	<s:VGroup height="100%">
-		<s:HGroup width="100%" horizontalAlign="center">
-			<s:VGroup horizontalAlign="center" height="100%">
-				
-				<s:HGroup width="200">
-					<s:Button label="{Translations.NEW_MERCHANTS.getItemAt(Session.LANGUAGE)}" 
-							  click="caravanCreationGroup.newUnit(Unit.MERCHANT)"
-							  skinClass="com.uralys.tribes.skins.CustomButtonSkin"
-							  enabled="{city.caravan == null &amp;&amp; Session.player.units.length &lt; Session.player.cities.length*3}"/>
-					<mx:Image width="30" height="30" 
-							  toolTip=" "
-							  toolTipCreate="{onCreateMerchantToolTip(event)}"
-							  source="{ImageContainer.QUESTION}"/>
-				</s:HGroup>
-				<s:Button label="{Translations.DELETE.getItemAt(Session.LANGUAGE)}"
-						  skinClass="com.uralys.tribes.skins.CustomButtonSkin"
-						  click="caravanCreationGroup.deleteUnit()"
-						  visible="{city.caravan != null}"
-						  enabled="{city.caravan.moves.length == 1 || city.caravan.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
-			</s:VGroup>
-			<components:UnitCreationGroup id="caravanCreationGroup"
-										  unit="@{city.caravan}"
-										  city="@{city}"/>
-		</s:HGroup>
-	</s:VGroup>
+	<s:HGroup width="100%" horizontalAlign="center">
+		<s:VGroup horizontalAlign="center" height="100%">
+			<s:HGroup width="200">
+				<s:Button label="{Translations.NEW_MERCHANTS.getItemAt(Session.LANGUAGE)}" 
+						  click="caravanCreationGroup.newUnit(Unit.MERCHANT)"
+						  skinClass="com.uralys.tribes.skins.CustomButtonSkin"/>
+				<mx:Image toolTip=" "
+						  toolTipCreate="{onCreateMerchantToolTip(event)}"
+						  source="{ImageContainer.GREEN_QUESTION}"/>
+			</s:HGroup>
+			<s:Button label="{Translations.DELETE.getItemAt(Session.LANGUAGE)}"
+					  skinClass="com.uralys.tribes.skins.CustomButtonSkin"
+					  click="caravanCreationGroup.deleteUnit()"
+					  visible="{Session.CURRENT_CELL_SELECTED.caravan != null}"
+					  enabled="{Session.CURRENT_CELL_SELECTED.caravan.moves.length == 1}"/>
+		</s:VGroup>
+		<components:UnitCreationGroup id="caravanCreationGroup"
+									  unit="@{Session.CURRENT_CELL_SELECTED.caravan}"
+									  city="@{city}"/>
+	</s:HGroup>
+		
 </s:NavigatorContent>

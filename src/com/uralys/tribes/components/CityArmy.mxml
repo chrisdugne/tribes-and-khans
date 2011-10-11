@@ -25,15 +25,15 @@
 			<s:Button label="{Translations.NEW_ARMY.getItemAt(Session.LANGUAGE)}" 
 					  skinClass="com.uralys.tribes.skins.CustomButtonSkin"
 					  click="{armyCreationGroup.newUnit(Unit.ARMY)}"
-					  enabled="{city.army == null &amp;&amp; Session.player.units.length &lt; Session.player.cities.length*3}"/>
+					  enabled="{Session.CURRENT_CELL_SELECTED.army == null &amp;&amp; Session.player.units.length &lt; Session.player.cities.length*3}"/>
 			<s:Button label="{Translations.DELETE.getItemAt(Session.LANGUAGE)}" 
 					  skinClass="com.uralys.tribes.skins.CustomButtonSkin"
 					  click="{armyCreationGroup.deleteUnit()}"
-					  visible="{city.army != null}"
-					  enabled="{city.army.moves.length == 1 || city.army.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
+					  visible="{Session.CURRENT_CELL_SELECTED.army != null}"
+					  enabled="{Session.CURRENT_CELL_SELECTED.army.moves.length == 1}"/>
 		</s:VGroup>
 		<components:UnitCreationGroup id="armyCreationGroup"
-									  unit="@{city.army}"
+									  unit="@{Session.CURRENT_CELL_SELECTED.army}"
 									  city="@{city}"/>
 		
 	</s:HGroup>

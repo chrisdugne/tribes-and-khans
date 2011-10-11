@@ -131,7 +131,10 @@ public final class ImageContainer
 	//   ======================================================================//
 	
 	[Embed(source="resources/embed/question-mark.png")]
-	[Bindable] public static var QUESTION:Class;
+	[Bindable] public static var GREEN_QUESTION:Class;
+
+	[Embed(source="resources/embed/red-question-mark.png")]
+	[Bindable] public static var RED_QUESTION:Class;
 	
 	[Embed(source="resources/embed/resizeHandler.png")]
 	[Bindable] public static var RESIZER:Class;

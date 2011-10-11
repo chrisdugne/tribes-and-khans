@@ -2,6 +2,7 @@
 package com.uralys.tribes.entities
 {
 	import com.uralys.tribes.commons.Numbers;
+	import com.uralys.tribes.commons.Session;
 	
 	import mx.collections.ArrayCollection;
 
@@ -219,8 +220,6 @@ package com.uralys.tribes.entities
 		// 	only on flex side
 		//===============================================================================================//
 		
-		public var caravan:Unit;
-		public var army:Unit;
 		protected var _unemployed:int;
 		protected var _availableAsSmith:int;
 		protected var _armiesToFeed:int;
@@ -260,11 +259,17 @@ package com.uralys.tribes.entities
 					+ swordWorkers
 					+ armorWorkers;
 			
-			if(army != null && army.status == Unit.TO_BE_CREATED)
-				nbWorkers += army.size;
-			
-			if(caravan != null && caravan.status == Unit.TO_BE_CREATED)
-				nbWorkers += caravan.size;
+//			if(Session.CURRENT_CELL_SELECTED != null 
+//				&& Session.CURRENT_CELL_SELECTED.city != null 
+//				&& Session.CURRENT_CELL_SELECTED.army != null 
+//				&& Session.CURRENT_CELL_SELECTED.army.status == Unit.TO_BE_CREATED)
+//				nbWorkers += Session.CURRENT_CELL_SELECTED.army.size;
+//			
+//			if(Session.CURRENT_CELL_SELECTED != null 
+//				&& Session.CURRENT_CELL_SELECTED.city != null 
+//				&& Session.CURRENT_CELL_SELECTED.caravan != null 
+//				&& Session.CURRENT_CELL_SELECTED.caravan.status == Unit.TO_BE_CREATED)
+//				nbWorkers += Session.CURRENT_CELL_SELECTED.caravan.size;
 			
 			return nbWorkers;
 		}

@@ -5,6 +5,7 @@ package com.uralys.tribes.entities
 	import com.uralys.tribes.core.UnitMover;
 	import com.uralys.tribes.managers.GameManager;
 	import com.uralys.tribes.renderers.Pawn;
+	import com.uralys.tribes.tooltips.MerchantToolTip;
 	import com.uralys.utils.Utils;
 	
 	import mx.collections.ArrayCollection;
@@ -176,13 +177,22 @@ package com.uralys.tribes.entities
 		
 		//--------------------------------------------------------------//
 		
-		public function get unit():Unit{
-			if(army != null)
-				return army
-			else if(caravan != null)
-				return caravan;
+		private var _visibleUnit:Unit;
+		
+		public function set visibleUnit(o:Unit):void{
+			_visibleUnit = o;
+		}
 			
-			else return null;
+		/**
+		 * par defaut army, puis caravan. sinon la _visibleUnit qui a été choisie
+		 */ 
+		public function get visibleUnit():Unit
+		{
+			if(_visibleUnit == null){
+				return army != null ? army : caravan; 
+			}
+			else
+				return _visibleUnit;
 		}
 	}
 }

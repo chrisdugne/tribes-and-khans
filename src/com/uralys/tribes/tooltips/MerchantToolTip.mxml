@@ -8,10 +8,13 @@
 	<fx:Script>
 			
 		<![CDATA[
-			import com.uralys.tribes.main.ImageContainer;
 			import com.uralys.tribes.commons.Numbers;
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;
+			import com.uralys.tribes.entities.Unit;
+			import com.uralys.tribes.main.ImageContainer;
+			
+			public var caravan:Unit;
 			
 			public function get text():String { 
                  return null; 
@@ -28,41 +31,45 @@
 			<s:SolidColorStroke color="0x000000" weight="1" scaleMode="normal"/>
 		</s:stroke>			
 		<s:fill>
-			<s:SolidColor color="{0x000000}" alpha="0.7"/>
+			<s:SolidColor color="{0x000000}" alpha="0.85"/>
 		</s:fill>
 	</s:Rect>
 	
-	<s:HGroup horizontalAlign="center" verticalAlign="middle" width="100%" height="100%"
+	<s:VGroup horizontalAlign="center" verticalAlign="middle" width="100%" height="100%"
 			  paddingLeft="10" paddingRight="10">
-					
-		<s:Label text="{Translations.CITY.getItemAt(Session.LANGUAGE)}" styleName="whiteNumberLabel"/>
-		<s:VGroup>
-			<s:HGroup>
-				<mx:Image toolTip="{Translations.MERCHANTS.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.MERCHANT1}"/>
-				<s:Label text="{Numbers.CITY_MERCHANT_BASE} + {Translations.MINIMUM.getItemAt(Session.LANGUAGE)}" styleName="whiteNumberLabel"/>
-			</s:HGroup>
-			<s:HGroup>
-				<mx:Image toolTip="{Translations.WHEAT.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WHEAT}" width="25" height="25"/>
-				<s:Label text="{Numbers.CITY_WHEAT_BASE_PRICE} + " styleName="whiteNumberLabel"/>
-				<mx:Image toolTip="{Translations.MERCHANTS.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.MERCHANT1}"/>
-			</s:HGroup>
-			<s:HGroup>
-				<mx:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}" width="25" height="25"/>
-				<s:Label text="{Numbers.CITY_WOOD_BASE_PRICE} + " styleName="whiteNumberLabel"/>
-				<mx:Image toolTip="{Translations.MERCHANTS.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.MERCHANT1}"/>
-				<s:Label text=" X 10" styleName="whiteNumberLabel"/>
-			</s:HGroup>
-			<s:HGroup>
-				<mx:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}" width="25" height="25"/>
-				<s:Label text="{Numbers.CITY_IRON_BASE_PRICE} + " styleName="whiteNumberLabel"/>
-				<mx:Image toolTip="{Translations.MERCHANTS.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.MERCHANT1}"/>
-				<s:Label text=" X 10" styleName="whiteNumberLabel"/>
-			</s:HGroup>
-			<s:HGroup>
-				<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
-				<s:Label text="{Numbers.CITY_GOLD_BASE_PRICE}" styleName="whiteNumberLabel"/>
-			</s:HGroup>
-		</s:VGroup>
-	</s:HGroup>
+	
+		<s:Label text="{Session.CURRENT_CELL_SELECTED.caravan.mayBuildAcity() ? Translations.MAY_BUILD_CITY.getItemAt(Session.LANGUAGE) : Translations.MAY_NOT_BUILD_CITY.getItemAt(Session.LANGUAGE)}"
+				 color="{Session.CURRENT_CELL_SELECTED.caravan.mayBuildAcity() ? Numbers.GREEN : Numbers.RED}"/>
+		<s:HGroup>
+			<s:Image toolTip="{Translations.MERCHANTS.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.MERCHANT1}"/>
+			<s:Label text="{Session.CURRENT_CELL_SELECTED.caravan.size} {Session.CURRENT_CELL_SELECTED.caravan.size &gt;= Numbers.CITY_MERCHANT_BASE ? '' : '('+Numbers.CITY_MERCHANT_BASE+' ' + Translations.MINIMUM.getItemAt(Session.LANGUAGE) +')'}" 
+					 color="{Session.CURRENT_CELL_SELECTED.caravan.size &gt;= Numbers.CITY_MERCHANT_BASE ? Numbers.GREEN : Numbers.RED}"/>
+		</s:HGroup>
+
+		<s:HGroup>
+			<s:Image toolTip="{Translations.WHEAT.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WHEAT}"/>
+			<s:Label text="{Session.CURRENT_CELL_SELECTED.caravan.wheat} {Session.CURRENT_CELL_SELECTED.caravan.wheat  &gt;= (Numbers.CITY_WHEAT_BASE_PRICE + Session.CURRENT_CELL_SELECTED.caravan.size) ? '' : '('+(Numbers.CITY_WHEAT_BASE_PRICE + Session.CURRENT_CELL_SELECTED.caravan.size)+' ' + Translations.MINIMUM.getItemAt(Session.LANGUAGE) +')'}" 
+					 color="{Session.CURRENT_CELL_SELECTED.caravan.wheat &gt;= (Numbers.CITY_WHEAT_BASE_PRICE + Session.CURRENT_CELL_SELECTED.caravan.size) ? Numbers.GREEN : Numbers.RED}"/>
+		</s:HGroup>
+
+		<s:HGroup>
+			<s:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}"/>
+			<s:Label text="{Session.CURRENT_CELL_SELECTED.caravan.wood} {Session.CURRENT_CELL_SELECTED.caravan.wood  &gt;= (Numbers.CITY_WOOD_BASE_PRICE + Session.CURRENT_CELL_SELECTED.caravan.size * 10) ? '' : '('+(Numbers.CITY_WOOD_BASE_PRICE + Session.CURRENT_CELL_SELECTED.caravan.size * 10)+' ' + Translations.MINIMUM.getItemAt(Session.LANGUAGE) +')'}" 
+					 color="{Session.CURRENT_CELL_SELECTED.caravan.wood &gt;= (Numbers.CITY_WOOD_BASE_PRICE + Session.CURRENT_CELL_SELECTED.caravan.size * 10) ? Numbers.GREEN : Numbers.RED}"/>
+		</s:HGroup>
+
+		<s:HGroup>
+			<s:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}"/>
+			<s:Label text="{Session.CURRENT_CELL_SELECTED.caravan.iron} {Session.CURRENT_CELL_SELECTED.caravan.iron  &gt;= (Numbers.CITY_IRON_BASE_PRICE + Session.CURRENT_CELL_SELECTED.caravan.size * 10) ? '' : '('+(Numbers.CITY_IRON_BASE_PRICE + Session.CURRENT_CELL_SELECTED.caravan.size * 10)+' ' + Translations.MINIMUM.getItemAt(Session.LANGUAGE) +')'}" 
+					 color="{Session.CURRENT_CELL_SELECTED.caravan.iron &gt;= (Numbers.CITY_IRON_BASE_PRICE + Session.CURRENT_CELL_SELECTED.caravan.size * 10) ? Numbers.GREEN : Numbers.RED}"/>
+		</s:HGroup>
+
+		<s:HGroup>
+			<s:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}"/>
+			<s:Label text="{Session.CURRENT_CELL_SELECTED.caravan.gold} {Session.CURRENT_CELL_SELECTED.caravan.gold  &gt;= (Numbers.CITY_GOLD_BASE_PRICE + Session.CURRENT_CELL_SELECTED.caravan.size) ? '' : '('+(Numbers.CITY_GOLD_BASE_PRICE + Session.CURRENT_CELL_SELECTED.caravan.size)+' ' + Translations.MINIMUM.getItemAt(Session.LANGUAGE) +')'}" 
+					 color="{Session.CURRENT_CELL_SELECTED.caravan.gold &gt;= (Numbers.CITY_GOLD_BASE_PRICE + Session.CURRENT_CELL_SELECTED.caravan.size) ? Numbers.GREEN : Numbers.RED}"/>
+		</s:HGroup>
+		
+	</s:VGroup>
 	
 </s:Group>

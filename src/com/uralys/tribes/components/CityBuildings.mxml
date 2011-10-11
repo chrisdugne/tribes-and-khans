@@ -32,10 +32,10 @@
 		]]>
 	</fx:Script>
 	
-	<s:Scroller height="100%" width="100%">
-		<s:VGroup width="100%" horizontalAlign="center">
+	<s:Scroller height="240" width="100%">
+		<s:VGroup width="100%" height="100%" horizontalAlign="center">
 			
-			<mx:Spacer height="15"/>
+			<s:Spacer height="15"/>
 			<s:HGroup width="100%" verticalAlign="middle">
 				<mx:Image toolTip="{Translations.WHEAT.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WHEAT}"/>
 				<renderers:BuildingRenderer stockBuilders="@{city.wheatStockBuilders}"
@@ -49,7 +49,7 @@
 											/>
 			</s:HGroup>
 			
-			<mx:Spacer height="15"/>
+			<s:Spacer height="15"/>
 			<s:HGroup width="100%" verticalAlign="middle">
 				<mx:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}"/>
 				<renderers:BuildingRenderer stockBuilders="@{city.woodStockBuilders}"
@@ -63,7 +63,7 @@
 											/>
 			</s:HGroup>
 			
-			<mx:Spacer height="15"/>
+			<s:Spacer height="15"/>
 			<s:HGroup width="100%" verticalAlign="middle">
 				<mx:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}"/>
 				<renderers:BuildingRenderer stockBuilders="@{city.ironStockBuilders}"
@@ -77,7 +77,7 @@
 											/>
 			</s:HGroup>
 			
-			<mx:Spacer height="15"/>
+			<s:Spacer height="15"/>
 			<s:HGroup width="100%" verticalAlign="middle">
 				<mx:Image toolTip="{Translations.BOW.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.BOW}"/>
 				<renderers:BuildingRenderer stockBuilders="@{city.bowStockBuilders}"
@@ -91,7 +91,7 @@
 											/>
 			</s:HGroup>
 			
-			<mx:Spacer height="15"/>
+			<s:Spacer height="15"/>
 			<s:HGroup width="100%" verticalAlign="middle">
 				<mx:Image toolTip="{Translations.SWORD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.SWORD}"/>
 				<renderers:BuildingRenderer stockBuilders="@{city.swordStockBuilders}"
@@ -105,7 +105,7 @@
 											/>
 			</s:HGroup>
 			
-			<mx:Spacer height="15"/>
+			<s:Spacer height="15"/>
 			<s:HGroup width="100%" verticalAlign="middle">
 				<mx:Image toolTip="{Translations.ARMOR.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.ARMOR}"/>
 				<renderers:BuildingRenderer stockBuilders="@{city.armorStockBuilders}"

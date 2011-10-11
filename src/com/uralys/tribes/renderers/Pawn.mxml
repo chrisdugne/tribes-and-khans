@@ -31,7 +31,6 @@
 			[Bindable] public var timeTo:Number;	
 			[Bindable] public var status:int;	
 			[Bindable] public var cell:Cell;	
-			[Bindable] public var unit:Unit;
 			
 			//----------------------------------------------------------------------------------//
 
@@ -94,8 +93,9 @@
 
 			protected function getBaseTime():Number
 			{
-				if(status == CLASSIC)
-					return Numbers.BASE_TIME_PER_MOVE_MILLIS;
+				if(status == CLASSIC){
+					return Numbers.BASE_TIME_PER_MOVE_MILLIS * Numbers.BASE_SPEED/cell.visibleUnit.speed;
+				}
 				else // CONQUERING_LAND
 					return Numbers.BASE_TIME_FOR_LAND_CONQUEST_MILLIS;
 			}

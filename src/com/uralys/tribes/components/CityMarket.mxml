@@ -220,7 +220,6 @@
 			<!-- Achat -->
 			
 			<s:NavigatorContent label="{Translations.BUYING.getItemAt(Session.LANGUAGE)}" width="650">
-				<s:Button label="{Translations.BUY.getItemAt(Session.LANGUAGE)}" right="0" bottom="0" click="buy()" skinClass="com.uralys.tribes.skins.CustomButtonSkin"/>
 				<s:VGroup left="-60">
 					<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle"
 							 width="520">
@@ -469,7 +468,9 @@
 								<s:Label text="{city.goldSpent}" styleName="numberLabel"/>
 								<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
 							</mx:GridItem>
-							<mx:GridItem/>
+							<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+								<s:Button label="{Translations.BUY.getItemAt(Session.LANGUAGE)}" right="0" bottom="0" click="buy()" skinClass="com.uralys.tribes.skins.CustomButtonSkin"/>
+							</mx:GridItem>
 						</mx:GridRow>
 					</mx:Grid>
 				</s:VGroup>
@@ -479,19 +480,18 @@
 			<!-- Vente -->
 			
 			<s:NavigatorContent label="{Translations.SELLING.getItemAt(Session.LANGUAGE)}" width="650">
-				<s:Button label="{Translations.SELL.getItemAt(Session.LANGUAGE)}" right="0" bottom="0" click="sell()" skinClass="com.uralys.tribes.skins.CustomButtonSkin"/>
 				<s:VGroup left="-60">
 					<mx:Grid verticalGap="10" horizontalGap="25" horizontalAlign="center" verticalAlign="middle"
 							 width="520">
 						<mx:GridRow >
-							<mx:GridItem minWidth="35"/>
+							<mx:GridItem minWidth="60"/>
 							<mx:GridItem horizontalAlign="center" minWidth="60">
 								<s:Label text="{Translations.UNIT_COST.getItemAt(Session.LANGUAGE)}" />
 							</mx:GridItem>
-							<mx:GridItem horizontalAlign="center" minWidth="180">
+							<mx:GridItem horizontalAlign="center" minWidth="160">
 								<s:Label text="{Translations.QUANTITY.getItemAt(Session.LANGUAGE)}"/>
 							</mx:GridItem>
-							<mx:GridItem horizontalAlign="center" minWidth="100">
+							<mx:GridItem horizontalAlign="center" minWidth="60">
 								<s:Label text="{Translations.PROFIT.getItemAt(Session.LANGUAGE)}"/>
 							</mx:GridItem>
 						</mx:GridRow>
@@ -535,7 +535,7 @@
 								<mx:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}"/>
 							</mx:GridItem>
 							<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-								<s:Label text="{Numbers.WOOD_PRICE_SELL}" styleName="numberLabel"
+								<s:Label text="{Numbers.WOOD_PRICE_SELL}" styleName="numberLabel" textAlign="right"
 										 minWidth="60"/>
 								<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
 							</mx:GridItem>
@@ -570,7 +570,7 @@
 								<mx:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}"/>
 							</mx:GridItem>
 							<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-								<s:Label text="{Numbers.IRON_PRICE_SELL}" styleName="numberLabel"
+								<s:Label text="{Numbers.IRON_PRICE_SELL}" styleName="numberLabel" textAlign="right"
 										 minWidth="60"/>
 								<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
 							</mx:GridItem>
@@ -602,10 +602,10 @@
 						</mx:GridRow>
 						<mx:GridRow>
 							<mx:GridItem horizontalAlign="center">
-								<mx:Image toolTip="{Translations.BOW.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.BOW}"/>
+								<mx:Image toolTip="{Translations.BOWS.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.BOW}"/>
 							</mx:GridItem>
 							<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-								<s:Label text="{Numbers.BOW_PRICE_SELL}" styleName="numberLabel"
+								<s:Label text="{Numbers.BOW_PRICE_SELL}" styleName="numberLabel" textAlign="right"
 										 minWidth="60"/>
 								<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
 							</mx:GridItem>
@@ -634,10 +634,10 @@
 						</mx:GridRow>
 						<mx:GridRow>
 							<mx:GridItem horizontalAlign="center">
-								<mx:Image toolTip="{Translations.SWORD.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.SWORD}"/>
+								<mx:Image toolTip="{Translations.SWORDS.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.SWORD}"/>
 							</mx:GridItem>
 							<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-								<s:Label text="{Numbers.SWORD_PRICE_SELL}" styleName="numberLabel"
+								<s:Label text="{Numbers.SWORD_PRICE_SELL}" styleName="numberLabel" textAlign="right"
 										 minWidth="60"/>
 								<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
 							</mx:GridItem>
@@ -666,10 +666,10 @@
 						</mx:GridRow>
 						<mx:GridRow>
 							<mx:GridItem horizontalAlign="center">
-								<mx:Image toolTip="{Translations.ARMOR.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.ARMOR}"/>
+								<mx:Image toolTip="{Translations.ARMORS.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.ARMOR}"/>
 							</mx:GridItem>
 							<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-								<s:Label text="{Numbers.ARMOR_PRICE_SELL}" styleName="numberLabel"
+								<s:Label text="{Numbers.ARMOR_PRICE_SELL}" styleName="numberLabel" textAlign="right"
 										 minWidth="60"/>
 								<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
 							</mx:GridItem>
@@ -714,7 +714,9 @@
 								<s:Label text="{city.goldEarned}" styleName="numberLabel"/>
 								<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
 							</mx:GridItem>
-							<mx:GridItem/>
+							<mx:GridItem horizontalAlign="center" verticalAlign="middle">
+								<s:Button label="{Translations.SELL.getItemAt(Session.LANGUAGE)}" right="0" bottom="0" click="sell()" skinClass="com.uralys.tribes.skins.CustomButtonSkin"/>
+							</mx:GridItem>
 						</mx:GridRow>
 					</mx:Grid>
 				</s:VGroup>

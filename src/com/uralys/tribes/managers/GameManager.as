@@ -5,6 +5,7 @@ package com.uralys.tribes.managers {
 	import com.uralys.tribes.commons.Numbers;
 	import com.uralys.tribes.commons.Session;
 	import com.uralys.tribes.commons.Translations;
+	import com.uralys.tribes.core.BoardClickAnalyser;
 	import com.uralys.tribes.core.BoardDrawer;
 	import com.uralys.tribes.core.Pager;
 	import com.uralys.tribes.core.UnitMover;
@@ -549,15 +550,6 @@ package com.uralys.tribes.managers {
 
 				refreshUnit(unitAltered);
 
-				var unitInPlayer:Unit = Session.player.getUnit(unitAltered.unitUID);
-				
-				if(unitInPlayer == null)
-					Session.player.units.addItem(unitAltered);
-				else{
-					Session.player.refreshUnit(unitAltered);
-				}
-
-				
 				trace("----");
 				trace("cellDeparture : " + cellDeparture.cellUID);
 				trace("timeToChangeUnit : " + cellDeparture.timeToChangeUnit);
@@ -590,8 +582,11 @@ package com.uralys.tribes.managers {
 				//refreshStatusOfAllUnitsInSession();
 				
 				// on refresh les villes au cas ou le deplacement fait partir/arriver une unite de/dans une ville
-				refreshUnitsInCity();
+				//refreshUnitsInCity();
 			}
+			
+			// lorsqu'on sauvegarde une ville, on sauvegarde les unites 1 par 1
+			tryToRecordNextUnitInCity();
 			
 			trace("--------");
 		}
@@ -623,18 +618,8 @@ package com.uralys.tribes.managers {
 			unit.ownerStatus = Unit.PLAYER;
 			unit.isModified = false;	
 			
-			// ici unit.isIntercepted a besoin que le currentCellUID soit set.
-			if(unit.endTime != -1
-				&& unit.isInterceptedOnThisCell)
-			{
-				trace(" ====> Unit.INTERCEPTED_ON_THIS_CASE");
-				unit.status = Unit.INTERCEPTED_ON_THIS_CASE;
-			}
-				
-			else{
-				trace(" ====> Unit.FREE");
-				unit.status = Unit.FREE;
-			}
+			trace(" ====> Unit.FREE");
+			unit.status = Unit.FREE;
 			
 			return true;
 		}
@@ -749,7 +734,7 @@ package com.uralys.tribes.managers {
 //			return population + populationEvolution - armyRaised;
 		}
 		
-		public function validateUnit(unit:Unit):void
+		private function validateUnit(unit:Unit):void
 		{
 			if(unit.status == Unit.TO_BE_CREATED){
 				createUnit(unit);
@@ -760,7 +745,7 @@ package com.uralys.tribes.managers {
 			}
 			
 			// on vient de set Session.CURRENT_CELL_SELECTED.caravan ou army
-			BoardDrawer.getInstance().refreshCellDisplay(Session.CURRENT_CELL_SELECTED);
+			refreshCellDisplay(Session.CURRENT_CELL_SELECTED);
 		}
 		
 		//============================================================================================//
@@ -779,12 +764,6 @@ package com.uralys.tribes.managers {
 		{
 			Session.ITEMS = event.result as ArrayCollection;
 			Numbers.loadItemData();
-//			
-//			if(Session.GAME_OVER){
-//				initMap(100, 100);
-//			}
-//			else
-//				calculateSteps(Session.player);
 		}
 
 		//============================================================================================//
@@ -819,14 +798,29 @@ package com.uralys.tribes.managers {
 			gameWrapper.changeCityName(Session.board.selectedCity.cityUID, newName);			
 		}
 		
+		//--------------------------------------------------------------------------------//
 
-		public function saveCity(city:City):void
+		private var unitsToRecord:Array;
+		public function saveCity(city:City, unitsToRecord:Array = null):void
 		{
 			refreshStocksForServerSide(city);
+			this.unitsToRecord = unitsToRecord;
 			
 			var gameWrapper:RemoteObject = getGameWrapper();
-			gameWrapper.saveCity(city);			
+			gameWrapper.saveCity(city);
+			gameWrapper.saveCity.addEventListener("result", tryToRecordNextUnitInCity);
 		}
+		
+		private function tryToRecordNextUnitInCity(event:ResultEvent = null):void
+		{
+			if(unitsToRecord != null && unitsToRecord.length > 0){
+				var unitToRecord:Unit = unitsToRecord.shift();
+				validateUnit(unitToRecord);
+			}
+		}
+		
+		//--------------------------------------------------------------------------------//
+		
 
 		public function buildCity(unit:Unit):void
 		{
@@ -897,7 +891,7 @@ package com.uralys.tribes.managers {
 				}
 			}
 			
-			Session.board.reloadCurrentCells(true);
+			reloadCurrentCells(true);
 		}
 		
 		//----------------------------------------------------------------------//
@@ -1145,6 +1139,9 @@ package com.uralys.tribes.managers {
 				}
 			}
 			
+			// si Session.CURRENT_CELL_SELECTED n'avait pas pu etre selectionné avant loadCells, on le peut ici.
+			Session.CURRENT_CELL_SELECTED = Session.map[Session.CENTER_X][Session.CENTER_Y];
+			
 			//------------------------------------------------//
 			
 			// on reset tous les timers pour les moves des unites du plateau
@@ -1185,7 +1182,7 @@ package com.uralys.tribes.managers {
 			//------------------------------------------------//
 
 			// on refresh l'etat des armees dans les villes
-			refreshUnitsInCity();
+			//refreshUnitsInCity();
 
 			// on place le plateau au bon endroit
 			Session.board.placeBoard(Session.CENTER_X, Session.CENTER_Y, false);
@@ -1203,46 +1200,44 @@ package com.uralys.tribes.managers {
 		//===================================================================================//
 
 		// appelee apres le BoardDrawer.refreshDisplay, qui raffraichit toutes les currentCaseUID des units de toutes les cases.
-		public function refreshUnitsInCity():void
-		{
-			trace("refreshUnitsInCity");
-			
-			for each(var city:City in Session.player.cities){
-				city.caravan = null;
-				city.army = null;
-				city.unitsToFeed = 0;
-			}
-			
-			for each(var unit:Unit in Session.player.units)
-			{
-				if(unit.status == Unit.DESTROYED != unit.status == Unit.FUTURE)
-					continue;
-				
-				if(unit.type == 2){
-					for each(var city:City in Session.player.cities)
-					{
-						if(Utils.getXFromCellUID(unit.currentCaseUID) == city.x && Utils.getYFromCellUID(unit.currentCaseUID) == city.y){
-							city.caravan = unit;
-							city.unitsToFeed += unit.size;
-							break;
-						}
-					}
-				}
-					
-				else if(unit.type == 1){
-					for each(var city:City in Session.player.cities)
-					{
-						if(Utils.getXFromCellUID(unit.currentCaseUID) == city.x && Utils.getYFromCellUID(unit.currentCaseUID) == city.y){
-							city.army = unit;
-							city.unitsToFeed += unit.size;
-							break;
-						}
-					}
-				}
-				
-			}
-			
-		}
+//		public function refreshUnitsInCity():void
+//		{
+//			trace("refreshUnitsInCity");
+//			
+//			for each(var city:City in Session.player.cities){
+//				city.unitsToFeed = 0;
+//			}
+//			
+//			for each(var unit:Unit in Session.player.units)
+//			{
+//				if(unit.status == Unit.DESTROYED != unit.status == Unit.FUTURE)
+//					continue;
+//				
+//				if(unit.type == 2){
+//					for each(var city:City in Session.player.cities)
+//					{
+//						if(Utils.getXFromCellUID(unit.currentCaseUID) == city.x && Utils.getYFromCellUID(unit.currentCaseUID) == city.y){
+//							city.caravan = unit;
+//							city.unitsToFeed += unit.size;
+//							break;
+//						}
+//					}
+//				}
+//					
+//				else if(unit.type == 1){
+//					for each(var city:City in Session.player.cities)
+//					{
+//						if(Utils.getXFromCellUID(unit.currentCaseUID) == city.x && Utils.getYFromCellUID(unit.currentCaseUID) == city.y){
+//							city.army = unit;
+//							city.unitsToFeed += unit.size;
+//							break;
+//						}
+//					}
+//				}
+//				
+//			}
+//			
+//		}
 		
 		//===================================================================================//
 		
@@ -1254,26 +1249,48 @@ package com.uralys.tribes.managers {
 			refreshUnit(cell.army);	
 			refreshUnit(cell.caravan);	
 			
-			if(cell.unit != null)
+			if(cell.visibleUnit != null)
 			{
 				var cellIsToListen:Boolean = false;
 				
-				if(cell.timeToChangeUnit > 0){
-					trace("move : set timeTo : " + cell.timeToChangeUnit);
-					cell.pawn.status = Pawn.CLASSIC;
-					cell.pawn.timeTo = cell.timeToChangeUnit;
-					cellIsToListen = true;
-				}
-				else if(cell.timeFromChallenging > 0){
-					trace("challenger : set timeTo : " + (cell.timeFromChallenging + Numbers.BASE_TIME_FOR_LAND_CONQUEST_MILLIS));
-					cell.pawn.status = Pawn.CONQUERING_LAND;
-					cell.pawn.timeTo = cell.timeFromChallenging + Numbers.BASE_TIME_FOR_LAND_CONQUEST_MILLIS;
-					cellIsToListen = true;
-				}
+				switch(cell.visibleUnit.type)
+				{
+					case Unit.ARMY :
+					{
+						if(cell.timeToChangeUnit > 0){
+							cell.pawn.status = Pawn.CLASSIC;
+							cell.pawn.timeTo = cell.visibleUnit.moves.getItemAt(0).timeTo;
+							cellIsToListen = true;
+							trace("move : set timeTo : " + cell.pawn.timeTo);
+						}
+						else if(cell.timeFromChallenging > 0){
+							trace("challenger : set timeTo : " + (cell.timeFromChallenging + Numbers.BASE_TIME_FOR_LAND_CONQUEST_MILLIS));
+							cell.pawn.status = Pawn.CONQUERING_LAND;
+							cell.pawn.timeTo = cell.timeFromChallenging + Numbers.BASE_TIME_FOR_LAND_CONQUEST_MILLIS;
+							cell.visibleUnit.timeFromChallenging = cell.timeFromChallenging;
+							cellIsToListen = true;
+						}
+						
+						break;
+					}
+					case Unit.MERCHANT :
+					{
+						if(cell.timeToChangeUnit > 0){
+							cell.pawn.status = Pawn.CLASSIC;
+							cell.pawn.timeTo = cell.visibleUnit.moves.getItemAt(0).timeTo;
+							cellIsToListen = true;
+							trace("move : set timeTo : " + cell.pawn.timeTo);
+						}
+						
+						break;
+					}
+				}				
 				
 				if(cellIsToListen){
 					UnitMover.getInstance().listenTo(cell);
 				}
+
+				refreshInSession(cell.visibleUnit);
 			}
 		}
 
@@ -1290,9 +1307,11 @@ package com.uralys.tribes.managers {
 				return;	
 			}
 			
-			
 			BoardDrawer.getInstance().resetCellDisplay(cell);
-			BoardDrawer.getInstance().resetCellDisplay(Utils.getCellInSession(cell.nextCellUID));
+	
+			if(cell.nextCellUID != null)
+				BoardDrawer.getInstance().resetCellDisplay(Utils.getCellInSession(cell.nextCellUID));
+			
 			cell.pawn = null;
 			
 			var gameWrapper:RemoteObject = getGameWrapper();
@@ -1312,7 +1331,7 @@ package com.uralys.tribes.managers {
 				Session.map[cell.x][cell.y] = cell;
 			}
 			
-			Session.board.simulateClick(); // rafraichit l'information sur la case courante.
+			BoardClickAnalyser.getInstance().simulateClick(); // rafraichit l'information sur la case courante.
 		}
 		
 		//===================================================================================//
@@ -1336,25 +1355,62 @@ package com.uralys.tribes.managers {
 				
 				unit.currentCaseUID = (unit.moves.getItemAt(0) as Move).cellUID;
 				
+				refreshInSession(unit);
 				UnitMover.getInstance().refreshMoves(unit);
 			}
 			
 		}
-//		public function refreshStatusOfAllUnitsInSession():void
-//		{
-//			for each(var unit:Unit in Session.player.units)
-//			{
-//				if(unit.endTime != -1 && unit.endTime < new Date().getTime())
-//					unit.status = Unit.DESTROYED;
-//			}
-//		}
+		
+		private function refreshInSession(unit:Unit):void
+		{
+			var unitInPlayer:Unit = Session.player.getUnit(unit.unitUID);
+			
+			if(unitInPlayer == null)
+				Session.player.units.addItem(unit);
+			else{
+				Session.player.refreshUnit(unit);
+			}
+		}
 
-//		private function moveDeleted(event:ResultEvent):void{
-//			if(movesBeingDeleted != null && movesBeingDeleted.length > 0)
-//				deleteNextMove(movesBeingDeleted.shift());
-//			else
-//				Session.movesToDelete = new ArrayCollection();
-//		}
+		//---------------------------------------------------------------------------------------------------//
+		
+		public function reloadCurrentCells(force:Boolean = false, refreshLandOwners:Boolean = false):Boolean{
+			return checkToLoadCases(Utils.getXPixel(Session.CENTER_X), Utils.getYPixel(Session.CENTER_Y), force, refreshLandOwners);
+		}
+		
+		private function checkToLoadCases(x:int, y:int, force:Boolean = false, refreshLandOwners = false):Boolean
+		{
+			//				trace("-------------------------------------");
+			//				trace("checkToLoadCases | force : " + force);
+			//				trace("------");
+			//				trace("x : " + x);
+			//				trace("y : " + y);
+			//				trace("------");
+			//				trace("Session.LEFT_LIMIT_LOADED : " + Session.LEFT_LIMIT_LOADED);
+			//				trace("Session.RIGHT_LIMIT_LOADED : " + Session.RIGHT_LIMIT_LOADED);
+			//				trace("Session.TOP_LIMIT_LOADED : " + Session.TOP_LIMIT_LOADED);
+			//				trace("Session.BOTTOM_LIMIT_LOADED : " + Session.BOTTOM_LIMIT_LOADED);
+			//				trace("------");
+			//				trace("Session.CENTER_X : " + Session.CENTER_X);
+			//				trace("Session.CENTER_Y : " + Session.CENTER_Y);
+			//				trace("------");
+			
+			if(x < Session.LEFT_LIMIT_LOADED
+				|| x > Session.RIGHT_LIMIT_LOADED 
+				|| y < Session.TOP_LIMIT_LOADED 
+				|| y > Session.BOTTOM_LIMIT_LOADED
+				|| force)
+			{
+				trace("-------------------------------------");
+				trace("checkToLoadCases  ==>  LOAD");
+				loadCells(Session.CENTER_X, Session.CENTER_Y, refreshLandOwners);
+				return true;
+			}
+			
+			return false;
+		}
+		
+		//---------------------------------------------------------------------//		
 		
 		public function refreshCellDisplay(cell:Cell):void
 		{

@@ -104,7 +104,6 @@ package com.uralys.tribes.commons
 		// une fois remplie, on peut appeler le GameManager.deleteMoves
 		public static var movesToDelete:ArrayCollection = new ArrayCollection();
 
-		
 		// contient toutes les unitUID
 		public static var allUnits:ArrayCollection = new ArrayCollection();
 		

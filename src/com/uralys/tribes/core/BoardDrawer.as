@@ -246,7 +246,8 @@ package com.uralys.tribes.core
 		public function resetCellDisplay(cell:Cell):void{
 			try{
 				trace("resetCellDisplay");
-				Session.board.pawnLayer.removeElement(cell.pawn);	
+				cell.pawn.removeElementAt(1);				
+				Session.board.pawnLayer.removeElement(cell.pawn);
 			}
 			catch(e:Error){}
 		}
@@ -255,48 +256,54 @@ package com.uralys.tribes.core
 		public function refreshCellDisplay(cell:Cell):void
 		{
 			trace("---");
-			try{
-				Session.board.pawnLayer.removeElement(cell.pawn);	
-			}
-			catch(e:Error){}
-			
-			var imageUnit:Image;
-			
 			trace("boardDrawer refreshCellDisplay ===> " + cell.cellUID);
-			if(cell.army){
-				imageUnit = new Image();
-				
-				switch(cell.army.ownerStatus){
-					case Unit.PLAYER:
-						imageUnit.source = ImageContainer.getImage(ImageContainer.ARMY_PLAYER);
-						break;
-					case Unit.ALLY:
-						imageUnit.source = ImageContainer.getImage(ImageContainer.ARMY_ALLY);
-						break;
-					case Unit.ENNEMY:
-						imageUnit.source = ImageContainer.getImage(ImageContainer.ARMY_ENNEMY);
-						break;
-				}
-			}
-			else if(cell.caravan){
-				imageUnit = new Image();
 
-				switch(cell.caravan.ownerStatus){
-					case Unit.PLAYER:
-						imageUnit.source = ImageContainer.getImage(ImageContainer.MERCHANT_PLAYER);
-						break;
-					case Unit.ALLY:
-						imageUnit.source = ImageContainer.getImage(ImageContainer.MERCHANT_ALLY);
-						break;
-					case Unit.ENNEMY:
-						imageUnit.source = ImageContainer.getImage(ImageContainer.MERCHANT_ENNEMY);
-						break;
-				}
-			}
-			else{
+			if(cell.visibleUnit == null){
 				trace("-- no unit - no pawn --");
 				return; // no unit
 			}
+			
+			var imageUnit:Image;
+			
+			switch(cell.visibleUnit.type)
+			{
+				case Unit.ARMY :
+				{
+					imageUnit = new Image();
+					
+					switch(cell.army.ownerStatus){
+						case Unit.PLAYER:
+							imageUnit.source = ImageContainer.getImage(ImageContainer.ARMY_PLAYER);
+							break;
+						case Unit.ALLY:
+							imageUnit.source = ImageContainer.getImage(ImageContainer.ARMY_ALLY);
+							break;
+						case Unit.ENNEMY:
+							imageUnit.source = ImageContainer.getImage(ImageContainer.ARMY_ENNEMY);
+							break;
+					}
+					
+					break;
+				}
+				case Unit.MERCHANT :
+				{
+					imageUnit = new Image();
+					
+					switch(cell.caravan.ownerStatus){
+						case Unit.PLAYER:
+							imageUnit.source = ImageContainer.getImage(ImageContainer.MERCHANT_PLAYER);
+							break;
+						case Unit.ALLY:
+							imageUnit.source = ImageContainer.getImage(ImageContainer.MERCHANT_ALLY);
+							break;
+						case Unit.ENNEMY:
+							imageUnit.source = ImageContainer.getImage(ImageContainer.MERCHANT_ENNEMY);
+							break;
+					}
+					
+					break;
+				}
+			}			
 			
 			cell.pawn.x = (Utils.getXPixel(cell.x) + 15*scale);
 			cell.pawn.y = (Utils.getYPixel(cell.y) - 10*scale);
@@ -308,7 +315,6 @@ package com.uralys.tribes.core
 			cell.pawn.addElement(imageUnit);
 			
 			Session.board.pawnLayer.addElement(cell.pawn);
-			
 		}
 		
 		public function drawCity(city:City):void
@@ -482,7 +488,7 @@ package com.uralys.tribes.core
 		// click et roll-over sur les tuiles-images
 		
 		protected function tileIsClicked(event:MouseEvent):void{
-			BoardClickAnalyser.getInstance().clickOnCase(event.currentTarget.data as Cell);
+			BoardClickAnalyser.getInstance().clickOnCell(event.currentTarget.data as Cell);
 		}
 		
 		protected function tileIsRolledOn(event:MouseEvent):void{

@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:ViewStack xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			  xmlns:s="library://ns.adobe.com/flex/spark" 
+			  xmlns:mx="library://ns.adobe.com/flex/mx">
+	<fx:Script>
+		<![CDATA[
+			import com.uralys.tribes.commons.Numbers;
+			import com.uralys.tribes.commons.Session;
+			import com.uralys.tribes.commons.Translations;
+			import com.uralys.tribes.core.UnitMover;
+			import com.uralys.tribes.entities.Unit;
+			import com.uralys.tribes.managers.GameManager;
+			import com.uralys.tribes.skins.WorkersProgressBarSkin;
+			import com.uralys.tribes.skins.WorkersProgressTrackSkin;
+			
+			//-------------------------------------------------------------------------------------//
+			
+			[Bindable] public var unit:Unit;
+			[Bindable] public var unitRenderer:UnitRenderer;
+			
+			//-------------------------------------------------------------------------//
+			
+			[Bindable] public var shotEnabled:Boolean;
+			[Bindable] public var reloading:Boolean;
+			
+			[Bindable] public var buildCityEnabled:Boolean;
+			[Bindable] public var buildingCityInProgress:Boolean;
+			
+			[Bindable] public var moveInProgress:Boolean;
+			[Bindable] public var conqueringInProgress:Boolean;
+			
+			[Bindable] public var hidActionViewStack:Boolean;
+			
+			//-------------------------------------------------------------------------------------//
+			
+			public function setMoveInProgress(event:TimerEvent = null):void
+			{
+				if(event==null)trace("setMoveInProgress");
+				var now:Number = new Date().getTime();
+				var millisRemaining:Number = unit.moves.getItemAt(0).timeTo - now;
+				var millisSpent:Number = now - unit.moves.getItemAt(0).timeFrom;
+
+				if(event==null)trace("millisRemaining : " + millisRemaining);
+				
+				if(millisRemaining <= 0){
+					if(event != null){
+						Session.timer.removeEventListener(TimerEvent.TIMER, setMoveInProgress);
+						unitRenderer.refresh();
+					}
+				}
+				else{
+					var minutes:int = millisRemaining/60/1000;
+					var secondes:int = (millisRemaining - minutes*60*1000) /1000;
+					
+					if(event==null)trace("setProgress millisSpent : " + millisSpent);
+	
+					moveProgressBar.setProgress( millisSpent, unit.moves.getItemAt(0).timeTo - unit.moves.getItemAt(0).timeFrom );
+					moveProgressBar.label = Translations.MOVING.getItemAt(Session.LANGUAGE) + " : " +(minutes>9 ? "" : "0")+minutes+" mn "+(secondes>9 ? "" : "0")+secondes+' s';
+
+					if(event==null)trace("moveProgressBar.label : " + moveProgressBar.label);
+					
+					Session.timer.addEventListener(TimerEvent.TIMER, setMoveInProgress);
+				}
+			}
+			
+			//-------------------------------------------------------------------------------------//
+			
+			public function setConquestInProgress(event:TimerEvent = null):void
+			{
+				if(conquestProgressBar == null)
+					return;
+				
+				var now:Number = new Date().getTime();
+				var millisRemaining:Number = unit.timeFromChallenging + Numbers.BASE_TIME_FOR_LAND_CONQUEST_MILLIS - now;
+				var millisSpent:Number = now - (unit.timeFromChallenging + Numbers.BASE_TIME_FOR_LAND_CONQUEST_MILLIS);
+				
+				if(millisRemaining <= 0){
+					if(event != null){
+						Session.timer.removeEventListener(TimerEvent.TIMER, setConquestInProgress);
+						unitRenderer.refresh();
+					}
+				}
+				else{
+					var minutes:int = millisRemaining/60/1000;
+					var secondes:int = (millisRemaining - minutes*60*1000) /1000;
+					
+					conquestProgressBar.setProgress( millisSpent, Numbers.BASE_TIME_FOR_LAND_CONQUEST_MILLIS );
+					conquestProgressBar.label = Translations.CONQUERING_LAND.getItemAt(Session.LANGUAGE) + " : " +(minutes>9 ? "" : "0")+minutes+" mn "+(secondes>9 ? "" : "0")+secondes+' s';
+					
+					Session.timer.addEventListener(TimerEvent.TIMER, setConquestInProgress);
+				}
+			}
+			
+			//-------------------------------------------------------------------------------------//
+			
+			public function setReloading(event:TimerEvent = null):void
+			{
+				if(shootProgressBar == null)
+					return;
+				
+				var now:Number = new Date().getTime();
+				var millisRemaining:Number = Numbers.BASE_TIME_FOR_SHOOTING + unit.lastShotTime - now;
+				var millisSpent:Number = now - unit.lastShotTime;
+				
+				if(millisRemaining <= 0){
+					if(event != null){
+						Session.timer.removeEventListener(TimerEvent.TIMER, setReloading);
+						unitRenderer.refresh();
+					}
+				}
+				else{
+					var minutes:int = millisRemaining/60/1000;
+					var secondes:int = (millisRemaining - minutes*60*1000) /1000;
+					
+					shootProgressBar.setProgress( millisSpent, Numbers.BASE_TIME_FOR_SHOOTING );
+					shootProgressBar.label = Translations.BOWS.getItemAt(Session.LANGUAGE) + " : " +(minutes>9 ? "" : "0")+minutes+" mn "+(secondes>9 ? "" : "0")+secondes+' s';
+					
+					Session.timer.addEventListener(TimerEvent.TIMER, setReloading);
+				}
+			}
+			
+			//-------------------------------------------------------------------------------------//
+			
+			private function shoot():void{
+				unit.lastShotTime = new Date().getTime();
+				unitRenderer.refresh();
+			}
+			
+			//-------------------------------------------------------------------------------------//
+			
+			private function buildCity():void
+			{
+				GameManager.getInstance().buildCity(unit);
+			}
+			
+			//-------------------------------------------------------------------------------------//
+			
+			private function moveUnit():void{
+				currentState = "moving";
+				UnitMover.getInstance().moveUnit(unit);
+			}
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<s:Fade id="fade" alphaTo="0" duration="200"/>
+		<s:Fade id="unfade" alphaTo="1" duration="200"/>
+		
+		<s:State name="classic"/>
+		<s:State name="moving"/>
+	</fx:Declarations>
+	
+		<s:NavigatorContent width="100%" showEffect="{unfade}" hideEffect="{fade}">
+			<s:HGroup verticalAlign="middle" 
+					  horizontalAlign="center" 
+					  width="100%">
+				<s:Button label="{Translations.MOVE.getItemAt(Session.LANGUAGE)}"
+						  skinClass="{CustomButtonSkin}"
+						  click="moveUnit()"
+						  includeInLayout="{!moveInProgress}"
+						  visible="{!moveInProgress}"/>
+				
+				<mx:ProgressBar id="moveProgressBar"
+								width="60%"
+								height="20"
+								mode="manual"
+								barSkin="{WorkersProgressBarSkin}"
+								trackSkin="{WorkersProgressTrackSkin}"
+								label="" 
+								labelPlacement="bottom"
+								includeInLayout="{moveInProgress}"
+								visible="{moveInProgress}"/>
+			</s:HGroup>
+		</s:NavigatorContent>
+		
+		<s:NavigatorContent width="100%" showEffect="{unfade}" hideEffect="{fade}"
+							includeInLayout="{reloading || shotEnabled}"
+							visible="{reloading || shotEnabled}"
+							show="{unitRenderer.refresh()}">
+			<s:HGroup verticalAlign="middle" 
+					  horizontalAlign="center" 
+					  width="100%">
+				
+				<s:Button label="{Translations.SHOOT.getItemAt(Session.LANGUAGE)}"
+						  skinClass="{CustomButtonSkin}"
+						  click="shoot()"
+						  includeInLayout="{shotEnabled}"
+						  visible="{shotEnabled}"/>
+				
+				<mx:ProgressBar id="shootProgressBar"
+								width="60%"
+								height="20"
+								mode="manual"
+								barSkin="{WorkersProgressBarSkin}"
+								trackSkin="{WorkersProgressTrackSkin}"
+								label="" 
+								includeInLayout="{reloading}"
+								visible="{reloading}"/>
+			</s:HGroup>
+		</s:NavigatorContent>
+
+	<s:NavigatorContent width="100%" showEffect="{unfade}" hideEffect="{fade}"
+						includeInLayout="{conqueringInProgress}"
+						visible="{conqueringInProgress}"
+						show="{unitRenderer.refresh()}">
+			
+			<s:HGroup verticalAlign="middle" 
+					  horizontalAlign="center" 
+					  width="100%">
+				
+				<mx:ProgressBar id="conquestProgressBar"
+								width="60%"
+								height="20"
+								mode="manual"
+								barSkin="{WorkersProgressBarSkin}"
+								trackSkin="{WorkersProgressTrackSkin}"
+								label="" 
+								labelPlacement="bottom"/>
+			</s:HGroup>
+		</s:NavigatorContent>
+		
+		<s:NavigatorContent width="100%" showEffect="{unfade}" hideEffect="{fade}"
+							visible="{buildCityEnabled || buildingCityInProgress}"
+							includeInLayout="{buildCityEnabled || buildingCityInProgress}"
+							show="{unitRenderer.refresh()}">
+			
+			<s:HGroup verticalAlign="middle" 
+					  horizontalAlign="center" 
+					  width="100%">
+				
+				<s:VGroup id="buildCityForm"
+						  top="150" right="95"
+						  includeInLayout="{buildCityEnabled}"
+						  visible="{buildCityEnabled}">
+					<s:Button label="{Translations.BUILD_HERE.getItemAt(Session.LANGUAGE)}" 
+							  click="buildCity()" 
+							  skinClass="com.uralys.tribes.skins.CustomButtonSkin"/>
+				</s:VGroup>
+				
+			</s:HGroup>
+		</s:NavigatorContent>
+	</mx:ViewStack>

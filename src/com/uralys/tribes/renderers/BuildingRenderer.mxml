@@ -61,7 +61,7 @@
 				stockBuilders = stockBuildersSlider.value;
 				timeLabel.text = Utils.round(stockBuilders/10, 0) + 'h';
 				
-				Session.board.cityForm.updateWorkersProgressBar();
+				Session.board.cityForm.cityHeader.updateWorkersProgressBar();
 			}
 			
 			//-------------------------------------------------------------------------------------//

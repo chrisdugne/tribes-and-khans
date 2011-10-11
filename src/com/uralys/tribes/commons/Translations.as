@@ -180,7 +180,7 @@ public class Translations{
 									"Shoot"]);
 	[Bindable]
 	public static var MOVING:ArrayCollection = new ArrayCollection(
-									["Déplacement",
+									["Dépl.",
 									"Moving",
 									"Moving"]);
 	[Bindable]
@@ -836,6 +836,18 @@ public class Translations{
 									"Min."]);
 
 	[Bindable]
+	public static var MAY_BUILD_CITY:ArrayCollection = new ArrayCollection(
+									["Ok pour une ville !",
+									"Ok for a new city !",
+									"Ok for a new city !"]);
+
+	[Bindable]
+	public static var MAY_NOT_BUILD_CITY:ArrayCollection = new ArrayCollection(
+									["Pas suffisant pour une ville",
+									"Not enough for a new city",
+									"Not enough for a new city"]);
+
+	[Bindable]
 	public static var CONFLICT:ArrayCollection = new ArrayCollection(
 									["Conflit",
 									"Conflict",
@@ -1113,9 +1125,9 @@ public class Translations{
 									"Tools"]);
 	[Bindable]
 	public static var CONQUERING_LAND:ArrayCollection = new ArrayCollection(
-									["Conquiere une contrée",
-									"Conquering a new land",
-									"Conquering a new land"]);
+									["Contrée",
+									"Land",
+									"Land"]);
 	
 	//-----------------------------------------------------------------------------------//
 

@@ -50,81 +50,7 @@
 			protected function init():void
 			{
 				Session.timer.start();
-
-				limitLeft = Session.MAP_WIDTH - mapPositioner.width;
-				limitUp = Session.MAP_HEIGHT - mapPositioner.height;
-				
 				initBoard();
-			}
-			
-			//---------------------------------------------------------------------------------------------------//
-			// click sur une ville dans la barre laterale
-			public function onCityClick(event:ItemClickEvent):void
-			{
-				var city:City = event.currentTarget.selectedItem;
-				
-				placeBoard(city.x, city.y);
-				var caseBeingLoaded:Boolean = reloadCurrentCells();
-				
-				if(!caseBeingLoaded){
-					BoardClickAnalyser.getInstance().clickOnCase(Session.map[city.x][city.y]);
-				}
-				
-				return;
-			}
-			
-			// click sur une unité dans la barre laterale
-			public function onMyUnitClick(event:ItemClickEvent):void
-			{
-				var unit:Unit = event.currentTarget.selectedItem;
-				unit.currentCaseUID = (unit.moves.getItemAt(0) as com.uralys.tribes.entities.Move).cellUID;
-				
-				placeBoard(Utils.getXFromCellUID(unit.currentCaseUID), Utils.getYFromCellUID(unit.currentCaseUID));
-				var caseBeingLoaded:Boolean = reloadCurrentCells();
-				
-				if(!caseBeingLoaded){
-					BoardClickAnalyser.getInstance().clickOnCase(Session.map[Utils.getXFromCellUID(unit.currentCaseUID)][Utils.getYFromCellUID(unit.currentCaseUID)]);
-				}
-				
-				return;
-			}
-			
-			//---------------------------------------------------------------------------------------------------//
-
-			public function reloadCurrentCells(force:Boolean = false, refreshLandOwners:Boolean = false):Boolean{
-				return checkToLoadCases(Utils.getXPixel(Session.CENTER_X), Utils.getYPixel(Session.CENTER_Y), force, refreshLandOwners);
-			}
-			
-			private function checkToLoadCases(x:int, y:int, force:Boolean = false, refreshLandOwners = false):Boolean
-			{
-//				trace("-------------------------------------");
-//				trace("checkToLoadCases | force : " + force);
-//				trace("------");
-//				trace("x : " + x);
-//				trace("y : " + y);
-//				trace("------");
-//				trace("Session.LEFT_LIMIT_LOADED : " + Session.LEFT_LIMIT_LOADED);
-//				trace("Session.RIGHT_LIMIT_LOADED : " + Session.RIGHT_LIMIT_LOADED);
-//				trace("Session.TOP_LIMIT_LOADED : " + Session.TOP_LIMIT_LOADED);
-//				trace("Session.BOTTOM_LIMIT_LOADED : " + Session.BOTTOM_LIMIT_LOADED);
-//				trace("------");
-//				trace("Session.CENTER_X : " + Session.CENTER_X);
-//				trace("Session.CENTER_Y : " + Session.CENTER_Y);
-//				trace("------");
-				
-				if(x < Session.LEFT_LIMIT_LOADED
-				|| x > Session.RIGHT_LIMIT_LOADED 
-				|| y < Session.TOP_LIMIT_LOADED 
-				|| y > Session.BOTTOM_LIMIT_LOADED
-				|| force)
-				{
-					trace("-------------------------------------");
-					trace("checkToLoadCases  ==>  LOAD");
-					GameManager.getInstance().loadCells(Session.CENTER_X, Session.CENTER_Y, refreshLandOwners);
-					return true;
-				}
-				
-				return false;
 			}
 			
 			//-----------------------------------------------------------//
@@ -143,115 +69,13 @@
 			//-----------------------------------------------------------//
 			
 			protected function initCitiesList():void{
-				citiesList.addEventListener(ItemClickEvent.ITEM_CLICK, onCityClick);
+				citiesList.addEventListener(ItemClickEvent.ITEM_CLICK, BoardClickAnalyser.getInstance().onCityClick);
 			}
 
 			protected function initUnitsList():void{
-				unitsList.addEventListener(ItemClickEvent.ITEM_CLICK, onMyUnitClick);
+				unitsList.addEventListener(ItemClickEvent.ITEM_CLICK, BoardClickAnalyser.getInstance().onMyUnitClick);
 			}
 			
-			// ------------------------------------------------------------------------// 
-			// 		map scrolling
-			
-			private var mayDrag:Boolean = false;
-			private var isDragging:Boolean = false;
-			private var draggingImageXFrom:int;
-			private var draggingImageYFrom:int;
-			private var limitLeft:int;
-			private var limitUp:int;
-			
-			protected function mouseDown(event:MouseEvent):void
-			{
-				mayDrag = true;
-				draggingImageXFrom = event.currentTarget.mouseX; // le x de la souris sur le mapContainer
-				draggingImageYFrom = event.currentTarget.mouseY; // le y de la souris sur le mapContainer
-				
-				if(Session.MOVE_A_UNIT){
-					// manipulation d'une unite
-				}
-			}
-			
-			protected function mouseMove(event:MouseEvent):void
-			{
-				if(mayDrag)
-					isDragging = true;
-				
-				if(Session.MOVE_A_UNIT){
-					// manipulation d'une unite
-				}
-				
-				if(isDragging)
-				{
-					// on decale l'image du nombre de pixels du dernier mouvement
-					// donc elle suit bien la souris et event.localXY a bien lieu au meme endroit sur l'image apres chaque mouseMove
-					mapPositioner.x += (event.currentTarget.mouseX - draggingImageXFrom);
-					mapPositioner.y += (event.currentTarget.mouseY - draggingImageYFrom);
-					
-					Session.CENTER_X = Utils.getXCoordinate(Session.MAP_WIDTH/2 - mapPositioner.x);
-					Session.CENTER_Y = Utils.getYCoordinate(Session.MAP_HEIGHT/2 - mapPositioner.y);
-					
-					if(Math.abs(Session.CENTER_X-Session.CENTER_Y)%2 !=0){
-						// la difference entre x et y n'est pas paire
-						// c'est une 'non case' : un hexagone intermediaire qui ne fait pas partie du plateau
-						// on prend l'hexagone du dessus
-						Session.CENTER_Y -= 1;
-					}
-				}
-			}
-			
-			public function simulateClick():void{
-				mouseUp();
-			}
-			
-			protected function mouseUp(event:MouseEvent = null):void
-			{
-				trace("mouseUp");
-				mayDrag = false;
-				
-				enterCityForm.visible = false;
-				enterCityForm.includeInLayout = false;
-				
-				if(!isDragging && Session.MOVE_A_UNIT){
-					//newMoveAdded = UnitMover.getInstance().recordMove();
-				}
-				else{
-					try{
-						Session.CURRENT_SELECTION_X = Session.COORDINATE_X;
-						Session.CURRENT_SELECTION_Y = Session.COORDINATE_Y;
-						
-						Session.CURRENT_CELL_SELECTED = Session.map[Session.CURRENT_SELECTION_X][Session.CURRENT_SELECTION_Y];
-					}
-					catch(e:Error){
-						// au chargement Session.map peut etre null, et la souris etre sur une image de bord
-					}
-				}
-				
-				isDragging = false;
-				Mouse.show();
-				reloadCurrentCells();
-			}
-			
-			// ------------------------------------------------------------------------// 
-			// 	minimap scrolling
-			
-			protected function mouseUpMiniMap(event:MouseEvent):void{
-				isDragging = false;
-			}
-
-			protected function mouseDownMiniMap(event:MouseEvent):void{
-				mapPositioner.x = 250 - event.localX*15;
-				mapPositioner.y = 250 - event.localY*15;
-				
-				isDragging = true;
-			}
-
-			protected function mouseMoveMiniMap(event:MouseEvent):void{
-				if(isDragging){
-					mapPositioner.x = Session.MAP_WIDTH/2 - event.localX*15;
-					mapPositioner.y = Session.MAP_WIDTH/2 - event.localY*15;
-				}
-			}
-				
 			//==============================================================================================================//
 			// 	Game management
 			
@@ -276,16 +100,6 @@
 				placeBoard(selectedCity.x, selectedCity.y, false);
 				
 				GameManager.getInstance().refreshPlayer(Session.player);
-
-				//------------------------------------------------------------//
-			
-				try{
-					FlexGlobals.topLevelApplication.createConflicts();	
-				}
-				catch(error:Error){}
-
-				//------------------------------------------------------------//
-				
 			}
 	
 			//----------------------------------------------------------------------------------------//
@@ -350,201 +164,35 @@
 			{				
 				trace("-----");
 				trace("saveCityAndGoBackToBoard");
+				
+				var unitsToRecord:Array = [];
+				var army:Unit = Session.CURRENT_CELL_SELECTED.army;
+				var caravan:Unit = Session.CURRENT_CELL_SELECTED.caravan;
+				
 				// on force la validation du marchand si il existe et qu'il reste dans la ville
 				// si il est en mouvement, on ne peut pas l'editer donc pas besoin d'appeler le validateMerchants (qui casserait tout en placant le timeTo à -1) 
-				if(selectedCity.caravan != null 
-				&& (selectedCity.caravan.moves.length == 1 || selectedCity.caravan.status == Unit.INTERCEPTED_ON_THIS_CASE))
+				if(caravan != null 
+				&& caravan.moves.length == 1)
 				{
-					Session.CURRENT_CELL_SELECTED.caravan = selectedCity.caravan;
-					GameManager.getInstance().validateUnit(selectedCity.caravan);
-	
-					if(selectedCity.caravan.status == Unit.TO_BE_CREATED)
-						selectedCity.population -= selectedCity.caravan.size; 
+					unitsToRecord.push(caravan);
 				}
 
 				// IDEM pour army
-				if(selectedCity.army != null 
-				&& (selectedCity.army.moves.length == 1 || selectedCity.army.status == Unit.INTERCEPTED_ON_THIS_CASE))
+				if(army != null 
+				&& army.moves.length == 1)
 				{
-					Session.CURRENT_CELL_SELECTED.army = selectedCity.army;
-					GameManager.getInstance().validateUnit(selectedCity.army);
-					
-					if(selectedCity.army.status == Unit.TO_BE_CREATED)
-						selectedCity.population -= selectedCity.army.size; 
+					unitsToRecord.push(army);
 				}
 				
-				GameManager.getInstance().saveCity(selectedCity);
+				GameManager.getInstance().saveCity(selectedCity, unitsToRecord);
 				hideCity.play();
 				comeBack.play();
 				
 				currentState = "board";
 			}
 			
-//			
-//			private function saveTurn():void{
-//				
-//				Session.TURN_SAVING_DONE = false;
-//				
-//				//------------------------------------------------------------------//
-//
-//				for each(var city:City in Session.currentPlayer.cities){
-//					
-//					city.wheat += city.wheatEarned - city.wheatSpent;
-//					city.wood += city.woodEarned - city.woodSpent;
-//					city.iron += city.ironEarned - city.ironSpent;
-//					city.population += city.armyReleased - city.armyRaised;
-//					
-//					for each(var equipment:Equipment in city.equipmentStock){
-//						switch(equipment.item.name){
-//							case "bow" :
-//								equipment.size = city.bowStock
-//												+ city.bowsRestored
-//												- city.bowsEquiped
-//												+ city.bowWorkers * equipment.item.peopleRequired;
-//								
-//								break;
-//							case "sword" :
-//								equipment.size = city.swordStock
-//												+ city.swordsRestored
-//												- city.swordsEquiped
-//												+ city.swordWorkers * equipment.item.peopleRequired;
-//								break;
-//							case "armor" :
-//								equipment.size = city.armorStock
-//											+ city.armorsRestored
-//											- city.armorsEquiped
-//											+ city.armorWorkers * equipment.item.peopleRequired;
-//								break;
-//						}
-//					}
-//
-//					for each(var smith:Smith in city.smiths){
-//						switch(smith.item.name){
-//							case "bow" :
-//								smith.people = city.bowWorkers;
-//								break;
-//							case "sword" :
-//								smith.people = city.swordWorkers;
-//								break;
-//							case "armor" :
-//								smith.people = city.armorWorkers;
-//								break;
-//						}
-//					}
-//				}
-//				
-//				for each(var army:Army in Session.currentPlayer.armies){
-//					if(army.armyUID == "new"){
-//						var bows:Equipment = new Equipment();
-//						var swords:Equipment = new Equipment();
-//						var armors:Equipment = new Equipment();
-//						
-//						bows.size = army.bows;
-//						swords.size = army.swords;
-//						armors.size = army.armors;
-//						
-//						for each(var equipment:Equipment in city.equipmentStock){
-//							switch(equipment.item.name){
-//								case "bow" :
-//									bows.item = equipment.item;
-//									break;
-//								case "sword" :
-//									swords.item = equipment.item;
-//									break;
-//								case "armor" :
-//									armors.item = equipment.item;
-//									break;
-//							}
-//						}
-//						
-//						army.equipments.addItem(bows);
-//						army.equipments.addItem(swords);
-//						army.equipments.addItem(armors);
-//					}
-//					else{
-//						for each(var equipment:Equipment in army.equipments){
-//							switch(equipment.item.name){
-//								case "bow" :
-//									equipment.size = army.bows;
-//									break;
-//								case "sword" :
-//									equipment.size = army.swords;
-//									break;
-//								case "armor" :
-//									equipment.size = army.armors;
-//									break;
-//							}
-//						}
-//					}
-//					
-//					// on ne passe pas les info graphiques par BlazesDS : inutile et surtout ca casse tout (objets enormes passes en AMF, ce qui casse le transfert)
-//					army.armyCircle = null;
-//					army.ellipseTo = null;
-//					army.lineTo = null;
-//					army.tmpLandSquare = null;
-//				}
-//				
-//				for each(var merchant:Army in Session.currentPlayer.merchants){
-//					
-//					// on ne passe pas les info graphiques par BlazesDS : inutile et surtout ca casse tout (objets enormes passes en AMF, ce qui casse le transfert)
-//					merchant.armyCircle = null;
-//					merchant.ellipseTo = null;
-//					merchant.lineTo = null;
-//					merchant.tmpLandSquare = null;
-//				}
-//				
-//				//------------------------------------------------------------------//
-//				
-//				FlexGlobals.topLevelApplication.conflictsWindow.conflictsGroup.removeAllElements();
-//				Session.currentPlayer.lastTurnPlayed ++;
-//				GameManager.getInstance().saveTurn(Session.currentPlayer);
-//				Pager.getInstance().goToPage(Home, Home.CURRENT_GAMES, Session.GAMES_PLAYING);
-//			}
-// 
-			//================================================================================//
-//			
-//			private function calculateLands():void{
-//				for each (var player:Player in game.players){
-//					var lands:ArrayCollection = new ArrayCollection();
-//					for each (var city:City in player.cities){
-//						
-//						// de 0 a 29
-//						var cityLandXmin:int = Math.floor((city.x - city.radius)/Numbers.LAND_WIDTH);	
-//						var cityLandXmax:int = Math.floor((city.x + city.radius)/Numbers.LAND_WIDTH);	
-//						var cityLandYmin:int = Math.floor((city.y - city.radius)/Numbers.LAND_HEIGHT);	
-//						var cityLandYmax:int = Math.floor((city.y + city.radius)/Numbers.LAND_HEIGHT);
-//						
-//						for(var i:int=cityLandXmin; i <= cityLandXmax; i++){
-//							for(var j:int=cityLandYmin; j <= cityLandYmax; j++){
-//								var landNumber:int = mapPositioner.width/Numbers.LAND_WIDTH * j + i;
-//								lands.addItem(landNumber);
-//							}
-//						}
-//					}
-//
-//					for each(var landNumberOwnedYet:int in player.lands){
-//						var found:Boolean = false;
-//						
-//						for each(var landNumberFromPreviousCities:int in lands){
-//							if(landNumberFromPreviousCities == landNumberOwnedYet){
-//								found = true;
-//								break;
-//							}
-//						}
-//						
-//						if(!found){
-//							lands.addItem(landNumberOwnedYet);
-//						}
-//					}
-//					
-//					player.lands = lands;
-//					if(Session.player.uralysUID == player.uralysUID) // refresh
-//						Session.player.lands = player.lands;
-//					
-//				}
-//			}
-//			
-
+			//======================================================================================//
+			
 			public function placeBoard(x:int, y:int, simulateMouseClick:Boolean = true):void
 			{
 				trace("placeBoard  : " + x + " | " + y);
@@ -563,11 +211,18 @@
 				Session.COORDINATE_X = x;
 				Session.COORDINATE_Y = y;
 				
+				try{
+					Session.CURRENT_CELL_SELECTED = Session.map[x][y];
+				}catch(e:Error){};
+				
 				if(simulateMouseClick)
-					mouseUp(); // simule le click sur la case x,y
+					BoardClickAnalyser.getInstance().simulateClick(); // simule le click sur la case x,y
 			}
+
 		]]>
 	</fx:Script>
+	
+	<!-- ====================================================================================== -->
 	
 	<fx:Declarations>
 		<mx:Move id="goLeft"
@@ -597,6 +252,8 @@
 		<s:Move id="showCityChangeName" target="{changeCityNameWindow}" xTo="0"/>
 		
 	</fx:Declarations>
+	
+	<!-- ====================================================================================== -->
 	
 	<s:Group id="main" width="100%" height="100%">
 		
@@ -736,9 +393,9 @@
 						  buttonMode="true"
 						  width="{Numbers.LAND_WIDTH*400}"
 						  height="{Numbers.LAND_HEIGHT*400}"
-						  mouseDown="mouseDown(event)"
-						  mouseMove="mouseMove(event)"
-						  mouseUp="mouseUp(event)"/>
+						  mouseDown="BoardClickAnalyser.getInstance().mouseDown(event)"
+						  mouseMove="BoardClickAnalyser.getInstance().mouseMove(event)"
+						  mouseUp="BoardClickAnalyser.getInstance().mouseUp(event)"/>
 					<s:Group id="landLayer"
 							 visible="{Session.LANDS_VISIBLE}"
 							 width="{Numbers.LAND_WIDTH*400}"
@@ -798,19 +455,19 @@
 			<mx:Image source="{ImageContainer.MAP_BORDER_TOP}"
 					  x="{boardImage.x-31}"
 					  y="{boardImage.y-31}"
-					  mouseOver="if(isDragging)mouseUp(event)"/>
+					  mouseOver="if(BoardClickAnalyser.isDragging)BoardClickAnalyser.getInstance().mouseUp(event)"/>
 			<mx:Image source="{ImageContainer.MAP_BORDER_BOTTOM}"
 					  x="{boardImage.x-31}"
 					  y="{boardImage.y+Session.MAP_HEIGHT - 31}"
-					  mouseOver="if(isDragging)mouseUp(event)"/>
+					  mouseOver="if(BoardClickAnalyser.isDragging)BoardClickAnalyser.getInstance().mouseUp(event)"/>
 			<mx:Image source="{ImageContainer.MAP_BORDER_LEFT}"
 					  x="{boardImage.x-31}"
 					  y="{boardImage.y + 31}"
-					  mouseOver="if(isDragging)mouseUp(event)"/>
+					  mouseOver="if(BoardClickAnalyser.isDragging)BoardClickAnalyser.getInstance().mouseUp(event)"/>
 			<mx:Image source="{ImageContainer.MAP_BORDER_RIGHT}"
 					  x="{boardImage.x+Session.MAP_WIDTH - 31}"
 					  y="{boardImage.y + 31}"
-					  mouseOver="if(isDragging)mouseUp(event)"/>
+					  mouseOver="if(BoardClickAnalyser.isDragging)BoardClickAnalyser.getInstance().mouseUp(event)"/>
 			
 			<mx:Image source="{ImageContainer.ZOOM_IN}"
 					  id="zoomInButton"

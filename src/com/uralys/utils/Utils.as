@@ -357,6 +357,7 @@ public class Utils
 		}
 
 		//----------------------------------------------------------------------------------------------------
+		
 
 		public static function createDummyAlly(content:String):Ally{
 			return new Ally(content);
@@ -378,5 +379,7 @@ public class Utils
 		{
 			return Session.map[getXFromCellUID(cellUID)][getYFromCellUID(cellUID)];
 		}
+		
+		//----------------------------------------------------------------------------------------------------
 }
 }

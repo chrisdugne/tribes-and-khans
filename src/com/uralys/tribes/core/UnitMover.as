@@ -89,7 +89,7 @@ package com.uralys.tribes.core
 				timers.put(t, cell);
 				
 				// on enleve la presence de la barre pour les pions qui ne sont pas les siens
-				if(cell.unit.player.playerUID != Session.player.playerUID)
+				if(cell.visibleUnit.player.playerUID != Session.player.playerUID)
 					cell.pawn.timeTo = -1;
 				
 				cell.pawn.resetProgress();
@@ -108,8 +108,8 @@ package com.uralys.tribes.core
 	
 		//----------------------------------------------------------------------------------------//
 		
-		[Bindable]
-		private var newMoveAdded:Boolean = false;
+		// true losrque le joueur a rajouté au moins un move dans le deplacement de l'unite qu'il deplace.
+		[Bindable] public static var newMoveAdded:Boolean = false;
 		
 		public function validateUnitMoves(cancel:Boolean):void
 		{
@@ -136,6 +136,7 @@ package com.uralys.tribes.core
 			removingMoves = false;
 			
 			BoardDrawer.getInstance().removeAllUnitMovesImages();
+			GameManager.getInstance().refreshUnit(unit);
 		}
 		
 		private var removingMoves:Boolean = false;
@@ -224,16 +225,13 @@ package com.uralys.tribes.core
 			unit.removeLastMove(); // movesPending commence à partir du lastMove deja. 
 			unit.moves.addItem(previousMove); // on met le bon lastMove (celui qui a ete trouve pour initialiser movesPending)
 			
+			if(moveBeginsNow){
+				previousMove.timeFrom = new Date().getTime();
+			}
+			
 			for each(var newMove:Move in movesPending)
 			{
-				var timeFrom:Number;
-				
-				if(moveBeginsNow){
-					timeFrom = new Date().getTime() + Numbers.BASE_TIME_PER_MOVE_MILLIS * Numbers.BASE_SPEED/unit.speed;
-				}
-				else{
-					timeFrom = previousMove.timeFrom + Numbers.BASE_TIME_PER_MOVE_MILLIS * Numbers.BASE_SPEED/unit.speed;
-				}
+				var timeFrom:Number = previousMove.timeFrom + Numbers.BASE_TIME_PER_MOVE_MILLIS * Numbers.BASE_SPEED/unit.speed;
 				
 				newMove.timeFrom = timeFrom;
 				newMove.timeTo = -1;
@@ -287,11 +285,12 @@ package com.uralys.tribes.core
 		}
 
 		private var lastMoveIsInCity:Boolean = false;
-		public function recordMove():Boolean
+		public function recordMove():void
 		{
 			if(lastMoveIsInCity){
 				FlexGlobals.topLevelApplication.message(Translations.CITY_STOP.getItemAt(Session.LANGUAGE));
-				return true;
+				newMoveAdded =  true; 
+				return;
 			}
 			
 			var lastMove:com.uralys.tribes.entities.Move = movesPending.getItemAt(movesPending.length-1) as com.uralys.tribes.entities.Move;
@@ -302,11 +301,14 @@ package com.uralys.tribes.core
 			
 			if(movesPending.length == 10){
 				FlexGlobals.topLevelApplication.message(Translations.LIMIT_NB_MOVES.getItemAt(Session.LANGUAGE));
-				return true;
+				
+				newMoveAdded =  true; 
+				return;
 			}
 			else if(distance > 2 || lastMoveY == Session.COORDINATE_Y){
 				FlexGlobals.topLevelApplication.message(Translations.TOO_LONG.getItemAt(Session.LANGUAGE));
-				return true;
+				newMoveAdded =  true; 
+				return;
 			}
 			else if(Math.abs(lastMoveX - Session.COORDINATE_X) + Math.abs(lastMoveY - Session.COORDINATE_Y) > 0){
 				
@@ -329,10 +331,11 @@ package com.uralys.tribes.core
 				}
 				catch(e:Error){}
 				
-				return true;
+				newMoveAdded =  true; 
+				return;
 			}
 			
-			return false;
+			newMoveAdded =  false; 
 		}
 
 	}

@@ -12,10 +12,13 @@
 			import com.uralys.tribes.entities.Unit;
 			import com.uralys.tribes.main.ImageContainer;
 			import com.uralys.tribes.managers.GameManager;
+			import com.uralys.utils.Utils;
 			
 			import mx.collections.ArrayCollection;
 			import mx.core.FlexGlobals;
 			
+			//-------------------------------------------------------------------------//
+
 			[Bindable] public var city:City;
 			[Bindable] public var unit:Unit;
 			
@@ -42,13 +45,13 @@
 				moveInCity.initNewMove(newUnit.unitUID, city.x, city.y);
 				newUnit.moves.addItem(moveInCity);
 				
-				Session.player.units.addItem(newUnit);
 				
 				// le contenu de la case sera refreshed au retour par unitSaved, 
 				// mais si on refresh maintenant, on va pouvoir afficher la case lors du validateArmy() ou validateUnit()
 				//GameManager.getInstance().refreshCell(Session.CURRENT_CELL_SELECTED);
 				
 				unit = newUnit;
+				GameManager.getInstance().refreshUnit(unit);
 				
 				unitSlider.value = 50;
 				unitCheck(null);
@@ -58,13 +61,7 @@
 			
 			public function deleteUnit():void
 			{
-				trace("delete unit : " + unit.unitUID);
-				
-				if(unit.status != Unit.TO_BE_CREATED){
-					// pour une caravane deja existante : on reajuste la pop, ils peuvent travailler des ce tour
-					// faille : si on a enleve des unites avant elles sont dans armyReleased et ne seront pas utilisees ce tour
-					city.population += unit.size;
-				}
+				city.population += unit.size;
 				
 				//---------------------------------//
 				// on remet les provisions transportees dans les stocks de la ville
@@ -115,10 +112,10 @@
 				// on enleve la caravane de la liste de la ville et du player
 				Session.player.units.removeItemAt(Session.player.units.getItemIndex(unit));
 				
-				GameManager.getInstance().refreshCellDisplay(Session.CURRENT_CELL_SELECTED);
 				GameManager.getInstance().deleteUnit(unit);
-				
+			
 				unit = null;
+				GameManager.getInstance().refreshCellDisplay(Session.CURRENT_CELL_SELECTED);
 				
 				Session.board.cityForm.cityHeader.updateWorkersProgressBar();
 			}
@@ -132,9 +129,7 @@
 				var previousUnitSize:int = unit.size;
 				unit.size = unitSlider.value;
 				
-				if(unit.status != Unit.TO_BE_CREATED)
-					city.population -= unit.size - previousUnitSize; 
-				
+				city.population -= unit.size - previousUnitSize; 
 				unit.refreshValue();
 				
 				Session.board.cityForm.cityHeader.updateWorkersProgressBar();
@@ -162,6 +157,9 @@
 					// on enleve du ble de la caravane
 					city.wheat += previousNbWheat - newNbWheat;
 				}
+				
+				city.wheatRequiredToFeed = (city.population + city.unitsToFeed) * Numbers.FEED_COEFF;
+				city.wheatExpected = city.wheat + city.wheatEarned - city.wheatRequiredToFeed;
 				
 				unit.wheat = newNbWheat;
 				wheatUnitSlider.value = unit.wheat;
@@ -361,7 +359,7 @@
 							   minimum="50"
 							   maximum="{city.unemployed + unit.size}"
 							   snapInterval="1"
-							   enabled="{unit.moves.length == 1 || unit.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
+							   enabled="{unit.moves.length == 1}"/>
 				</s:HGroup>
 			</mx:GridItem>
 			<mx:GridItem/>
@@ -407,7 +405,7 @@
 									   value="{unit.bows}"
 									   maximum="{city.bows + unit.bows}"
 									   snapInterval="1"
-									   enabled="{unit.moves.length == 1 || unit.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
+									   enabled="{unit.moves.length == 1}"/>
 						</s:HGroup>
 					</mx:GridItem>
 					<mx:GridItem horizontalAlign="center" verticalAlign="middle">
@@ -431,7 +429,7 @@
 									   value="{unit.swords}"
 									   maximum="{city.swords + unit.swords}"
 									   snapInterval="1"
-									   enabled="{unit.moves.length == 1 || unit.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
+									   enabled="{unit.moves.length == 1}"/>
 						</s:HGroup>
 					</mx:GridItem>
 					<mx:GridItem horizontalAlign="center" verticalAlign="middle">
@@ -455,7 +453,7 @@
 									   value="{unit.armors}"
 									   maximum="{city.armors + unit.armors}"
 									   snapInterval="1"
-									   enabled="{unit.moves.length == 1 || unit.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
+									   enabled="{unit.moves.length == 1}"/>
 						</s:HGroup>
 					</mx:GridItem>
 					<mx:GridItem horizontalAlign="center" verticalAlign="middle">
@@ -479,7 +477,7 @@
 									   value="{unit.wheat}"
 									   maximum="{city.wheat + unit.wheat}"
 									   snapInterval="1"
-									   enabled="{unit.moves.length == 1 || unit.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
+									   enabled="{unit.moves.length == 1}"/>
 						</s:HGroup>
 					</mx:GridItem>
 					<mx:GridItem horizontalAlign="center" verticalAlign="middle">
@@ -503,7 +501,7 @@
 									   value="{unit.wood}"
 									   maximum="{city.wood + unit.wood}"
 									   snapInterval="1"
-									   enabled="{unit.moves.length == 1 || unit.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
+									   enabled="{unit.moves.length == 1}"/>
 						</s:HGroup>
 					</mx:GridItem>
 					<mx:GridItem horizontalAlign="center" verticalAlign="middle">
@@ -527,7 +525,7 @@
 									   value="{unit.iron}"
 									   maximum="{city.iron + unit.iron}"
 									   snapInterval="1"
-									   enabled="{unit.moves.length == 1 || unit.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
+									   enabled="{unit.moves.length == 1}"/>
 						</s:HGroup>
 					</mx:GridItem>
 					<mx:GridItem horizontalAlign="center" verticalAlign="middle">
@@ -551,7 +549,7 @@
 									   value="{unit.gold}"
 									   maximum="{city.gold + unit.gold}"
 									   snapInterval="1"
-									   enabled="{unit.moves.length == 1 || unit.status == Unit.INTERCEPTED_ON_THIS_CASE}"/>
+									   enabled="{unit.moves.length == 1}"/>
 						</s:HGroup>
 					</mx:GridItem>
 					<mx:GridItem horizontalAlign="center" verticalAlign="middle">

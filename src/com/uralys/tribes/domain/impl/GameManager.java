@@ -342,7 +342,9 @@ public class GameManager implements IGameManager {
 		List<Cell> cells = new ArrayList<Cell>();
 		
 		cells.add(EntitiesConverter.convertCellDTO(gameDao.getCell(cell.getX(), cell.getY())));
-		cells.add(EntitiesConverter.convertCellDTO(gameDao.getCell(cell.getNextCellUID())));
+		
+		if(cell.getNextCellUID() != null)
+			cells.add(EntitiesConverter.convertCellDTO(gameDao.getCell(cell.getNextCellUID())));
 
 		return cells;
 	}

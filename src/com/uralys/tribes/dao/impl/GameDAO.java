@@ -418,7 +418,11 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 					{
 						if(now - cell.getTimeFromChallenging() > Constants.LAND_TIME*60*1000)
 						{
-							cell = newLandOwner(cell.getCellUID());
+							newLandOwner(cell.getCellUID());
+							
+							cell.setLandOwnerUID(cell.getChallengerUID());
+							cell.setChallengerUID(null);
+							cell.setTimeFromChallenging(-1);
 						}
 					}
 				}
@@ -431,7 +435,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		return result;
 	}
 
-	private CellDTO newLandOwner(String cellUID) 
+	private void newLandOwner(String cellUID) 
 	{
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		CellDTO cell = pm.getObjectById(CellDTO.class, cellUID);
@@ -449,8 +453,6 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		cell.setTimeFromChallenging(-1);
 		
 		pm.close();
-		
-		return cell;
 	}
 	
 	//==================================================================================================//
@@ -470,7 +472,11 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			{
 				if(now - cell.getTimeFromChallenging() > Constants.LAND_TIME*60*1000)
 				{
-					cell = newLandOwner(cell.getCellUID());
+					newLandOwner(cell.getCellUID());
+					
+					cell.setLandOwnerUID(cell.getChallengerUID());
+					cell.setChallengerUID(null);
+					cell.setTimeFromChallenging(-1);
 				}
 			}
 			

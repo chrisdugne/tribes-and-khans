@@ -47,14 +47,14 @@ public final class ImageContainer
 	[Embed(source="resources/embed/icons/volume.png")]
 	[Bindable] public static var HP:Class;
 
-	[Embed(source="resources/embed/buttons/ville-left.png")]
-	[Bindable] public static var CITY_BUTTON_LEFT:Class;
-
-	[Embed(source="resources/embed/buttons/ville-right.png")]
-	[Bindable] public static var CITY_BUTTON_RIGHT:Class;
-
-	[Embed(source="resources/embed/buttons/ville-center.png")]
-	[Bindable] public static var CITY_BUTTON_CENTER:Class;
+//	[Embed(source="resources/embed/buttons/ville-left.png")]
+//	[Bindable] public static var CITY_BUTTON_LEFT:Class;
+//
+//	[Embed(source="resources/embed/buttons/ville-right.png")]
+//	[Bindable] public static var CITY_BUTTON_RIGHT:Class;
+//
+//	[Embed(source="resources/embed/buttons/ville-center.png")]
+//	[Bindable] public static var CITY_BUTTON_CENTER:Class;
 	
 	//   ======================================================================//
 	
@@ -75,9 +75,6 @@ public final class ImageContainer
 	[Embed(source="resources/embed/icons/cross.png")]
 	[Bindable] public static var CROSS:Class;
 
-	[Embed(source="resources/embed/icons/check.png")]
-	[Bindable] public static var CHECK:Class;  
-	
 	[Embed(source="resources/embed/clock.png")]
 	[Bindable] public static var CLOCK:Class;  
 
@@ -133,9 +130,6 @@ public final class ImageContainer
 	[Embed(source="resources/embed/question-mark.png")]
 	[Bindable] public static var GREEN_QUESTION:Class;
 
-	[Embed(source="resources/embed/red-question-mark.png")]
-	[Bindable] public static var RED_QUESTION:Class;
-	
 	[Embed(source="resources/embed/resizeHandler.png")]
 	[Bindable] public static var RESIZER:Class;
 

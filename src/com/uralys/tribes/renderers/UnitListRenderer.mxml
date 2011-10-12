@@ -35,7 +35,7 @@
 		]]>
 	</fx:Script>
 	
-	<s:Label id="labelCase" 
+	<s:Label id="labelCell" 
 			 color="#ffffff" 
 			 left="5" 
 			 text="[ {Utils.getXFromCellUID((data as Unit).currentCaseUID)} , {Utils.getYFromCellUID((data as Unit).currentCaseUID)} ]"

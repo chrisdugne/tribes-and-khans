@@ -362,6 +362,7 @@
 									visible="{Session.CURRENT_CELL_SELECTED != null &amp;&amp; Session.CURRENT_CELL_SELECTED.caravan !=null &amp;&amp; Session.CURRENT_CELL_SELECTED.caravan.size > 0}"/>
 		</s:VGroup>
 
+		<!--
 		<s:CheckBox id="checkboxBars"
 					selected="@{Session.LANDS_VISIBLE}" 
 					label="{Translations.SHOW_LANDS.getItemAt(Session.LANGUAGE)}"
@@ -372,6 +373,7 @@
 					label="{Translations.PROGRESS_BARS.getItemAt(Session.LANGUAGE)}"
 					right="95"
 					bottom="44"/>
+		-->
 
 		<!-- =============================================================================================== -->
 		

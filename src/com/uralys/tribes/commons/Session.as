@@ -1,5 +1,6 @@
 package com.uralys.tribes.commons
 {
+	import com.uralys.tribes.components.CityHeader;
 	import com.uralys.tribes.entities.Ally;
 	import com.uralys.tribes.entities.Cell;
 	import com.uralys.tribes.pages.Board;

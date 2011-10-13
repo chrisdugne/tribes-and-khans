@@ -1419,5 +1419,12 @@ package com.uralys.tribes.managers {
 			refreshCell(cell);
 			BoardDrawer.getInstance().refreshCellDisplay(cell);
 		}
+
+		//---------------------------------------------------------------------//		
+		
+		public function updateWorkersProgressBar():void
+		{
+			Session.board.cityForm.cityHeader.updateWorkersProgressBar();
+		}
 	}
 }

@@ -70,7 +70,7 @@ package com.uralys.tribes.entities
 		
 		protected var _radius:int;
 		protected var _value:int;
-		
+		protected var _totalCarriage:int;
 		
 		//==========================================================================//
 		
@@ -118,6 +118,8 @@ package com.uralys.tribes.entities
 			_type = o;
 		}
 	
+		//-----------------------------------------------------------//
+		
 		public function set value(o:int):void {
 			_value = o;
 		}
@@ -138,6 +140,27 @@ package com.uralys.tribes.entities
 			}
 		}
 	
+		//-----------------------------------------------------------//
+		
+		/*
+			1 marchand peut porter : 25 points
+		    1 ressource = 1 point
+			1 arme = 5 points
+		*/
+		public function set totalCarriage(o:int):void {
+			_totalCarriage = o;
+		}
+		
+		public function get totalCarriage():int {
+			return _totalCarriage;
+		}
+		
+		public function refreshTotalCarriage():void 
+		{
+			totalCarriage = (iron + wood + wheat + 5*bows + 5*armors + 5*swords);
+		}
+		
+		//-----------------------------------------------------------//
 		
 		public function get wheat():int {
 			return _wheat;
@@ -146,6 +169,7 @@ package com.uralys.tribes.entities
 		public function set wheat(o:int):void {
 			isModified = true;
 			_wheat = o;
+			refreshTotalCarriage();
 		}
 		
 		public function get wood():int {
@@ -155,6 +179,7 @@ package com.uralys.tribes.entities
 		public function set wood(o:int):void {
 			isModified = true;
 			_wood = o;
+			refreshTotalCarriage();
 		}
 		
 		public function get iron():int {
@@ -164,6 +189,7 @@ package com.uralys.tribes.entities
 		public function set iron(o:int):void {
 			isModified = true;
 			_iron = o;
+			refreshTotalCarriage();
 		}
 		
 		public function get gold():int {
@@ -290,6 +316,7 @@ package com.uralys.tribes.entities
 		public function set bows(o:int):void{
 			isModified = true;
 			_bows = o;
+			refreshTotalCarriage();
 			//refreshValue();
 		}
 
@@ -300,6 +327,7 @@ package com.uralys.tribes.entities
 		public function set swords(o:int):void{
 			isModified = true;
 			_swords = o;
+			refreshTotalCarriage();
 			//refreshValue();
 		}
 
@@ -310,6 +338,7 @@ package com.uralys.tribes.entities
 		public function set armors(o:int):void{
 			isModified = true;
 			_armors = o;
+			refreshTotalCarriage();
 			//refreshValue();
 		}
 
@@ -330,7 +359,6 @@ package com.uralys.tribes.entities
 		public static const MERCHANT:int = 2;
 		
 		public var landExpected:int = -1;
-		//public var tmpLandSquare:Rect;
 		
 		//==========================================================================//
 

@@ -12,6 +12,8 @@
 			import com.uralys.tribes.entities.Unit;
 			import com.uralys.tribes.main.ImageContainer;
 			import com.uralys.tribes.managers.GameManager;
+			import com.uralys.tribes.skins.WorkersProgressBarSkin;
+			import com.uralys.tribes.skins.WorkersProgressTrackSkin;
 			import com.uralys.utils.Utils;
 			
 			import mx.collections.ArrayCollection;
@@ -116,8 +118,7 @@
 			
 				unit = null;
 				GameManager.getInstance().refreshCellDisplay(Session.CURRENT_CELL_SELECTED);
-				
-				Session.board.cityForm.cityHeader.updateWorkersProgressBar();
+				GameManager.getInstance().updateWorkersProgressBar();
 			}
 			
 			
@@ -132,9 +133,12 @@
 				city.population -= unit.size - previousUnitSize; 
 				unit.refreshValue();
 				
-				Session.board.cityForm.cityHeader.updateWorkersProgressBar();
+				GameManager.getInstance().updateWorkersProgressBar();
+				updateCarriageProgressBar()
 			}
 			
+			//-------------------------------------------------------------------------//
+
 			protected function wheatUnitCheck(event:Event):void
 			{
 				var previousNbWheat:int = unit.wheat;
@@ -156,13 +160,27 @@
 				else{
 					// on enleve du ble de la caravane
 					city.wheat += previousNbWheat - newNbWheat;
+					
+					if(city.wheatStockCapacity < city.wheat){
+						var overWeight:int =  city.wheat - city.wheatStockCapacity;
+						unit.wheat += overWeight;
+						city.wheat -= overWeight;
+					}
+				}
+				
+				unit.wheat = newNbWheat;
+				
+				if(getAvailableCarriage() < unit.totalCarriage){
+					var overWeight:int =  unit.totalCarriage - getAvailableCarriage();
+					city.wheat += overWeight;
+					unit.wheat -= overWeight;
 				}
 				
 				city.wheatRequiredToFeed = (city.population + city.unitsToFeed) * Numbers.FEED_COEFF;
 				city.wheatExpected = city.wheat + city.wheatEarned - city.wheatRequiredToFeed;
 				
-				unit.wheat = newNbWheat;
 				wheatUnitSlider.value = unit.wheat;
+				updateCarriageProgressBar();
 			}
 			
 			
@@ -187,10 +205,24 @@
 				else{
 					// on enleve du bois de la caravane
 					city.wood += previousNbWood - newNbWood;
+					
+					if(city.woodStockCapacity < city.wood){
+						var overWeight:int =  city.wood - city.woodStockCapacity;
+						unit.wood += overWeight;
+						city.wood -= overWeight;
+					}
 				}
 				
 				unit.wood = newNbWood;
+				
+				if(getAvailableCarriage() < unit.totalCarriage){
+					var overWeight:int =  unit.totalCarriage - getAvailableCarriage();
+					city.wood += overWeight;
+					unit.wood -= overWeight;
+				}
+				
 				woodUnitSlider.value = unit.wood;
+				updateCarriageProgressBar();
 			}
 			
 			
@@ -207,7 +239,7 @@
 						newNbIron = city.iron + previousNbIron;
 						city.iron = 0;
 					}
-					else{	
+					else{
 						// on pioche dans la reserve de fer
 						city.iron -= newNbIron - previousNbIron;
 					}
@@ -215,10 +247,24 @@
 				else{
 					// on enleve du fer de la caravane
 					city.iron += previousNbIron - newNbIron;
+					
+					if(city.ironStockCapacity < city.iron){
+						var overWeight:int =  city.iron - city.ironStockCapacity;
+						unit.iron += overWeight;
+						city.iron -= overWeight;
+					}
 				}
 				
 				unit.iron = newNbIron;
+				
+				if(getAvailableCarriage() < unit.totalCarriage){
+					var overWeight:int =  unit.totalCarriage - getAvailableCarriage();
+					city.iron += overWeight;
+					unit.iron -= overWeight;
+				}
+				
 				ironUnitSlider.value = unit.iron;
+				updateCarriageProgressBar();
 			}
 			
 			protected function goldUnitCheck(event:Event):void
@@ -270,10 +316,24 @@
 				else{
 					// on enleve des arcs de la caravane
 					city.bows += previousNbBows - newNbBows;
+					
+					if(city.bowStockCapacity < city.bows){
+						var overWeight:int =  city.bows - city.bowStockCapacity;
+						unit.bows += overWeight;
+						city.bows -= overWeight;
+					}
 				}
 				
 				unit.bows = newNbBows;
+				
+				if(getAvailableCarriage() < unit.totalCarriage){
+					var overWeight:int =  unit.totalCarriage - getAvailableCarriage();
+					city.bows += overWeight/5;
+					unit.bows -= overWeight/5;
+				}
+				
 				bowsUnitSlider.value = unit.bows;
+				updateCarriageProgressBar();
 			}
 			
 			
@@ -298,10 +358,24 @@
 				else{
 					// on enleve des epees de la caravane
 					city.swords += previousNbSwords - newNbSwords;
+					
+					if(city.swordStockCapacity < city.swords){
+						var overWeight:int =  city.swords - city.swordStockCapacity;
+						unit.swords += overWeight;
+						city.swords -= overWeight;
+					}
 				}
 				
 				unit.swords = newNbSwords;
+				
+				if(getAvailableCarriage() < unit.totalCarriage){
+					var overWeight:int =  unit.totalCarriage - getAvailableCarriage();
+					city.swords += overWeight/5;
+					unit.swords -= overWeight/5;
+				}
+				
 				swordsUnitSlider.value = unit.swords;
+				updateCarriageProgressBar();
 			}
 			
 			protected function armorsUnitCheck(event:Event):void
@@ -325,10 +399,41 @@
 				else{
 					// on enleve des armures de la caravane
 					city.armors += previousNbArmors - newNbArmors;
+					
+					if(city.armorStockCapacity < city.armors){
+						var overWeight:int =  city.armors - city.armorStockCapacity;
+						unit.armors += overWeight;
+						city.armors -= overWeight;
+					}
 				}
 				
 				unit.armors = newNbArmors;
+				
+				if(getAvailableCarriage() < unit.totalCarriage){
+					var overWeight:int =  unit.totalCarriage - getAvailableCarriage();
+					city.armors += overWeight/5;
+					unit.armors -= overWeight/5;
+				}
+				
 				armorsUnitSlider.value = unit.armors;
+				updateCarriageProgressBar();
+			}
+			
+			//-------------------------------------------------------------------------//
+			
+			private function getAvailableCarriage():int
+			{
+				return unit.size*25;
+			}
+			
+			//-------------------------------------------------------------------------//
+			
+			private function updateCarriageProgressBar():void
+			{
+				if(carriageProgressBar == null || unit == null)
+					return;
+				
+				carriageProgressBar.setProgress(unit.totalCarriage, getAvailableCarriage());
 			}
 			
 		]]>
@@ -521,7 +626,7 @@
 							<s:HSlider id="ironUnitSlider"
 									   showDataTip="false"
 									   liveDragging="true" 
-									   change="ironUnitCheck(event)"
+									   change="{ironUnitCheck(event)}"
 									   value="{unit.iron}"
 									   maximum="{city.iron + unit.iron}"
 									   snapInterval="1"
@@ -556,12 +661,26 @@
 						<s:Label text="{city.gold}" />
 					</mx:GridItem>
 				</mx:GridRow>
-				<mx:GridRow>
-					<mx:GridItem colSpan="4">
-						<mx:HRule width="100%"/>
-					</mx:GridItem>
-				</mx:GridRow >
 			</mx:Grid>
 		</s:Group>
 	</s:Scroller>
+	<mx:HRule width="100%"
+			  visible="{unit != null}"/>
+	
+	<s:HGroup width="100%" horizontalAlign="center"
+			  verticalAlign="middle">
+		<mx:ProgressBar width="200"
+						height="100%"
+						id="carriageProgressBar"
+						mode="manual"
+						label=" "
+						labelPlacement="right"
+						barSkin="{WorkersProgressBarSkin}"
+						trackSkin="{WorkersProgressTrackSkin}"
+						trackHeight="24"
+						visible="{unit != null}"
+						creationComplete="{updateCarriageProgressBar()}"/>
+		<s:Label text="{unit.totalCarriage} / {unit.size*25}" styleName="numberLabel"/>
+	</s:HGroup>
+	
 </s:VGroup>

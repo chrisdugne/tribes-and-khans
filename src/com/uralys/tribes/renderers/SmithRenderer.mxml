@@ -78,7 +78,7 @@
 				
 				timeLabel.text = (hours > 0 ? hours + ' h ' : '') + min + " mn "+ (secs != 0 ? ((secs < 10 ? '0' : '') + secs + " secs") : '');
 				
-				Session.board.cityForm.cityHeader.updateWorkersProgressBar();
+				GameManager.getInstance().updateWorkersProgressBar();
 			}
 			
 			//-------------------------------------------------------------------------------------//

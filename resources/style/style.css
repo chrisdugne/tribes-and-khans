@@ -13,6 +13,7 @@
 Label {
     fontFamily: corinthians;
 	fontSize:20;
+	color: #9C9C9C;
 }
 
 TextArea {

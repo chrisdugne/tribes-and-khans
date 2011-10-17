@@ -35,6 +35,11 @@
 			
 			public function setMoveInProgress(event:TimerEvent = null):void
 			{
+				if(unit == null){
+					Session.timer.removeEventListener(TimerEvent.TIMER, setMoveInProgress);
+					return;
+				}
+				
 				if(event==null)trace("setMoveInProgress");
 				var now:Number = new Date().getTime();
 				var millisRemaining:Number = unit.moves.getItemAt(0).timeTo - now;

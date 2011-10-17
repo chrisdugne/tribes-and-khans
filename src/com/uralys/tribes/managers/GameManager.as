@@ -105,12 +105,11 @@ package com.uralys.tribes.managers {
 			
 			for each(var unit:Unit in Session.player.units)
 			{
-				refreshUnit(unit);
 				
-				var unitIsPrepared:Boolean = refreshUnitStatus(unit);
+				var unitExists:Boolean = refreshUnitStatus(unit);
 				trace("status : " + unit.status);
 				
-				if(!unitIsPrepared){
+				if(!unitExists){
 					trace("unit is not prepared");
 					if(unit.status == Unit.DESTROYED){
 						trace("unit is to be deleted");				
@@ -119,6 +118,8 @@ package com.uralys.tribes.managers {
 					
 					uidsToRemove.addItem(unit.unitUID);
 				}
+				else
+					refreshUnit(unit);
 			}
 			
 			for each(var unitToRemoveUID:String in uidsToRemove){
@@ -632,20 +633,20 @@ package com.uralys.tribes.managers {
 		 * et appelle ici pour les enregistrer au passage
 		 * ensuite on va faire un addTimer sur chacune des unites
 		 */
-		public function registerUnitInSession(unit:Unit):void
-		{
-			var foundInSession:Boolean = false;
-			
-			for each(var unitInSession:Unit in Session.allUnits){
-				if(unit.unitUID == unitInSession.unitUID){
-					foundInSession = true;
-					break;
-				}
-			}
-			
-			if(!foundInSession)
-				Session.allUnits.addItem(unit);
-		}
+//		public function registerUnitInSession(unit:Unit):void
+//		{
+//			var foundInSession:Boolean = false;
+//			
+//			for each(var unitInSession:Unit in Session.allUnits){
+//				if(unit.unitUID == unitInSession.unitUID){
+//					foundInSession = true;
+//					break;
+//				}
+//			}
+//			
+//			if(!foundInSession)
+//				Session.allUnits.addItem(unit);
+//		}
 		
 		//-------------------------------------------------------------------------------//
 		
@@ -1340,6 +1341,7 @@ package com.uralys.tribes.managers {
 		{
 			if(unit != null)
 			{
+				trace("refreshUnit : " + unit.unitUID);
 				unit.refreshValue();
 				
 				if(unit.player.playerUID == Session.player.playerUID)
@@ -1363,6 +1365,9 @@ package com.uralys.tribes.managers {
 		
 		private function refreshInSession(unit:Unit):void
 		{
+			if(unit.player.playerUID != Session.player.playerUID)
+				return;
+
 			var unitInPlayer:Unit = Session.player.getUnit(unit.unitUID);
 			
 			if(unitInPlayer == null)

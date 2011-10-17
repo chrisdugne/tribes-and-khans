@@ -16,6 +16,7 @@
 	<fx:Script>
 		<![CDATA[ 
 			import com.uralys.tribes.commons.Names;
+			import com.uralys.tribes.commons.Numbers;
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;
 			import com.uralys.tribes.core.MusicPlayer;
@@ -251,7 +252,7 @@
 		<s:Label text="{MusicPlayer.getInstance().volume &gt; 0 ? 'On' : 'Off'}" click="{music()}"
 				 id="labelVolume"
 				 mouseOver="{labelVolume.setStyle('color', '#ffffff')}"
-				 mouseOut="{labelVolume.setStyle('color', '#000000')}"/>
+				 mouseOut="{labelVolume.setStyle('color', Numbers.CLASSIC_COLOR)}"/>
 		<s:HSlider id="volumeSlider" 
 				   maximum="100" 
 				   showDataTip="false"
@@ -263,68 +264,68 @@
 		<s:Label text="{Translations.HOW_TO_PLAY.getItemAt(Session.LANGUAGE)}"
 				 id="labelHowTo"
 				 click="navigateToURL(new URLRequest('http://www.uralys.com/tribes-and-khans.'+ (Session.LANGUAGE == 0 ? 'fr' : 'en') +'.html'), '_new');"
-				 color="#000000"
+				 color="{Numbers.CLASSIC_COLOR}"
 				 toolTip="{Translations.OPEN_TAB.getItemAt(Session.LANGUAGE)}"
 				 mouseOver="{labelHowTo.setStyle('color', '#ffffff')}"
-				 mouseOut="{labelHowTo.setStyle('color', '#000000')}"/>
+				 mouseOut="{labelHowTo.setStyle('color', Numbers.CLASSIC_COLOR)}"/>
 		<mx:Image source="{ImageContainer.GREEN_QUESTION}"
 				  click="navigateToURL(new URLRequest('http://www.uralys.com/tribes-and-khans.'+ (Session.LANGUAGE == 0 ? 'fr' : 'en') +'.html'), '_new');"
 				  toolTip="{Translations.OPEN_TAB.getItemAt(Session.LANGUAGE)}"
 				  mouseOver="{labelHowTo.setStyle('color', '#ffffff')}"
-				  mouseOut="{labelHowTo.setStyle('color', '#000000')}"
+				  mouseOut="{labelHowTo.setStyle('color', Numbers.CLASSIC_COLOR)}"
 				  />
 		
 		<mx:Spacer width="100%"/>
 		<s:Label text="{Translations.MY_ALLY.getItemAt(Session.LANGUAGE)}"
 				 id="labelAlly"
 				 click="openAllyProfileWindow(Session.player.ally.allyUID)"
-				 color="#000000"
+				 color="{Numbers.CLASSIC_COLOR}"
 				 toolTip="{Translations.PROFILE.getItemAt(Session.LANGUAGE)}"
 				 mouseOver="{labelAlly.setStyle('color', '#ffffff')}"
-				 mouseOut="{labelAlly.setStyle('color', '#000000')}"
+				 mouseOut="{labelAlly.setStyle('color', Numbers.CLASSIC_COLOR)}"
 				 visible="{Session.LOGGED_IN &amp;&amp; Session.player.ally != null}"/>
 		
 		<mx:Spacer width="30"/>
 		<s:Label text="{Translations.MY_PROFILE.getItemAt(Session.LANGUAGE)}"
 				 id="labelProfile"
 				 click="openPlayerProfileWindow(Session.player.playerUID)"
-				 color="#000000"
+				 color="{Numbers.CLASSIC_COLOR}"
 				 toolTip="{Translations.PROFILE.getItemAt(Session.LANGUAGE)}"
 				 mouseOver="{labelProfile.setStyle('color', '#ffffff')}"
-				 mouseOut="{labelProfile.setStyle('color', '#000000')}"
+				 mouseOut="{labelProfile.setStyle('color', Numbers.CLASSIC_COLOR)}"
 				 visible="{Session.LOGGED_IN}"/>
 		
 		<mx:Spacer width="30"/>
 		<mx:Image source="{ImageContainer.MAIL_BOX}"
 				  click="openMailBox()"
 				  mouseOver="{labelMessages.setStyle('color', '#ffffff')}"
-				  mouseOut="{labelMessages.setStyle('color', '#000000')}"
+				  mouseOut="{labelMessages.setStyle('color', Numbers.CLASSIC_COLOR)}"
 				  visible="{Session.LOGGED_IN}"
 				  />
 		<s:Label text="({Session.player.newMessages.length})"
 				 id="labelMessages"
 				 click="openMailBox()"
-				 color="#000000"
+				 color="{Numbers.CLASSIC_COLOR}"
 				 toolTip="{Translations.OPEN_TAB.getItemAt(Session.LANGUAGE)}"
 				 mouseOver="{labelMessages.setStyle('color', '#ffffff')}"
-				 mouseOut="{labelMessages.setStyle('color', '#000000')}"
+				 mouseOut="{labelMessages.setStyle('color', Numbers.CLASSIC_COLOR)}"
 				 visible="{Session.LOGGED_IN}"/>
 		
 		<mx:Spacer width="30"/>
 		<s:Label text="{Translations.BOARDS.getItemAt(Session.LANGUAGE)}"
 				 id="labelBoards"
-				 color="#000000"
+				 color="{Numbers.CLASSIC_COLOR}"
 				 click="{openBoardsWindow()}"
 				 mouseOver="{labelBoards.setStyle('color', '#ffffff')}"
-				 mouseOut="{labelBoards.setStyle('color', '#000000')}"/>
+				 mouseOut="{labelBoards.setStyle('color', Numbers.CLASSIC_COLOR)}"/>
 		
 		<mx:Spacer width="30"/>
 		<s:Label text="{Session.player ? Translations.LOG_AS.getItemAt(Session.LANGUAGE) + ' : '+ Session.uralysProfile.email : Translations.LOG_IN.getItemAt(Session.LANGUAGE)}"
 				 id="labelLogin"
-				 color="#000000"
+				 color="{Numbers.CLASSIC_COLOR}"
 				 click="{openLoginWindow()}"
 				 mouseOver="{labelLogin.setStyle('color', '#ffffff')}"
-				 mouseOut="{labelLogin.setStyle('color', '#000000')}"/>
+				 mouseOut="{labelLogin.setStyle('color', Numbers.CLASSIC_COLOR)}"/>
 	</s:HGroup>	
 	
 	
@@ -337,30 +338,30 @@
 		<s:Label text="Uralys"
 				 id="labelUralys"
 				  click="navigateToURL(new URLRequest('http://www.uralys.com'), '_new');"
-				  color="#000000"
+				  color="{Numbers.CLASSIC_COLOR}"
 				  mouseOver="{labelUralys.setStyle('color', '#ffffff')}"
-				  mouseOut="{labelUralys.setStyle('color', '#000000')}"/>
+				  mouseOut="{labelUralys.setStyle('color', Numbers.CLASSIC_COLOR)}"/>
 		<mx:Spacer width="10%"/>
 		<s:Label text="Credits"
 				 id="labelCredits"
 				  click="openCreditsWindow()"
-				  color="#000000"
+				  color="{Numbers.CLASSIC_COLOR}"
 				  mouseOver="{labelCredits.setStyle('color', '#ffffff')}"
-				  mouseOut="{labelCredits.setStyle('color', '#000000')}"/>
+				  mouseOut="{labelCredits.setStyle('color', Numbers.CLASSIC_COLOR)}"/>
 		<mx:Spacer width="10%"/>
 		<s:Label text="{Translations.GO_TO_FORUM.getItemAt(Session.LANGUAGE)}"
 				 id="labelForum"
 				 click="navigateToURL(new URLRequest('http://tribesandkhans.freeforums.org/'), '_new');"
-				 color="#000000"
+				 color="{Numbers.CLASSIC_COLOR}"
 				 mouseOver="{labelForum.setStyle('color', '#ffffff')}"
-				 mouseOut="{labelForum.setStyle('color', '#000000')}"/>
+				 mouseOut="{labelForum.setStyle('color', Numbers.CLASSIC_COLOR)}"/>
 		<mx:Spacer width="20%"/>
 		<s:Label text=" Tribes And Khans 2011   -    version {Session.VERSION}" 
 				 id="labelTitle"
-				 color="#000000"
+				 color="{Numbers.CLASSIC_COLOR}"
 				 click="navigateToURL(new URLRequest('http://tribes-and-khans.tumblr.com'), '_new');"
 				 mouseOver="{labelTitle.setStyle('color', '#ffffff')}"
-				 mouseOut="{labelTitle.setStyle('color', '#000000')}"/>
+				 mouseOut="{labelTitle.setStyle('color', Numbers.CLASSIC_COLOR)}"/>
 	</s:HGroup>	
 	
 	<!-- ========================================================================== -->

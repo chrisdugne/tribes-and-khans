@@ -31,14 +31,15 @@ package com.uralys.tribes.commons
 		public static var TIME_TO_BUILD_A_CITY:int = 12*60*60*1000;
 	
 		// Main data  ==============================================================
-		// Colors			[Bindable] public static var GREEN:Number = 0x5CBF7A;
+		// Colors			[Bindable] public static var CLASSIC_COLOR:Number = 0x9C9C9C;
+		[Bindable] public static var GREEN:Number = 0x348C4F;
 		[Bindable] public static var BLUE:Number = 0x5C7FBF;
 		[Bindable] public static var RED:Number = 0xBF5C5C;
 		[Bindable] public static var BLACK:Number = 0x000000;
 		[Bindable] public static var WHITE:Number = 0xFFFFFF;
 		[Bindable] public static var YELLOW:Number = 0xC4BC45;
 		
-		[Bindable] public static var colorPlayer:Number = 0x5CBF7A;
+		[Bindable] public static var colorPlayer:Number = 0x348C4F;
 		[Bindable] public static var colorEnnemy:Number = 0xBF5C5C;
 		[Bindable] public static var colorAlly:Number = 0x5C7FBF;
 	

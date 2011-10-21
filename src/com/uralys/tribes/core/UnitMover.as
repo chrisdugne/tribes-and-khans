@@ -3,6 +3,7 @@ package com.uralys.tribes.core
 	import com.uralys.tribes.commons.Numbers;
 	import com.uralys.tribes.commons.Session;
 	import com.uralys.tribes.commons.Translations;
+	import com.uralys.tribes.components.UnitRenderer;
 	import com.uralys.tribes.entities.Cell;
 	import com.uralys.tribes.entities.City;
 	import com.uralys.tribes.entities.Move;
@@ -180,9 +181,8 @@ package com.uralys.tribes.core
 		
 		// ============================================================================================
 		
-		// click sur une armee dans la barre laterale
-		// ou dans la liste sous 'enter city'
-		public function moveUnit(unit:Unit):void
+		// click sur le bouton deplacer
+		public function prepareToMoveUnit(unit:Unit):void
 		{
 			this.unit = unit;
 			
@@ -336,6 +336,36 @@ package com.uralys.tribes.core
 			}
 			
 			newMoveAdded =  false; 
+		}
+		
+		// ============================================================================================
+		
+		// click sur le bouton tirer
+		public function prepareShoot(unitRenderer:UnitRenderer):void
+		{
+			this.unit = unitRenderer.unit;
+			unitRendererShooting = unitRenderer;
+			
+			if(Session.SHOOTING)
+				return;
+			
+			Session.SHOOTING = true;
+			
+			BoardDrawer.getInstance().drawBowsToShoot();
+		}
+		
+		//--------------------------------------------------------------------------//
+		
+		[Bindable] public static var cellSelectedForShoot:Boolean = false;
+		[Bindable] private static var unitRendererShooting:UnitRenderer;
+		
+		public function shoot():void
+		{
+			unit.lastShotTime = new Date().getTime();
+			unitRendererShooting.refresh();
+			
+			cellSelectedForShoot = false;
+			GameManager.getInstance().updateUnit(unit);
 		}
 
 	}

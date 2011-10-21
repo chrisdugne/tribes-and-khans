@@ -585,6 +585,13 @@ package com.uralys.tribes.managers {
 				// on refresh les villes au cas ou le deplacement fait partir/arriver une unite de/dans une ville
 				//refreshUnitsInCity();
 			}
+			else{
+				// l'unite nexiste plus : elle a été supprimé entre temps
+				// par exemple apres un tir d'arcs
+				// on refresh le joueur, il recevra le message.
+				getPlayer(Session.player);
+				return;
+			}
 			
 			// lorsqu'on sauvegarde une ville, on sauvegarde les unites 1 par 1
 			tryToRecordNextUnitInCity();

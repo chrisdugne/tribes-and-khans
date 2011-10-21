@@ -6,24 +6,30 @@
    fontFamily: corinthians;
 }
 
+@font-face {
+   src:url("fonts/BNEG98.ttf");
+   embedAsCff : true;
+   fontFamily: bneg;
+}
+
 @namespace mx "library://ns.adobe.com/flex/mx";
 @namespace controls "qs.controls.*";
 @namespace "library://ns.adobe.com/flex/spark";
 
 Label {
-    fontFamily: corinthians;
+    fontFamily: bneg;
 	fontSize:20;
 	color: #9C9C9C;
 }
 
 TextArea {
-    fontFamily: corinthians;
+    fontFamily: bneg;
 	fontSize:18;
 }
 
 .numberLabel {
-   fontSize: 28;
-   color: #2B40C4;
+   fontSize: 21;
+   color: #4298C7;
 }
 
 .whiteNumberLabel {
@@ -219,13 +225,13 @@ TextArea {
 /**************************************************************/
 
 TextInput {
-    fontFamily: corinthians;
+    fontFamily: bneg;
     fontSize: 24;
     color:#135b19;
 }
 
 .classicButtonStyle {
-    fontFamily: corinthians;
+    fontFamily: bneg;
     fontWeight: normal;
     fontSize: 27;
     cornerRadius: 7;
@@ -247,7 +253,7 @@ TextInput {
 }
 
 .littleButtonStyle {
-    fontFamily: corinthians;
+    fontFamily: bneg;
     fontWeight: normal;
     fontSize: 17;
     cornerRadius: 7;
@@ -269,7 +275,7 @@ TextInput {
 }
 
 .biggestButtonStyle {
-    fontFamily: corinthians;
+    fontFamily: bneg;
     fontWeight: normal;
     fontSize: 64;
     cornerRadius: 7;

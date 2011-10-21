@@ -10,6 +10,7 @@ package com.uralys.tribes.core
 	import com.uralys.tribes.entities.Move;
 	import com.uralys.tribes.entities.Player;
 	import com.uralys.tribes.entities.Unit;
+	import com.uralys.tribes.main.ImageContainer;
 	import com.uralys.tribes.managers.GameManager;
 	import com.uralys.tribes.pages.Board;
 	import com.uralys.tribes.renderers.MoveHighLight;
@@ -44,7 +45,6 @@ package com.uralys.tribes.core
 	import spark.primitives.Ellipse;
 	import spark.primitives.Line;
 	import spark.primitives.Rect;
-	import com.uralys.tribes.main.ImageContainer;
 
 	/**
 		BoardDrawer draws all the entities of the game on the board.
@@ -539,6 +539,94 @@ package com.uralys.tribes.core
 			currentUnitMoveHighLights = new ArrayCollection();
 		}
 		
+		
+		//==================================================================================================//
+		
+		private var currentBowsToShoot:ArrayCollection = new ArrayCollection();
+		
+		public function clearBowsToShoot():void
+		{
+			for each(var image:Image in currentBowsToShoot){
+				Session.board.pawnLayer.removeElement(image);
+			}
+		}
+
+		public function drawBowsToShoot():void
+		{
+			currentBowsToShoot = new ArrayCollection();
+			
+			var cell:Cell = Session.CURRENT_CELL_SELECTED;
+			
+			var imageNorth:Image = new Image();
+			var imageSouth:Image = new Image();
+			var imageNorthEast:Image = new Image();
+			var imageNorthWest:Image = new Image();
+			var imageSouthEast:Image = new Image();
+			var imageSouthWest:Image = new Image();
+			
+			imageNorth.source = ImageContainer.getImage(ImageContainer.URALYS_MINI_LOGO);
+			imageSouth.source = ImageContainer.getImage(ImageContainer.URALYS_MINI_LOGO);
+			imageNorthEast.source = ImageContainer.getImage(ImageContainer.URALYS_MINI_LOGO);
+			imageNorthWest.source = ImageContainer.getImage(ImageContainer.URALYS_MINI_LOGO);
+			imageSouthEast.source = ImageContainer.getImage(ImageContainer.URALYS_MINI_LOGO);
+			imageSouthWest.source = ImageContainer.getImage(ImageContainer.URALYS_MINI_LOGO);
+			
+			var northPx:int = Utils.getXPixel(cell.x);
+			var northPy:int = Utils.getYPixel(cell.y - 2);
+
+			var southPx:int = Utils.getXPixel(cell.x);
+			var southPy:int = Utils.getYPixel(cell.y + 2);
+
+			var northEastPx:int = Utils.getXPixel(cell.x + 1);
+			var northEastPy:int = Utils.getYPixel(cell.y - 1);
+
+			var northWestPx:int = Utils.getXPixel(cell.x - 1);
+			var northWestPy:int = Utils.getYPixel(cell.y - 1);
+			
+			var southEastPx:int = Utils.getXPixel(cell.x + 1);
+			var southEastPy:int = Utils.getYPixel(cell.y + 1);
+
+			var southWestPx:int = Utils.getXPixel(cell.x - 1);
+			var southWestPy:int = Utils.getYPixel(cell.y + 1);
+			
+			imageNorth.x = northPx;
+			imageNorth.y = northPy;
+			imageNorth.scaleX = scale;
+			imageNorth.scaleY = scale;
+
+			imageSouth.x = southPx;
+			imageSouth.y = southPy;
+			imageSouth.scaleX = scale;
+			imageSouth.scaleY = scale;
+
+			imageNorthEast.x = northEastPx;
+			imageNorthEast.y = northEastPy;
+			imageNorthEast.scaleX = scale;
+			imageNorthEast.scaleY = scale;
+
+			imageNorthWest.x = northWestPx;
+			imageNorthWest.y = northWestPy;
+			imageNorthWest.scaleX = scale;
+			imageNorthWest.scaleY = scale;
+
+			imageSouthEast.x = southEastPx;
+			imageSouthEast.y = southEastPy;
+			imageSouthEast.scaleX = scale;
+			imageSouthEast.scaleY = scale;
+
+			imageSouthWest.x = southWestPx;
+			imageSouthWest.y = southWestPy;
+			imageSouthWest.scaleX = scale;
+			imageSouthWest.scaleY = scale;
+			
+			
+			Session.board.pawnLayer.addElement(imageNorth);
+			Session.board.pawnLayer.addElement(imageSouth);
+			Session.board.pawnLayer.addElement(imageNorthEast);
+			Session.board.pawnLayer.addElement(imageNorthWest);
+			Session.board.pawnLayer.addElement(imageSouthEast);
+			Session.board.pawnLayer.addElement(imageSouthWest);
+		}
 		
 		//==================================================================================================//
 

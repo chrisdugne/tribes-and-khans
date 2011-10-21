@@ -72,6 +72,11 @@
 			
 			public function setConquestInProgress(event:TimerEvent = null):void
 			{
+				if(unit == null){
+					Session.timer.removeEventListener(TimerEvent.TIMER, setConquestInProgress);
+					return;
+				}
+				
 				if(conquestProgressBar == null)
 					return;
 				
@@ -100,6 +105,11 @@
 			
 			public function setReloading(event:TimerEvent = null):void
 			{
+				if(unit == null){
+					Session.timer.removeEventListener(TimerEvent.TIMER, setReloading);
+					return;
+				}
+				
 				if(shootProgressBar == null)
 					return;
 				
@@ -126,9 +136,10 @@
 			
 			//-------------------------------------------------------------------------------------//
 			
-			private function shoot():void{
-				unit.lastShotTime = new Date().getTime();
-				unitRenderer.refresh();
+			private function shoot():void
+			{
+				currentState = "shooting";
+				UnitMover.getInstance().prepareShoot(unitRenderer);
 			}
 			
 			//-------------------------------------------------------------------------------------//
@@ -142,7 +153,7 @@
 			
 			private function moveUnit():void{
 				currentState = "moving";
-				UnitMover.getInstance().moveUnit(unit);
+				UnitMover.getInstance().prepareToMoveUnit(unit);
 			}
 		]]>
 	</fx:Script>
@@ -153,6 +164,7 @@
 		
 		<s:State name="classic"/>
 		<s:State name="moving"/>
+		<s:State name="shooting"/>
 	</fx:Declarations>
 	
 		<s:NavigatorContent width="100%" showEffect="{unfade}" hideEffect="{fade}">
@@ -162,8 +174,7 @@
 				<s:Button label="{Translations.MOVE.getItemAt(Session.LANGUAGE)}"
 						  skinClass="{CustomButtonSkin}"
 						  click="moveUnit()"
-						  includeInLayout="{!moveInProgress}"
-						  visible="{!moveInProgress}"/>
+						  includeInLayout="{!moveInProgress}"/>
 				
 				<mx:ProgressBar id="moveProgressBar"
 								width="60%"
@@ -180,7 +191,6 @@
 		
 		<s:NavigatorContent width="100%" showEffect="{unfade}" hideEffect="{fade}"
 							includeInLayout="{reloading || shotEnabled}"
-							visible="{reloading || shotEnabled}"
 							show="{unitRenderer.refresh()}">
 			<s:HGroup verticalAlign="middle" 
 					  horizontalAlign="center" 
@@ -206,7 +216,6 @@
 
 	<s:NavigatorContent width="100%" showEffect="{unfade}" hideEffect="{fade}"
 						includeInLayout="{conqueringInProgress}"
-						visible="{conqueringInProgress}"
 						show="{unitRenderer.refresh()}">
 			
 			<s:HGroup verticalAlign="middle" 
@@ -219,13 +228,13 @@
 								mode="manual"
 								barSkin="{WorkersProgressBarSkin}"
 								trackSkin="{WorkersProgressTrackSkin}"
+								color="0x000000"
 								label="" 
 								labelPlacement="bottom"/>
 			</s:HGroup>
 		</s:NavigatorContent>
 		
 		<s:NavigatorContent width="100%" showEffect="{unfade}" hideEffect="{fade}"
-							visible="{buildCityEnabled || buildingCityInProgress}"
 							includeInLayout="{buildCityEnabled || buildingCityInProgress}"
 							show="{unitRenderer.refresh()}">
 			

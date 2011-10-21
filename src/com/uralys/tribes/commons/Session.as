@@ -98,6 +98,10 @@ package com.uralys.tribes.commons
 		[Bindable] public static var CENTER_Y:int;
 
 		[Bindable] public static var CURRENT_CELL_SELECTED:Cell;
+
+		//=====================================================//
+		
+		[Bindable] public static var SHOOTING:Boolean;
 		[Bindable] public static var MOVE_A_UNIT:Boolean;
 		[Bindable] public static var REMOVING_MOVES_ENABLE:Boolean;
 		

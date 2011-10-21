@@ -297,7 +297,7 @@
 		<!-- Units Tab -->
 		
 		<s:VGroup id="enterCityForm"
-				  top="70" 
+				  top="150" 
 				  x="{boardImage.x+Session.MAP_WIDTH + 65}"
 				  visible="false"
 				  includeInLayout="false"
@@ -341,14 +341,14 @@
 		</s:VGroup>
 		
 		<s:VGroup id="unitForm"
-				  top="210" 
+				  top="290" 
 				  x="{boardImage.x+Session.MAP_WIDTH + 65}"
 				  visible="{Session.CURRENT_CELL_SELECTED != null 
 						  &amp;&amp; 
-						  ((Session.CURRENT_CELL_SELECTED.army !=null 
+						  ((Session.CURRENT_CELL_SELECTED.army != null 
 						  &amp;&amp; Session.CURRENT_CELL_SELECTED.army.size > 0)
 						  ||
-				  		  (Session.CURRENT_CELL_SELECTED.caravan !=null 
+				  		  (Session.CURRENT_CELL_SELECTED.caravan != null 
 						  &amp;&amp; Session.CURRENT_CELL_SELECTED.caravan.size > 0))}"
 				  horizontalAlign="center"
 				  paddingTop="5"

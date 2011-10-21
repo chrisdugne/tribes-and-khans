@@ -101,13 +101,22 @@ public class GameService implements IGameService {
 	public MoveResult updateUnit(Unit unit)
 	{
 		try {
-			return gameManager.updateUnit(unit, true);
+			return gameManager.updateUnit(unit);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
-
+	
+	public void shoot(Unit shooter, Unit target, String cellUID)
+	{
+		try {
+			gameManager.shoot(shooter, target, cellUID);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public void deleteUnit(String uralysUID, Unit unit) {
 		try {
 			gameManager.deleteUnit(uralysUID, unit);

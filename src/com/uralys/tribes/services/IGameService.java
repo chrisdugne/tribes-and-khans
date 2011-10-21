@@ -33,6 +33,10 @@ public interface IGameService {
 	
 	//-----------------------------------------------------------------------------------//
 
+	public void shoot(Unit shooter, Unit target, String cellUID);
+	
+	//-----------------------------------------------------------------------------------//
+
 	public void deleteUnit(String uralysUID, Unit unit);
 	public void deleteUnits(String uralysUID, List<String> unitsUID);
 	public void deleteMove(String moveUID);

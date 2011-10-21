@@ -28,8 +28,9 @@ public class MovesManager implements IMovesManager{
 
 	//==================================================================================================//
 
-	private static final int REPORT_GROUND_FIGHT = 1;
-	private static final int REPORT_GROUND_GATHERING = 2;
+	public static final int REPORT_GROUND_FIGHT = 1;
+	public static final int REPORT_GROUND_GATHERING = 2;
+	public static final int REPORT_BOW_SHOT = 3;
 	
 	//==================================================================================================//
 
@@ -39,6 +40,52 @@ public class MovesManager implements IMovesManager{
 		this.gameDao = gameDao;
 	}
 
+	//==================================================================================================//
+
+	public void cancelAllUnitMoves(Unit unit){
+		
+		if(debug)Utils.print("--------------------");
+		if(debug)Utils.print("cancelAllUnitMoves");
+		if(debug)Utils.print("unit : " + unit.getUnitUID());
+		if(debug)Utils.print("player : " + unit.getPlayer().getUralysUID());
+
+		//-------------------------------------------------------//
+		// - 0 : init des donnees pour le calcul
+
+		if(debug)Utils.print("--------------------");
+		if(debug)Utils.print(" 0 : init des donnees pour le calcul");
+		
+		DataContainer dataContainer = new DataContainer();		
+		
+		//-------------------------------------------------------//
+		// - 1 : on verifie si on a croisŽ une unitMet avant
+		//		 on fera un refreshUnitMoves pour cet unitMet
+
+		if(debug)Utils.print("--------------------");
+		if(debug)Utils.print(" 1 : on verifie si on a croisŽ une unitMet avant");
+		
+		Unit unitToReset = unit;
+		Unit unitToReplace = resetPreviousMeeting(unitToReset, dataContainer);
+		
+		//-------------------------------------------------------//
+		// - 2 : on supprime les anciens moves
+
+		if(debug)Utils.print("--------------------");
+		if(debug)Utils.print(" 2 : on supprime les anciens moves");
+
+		gameDao.deleteMoves(unit.getUnitUID());
+		
+		//--------------------------------------------------------------//
+		// - 3 : on replace l'ancienne unitMet si elle existait
+
+		if(unitToReplace != null ){
+			if(debug)Utils.print("--------------------------------");
+			if(debug)if(debug)	Utils.print(" 3 : replace previous unitMet");
+			
+			refreshUnitMoves(unitToReplace, false);
+		}
+	}
+	
 	//==================================================================================================//
 
 	public MoveResult refreshUnitMoves(Unit unit, boolean creation) 
@@ -190,14 +237,29 @@ public class MovesManager implements IMovesManager{
 		Report report = (Report) nextUnitAndReport[1];
 		
 		long timeOfTheMeeting = moveMet.getTimeFrom() > lastMove.getTimeFrom() ? moveMet.getTimeFrom() : lastMove.getTimeFrom();
-		finalizeNextUnitCreation(unit, unitMet, nextUnit, report, lastMove, dataContainer, timeOfTheMeeting);
+		finalizeNextUnitCreation(unit, unitMet, nextUnit, lastMove, dataContainer, timeOfTheMeeting);
+		
+		sendReports(unit, unitMet, lastMove, report);
 		
 		gameDao.updateUnit(unitMet);	
 	}
 
 	//-----------------------------------------------------------------------------------//
+
+	private void sendReports(Unit unit, Unit unitMet, Move lastMove, Report report) 
+	{
+		//------------------------------------------------//
+		// envoi des rapports de combats
+		
+		unit.setMessageUID(gameDao.sendReport(report, unit.getPlayer().getUralysUID(), lastMove.getTimeFrom()));
+
+		if(!unit.getPlayer().getUralysUID().equals(unitMet.getPlayer().getUralysUID()))
+			unitMet.setMessageUID(gameDao.sendReport(report, unitMet.getPlayer().getUralysUID(), lastMove.getTimeFrom()));
+	}
+
+	//-----------------------------------------------------------------------------------//
 	
-	private void finalizeNextUnitCreation(Unit unit, Unit unitMet, Unit nextUnit, Report report, Move lastMove, DataContainer dataContainer, long timeOfTheMeeting) 
+	private void finalizeNextUnitCreation(Unit unit, Unit unitMet, Unit nextUnit, Move lastMove, DataContainer dataContainer, long timeOfTheMeeting) 
 	{
 		if(nextUnit != null)
 		{
@@ -247,13 +309,6 @@ public class MovesManager implements IMovesManager{
 			unitMet.setEndTime(timeOfTheMeeting);
 		unitMet.setUnitMetUID(unit.getUnitUID());
 
-		//------------------------------------------------//
-		// envoi des rapports de combats
-		
-		unit.setMessageUID(gameDao.sendReport(report, unit.getPlayer().getUralysUID(), lastMove.getTimeFrom()));
-
-		if(!unit.getPlayer().getUralysUID().equals(unitMet.getPlayer().getUralysUID()))
-			unitMet.setMessageUID(gameDao.sendReport(report, unitMet.getPlayer().getUralysUID(), lastMove.getTimeFrom()));
 	}
 
 	//-----------------------------------------------------------------------------------//
@@ -579,6 +634,7 @@ public class MovesManager implements IMovesManager{
 		report.getNextUnit().setGold(nextUnit.getGold());	
 	}
 
+	
 	//-------------------------------------------------------------------------------------//
 
 	private int getValue(Unit unit) {

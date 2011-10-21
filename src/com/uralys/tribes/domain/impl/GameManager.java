@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.jdo.PersistenceManager;
 
+import com.uralys.tribes.commons.Constants;
 import com.uralys.tribes.dao.IGameDAO;
 import com.uralys.tribes.dao.impl.PMF;
 import com.uralys.tribes.domain.IGameManager;
@@ -17,6 +18,7 @@ import com.uralys.tribes.entities.Item;
 import com.uralys.tribes.entities.Move;
 import com.uralys.tribes.entities.MoveResult;
 import com.uralys.tribes.entities.Player;
+import com.uralys.tribes.entities.Report;
 import com.uralys.tribes.entities.Stock;
 import com.uralys.tribes.entities.Unit;
 import com.uralys.tribes.entities.converters.EntitiesConverter;
@@ -269,23 +271,20 @@ public class GameManager implements IGameManager {
 		return movesManager.refreshUnitMoves(unit, true);
 	}
 
-	public MoveResult updateUnit(Unit unit, boolean needReplacing)
+	public MoveResult updateUnit(Unit unit)
 	{
 		if(debug)Utils.print("-----------------------------------");
 		if(debug)Utils.print("gamemanager updateUnit : " + unit.getUnitUID());
 
-		gameDao.updateUnit(unit);
-		
-		if(unit.getEndTime() < new Date().getTime() && unit.getEndTime() != -1){
-			needReplacing = false;
+		try{
+			gameDao.updateUnit(unit);
+		}
+		catch(Exception e){
+			return null;
 		}
 		
-		if(needReplacing){
-			if(debug)Utils.print("refreshUnitWay for the unit");
-			return movesManager.refreshUnitMoves(unit, false);
-		}
-
-		return null;
+		if(debug)Utils.print("refreshUnitWay for the unit");
+		return movesManager.refreshUnitMoves(unit, false);
 	}
 	
 	public void deleteUnit(String uralysUID, Unit unit)
@@ -304,6 +303,61 @@ public class GameManager implements IGameManager {
 		gameDao.deleteUnits(uralysUID, unitUIDs);
 	}
 
+	//==================================================================================================//
+
+	public void shoot(Unit shooter, Unit target, String cellUID)
+	{
+		int previousSize = target.getSize();
+		int deads = shooter.getBows()/Constants.BOW_SHOT_COEFF;
+		
+		target.setSize(previousSize - deads);
+		
+		int newSize = target.getSize();
+		
+		if(newSize <= 0){
+			newSize = 0;
+			movesManager.cancelAllUnitMoves(target);
+			deleteUnit(target.getPlayer().getUralysUID(), target);
+		}
+		else{
+			movesManager.refreshUnitMoves(target, false);
+		}
+
+		shooter.setLastShotTime(new Date().getTime());
+		gameDao.updateUnit(shooter);
+		
+		sendReportForBowShot(cellUID, shooter, target, previousSize, newSize, deads);
+	}
+
+	private void sendReportForBowShot(String cellUID, Unit shooter, Unit target, int previousSize, int newSize, int deads) 
+	{
+		Report report = new Report();
+		
+		report.setReportType(MovesManager.REPORT_BOW_SHOT);
+		report.setCellUID(cellUID);
+		
+		report.getUnit1().setUnitUID(shooter.getUnitUID());
+		report.getUnit1().setOwnerUID(shooter.getPlayer().getUralysUID());
+		report.getUnit1().setOwnerName(shooter.getPlayer().getName());
+		report.getUnit1().setType(shooter.getType());
+		report.getUnit1().setBows(shooter.getBows());
+		report.getUnit1().setValue(deads);
+
+		report.getUnit1().setAttackACity(false);
+		report.getUnit1().setDefendACity(false);
+
+		report.getUnit2().setUnitUID(target.getUnitUID());
+		report.getUnit2().setOwnerUID(target.getPlayer().getUralysUID());
+		report.getUnit2().setOwnerName(target.getPlayer().getName());
+		report.getUnit2().setSize(previousSize);
+
+		report.getNextUnit().setUnitUID(target.getUnitUID());
+		report.getNextUnit().setOwnerUID(target.getPlayer().getUralysUID());
+		report.getNextUnit().setOwnerName(target.getPlayer().getName());
+		report.getNextUnit().setSize(newSize);
+		
+		gameDao.sendReport(report, target.getPlayer().getUralysUID(), new Date().getTime());
+	}
 	//==================================================================================================//
 
 	public void deleteMove(String moveUID) {

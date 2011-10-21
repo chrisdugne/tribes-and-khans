@@ -12,4 +12,7 @@ public class Constants {
 
 	// distance utilisée pour le placement des joueurs
 	public static final int PLAYER_DISTANCE = 10;
+
+	// 100 arcs tuent 10 guerriers
+	public static final int BOW_SHOT_COEFF = 10;
 }

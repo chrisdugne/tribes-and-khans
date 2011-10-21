@@ -8,6 +8,7 @@ public interface IMovesManager {
 	//-----------------------------------------------------------------------------------//
 	
 	public MoveResult refreshUnitMoves(Unit unit, boolean creation);
+	public void cancelAllUnitMoves(Unit unit);
 	
 	//-----------------------------------------------------------------------------------//
 	

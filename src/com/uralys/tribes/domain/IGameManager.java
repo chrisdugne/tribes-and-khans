@@ -27,8 +27,12 @@ public interface IGameManager {
 	//-----------------------------------------------------------------------------------//
 	
 	public MoveResult createUnit(String uralysUID, Unit unit);
-	public MoveResult updateUnit(Unit unit, boolean needReplacing);
+	public MoveResult updateUnit(Unit unit);
 
+	//-----------------------------------------------------------------------------------//
+
+	public void shoot(Unit shooter, Unit target, String cellUID);
+	
 	//-----------------------------------------------------------------------------------//
 	
 	public void deleteUnit(String uralysUID, Unit unit);

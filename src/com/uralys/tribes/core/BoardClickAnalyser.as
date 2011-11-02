@@ -2,6 +2,7 @@ package com.uralys.tribes.core
 {
 	import com.uralys.tribes.commons.Numbers;
 	import com.uralys.tribes.commons.Session;
+	import com.uralys.tribes.commons.Translations;
 	import com.uralys.tribes.entities.Cell;
 	import com.uralys.tribes.entities.City;
 	import com.uralys.tribes.entities.Player;
@@ -14,6 +15,7 @@ package com.uralys.tribes.core
 	import flash.events.MouseEvent;
 	import flash.ui.Mouse;
 	
+	import mx.core.FlexGlobals;
 	import mx.events.ItemClickEvent;
 	import mx.utils.ObjectUtil;
 	
@@ -36,16 +38,6 @@ package com.uralys.tribes.core
 		public function BoardClickAnalyser(){}
 
 		//=====================================================================================//
-		
-		public function rollOnCase(_case:Cell):void{
-			Session.COORDINATE_X = _case.x;
-			Session.COORDINATE_Y = _case.y;			
-		}
-		
-		public function rollOnCity(city:City):void{
-			Session.COORDINATE_X = city.x;
-			Session.COORDINATE_Y = city.y;			
-		}
 		
 		public function clickOnCell(_cell:Cell):void
 		{
@@ -84,6 +76,13 @@ package com.uralys.tribes.core
 		
 		public function mouseMove(event:MouseEvent):void
 		{
+			Session.COORDINATE_X = Utils.getXCoordinate(event.currentTarget.mouseX);
+			Session.COORDINATE_Y = Utils.getYCoordinate(event.currentTarget.mouseY);		
+			
+			if(Math.abs(Session.COORDINATE_X - Session.COORDINATE_Y)%2 !=0){
+				Session.COORDINATE_Y--;
+			}
+			
 			if(mayDrag)
 				isDragging = true;
 			
@@ -124,6 +123,9 @@ package com.uralys.tribes.core
 			if(Session.MOVE_A_UNIT){
 				UnitMover.getInstance().recordMove();
 			}
+			else if(Session.SHOOTING){
+				shoot();
+			}
 			else{
 				try{
 					Session.CURRENT_SELECTION_X = Session.COORDINATE_X;
@@ -142,6 +144,39 @@ package com.uralys.tribes.core
 			Mouse.show();
 		}
 		
+		//---------------------------------------------------------------------------------------------------//
+		
+		private function shoot():void
+		{
+			var shootInAGoodCell:Boolean = false;
+			
+			if(Session.COORDINATE_X == Session.CURRENT_CELL_SELECTED.x
+				&& Session.COORDINATE_Y == Session.CURRENT_CELL_SELECTED.y - 2)
+				shootInAGoodCell = true;
+			
+			if(Session.COORDINATE_X == Session.CURRENT_CELL_SELECTED.x
+				&& Session.COORDINATE_Y == Session.CURRENT_CELL_SELECTED.y + 2)
+				shootInAGoodCell = true;
+			
+			if(Session.COORDINATE_X == Session.CURRENT_CELL_SELECTED.x + 1
+				&& Session.COORDINATE_Y == Session.CURRENT_CELL_SELECTED.y - 1)
+				shootInAGoodCell = true;
+			
+			if(Session.COORDINATE_X == Session.CURRENT_CELL_SELECTED.x - 1
+				&& Session.COORDINATE_Y == Session.CURRENT_CELL_SELECTED.y - 1)
+				shootInAGoodCell = true;
+			
+			if(Session.COORDINATE_X == Session.CURRENT_CELL_SELECTED.x - 1
+				&& Session.COORDINATE_Y == Session.CURRENT_CELL_SELECTED.y + 1)
+				shootInAGoodCell = true;
+			
+			if(Session.COORDINATE_X == Session.CURRENT_CELL_SELECTED.x + 1
+				&& Session.COORDINATE_Y == Session.CURRENT_CELL_SELECTED.y + 1)
+				shootInAGoodCell = true;
+			
+			if(!shootInAGoodCell)
+				FlexGlobals.topLevelApplication.message(Translations.WRONG_SHOOT.getItemAt(Session.LANGUAGE));
+		}		
 		
 		//---------------------------------------------------------------------------------------------------//
 		// click sur une ville dans la barre laterale

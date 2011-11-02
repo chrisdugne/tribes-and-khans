@@ -235,7 +235,6 @@ package com.uralys.tribes.core
 			
 			image.data = _cell;
 			image.addEventListener(MouseEvent.CLICK, tileIsClicked);
-			image.addEventListener(MouseEvent.ROLL_OVER, tileIsRolledOn);
 			
 			Session.board.mapPositioner.addElement(image);
 		}
@@ -491,14 +490,6 @@ package com.uralys.tribes.core
 			BoardClickAnalyser.getInstance().clickOnCell(event.currentTarget.data as Cell);
 		}
 		
-		protected function tileIsRolledOn(event:MouseEvent):void{
-			BoardClickAnalyser.getInstance().rollOnCase(event.currentTarget.data as Cell);
-		}
-
-		protected function cityIsRolledOn(event:MouseEvent):void{
-			BoardClickAnalyser.getInstance().rollOnCity(event.currentTarget.data as City);
-		}
-		
 		//==================================================================================================//
 
 		public function addMoveImages(move:com.uralys.tribes.entities.Move, xPreviousMove:int, yPreviousMove:int, displayProgress:Boolean):void
@@ -549,11 +540,15 @@ package com.uralys.tribes.core
 			for each(var image:Image in currentBowsToShoot){
 				Session.board.pawnLayer.removeElement(image);
 			}
+			
+			currentBowsToShoot.removeAll();
 		}
 
 		public function drawBowsToShoot():void
 		{
+			trace("-------");
 			currentBowsToShoot = new ArrayCollection();
+			trace("drawBowsToShoot : currentBowsToShoot " + currentBowsToShoot.length);
 			
 			var cell:Cell = Session.CURRENT_CELL_SELECTED;
 			
@@ -564,12 +559,12 @@ package com.uralys.tribes.core
 			var imageSouthEast:Image = new Image();
 			var imageSouthWest:Image = new Image();
 			
-			imageNorth.source = ImageContainer.getImage(ImageContainer.URALYS_MINI_LOGO);
-			imageSouth.source = ImageContainer.getImage(ImageContainer.URALYS_MINI_LOGO);
-			imageNorthEast.source = ImageContainer.getImage(ImageContainer.URALYS_MINI_LOGO);
-			imageNorthWest.source = ImageContainer.getImage(ImageContainer.URALYS_MINI_LOGO);
-			imageSouthEast.source = ImageContainer.getImage(ImageContainer.URALYS_MINI_LOGO);
-			imageSouthWest.source = ImageContainer.getImage(ImageContainer.URALYS_MINI_LOGO);
+			imageNorth.source = ImageContainer.getImage(ImageContainer.HIGHLIGHT_BOW_SHOOT);
+			imageSouth.source = ImageContainer.getImage(ImageContainer.HIGHLIGHT_BOW_SHOOT);
+			imageNorthEast.source = ImageContainer.getImage(ImageContainer.HIGHLIGHT_BOW_SHOOT);
+			imageNorthWest.source = ImageContainer.getImage(ImageContainer.HIGHLIGHT_BOW_SHOOT);
+			imageSouthEast.source = ImageContainer.getImage(ImageContainer.HIGHLIGHT_BOW_SHOOT);
+			imageSouthWest.source = ImageContainer.getImage(ImageContainer.HIGHLIGHT_BOW_SHOOT);
 			
 			var northPx:int = Utils.getXPixel(cell.x);
 			var northPy:int = Utils.getYPixel(cell.y - 2);
@@ -620,12 +615,27 @@ package com.uralys.tribes.core
 			imageSouthWest.scaleY = scale;
 			
 			
+			trace("Session.board.pawnLayer : " + Session.board.pawnLayer.numElements);
+
 			Session.board.pawnLayer.addElement(imageNorth);
 			Session.board.pawnLayer.addElement(imageSouth);
 			Session.board.pawnLayer.addElement(imageNorthEast);
 			Session.board.pawnLayer.addElement(imageNorthWest);
 			Session.board.pawnLayer.addElement(imageSouthEast);
 			Session.board.pawnLayer.addElement(imageSouthWest);
+			
+			
+			trace("Session.board.pawnLayer : " + Session.board.pawnLayer.numElements);
+			trace("currentBowsToShoot.length : " + currentBowsToShoot.length);
+			
+			currentBowsToShoot.addItem(imageNorth);
+			currentBowsToShoot.addItem(imageSouth);
+			currentBowsToShoot.addItem(imageNorthEast);
+			currentBowsToShoot.addItem(imageNorthWest);
+			currentBowsToShoot.addItem(imageSouthEast);
+			currentBowsToShoot.addItem(imageSouthWest);
+
+			trace("currentBowsToShoot.length : " + currentBowsToShoot.length);
 		}
 		
 		//==================================================================================================//

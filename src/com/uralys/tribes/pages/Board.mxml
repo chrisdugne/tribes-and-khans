@@ -519,7 +519,7 @@
 	<!-- ====================================================================================== -->
 	
 	<mx:Image source="{ImageContainer.MINI_LOGO}" right="70" y="-7"/>
-	<renderers:StepProgress top="7" left="20"/>
+	<components:StepProgress top="7" left="20"/>
 			  
 	<mx:SWFLoader source="{ImageContainer.LOADING}" 
 		 		  visible="{Session.WAIT_FOR_SERVER}"

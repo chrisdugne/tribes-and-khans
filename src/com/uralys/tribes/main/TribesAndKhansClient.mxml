@@ -78,6 +78,9 @@
 			import com.uralys.tribes.entities.City;
 			import com.uralys.tribes.entities.Unit;
 			import com.uralys.tribes.entities.Move;
+			
+			//-----------------------------------------------------------------------//
+			
 			private function initBlazeDS():void{
 //				registerClassAlias("com.uralys.tribes.entities.Game", Game);
 //				registerClassAlias("com.uralys.tribes.entities.Player", Player);
@@ -88,7 +91,8 @@
 			
 			//-----------------------------------------------------------------------//
 			
-			public function message(message:String, time:int = 3):void {
+			public function message(message:String, time:int = 3):void 
+			{
 				displayMessage.message = message;
 				displayMessage.time = time;
 				displayMessage.showMessage(); 

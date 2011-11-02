@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx">
+	<fx:Script>
+		<![CDATA[
+			import com.uralys.tribes.commons.Numbers;
+			[Bindable] public var minimum:int;
+			[Bindable] public var maximum:int;
+			[Bindable] public var mode:String;
+			[Bindable] public var trackHeight:int;
+			[Bindable] public var barSkin:Class;
+			[Bindable] public var trackSkin:Class;
+			[Bindable] public var label:String;
+		]]>
+	</fx:Script>
+		<mx:ProgressBar id="progressBar"
+						minimum="{minimum}" 
+						maximum="{maximum}" 
+						mode="{mode}"
+						trackHeight="{trackHeight}"
+						barSkin="{barSkin}"
+						trackSkin="{trackSkin}"
+						label=" "
+						width="100%"/>
+		<s:Label y="{trackHeight+3}"
+				 text="{label}"
+				 color="{Numbers.WHITE}"
+				 fontSize="16"/>
+</s:Group>

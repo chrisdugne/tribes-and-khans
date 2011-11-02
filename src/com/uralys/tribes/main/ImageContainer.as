@@ -178,6 +178,7 @@ public final class ImageContainer
 	[Bindable] public static var EDIT_WHITE:Bitmap;
 	[Bindable] public static var LEFT_ARROW:Bitmap;
 	[Bindable] public static var RIGHT_ARROW:Bitmap;
+	[Bindable] public static var HIGHLIGHT_BOW_SHOOT:Bitmap;
 
 	//   ======================================================================//
 
@@ -233,7 +234,8 @@ public final class ImageContainer
 		 "webresources/images/logos/onesheet.png",
 		 "webresources/images/edit_white.png",
 		 "webresources/images/icons/left.png",
-		 "webresources/images/icons/right.png"
+		 "webresources/images/icons/right.png",
+		 "webresources/images/map/highlight_bow_shoot.png"
 		 
 		 ]);
 	
@@ -375,11 +377,14 @@ public final class ImageContainer
 			case 39:
 				RIGHT_ARROW = event.currentTarget.content;
 				break;
+			case 40:
+				HIGHLIGHT_BOW_SHOOT = event.currentTarget.content;
+				break;
 		}
 		
 		currentImage++;
 		
-		if(currentImage < 40)
+		if(currentImage < 41)
 			loadNextImage();
 		else
 			IMAGES_LOADED = true;

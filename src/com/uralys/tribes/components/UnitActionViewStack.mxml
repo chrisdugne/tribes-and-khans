@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:ViewStack xmlns:fx="http://ns.adobe.com/mxml/2009" 
 			  xmlns:s="library://ns.adobe.com/flex/spark" 
-			  xmlns:mx="library://ns.adobe.com/flex/mx">
+			  xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:components="com.uralys.tribes.components.*">
 	<fx:Script>
 		<![CDATA[
 			import com.uralys.tribes.commons.Numbers;
@@ -10,6 +10,7 @@
 			import com.uralys.tribes.core.UnitMover;
 			import com.uralys.tribes.entities.Unit;
 			import com.uralys.tribes.managers.GameManager;
+			import com.uralys.tribes.skins.ClassicProgressTrackSkin;
 			import com.uralys.tribes.skins.WorkersProgressBarSkin;
 			import com.uralys.tribes.skins.WorkersProgressTrackSkin;
 			
@@ -40,6 +41,9 @@
 					return;
 				}
 				
+				if(moveProgressBar == null)
+					return;
+				
 				if(event==null)trace("setMoveInProgress");
 				var now:Number = new Date().getTime();
 				var millisRemaining:Number = unit.moves.getItemAt(0).timeTo - now;
@@ -59,7 +63,7 @@
 					
 					if(event==null)trace("setProgress millisSpent : " + millisSpent);
 	
-					moveProgressBar.setProgress( millisSpent, unit.moves.getItemAt(0).timeTo - unit.moves.getItemAt(0).timeFrom );
+					moveProgressBar.progressBar.setProgress( millisSpent, unit.moves.getItemAt(0).timeTo - unit.moves.getItemAt(0).timeFrom );
 					moveProgressBar.label = Translations.MOVING.getItemAt(Session.LANGUAGE) + " : " +(minutes>9 ? "" : "0")+minutes+" mn "+(secondes>9 ? "" : "0")+secondes+' s';
 
 					if(event==null)trace("moveProgressBar.label : " + moveProgressBar.label);
@@ -94,7 +98,7 @@
 					var minutes:int = millisRemaining/60/1000;
 					var secondes:int = (millisRemaining - minutes*60*1000) /1000;
 					
-					conquestProgressBar.setProgress( millisSpent, Numbers.BASE_TIME_FOR_LAND_CONQUEST_MILLIS );
+					conquestProgressBar.progressBar.setProgress( millisSpent, Numbers.BASE_TIME_FOR_LAND_CONQUEST_MILLIS );
 					conquestProgressBar.label = Translations.CONQUERING_LAND.getItemAt(Session.LANGUAGE) + " : " +(minutes>9 ? "" : "0")+minutes+" mn "+(secondes>9 ? "" : "0")+secondes+' s';
 					
 					Session.timer.addEventListener(TimerEvent.TIMER, setConquestInProgress);
@@ -127,7 +131,7 @@
 					var minutes:int = millisRemaining/60/1000;
 					var secondes:int = (millisRemaining - minutes*60*1000) /1000;
 					
-					shootProgressBar.setProgress( millisSpent, Numbers.BASE_TIME_FOR_SHOOTING );
+					shootProgressBar.progressBar.setProgress( millisSpent, Numbers.BASE_TIME_FOR_SHOOTING );
 					shootProgressBar.label = Translations.BOWS.getItemAt(Session.LANGUAGE) + " : " +(minutes>9 ? "" : "0")+minutes+" mn "+(secondes>9 ? "" : "0")+secondes+' s';
 					
 					Session.timer.addEventListener(TimerEvent.TIMER, setReloading);
@@ -168,25 +172,35 @@
 	</fx:Declarations>
 	
 		<s:NavigatorContent width="100%" showEffect="{unfade}" hideEffect="{fade}">
-			<s:HGroup verticalAlign="middle" 
+			<s:VGroup verticalAlign="middle" 
 					  horizontalAlign="center" 
 					  width="100%">
+				
 				<s:Button label="{Translations.MOVE.getItemAt(Session.LANGUAGE)}"
 						  skinClass="{CustomButtonSkin}"
-						  click="moveUnit()"
-						  includeInLayout="{!moveInProgress}"/>
+						  click="moveUnit()"/>
 				
-				<mx:ProgressBar id="moveProgressBar"
-								width="60%"
-								height="20"
-								mode="manual"
-								barSkin="{WorkersProgressBarSkin}"
-								trackSkin="{WorkersProgressTrackSkin}"
-								label="" 
-								labelPlacement="bottom"
-								includeInLayout="{moveInProgress}"
-								visible="{moveInProgress}"/>
-			</s:HGroup>
+			</s:VGroup>
+		</s:NavigatorContent>
+
+		<s:NavigatorContent width="100%" 
+							showEffect="{unfade}" 
+							hideEffect="{fade}"
+							includeInLayout="{moveInProgress}"
+							show="{unitRenderer.refresh()}">
+			<s:VGroup verticalAlign="middle" 
+					  horizontalAlign="center" 
+					  width="100%">
+				
+				<components:UralysProgressBar
+					id="moveProgressBar"
+					width="60%"
+					mode="manual"
+					trackHeight="15"
+					barSkin="{WorkersProgressBarSkin}"
+					trackSkin="{ClassicProgressTrackSkin}"/>
+				
+			</s:VGroup>
 		</s:NavigatorContent>
 		
 		<s:NavigatorContent width="100%" showEffect="{unfade}" hideEffect="{fade}"
@@ -202,15 +216,16 @@
 						  includeInLayout="{shotEnabled}"
 						  visible="{shotEnabled}"/>
 				
-				<mx:ProgressBar id="shootProgressBar"
-								width="60%"
-								height="20"
-								mode="manual"
-								barSkin="{WorkersProgressBarSkin}"
-								trackSkin="{WorkersProgressTrackSkin}"
-								label="" 
-								includeInLayout="{reloading}"
-								visible="{reloading}"/>
+				<components:UralysProgressBar
+					id="shootProgressBar"
+					width="60%"
+					mode="manual"
+					trackHeight="15"
+					barSkin="{WorkersProgressBarSkin}"
+					trackSkin="{ClassicProgressTrackSkin}"
+					includeInLayout="{reloading}"
+					visible="{reloading}"/>
+				
 			</s:HGroup>
 		</s:NavigatorContent>
 
@@ -222,15 +237,14 @@
 					  horizontalAlign="center" 
 					  width="100%">
 				
-				<mx:ProgressBar id="conquestProgressBar"
-								width="60%"
-								height="20"
-								mode="manual"
-								barSkin="{WorkersProgressBarSkin}"
-								trackSkin="{WorkersProgressTrackSkin}"
-								color="0x000000"
-								label="" 
-								labelPlacement="bottom"/>
+				<components:UralysProgressBar
+					id="conquestProgressBar"
+					width="60%"
+					mode="manual"
+					trackHeight="15"
+					barSkin="{WorkersProgressBarSkin}"
+					trackSkin="{ClassicProgressTrackSkin}"/>
+				
 			</s:HGroup>
 		</s:NavigatorContent>
 		

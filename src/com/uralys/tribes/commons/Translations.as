@@ -150,6 +150,12 @@ public class Translations{
 									["Distance trop longue, choisir une case à côté du dernier deplacement",
 									"Too long way, choose a cell next to your last move",
 									"Too long way, choose a cell next to your last move"]);
+
+	[Bindable]
+	public static var WRONG_SHOOT:ArrayCollection = new ArrayCollection(
+									["Choisir une case cible !",
+									"Choose a target cell !",
+									"Choose a target cell !"]);
 	[Bindable]
 	public static var LIMIT_NB_MOVES:ArrayCollection = new ArrayCollection(
 									["10 déplacements en mémoire maximum",

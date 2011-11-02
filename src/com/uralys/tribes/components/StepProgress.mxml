@@ -3,7 +3,7 @@
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
 		 xmlns:mx="library://ns.adobe.com/flex/mx"
 		 width="160"
-		 creationComplete="init()">
+		 creationComplete="init()" xmlns:components="com.uralys.tribes.components.*">
 
 	<fx:Script>
 		<![CDATA[
@@ -11,7 +11,9 @@
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;
 			import com.uralys.tribes.managers.GameManager;
+			import com.uralys.tribes.skins.ClassicProgressTrackSkin;
 			import com.uralys.tribes.skins.WorkersProgressBarSkin;
+			import com.uralys.tribes.skins.WorkersProgressTrackSkin;
 			
 			import flash.events.TimerEvent;
 			import flash.utils.Timer;
@@ -32,7 +34,7 @@
 				var minutes:int = millisRemaining/60/1000;
 				var secs:int = (millisRemaining-minutes*60*1000)/1000;
 				
-				this.progress.setProgress( millisSpent, Numbers.TIME_PER_STEP*60*1000 );
+				this.progress.progressBar.setProgress( millisSpent, Numbers.TIME_PER_STEP*60*1000 );
 				this.progress.label = Translations.REMAINING_TIME.getItemAt(Session.LANGUAGE) + "   " +minutes+": "+(secs>9 ? "" : "0")+secs;
 				
 				if(minutes == Numbers.TIME_PER_STEP-1 && secs == 59)
@@ -61,13 +63,14 @@
 		]]>
 	</fx:Script>
 	
-	<mx:ProgressBar id="progress"
-					minimum="100" 
-					maximum="100" 
-					mode="manual"
-					trackHeight="15"
-					barSkin="{WorkersProgressBarSkin}"
-					label="{Translations.REMAINING_TIME.getItemAt(Session.LANGUAGE)}    --:--" 
-					labelPlacement="top"/>
-	<mx:Button label="plop" y="9" click="nextStep()" visible="{Session.isLocal}"/>
+	<components:UralysProgressBar
+				id="progress"
+				minimum="100" 
+				maximum="100" 
+				mode="manual"
+				trackHeight="15"
+				barSkin="{WorkersProgressBarSkin}"
+				trackSkin="{ClassicProgressTrackSkin}"
+				label="{Translations.REMAINING_TIME.getItemAt(Session.LANGUAGE)}    --:--"/>
+	<s:Button label="plop" y="9" click="nextStep()" visible="{Session.isLocal}"/>
 </s:Group>

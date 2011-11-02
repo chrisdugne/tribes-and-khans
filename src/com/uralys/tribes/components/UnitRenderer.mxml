@@ -24,6 +24,7 @@
 			import com.uralys.tribes.commons.Numbers;
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;
+			import com.uralys.tribes.core.BoardDrawer;
 			import com.uralys.tribes.core.UnitMover;
 			import com.uralys.tribes.entities.Unit;
 			import com.uralys.tribes.main.ImageContainer;
@@ -94,14 +95,16 @@
 				
 				if(unit.moves.length > 1){
 					trace("moveInProgress");
+					nbActionsAvailable ++; // la barre de temps du deplacement
 					moveInProgress = true;
 					callLater(this.actionsViewStack.setMoveInProgress);
+					navigatorIndexesToshow.push(1);
 				}
 				else
 				{
 					if(unit.timeFromChallenging != -1){
 						nbActionsAvailable ++; // la conquete
-						navigatorIndexesToshow.push(2);
+						navigatorIndexesToshow.push(3);
 					
 						callLater(actionsViewStack.setConquestInProgress);
 					}
@@ -109,7 +112,7 @@
 					if(unit.bows > 0 && unit.type == Unit.ARMY)
 					{
 						nbActionsAvailable ++; // le tir
-						navigatorIndexesToshow.push(1);
+						navigatorIndexesToshow.push(2);
 						
 						Session.timer.removeEventListener(TimerEvent.TIMER, actionsViewStack.setReloading);
 						
@@ -127,7 +130,7 @@
 						&& (Session.CURRENT_CELL_SELECTED.landOwner == null || unit.player.ally.allyUID == Session.CURRENT_CELL_SELECTED.landOwner.ally.allyUID))
 					{
 						nbActionsAvailable ++; // la construction d'une ville
-						navigatorIndexesToshow.push(3);
+						navigatorIndexesToshow.push(4);
 						
 						buildCityEnabled = true;
 					}
@@ -194,12 +197,16 @@
 
 			//-------------------------------------------------------------------------------------//
 			
-			private function shoot():void{
+			private function shoot():void
+			{
 				UnitMover.getInstance().shoot();
 				refresh();
 			}
 			
-			private function cancelShoot():void{
+			private function cancelShoot():void
+			{
+				Session.SHOOTING = false;
+				BoardDrawer.getInstance().clearBowsToShoot();
 				refresh();
 			}
 

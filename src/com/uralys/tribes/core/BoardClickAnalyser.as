@@ -176,6 +176,9 @@ package com.uralys.tribes.core
 			
 			if(!shootInAGoodCell)
 				FlexGlobals.topLevelApplication.message(Translations.WRONG_SHOOT.getItemAt(Session.LANGUAGE));
+			else{
+				UnitMover.getInstance().shoot();
+			}
 		}		
 		
 		//---------------------------------------------------------------------------------------------------//

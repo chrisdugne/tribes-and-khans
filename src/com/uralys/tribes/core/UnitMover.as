@@ -356,16 +356,29 @@ package com.uralys.tribes.core
 		
 		//--------------------------------------------------------------------------//
 		
-		[Bindable] public static var cellSelectedForShoot:Boolean = false;
 		[Bindable] private static var unitRendererShooting:UnitRenderer;
 		
 		public function shoot():void
 		{
-			unit.lastShotTime = new Date().getTime();
 			unitRendererShooting.refresh();
+
+			var cellShooted:Cell = Session.map[Session.COORDINATE_X][Session.COORDINATE_Y];
+			var shooter:Unit = Session.CURRENT_CELL_SELECTED.army;
+			var target:Unit;
 			
-			cellSelectedForShoot = false;
-			GameManager.getInstance().updateUnit(unit);
+			if(cellShooted.army != null && cellShooted.army.player.ally.allyUID != Session.player.ally.allyUID){
+				target = cellShooted.army;
+			}
+			else if(cellShooted.caravan != null && cellShooted.caravan.player.ally.allyUID != Session.player.ally.allyUID){
+				target = cellShooted.caravan;
+			}
+			
+			if(target != null){
+				unit.lastShotTime = new Date().getTime();
+				GameManager.getInstance().shoot(shooter, target, cellShooted.cellUID);
+			}
+
+			unitRendererShooting.cancelShoot();
 		}
 
 	}

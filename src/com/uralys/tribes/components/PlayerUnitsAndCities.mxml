@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		  xmlns:s="library://ns.adobe.com/flex/spark" 
+		  xmlns:mx="library://ns.adobe.com/flex/mx"
+		  horizontalAlign="left">
+	<fx:Script>
+		<![CDATA[
+			import com.uralys.tribes.commons.Session;
+			import com.uralys.tribes.commons.Translations;
+			import com.uralys.tribes.core.BoardClickAnalyser;
+			
+			import mx.events.ItemClickEvent;
+			
+			//-----------------------------------------------------------//
+			
+			protected function initCitiesList():void{
+				citiesList.addEventListener(ItemClickEvent.ITEM_CLICK, BoardClickAnalyser.getInstance().onCityClick);
+			}
+			
+			protected function initUnitsList():void{
+				unitsList.addEventListener(ItemClickEvent.ITEM_CLICK, BoardClickAnalyser.getInstance().onMyUnitClick);
+			}
+			
+			
+		]]>
+	</fx:Script>
+	
+	<s:Label text="{Translations.MY_CITIES.getItemAt(Session.LANGUAGE)}"/>
+	<s:Scroller height="200">
+		<s:Group>
+			<s:List id="citiesList"
+					itemRenderer="com.uralys.tribes.renderers.CityListRenderer"
+					dataProvider="{Session.player.cities}"
+					borderVisible="false"
+					width="240"
+					contentBackgroundAlpha="0"
+					creationComplete="initCitiesList()">
+				<s:layout>
+					<s:VerticalLayout gap="1" useVirtualLayout="true" />
+				</s:layout>
+			</s:List>
+		</s:Group>
+	</s:Scroller>
+	<s:Label text="{Translations.MY_UNITS.getItemAt(Session.LANGUAGE)}"
+			 visible="{Session.player.units.length > 0}"/>
+	<s:Scroller height="200">
+		<s:Group>
+			<s:List id="unitsList"
+					itemRenderer="com.uralys.tribes.renderers.UnitListRenderer"
+					dataProvider="{Session.player.units}"
+					borderVisible="false"
+					width="240"
+					contentBackgroundAlpha="0"
+					creationComplete="initUnitsList()">
+				<s:layout>
+					<s:VerticalLayout gap="1" useVirtualLayout="true" />
+				</s:layout>
+			</s:List>
+		</s:Group>
+	</s:Scroller>
+</s:VGroup>

@@ -300,7 +300,7 @@ package com.uralys.tribes.managers {
 				
 				refreshCityWorkersOnResources(true, city, starvation);
 			}
-		}
+		} 
 		
 		public function updateStockBuildingStatus(city:City, stock:Stock):void
 		{
@@ -1437,6 +1437,14 @@ package com.uralys.tribes.managers {
 		public function updateWorkersProgressBar():void
 		{
 			Session.board.cityForm.cityHeader.updateWorkersProgressBar();
+		}
+		
+		//---------------------------------------------------------------------//		
+
+		public function shoot(shooter:Unit, target:Unit, cellUID:String):void
+		{
+			var gameWrapper:RemoteObject = getGameWrapper();
+			gameWrapper.shoot(shooter, target, cellUID);
 		}
 	}
 }

@@ -33,8 +33,8 @@ package com.uralys.tribes.commons
 		
 		//=====================================================//
 
-		[Bindable] public static var MAP_WIDTH:int = 500;	
-		[Bindable] public static var MAP_HEIGHT:int = 500;	
+		[Bindable] public static var MAP_WIDTH:int = 880;	
+		[Bindable] public static var MAP_HEIGHT:int = 550;	
 		
 		//=====================================================//
 		

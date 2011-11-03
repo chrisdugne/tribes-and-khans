@@ -93,8 +93,10 @@
 				nbActionsAvailable = 1; // le deplacement
 				navigatorIndexesToshow.push(0);
 				
+				if(unit.player.playerUID != Session.player.playerUID)
+					return;
+				
 				if(unit.moves.length > 1){
-					trace("moveInProgress");
 					nbActionsAvailable ++; // la barre de temps du deplacement
 					moveInProgress = true;
 					callLater(this.actionsViewStack.setMoveInProgress);
@@ -197,16 +199,10 @@
 
 			//-------------------------------------------------------------------------------------//
 			
-			private function shoot():void
-			{
-				UnitMover.getInstance().shoot();
-				refresh();
-			}
-			
-			private function cancelShoot():void
+			public function cancelShoot():void
 			{
 				Session.SHOOTING = false;
-				BoardDrawer.getInstance().clearBowsToShoot();
+				BoardDrawer.getInstance().removeBowsToShoot();
 				refresh();
 			}
 
@@ -304,11 +300,6 @@
 				  width="100%"
 				  includeIn="shooting"
 				  paddingTop="7">
-			
-			<s:Button label="{Translations.SHOOT.getItemAt(Session.LANGUAGE)}" 
-					  click="{shoot()}" 
-					  enabled="{UnitMover.cellSelectedForShoot}"
-					  skinClass="com.uralys.tribes.skins.CustomButtonSkin"/>
 			
 			<s:Button label="{Translations.CANCEL.getItemAt(Session.LANGUAGE)}" 
 					  click="{cancelShoot()}" 

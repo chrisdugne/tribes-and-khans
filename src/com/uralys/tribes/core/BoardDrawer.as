@@ -535,7 +535,7 @@ package com.uralys.tribes.core
 		
 		private var currentBowsToShoot:ArrayCollection = new ArrayCollection();
 		
-		public function clearBowsToShoot():void
+		public function removeBowsToShoot():void
 		{
 			for each(var image:Image in currentBowsToShoot){
 				Session.board.pawnLayer.removeElement(image);

@@ -332,7 +332,7 @@
 			<s:Group width="{Session.MAP_WIDTH}" 
 					 height="{Session.MAP_HEIGHT}"
 					 x="50"
-					 y="40"
+					 y="30"
 					 id="boardImage"
 					 clipAndEnableScrolling="true"	  
 					 useHandCursor="true">

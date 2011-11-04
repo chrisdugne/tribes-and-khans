@@ -307,12 +307,26 @@ public class GameManager implements IGameManager {
 
 	public void shoot(Unit shooter, Unit target, String cellUID)
 	{
+		if(debug)Utils.print("----------------------------");
+		if(debug)Utils.print("shoot");
+		if(debug)Utils.print("----------------------------");
+		if(debug)Utils.print("shooter : " + shooter.getUnitUID());
+		if(debug)Utils.print("target : " + target.getUnitUID());
+		if(debug)Utils.print("cellUID : " + cellUID);
+		if(debug)Utils.print("----------------------------");
+		
 		int previousSize = target.getSize();
 		int deads = shooter.getBows()/Constants.BOW_SHOT_COEFF;
+
+		if(debug)Utils.print("deads : " + deads);
+		if(debug)Utils.print("----------------------------");
 		
 		target.setSize(previousSize - deads);
 		
 		int newSize = target.getSize();
+
+		if(debug)Utils.print("newSize : " + newSize);
+		if(debug)Utils.print("----------------------------");
 		
 		if(newSize <= 0){
 			newSize = 0;
@@ -350,6 +364,7 @@ public class GameManager implements IGameManager {
 		report.getUnit2().setOwnerUID(target.getPlayer().getUralysUID());
 		report.getUnit2().setOwnerName(target.getPlayer().getName());
 		report.getUnit2().setSize(previousSize);
+		report.getUnit2().setType(target.getType());
 
 		report.getNextUnit().setUnitUID(target.getUnitUID());
 		report.getNextUnit().setOwnerUID(target.getPlayer().getUralysUID());

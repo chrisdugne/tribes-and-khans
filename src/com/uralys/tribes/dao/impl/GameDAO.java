@@ -431,7 +431,6 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			result.addAll(cells);
 		}
 		
-		pm.close();
 		return result;
 	}
 

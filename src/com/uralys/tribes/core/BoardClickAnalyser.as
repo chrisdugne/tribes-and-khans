@@ -117,8 +117,8 @@ package com.uralys.tribes.core
 		{
 			mayDrag = false;
 			
-			Session.board.enterCityForm.visible = false;
-			Session.board.enterCityForm.includeInLayout = false;
+			Session.board.cellContent.enterCityForm.visible = false;
+			Session.board.cellContent.enterCityForm.includeInLayout = false;
 			
 			if(Session.MOVE_A_UNIT){
 				UnitMover.getInstance().recordMove();
@@ -132,6 +132,7 @@ package com.uralys.tribes.core
 					Session.CURRENT_SELECTION_Y = Session.COORDINATE_Y;
 					
 					Session.CURRENT_CELL_SELECTED = Session.map[Session.CURRENT_SELECTION_X][Session.CURRENT_SELECTION_Y];
+					clickOnCell(Session.CURRENT_CELL_SELECTED);
 					
 					GameManager.getInstance().reloadCurrentCells();
 				}

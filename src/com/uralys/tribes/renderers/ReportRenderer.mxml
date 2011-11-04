@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
-				xmlns:s="library://ns.adobe.com/flex/spark" 
-				xmlns:mx="library://ns.adobe.com/flex/mx" 
-				xmlns:renderers="com.uralys.tribes.renderers.*"
-				paddingTop="10">
+		xmlns:s="library://ns.adobe.com/flex/spark" 
+		xmlns:mx="library://ns.adobe.com/flex/mx" 
+		xmlns:renderers="com.uralys.tribes.renderers.*"
+		paddingTop="10" xmlns:components="com.uralys.tribes.components.*"
+		horizontalAlign="center">
 	<fx:Script>
 		<![CDATA[
 			import com.uralys.tribes.commons.Numbers;
@@ -25,10 +26,16 @@
 	</fx:Script>
 	<s:Label text="{report.title}"
 			 color="#ffffff"/>
-	<s:Label text="{Translations.CELL.getItemAt(Session.LANGUAGE)} : [{Utils.getXFromCellUID(report.cellUID)},{Utils.getYFromCellUID(report.cellUID)}]"
+	<s:Label text="{Translations.CELL.getItemAt(Session.LANGUAGE)} : [ {Utils.getXFromCellUID(report.cellUID)} , {Utils.getYFromCellUID(report.cellUID)} ]"
 			 color="#ffffff"/>
+	
+	<components:HRule width="100%"/>
+
 	<renderers:ReportUnitRenderer unit="{report.unit1}"/>
 	<renderers:ReportUnitRenderer unit="{report.unit2}"/>
+	
+	<s:Image source="{ImageContainer.ARROW_DEMOTE}"/>
+	
 	<renderers:ReportUnitRenderer unit="{report.nextUnit}"/>
 	
 </s:VGroup>

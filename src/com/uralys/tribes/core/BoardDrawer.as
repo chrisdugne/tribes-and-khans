@@ -72,7 +72,8 @@ package com.uralys.tribes.core
 			return instance;
 		}
 
-		public function BoardDrawer(){
+		public function BoardDrawer()
+		{
 			moveGradient = [];
 			moveGradient.push(new GradientEntry(0xFFFFFF));
 			moveGradient.push(new GradientEntry(0x11dd11));
@@ -234,7 +235,6 @@ package com.uralys.tribes.core
 			}
 			
 			image.data = _cell;
-			image.addEventListener(MouseEvent.CLICK, tileIsClicked);
 			
 			Session.board.mapPositioner.addElement(image);
 		}
@@ -481,13 +481,6 @@ package com.uralys.tribes.core
 				catch(e:Error){}
 				
 			}
-		}
-		
-		//==================================================================================================//
-		// click et roll-over sur les tuiles-images
-		
-		protected function tileIsClicked(event:MouseEvent):void{
-			BoardClickAnalyser.getInstance().clickOnCell(event.currentTarget.data as Cell);
 		}
 		
 		//==================================================================================================//

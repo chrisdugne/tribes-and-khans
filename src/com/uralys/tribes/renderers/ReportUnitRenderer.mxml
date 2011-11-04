@@ -26,7 +26,7 @@
 	</s:HGroup>
 	<s:HGroup width="100%">
 		<s:Image source="{unit.type == Unit.ARMY ? ImageContainer.WARRIOR1 : ImageContainer.MERCHANTS}"/>
-		<s:Label text="{unit.size}" color="#ffffff"/>
+		<s:Label text="{unit.size}" visible="{unit.size &gt; 0}" color="#ffffff"/>
 		
 		<s:Image source="{ImageContainer.BOW}" visible="{unit.bows &gt; 0}"/>
 		<s:Label text="{unit.bows}" visible="{unit.bows &gt; 0}" color="#ffffff"/>
@@ -38,7 +38,7 @@
 		<s:Label text="{unit.armors}" visible="{unit.armors &gt; 0}" color="#ffffff"/>
 		
 		<s:Spacer width="100%"/>
-		<s:Label text="{unit.value} pts" color="#ffffff"/>
+		<s:Label text="{unit.value} pts" visible="{unit.value &gt; 0}" color="#ffffff"/>
 	</s:HGroup>
 	<s:HGroup width="100%">
 		<s:Image source="{ImageContainer.WHEAT}" visible="{unit.wheat &gt; 0}"/>

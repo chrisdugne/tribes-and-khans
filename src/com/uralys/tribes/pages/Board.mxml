@@ -116,9 +116,9 @@
 				// on calcule si ce n'a pas été fait avant
 				GameManager.getInstance().refreshCityWorkersOnResources(false, selectedCity, false);
 				
-				enterCityForm.includeInLayout = true;
-				enterCityForm.visible = true;				
-				enterCityButton.enabled = selectedCity.beginTime < new Date().getTime();
+				cellContent.enterCityForm.includeInLayout = true;
+				cellContent.enterCityForm.visible = true;				
+				cellContent.enterCityButton.enabled = selectedCity.beginTime < new Date().getTime();
 				
 				setBuildingCityProgressBar();
 			}
@@ -133,11 +133,13 @@
 				var hours:int = millisRemaining/60/60/1000;
 				var minutes:int = (millisRemaining-hours*60*60*1000)/60/1000;
 				
-				buildingCityProgessBar.setProgress( millisSpent, Numbers.TIME_TO_BUILD_A_CITY );
-				labelBuildingCity.text = Translations.CITY_BUILDING_DONE.getItemAt(Session.LANGUAGE) + " " +(hours>9 ? "" : "0") + hours + "h"+ (minutes>9 ? "" : "0") + minutes;
+				cellContent.buildingCityProgessBar.setProgress( millisSpent, Numbers.TIME_TO_BUILD_A_CITY );
+				cellContent.labelBuildingCity.text = Translations.CITY_BUILDING_DONE.getItemAt(Session.LANGUAGE) + " " +(hours>9 ? "" : "0") + hours + "h"+ (minutes>9 ? "" : "0") + minutes;
 			}
 			
-			private function enterCity(event:MouseEvent):void
+			//-----------------------------------------------------------//
+
+			public function enterCity(event:MouseEvent):void
 			{
 				cityForm.refreshCity();
 				goLeft.play();
@@ -146,8 +148,6 @@
 				currentState = "city";
 			}
 			
-			
-
 			//-----------------------------------------------------------//
 
 			private function saveCityAndGoBackToBoard():void
@@ -240,6 +240,9 @@
 
 		<s:Move id="hideCityChangeName" target="{changeCityNameWindow}" xTo="-375"/>
 		<s:Move id="showCityChangeName" target="{changeCityNameWindow}" xTo="0"/>
+
+		<s:Move id="hidePlayerUnits" target="{playerUnits}" xTo="-600"/>
+		<s:Move id="showPlayerUnits" target="{playerUnits}" xTo="0"/>
 		
 	</fx:Declarations>
 	
@@ -247,82 +250,24 @@
 	
 	<s:Group id="main" width="100%" height="100%">
 		
-		<components:PlayerUnitsAndCities top="70" right="15"/>
+		<components:CellContent id="cellContent"		
+				  top="155" 
+				  x="{boardImage.x+Session.MAP_WIDTH + 65}"/>
 		
-		<!-- =============================================================================================== -->
-		<!-- Units Tab -->
+		<mx:Image source="{ImageContainer.MINI_LOGO}" right="50" y="-7"/>
+		<mx:Image source="{ImageContainer.ARROW_RIGHT}" 
+				  id="openPlayerUnitsButton"
+				  x="2" y="160"
+				  alpha="0.6"
+				  click="{showPlayerUnits.play()}"/>
 		
-		<s:VGroup id="enterCityForm"
-				  top="150" 
-				  x="{boardImage.x+Session.MAP_WIDTH + 65}"
-				  visible="false"
-				  includeInLayout="false"
-				  horizontalAlign="center"
-				  paddingTop="5"
-				  width="200">
-			<s:HGroup>
-				<s:Label text="{Translations.CITY.getItemAt(Session.LANGUAGE)} : {Session.CURRENT_CELL_SELECTED.city.name} ({Session.CURRENT_CELL_SELECTED.city.population})"
-						  click="if(Session.player.playerUID == Session.CURRENT_CELL_SELECTED.landOwner.playerUID)showCityChangeName.play()"/>
-				<mx:Image source="{ImageContainer.getImage(ImageContainer.EDIT)}"
-					  click="showCityChangeName.play()"
-					  visible="{Session.player.playerUID == Session.CURRENT_CELL_SELECTED.landOwner.playerUID}"/>
-			</s:HGroup>
-			<renderers:PlayerName player="{Session.player.playerUID == Session.CURRENT_CELL_SELECTED.landOwner.playerUID ? Session.player : Session.CURRENT_CELL_SELECTED.landOwner}"/>
-			
-			<s:Button label="{Translations.ENTER_CITY.getItemAt(Session.LANGUAGE)}" 
-					  id="enterCityButton"
-					  click="enterCity(event)"
-					  skinClass="com.uralys.tribes.skins.CustomButtonSkin"
-					  visible="{Session.player.playerUID == Session.CURRENT_CELL_SELECTED.landOwner.playerUID}"/>
-			<mx:ProgressBar id="buildingCityProgessBar"
-							width="120"
-							right="0" top="0"
-							mode="manual"
-							trackSkin="{CustomProgressTrackSkin}"
-							barSkin="{ClassicProgressBarSkin}"
-							label="" 
-							includeInLayout="{!enterCityButton.enabled}"
-							visible="{!enterCityButton.enabled}"
-							labelPlacement="top"/>
-			<s:Label id="labelBuildingCity"
-					 includeInLayout="{!enterCityButton.enabled}"
-					 visible="{!enterCityButton.enabled}"/>
-			
-			<s:Button label="{Translations.REFRESH.getItemAt(Session.LANGUAGE)}" 
-					  id="refreshOpponentButton"
-					  click="{GameManager.getInstance().getPlayer(Session.CURRENT_CELL_SELECTED.landOwner)}"
-					  skinClass="com.uralys.tribes.skins.CustomButtonSkin"
-					  visible="{Session.player.playerUID != Session.CURRENT_CELL_SELECTED.landOwner.playerUID
-					  		&amp;&amp; Session.CURRENT_CELL_SELECTED.landOwner.lastStep &lt; Session.player.lastStep}"/>
-		</s:VGroup>
+		<components:StepProgress bottom="20" x="{boardImage.x+Session.MAP_WIDTH + 65}"/>
 		
-		<s:VGroup id="unitForm"
-				  top="290" 
-				  x="{boardImage.x+Session.MAP_WIDTH + 65}"
-				  visible="{Session.CURRENT_CELL_SELECTED != null 
-						  &amp;&amp; 
-						  ((Session.CURRENT_CELL_SELECTED.army != null 
-						  &amp;&amp; Session.CURRENT_CELL_SELECTED.army.size > 0)
-						  ||
-				  		  (Session.CURRENT_CELL_SELECTED.caravan != null 
-						  &amp;&amp; Session.CURRENT_CELL_SELECTED.caravan.size > 0))}"
-				  horizontalAlign="center"
-				  paddingTop="5"
-				  width="200">
-			
-			<mx:HRule width="180"/>
-			<components:UnitRenderer unit="{Session.CURRENT_CELL_SELECTED.army}" 
-									visible="{Session.CURRENT_CELL_SELECTED != null &amp;&amp; Session.CURRENT_CELL_SELECTED.army !=null &amp;&amp; Session.CURRENT_CELL_SELECTED.army.size > 0}"/>
-			<mx:HRule width="180"/>
-			<components:UnitRenderer unit="{Session.CURRENT_CELL_SELECTED.caravan}" 
-									visible="{Session.CURRENT_CELL_SELECTED != null &amp;&amp; Session.CURRENT_CELL_SELECTED.caravan !=null &amp;&amp; Session.CURRENT_CELL_SELECTED.caravan.size > 0}"/>
-		</s:VGroup>
-
-		<!-- =============================================================================================== -->
-		
-		<s:HGroup width="100%" horizontalAlign="center" paddingTop="5">
+		<s:HGroup width="100%" horizontalAlign="center" paddingTop="5"
+				  bottom="70"
+				  x="{boardImage.x+Session.MAP_WIDTH + 20}">
 			<s:Label text="X : {Session.COORDINATE_X}"/>
-			<mx:Spacer width="200"/>
+			<mx:Spacer width="50"/>
 			<s:Label text="Y : {Session.COORDINATE_Y}"/>
 		</s:HGroup>
 
@@ -398,6 +343,7 @@
 				</s:Group>
  			</s:Group>
 				
+			<!--
 			<mx:Image source="{ImageContainer.MAP_BORDER_TOP}"
 					  x="{boardImage.x-31}"
 					  y="{boardImage.y-31}"
@@ -414,6 +360,7 @@
 					  x="{boardImage.x+Session.MAP_WIDTH - 31}"
 					  y="{boardImage.y + 31}"
 					  mouseOver="if(BoardClickAnalyser.isDragging)BoardClickAnalyser.getInstance().mouseUp(event)"/>
+			-->
 			
 			<mx:Image source="{ImageContainer.ZOOM_IN}"
 					  id="zoomInButton"
@@ -461,10 +408,7 @@
 	</s:VGroup>
 		 
 	<!-- ====================================================================================== -->
-	
-	<mx:Image source="{ImageContainer.MINI_LOGO}" right="70" y="-7"/>
-	<components:StepProgress top="7" left="20"/>
-			  
+		  
 	<mx:SWFLoader source="{ImageContainer.LOADING}" 
 		 		  visible="{Session.WAIT_FOR_SERVER}"
 				  x="{boardImage.x+50}"
@@ -476,4 +420,6 @@
 	
 	<windows:ChangeName id="changeNameWindow" x="-375" y="100" type="1"/>
 	<windows:ChangeName id="changeCityNameWindow" x="-375" y="100" type="2"/>
+	<windows:PlayerUnits id="playerUnits" x="-600" y="100"/>
+	
 </s:Group>

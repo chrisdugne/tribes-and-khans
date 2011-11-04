@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		  xmlns:s="library://ns.adobe.com/flex/spark" 
+		  xmlns:mx="library://ns.adobe.com/flex/mx" 
+		  xmlns:renderers="com.uralys.tribes.renderers.*" 
+		  xmlns:components="com.uralys.tribes.components.*">
+	
+	<fx:Script>
+		<![CDATA[
+			import com.uralys.tribes.commons.Session;
+			import com.uralys.tribes.commons.Translations;
+			import com.uralys.tribes.main.ImageContainer;
+			import com.uralys.tribes.managers.GameManager;
+			import com.uralys.tribes.skins.ClassicProgressBarSkin;
+			import com.uralys.tribes.skins.CustomProgressTrackSkin;
+		]]>
+	</fx:Script>
+	
+	<s:VGroup id="enterCityForm"
+			  visible="false"
+			  includeInLayout="false"
+			  horizontalAlign="center"
+			  paddingTop="5"
+			  width="200">
+		<s:HGroup>
+			<s:Label text="{Translations.CITY.getItemAt(Session.LANGUAGE)} : {Session.CURRENT_CELL_SELECTED.city.name} ({Session.CURRENT_CELL_SELECTED.city.population})"
+					 click="if(Session.player.playerUID == Session.CURRENT_CELL_SELECTED.landOwner.playerUID)Session.board.showCityChangeName.play()"/>
+			<mx:Image source="{ImageContainer.getImage(ImageContainer.EDIT)}"
+					  click="{Session.board.showCityChangeName.play()}"
+					  visible="{Session.player.playerUID == Session.CURRENT_CELL_SELECTED.landOwner.playerUID}"/>
+		</s:HGroup>
+		
+		<renderers:PlayerName player="{Session.player.playerUID == Session.CURRENT_CELL_SELECTED.landOwner.playerUID ? Session.player : Session.CURRENT_CELL_SELECTED.landOwner}"/>
+		
+		<s:Button label="{Translations.ENTER_CITY.getItemAt(Session.LANGUAGE)}" 
+				  id="enterCityButton"
+				  click="{Session.board.enterCity(event)}"
+				  skinClass="com.uralys.tribes.skins.CustomButtonSkin"
+				  visible="{Session.player.playerUID == Session.CURRENT_CELL_SELECTED.landOwner.playerUID}"/>
+		<mx:ProgressBar id="buildingCityProgessBar"
+						width="120"
+						right="0" top="0"
+						mode="manual"
+						trackSkin="{CustomProgressTrackSkin}"
+						barSkin="{ClassicProgressBarSkin}"
+						label="" 
+						includeInLayout="{!enterCityButton.enabled}"
+						visible="{!enterCityButton.enabled}"
+						labelPlacement="top"/>
+		<s:Label id="labelBuildingCity"
+				 includeInLayout="{!enterCityButton.enabled}"
+				 visible="{!enterCityButton.enabled}"/>
+		
+		<s:Button label="{Translations.REFRESH.getItemAt(Session.LANGUAGE)}" 
+				  id="refreshOpponentButton"
+				  click="{GameManager.getInstance().getPlayer(Session.CURRENT_CELL_SELECTED.landOwner)}"
+				  skinClass="com.uralys.tribes.skins.CustomButtonSkin"
+				  visible="{Session.player.playerUID != Session.CURRENT_CELL_SELECTED.landOwner.playerUID
+				  &amp;&amp; Session.CURRENT_CELL_SELECTED.landOwner.lastStep &lt; Session.player.lastStep}"/>
+	</s:VGroup>
+	
+	<s:VGroup id="unitForm"
+			  visible="{Session.CURRENT_CELL_SELECTED != null 
+			  &amp;&amp; 
+			  ((Session.CURRENT_CELL_SELECTED.army != null 
+			  &amp;&amp; Session.CURRENT_CELL_SELECTED.army.size > 0)
+			  ||
+			  (Session.CURRENT_CELL_SELECTED.caravan != null 
+			  &amp;&amp; Session.CURRENT_CELL_SELECTED.caravan.size > 0))}"
+			  horizontalAlign="center"
+			  paddingTop="5"
+			  width="200">
+		
+		<mx:HRule width="180"/>
+		<components:UnitRenderer unit="{Session.CURRENT_CELL_SELECTED.army}" 
+								 visible="{Session.CURRENT_CELL_SELECTED != null &amp;&amp; Session.CURRENT_CELL_SELECTED.army !=null &amp;&amp; Session.CURRENT_CELL_SELECTED.army.size > 0}"/>
+		<mx:HRule width="180"/>
+		<components:UnitRenderer unit="{Session.CURRENT_CELL_SELECTED.caravan}" 
+								 visible="{Session.CURRENT_CELL_SELECTED != null &amp;&amp; Session.CURRENT_CELL_SELECTED.caravan !=null &amp;&amp; Session.CURRENT_CELL_SELECTED.caravan.size > 0}"/>
+	</s:VGroup>
+</s:VGroup>

@@ -19,6 +19,7 @@ package com.uralys.tribes.core
 	
 	import mx.collections.ArrayCollection;
 	import mx.core.FlexGlobals;
+	import mx.utils.ObjectUtil;
 
 	public class UnitMover
 	{
@@ -366,10 +367,10 @@ package com.uralys.tribes.core
 			var shooter:Unit = Session.CURRENT_CELL_SELECTED.army;
 			var target:Unit;
 			
-			if(cellShooted.army != null && cellShooted.army.player.ally.allyUID != Session.player.ally.allyUID){
+			if(cellShooted.army != null && cellShooted.army.player.playerUID != Session.player.playerUID){
 				target = cellShooted.army;
 			}
-			else if(cellShooted.caravan != null && cellShooted.caravan.player.ally.allyUID != Session.player.ally.allyUID){
+			else if(cellShooted.caravan != null && cellShooted.caravan.player.playerUID != Session.player.playerUID){
 				target = cellShooted.caravan;
 			}
 			

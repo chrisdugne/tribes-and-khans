@@ -112,6 +112,7 @@ package com.uralys.tribes.commons
 		
 		[Bindable] public static var REPORT_GROUND_FIGHT:int = 1;
 		[Bindable] public static var REPORT_GROUND_GATHERING:int = 2;
+		[Bindable] public static var REPORT_BOW_SHOT:int = 3;
 		
 		//==================================================================================================//
 		// Item data

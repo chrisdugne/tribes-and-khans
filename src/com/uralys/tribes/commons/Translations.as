@@ -12,25 +12,28 @@ public class Translations{
 
 	//-----------------------------------------------------------------------------------//
 
-	public static var idMessage:String = "4";
+	public static var idMessage:String = "5";
 	
 	[Bindable]
 	public static var G_MESSAGE:ArrayCollection = new ArrayCollection(
-									["Bienvenue sur la version 1.2 !\n\n" +
-										"Vous pouvez désormais jouer en Alliance\n avec d'autres joueurs.\n\n" +
-										"Construisez vos entrepots pour agrandir\n les capacités de vos villes.\n\n" +
+									["Bienvenue sur la version 1.3 !\n\n" +
+										"La carte a été agrandie, \n\n" +
+										"Les rapports de combats sont en place !\n\n" +
+										"Il est possible de tirer à distance avec les arcs\n\n" +
 										"Faites un tour sur le forum pour proposer des évolutions du jeu\n" +
 										"Ou pour remonter un bug.\n",
-									"Welcome on the the 1.2 !\n\n" +
-										"You can know play with Allies.\n\n" +
-										"Build your stocks to upgrade your cities.\n\n" +
+									"Welcome on the the 1.3 !\n\n" +
+										"The map is now bigger, \n\n" +
+										"You have access to the Fight Reports !\n\n" +
+										"You may now on shoot with the bows.\n\n" +
 										"Go see the forum to suggest a game evolution,\n" +
 										"Or to tell us about un bug you found.",
-									"Welcome on the the 1.2 !\n\n" +
-										"You can know play with Allies.\n\n" +
-										"Build your stocks to upgrade your cities.\n\n" +
+									"Welcome on the the 1.3 !\n\n" +
+										"The map is now bigger, \n\n" +
+										"You have access to the Fight Reports !\n\n" +
+										"You may now on shoot with the bows.\n\n" +
 										"Go see the forum to suggest a game evolution,\n" +
-										"Or to tell us about un bug you found."]);
+										"Or to tell us about un bug you found.",]);
 	[Bindable]
 	public static var DO_NOT_SHOW_MESSAGE:ArrayCollection = new ArrayCollection(
 									["Ne pas me montrer ce message la prochaine fois",
@@ -864,6 +867,11 @@ public class Translations{
 									["Rassemblement",
 									"Gathering",
 									"Gathering"]);
+	[Bindable]
+	public static var BOW_SHOT:ArrayCollection = new ArrayCollection(
+									["Tir d'arcs",
+									"Bow shots",
+									"Bow shots"]);
 	
 	[Bindable]
 	public static var RESULT:ArrayCollection = new ArrayCollection(

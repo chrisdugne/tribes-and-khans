@@ -87,6 +87,12 @@ public final class ImageContainer
 	[Embed(source="resources/embed/arrow_demote.png")]
 	[Bindable] public static var ARROW_DEMOTE:Class;  
 
+	[Embed(source="resources/embed/arrow_left.png")]
+	[Bindable] public static var ARROW_LEFT:Class;  
+
+	[Embed(source="resources/embed/arrow_right.png")]
+	[Bindable] public static var ARROW_RIGHT:Class;  
+
 	//   ======================================================================//
 
 	[Embed(source="resources/embed/icons/epee.png")]

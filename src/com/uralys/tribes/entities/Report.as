@@ -74,11 +74,27 @@ package com.uralys.tribes.entities
 			var victory:Boolean = nextUnit.ownerUID == Session.player.playerUID;
 			var playerOwnsUnit1 = unit1.ownerUID ==  Session.player.playerUID;
 			
-			var _title:String =  reportType == Numbers.REPORT_GROUND_FIGHT 
-								? (Translations.CONFLICT.getItemAt(Session.LANGUAGE) as String) 
-								: (Translations.GATHERING.getItemAt(Session.LANGUAGE) as String)
+			var _title:String;
 			
-			if(reportType != Numbers.REPORT_GROUND_GATHERING)
+			switch(reportType)
+			{
+				case Numbers.REPORT_GROUND_FIGHT:
+					_title = (Translations.CONFLICT.getItemAt(Session.LANGUAGE) as String);
+					break;
+
+				case Numbers.REPORT_GROUND_GATHERING:
+					_title = (Translations.GATHERING.getItemAt(Session.LANGUAGE) as String);
+					break;
+
+				case Numbers.REPORT_BOW_SHOT:
+					_title = (Translations.BOW_SHOT.getItemAt(Session.LANGUAGE) as String);
+					break;
+					
+				default:
+					break;
+			}
+			
+			if(reportType == Numbers.REPORT_GROUND_FIGHT)
 			{
 				if(victory){
 					_title += " : " + (Translations.VICTORY.getItemAt(Session.LANGUAGE) as String);

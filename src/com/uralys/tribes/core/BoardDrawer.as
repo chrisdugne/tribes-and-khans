@@ -95,7 +95,7 @@ package com.uralys.tribes.core
 		private var timer:Timer = new Timer(1000,1);
 		public function refreshDisplay(event:TimerEvent = null):void
 		{
-			Session.board.mapPositioner.removeAllElements();
+			Session.board.mapLayer.removeAllElements();
 			Session.board.pawnLayer.removeAllElements();
 			Session.board.landLayer.removeAllElements();
 			
@@ -110,40 +110,41 @@ package com.uralys.tribes.core
 				timer.stop();
 			}
 			
+			
 			// draw city grounds
 			for(var j:int=0; j < Session.nbTilesByEdge; j++)
 			{
 				for(var i:int=0; i < Session.nbTilesByEdge; i++)
 				{
 					var _cell:Cell = Session.map[Session.firstCellX+i][Session.firstCellY+j];
-					
-					if(_cell.type == 1)
-						drawCell(_cell); 
+					drawCell(_cell); 
 				}
 			}
+
 			
-			for(var j:int=0; j < Session.nbTilesByEdge; j++)
-			{
-				for(var i:int=0; i < Session.nbTilesByEdge; i++)
-				{
-					var _cell:Cell = Session.map[Session.firstCellX+i][Session.firstCellY+j];
-					
-					if(_cell.type == 1)
-						drawCity(_cell.city);
-				}
-
-				// draw forests grounds
-				for(var i:int=0; i < Session.nbTilesByEdge; i++)
-				{
-					var _cell:Cell = Session.map[Session.firstCellX+i][Session.firstCellY+j];
-					
-					if(_cell.type == 0){
-						drawCell(_cell);
-					}
-				}
-				
-			}
-
+//			for(var j:int=0; j < Session.nbTilesByEdge; j++)
+//			{
+//				for(var i:int=0; i < Session.nbTilesByEdge; i++)
+//				{
+//					var _cell:Cell = Session.map[Session.firstCellX+i][Session.firstCellY+j];
+//					
+//					if(_cell.type == 1)
+//						drawCity(_cell.city);
+//				}
+//
+//				// draw forests grounds
+//				for(var i:int=0; i < Session.nbTilesByEdge; i++)
+//				{
+//					var _cell:Cell = Session.map[Session.firstCellX+i][Session.firstCellY+j];
+//					
+//					if(_cell.type == 0){
+//						drawCell(_cell);
+//					}
+//				}
+//				
+//			}
+			
+			
 			for(var j:int=0; j < Session.nbTilesByEdge; j++)
 			{
 				// draw units
@@ -157,7 +158,7 @@ package com.uralys.tribes.core
 					refreshCellDisplay(_cell);
 				}
 			}
-
+			
 			redrawAllLands();
 			Session.WAIT_FOR_SERVER = false;
 		}
@@ -186,12 +187,11 @@ package com.uralys.tribes.core
 		private function drawCell(_cell:Cell):void
 		{
 			var image:Image = new Image();
-			var placeForet:Boolean = false;
+			var placeCity:Boolean = false;
 			
 			switch(_cell.type){
 				case 0:
 					// forest
-					placeForet = true;
 					image.source = ImageContainer.FORET7;
 
 //					switch(Utils.random(6)){
@@ -219,24 +219,23 @@ package com.uralys.tribes.core
 					break;
 				case 1:
 					//city
+					placeCity = true;
 					image.source = ImageContainer.SOL_VILLE;
 					break;
 			}
+			
 			
 			image.x = Utils.getXPixel(_cell.x);
 			image.y = Utils.getYPixel(_cell.y);
 			image.scaleX = scale;
 			image.scaleY = scale;
 			
-			// decalage des tuiles forets
-			if(placeForet){
-				image.x -= 10 * scale;	
-				image.y -= 9 * scale;	
+			// decalage des tuiles ville de 22 vers le haut
+			if(placeCity){
+				image.y -= 22 * scale;
 			}
-			
-			image.data = _cell;
-			
-			Session.board.mapPositioner.addElement(image);
+
+			Session.board.mapLayer.addElement(image);
 		}
 
 		// ---------------------------------------------------------------------//
@@ -336,6 +335,7 @@ package com.uralys.tribes.core
 		
 		private function drawLandAndBounds(_cell:Cell):void
 		{
+			trace("drawLandAndBounds");
 			if(_cell.landOwner != null)
 			{
 				var image:Image = new Image();

@@ -151,6 +151,7 @@
 			
 			private function goLeft(viewStack:ViewStack):void
 			{
+				trace("goleft");
 				if(viewStack.selectedIndex == 0)
 					viewStack.selectedIndex = viewStack.numElements-1;
 				else
@@ -163,6 +164,7 @@
 
 			private function goRight(viewStack:ViewStack):void
 			{
+				trace("goRight");
 				if(viewStack.selectedIndex == viewStack.numElements-1)
 					viewStack.selectedIndex = 0;
 				else
@@ -174,6 +176,7 @@
 			
 			private function thisNavigatorIsHidden(selectedIndex:int):Boolean
 			{
+				trace("thisNavigatorIsHidden : " + selectedIndex);
 				var navigatorIsHidden:Boolean = true;
 				for(var i:int = 0; i<navigatorIndexesToshow.length; i++)
 				{

@@ -99,8 +99,8 @@ package com.uralys.tribes.commons
 		//==================================================================================================//
 		// contrees
 	
-		[Bindable] public static var LAND_WIDTH:int = 100;
-		[Bindable] public static var LAND_HEIGHT:int = 86;
+		[Bindable] public static var LAND_WIDTH:int = 142;
+		[Bindable] public static var LAND_HEIGHT:int = 123;
 		
 		[Bindable] public static var NOTHING:int = 0;
 		[Bindable] public static var FOREST:int = 1;

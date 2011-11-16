@@ -97,7 +97,6 @@ package com.uralys.tribes.core
 		{
 			Session.board.mapLayer.removeAllElements();
 			Session.board.pawnLayer.removeAllElements();
-			Session.board.landLayer.removeAllElements();
 			
 			if(!ImageContainer.IMAGES_LOADED){
 				FlexGlobals.topLevelApplication.message(Translations.LOADING_IMAGES.getItemAt(Session.LANGUAGE));
@@ -111,13 +110,23 @@ package com.uralys.tribes.core
 			}
 			
 			
-			// draw city grounds
+			// de haut en bas, de gauche à droite, ligne apres ligne
 			for(var j:int=0; j < Session.nbTilesByEdge; j++)
 			{
 				for(var i:int=0; i < Session.nbTilesByEdge; i++)
 				{
 					var _cell:Cell = Session.map[Session.firstCellX+i][Session.firstCellY+j];
+					
+					
+					drawNorthFrontiers(_cell); 
 					drawCell(_cell); 
+					
+					// draw cell content
+					if(_cell.cellUID.indexOf("cell_") != -1)
+						refreshCellDisplay(_cell);
+
+					drawSouthFrontiers(_cell); 
+					
 				}
 			}
 
@@ -144,44 +153,44 @@ package com.uralys.tribes.core
 //				
 //			}
 			
-			
-			for(var j:int=0; j < Session.nbTilesByEdge; j++)
-			{
-				// draw units
-				for(var i:int=0; i < Session.nbTilesByEdge; i++)
-				{
-					var _cell:Cell = Session.map[Session.firstCellX+i][Session.firstCellY+j];
-					
-					if(_cell.cellUID.indexOf("cell_") == -1)
-						continue;
-					
-					refreshCellDisplay(_cell);
-				}
-			}
-			
-			redrawAllLands();
+//			
+//			for(var j:int=0; j < Session.nbTilesByEdge; j++)
+//			{
+//				// draw units
+//				for(var i:int=0; i < Session.nbTilesByEdge; i++)
+//				{
+//					var _cell:Cell = Session.map[Session.firstCellX+i][Session.firstCellY+j];
+//					
+//					if(_cell.cellUID.indexOf("cell_") == -1)
+//						continue;
+//					
+//					refreshCellDisplay(_cell);
+//				}
+//			}
+//			
+//			redrawAllLands();
 			Session.WAIT_FOR_SERVER = false;
 		}
 		
-		public function redrawAllLands():void
-		{
-			Session.board.landLayer.removeAllElements();
-				
-			for(var j:int=0; j < Session.nbTilesByEdge; j++)
-			{
-				// draw lands
-				for(var i:int=0; i < Session.nbTilesByEdge; i++)
-				{
-					var _cell:Cell = Session.map[Session.firstCellX+i][Session.firstCellY+j];
-					
-					if(_cell.cellUID.indexOf("cell_") == -1)
-						continue;
-					
-					
-					drawLandAndBounds(_cell);
-				}
-			}
-		}
+//		public function redrawAllLands():void
+//		{
+//			Session.board.mapLayer.removeAllElements();
+//				
+//			for(var j:int=0; j < Session.nbTilesByEdge; j++)
+//			{
+//				// draw lands
+//				for(var i:int=0; i < Session.nbTilesByEdge; i++)
+//				{
+//					var _cell:Cell = Session.map[Session.firstCellX+i][Session.firstCellY+j];
+//					
+//					if(_cell.cellUID.indexOf("cell_") == -1)
+//						continue;
+//					
+//					
+//					drawLandAndBounds(_cell);
+//				}
+//			}
+//		}
 
 			
 		private function drawCell(_cell:Cell):void
@@ -305,6 +314,7 @@ package com.uralys.tribes.core
 			
 			cell.pawn.x = (Utils.getXPixel(cell.x) + 15*scale);
 			cell.pawn.y = (Utils.getYPixel(cell.y) - 10*scale);
+			
 			imageUnit.scaleX = scale;
 			imageUnit.scaleY = scale;
 			imageUnit.mouseEnabled = false;
@@ -332,6 +342,148 @@ package com.uralys.tribes.core
 		}
 		
 		//------------------------------------------------------------------------------------//
+
+		private function drawNorthFrontiers(_cell:Cell):void
+		{
+			trace("drawNorthFrontiers");
+			if(_cell.landOwner != null)
+			{
+				//----------------//
+				// frontier NO	
+				
+				try{
+					if(Session.map[_cell.x - 1][_cell.y - 1] != null 
+						&& (Session.map[_cell.x - 1][_cell.y - 1].landOwner == null
+							|| Session.map[_cell.x - 1][_cell.y - 1].landOwner.playerUID != _cell.landOwner.playerUID))
+					{
+						var imageNO:Image = new Image();
+						imageNO.x = Utils.getXPixel(_cell.x) - 13*scale;
+						imageNO.y = Utils.getYPixel(_cell.y) - 23*scale;
+						imageNO.source = ImageContainer.getImage(ImageContainer.FRONTIER_NO);
+						imageNO.scaleX = scale;
+						imageNO.scaleY = scale;
+						
+						Session.board.mapLayer.addElement(imageNO);
+					}
+				}
+				catch(e:Error){}
+				
+				
+				//----------------//
+				// frontier N
+				
+				try{
+					if(Session.map[_cell.x][_cell.y - 2] != null 
+						&& (Session.map[_cell.x][_cell.y - 2].landOwner == null
+							|| Session.map[_cell.x][_cell.y - 2].landOwner.playerUID != _cell.landOwner.playerUID))
+					{
+						var imageN:Image = new Image();
+						imageN.x = Utils.getXPixel(_cell.x) - 13*scale;
+						imageN.y = Utils.getYPixel(_cell.y) - 23*scale;
+						imageN.source = ImageContainer.getImage(ImageContainer.FRONTIER_N);
+						imageN.scaleX = scale;
+						imageN.scaleY = scale;
+						
+						Session.board.mapLayer.addElement(imageN);
+					}
+				}
+				catch(e:Error){}
+				
+				
+				//----------------//
+				// frontier NE
+				
+				
+				try{
+					if(Session.map[_cell.x + 1][_cell.y - 1] != null 
+						&& (Session.map[_cell.x + 1][_cell.y - 1].landOwner == null
+							|| Session.map[_cell.x + 1][_cell.y - 1].landOwner.playerUID != _cell.landOwner.playerUID))
+					{
+						var imageNE:Image = new Image();
+						imageNE.x = Utils.getXPixel(_cell.x) - 13*scale;
+						imageNE.y = Utils.getYPixel(_cell.y) - 23*scale;
+						imageNE.source = ImageContainer.getImage(ImageContainer.FRONTIER_NE);
+						imageNE.scaleX = scale;
+						imageNE.scaleY = scale;
+						
+						Session.board.mapLayer.addElement(imageNE);
+					}
+				}
+				catch(e:Error){}
+				
+			}
+		}
+
+		private function drawSouthFrontiers(_cell:Cell):void
+		{
+			trace("drawSouthFrontiers");
+			if(_cell.landOwner != null)
+			{
+				//----------------//
+				// frontier SO	
+				
+				try{
+					if(Session.map[_cell.x - 1][_cell.y + 1] != null
+						&& (Session.map[_cell.x - 1][_cell.y + 1].landOwner == null
+							|| Session.map[_cell.x - 1][_cell.y + 1].landOwner.playerUID != _cell.landOwner.playerUID))
+					{
+						var imageSO:Image = new Image();
+						imageSO.x = Utils.getXPixel(_cell.x) - 13*scale;
+						imageSO.y = Utils.getYPixel(_cell.y) - 23*scale;
+						imageSO.source = ImageContainer.getImage(ImageContainer.FRONTIER_SO);
+						imageSO.scaleX = scale;
+						imageSO.scaleY = scale;
+						
+						Session.board.mapLayer.addElement(imageSO);
+					}
+				}
+				catch(e:Error){}
+				
+				//----------------//
+				// frontier S
+				
+				try{
+					if(Session.map[_cell.x][_cell.y + 2] != null 
+						&& (Session.map[_cell.x][_cell.y + 2].landOwner == null
+							|| Session.map[_cell.x][_cell.y + 2].landOwner.playerUID != _cell.landOwner.playerUID))
+					{
+						var imageS:Image = new Image();
+						imageS.x = Utils.getXPixel(_cell.x) - 13*scale;
+						imageS.y = Utils.getYPixel(_cell.y) - 23*scale;
+						imageS.source = ImageContainer.getImage(ImageContainer.FRONTIER_S);
+						imageS.scaleX = scale;
+						imageS.scaleY = scale;
+						
+						Session.board.mapLayer.addElement(imageS);
+					}
+				}
+				catch(e:Error){}
+
+				//----------------//
+				// frontier SE
+				
+				try{
+					if(Session.map[_cell.x + 1][_cell.y + 1] != null 
+						&& (Session.map[_cell.x + 1][_cell.y + 1].landOwner == null
+							|| Session.map[_cell.x + 1][_cell.y + 1].landOwner.playerUID != _cell.landOwner.playerUID))
+					{
+						var imageSE:Image = new Image();
+						imageSE.x = Utils.getXPixel(_cell.x) - 13*scale;
+						imageSE.y = Utils.getYPixel(_cell.y) - 23*scale;
+						imageSE.source = ImageContainer.getImage(ImageContainer.FRONTIER_SE);
+						imageSE.scaleX = scale;
+						imageSE.scaleY = scale;
+						
+						Session.board.mapLayer.addElement(imageSE);
+					}
+				}
+				catch(e:Error){}
+				
+			}
+		}
+		
+		
+		//------------------------------------------------------------------------------------//
 		
 		private function drawLandAndBounds(_cell:Cell):void
 		{
@@ -355,7 +507,7 @@ package com.uralys.tribes.core
 				image.scaleX = scale;
 				image.scaleY = scale;
 				
-				Session.board.landLayer.addElement(image);
+				Session.board.mapLayer.addElement(image);
 				
 				//----------------//
 				// frontier NO	
@@ -372,7 +524,7 @@ package com.uralys.tribes.core
 						imageNO.scaleX = scale;
 						imageNO.scaleY = scale;
 						
-						Session.board.landLayer.addElement(imageNO);
+						Session.board.mapLayer.addElement(imageNO);
 					}
 				}
 				catch(e:Error){}
@@ -393,7 +545,7 @@ package com.uralys.tribes.core
 						imageSO.scaleX = scale;
 						imageSO.scaleY = scale;
 						
-						Session.board.landLayer.addElement(imageSO);
+						Session.board.mapLayer.addElement(imageSO);
 					}
 				}
 				catch(e:Error){}
@@ -413,7 +565,7 @@ package com.uralys.tribes.core
 						imageN.scaleX = scale;
 						imageN.scaleY = scale;
 						
-						Session.board.landLayer.addElement(imageN);
+						Session.board.mapLayer.addElement(imageN);
 					}
 				}
 				catch(e:Error){}
@@ -433,7 +585,7 @@ package com.uralys.tribes.core
 						imageS.scaleX = scale;
 						imageS.scaleY = scale;
 						
-						Session.board.landLayer.addElement(imageS);
+						Session.board.mapLayer.addElement(imageS);
 					}
 				}
 				catch(e:Error){}
@@ -454,7 +606,7 @@ package com.uralys.tribes.core
 						imageNE.scaleX = scale;
 						imageNE.scaleY = scale;
 						
-						Session.board.landLayer.addElement(imageNE);
+						Session.board.mapLayer.addElement(imageNE);
 					}
 				}
 				catch(e:Error){}
@@ -475,7 +627,7 @@ package com.uralys.tribes.core
 						imageSE.scaleX = scale;
 						imageSE.scaleY = scale;
 						
-						Session.board.landLayer.addElement(imageSE);
+						Session.board.mapLayer.addElement(imageSE);
 					}
 				}
 				catch(e:Error){}

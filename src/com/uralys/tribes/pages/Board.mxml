@@ -275,15 +275,6 @@
 						 mouseEnabled="false"
 						 mouseChildren="false"
 						 mouseEnabledWhereTransparent="false"/>
-				<s:Group id="landLayer"
-						 visible="{Session.LANDS_VISIBLE}"
-						 width="{Numbers.LAND_WIDTH*400}"
-						 height="{Numbers.LAND_HEIGHT*400}"
-						 x="{mapPositioner.x}"
-						 y="{mapPositioner.y}"
-						 mouseEnabled="false"
-						 mouseChildren="false"
-						 mouseEnabledWhereTransparent="false"/>
 				<s:Group id="pawnLayer"
 						 width="{Numbers.LAND_WIDTH*400}"
 						 height="{Numbers.LAND_HEIGHT*400}"

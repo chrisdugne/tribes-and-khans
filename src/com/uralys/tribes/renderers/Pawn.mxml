@@ -82,7 +82,7 @@
 				cell.landOwner = cell.challenger;
 				cell.timeFromChallenging = -1;
 				cell.challenger = null;
-				BoardDrawer.getInstance().redrawAllLands();
+				BoardDrawer.getInstance().refreshDisplay();
 			}
 			
 			protected function getMillisRemaining():Number

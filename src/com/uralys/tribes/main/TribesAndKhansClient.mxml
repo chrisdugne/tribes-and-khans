@@ -3,10 +3,11 @@
 			   xmlns:s="library://ns.adobe.com/flex/spark" 
 			   xmlns:mx="library://ns.adobe.com/flex/mx" 
 			   xmlns:windows="com.uralys.tribes.windows.*"
-			   preloader="com.uralys.tribes.preload.CustomPreloader"
-			   frameRate="24"
+			   preloader="com.uralys.tribes.preload.Preloader"
+			   xmlns:components="com.uralys.tribes.components.*" 
+			   xmlns:maincomponents="com.uralys.tribes.main.components.*"
 			   creationComplete="init()" 
-			   xmlns:components="com.uralys.tribes.components.*">
+			   >
 	
 	<fx:Declarations>
 		<s:Move id="hidedisplaymessage" target="{displayMessage}" yTo="-50"/>
@@ -16,34 +17,36 @@
 	<fx:Script>
 		<![CDATA[ 
 			import com.uralys.tribes.commons.Names;
-			import com.uralys.tribes.commons.Numbers;
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;
 			import com.uralys.tribes.core.MusicPlayer;
 			import com.uralys.tribes.core.Pager;
-			import com.uralys.tribes.managers.AccountManager;
 			import com.uralys.tribes.managers.GameManager;
 			import com.uralys.tribes.pages.Home;
-			import com.uralys.tribes.windows.AllyProfileWindow;
-			import com.uralys.tribes.windows.BoardsWindow;
 			import com.uralys.tribes.windows.CreditsWindow;
 			import com.uralys.tribes.windows.GlobalMessageWindow;
-			import com.uralys.tribes.windows.LoginWindow;
-			import com.uralys.tribes.windows.MailBoxWindow;
-			import com.uralys.tribes.windows.PlayerProfileWindow;
 			
 			import mx.core.FlexGlobals;
 			import mx.managers.PopUpManager;
-			
 			//-----------------------------------------------------------------------//
+			
+			private	function resizeHandler(e:Event):void
+			{
+				Session.APPLICATION_WIDTH = FlexGlobals.topLevelApplication.width;
+				Session.APPLICATION_HEIGHT = FlexGlobals.topLevelApplication.height;
+			}
 			
 			private function init():void
 			{
 				trace("Welcome to Tribes and Khans | Version : " + Session.VERSION);
 				
+				addEventListener(Event.RESIZE, resizeHandler); 
+				
 				Session.isLocal = url == "http://localhost:8888/webresources/flex.debug/TribesAndKhansClient.swf";
 				
 				Session.APPLICATION_WIDTH = FlexGlobals.topLevelApplication.width;
+				Session.APPLICATION_HEIGHT = FlexGlobals.topLevelApplication.height;
+
 				Session.dateFormatter.formatString = "DD MMMM YYYY, HHhNN";
 				Session.timeFormatter.formatString = "HHhNN";
 				
@@ -62,10 +65,26 @@
 				var sharedObject:SharedObject = SharedObject.getLocal(Names.SHARED_OBJECT_NAME);
 				Session.LANGUAGE = sharedObject.data.lastLanguage;
 				
-				openLoginWindow();
+				header.openLoginWindow();
 				openGlobalMessageWindow();
 				
 				GameManager.getInstance().loadItems();
+			}
+			
+			//-----------------------------------------------------------------------//
+			
+			public var globalMessageWindow:GlobalMessageWindow = new GlobalMessageWindow();
+			private function openGlobalMessageWindow():void 
+			{
+				var sharedObject:SharedObject = SharedObject.getLocal(Names.SHARED_OBJECT_NAME);
+				if(sharedObject.data.idMessage == Translations.idMessage)
+					return;
+				
+				globalMessageWindow.closeWindow();
+				
+				PopUpManager.addPopUp(globalMessageWindow, this, false);
+				PopUpManager.centerPopUp(globalMessageWindow);
+				globalMessageWindow.x = 30;
 			}
 			
 			//-----------------------------------------------------------------------//
@@ -99,136 +118,7 @@
 			}
 
 			//==================================================================================================//
-			
-			private function french():void {
-				changeLanguage(0);
-			}
-			
-			private function english():void {
-				changeLanguage(1);
-			}
-			
-			private function us():void {
-				changeLanguage(2);				
-			}
 
-			private function changeLanguage(lang:int):void {
-				if(Session.LOGGED_IN)
-					AccountManager.getInstance().changeLanguage(Session.uralysProfile.uralysUID, lang);
-				
-				Session.LANGUAGE = lang;
-				var sharedObject:SharedObject = SharedObject.getLocal(Names.SHARED_OBJECT_NAME);
-				sharedObject.data.lastLanguage = lang;
-				
-			}
-			
-			private function music():void {
-				MusicPlayer.getInstance().switchState();
-				
-				if(Session.LOGGED_IN)
-					AccountManager.getInstance().changeMusicOn(Session.uralysProfile.uralysUID, Session.player.musicOn);
-			}
-			
-			//-----------------------------------------------------------------------//
-
-			public var loginWindow:LoginWindow = new LoginWindow();
-			private function openLoginWindow():void 
-			{
-				if(Session.player){
-					return;
-				}
-				
-				loginWindow.closeWindow(); 
-					
-				PopUpManager.addPopUp(loginWindow, this, false);
-				PopUpManager.centerPopUp(loginWindow);
-				
-			}
-			
-			//-----------------------------------------------------------------------//
-
-			public var creditsWindow:CreditsWindow = new CreditsWindow();
-			private function openCreditsWindow():void 
-			{
-				creditsWindow.closeWindow();
-					
-				PopUpManager.addPopUp(creditsWindow, this, false);
-				PopUpManager.centerPopUp(creditsWindow);
-				
-			}
-
-			//-----------------------------------------------------------------------//
-
-			public var globalMessageWindow:GlobalMessageWindow = new GlobalMessageWindow();
-			private function openGlobalMessageWindow():void 
-			{
-				var sharedObject:SharedObject = SharedObject.getLocal(Names.SHARED_OBJECT_NAME);
-				if(sharedObject.data.idMessage == Translations.idMessage)
-					return;
-				
-				globalMessageWindow.closeWindow();
-					
-				PopUpManager.addPopUp(globalMessageWindow, this, false);
-				PopUpManager.centerPopUp(globalMessageWindow);
-				globalMessageWindow.x = 30;
-			}
-			
-			//-----------------------------------------------------------------------//
-
-			public var boardsWindow:BoardsWindow = new BoardsWindow();
-			private function openBoardsWindow():void 
-			{
-				boardsWindow.closeWindow();
-					
-				PopUpManager.addPopUp(boardsWindow, this, false);
-				PopUpManager.centerPopUp(boardsWindow);
-			}
-			
-			//-----------------------------------------------------------------------//
-
-			public var playerProfileWindow:PlayerProfileWindow = new PlayerProfileWindow();
-			public function openPlayerProfileWindow(playerUID:String):void 
-			{
-				playerProfileWindow.playerUID = playerUID;
-				playerProfileWindow.closeWindow();
-					
-				PopUpManager.addPopUp(playerProfileWindow, this, false);
-				PopUpManager.centerPopUp(playerProfileWindow);
-				playerProfileWindow.x = 5;
-				
-				playerProfileWindow.refresh();
-			}
-			
-			public function closePlayerProfileWindow():void{
-				playerProfileWindow.closeWindow();
-			}
-
-			//-----------------------------------------------------------------------//
-
-			public var allyProfileWindow:AllyProfileWindow = new AllyProfileWindow();
-			public function openAllyProfileWindow(allyUID:String):void 
-			{
-				allyProfileWindow.allyUID = allyUID;
-				allyProfileWindow.closeWindow();
-					
-				PopUpManager.addPopUp(allyProfileWindow, this, false);
-				PopUpManager.centerPopUp(allyProfileWindow);
-				
-				allyProfileWindow.refresh();
-			}
-			
-			//-----------------------------------------------------------------------//
-
-			public var mailBoxWindow:MailBoxWindow = new MailBoxWindow();
-			public function openMailBox():void 
-			{
-				mailBoxWindow.closeWindow();
-					
-				PopUpManager.addPopUp(mailBoxWindow, this, true);
-				PopUpManager.centerPopUp(mailBoxWindow);
-				
-				mailBoxWindow.refresh();
-			}
 		]]>
 	</fx:Script>
 	
@@ -236,137 +126,26 @@
 		<components:ClippedImage id="background" width="100%" height="100%"
 								 source="{ImageContainer.BACKGROUND}"/>
 	</s:HGroup>
-	<s:Group width="100%" height="{background.height-40}" top="20">
-		<s:Rect left="0" right="0" top="0" bottom="0" alpha="0.3">
+	<s:Group width="100%" height="{background.height-40}" top="28">
+		<s:Rect left="0" right="0" top="0" bottom="0" alpha="0.2">
 			<s:fill>
 				<s:SolidColor color="#000000"/>
 			</s:fill>
 		</s:Rect>
 	</s:Group>	
 		
-	<!-- header -->
-	<s:HGroup width="100%" paddingLeft="10" paddingRight="10" paddingBottom="-20"
-			  height="20"
-			  verticalAlign="top">
-		<mx:Image id="frenchButton" source="{ImageContainer.FR_FLAG}" click="french()" visible="{Session.LANGUAGE != 0}" width="25"/>
-		<mx:Image id="englishButton" source="{ImageContainer.EN_FLAG}" click="english()" visible="{Session.LANGUAGE != 1}" width="25"/>
-		<mx:Image id="usButton" source="{ImageContainer.US_FLAG}" click="us()" visible="{Session.LANGUAGE != 2}" width="25"/>
-		
-		<mx:Image id="soundOnButton" source="{ImageContainer.HP}" click="{music()}"/>
-		<s:Label text="{MusicPlayer.getInstance().volume &gt; 0 ? 'On' : 'Off'}" click="{music()}"
-				 id="labelVolume"
-				 mouseOver="{labelVolume.setStyle('color', '#ffffff')}"
-				 mouseOut="{labelVolume.setStyle('color', Numbers.CLASSIC_COLOR)}"/>
-		<s:HSlider id="volumeSlider" 
-				   maximum="100" 
-				   showDataTip="false"
-				   value="{MusicPlayer.getInstance().volume * 100}" 
-				   change="{MusicPlayer.getInstance().changeVolume()}"
-				   height="20"/>
-		
-		<mx:Spacer width="10"/>
-		<s:Label text="{Translations.HOW_TO_PLAY.getItemAt(Session.LANGUAGE)}"
-				 id="labelHowTo"
-				 click="navigateToURL(new URLRequest('http://www.uralys.com/tribes-and-khans.'+ (Session.LANGUAGE == 0 ? 'fr' : 'en') +'.html'), '_new');"
-				 color="{Numbers.CLASSIC_COLOR}"
-				 toolTip="{Translations.OPEN_TAB.getItemAt(Session.LANGUAGE)}"
-				 mouseOver="{labelHowTo.setStyle('color', '#ffffff')}"
-				 mouseOut="{labelHowTo.setStyle('color', Numbers.CLASSIC_COLOR)}"/>
-		<mx:Image source="{ImageContainer.GREEN_QUESTION}"
-				  click="navigateToURL(new URLRequest('http://www.uralys.com/tribes-and-khans.'+ (Session.LANGUAGE == 0 ? 'fr' : 'en') +'.html'), '_new');"
-				  toolTip="{Translations.OPEN_TAB.getItemAt(Session.LANGUAGE)}"
-				  mouseOver="{labelHowTo.setStyle('color', '#ffffff')}"
-				  mouseOut="{labelHowTo.setStyle('color', Numbers.CLASSIC_COLOR)}"
-				  />
-		
-		<mx:Spacer width="100%"/>
-		<s:Label text="{Translations.MY_ALLY.getItemAt(Session.LANGUAGE)}"
-				 id="labelAlly"
-				 click="openAllyProfileWindow(Session.player.ally.allyUID)"
-				 color="{Numbers.CLASSIC_COLOR}"
-				 toolTip="{Translations.PROFILE.getItemAt(Session.LANGUAGE)}"
-				 mouseOver="{labelAlly.setStyle('color', '#ffffff')}"
-				 mouseOut="{labelAlly.setStyle('color', Numbers.CLASSIC_COLOR)}"
-				 visible="{Session.LOGGED_IN &amp;&amp; Session.player.ally != null}"/>
-		
-		<mx:Spacer width="30"/>
-		<s:Label text="{Translations.MY_PROFILE.getItemAt(Session.LANGUAGE)}"
-				 id="labelProfile"
-				 click="openPlayerProfileWindow(Session.player.playerUID)"
-				 color="{Numbers.CLASSIC_COLOR}"
-				 toolTip="{Translations.PROFILE.getItemAt(Session.LANGUAGE)}"
-				 mouseOver="{labelProfile.setStyle('color', '#ffffff')}"
-				 mouseOut="{labelProfile.setStyle('color', Numbers.CLASSIC_COLOR)}"
-				 visible="{Session.LOGGED_IN}"/>
-		
-		<mx:Spacer width="30"/>
-		<mx:Image source="{ImageContainer.MAIL_BOX}"
-				  click="openMailBox()"
-				  mouseOver="{labelMessages.setStyle('color', '#ffffff')}"
-				  mouseOut="{labelMessages.setStyle('color', Numbers.CLASSIC_COLOR)}"
-				  visible="{Session.LOGGED_IN}"
-				  />
-		<s:Label text="({Session.player.newMessages.length})"
-				 id="labelMessages"
-				 click="openMailBox()"
-				 color="{Numbers.CLASSIC_COLOR}"
-				 toolTip="{Translations.OPEN_TAB.getItemAt(Session.LANGUAGE)}"
-				 mouseOver="{labelMessages.setStyle('color', '#ffffff')}"
-				 mouseOut="{labelMessages.setStyle('color', Numbers.CLASSIC_COLOR)}"
-				 visible="{Session.LOGGED_IN}"/>
-		
-		<mx:Spacer width="30"/>
-		<s:Label text="{Translations.BOARDS.getItemAt(Session.LANGUAGE)}"
-				 id="labelBoards"
-				 color="{Numbers.CLASSIC_COLOR}"
-				 click="{openBoardsWindow()}"
-				 mouseOver="{labelBoards.setStyle('color', '#ffffff')}"
-				 mouseOut="{labelBoards.setStyle('color', Numbers.CLASSIC_COLOR)}"/>
-		
-		<mx:Spacer width="30"/>
-		<s:Label text="{Session.player ? Translations.LOG_AS.getItemAt(Session.LANGUAGE) + ' : '+ Session.uralysProfile.email : Translations.LOG_IN.getItemAt(Session.LANGUAGE)}"
-				 id="labelLogin"
-				 color="{Numbers.CLASSIC_COLOR}"
-				 click="{openLoginWindow()}"
-				 mouseOver="{labelLogin.setStyle('color', '#ffffff')}"
-				 mouseOut="{labelLogin.setStyle('color', Numbers.CLASSIC_COLOR)}"/>
-	</s:HGroup>	
-	
 	
 	<!-- content -->
-	<s:Group id="window" height="100%" width="100%" top="24"/>
+	<s:Group id="window" height="100%" width="100%"/>
 	
+	<!-- header -->
+	<maincomponents:Header width="100%"
+						   id="header"/>
 	
 	<!-- footer -->
-	<s:HGroup width="100%" horizontalAlign="center" bottom="0">
-		<s:Label text="Uralys"
-				 id="labelUralys"
-				  click="navigateToURL(new URLRequest('http://www.uralys.com'), '_new');"
-				  color="{Numbers.CLASSIC_COLOR}"
-				  mouseOver="{labelUralys.setStyle('color', '#ffffff')}"
-				  mouseOut="{labelUralys.setStyle('color', Numbers.CLASSIC_COLOR)}"/>
-		<mx:Spacer width="10%"/>
-		<s:Label text="Credits"
-				 id="labelCredits"
-				  click="openCreditsWindow()"
-				  color="{Numbers.CLASSIC_COLOR}"
-				  mouseOver="{labelCredits.setStyle('color', '#ffffff')}"
-				  mouseOut="{labelCredits.setStyle('color', Numbers.CLASSIC_COLOR)}"/>
-		<mx:Spacer width="10%"/>
-		<s:Label text="{Translations.GO_TO_FORUM.getItemAt(Session.LANGUAGE)}"
-				 id="labelForum"
-				 click="navigateToURL(new URLRequest('http://tribesandkhans.freeforums.org/'), '_new');"
-				 color="{Numbers.CLASSIC_COLOR}"
-				 mouseOver="{labelForum.setStyle('color', '#ffffff')}"
-				 mouseOut="{labelForum.setStyle('color', Numbers.CLASSIC_COLOR)}"/>
-		<mx:Spacer width="20%"/>
-		<s:Label text=" Tribes And Khans 2011   -    version {Session.VERSION}" 
-				 id="labelTitle"
-				 color="{Numbers.CLASSIC_COLOR}"
-				 click="navigateToURL(new URLRequest('http://tribes-and-khans.tumblr.com'), '_new');"
-				 mouseOver="{labelTitle.setStyle('color', '#ffffff')}"
-				 mouseOut="{labelTitle.setStyle('color', Numbers.CLASSIC_COLOR)}"/>
-	</s:HGroup>	
+	<maincomponents:Footer width="100%"
+						   bottom="0"
+						   id="footer"/>
 	
 	<!-- ========================================================================== -->
 	<!-- windows -->

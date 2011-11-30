@@ -3,14 +3,11 @@
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
 		 xmlns:mx="library://ns.adobe.com/flex/mx" 
 		 xmlns:renderers="com.uralys.tribes.renderers.*"
+		 xmlns:components="com.uralys.tribes.components.*" 
 		 xmlns:windows="com.uralys.tribes.windows.*" 
 		 width="100%" height="100%"
-		 creationComplete="init()" xmlns:components="com.uralys.tribes.components.*" >
-	
-	<fx:Declarations>
-		<s:State name="board"/>
-		<s:State name="city"/>
-	</fx:Declarations>
+		 creationComplete="initBoard()" 
+		 >
 	
 	<fx:Script>
 		<![CDATA[
@@ -44,22 +41,20 @@
 			//---------------------------------------------------------------------------------------//
 			
 			[Bindable] public var selectedCity:City;
+
+			//----------------------------------------------------------//
+
+			[Bindable] public var boardPositionX:int = 150;
+			[Bindable] public var boardPositionY:int = 50;
 			
 			//----------------------------------------------------------//
 
-			protected function init():void
-			{
-				Session.timer.start();
-				initBoard();
-			}
-			
-			//-----------------------------------------------------------//
-			
-			// set params est appelee avant creationComplete (init())
+			// set params est appelee avant creationComplete (initBoard())
 			public function set params(args:Array):void
 			{
-				FlexGlobals.topLevelApplication.loginWindow.closeWindow();
+				FlexGlobals.topLevelApplication.header.loginWindow.closeWindow();
 				selectedCity = Session.player.cities.getItemAt(0) as City;
+				trace("Board.set params : " + selectedCity);
 				
 				if(Session.player.name == "New Player"){
 					showChangeName.play();
@@ -71,7 +66,8 @@
 			
 			private function initBoard():void
 			{
-				currentState = "board";
+				trace("Board.initBoard : " + selectedCity);
+				Session.timer.start();
 				
 				if(selectedCity == null){
 					FlexGlobals.topLevelApplication.message('GAME OVER ON THIS SERVER', 700);
@@ -141,45 +137,10 @@
 
 			public function enterCity(event:MouseEvent):void
 			{
-				cityForm.refreshCity();
-				goLeft.play();
+				cityGroup.cityForm.refreshCity();
 				appearCity.play();
-				
-				currentState = "city";
 			}
 			
-			//-----------------------------------------------------------//
-
-			private function saveCityAndGoBackToBoard():void
-			{				
-				trace("-----");
-				trace("saveCityAndGoBackToBoard");
-				
-				var unitsToRecord:Array = [];
-				var army:Unit = Session.CURRENT_CELL_SELECTED.army;
-				var caravan:Unit = Session.CURRENT_CELL_SELECTED.caravan;
-				
-				// on force la validation du marchand si il existe et qu'il reste dans la ville
-				// si il est en mouvement, on ne peut pas l'editer donc pas besoin d'appeler le validateMerchants (qui casserait tout en placant le timeTo à -1) 
-				if(caravan != null 
-				&& caravan.moves.length == 1)
-				{
-					unitsToRecord.push(caravan);
-				}
-
-				// IDEM pour army
-				if(army != null 
-				&& army.moves.length == 1)
-				{
-					unitsToRecord.push(army);
-				}
-				
-				GameManager.getInstance().saveCity(selectedCity, unitsToRecord);
-				hideCity.play();
-				comeBack.play();
-				
-				currentState = "board";
-			}
 			
 			//======================================================================================//
 			
@@ -215,22 +176,12 @@
 	<!-- ====================================================================================== -->
 	
 	<fx:Declarations>
-		<mx:Move id="goLeft"
-				 xTo="-1500"
-				 target="{main}"
-				 duration="350"
-				 easingFunction="{Quadratic.easeIn}"/>
-		<mx:Move id="comeBack"
-				 xTo="0"
-				 target="{main}"
-				 easingFunction="{Quadratic.easeIn}"/>
-
 		<mx:Move id="appearCity"
 				 xTo="0"
 				 target="{cityGroup}"
 				 easingFunction="{Quadratic.easeIn}"/>
 		<mx:Move id="hideCity"
-				 xTo="1500"
+				 xTo="2500"
 				 target="{cityGroup}"
 				 easingFunction="{Quadratic.easeIn}"/>
 		
@@ -248,136 +199,108 @@
 	
 	<!-- ====================================================================================== -->
 	
-	<s:Group id="main" width="100%" height="100%">
+	<s:Group id="main" width="{Session.APPLICATION_WIDTH}" height="{Session.APPLICATION_HEIGHT}">
 		
-		<s:Group width="100%">
-			<s:Group width="{Session.MAP_WIDTH}" 
-					 height="{Session.MAP_HEIGHT}"
-					 x="50"
-					 y="50"
-					 id="boardImage"
-					 clipAndEnableScrolling="true"	  
-					 useHandCursor="true">
-				<!--
-				<s:Group id="mapPositioner" 
-					  buttonMode="true"
-					  width="{Numbers.LAND_WIDTH*400}"
-					  height="{Numbers.LAND_HEIGHT*400}"
-					  mouseDown="BoardClickAnalyser.getInstance().mouseDown(event)"
-					  mouseMove="BoardClickAnalyser.getInstance().mouseMove(event)"
-					  mouseUp="BoardClickAnalyser.getInstance().mouseUp(event)"/>
-				-->
-				<s:Group id="mapLayer"
-						 width="{Numbers.LAND_WIDTH*400}"
-						 height="{Numbers.LAND_HEIGHT*400}"
-						 x="{mapPositioner.x}"
-						 y="{mapPositioner.y}"
-						 mouseEnabled="false"
-						 mouseChildren="false"
-						 mouseEnabledWhereTransparent="false"/>
-				<s:Group id="pawnLayer"
-						 width="{Numbers.LAND_WIDTH*400}"
-						 height="{Numbers.LAND_HEIGHT*400}"
-						 x="{mapPositioner.x}"
-						 y="{mapPositioner.y}"
-						 mouseEnabled="false"
-						 mouseChildren="false"
-						 mouseEnabledWhereTransparent="false"/>
-				<s:Group id="highlighters"
-						 width="{Numbers.LAND_WIDTH*400}"
-						 height="{Numbers.LAND_HEIGHT*400}"
-						 x="{mapPositioner.x}"
-						 y="{mapPositioner.y}"
-						 mouseEnabled="false"
-						 mouseChildren="true"
-						 mouseEnabledWhereTransparent="false">
-					
-					<mx:Image id="currentMouseHighLightNormal"
-							  source="{ImageContainer.getImage(ImageContainer.HIGHLIGHT_BLANC)}"
-							  visible="{!Session.MOVE_A_UNIT}"
-							  x="{Session.COORDINATE_X * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4) * BoardDrawer.getInstance().scale}"
-							  y="{Session.COORDINATE_Y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2) * BoardDrawer.getInstance().scale}"
-							  scaleX="{BoardDrawer.getInstance().scale}"
-							  scaleY="{BoardDrawer.getInstance().scale}"
-							  mouseEnabled="false"/>
-
-					<mx:Image id="currentMouseHighLight4UnitMoves"
-							  source="{ImageContainer.getImage(ImageContainer.HIGHLIGHT_BLANC)}"
-							  visible="{Session.MOVE_A_UNIT}"
-							  x="{Session.COORDINATE_X * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4) * BoardDrawer.getInstance().scale}"
-							  y="{Session.COORDINATE_Y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2) * BoardDrawer.getInstance().scale}"
-							  scaleX="{BoardDrawer.getInstance().scale}"
-							  scaleY="{BoardDrawer.getInstance().scale}"
-							  mouseEnabled="false"/>
-
-					<mx:Image id="currentSelectionHighLight"
-							  source="{ImageContainer.getImage(ImageContainer.HIGHLIGHT_BLANC)}"
-							  x="{Session.CURRENT_SELECTION_X * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4) * BoardDrawer.getInstance().scale}"
-							  y="{Session.CURRENT_SELECTION_Y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2) * BoardDrawer.getInstance().scale}"
-							  scaleX="{BoardDrawer.getInstance().scale}"
-							  scaleY="{BoardDrawer.getInstance().scale}"
-							  mouseEnabled="false"/>
-					
-				</s:Group>
- 			</s:Group>
+		<s:Group width="{Session.MAP_WIDTH}" 
+				 height="{Session.MAP_HEIGHT}"
+				 verticalCenter="0"
+				 horizontalCenter="0"
+				 id="boardImage"
+				 clipAndEnableScrolling="true"	  
+				 useHandCursor="true">
+			<s:Group id="mapLayer"
+					 width="{Numbers.LAND_WIDTH*400}"
+					 height="{Numbers.LAND_HEIGHT*400}"
+					 x="{mapPositioner.x}"
+					 y="{mapPositioner.y}"
+					 mouseEnabled="false"
+					 mouseChildren="false"
+					 mouseEnabledWhereTransparent="false"/>
+			<s:Group id="pawnLayer"
+					 width="{Numbers.LAND_WIDTH*400}"
+					 height="{Numbers.LAND_HEIGHT*400}"
+					 x="{mapPositioner.x}"
+					 y="{mapPositioner.y}"
+					 mouseEnabled="false"
+					 mouseChildren="false"
+					 mouseEnabledWhereTransparent="false"/>
+			<s:Group id="highlighters"
+					 width="{Numbers.LAND_WIDTH*400}"
+					 height="{Numbers.LAND_HEIGHT*400}"
+					 x="{mapPositioner.x}"
+					 y="{mapPositioner.y}"
+					 mouseEnabled="false"
+					 mouseChildren="true"
+					 mouseEnabledWhereTransparent="false">
 				
-			<s:Image source="{ImageContainer.BORDERS}"
-					  x="0"
-					  y="-40"/>
-			
-			<s:Group width="{Session.MAP_WIDTH}" 
-					 height="{Session.MAP_HEIGHT}"
-					 x="50"
-					 y="50"
-					 clipAndEnableScrolling="true"	  
-					 useHandCursor="true">
-				<s:Group id="mapPositioner" 
-						 buttonMode="true"
-						 width="{Numbers.LAND_WIDTH*400}"
-						 height="{Numbers.LAND_HEIGHT*400}"
-						 mouseDown="BoardClickAnalyser.getInstance().mouseDown(event)"
-						 mouseMove="BoardClickAnalyser.getInstance().mouseMove(event)"
-						 mouseUp="BoardClickAnalyser.getInstance().mouseUp(event)"/>
-			</s:Group>
+				<mx:Image id="currentMouseHighLightNormal"
+						  source="{ImageContainer.getImage(ImageContainer.HIGHLIGHT_BLANC)}"
+						  visible="{!Session.MOVE_A_UNIT}"
+						  x="{Session.COORDINATE_X * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4) * BoardDrawer.getInstance().scale}"
+						  y="{Session.COORDINATE_Y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2) * BoardDrawer.getInstance().scale}"
+						  scaleX="{BoardDrawer.getInstance().scale}"
+						  scaleY="{BoardDrawer.getInstance().scale}"
+						  mouseEnabled="false"/>
 
-			<!--
-			<mx:Image source="{ImageContainer.MAP_BORDER_TOP}"
-					  x="{boardImage.x-31}"
-					  y="{boardImage.y-31}"
-					  mouseOver="if(BoardClickAnalyser.isDragging)BoardClickAnalyser.getInstance().mouseUp(event)"/>
-			<mx:Image source="{ImageContainer.MAP_BORDER_BOTTOM}"
-					  x="{boardImage.x-31}"
-					  y="{boardImage.y+Session.MAP_HEIGHT - 31}"
-					  mouseOver="if(BoardClickAnalyser.isDragging)BoardClickAnalyser.getInstance().mouseUp(event)"/>
-			<mx:Image source="{ImageContainer.MAP_BORDER_LEFT}"
-					  x="{boardImage.x-31}"
-					  y="{boardImage.y + 31}"
-					  mouseOver="if(BoardClickAnalyser.isDragging)BoardClickAnalyser.getInstance().mouseUp(event)"/>
-			<mx:Image source="{ImageContainer.MAP_BORDER_RIGHT}"
-					  x="{boardImage.x+Session.MAP_WIDTH - 31}"
-					  y="{boardImage.y + 31}"
-					  mouseOver="if(BoardClickAnalyser.isDragging)BoardClickAnalyser.getInstance().mouseUp(event)"/>
-			-->
-			
-			<mx:Image source="{ImageContainer.ZOOM_IN}"
-					  id="zoomInButton"
-					  visible="{!Session.MOVE_A_UNIT &amp;&amp; !Session.WAIT_FOR_SERVER}"
-					  x="{boardImage.x + 25}"
-					  y="{boardImage.y - 15}"
-					  click="{BoardDrawer.getInstance().zoom()}"/>
-			<mx:Image source="{ImageContainer.ZOOM_OUT}"
-					  id="zoomOutButton"
-					  visible="{!Session.MOVE_A_UNIT &amp;&amp; !Session.WAIT_FOR_SERVER}"
-					  x="{boardImage.x + 60}"
-					  y="{boardImage.y - 14}"
-					  click="BoardDrawer.getInstance().unzoom()"/>
-			<mx:Image source="{ImageContainer.REFRESH}"
-					  id="refreshButton"
-					  visible="{!Session.MOVE_A_UNIT &amp;&amp; !Session.WAIT_FOR_SERVER}"
-					  x="{boardImage.x + 95}"
-					  y="{boardImage.y - 13}"
-					  click="{GameManager.getInstance().getPlayer(Session.player)}"/>
+				<mx:Image id="currentMouseHighLight4UnitMoves"
+						  source="{ImageContainer.getImage(ImageContainer.HIGHLIGHT_BLANC)}"
+						  visible="{Session.MOVE_A_UNIT}"
+						  x="{Session.COORDINATE_X * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4) * BoardDrawer.getInstance().scale}"
+						  y="{Session.COORDINATE_Y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2) * BoardDrawer.getInstance().scale}"
+						  scaleX="{BoardDrawer.getInstance().scale}"
+						  scaleY="{BoardDrawer.getInstance().scale}"
+						  mouseEnabled="false"/>
+
+				<mx:Image id="currentSelectionHighLight"
+						  source="{ImageContainer.getImage(ImageContainer.HIGHLIGHT_BLANC)}"
+						  x="{Session.CURRENT_SELECTION_X * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4) * BoardDrawer.getInstance().scale}"
+						  y="{Session.CURRENT_SELECTION_Y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2) * BoardDrawer.getInstance().scale}"
+						  scaleX="{BoardDrawer.getInstance().scale}"
+						  scaleY="{BoardDrawer.getInstance().scale}"
+						  mouseEnabled="false"/>
+				
+			</s:Group>
+ 		</s:Group>
+		
+		<s:Image source="{ImageContainer.BORDERS}"
+				 x="{boardImage.x - 80}"
+				 y="{boardImage.y - 80}"
+				 />
+
+		<s:Group width="{Session.MAP_WIDTH}" 
+				 height="{Session.MAP_HEIGHT}"
+				 verticalCenter="0"
+				 horizontalCenter="0"
+				 id="boardClickReceiver"
+				 clipAndEnableScrolling="true"	  
+				 useHandCursor="true">
+			<s:Group id="mapPositioner" 
+					 buttonMode="true"
+					 width="{Numbers.LAND_WIDTH*400}"
+					 height="{Numbers.LAND_HEIGHT*400}"
+					 mouseDown="BoardClickAnalyser.getInstance().mouseDown(event)"
+					 mouseMove="BoardClickAnalyser.getInstance().mouseMove(event)"
+					 mouseUp="BoardClickAnalyser.getInstance().mouseUp(event)"/>
 		</s:Group>
+		
+		<mx:Image source="{ImageContainer.ZOOM_IN}"
+				  id="zoomInButton"
+				  visible="{!Session.MOVE_A_UNIT &amp;&amp; !Session.WAIT_FOR_SERVER}"
+				  x="{boardImage.x + 25}"
+				  y="{boardImage.y - 15}"
+				  click="{BoardDrawer.getInstance().zoom()}"/>
+		<mx:Image source="{ImageContainer.ZOOM_OUT}"
+				  id="zoomOutButton"
+				  visible="{!Session.MOVE_A_UNIT &amp;&amp; !Session.WAIT_FOR_SERVER}"
+				  x="{boardImage.x + 60}"
+				  y="{boardImage.y - 14}"
+				  click="BoardDrawer.getInstance().unzoom()"/>
+		<mx:Image source="{ImageContainer.REFRESH}"
+				  id="refreshButton"
+				  visible="{!Session.MOVE_A_UNIT &amp;&amp; !Session.WAIT_FOR_SERVER}"
+				  x="{boardImage.x + 95}"
+				  y="{boardImage.y - 13}"
+				  click="{GameManager.getInstance().getPlayer(Session.player)}"/>
 	</s:Group>
 	
 	<!-- =============================================================================================== -->
@@ -402,37 +325,13 @@
 		<mx:Spacer width="50"/>
 		<s:Label text="Y : {Session.COORDINATE_Y}"/>
 	</s:HGroup>
-	<!-- ====================================================================================== -->
-	<!-- city -->
 	
-	
-	<s:VGroup horizontalAlign="center" 
-			  paddingTop="50"
-			  id="cityGroup" 
-			  width="{main.width}" 
-			  height="{main.height}"
-			  x="3000"
-			  includeInLayout="false">
-		<s:HGroup>
-			<s:Button label="&lt;-- {Translations.VALIDATE_MODIFICATIONS.getItemAt(Session.LANGUAGE)}" 
-					  click="{saveCityAndGoBackToBoard()}"
-					  skinClass="com.uralys.tribes.skins.CustomButtonSkin"
-					  enabled="{cityForm.currentState != 'recordingUnit'}"/>
-			<mx:Spacer width="450"/>
-		</s:HGroup>
-		<components:CityForm 
-				id="cityForm"
-			    city="@{selectedCity}"/>
-		<mx:Spacer height="55"/>
-	</s:VGroup>
-		 
 	<!-- ====================================================================================== -->
 		  
 	<mx:SWFLoader source="{ImageContainer.LOADING}" 
 		 		  visible="{Session.WAIT_FOR_SERVER}"
 				  x="{boardImage.x+50}"
 				  y="{boardImage.y+Session.MAP_HEIGHT - 16}"
-				  excludeFrom="city"
 				  rotation="2"/>
 	
 	<!-- ====================================================================================== -->
@@ -440,5 +339,9 @@
 	<windows:ChangeName id="changeNameWindow" x="-375" y="100" type="1"/>
 	<windows:ChangeName id="changeCityNameWindow" x="-375" y="100" type="2"/>
 	<windows:PlayerUnits id="playerUnits" x="-600" y="100"/>
+	<windows:CityGroup id="cityGroup" x="2500" y="{Session.HEADER_HEIGHT}"
+					   width="{Session.APPLICATION_WIDTH}"
+					   height="{Session.APPLICATION_HEIGHT - Session.HEADER_HEIGHT - Session.FOOTER_HEIGHT}"
+					   selectedCity="@{selectedCity}"/>
 	
 </s:Group>

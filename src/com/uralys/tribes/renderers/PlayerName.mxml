@@ -19,7 +19,7 @@
 			
 			protected function openProfile():void
 			{
-				FlexGlobals.topLevelApplication.openPlayerProfileWindow(player.playerUID);
+				FlexGlobals.topLevelApplication.header.openPlayerProfileWindow(player.playerUID);
 			}
 		]]>
 	</fx:Script>

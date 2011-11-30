@@ -55,13 +55,16 @@ public class Pager
 		
 		//======================================================================================//
 
-		public function goToPage(PageType:Class, ...args):void{
+		public function goToPage(PageType:Class, ...args):void
+		{
 			trace("GO TO PAGE");
 			_currentPage = PageType;
 			var page = new PageType(); 
 			try{
 				page.params = args;
-			}catch(e:Error){}
+			}catch(e:Error){
+				trace(e.message);
+			}
 				
 			
 			trace(_window == null);

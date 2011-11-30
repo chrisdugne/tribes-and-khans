@@ -258,7 +258,7 @@ package com.uralys.tribes.managers {
 			if(!catchUpCalculation || !allCitiesAreFilled)
 				allCitiesAreFilled = calculateCitiesStep(player, catchUpCalculation);
 			
-			Session.board.cityForm.refreshCity();
+			Session.board.cityGroup.cityForm.refreshCity();
 
 			if(!catchUpCalculation){
 				savePlayer(player);
@@ -537,7 +537,7 @@ package com.uralys.tribes.managers {
 			trace("unitSaved");
 			
 			currentUnitBeingSaved.isModified = false;
-			Session.board.cityForm.currentState = Session.board.cityForm.normalState.name;
+			Session.board.cityGroup.cityForm.currentState = Session.board.cityGroup.cityForm.normalState.name;
 			
 			if(event.result != null)
 			{
@@ -1436,7 +1436,7 @@ package com.uralys.tribes.managers {
 		
 		public function updateWorkersProgressBar():void
 		{
-			Session.board.cityForm.cityHeader.updateWorkersProgressBar();
+			Session.board.cityGroup.cityForm.cityHeader.updateWorkersProgressBar();
 		}
 		
 		//---------------------------------------------------------------------//		

@@ -20,6 +20,9 @@ public final class ImageContainer
 	[Embed(source="resources/embed/mail.png")]
 	[Bindable] public static var MAIL_BOX:Class;
 
+	[Embed(source="resources/embed/logo.png")]
+	[Bindable] public static var LOGO:Class;
+
 	//   ======================================================================//
 
 	[Embed(source="resources/embed/zoom_in.png")]
@@ -155,7 +158,7 @@ public final class ImageContainer
 	[Bindable] public static var HIGHLIGHT_BLANC:Bitmap;
 	[Bindable] public static var HIGHLIGHT_VERT:Bitmap;
 	[Bindable] public static var HIGHLIGHT_ROUGE:Bitmap;
-	[Bindable] public static var LOGO:Bitmap;
+	//[Bindable] public static var LOGO:Bitmap;
 	[Bindable] public static var GROUPE_PERSO:Bitmap;
 	[Bindable] public static var FERMIER:Bitmap;
 	[Bindable] public static var FORGERON:Bitmap;
@@ -296,10 +299,10 @@ public final class ImageContainer
 				break;
 			case 10:
 				HIGHLIGHT_ROUGE = event.currentTarget.content;
+				currentImage++;
 				break;
-			case 11:
-				LOGO = event.currentTarget.content;
-				break;
+			//case 11:
+				//LOGO = event.currentTarget.content;
 			case 12:
 				GROUPE_PERSO = event.currentTarget.content;
 				break;

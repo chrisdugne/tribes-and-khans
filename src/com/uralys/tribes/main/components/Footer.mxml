@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:HGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 horizontalAlign="center"
+			>
+	<fx:Script>
+		<![CDATA[
+			import com.uralys.tribes.commons.Numbers;
+			import com.uralys.tribes.commons.Session;
+			import com.uralys.tribes.commons.Translations;
+			import com.uralys.tribes.windows.CreditsWindow;
+			
+			import mx.managers.PopUpManager;
+			
+			public var creditsWindow:CreditsWindow = new CreditsWindow();
+			private function openCreditsWindow():void 
+			{
+				creditsWindow.closeWindow();
+				
+				PopUpManager.addPopUp(creditsWindow, this, false);
+				PopUpManager.centerPopUp(creditsWindow);
+				
+			}
+		]]>
+	</fx:Script>
+
+	<s:Label text="Uralys"
+			 id="labelUralys"
+			 click="navigateToURL(new URLRequest('http://www.uralys.com'), '_new');"
+			 color="{Numbers.CLASSIC_COLOR}"
+			 mouseOver="{labelUralys.setStyle('color', '#ffffff')}"
+			 mouseOut="{labelUralys.setStyle('color', Numbers.CLASSIC_COLOR)}"/>
+	<mx:Spacer width="10%"/>
+	<s:Label text="Credits"
+			 id="labelCredits"
+			 click="openCreditsWindow()"
+			 color="{Numbers.CLASSIC_COLOR}"
+			 mouseOver="{labelCredits.setStyle('color', '#ffffff')}"
+			 mouseOut="{labelCredits.setStyle('color', Numbers.CLASSIC_COLOR)}"/>
+	<mx:Spacer width="10%"/>
+	<s:Label text="{Translations.GO_TO_FORUM.getItemAt(Session.LANGUAGE)}"
+			 id="labelForum"
+			 click="navigateToURL(new URLRequest('http://tribesandkhans.freeforums.org/'), '_new');"
+			 color="{Numbers.CLASSIC_COLOR}"
+			 mouseOver="{labelForum.setStyle('color', '#ffffff')}"
+			 mouseOut="{labelForum.setStyle('color', Numbers.CLASSIC_COLOR)}"/>
+	<mx:Spacer width="20%"/>
+	<s:Label text=" Tribes And Khans 2011   -    version {Session.VERSION}" 
+			 id="labelTitle"
+			 color="{Numbers.CLASSIC_COLOR}"
+			 click="navigateToURL(new URLRequest('http://tribes-and-khans.tumblr.com'), '_new');"
+			 mouseOver="{labelTitle.setStyle('color', '#ffffff')}"
+			 mouseOut="{labelTitle.setStyle('color', Numbers.CLASSIC_COLOR)}"/>
+</s:HGroup>	

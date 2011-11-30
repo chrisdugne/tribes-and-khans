@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		  xmlns:s="library://ns.adobe.com/flex/spark" 
+		  xmlns:mx="library://ns.adobe.com/flex/mx"
+		  xmlns:components="com.uralys.tribes.components.*" 
+		  >
+	<fx:Script>
+		<![CDATA[
+			import com.uralys.tribes.commons.Session;
+			import com.uralys.tribes.commons.Translations;
+			import com.uralys.tribes.entities.City;
+			import com.uralys.tribes.entities.Unit;
+			import com.uralys.tribes.managers.GameManager;
+			
+			//---------------------------------------------------------------------------------------//
+			
+			[Bindable] public var selectedCity:City;
+
+			//---------------------------------------------------------------------------------------//
+			
+			
+			private function saveCityAndGoBackToBoard():void
+			{				
+				trace("-----");
+				trace("saveCityAndGoBackToBoard");
+				
+				var unitsToRecord:Array = [];
+				var army:Unit = Session.CURRENT_CELL_SELECTED.army;
+				var caravan:Unit = Session.CURRENT_CELL_SELECTED.caravan;
+				
+				// on force la validation du marchand si il existe et qu'il reste dans la ville
+				// si il est en mouvement, on ne peut pas l'editer donc pas besoin d'appeler le validateMerchants (qui casserait tout en placant le timeTo à -1) 
+				if(caravan != null 
+					&& caravan.moves.length == 1)
+				{
+					unitsToRecord.push(caravan);
+				}
+				
+				// IDEM pour army
+				if(army != null 
+					&& army.moves.length == 1)
+				{
+					unitsToRecord.push(army);
+				}
+				
+				GameManager.getInstance().saveCity(selectedCity, unitsToRecord);
+				Session.board.hideCity.play();
+			}
+
+		]]>
+	</fx:Script>
+	
+	<s:Rect left="0" right="0" top="0" bottom="0" radiusX="5" radiusY="5">
+		<s:fill>
+			<s:SolidColor color="#000000"/>
+		</s:fill>
+	</s:Rect>
+	
+	<s:VGroup height="100%"
+			  width="100%"
+			  horizontalAlign="center" >
+		
+		<s:HGroup>
+			<s:Button label="&lt;-- {Translations.VALIDATE_MODIFICATIONS.getItemAt(Session.LANGUAGE)}" 
+					  click="{saveCityAndGoBackToBoard()}"
+					  skinClass="com.uralys.tribes.skins.CustomButtonSkin"
+					  enabled="{cityForm.currentState != 'recordingUnit'}"/>
+			<mx:Spacer width="450"/>
+		</s:HGroup>
+		<components:CityForm 
+			id="cityForm"
+			city="@{selectedCity}"/>
+		<s:Spacer height="55"/>
+	</s:VGroup>
+</s:Group>

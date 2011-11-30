@@ -141,6 +141,7 @@ package com.uralys.tribes.managers {
 			}
 			else{
 				Session.player = player;
+				trace(ObjectUtil.toString(Session.player));
 				finalizeLogin();
 			}
 				

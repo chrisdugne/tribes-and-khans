@@ -101,7 +101,7 @@ public class MusicPlayer
 
 		public function changeVolume():void
 		{
-			var pourcentageValue:int = FlexGlobals.topLevelApplication.volumeSlider.value;
+			var pourcentageValue:int = FlexGlobals.topLevelApplication.header.volumeSlider.value;
 			
 			volumeRecorded = pourcentageValue/100;
 			volume = pourcentageValue/100;

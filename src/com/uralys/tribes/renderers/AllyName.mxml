@@ -19,7 +19,7 @@
 			
 			protected function openProfile():void
 			{
-				FlexGlobals.topLevelApplication.openAllyProfileWindow(ally.allyUID);
+				FlexGlobals.topLevelApplication.header.openAllyProfileWindow(ally.allyUID);
 			}
 		]]>
 	</fx:Script>

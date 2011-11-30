@@ -27,6 +27,9 @@
 			{
 				if(workersProgressBar == null)
 					return;
+
+				if(city == null)
+					return;
 				
 				city.refreshUnemployed();
 				workersProgressBar.setProgress(city.workers, city.population);

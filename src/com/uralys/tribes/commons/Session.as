@@ -20,7 +20,7 @@ package com.uralys.tribes.commons
 
 		//=====================================================//
 		
-		[Bindable] public static var VERSION:String = "1.3.17";
+		[Bindable] public static var VERSION:String = "1.3.19";
 		[Bindable] public static var LOGGED_IN:Boolean = false; 
 		[Bindable] public static var CONNECTED_TO_FACEBOOK:Boolean = false;
 		
@@ -30,12 +30,18 @@ package com.uralys.tribes.commons
 		//=====================================================//
 		
 		[Bindable] public static var APPLICATION_WIDTH:int = 0;	
+		[Bindable] public static var APPLICATION_HEIGHT:int = 0;	
 		
+		//=====================================================//
+
+		[Bindable] public static var HEADER_HEIGHT:int = 28;	
+		[Bindable] public static var FOOTER_HEIGHT:int = 28;	
+
 		//=====================================================//
 
 		[Bindable] public static var MAP_WIDTH:int = 880;	
 		[Bindable] public static var MAP_HEIGHT:int = 540;	
-		
+
 		//=====================================================//
 		
 		[Bindable] public static var LOGGED_IN_FORCE_STEPS_DONE:Boolean = false; 

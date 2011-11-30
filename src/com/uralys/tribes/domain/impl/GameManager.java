@@ -135,6 +135,7 @@ public class GameManager implements IGameManager {
 		Player player = EntitiesConverter.convertPlayerDTO(playerDTO, true);
 
 		if(player.getCities().size() == 0){
+			if(debug)Utils.print("Creation de la nouvelle premier ville");
 			player.getCities().add(EntitiesConverter.convertCityDTO(gameDao.createNewFirstCity(uralysUID), true));
 		}
 		
@@ -168,17 +169,19 @@ public class GameManager implements IGameManager {
 		//------------------------------------//
 		// MAJ des points des l'alliance : on ajoute les nouvelles donnees
 		
-		if(player.getAlly() != null){
+		if(player.getAlly() != null)
+		{
 			player.getAlly().setNbArmies(player.getAlly().getNbArmies() + player.getNbArmies());
 			player.getAlly().setNbCities(player.getAlly().getNbCities() + player.getNbCities());
 			player.getAlly().setNbPopulation(player.getAlly().getNbPopulation() + player.getNbPopulation());
 			
-
 			gameDao.updateAllyPoints(player.getAlly());
 		}
 
 		//------------------------------------//
 
+		if(debug)Utils.print("player ready | cities size : " + player.getCities().size());
+		if(debug)Utils.print("player ready | nb cities : " + player.getNbCities());
 		return player;
 	}
 

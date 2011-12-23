@@ -263,8 +263,8 @@
  		</s:Group>
 		
 		<s:Image source="{ImageContainer.BORDERS}"
-				 x="{boardImage.x - 80}"
-				 y="{boardImage.y - 80}"
+				 x="{boardImage.x - 510}"
+				 y="{boardImage.y - 220}"
 				 />
 
 		<s:Group width="{Session.MAP_WIDTH}" 

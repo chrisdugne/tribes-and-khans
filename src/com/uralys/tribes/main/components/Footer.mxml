@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<s:HGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
-		 xmlns:mx="library://ns.adobe.com/flex/mx"
-		 horizontalAlign="center"
-			>
+		 xmlns:mx="library://ns.adobe.com/flex/mx">
 	<fx:Script>
 		<![CDATA[
 			import com.uralys.tribes.commons.Numbers;
@@ -24,32 +22,52 @@
 			}
 		]]>
 	</fx:Script>
-
-	<s:Label text="Uralys"
-			 id="labelUralys"
-			 click="navigateToURL(new URLRequest('http://www.uralys.com'), '_new');"
-			 color="{Numbers.CLASSIC_COLOR}"
-			 mouseOver="{labelUralys.setStyle('color', '#ffffff')}"
-			 mouseOut="{labelUralys.setStyle('color', Numbers.CLASSIC_COLOR)}"/>
-	<mx:Spacer width="10%"/>
-	<s:Label text="Credits"
-			 id="labelCredits"
-			 click="openCreditsWindow()"
-			 color="{Numbers.CLASSIC_COLOR}"
-			 mouseOver="{labelCredits.setStyle('color', '#ffffff')}"
-			 mouseOut="{labelCredits.setStyle('color', Numbers.CLASSIC_COLOR)}"/>
-	<mx:Spacer width="10%"/>
-	<s:Label text="{Translations.GO_TO_FORUM.getItemAt(Session.LANGUAGE)}"
-			 id="labelForum"
-			 click="navigateToURL(new URLRequest('http://tribesandkhans.freeforums.org/'), '_new');"
-			 color="{Numbers.CLASSIC_COLOR}"
-			 mouseOver="{labelForum.setStyle('color', '#ffffff')}"
-			 mouseOut="{labelForum.setStyle('color', Numbers.CLASSIC_COLOR)}"/>
-	<mx:Spacer width="20%"/>
-	<s:Label text=" Tribes And Khans 2011   -    version {Session.VERSION}" 
-			 id="labelTitle"
-			 color="{Numbers.CLASSIC_COLOR}"
-			 click="navigateToURL(new URLRequest('http://tribes-and-khans.tumblr.com'), '_new');"
-			 mouseOver="{labelTitle.setStyle('color', '#ffffff')}"
-			 mouseOut="{labelTitle.setStyle('color', Numbers.CLASSIC_COLOR)}"/>
-</s:HGroup>	
+	
+	<s:Rect left="0" right="0" top="0" bottom="0" radiusX="5" radiusY="5">
+		<s:fill>
+			<s:LinearGradient id="gradient1">
+				<s:entries>
+					<s:GradientEntry id="entry1" color="0x000000" alpha="0"/>
+					<s:GradientEntry id="entry2" color="0x000000" alpha="0.8" />
+					<s:GradientEntry id="entry3" color="0x000000" alpha="0"/>
+				</s:entries>
+			</s:LinearGradient>
+		</s:fill>
+	</s:Rect>
+	
+	<s:HGroup
+		width="100%"
+		paddingLeft="10" paddingRight="10" paddingBottom="-20"
+		height="30"
+		verticalAlign="top"
+		horizontalAlign="center">
+		
+		<s:Label text="Uralys"
+				 id="labelUralys"
+				 click="navigateToURL(new URLRequest('http://www.uralys.com'), '_new');"
+				 color="{Numbers.CLASSIC_COLOR}"
+				 mouseOver="{labelUralys.setStyle('color', '#ffffff')}"
+				 mouseOut="{labelUralys.setStyle('color', Numbers.CLASSIC_COLOR)}"/>
+		<mx:Spacer width="10%"/>
+		<s:Label text="Credits"
+				 id="labelCredits"
+				 click="openCreditsWindow()"
+				 color="{Numbers.CLASSIC_COLOR}"
+				 mouseOver="{labelCredits.setStyle('color', '#ffffff')}"
+				 mouseOut="{labelCredits.setStyle('color', Numbers.CLASSIC_COLOR)}"/>
+		<mx:Spacer width="10%"/>
+		<s:Label text="{Translations.GO_TO_FORUM.getItemAt(Session.LANGUAGE)}"
+				 id="labelForum"
+				 click="navigateToURL(new URLRequest('http://tribesandkhans.freeforums.org/'), '_new');"
+				 color="{Numbers.CLASSIC_COLOR}"
+				 mouseOver="{labelForum.setStyle('color', '#ffffff')}"
+				 mouseOut="{labelForum.setStyle('color', Numbers.CLASSIC_COLOR)}"/>
+		<mx:Spacer width="20%"/>
+		<s:Label text=" Tribes And Khans 2011   -    version {Session.VERSION}" 
+				 id="labelTitle"
+				 color="{Numbers.CLASSIC_COLOR}"
+				 click="navigateToURL(new URLRequest('http://tribes-and-khans.tumblr.com'), '_new');"
+				 mouseOver="{labelTitle.setStyle('color', '#ffffff')}"
+				 mouseOut="{labelTitle.setStyle('color', Numbers.CLASSIC_COLOR)}"/>
+	</s:HGroup>
+</s:Group>

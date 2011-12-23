@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<s:HGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
-		 xmlns:mx="library://ns.adobe.com/flex/mx"
-		 width="100%" paddingLeft="10" paddingRight="10" paddingBottom="-20"
-		 height="20"
-		 verticalAlign="top">
+		 xmlns:mx="library://ns.adobe.com/flex/mx">
 	
 	<fx:Script>
 		<![CDATA[
@@ -131,11 +128,30 @@
 		]]>
 	</fx:Script>
 	
-		<mx:Image id="frenchButton" source="{ImageContainer.FR_FLAG}" click="french()" visible="{Session.LANGUAGE != 0}" width="25"/>
-		<mx:Image id="englishButton" source="{ImageContainer.EN_FLAG}" click="english()" visible="{Session.LANGUAGE != 1}" width="25"/>
-		<mx:Image id="usButton" source="{ImageContainer.US_FLAG}" click="us()" visible="{Session.LANGUAGE != 2}" width="25"/>
+	<s:Rect left="0" right="0" top="0" bottom="0" radiusX="5" radiusY="5">
+		<s:fill>
+			<s:LinearGradient id="gradient1">
+				<s:entries>
+					<s:GradientEntry id="entry1" color="0x000000" alpha="0"/>
+					<s:GradientEntry id="entry2" color="0x000000" alpha="0.8" />
+					<s:GradientEntry id="entry3" color="0x000000" alpha="0"/>
+				</s:entries>
+			</s:LinearGradient>
+		</s:fill>
+	</s:Rect>
+	
+	<s:HGroup
+		width="100%"
+		paddingLeft="10" paddingRight="10" paddingBottom="-20"
+		height="30"
+		verticalAlign="top">
 		
-		<mx:Image id="soundOnButton" source="{ImageContainer.HP}" click="{music()}"/>
+	
+		<s:Image id="frenchButton" source="{ImageContainer.FR_FLAG}" click="french()" visible="{Session.LANGUAGE != 0}" width="25"/>
+		<s:Image id="englishButton" source="{ImageContainer.EN_FLAG}" click="english()" visible="{Session.LANGUAGE != 1}" width="25"/>
+		<s:Image id="usButton" source="{ImageContainer.US_FLAG}" click="us()" visible="{Session.LANGUAGE != 2}" width="25"/>
+		
+		<s:Image id="soundOnButton" source="{ImageContainer.HP}" click="{music()}"/>
 		<s:Label text="{MusicPlayer.getInstance().volume &gt; 0 ? 'On' : 'Off'}" click="{music()}"
 				 id="labelVolume"
 				 mouseOver="{labelVolume.setStyle('color', '#ffffff')}"
@@ -147,7 +163,7 @@
 				   change="{MusicPlayer.getInstance().changeVolume()}"
 				   height="20"/>
 		
-		<mx:Spacer width="10"/>
+		<s:Spacer width="10"/>
 		<s:Label text="{Translations.HOW_TO_PLAY.getItemAt(Session.LANGUAGE)}"
 				 id="labelHowTo"
 				 click="navigateToURL(new URLRequest('http://www.uralys.com/tribes-and-khans.'+ (Session.LANGUAGE == 0 ? 'fr' : 'en') +'.html'), '_new');"
@@ -155,14 +171,14 @@
 				 toolTip="{Translations.OPEN_TAB.getItemAt(Session.LANGUAGE)}"
 				 mouseOver="{labelHowTo.setStyle('color', '#ffffff')}"
 				 mouseOut="{labelHowTo.setStyle('color', Numbers.CLASSIC_COLOR)}"/>
-		<mx:Image source="{ImageContainer.GREEN_QUESTION}"
+		<s:Image source="{ImageContainer.GREEN_QUESTION}"
 				  click="navigateToURL(new URLRequest('http://www.uralys.com/tribes-and-khans.'+ (Session.LANGUAGE == 0 ? 'fr' : 'en') +'.html'), '_new');"
 				  toolTip="{Translations.OPEN_TAB.getItemAt(Session.LANGUAGE)}"
 				  mouseOver="{labelHowTo.setStyle('color', '#ffffff')}"
 				  mouseOut="{labelHowTo.setStyle('color', Numbers.CLASSIC_COLOR)}"
 				  />
 		
-		<mx:Spacer width="100%"/>
+		<s:Spacer width="100%"/>
 		<s:Label text="{Translations.MY_ALLY.getItemAt(Session.LANGUAGE)}"
 				 id="labelAlly"
 				 click="openAllyProfileWindow(Session.player.ally.allyUID)"
@@ -172,7 +188,7 @@
 				 mouseOut="{labelAlly.setStyle('color', Numbers.CLASSIC_COLOR)}"
 				 visible="{Session.LOGGED_IN &amp;&amp; Session.player.ally != null}"/>
 		
-		<mx:Spacer width="30"/>
+		<s:Spacer width="30"/>
 		<s:Label text="{Translations.MY_PROFILE.getItemAt(Session.LANGUAGE)}"
 				 id="labelProfile"
 				 click="openPlayerProfileWindow(Session.player.playerUID)"
@@ -182,8 +198,8 @@
 				 mouseOut="{labelProfile.setStyle('color', Numbers.CLASSIC_COLOR)}"
 				 visible="{Session.LOGGED_IN}"/>
 		
-		<mx:Spacer width="30"/>
-		<mx:Image source="{ImageContainer.MAIL_BOX}"
+		<s:Spacer width="30"/>
+		<s:Image source="{ImageContainer.MAIL_BOX}"
 				  click="openMailBox()"
 				  mouseOver="{labelMessages.setStyle('color', '#ffffff')}"
 				  mouseOut="{labelMessages.setStyle('color', Numbers.CLASSIC_COLOR)}"
@@ -198,7 +214,7 @@
 				 mouseOut="{labelMessages.setStyle('color', Numbers.CLASSIC_COLOR)}"
 				 visible="{Session.LOGGED_IN}"/>
 		
-		<mx:Spacer width="30"/>
+		<s:Spacer width="30"/>
 		<s:Label text="{Translations.BOARDS.getItemAt(Session.LANGUAGE)}"
 				 id="labelBoards"
 				 color="{Numbers.CLASSIC_COLOR}"
@@ -206,7 +222,7 @@
 				 mouseOver="{labelBoards.setStyle('color', '#ffffff')}"
 				 mouseOut="{labelBoards.setStyle('color', Numbers.CLASSIC_COLOR)}"/>
 		
-		<mx:Spacer width="30"/>
+		<s:Spacer width="30"/>
 		<s:Label text="{Session.player ? Translations.LOG_AS.getItemAt(Session.LANGUAGE) + ' : '+ Session.uralysProfile.email : Translations.LOG_IN.getItemAt(Session.LANGUAGE)}"
 				 id="labelLogin"
 				 color="{Numbers.CLASSIC_COLOR}"
@@ -214,3 +230,5 @@
 				 mouseOver="{labelLogin.setStyle('color', '#ffffff')}"
 				 mouseOut="{labelLogin.setStyle('color', Numbers.CLASSIC_COLOR)}"/>
 	</s:HGroup>	
+
+</s:Group>	

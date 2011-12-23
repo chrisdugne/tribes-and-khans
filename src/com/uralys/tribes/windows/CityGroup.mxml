@@ -52,13 +52,20 @@
 	
 	<s:Rect left="0" right="0" top="0" bottom="0" radiusX="5" radiusY="5">
 		<s:fill>
-			<s:SolidColor color="#000000"/>
+			<s:LinearGradient id="gradient1">
+				<s:entries>
+					<s:GradientEntry id="entry1" color="0x000000" alpha="0"/>
+					<s:GradientEntry id="entry2" color="0x000000" alpha="0.8" />
+					<s:GradientEntry id="entry3" color="0x000000" alpha="0"/>
+				</s:entries>
+			</s:LinearGradient>
 		</s:fill>
 	</s:Rect>
 	
 	<s:VGroup height="100%"
 			  width="100%"
-			  horizontalAlign="center" >
+			  horizontalAlign="center"
+			  paddingTop="5">
 		
 		<s:HGroup>
 			<s:Button label="&lt;-- {Translations.VALIDATE_MODIFICATIONS.getItemAt(Session.LANGUAGE)}" 

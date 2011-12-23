@@ -178,7 +178,7 @@
 				</mx:GridItem>
 			</mx:GridRow>
 		</mx:Grid>
-		<mx:Spacer height="10"/>
+		<s:Spacer height="10"/>
 		<s:HGroup width="100%" horizontalAlign="center" bottom="0"
 				  includeInLayout="{(city.wheatExpected) &lt; 0}">
 			<s:Label text="{Translations.STARVATION.getItemAt(Session.LANGUAGE)}"

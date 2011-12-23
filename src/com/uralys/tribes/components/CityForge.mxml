@@ -48,7 +48,7 @@
 	
 	<s:VGroup width="100%" horizontalAlign="center">
 		
-		<mx:Spacer height="15"/>
+		<s:Spacer height="15"/>
 		<s:HGroup width="100%" verticalAlign="middle">
 			<s:Label text="{city.bows}/{city.bowStockCapacity}" styleName="numberLabel"/>
 			<mx:Image toolTip="{Translations.BOW.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.BOW}"/>
@@ -64,7 +64,7 @@
 									 />
 		</s:HGroup>
 		
-		<mx:Spacer height="15"/>
+		<s:Spacer height="15"/>
 		<s:HGroup width="100%" verticalAlign="middle">
 			<s:Label text="{city.swords}/{city.swordStockCapacity}" styleName="numberLabel"/>
 			<mx:Image toolTip="{Translations.SWORD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.SWORD}"/>
@@ -80,7 +80,7 @@
 									 />
 		</s:HGroup>
 		
-		<mx:Spacer height="15"/>
+		<s:Spacer height="15"/>
 		<s:HGroup width="100%" verticalAlign="middle">
 			<s:Label text="{city.armors}/{city.armorStockCapacity}" styleName="numberLabel"/>
 			<mx:Image toolTip="{Translations.ARMOR.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.ARMOR}"/>

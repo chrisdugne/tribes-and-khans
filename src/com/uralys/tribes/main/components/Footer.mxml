@@ -9,6 +9,7 @@
 			import com.uralys.tribes.commons.Translations;
 			import com.uralys.tribes.windows.CreditsWindow;
 			
+			import mx.core.FlexGlobals;
 			import mx.managers.PopUpManager;
 			
 			public var creditsWindow:CreditsWindow = new CreditsWindow();
@@ -16,7 +17,7 @@
 			{
 				creditsWindow.closeWindow();
 				
-				PopUpManager.addPopUp(creditsWindow, this, false);
+				PopUpManager.addPopUp(creditsWindow, DisplayObject(FlexGlobals.topLevelApplication), false);
 				PopUpManager.centerPopUp(creditsWindow);
 				
 			}
@@ -38,7 +39,7 @@
 	<s:HGroup
 		width="100%"
 		paddingLeft="10" paddingRight="10" paddingBottom="-20"
-		height="30"
+		height="{Session.FOOTER_HEIGHT}"
 		verticalAlign="top"
 		horizontalAlign="center">
 		
@@ -48,21 +49,21 @@
 				 color="{Numbers.CLASSIC_COLOR}"
 				 mouseOver="{labelUralys.setStyle('color', '#ffffff')}"
 				 mouseOut="{labelUralys.setStyle('color', Numbers.CLASSIC_COLOR)}"/>
-		<mx:Spacer width="10%"/>
+		<s:Spacer width="10%"/>
 		<s:Label text="Credits"
 				 id="labelCredits"
 				 click="openCreditsWindow()"
 				 color="{Numbers.CLASSIC_COLOR}"
 				 mouseOver="{labelCredits.setStyle('color', '#ffffff')}"
 				 mouseOut="{labelCredits.setStyle('color', Numbers.CLASSIC_COLOR)}"/>
-		<mx:Spacer width="10%"/>
+		<s:Spacer width="10%"/>
 		<s:Label text="{Translations.GO_TO_FORUM.getItemAt(Session.LANGUAGE)}"
 				 id="labelForum"
 				 click="navigateToURL(new URLRequest('http://tribesandkhans.freeforums.org/'), '_new');"
 				 color="{Numbers.CLASSIC_COLOR}"
 				 mouseOver="{labelForum.setStyle('color', '#ffffff')}"
 				 mouseOut="{labelForum.setStyle('color', Numbers.CLASSIC_COLOR)}"/>
-		<mx:Spacer width="20%"/>
+		<s:Spacer width="20%"/>
 		<s:Label text=" Tribes And Khans 2011   -    version {Session.VERSION}" 
 				 id="labelTitle"
 				 color="{Numbers.CLASSIC_COLOR}"

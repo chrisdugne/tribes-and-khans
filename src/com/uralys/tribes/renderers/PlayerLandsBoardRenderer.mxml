@@ -10,7 +10,7 @@
 			  paddingRight="15"
 			  paddingBottom="4">
 		<renderers:PlayerName player="{data}"/>
-		<mx:Spacer width="100%"/>
+		<s:Spacer width="100%"/>
 		<s:Label text="{(data as Player).nbLands}" color="#ffffff"/>
 	</s:HGroup>
 	

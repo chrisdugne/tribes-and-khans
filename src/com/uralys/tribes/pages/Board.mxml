@@ -35,7 +35,6 @@
 			
 			import mx.containers.TitleWindow;
 			import mx.core.FlexGlobals;
-			import mx.effects.easing.Quadratic;
 			import mx.events.ItemClickEvent;
 			
 			//---------------------------------------------------------------------------------------//
@@ -112,9 +111,9 @@
 				// on calcule si ce n'a pas été fait avant
 				GameManager.getInstance().refreshCityWorkersOnResources(false, selectedCity, false);
 				
-				cellContent.enterCityForm.includeInLayout = true;
-				cellContent.enterCityForm.visible = true;				
-				cellContent.enterCityButton.enabled = selectedCity.beginTime < new Date().getTime();
+				cellContentGroup.cellContent.enterCityForm.includeInLayout = true;
+				cellContentGroup.cellContent.enterCityForm.visible = true;				
+				cellContentGroup.cellContent.enterCityButton.enabled = selectedCity.beginTime < new Date().getTime();
 				
 				setBuildingCityProgressBar();
 			}
@@ -129,8 +128,8 @@
 				var hours:int = millisRemaining/60/60/1000;
 				var minutes:int = (millisRemaining-hours*60*60*1000)/60/1000;
 				
-				cellContent.buildingCityProgessBar.setProgress( millisSpent, Numbers.TIME_TO_BUILD_A_CITY );
-				cellContent.labelBuildingCity.text = Translations.CITY_BUILDING_DONE.getItemAt(Session.LANGUAGE) + " " +(hours>9 ? "" : "0") + hours + "h"+ (minutes>9 ? "" : "0") + minutes;
+				cellContentGroup.cellContent.buildingCityProgessBar.setProgress( millisSpent, Numbers.TIME_TO_BUILD_A_CITY );
+				cellContentGroup.cellContent.labelBuildingCity.text = Translations.CITY_BUILDING_DONE.getItemAt(Session.LANGUAGE) + " " +(hours>9 ? "" : "0") + hours + "h"+ (minutes>9 ? "" : "0") + minutes;
 			}
 			
 			//-----------------------------------------------------------//
@@ -176,14 +175,12 @@
 	<!-- ====================================================================================== -->
 	
 	<fx:Declarations>
-		<mx:Move id="appearCity"
+		<s:Move id="appearCity"
 				 xTo="0"
-				 target="{cityGroup}"
-				 easingFunction="{Quadratic.easeIn}"/>
-		<mx:Move id="hideCity"
+				 target="{cityGroup}"/>
+		<s:Move id="hideCity"
 				 xTo="2500"
-				 target="{cityGroup}"
-				 easingFunction="{Quadratic.easeIn}"/>
+				 target="{cityGroup}"/>
 		
 		
 		<s:Move id="hideChangeName" target="{changeNameWindow}" xTo="-375"/>
@@ -233,7 +230,7 @@
 					 mouseChildren="true"
 					 mouseEnabledWhereTransparent="false">
 				
-				<mx:Image id="currentMouseHighLightNormal"
+				<s:Image id="currentMouseHighLightNormal"
 						  source="{ImageContainer.getImage(ImageContainer.HIGHLIGHT_BLANC)}"
 						  visible="{!Session.MOVE_A_UNIT}"
 						  x="{Session.COORDINATE_X * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4) * BoardDrawer.getInstance().scale}"
@@ -242,7 +239,7 @@
 						  scaleY="{BoardDrawer.getInstance().scale}"
 						  mouseEnabled="false"/>
 
-				<mx:Image id="currentMouseHighLight4UnitMoves"
+				<s:Image id="currentMouseHighLight4UnitMoves"
 						  source="{ImageContainer.getImage(ImageContainer.HIGHLIGHT_BLANC)}"
 						  visible="{Session.MOVE_A_UNIT}"
 						  x="{Session.COORDINATE_X * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4) * BoardDrawer.getInstance().scale}"
@@ -251,7 +248,7 @@
 						  scaleY="{BoardDrawer.getInstance().scale}"
 						  mouseEnabled="false"/>
 
-				<mx:Image id="currentSelectionHighLight"
+				<s:Image id="currentSelectionHighLight"
 						  source="{ImageContainer.getImage(ImageContainer.HIGHLIGHT_BLANC)}"
 						  x="{Session.CURRENT_SELECTION_X * (Numbers.LAND_WIDTH - Numbers.LAND_WIDTH/4) * BoardDrawer.getInstance().scale}"
 						  y="{Session.CURRENT_SELECTION_Y * (Numbers.LAND_HEIGHT - Numbers.LAND_HEIGHT/2) * BoardDrawer.getInstance().scale}"
@@ -283,19 +280,19 @@
 					 mouseUp="BoardClickAnalyser.getInstance().mouseUp(event)"/>
 		</s:Group>
 		
-		<mx:Image source="{ImageContainer.ZOOM_IN}"
+		<s:Image source="{ImageContainer.ZOOM_IN}"
 				  id="zoomInButton"
 				  visible="{!Session.MOVE_A_UNIT &amp;&amp; !Session.WAIT_FOR_SERVER}"
 				  x="{boardImage.x + 25}"
 				  y="{boardImage.y - 15}"
 				  click="{BoardDrawer.getInstance().zoom()}"/>
-		<mx:Image source="{ImageContainer.ZOOM_OUT}"
+		<s:Image source="{ImageContainer.ZOOM_OUT}"
 				  id="zoomOutButton"
 				  visible="{!Session.MOVE_A_UNIT &amp;&amp; !Session.WAIT_FOR_SERVER}"
 				  x="{boardImage.x + 60}"
 				  y="{boardImage.y - 14}"
 				  click="BoardDrawer.getInstance().unzoom()"/>
-		<mx:Image source="{ImageContainer.REFRESH}"
+		<s:Image source="{ImageContainer.REFRESH}"
 				  id="refreshButton"
 				  visible="{!Session.MOVE_A_UNIT &amp;&amp; !Session.WAIT_FOR_SERVER}"
 				  x="{boardImage.x + 95}"
@@ -304,35 +301,22 @@
 	</s:Group>
 	
 	<!-- =============================================================================================== -->
-
-	<components:CellContent id="cellContent"		
-							top="155" 
-							x="{boardImage.x+Session.MAP_WIDTH + 65}"/>
 	
-	<mx:Image source="{ImageContainer.MINI_LOGO}" right="50" y="-7"/>
-	<mx:Image source="{ImageContainer.ARROW_RIGHT}" 
-			  id="openPlayerUnitsButton"
-			  x="2" y="160"
-			  alpha="0.6"
-			  click="{showPlayerUnits.play()}"/>
+	<windows:CellContentGroup id="cellContentGroup" 
+							  height="{Session.APPLICATION_HEIGHT - Session.HEADER_HEIGHT - Session.FOOTER_HEIGHT}"
+							  y="{Session.HEADER_HEIGHT}"/>
 	
-	<components:StepProgress bottom="20" x="{boardImage.x+Session.MAP_WIDTH + 65}"/>
+	<s:Image source="{ImageContainer.ARROW_RIGHT}" 
+			 id="openPlayerUnitsButton" 
+			 alpha="0.6"
+			 click="{showPlayerUnits.play()}"
+			 left="0"
+			 top="300"/>
 	
-	<s:HGroup width="100%" horizontalAlign="center" paddingTop="5"
-			  bottom="70"
-			  x="{boardImage.x+Session.MAP_WIDTH + 20}">
-		<s:Label text="X : {Session.COORDINATE_X}"/>
-		<mx:Spacer width="50"/>
-		<s:Label text="Y : {Session.COORDINATE_Y}"/>
-	</s:HGroup>
-	
-	<!-- ====================================================================================== -->
-		  
-	<mx:SWFLoader source="{ImageContainer.LOADING}" 
+	<s:SWFLoader source="{ImageContainer.LOADING}" 
 		 		  visible="{Session.WAIT_FOR_SERVER}"
-				  x="{boardImage.x+50}"
-				  y="{boardImage.y+Session.MAP_HEIGHT - 16}"
-				  rotation="2"/>
+				  x="{boardImage.x+150}"
+				  y="{boardImage.y+Session.MAP_HEIGHT - 11}"/>
 	
 	<!-- ====================================================================================== -->
 	
@@ -343,5 +327,6 @@
 					   width="{Session.APPLICATION_WIDTH}"
 					   height="{Session.APPLICATION_HEIGHT - Session.HEADER_HEIGHT - Session.FOOTER_HEIGHT}"
 					   selectedCity="@{selectedCity}"/>
+
 	
 </s:Group>

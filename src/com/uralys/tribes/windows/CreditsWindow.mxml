@@ -57,7 +57,7 @@
 							 click="navigateToURL(new URLRequest('http://www.charlesdautel.fr '),'_new');"
 							 buttonMode="true"
 							 useHandCursor="true"/>		
-					<mx:Spacer width="100"/>
+					<s:Spacer width="100"/>
 					<s:Label text="Thomas Pasquier" styleName="littleWhiteStyle"
 							 click="navigateToURL(new URLRequest('http://www.taomas.org'),'_new');"
 							 buttonMode="true"
@@ -77,7 +77,7 @@
 						<s:Label text="Flex 4" styleName="littleWhiteStyle"/>
 					</s:VGroup>
 					
-					<mx:Spacer width="7%"/>
+					<s:Spacer width="7%"/>
 					
 					<s:VGroup horizontalAlign="center">
 						<mx:Image source="{ImageContainer.APPENGINE}" 
@@ -97,7 +97,7 @@
 							  click="navigateToURL(new URLRequest('http://icons.mysitemyway.com/'),'_new');"
 							  buttonMode="true"
 							  useHandCursor="true"/>		
-					<mx:Spacer width="7%"/>
+					<s:Spacer width="7%"/>
 					<mx:Image source="{ImageContainer.FONTS}" 
 							  click="navigateToURL(new URLRequest('http://www.1001freefonts.com/'),'_new');"
 							  buttonMode="true"

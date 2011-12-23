@@ -70,7 +70,7 @@
 			</s:HGroup>	
 			
 			<s:Label text="{game.status == Game.IN_CREATION ? '' : Translations.TURN.getItemAt(Session.LANGUAGE) + game.currentTurn}"/>
-			<mx:Spacer height="10"/>
+			<s:Spacer height="10"/>
 			<s:Label text="{game.status == Game.IN_CREATION ? Translations.NOT_LAUNCHED.getItemAt(Session.LANGUAGE) : ''}"/>
 			
 			<s:Label text="({Translations.NOT_ENOUGH_PLAYERS.getItemAt(Session.LANGUAGE)})" 
@@ -102,7 +102,7 @@
 					  horizontalAlign="center"
 					  visible="{joinable}"
 					  includeInLayout="{joinable}">
-				<mx:Spacer height="20"/>
+				<s:Spacer height="20"/>
 				<s:Label text="{Translations.CHOOSE_NAME.getItemAt(Session.LANGUAGE)} :"/>
 				<s:TextInput id="playerNameInput" text="Dede le Fourbe"/>
 				<s:Button label="{Translations.JOIN.getItemAt(Session.LANGUAGE)}"

@@ -268,12 +268,12 @@
 														  refuse="{deleteReadMessageFromList}"
 														  height="70%"/>
 						
-						<mx:Spacer height="100%"/>
+						<s:Spacer height="100%"/>
 						<s:HGroup width="100%" visible="{readMessagesList.selectedItem != null}">
 							<s:Button skinClass="com.uralys.tribes.skins.CustomButtonSkin" 
 									  label="{Translations.ARCHIVE.getItemAt(Session.LANGUAGE)}"
 									  click="archiveReadMessage()"/>
-							<mx:Spacer width="100%"/>
+							<s:Spacer width="100%"/>
 							<s:Button skinClass="com.uralys.tribes.skins.CustomButtonSkin"
 									  label="{Translations.DELETE.getItemAt(Session.LANGUAGE)}"
 									  click="deleteReadMessageFromList()"/>
@@ -305,9 +305,9 @@
 														  accept="{acceptAllyInvitation}"
 														  refuse="{deleteArchivedMessageFromList}"/>
 						
-						<mx:Spacer height="100%"/>
+						<s:Spacer height="100%"/>
 						<s:HGroup width="100%" visible="{archivedMessagesList.selectedItem != null}">
-							<mx:Spacer width="100%"/>
+							<s:Spacer width="100%"/>
 							<s:Button skinClass="com.uralys.tribes.skins.CustomButtonSkin"
 									  label="{Translations.DELETE.getItemAt(Session.LANGUAGE)}"
 									  click="deleteArchivedMessageFromList()"/>

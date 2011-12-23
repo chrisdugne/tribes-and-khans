@@ -24,7 +24,7 @@
 					 left="20" 
 					 verticalCenter="2"
 					 text="{allySize}"/>
-			<mx:Spacer width="100%"/>
+			<s:Spacer width="100%"/>
 			<s:Label color="#FFFFFF" 
 					 left="20" 
 					 verticalCenter="2"
@@ -52,7 +52,7 @@
 					 left="20" 
 					 verticalCenter="2"
 					 text="{ennemySize}"/>
-			<mx:Spacer width="100%"/>
+			<s:Spacer width="100%"/>
 			<s:Label color="#FFFFFF" 
 					 left="20" 
 					 verticalCenter="2"

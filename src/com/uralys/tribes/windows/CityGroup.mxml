@@ -72,7 +72,7 @@
 					  click="{saveCityAndGoBackToBoard()}"
 					  skinClass="com.uralys.tribes.skins.CustomButtonSkin"
 					  enabled="{cityForm.currentState != 'recordingUnit'}"/>
-			<mx:Spacer width="450"/>
+			<s:Spacer width="450"/>
 		</s:HGroup>
 		<components:CityForm 
 			id="cityForm"

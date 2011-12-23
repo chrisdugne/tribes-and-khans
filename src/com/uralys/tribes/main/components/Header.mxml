@@ -19,6 +19,7 @@
 			import com.uralys.tribes.windows.MailBoxWindow;
 			import com.uralys.tribes.windows.PlayerProfileWindow;
 			
+			import mx.core.FlexGlobals;
 			import mx.managers.PopUpManager;
 			
 			//-----------------------------------------------------------------------//
@@ -32,7 +33,7 @@
 				
 				loginWindow.closeWindow(); 
 				
-				PopUpManager.addPopUp(loginWindow, this, false);
+				PopUpManager.addPopUp(loginWindow, DisplayObject(FlexGlobals.topLevelApplication), false);
 				PopUpManager.centerPopUp(loginWindow);
 				
 			}
@@ -44,7 +45,7 @@
 			{
 				boardsWindow.closeWindow();
 				
-				PopUpManager.addPopUp(boardsWindow, this, false);
+				PopUpManager.addPopUp(boardsWindow, DisplayObject(FlexGlobals.topLevelApplication), false);
 				PopUpManager.centerPopUp(boardsWindow);
 			}
 			
@@ -56,7 +57,7 @@
 				playerProfileWindow.playerUID = playerUID;
 				playerProfileWindow.closeWindow();
 				
-				PopUpManager.addPopUp(playerProfileWindow, this, false);
+				PopUpManager.addPopUp(playerProfileWindow, DisplayObject(FlexGlobals.topLevelApplication), false);
 				PopUpManager.centerPopUp(playerProfileWindow);
 				playerProfileWindow.x = 5;
 				
@@ -75,7 +76,7 @@
 				allyProfileWindow.allyUID = allyUID;
 				allyProfileWindow.closeWindow();
 				
-				PopUpManager.addPopUp(allyProfileWindow, this, false);
+				PopUpManager.addPopUp(allyProfileWindow, DisplayObject(FlexGlobals.topLevelApplication), false);
 				PopUpManager.centerPopUp(allyProfileWindow);
 				
 				allyProfileWindow.refresh();
@@ -88,7 +89,7 @@
 			{
 				mailBoxWindow.closeWindow();
 				
-				PopUpManager.addPopUp(mailBoxWindow, this, true);
+				PopUpManager.addPopUp(mailBoxWindow, DisplayObject(FlexGlobals.topLevelApplication), true);
 				PopUpManager.centerPopUp(mailBoxWindow);
 				
 				mailBoxWindow.refresh();
@@ -143,7 +144,7 @@
 	<s:HGroup
 		width="100%"
 		paddingLeft="10" paddingRight="10" paddingBottom="-20"
-		height="30"
+		height="{Session.HEADER_HEIGHT}"
 		verticalAlign="top">
 		
 	

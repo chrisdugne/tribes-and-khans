@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		  xmlns:s="library://ns.adobe.com/flex/spark" 
+		  xmlns:mx="library://ns.adobe.com/flex/mx"
+		  xmlns:components="com.uralys.tribes.components.*">
+	
+	<fx:Script>
+		<![CDATA[
+			import com.uralys.tribes.commons.Session;
+			import com.uralys.tribes.main.ImageContainer;
+
+		]]>
+	</fx:Script>
+	
+	<s:Rect left="0" right="0" top="0" bottom="0" radiusX="5" radiusY="5">
+		<s:fill>
+			<s:LinearGradient id="gradient1">
+				<s:entries>
+					<s:GradientEntry id="entry1" color="0x000000" alpha="0"/>
+					<s:GradientEntry id="entry2" color="0x000000" alpha="0.8" />
+					<s:GradientEntry id="entry3" color="0x000000" alpha="0"/>
+				</s:entries>
+			</s:LinearGradient>
+		</s:fill>
+	</s:Rect>
+	
+	<s:VGroup height="100%"
+			  width="100%"
+			  horizontalAlign="center"
+			  paddingTop="5">
+		
+		<s:Image source="{ImageContainer.MINI_LOGO}"/>
+
+		<components:CellContent id="cellContent"/>
+		
+		<s:Spacer height="100%"/>
+		
+		<components:StepProgress/>
+		<s:HGroup width="100%" horizontalAlign="center" paddingTop="5">
+			<s:Label text="X : {Session.COORDINATE_X}"/>
+			<s:Spacer width="50"/>
+			<s:Label text="Y : {Session.COORDINATE_Y}"/>
+		</s:HGroup>
+	</s:VGroup>
+</s:Group>

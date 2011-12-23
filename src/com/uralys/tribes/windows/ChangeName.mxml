@@ -5,12 +5,19 @@
 		 width="370"
 		 height="80" 
 		 alpha="0.8">
-		
+	
 		<s:Rect left="0" right="0" top="0" bottom="0" radiusX="5" radiusY="5">
 			<s:fill>
-				<s:SolidColor color="#000000"/>
+				<s:LinearGradient id="gradient1">
+					<s:entries>
+						<s:GradientEntry id="entry1" color="0x000000" alpha="0"/>
+						<s:GradientEntry id="entry2" color="0x000000" alpha="0.8" />
+						<s:GradientEntry id="entry3" color="0x000000" alpha="0"/>
+					</s:entries>
+				</s:LinearGradient>
 			</s:fill>
 		</s:Rect>
+	
 		<fx:Script>
 			<![CDATA[
 				import com.uralys.tribes.commons.Session;
@@ -41,7 +48,7 @@
 		
 		<s:VGroup width="100%" 
 				  horizontalAlign="center">
-			<mx:Spacer width="30"/>
+			<s:Spacer width="30"/>
 			<mx:Grid>
 				<mx:GridRow >
 					<mx:GridItem >

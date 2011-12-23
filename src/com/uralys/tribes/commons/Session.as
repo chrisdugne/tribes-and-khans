@@ -34,8 +34,8 @@ package com.uralys.tribes.commons
 		
 		//=====================================================//
 
-		[Bindable] public static var HEADER_HEIGHT:int = 28;	
-		[Bindable] public static var FOOTER_HEIGHT:int = 28;	
+		[Bindable] public static var HEADER_HEIGHT:int = 30;	
+		[Bindable] public static var FOOTER_HEIGHT:int = 30;	
 
 		//=====================================================//
 

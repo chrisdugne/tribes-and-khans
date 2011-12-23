@@ -117,8 +117,8 @@ package com.uralys.tribes.core
 		{
 			mayDrag = false;
 			
-			Session.board.cellContent.enterCityForm.visible = false;
-			Session.board.cellContent.enterCityForm.includeInLayout = false;
+			Session.board.cellContentGroup.cellContent.enterCityForm.visible = false;
+			Session.board.cellContentGroup.cellContent.enterCityForm.includeInLayout = false;
 			
 			if(Session.MOVE_A_UNIT){
 				UnitMover.getInstance().recordMove();

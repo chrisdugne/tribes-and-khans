@@ -92,7 +92,7 @@
 				<mx:HRule width="70%"/>
 				<s:Label text="{Session.allyLoaded.profile}" color="#ffffff" width="270"/>
 				
-				<mx:Spacer height="100%"/>
+				<s:Spacer height="100%"/>
 				<mx:HRule width="70%"/>
 				
 				<s:Button label="{Translations.EDIT_ALLY_PROFILE.getItemAt(Session.LANGUAGE)}"

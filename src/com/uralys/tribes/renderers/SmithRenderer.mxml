@@ -169,7 +169,7 @@
 				   enabled.building="false"
 				   enabled.upgradeEnabled="true"/>
 		
-		<mx:Spacer width="100%"/>
+		<s:Spacer width="100%"/>
 		<s:HGroup width="100%"
 				  visible.building="false"
 				  includeInLayout.building="false">
@@ -177,12 +177,12 @@
 			<s:Label text="{smiths/item.peopleRequired * item.wood}"
 					 color="{smiths/item.peopleRequired * item.wood &lt;= city.wood ? Numbers.GREEN : Numbers.RED}"/>
 	
-			<mx:Spacer width="20"/>
+			<s:Spacer width="20"/>
 			<mx:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}" width="25" height="25"/>
 			<s:Label text="{smiths/item.peopleRequired * item.iron}"
 					 color="{smiths/item.peopleRequired * item.iron &lt;= city.iron ? Numbers.GREEN : Numbers.RED}"/>
 	
-			<mx:Spacer width="20"/>
+			<s:Spacer width="20"/>
 			<mx:Image toolTip="{Translations.TIME.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.CLOCK}"/>
 			<s:Label id="timeLabel" width="120"/>
 		</s:HGroup>
@@ -204,11 +204,11 @@
 	<s:HGroup width="100%" 
 			  verticalAlign="middle"
 			  horizontalAlign="center">
-		<mx:Spacer width="20"/>
+		<s:Spacer width="20"/>
 		<mx:Image source="{ImageContainer.UPGRADE_ARROW}"/>
 		<s:Label text="{stock + smiths * item.peopleRequired}/{stockCapacity}"
 				 color="{Numbers.GREEN}" width="150"/>
-		<mx:Spacer width="180"/>
+		<s:Spacer width="180"/>
 		<s:Button skinClass="{CustomButtonSkin}"
 				  label="{Translations.UPGRADE.getItemAt(Session.LANGUAGE)}"
 				  enabled="{smiths/item.peopleRequired * item.wood &lt;= city.wood

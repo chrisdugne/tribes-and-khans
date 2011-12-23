@@ -107,7 +107,7 @@
 				  paddingLeft="15"
 				  paddingRight="15"
 				  paddingBottom="15">
-			<mx:Spacer width="30"/>
+			<s:Spacer width="30"/>
 			<mx:Grid>
 				<mx:GridRow>
 					<mx:GridItem>
@@ -135,13 +135,13 @@
 					</mx:GridItem>
 				</mx:GridRow>
 			</mx:Grid>
-			<mx:Spacer height="15"/>
+			<s:Spacer height="15"/>
 			<s:HGroup visible="{!Session.WAIT_FOR_CONNECTION}">
-				<mx:Spacer width="5"/>
+				<s:Spacer width="5"/>
 				<s:Button label="{Translations.CREATE_ACCOUNT.getItemAt(Session.LANGUAGE)}"
 						  skinClass="com.uralys.tribes.skins.CustomButtonSkin"
 						  click="{createAccount()}"/>
-				<mx:Spacer width="50"/>
+				<s:Spacer width="50"/>
 				<s:Button label="{Translations.LOG_ME_IN.getItemAt(Session.LANGUAGE)}" 
 						  skinClass="com.uralys.tribes.skins.CustomButtonSkin"
 						  click="{login()}"/>

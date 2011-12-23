@@ -157,7 +157,7 @@
 
 			<mx:HRule width="70%"/>
 			<s:Label text="{Session.playerLoaded.profile}" color="#ffffff" width="70%"/>
-			<mx:Spacer height="100%"/>
+			<s:Spacer height="100%"/>
 			<mx:HRule width="70%"/>
 			
 			<s:Button label="{Translations.WRITE_MESSAGE.getItemAt(Session.LANGUAGE)} {Session.playerLoaded.name}"

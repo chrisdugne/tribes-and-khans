@@ -28,8 +28,6 @@
 			  width="100%"
 			  horizontalAlign="center"
 			  paddingTop="5">
-		
-		<s:Image source="{ImageContainer.MINI_LOGO}"/>
 
 		<components:CellContent id="cellContent"/>
 		

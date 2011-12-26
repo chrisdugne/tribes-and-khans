@@ -6,20 +6,15 @@
 							  skinClass="com.uralys.tribes.skins.WindowSkin"
 							  close="{closeWindow()}"
 							  width="720"
-							  height="620"
-							  backgroundAlpha="0.8"
-							  cornerRadius="20"
-							  backgroundColor="#000000">
+							  height="620">
 		
 		<!--  ================================================================================================== -->
 		
 		<fx:Script>
 			<![CDATA[
-				import com.uralys.tribes.main.ImageContainer;
-				//-----------------------------------------------------------------//
-
 				import com.uralys.tribes.commons.Session;
 				import com.uralys.tribes.commons.Translations;
+				import com.uralys.tribes.main.ImageContainer;
 				
 				import mx.managers.PopUpManager;
 				
@@ -33,97 +28,97 @@
 		</fx:Script>
 		
 		<s:Group width="100%" height="100%">
+			
 			<s:VGroup horizontalAlign="center" width="100%"
-					  gap="10"
+					  gap="5"
 					  paddingTop="10"
 					  paddingBottom="10"
 					  paddingLeft="30"
 					  paddingRight="30">
 				
-				
+				<s:Image source="{ImageContainer.MINI_LOGO}"/>
 				<s:Label text="{Translations.CREATOR.getItemAt(Session.LANGUAGE)}" 
 						 styleName="bigGreen2Style"/>
-				<mx:Image source="{ImageContainer.URALYS_MINI_LOGO}"
+				<s:Image source="{ImageContainer.URALYS_MINI_LOGO}"
 						  click="navigateToURL(new URLRequest('http://www.uralys.com'),'_new');"
 						  buttonMode="true"
 						  useHandCursor="true"/>		
 				
 				
-				<s:Label text="{Translations.GRAPHISTS.getItemAt(Session.LANGUAGE)}"
+				<s:Label text="{Translations.GRAPHIST.getItemAt(Session.LANGUAGE)}"
 						 styleName="bigGreen2Style"/>
 				
 				<s:HGroup width="100%" horizontalAlign="center">
-					<s:Label text="Charles Dautel" styleName="littleWhiteStyle"
-							 click="navigateToURL(new URLRequest('http://www.charlesdautel.fr '),'_new');"
-							 buttonMode="true"
-							 useHandCursor="true"/>		
-					<s:Spacer width="100"/>
-					<s:Label text="Thomas Pasquier" styleName="littleWhiteStyle"
-							 click="navigateToURL(new URLRequest('http://www.taomas.org'),'_new');"
+					<s:Label text="Adrien Thollot" styleName="littleWhiteStyle"
+							 click="navigateToURL(new URLRequest('http://adritho.blogspot.com/'),'_new');"
 							 buttonMode="true"
 							 useHandCursor="true"/>		
 				</s:HGroup>
 						  
 				
-				<s:Label text="{Translations.TOOLS.getItemAt(Session.LANGUAGE)}"
-						 styleName="bigGreen2Style"/>
-				
-				<s:HGroup width="100%" horizontalAlign="center">
-					<s:VGroup horizontalAlign="center">
-						<mx:Image source="{ImageContainer.FLEX}" 
-								  click="navigateToURL(new URLRequest('http://www.adobe.com/fr/products/flex/?sdid=GYTRB'),'_new');"
-								  buttonMode="true"
-								  useHandCursor="true"/>		
-						<s:Label text="Flex 4" styleName="littleWhiteStyle"/>
-					</s:VGroup>
-					
-					<s:Spacer width="7%"/>
-					
-					<s:VGroup horizontalAlign="center">
-						<mx:Image source="{ImageContainer.APPENGINE}" 
-								  click="navigateToURL(new URLRequest('http://code.google.com/appengine/'),'_new');"
-								  buttonMode="true"
-								  useHandCursor="true"/>		
-						<s:Label text="App Engine" styleName="littleWhiteStyle"/>
-					</s:VGroup>
-				</s:HGroup>
-				
-				
-				
-				<s:Label text="{Translations.RESOURCES.getItemAt(Session.LANGUAGE)}" styleName="normalGreen2Style"/>
-				
-				<s:HGroup width="100%" horizontalAlign="center">
-					<mx:Image source="{ImageContainer.ICONS}" 
-							  click="navigateToURL(new URLRequest('http://icons.mysitemyway.com/'),'_new');"
-							  buttonMode="true"
-							  useHandCursor="true"/>		
-					<s:Spacer width="7%"/>
-					<mx:Image source="{ImageContainer.FONTS}" 
-							  click="navigateToURL(new URLRequest('http://www.1001freefonts.com/'),'_new');"
-							  buttonMode="true"
-							  useHandCursor="true"/>		
-				</s:HGroup>
-				
 				
 				<s:Label x="{Session.LANGUAGE == 0 ? 300 : 325}" y="420" text="{Translations.MUSIC.getItemAt(Session.LANGUAGE)}" styleName="bigGreen2Style"/>
-				<s:Label x="75" y="455" text="The House of Wisdom - Utopian Hedonism (2011)" 
+				
+				<s:Image source="{ImageContainer.UH}" 
+						 click="navigateToURL(new URLRequest('http://onesheet.com/utopian-hedonism/'),'_new');"
+						 buttonMode="true"
+						 useHandCursor="true"/>
+				
+				<s:Label x="75" y="455" text="Utopian Hedonism (2011)" 
 						 styleName="normalWhiteStyle"
 						 click="navigateToURL(new URLRequest('http://onesheet.com/utopian-hedonism/'),'_new');"
 						 buttonMode="true"
 						 useHandCursor="true"/>
 				
-				<s:HGroup width="100%" horizontalAlign="center" verticalAlign="middle">
-					<s:Label text="{Translations.LISTEN_NOW.getItemAt(Session.LANGUAGE)}"
-							 styleName="littleWhiteStyle"
-							 click="navigateToURL(new URLRequest('http://onesheet.com/utopian-hedonism/'),'_new');"
-							 buttonMode="true"
-							 useHandCursor="true"/>
-					<mx:Image source="{ImageContainer.ONESHEET}" 
-							  click="navigateToURL(new URLRequest('http://onesheet.com/utopian-hedonism/'),'_new');"
-							  buttonMode="true"
-							  useHandCursor="true"/>
+				<!--
+				<s:HGroup width="100%" horizontalAlign="center">
+				
+					<s:VGroup horizontalAlign="center">
+						<s:Label text="{Translations.TOOLS.getItemAt(Session.LANGUAGE)}"
+							 styleName="normalGreen2Style"/>
+						
+						<s:HGroup width="100%" horizontalAlign="center">
+							<s:VGroup horizontalAlign="center">
+								<s:Image source="{ImageContainer.FLEX}" 
+										  click="navigateToURL(new URLRequest('http://www.adobe.com/fr/products/flex/?sdid=GYTRB'),'_new');"
+										  buttonMode="true"
+										  useHandCursor="true"/>		
+								<s:Label text="Flex 4" styleName="littleWhiteStyle"/>
+							</s:VGroup>
+							
+							<s:Spacer width="7%"/>
+							
+							<s:VGroup horizontalAlign="center">
+								<s:Image source="{ImageContainer.APPENGINE}" 
+										  click="navigateToURL(new URLRequest('http://code.google.com/appengine/'),'_new');"
+										  buttonMode="true"
+										  useHandCursor="true"/>		
+								<s:Label text="App Engine" styleName="littleWhiteStyle"/>
+							</s:VGroup>
+						</s:HGroup>
+					</s:VGroup>
+				
+					<s:Spacer width="100"/>
 					
-				</s:HGroup>	
+					<s:VGroup horizontalAlign="center">
+						<s:Label text="{Translations.RESOURCES.getItemAt(Session.LANGUAGE)}" styleName="normalGreen2Style"/>
+						
+						<s:HGroup width="100%" horizontalAlign="center">
+							<s:Image source="{ImageContainer.ICONS}" 
+									  click="navigateToURL(new URLRequest('http://icons.mysitemyway.com/'),'_new');"
+									  buttonMode="true"
+									  useHandCursor="true"/>		
+							<s:Spacer width="7%"/>
+							<s:Image source="{ImageContainer.FONTS}" 
+									  click="navigateToURL(new URLRequest('http://www.1001freefonts.com/'),'_new');"
+									  buttonMode="true"
+									  useHandCursor="true"/>		
+						</s:HGroup>
+					</s:VGroup>
+
+				</s:HGroup>
+				-->
+				
 			</s:VGroup>	
 		</s:Group>
 	

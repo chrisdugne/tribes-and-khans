@@ -1127,10 +1127,10 @@ public class Translations{
 									"Design and development"]);
 
 	[Bindable]
-	public static var GRAPHISTS:ArrayCollection = new ArrayCollection(
-									["Graphistes",
-									"Graphists",
-									"Graphists"]);
+	public static var GRAPHIST:ArrayCollection = new ArrayCollection(
+									["Graphiste",
+									"Graphist",
+									"Graphist"]);
 
 	[Bindable]
 	public static var TOOLS:ArrayCollection = new ArrayCollection(

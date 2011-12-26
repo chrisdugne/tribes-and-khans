@@ -25,7 +25,7 @@
 		<s:HGroup>
 			<s:Label text="{Translations.CITY.getItemAt(Session.LANGUAGE)} : {Session.CURRENT_CELL_SELECTED.city.name} ({Session.CURRENT_CELL_SELECTED.city.population})"
 					 click="if(Session.player.playerUID == Session.CURRENT_CELL_SELECTED.landOwner.playerUID)Session.board.showCityChangeName.play()"/>
-			<mx:Image source="{ImageContainer.getImage(ImageContainer.EDIT)}"
+			<s:Image source="{ImageContainer.getImage(ImageContainer.EDIT)}"
 					  click="{Session.board.showCityChangeName.play()}"
 					  visible="{Session.player.playerUID == Session.CURRENT_CELL_SELECTED.landOwner.playerUID}"/>
 		</s:HGroup>

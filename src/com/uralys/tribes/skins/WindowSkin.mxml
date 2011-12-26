@@ -100,8 +100,8 @@
             
             borderStroke.color = getStyle("borderColor");
             borderStroke.alpha = getStyle("borderAlpha");
-            backgroundFill.color = getStyle("backgroundColor");
-            backgroundFill.alpha = getStyle("backgroundAlpha");
+            //backgroundFill.color = getStyle("backgroundColor");
+            //backgroundFill.alpha = getStyle("backgroundAlpha");
             
             super.updateDisplayList(unscaledWidth, unscaledHeight);
         }
@@ -159,7 +159,7 @@
         </s:Group>
         
         <!--- layer 1: border @private -->
-        <s:Rect id="border" left="0" right="0" top="0" bottom="0" >
+        <s:Rect id="border" left="0" right="0" top="0" bottom="0" alpha="0">
             <s:stroke>
                 <!--- Defines the TitleWindowSkin class's border stroke. The default value is 1. -->
                 <s:SolidColorStroke id="borderStroke" weight="0" />
@@ -168,12 +168,18 @@
         
         <!-- layer 2: background fill -->
         <!--- Defines the appearance of the TitleWindowSkin class's background. -->
-        <s:Rect id="background" left="1" top="1" right="1" bottom="1">
-            <s:fill>
-                <!--- Defines the TitleWindowSkin class's background fill. The default color is 0xFFFFFF. -->
-                <s:SolidColor id="backgroundFill" color="#FFFFFF"/>
-            </s:fill>
-        </s:Rect>
+		
+		<s:Rect id="background" left="0" right="0" top="0" bottom="0" radiusX="5" radiusY="5">
+			<s:fill>
+				<s:LinearGradient id="backgroundFill">
+					<s:entries>
+						<s:GradientEntry id="entry1" color="0x000000" alpha="0"/>
+						<s:GradientEntry id="entry2" color="0x000000" alpha="0.8" />
+						<s:GradientEntry id="entry3" color="0x000000" alpha="0"/>
+					</s:entries>
+				</s:LinearGradient>
+			</s:fill>
+		</s:Rect>
         
         <!-- layer 3: contents -->
         <!--- Contains the vertical stack of title bar content and control bar. -->
@@ -241,10 +247,10 @@
             </s:Group>
         </s:Group>
 		
-		<!-- resize handle -->
+		<!-- resize handle
 		<s:Group id="resizeHandle" right="1" bottom="1" width="15" height="15">
 			<s:Image source="{ImageContainer.RESIZER}"/>
 		</s:Group>
-
+		-->
     </s:Group>
 </s:SparkSkin>

@@ -2,7 +2,6 @@
 <s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
 		 xmlns:mx="library://ns.adobe.com/flex/mx"
-		 width="160"
 		 creationComplete="init()" xmlns:components="com.uralys.tribes.components.*">
 
 	<fx:Script>
@@ -64,6 +63,7 @@
 	</fx:Script>
 	
 	<components:UralysProgressBar
+				width="100%"
 				id="progress"
 				minimum="100" 
 				maximum="100" 
@@ -72,5 +72,5 @@
 				barSkin="{WorkersProgressBarSkin}"
 				trackSkin="{ClassicProgressTrackSkin}"
 				label="{Translations.REMAINING_TIME.getItemAt(Session.LANGUAGE)}    --:--"/>
-	<s:Button label="plop" y="9" click="nextStep()" visible="{Session.isLocal}"/>
+	<s:Button label="plop" x="40" click="nextStep()" visible="{Session.isLocal}"/>
 </s:Group>

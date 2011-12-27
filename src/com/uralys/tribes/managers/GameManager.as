@@ -1309,7 +1309,7 @@ package com.uralys.tribes.managers {
 			trace("----------");
 			trace("refreshCellFromServer : " + cell.cellUID + " | " + cell.nextCellUID);
 
-			if(Utils.getCellInSession(cell.nextCellUID).city != null){
+			if(cell.nextCellUID != null && Utils.getCellInSession(cell.nextCellUID).city != null){
 				trace("nextCellUID is a city : refreshPlayer");
 				getPlayer(Session.player);
 				return;	

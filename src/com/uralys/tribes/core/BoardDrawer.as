@@ -345,7 +345,6 @@ package com.uralys.tribes.core
 
 		private function drawNorthFrontiers(_cell:Cell):void
 		{
-			trace("drawNorthFrontiers");
 			if(_cell.landOwner != null)
 			{
 				//----------------//
@@ -416,7 +415,6 @@ package com.uralys.tribes.core
 
 		private function drawSouthFrontiers(_cell:Cell):void
 		{
-			trace("drawSouthFrontiers");
 			if(_cell.landOwner != null)
 			{
 				//----------------//
@@ -487,7 +485,6 @@ package com.uralys.tribes.core
 		
 		private function drawLandAndBounds(_cell:Cell):void
 		{
-			trace("drawLandAndBounds");
 			if(_cell.landOwner != null)
 			{
 				var image:Image = new Image();

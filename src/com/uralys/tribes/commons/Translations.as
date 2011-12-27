@@ -150,9 +150,9 @@ public class Translations{
 									"Unit way edition"]);
 	[Bindable]
 	public static var TOO_LONG:ArrayCollection = new ArrayCollection(
-									["Distance trop longue, choisir une case à côté du dernier deplacement",
-									"Too long way, choose a cell next to your last move",
-									"Too long way, choose a cell next to your last move"]);
+									["Distance trop longue. Choisir une case à côté du dernier deplacement",
+									"Too long way. Choose a cell next to your last move",
+									"Too long way. Choose a cell next to your last move"]);
 
 	[Bindable]
 	public static var WRONG_SHOOT:ArrayCollection = new ArrayCollection(

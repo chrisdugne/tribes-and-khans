@@ -4,34 +4,34 @@
 							  xmlns:mx="library://ns.adobe.com/flex/mx"
 							  xmlns:windows="com.uralys.tribes.windows.*"
 							  xmlns:components="com.uralys.tribes.components.*"
-							  skinClass="com.uralys.tribes.skins.WindowSkin"
+							  skinClass="com.uralys.tribes.skins.NotClosableWindowSkin"
 							  close="{closeWindow()}"
-							  width="250"
-							  height="{Session.APPLICATION_HEIGHT - Session.FOOTER_HEIGHT - Session.HEADER_HEIGHT - Session.board.leftPanel.height}"
-							  cornerRadius="10">
+							  width="230"
+							  height="{cellContent.height == 0 ? 0 : cellContent.height + 10}"
+							  cornerRadius="10"> 
 	
 	<fx:Script>
 		<![CDATA[
 			import com.uralys.tribes.commons.Session;
-			import com.uralys.tribes.commons.Translations;
 			import com.uralys.tribes.main.ImageContainer;
-			import com.uralys.tribes.skins.CustomButtonSkin;
 			
 			import mx.managers.PopUpManager;
 			
 			//-----------------------------------------------------------------//
 			
 			public function closeWindow():void{
-				Session.board.hidePlayerUnits.play()
+				PopUpManager.removePopUp(this);
 			}
 			
 		]]>
 	</fx:Script>
-
-	<s:VGroup width="100%"
+	
+	<s:VGroup height="100%"
+			  width="100%"
 			  horizontalAlign="center"
-			  paddingTop="4"
-			  paddingLeft="10">
-		<components:PlayerUnitsAndCities/>
+			  paddingTop="5">
+		
+		<components:CellContent id="cellContent"/>
+
 	</s:VGroup>
 </windows:ResizableTitleWindow>

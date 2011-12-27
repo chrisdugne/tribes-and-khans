@@ -5,7 +5,7 @@
 							  xmlns:windows="com.uralys.tribes.windows.*"
 							  skinClass="com.uralys.tribes.skins.WindowSkin"
 							  close="{closeWindow()}"
-							  width="720"
+							  width="500"
 							  height="620">
 		
 		<!--  ================================================================================================== -->

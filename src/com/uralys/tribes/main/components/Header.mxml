@@ -143,9 +143,9 @@
 	
 	<s:HGroup
 		width="100%"
-		paddingLeft="10" paddingRight="10" paddingBottom="-20"
+		paddingLeft="10" paddingRight="10"
 		height="{Session.HEADER_HEIGHT}"
-		verticalAlign="top">
+		verticalAlign="middle">
 		
 	
 		<s:Image id="frenchButton" source="{ImageContainer.FR_FLAG}" click="french()" visible="{Session.LANGUAGE != 0}" width="25"/>

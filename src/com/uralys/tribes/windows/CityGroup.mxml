@@ -68,7 +68,7 @@
 			  paddingTop="5">
 		
 		<s:HGroup>
-			<s:Button label="&lt;-- {Translations.VALIDATE_MODIFICATIONS.getItemAt(Session.LANGUAGE)}" 
+			<s:Button label="{Translations.VALIDATE_MODIFICATIONS.getItemAt(Session.LANGUAGE)}" 
 					  click="{saveCityAndGoBackToBoard()}"
 					  skinClass="com.uralys.tribes.skins.CustomButtonSkin"
 					  enabled="{cityForm.currentState != 'recordingUnit'}"/>

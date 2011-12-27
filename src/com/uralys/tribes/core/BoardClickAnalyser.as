@@ -20,7 +20,6 @@ package com.uralys.tribes.core
 	import mx.utils.ObjectUtil;
 	
 	import spark.components.Group;
-	
 
 	/**
 		BoardClickListener
@@ -117,9 +116,9 @@ package com.uralys.tribes.core
 		{
 			mayDrag = false;
 			
-			Session.board.cellContentGroup.cellContent.enterCityForm.visible = false;
-			Session.board.cellContentGroup.cellContent.enterCityForm.includeInLayout = false;
-			
+			//Session.board.rightPanel.cellContent.enterCityForm.visible = false;
+			//Session.board.rightPanel.cellContent.enterCityForm.includeInLayout = false;
+
 			if(Session.MOVE_A_UNIT){
 				UnitMover.getInstance().recordMove();
 			}

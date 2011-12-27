@@ -74,7 +74,7 @@
                 contents.left = contents.top = contents.right = contents.bottom = 0;
             }
             
-            //dropShadow.visible = getStyle("dropShadowVisible");
+         //   dropShadow.visible = getStyle("dropShadowVisible");
             
             var cr:Number = getStyle("cornerRadius");
             var withControls:Boolean = 
@@ -86,10 +86,10 @@
             {
                 cornerRadius = cr;
                 
-                //dropShadow.tlRadius = cornerRadius;
-                //dropShadow.trRadius = cornerRadius;
-                //dropShadow.blRadius = withControls ? cornerRadius : 0;
-                //dropShadow.brRadius = withControls ? cornerRadius : 0;
+               // dropShadow.tlRadius = cornerRadius;
+              //  dropShadow.trRadius = cornerRadius;
+               // dropShadow.blRadius = withControls ? cornerRadius : 0;
+              //  dropShadow.brRadius = withControls ? cornerRadius : 0;
                 
                 setPartCornerRadii(topMaskRect, withControls); 
                 setPartCornerRadii(border, withControls); 
@@ -139,7 +139,7 @@
     <s:Group left="0" right="0" top="0" bottom="0">
         
         <!--- top group mask @private-->
-        <s:Group left="0" top="0" right="0" bottom="0" id="topGroupMask">
+        <s:Group left="1" top="1" right="1" bottom="1" id="topGroupMask">
             <!--- @private-->
             <s:Rect id="topMaskRect" left="0" top="0" right="0" bottom="0">
                 <s:fill>
@@ -149,7 +149,7 @@
         </s:Group>
         
         <!--- bottom group mask @private-->
-        <s:Group left="0" top="0" right="0" bottom="0" id="bottomGroupMask" 
+        <s:Group left="1" top="1" right="1" bottom="1" id="bottomGroupMask" 
                  includeIn="withControls">
             <!--- @private-->
             <s:Rect id="bottomMaskRect" left="0" top="0" right="0" bottom="0">
@@ -189,16 +189,6 @@
                 <s:VerticalLayout gap="0" horizontalAlign="justify" />
             </s:layout>
             
-            <!--- 
-				Chris custom header group ! (id = moveArea pour garder les listeners pour le move de la fenetre) 
-				id="moveArea"
-			-->
-			<s:HGroup width="100%" id="dummyIdNotToBeMoveArea">
-				<s:Spacer width="100%"/>
-	            <s:Button id="closeButton" skinClass="com.uralys.tribes.skins.TitleWindowCloseButtonSkin"
-	                      width="15" height="15" right="7" top="7" />
-			</s:HGroup>
-			
             <!--
                 Note: setting the minimum size to 0 here so that changes to the host component's
                 size will not be thwarted by this skin part's minimum size.   This is a compromise,

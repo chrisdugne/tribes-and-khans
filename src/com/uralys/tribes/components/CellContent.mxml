@@ -5,6 +5,11 @@
 		  xmlns:renderers="com.uralys.tribes.renderers.*" 
 		  xmlns:components="com.uralys.tribes.components.*">
 	
+	<fx:Declarations>
+		<s:Fade id="shower" alphaTo="1"/>	
+		<s:Fade id="hider" alphaTo="0"/>	
+	</fx:Declarations>
+	
 	<fx:Script>
 		<![CDATA[
 			import com.uralys.tribes.commons.Session;
@@ -17,13 +22,20 @@
 	</fx:Script>
 	
 	<s:VGroup id="enterCityForm"
-			  visible="false"
-			  includeInLayout="false"
+			  
+			  visible="{Session.CURRENT_CELL_SELECTED != null 
+			  &amp;&amp; 
+			  Session.CURRENT_CELL_SELECTED.city != null}"
+
+			  includeInLayout="{Session.CURRENT_CELL_SELECTED != null 
+			  &amp;&amp; 
+			  Session.CURRENT_CELL_SELECTED.city != null}"
+			  
 			  horizontalAlign="center"
 			  paddingTop="5"
 			  width="200">
 		<s:HGroup>
-			<s:Label text="{Translations.CITY.getItemAt(Session.LANGUAGE)} : {Session.CURRENT_CELL_SELECTED.city.name} ({Session.CURRENT_CELL_SELECTED.city.population})"
+			<s:Label text="{Session.CURRENT_CELL_SELECTED.city.name} ({Session.CURRENT_CELL_SELECTED.city.population})"
 					 click="if(Session.player.playerUID == Session.CURRENT_CELL_SELECTED.landOwner.playerUID)Session.board.showCityChangeName.play()"/>
 			<s:Image source="{ImageContainer.getImage(ImageContainer.EDIT)}"
 					  click="{Session.board.showCityChangeName.play()}"
@@ -60,6 +72,13 @@
 	</s:VGroup>
 	
 	<s:VGroup id="unitForm"
+			  horizontalAlign="center"
+			  paddingTop="5"
+			  showEffect="shower"
+			  hideEffect="fader"
+			  width="200"
+			  alpha="0"
+			
 			  visible="{Session.CURRENT_CELL_SELECTED != null 
 			  &amp;&amp; 
 			  ((Session.CURRENT_CELL_SELECTED.army != null 
@@ -67,9 +86,15 @@
 			  ||
 			  (Session.CURRENT_CELL_SELECTED.caravan != null 
 			  &amp;&amp; Session.CURRENT_CELL_SELECTED.caravan.size > 0))}"
-			  horizontalAlign="center"
-			  paddingTop="5"
-			  width="200">
+			  
+			  includeInLayout="{Session.CURRENT_CELL_SELECTED != null 
+			  &amp;&amp; 
+			  ((Session.CURRENT_CELL_SELECTED.army != null 
+			  &amp;&amp; Session.CURRENT_CELL_SELECTED.army.size > 0)
+			  ||
+			  (Session.CURRENT_CELL_SELECTED.caravan != null 
+			  &amp;&amp; Session.CURRENT_CELL_SELECTED.caravan.size > 0))}"
+			  >
 		
 		<mx:HRule width="180"/>
 		<components:UnitRenderer unit="{Session.CURRENT_CELL_SELECTED.army}" 

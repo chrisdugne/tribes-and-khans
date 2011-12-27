@@ -14,7 +14,9 @@
 			[Bindable] public var label:String;
 		]]>
 	</fx:Script>
-		<mx:ProgressBar id="progressBar"
+		<s:HGroup width="100%">
+			<s:Spacer width="10%"/>
+			<mx:ProgressBar id="progressBar"
 						minimum="{minimum}" 
 						maximum="{maximum}" 
 						mode="{mode}"
@@ -22,9 +24,14 @@
 						barSkin="{barSkin}"
 						trackSkin="{trackSkin}"
 						label=" "
-						width="100%"/>
-		<s:Label y="{trackHeight+3}"
-				 text="{label}"
-				 color="{Numbers.WHITE}"
-				 fontSize="16"/>
+						width="80%"/>
+		</s:HGroup>
+		<s:HGroup width="100%" 
+				  y="{trackHeight+3}">
+			<s:Spacer width="12%"/>
+			<s:Label text="{label}"
+					 color="{Numbers.WHITE}"
+					 fontSize="16"
+				 	 width="80%"/>
+		</s:HGroup>
 </s:Group>

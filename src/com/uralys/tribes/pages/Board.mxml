@@ -111,9 +111,9 @@
 				// on calcule si ce n'a pas été fait avant
 				GameManager.getInstance().refreshCityWorkersOnResources(false, selectedCity, false);
 				
-				cellContentGroup.cellContent.enterCityForm.includeInLayout = true;
-				cellContentGroup.cellContent.enterCityForm.visible = true;				
-				cellContentGroup.cellContent.enterCityButton.enabled = selectedCity.beginTime < new Date().getTime();
+				//rightPanel.cellContent.enterCityForm.includeInLayout = true;
+				//rightPanel.cellContent.enterCityForm.visible = true;				
+				rightPanel.cellContent.enterCityButton.enabled = selectedCity.beginTime < new Date().getTime();
 				
 				setBuildingCityProgressBar();
 			}
@@ -128,8 +128,8 @@
 				var hours:int = millisRemaining/60/60/1000;
 				var minutes:int = (millisRemaining-hours*60*60*1000)/60/1000;
 				
-				cellContentGroup.cellContent.buildingCityProgessBar.setProgress( millisSpent, Numbers.TIME_TO_BUILD_A_CITY );
-				cellContentGroup.cellContent.labelBuildingCity.text = Translations.CITY_BUILDING_DONE.getItemAt(Session.LANGUAGE) + " " +(hours>9 ? "" : "0") + hours + "h"+ (minutes>9 ? "" : "0") + minutes;
+				rightPanel.cellContent.buildingCityProgessBar.setProgress( millisSpent, Numbers.TIME_TO_BUILD_A_CITY );
+				rightPanel.cellContent.labelBuildingCity.text = Translations.CITY_BUILDING_DONE.getItemAt(Session.LANGUAGE) + " " +(hours>9 ? "" : "0") + hours + "h"+ (minutes>9 ? "" : "0") + minutes;
 			}
 			
 			//-----------------------------------------------------------//
@@ -302,9 +302,11 @@
 	
 	<!-- =============================================================================================== -->
 	
+	<!--
 	<windows:CellContentGroup id="cellContentGroup" 
 							  height="{Session.APPLICATION_HEIGHT - Session.HEADER_HEIGHT - Session.FOOTER_HEIGHT}"
 							  y="{Session.HEADER_HEIGHT}"/>
+	-->
 	
 	<s:Image source="{ImageContainer.ARROW_RIGHT}" 
 			 id="openPlayerUnitsButton" 
@@ -322,11 +324,19 @@
 	
 	<windows:ChangeName id="changeNameWindow" x="-375" y="100" type="1"/>
 	<windows:ChangeName id="changeCityNameWindow" x="-375" y="100" type="2"/>
-	<windows:PlayerUnits id="playerUnits" x="-600" y="100"/>
+	<windows:PlayerUnits id="playerUnits" x="-600" y="{Session.HEADER_HEIGHT}"/>
 	<windows:CityGroup id="cityGroup" x="2500" y="{Session.HEADER_HEIGHT}"
 					   width="{Session.APPLICATION_WIDTH}"
 					   height="{Session.APPLICATION_HEIGHT - Session.HEADER_HEIGHT - Session.FOOTER_HEIGHT}"
 					   selectedCity="@{selectedCity}"/>
 
+	<windows:LeftBoardPanel
+				id="leftPanel"
+				bottom="{Session.FOOTER_HEIGHT}"/>
+
+	<windows:RightBoardPanel
+				id="rightPanel"
+				x="{Session.APPLICATION_WIDTH - rightPanel.width}"
+				bottom="{Session.FOOTER_HEIGHT}"/>
 	
 </s:Group>

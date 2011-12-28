@@ -6,8 +6,8 @@
 		  xmlns:components="com.uralys.tribes.components.*">
 	
 	<fx:Declarations>
-		<s:Fade id="shower" alphaTo="1"/>	
-		<s:Fade id="hider" alphaTo="0"/>	
+		<s:Fade id="shower" alphaFrom="0" alphaTo="1"/>	
+		<s:Fade id="hider" alphaFrom="1" alphaTo="0"/>	
 	</fx:Declarations>
 	
 	<fx:Script>
@@ -22,6 +22,8 @@
 	</fx:Script>
 	
 	<s:VGroup id="enterCityForm"
+			  showEffect="shower"
+			  hideEffect="fader"
 			  
 			  visible="{Session.CURRENT_CELL_SELECTED != null 
 			  &amp;&amp; 

@@ -98,11 +98,14 @@
 			  &amp;&amp; Session.CURRENT_CELL_SELECTED.caravan.size > 0))}"
 			  >
 		
-		<mx:HRule width="180"/>
-		<components:UnitRenderer unit="{Session.CURRENT_CELL_SELECTED.army}" 
+		<components:UnitRenderer id="armyRenderer"
+								 unit="{Session.CURRENT_CELL_SELECTED.army}" 
+								 includeInLayout="{Session.CURRENT_CELL_SELECTED != null &amp;&amp; Session.CURRENT_CELL_SELECTED.army !=null &amp;&amp; Session.CURRENT_CELL_SELECTED.army.size > 0}"
 								 visible="{Session.CURRENT_CELL_SELECTED != null &amp;&amp; Session.CURRENT_CELL_SELECTED.army !=null &amp;&amp; Session.CURRENT_CELL_SELECTED.army.size > 0}"/>
-		<mx:HRule width="180"/>
-		<components:UnitRenderer unit="{Session.CURRENT_CELL_SELECTED.caravan}" 
+	
+		<components:UnitRenderer id="caravanRenderer"
+								 unit="{Session.CURRENT_CELL_SELECTED.caravan}" 
+								 includeInLayout="{Session.CURRENT_CELL_SELECTED != null &amp;&amp; Session.CURRENT_CELL_SELECTED.caravan !=null &amp;&amp; Session.CURRENT_CELL_SELECTED.caravan.size > 0}"
 								 visible="{Session.CURRENT_CELL_SELECTED != null &amp;&amp; Session.CURRENT_CELL_SELECTED.caravan !=null &amp;&amp; Session.CURRENT_CELL_SELECTED.caravan.size > 0}"/>
 	</s:VGroup>
 </s:VGroup>

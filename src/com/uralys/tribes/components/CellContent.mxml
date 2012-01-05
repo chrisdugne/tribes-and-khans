@@ -3,11 +3,14 @@
 		  xmlns:s="library://ns.adobe.com/flex/spark" 
 		  xmlns:mx="library://ns.adobe.com/flex/mx" 
 		  xmlns:renderers="com.uralys.tribes.renderers.*" 
-		  xmlns:components="com.uralys.tribes.components.*">
+		  xmlns:components="com.uralys.tribes.components.*"
+		  paddingBottom="5">
 	
 	<fx:Declarations>
-		<s:Fade id="shower" alphaFrom="0" alphaTo="1"/>	
-		<s:Fade id="hider" alphaFrom="1" alphaTo="0"/>	
+		<s:Fade id="shower" alphaTo="1"
+				effectStart="{hider.stop();shower.stop()}"/>	
+		<s:Fade id="hider" alphaTo="0"	
+				effectStart="{shower.stop();hider.stop()}"/>	
 	</fx:Declarations>
 	
 	<fx:Script>
@@ -18,37 +21,45 @@
 			import com.uralys.tribes.managers.GameManager;
 			import com.uralys.tribes.skins.ClassicProgressBarSkin;
 			import com.uralys.tribes.skins.CustomProgressTrackSkin;
+			
+			public var saveCityAndGoBackToBoard:Function;
 		]]>
 	</fx:Script>
 	
 	<s:VGroup id="enterCityForm"
 			  showEffect="shower"
-			  hideEffect="fader"
 			  
 			  visible="{Session.CURRENT_CELL_SELECTED != null 
 			  &amp;&amp; 
-			  Session.CURRENT_CELL_SELECTED.city != null}"
+			  Session.CURRENT_CELL_SELECTED.city != null
+			  &amp;&amp; 
+			  !Session.MOVE_A_UNIT}"
 
 			  includeInLayout="{Session.CURRENT_CELL_SELECTED != null 
 			  &amp;&amp; 
-			  Session.CURRENT_CELL_SELECTED.city != null}"
+			  Session.CURRENT_CELL_SELECTED.city != null
+			  &amp;&amp; 
+			  !Session.MOVE_A_UNIT}"
 			  
 			  horizontalAlign="center"
 			  paddingTop="5"
 			  width="200">
 		<s:HGroup>
-			<s:Label text="{Session.CURRENT_CELL_SELECTED.city.name} ({Session.CURRENT_CELL_SELECTED.city.population})"
-					 click="if(Session.player.playerUID == Session.CURRENT_CELL_SELECTED.landOwner.playerUID)Session.board.showCityChangeName.play()"/>
-			<s:Image source="{ImageContainer.getImage(ImageContainer.EDIT)}"
-					  click="{Session.board.showCityChangeName.play()}"
-					  visible="{Session.player.playerUID == Session.CURRENT_CELL_SELECTED.landOwner.playerUID}"/>
+			<s:Label text="{Session.CURRENT_CELL_SELECTED.city.name}"
+					 click="if(Session.player.playerUID == Session.CURRENT_CELL_SELECTED.landOwner.playerUID)Session.board.showCityChangeName.play()"
+					 id="cityNameLabel"
+					 color="#ffffff"
+					 mouseOver="{cityNameLabel.setStyle('color', '#668FB3')}"
+					 mouseOut="{cityNameLabel.setStyle('color', '#ffffff')}"/>
+			<s:Label text="({Session.CURRENT_CELL_SELECTED.city.population})"
+					 styleName="numberLabel"/>
 		</s:HGroup>
 		
 		<renderers:PlayerName player="{Session.player.playerUID == Session.CURRENT_CELL_SELECTED.landOwner.playerUID ? Session.player : Session.CURRENT_CELL_SELECTED.landOwner}"/>
 		
-		<s:Button label="{Translations.ENTER_CITY.getItemAt(Session.LANGUAGE)}" 
+		<s:Button label="{Session.INSIDE_A_CITY ? Translations.VALIDATE_MODIFICATIONS.getItemAt(Session.LANGUAGE) : Translations.ENTER_CITY.getItemAt(Session.LANGUAGE)}" 
 				  id="enterCityButton"
-				  click="{Session.board.enterCity(event)}"
+				  click="{Session.INSIDE_A_CITY ? saveCityAndGoBackToBoard() : Session.board.enterCity(event)}"
 				  skinClass="com.uralys.tribes.skins.CustomButtonSkin"
 				  visible="{Session.player.playerUID == Session.CURRENT_CELL_SELECTED.landOwner.playerUID}"/>
 		<mx:ProgressBar id="buildingCityProgessBar"
@@ -77,7 +88,7 @@
 			  horizontalAlign="center"
 			  paddingTop="5"
 			  showEffect="shower"
-			  hideEffect="fader"
+			  hideEffect="hider"
 			  width="200"
 			  alpha="0"
 			
@@ -87,7 +98,9 @@
 			  &amp;&amp; Session.CURRENT_CELL_SELECTED.army.size > 0)
 			  ||
 			  (Session.CURRENT_CELL_SELECTED.caravan != null 
-			  &amp;&amp; Session.CURRENT_CELL_SELECTED.caravan.size > 0))}"
+			  &amp;&amp; Session.CURRENT_CELL_SELECTED.caravan.size > 0))
+			  &amp;&amp; 
+			  !Session.INSIDE_A_CITY}"
 			  
 			  includeInLayout="{Session.CURRENT_CELL_SELECTED != null 
 			  &amp;&amp; 
@@ -95,7 +108,9 @@
 			  &amp;&amp; Session.CURRENT_CELL_SELECTED.army.size > 0)
 			  ||
 			  (Session.CURRENT_CELL_SELECTED.caravan != null 
-			  &amp;&amp; Session.CURRENT_CELL_SELECTED.caravan.size > 0))}"
+			  &amp;&amp; Session.CURRENT_CELL_SELECTED.caravan.size > 0))
+			  &amp;&amp; 
+			  !Session.INSIDE_A_CITY}"
 			  >
 		
 		<components:UnitRenderer id="armyRenderer"

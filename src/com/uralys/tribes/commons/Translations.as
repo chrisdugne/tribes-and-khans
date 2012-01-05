@@ -306,24 +306,10 @@ public class Translations{
 	//-----------------------------------------------------------------------------------//
 
 	[Bindable]
-	public static var CREATION:ArrayCollection = new ArrayCollection(
-									["En creation",
-									"Being created",
-									"Being created"]);
-
-	[Bindable]
-	public static var RUNNING:ArrayCollection = new ArrayCollection(
-									["En cours",
-									"Running",
-									"Running"]);
-
-	//-----------------------------------------------------------------------------------//
-
-	[Bindable]
 	public static var PLAYERS:ArrayCollection = new ArrayCollection(
-									["joueurs",
-									"players",
-									"players"]);
+									["Joueurs",
+									"Players",
+									"Players"]);
 	[Bindable]
 	public static var ALLIES:ArrayCollection = new ArrayCollection(
 									["Alliances",

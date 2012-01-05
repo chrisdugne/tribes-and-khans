@@ -103,6 +103,7 @@
 				{
 					if(cityInSession.cityUID == city.cityUID){
 						selectedCity = cityInSession;
+						Session.CURRENT_CELL_SELECTED.city = cityInSession;
 						trace("found selectedCity");
 						break;
 					}
@@ -136,6 +137,7 @@
 
 			public function enterCity(event:MouseEvent):void
 			{
+				Session.INSIDE_A_CITY = true;
 				cityGroup.cityForm.refreshCity();
 				appearCity.play();
 			}
@@ -279,34 +281,9 @@
 					 mouseMove="BoardClickAnalyser.getInstance().mouseMove(event)"
 					 mouseUp="BoardClickAnalyser.getInstance().mouseUp(event)"/>
 		</s:Group>
-		
-		<s:Image source="{ImageContainer.ZOOM_IN}"
-				  id="zoomInButton"
-				  visible="{!Session.MOVE_A_UNIT &amp;&amp; !Session.WAIT_FOR_SERVER}"
-				  x="{boardImage.x + 25}"
-				  y="{boardImage.y - 15}"
-				  click="{BoardDrawer.getInstance().zoom()}"/>
-		<s:Image source="{ImageContainer.ZOOM_OUT}"
-				  id="zoomOutButton"
-				  visible="{!Session.MOVE_A_UNIT &amp;&amp; !Session.WAIT_FOR_SERVER}"
-				  x="{boardImage.x + 60}"
-				  y="{boardImage.y - 14}"
-				  click="BoardDrawer.getInstance().unzoom()"/>
-		<s:Image source="{ImageContainer.REFRESH}"
-				  id="refreshButton"
-				  visible="{!Session.MOVE_A_UNIT &amp;&amp; !Session.WAIT_FOR_SERVER}"
-				  x="{boardImage.x + 95}"
-				  y="{boardImage.y - 13}"
-				  click="{GameManager.getInstance().getPlayer(Session.player)}"/>
 	</s:Group>
 	
 	<!-- =============================================================================================== -->
-	
-	<!--
-	<windows:CellContentGroup id="cellContentGroup" 
-							  height="{Session.APPLICATION_HEIGHT - Session.HEADER_HEIGHT - Session.FOOTER_HEIGHT}"
-							  y="{Session.HEADER_HEIGHT}"/>
-	-->
 	
 	<s:Image source="{ImageContainer.ARROW_RIGHT}" 
 			 id="openPlayerUnitsButton" 
@@ -315,15 +292,8 @@
 			 left="0"
 			 top="300"/>
 	
-	<s:SWFLoader source="{ImageContainer.LOADING}" 
-		 		  visible="{Session.WAIT_FOR_SERVER}"
-				  x="{boardImage.x+150}"
-				  y="{boardImage.y+Session.MAP_HEIGHT - 11}"/>
-	
 	<!-- ====================================================================================== -->
 	
-	<windows:ChangeName id="changeNameWindow" x="-375" y="100" type="1"/>
-	<windows:ChangeName id="changeCityNameWindow" x="-375" y="100" type="2"/>
 	<windows:PlayerUnits id="playerUnits" x="-600" y="{Session.HEADER_HEIGHT}"/>
 	<windows:CityGroup id="cityGroup" x="2500" y="{Session.HEADER_HEIGHT}"
 					   width="{Session.APPLICATION_WIDTH}"
@@ -338,5 +308,8 @@
 				id="rightPanel"
 				x="{Session.APPLICATION_WIDTH - rightPanel.width}"
 				bottom="{Session.FOOTER_HEIGHT}"/>
+
+	<windows:ChangeName id="changeNameWindow" x="-375" y="100" type="1"/>
+	<windows:ChangeName id="changeCityNameWindow" x="-375" y="100" type="2"/>
 	
 </s:Group>

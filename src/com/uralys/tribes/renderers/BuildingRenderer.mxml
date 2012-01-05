@@ -2,7 +2,7 @@
 <s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
 		 xmlns:mx="library://ns.adobe.com/flex/mx"
-		 minWidth="550"
+		 minWidth="450"
 		 horizontalAlign="center"
 		 verticalAlign="middle"
 		 creationComplete="refresh()">
@@ -14,19 +14,21 @@
 	
 	<fx:Script>
 		<![CDATA[
-			import com.uralys.tribes.main.ImageContainer;
-			//-------------------------------------------------------------------------------------//
-			
 			import com.uralys.tribes.commons.Numbers;
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;
 			import com.uralys.tribes.entities.City;
+			import com.uralys.tribes.main.ImageContainer;
 			import com.uralys.tribes.managers.GameManager;
 			import com.uralys.tribes.skins.CustomButtonSkin;
 			import com.uralys.tribes.skins.WorkersProgressBarSkin;
 			import com.uralys.tribes.skins.WorkersProgressTrackSkin;
 			import com.uralys.utils.Utils;
 		
+			//-------------------------------------------------------------------------------------//
+
+			[Bindable] public var potentialBuilders:int;
+
 			//-------------------------------------------------------------------------------------//
 
 			[Bindable] public var stockBuilders:int;
@@ -45,6 +47,7 @@
 				if(stockBeginTime == -1)
 					currentState = "upgradeEnabled";
 				else{
+					potentialBuilders = stockBuilders;
 					setBuilding();
 				}
 			}
@@ -58,10 +61,11 @@
 				if(city.unemployed < peopleAdded)
 					stockBuildersSlider.value = stockBuilders + city.unemployed;
 				
-				stockBuilders = stockBuildersSlider.value;
-				timeLabel.text = Utils.round(stockBuilders/10, 0) + 'h';
+				potentialBuilders = stockBuildersSlider.value;
+				timeLabel.text = Utils.round(potentialBuilders/10, 0) + 'h';
 				
-				GameManager.getInstance().updateWorkersProgressBar();
+				setSliderMaximum();
+				//GameManager.getInstance().updateWorkersProgressBar();
 			}
 			
 			//-------------------------------------------------------------------------------------//
@@ -69,6 +73,7 @@
 			private function upgrade():void
 			{
 				// on est en double binding : le city.stock correspondant va etre MAJ
+				stockBuilders = potentialBuilders;
 				stockNextCapacity = stockBuilders * ratioUpgrade;
 				stockBeginTime = new Date().getTime();
 				stockEndTime = stockBeginTime + Utils.round(stockBuilders/10, 0) *60*60*1000;
@@ -78,25 +83,72 @@
 				city.gold -= stockBuilders * 4;
 				
 				GameManager.getInstance().saveCity(city);
-				
+				GameManager.getInstance().updateWorkersProgressBar();
 				setBuilding();
 			}
 
 			//-------------------------------------------------------------------------------------//
 			
-			private function setBuilding():void
+			private function setBuilding(event:TimerEvent = null):void
 			{
+				var now:Number = new Date().getTime();
 				var now:Number = new Date().getTime();
 				var millisRemaining:Number = stockEndTime - now;
 				var millisSpent:Number = stockEndTime - stockBeginTime - millisRemaining;
+				
+				if(millisRemaining <= 0){
+					if(event != null)
+						done();
+				}
+				else{
+					var hours:int = millisRemaining/60/60/1000;
+					var minutes:int = (millisRemaining-hours*60*60*1000)/60/1000;
+					var secondes:int = (millisRemaining-hours*60*60*1000 - minutes*60*1000) /1000;
+					
+					buildingProgressBar.setProgress( millisSpent, stockEndTime - stockBeginTime );
+					buildingProgressBar.label = (hours != 0 ? hours+" h " : '')+(minutes>9 ? "" : "0")+minutes+" mn "+(secondes>9 ? "" : "0")+secondes+' s';
+					
+					currentState = "building";
+					
+					Session.timer.addEventListener(TimerEvent.TIMER, setBuilding);
+				}
+			}
+			
+			//-------------------------------------------------------------------------------------//
+			
+			// appelee si on a chargé la progress bar et que le temps est ecoulé
+			protected function done():void
+			{
+				trace("DONE !");
+				Session.timer.removeEventListener(TimerEvent.TIMER, setBuilding);
+				
+//				trace("item.name : " + item.name);
+//				for each(var _stock:Stock in city.stocks)
+//				{
+//					trace("stockUID : " + _stock.stockUID);
+//					if(Utils.getStockItem(_stock.stockUID) == item.name){
+//						trace("update");
+//						GameManager.getInstance().updateStockBuildingStatus(city, _stock);
+//						break;
+//					}
+//				}
+				
+				trace("refresh");
+				refresh();
+			}
 
-				var hours:int = millisRemaining/60/60/1000;
-				var minutes:int = (millisRemaining-hours*60*60*1000)/60/1000;
+			//-------------------------------------------------------------------------------------//
+			
+			private function setSliderMaximum():void
+			{
+				var value:int = 0;
+				var workersLimit:int = city.unemployed - potentialBuilders;
+				var woodLimit:int = city.woodStockCapacity/10;
+				var ironLimit:int = city.ironStockCapacity/10;
 				
-				buildingProgressBar.setProgress( millisSpent, stockEndTime - stockBeginTime );
-				buildingProgressBar.label = Translations.REMAINS.getItemAt(Session.LANGUAGE) + " : " + hours+"H"+(minutes>9 ? "" : "0")+minutes;
-				
-				currentState = "building";
+				var array:Array = [workersLimit, woodLimit, ironLimit];
+
+				stockBuildersSlider.maximum = Math.min.apply(null, array);
 			}
 			
 		]]>
@@ -106,7 +158,7 @@
 			  verticalAlign="middle"
 			  paddingRight.building="50">
 		
-		<s:Label text="{stockBuilders}" 
+		<s:Label text="{potentialBuilders}" 
 				 styleName="numberLabel" 
 				 textAlign="right"
 				 minWidth="60"/>
@@ -114,9 +166,8 @@
 		<s:HSlider id="stockBuildersSlider"
 				   showDataTip="false"
 				   liveDragging="true" 
-				   value="{stockBuilders}"
+				   value="{potentialBuilders}"
 				   change="stockBuildersCheck(event)"
-				   maximum="{city.unemployed + stockBuilders}"
 				   snapInterval="1"
 				   enabled.building="false"
 				   enabled.upgradeEnabled="true"/>
@@ -125,24 +176,26 @@
 		<s:HGroup width="100%"
 				  visible.building="false"
 				  includeInLayout.building="false">
-			<mx:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}" width="25" height="25"/>
-			<s:Label text="{stockBuilders * 10}"
-					 color="{stockBuilders * 10 &lt;= city.wood ? Numbers.GREEN : Numbers.RED}"/>
+			<s:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}" width="25" height="25"/>
+			<s:Label text="{potentialBuilders * 10}"
+					 color="{potentialBuilders * 10 &lt;= city.wood ? Numbers.GREEN : Numbers.RED}"/>
 	
 			<s:Spacer width="20"/>
-			<mx:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}" width="25" height="25"/>
-			<s:Label text="{stockBuilders * 10}"
-					 color="{stockBuilders * 10 &lt;= city.iron ? Numbers.GREEN : Numbers.RED}"/>
+			<s:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}" width="25" height="25"/>
+			<s:Label text="{potentialBuilders * 10}"
+					 color="{potentialBuilders * 10 &lt;= city.iron ? Numbers.GREEN : Numbers.RED}"/>
 	
 			<s:Spacer width="20"/>
-			<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
-			<s:Label text="{stockBuilders * 4}"
-					 color="{stockBuilders * 4 &lt;= city.gold ? Numbers.GREEN : Numbers.RED}"/>
+			<s:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
+			<s:Label text="{potentialBuilders * 4}"
+					 color="{potentialBuilders * 4 &lt;= city.gold ? Numbers.GREEN : Numbers.RED}"/>
 	
 			<s:Spacer width="20"/>
-			<mx:Image toolTip="{Translations.TIME.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.CLOCK}"/>
+			<s:Image toolTip="{Translations.TIME.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.CLOCK}"/>
 			<s:Label id="timeLabel"/>
 		</s:HGroup>
+		
+		<s:Spacer width="100"/>
 		<mx:ProgressBar id="buildingProgressBar"
 						width="185"
 						height="20"
@@ -151,6 +204,7 @@
 						trackSkin="{WorkersProgressTrackSkin}"
 						label="" 
 						labelPlacement="bottom"
+						color="0xffffff"
 						visible.upgradeEnabled="false"
 						includeInLayout.upgradeEnabled="false"/>
 		
@@ -160,19 +214,19 @@
 			  horizontalAlign="center">
 		<s:Spacer width="20%"/>
 		<s:Label text="{stockCapacity}"/>
-		<mx:Image source="{ImageContainer.UPGRADE_ARROW}"/>
-		<s:Label text="{stockBuilders * ratioUpgrade}"
-				 color="{stockCapacity &lt; stockBuilders * ratioUpgrade ? Numbers.GREEN : Numbers.RED}"/>
+		<s:Image source="{ImageContainer.UPGRADE_ARROW}"/>
+		<s:Label text="{potentialBuilders * ratioUpgrade}"
+				 color="{stockCapacity &lt; potentialBuilders * ratioUpgrade ? Numbers.GREEN : Numbers.RED}"/>
 		<s:Spacer width="100%"/>
 		<s:Button skinClass="{CustomButtonSkin}"
 				  label="{Translations.UPGRADE.getItemAt(Session.LANGUAGE)}"
-				  enabled="{stockCapacity &lt; stockBuilders * ratioUpgrade
+				  enabled="{stockCapacity &lt; potentialBuilders * ratioUpgrade
 				  			&amp;&amp;
-				  			stockBuilders * 10 &lt;= city.wood
+				  			potentialBuilders * 10 &lt;= city.wood
 				  			&amp;&amp;
-				  			stockBuilders * 10 &lt;= city.iron
+				  			potentialBuilders * 10 &lt;= city.iron
 				  			&amp;&amp;
-				  			stockBuilders * 4 &lt;= city.gold
+				  			potentialBuilders * 4 &lt;= city.gold
 				  			}"
 				  click="upgrade()"
 				  visible.building="false"

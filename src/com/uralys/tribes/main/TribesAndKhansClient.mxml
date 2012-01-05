@@ -7,6 +7,7 @@
 			   xmlns:components="com.uralys.tribes.components.*" 
 			   xmlns:maincomponents="com.uralys.tribes.main.components.*"
 			   creationComplete="init()" 
+			   backgroundColor="0x001110"
 			   >
 	
 	<fx:Declarations>
@@ -28,6 +29,8 @@
 			
 			import mx.core.FlexGlobals;
 			import mx.managers.PopUpManager;
+			
+			import org.osmf.events.TimeEvent;
 			//-----------------------------------------------------------------------//
 			
 			private	function resizeHandler(e:Event):void
@@ -65,8 +68,8 @@
 				var sharedObject:SharedObject = SharedObject.getLocal(Names.SHARED_OBJECT_NAME);
 				Session.LANGUAGE = sharedObject.data.lastLanguage;
 				
-				header.openLoginWindow();
-				openGlobalMessageWindow();
+				header.openLoginWindow();	
+				//openGlobalMessageWindow();
 				
 				GameManager.getInstance().loadItems();
 			}
@@ -121,12 +124,12 @@
 
 		]]>
 	</fx:Script>
-	
+	<!--
 	<s:HGroup horizontalAlign="center" width="100%" height="100%">
 		<components:ClippedImage id="background" width="100%" height="100%"
 								 source="{ImageContainer.BACKGROUND}"/>
 	</s:HGroup>
-		
+	-->
 	
 	<!-- content -->
 	<s:Group id="window" height="100%" width="100%"/>

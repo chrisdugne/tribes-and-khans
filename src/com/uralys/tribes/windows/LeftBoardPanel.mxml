@@ -7,13 +7,15 @@
 							  skinClass="com.uralys.tribes.skins.NotClosableWindowSkin"
 							  close="{closeWindow()}"
 							  width="250"
-							  height="100"
+							  height="150"
 							  cornerRadius="10">
 	
 	<fx:Script>
 		<![CDATA[
 			import com.uralys.tribes.commons.Session;
+			import com.uralys.tribes.core.BoardDrawer;
 			import com.uralys.tribes.main.ImageContainer;
+			import com.uralys.tribes.managers.GameManager;
 			
 			import mx.managers.PopUpManager;
 			
@@ -31,6 +33,21 @@
 			  horizontalAlign="center"
 			  paddingTop="5">
 
+		<s:HGroup width="100%" horizontalAlign="right" paddingRight="10">
+			<s:Image source="{ImageContainer.ZOOM_IN}"
+					 id="zoomInButton"
+					 visible="{!Session.MOVE_A_UNIT &amp;&amp; !Session.WAIT_FOR_SERVER}"
+					 click="{BoardDrawer.getInstance().zoom()}"/>
+			<s:Image source="{ImageContainer.ZOOM_OUT}"
+					 id="zoomOutButton"
+					 visible="{!Session.MOVE_A_UNIT &amp;&amp; !Session.WAIT_FOR_SERVER}"
+					 click="BoardDrawer.getInstance().unzoom()"/>
+			<s:Image source="{ImageContainer.REFRESH}"
+					 id="refreshButton"
+					 visible="{!Session.MOVE_A_UNIT &amp;&amp; !Session.WAIT_FOR_SERVER}"
+					 click="{GameManager.getInstance().getPlayer(Session.player)}"/>
+		</s:HGroup>
+
 		<components:StepProgress width="100%"/>
 		
 		<s:HGroup width="100%" horizontalAlign="center" paddingTop="5">
@@ -38,5 +55,9 @@
 			<s:Spacer width="50"/>
 			<s:Label text="Y : {Session.COORDINATE_Y}"/>
 		</s:HGroup>
+		
+		
+		<s:SWFLoader source="{ImageContainer.LOADING}" 
+					 visible="{Session.WAIT_FOR_SERVER}"/>
 	</s:VGroup>
 </windows:ResizableTitleWindow>

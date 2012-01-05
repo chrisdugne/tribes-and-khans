@@ -7,13 +7,15 @@
 							  skinClass="com.uralys.tribes.skins.NotClosableWindowSkin"
 							  close="{closeWindow()}"
 							  width="230"
-							  height="{cellContent.height == 0 ? 0 : cellContent.height + 10}"
+							  height="{cellContent.height}"
 							  cornerRadius="10"> 
 	
 	<fx:Script>
 		<![CDATA[
 			import com.uralys.tribes.commons.Session;
+			import com.uralys.tribes.entities.Unit;
 			import com.uralys.tribes.main.ImageContainer;
+			import com.uralys.tribes.managers.GameManager;
 			
 			import mx.managers.PopUpManager;
 			
@@ -23,15 +25,43 @@
 				PopUpManager.removePopUp(this);
 			}
 			
+			//---------------------------------------------------------------------------------------//
+			
+			private function saveCityAndGoBackToBoard():void
+			{				
+				trace("-----");
+				trace("saveCityAndGoBackToBoard");
+				
+				Session.INSIDE_A_CITY = false;
+				
+				var unitsToRecord:Array = [];
+				var army:Unit = Session.CURRENT_CELL_SELECTED.army;
+				var caravan:Unit = Session.CURRENT_CELL_SELECTED.caravan;
+				
+				// on force la validation du marchand si il existe et qu'il reste dans la ville
+				// si il est en mouvement, on ne peut pas l'editer donc pas besoin d'appeler le validateMerchants (qui casserait tout en placant le timeTo à -1) 
+				if(caravan != null 
+					&& caravan.moves.length == 1)
+				{
+					unitsToRecord.push(caravan);
+				}
+				
+				// IDEM pour army
+				if(army != null 
+					&& army.moves.length == 1)
+				{
+					unitsToRecord.push(army);
+				}
+				
+				GameManager.getInstance().saveCity(Session.board.selectedCity, unitsToRecord);
+				Session.board.hideCity.play();
+			}
 		]]>
 	</fx:Script>
 	
-	<s:VGroup height="100%"
-			  width="100%"
-			  horizontalAlign="center"
-			  paddingTop="5">
-		
-		<components:CellContent id="cellContent"/>
-
-	</s:VGroup>
+	<components:CellContent id="cellContent"
+							width="100%"
+							horizontalAlign="center"
+							saveCityAndGoBackToBoard="{saveCityAndGoBackToBoard}"
+							paddingTop="5"/>
 </windows:ResizableTitleWindow>

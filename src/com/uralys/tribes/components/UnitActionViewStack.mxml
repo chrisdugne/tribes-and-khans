@@ -64,7 +64,7 @@
 					if(event==null)trace("setProgress millisSpent : " + millisSpent);
 	
 					moveProgressBar.progressBar.setProgress( millisSpent, unit.moves.getItemAt(0).timeTo - unit.moves.getItemAt(0).timeFrom );
-					moveProgressBar.label = Translations.MOVING.getItemAt(Session.LANGUAGE) + " : " +(minutes>9 ? "" : "0")+minutes+" mn "+(secondes>9 ? "" : "0")+secondes+' s';
+					moveProgressBar.label = Translations.MOVING.getItemAt(Session.LANGUAGE) + " " +(minutes>9 ? "" : "0")+minutes+" : "+(secondes>9 ? "" : "0")+secondes;
 
 					if(event==null)trace("moveProgressBar.label : " + moveProgressBar.label);
 					
@@ -99,7 +99,7 @@
 					var secondes:int = (millisRemaining - minutes*60*1000) /1000;
 					
 					conquestProgressBar.progressBar.setProgress( millisSpent, Numbers.BASE_TIME_FOR_LAND_CONQUEST_MILLIS );
-					conquestProgressBar.label = Translations.CONQUERING_LAND.getItemAt(Session.LANGUAGE) + " : " +(minutes>9 ? "" : "0")+minutes+" mn "+(secondes>9 ? "" : "0")+secondes+' s';
+					conquestProgressBar.label = Translations.CONQUERING_LAND.getItemAt(Session.LANGUAGE) + " " +(minutes>9 ? "" : "0")+minutes+" : "+(secondes>9 ? "" : "0")+secondes;
 					
 					Session.timer.addEventListener(TimerEvent.TIMER, setConquestInProgress);
 				}
@@ -132,7 +132,7 @@
 					var secondes:int = (millisRemaining - minutes*60*1000) /1000;
 					
 					shootProgressBar.progressBar.setProgress( millisSpent, Numbers.BASE_TIME_FOR_SHOOTING );
-					shootProgressBar.label = Translations.BOWS.getItemAt(Session.LANGUAGE) + " : " +(minutes>9 ? "" : "0")+minutes+" mn "+(secondes>9 ? "" : "0")+secondes+' s';
+					shootProgressBar.label = Translations.BOWS.getItemAt(Session.LANGUAGE) + " " +(minutes>9 ? "" : "0")+minutes+" : "+(secondes>9 ? "" : "0")+secondes;
 					
 					Session.timer.addEventListener(TimerEvent.TIMER, setReloading);
 				}

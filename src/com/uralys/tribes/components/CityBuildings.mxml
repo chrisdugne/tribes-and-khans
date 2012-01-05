@@ -3,7 +3,7 @@
 				xmlns:s="library://ns.adobe.com/flex/spark" 
 				xmlns:mx="library://ns.adobe.com/flex/mx"
 				xmlns:renderers="com.uralys.tribes.renderers.*"
-				label="{Translations.BUILDINGS.getItemAt(Session.LANGUAGE)}"> 
+				label="{Translations.BUILDINGS.getItemAt(Session.LANGUAGE)}" xmlns:components="com.uralys.tribes.components.*"> 
 	<fx:Script>
 		<![CDATA[
 			import com.uralys.tribes.commons.Session;
@@ -32,12 +32,13 @@
 		]]>
 	</fx:Script>
 	
-	<s:Scroller height="240" width="100%">
+	<s:Scroller height="{Session.APPLICATION_HEIGHT/2}" width="100%" 
+				maxWidth="{Session.APPLICATION_WIDTH - 380}"><!-- 480 = 230 + 250 = width left et right panel-->
 		<s:VGroup width="100%" height="100%" horizontalAlign="center">
 			
 			<s:Spacer height="15"/>
 			<s:HGroup width="100%" verticalAlign="middle">
-				<mx:Image toolTip="{Translations.WHEAT.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WHEAT}"/>
+				<s:Image toolTip="{Translations.WHEAT.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WHEAT}"/>
 				<renderers:BuildingRenderer stockBuilders="@{city.wheatStockBuilders}"
 											stockCapacity="{city.wheatStockCapacity}"
 											stockNextCapacity="@{city.wheatStockNextCapacity}"
@@ -50,8 +51,11 @@
 			</s:HGroup>
 			
 			<s:Spacer height="15"/>
+			<components:HRule width="90%"/>
+			<s:Spacer height="15"/>
+			
 			<s:HGroup width="100%" verticalAlign="middle">
-				<mx:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}"/>
+				<s:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}"/>
 				<renderers:BuildingRenderer stockBuilders="@{city.woodStockBuilders}"
 											stockCapacity="{city.woodStockCapacity}"
 											stockNextCapacity="@{city.woodStockNextCapacity}"
@@ -64,8 +68,11 @@
 			</s:HGroup>
 			
 			<s:Spacer height="15"/>
+			<components:HRule width="90%"/>
+			<s:Spacer height="15"/>
+			
 			<s:HGroup width="100%" verticalAlign="middle">
-				<mx:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}"/>
+				<s:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}"/>
 				<renderers:BuildingRenderer stockBuilders="@{city.ironStockBuilders}"
 											stockCapacity="{city.ironStockCapacity}"
 											stockNextCapacity="@{city.ironStockNextCapacity}"
@@ -78,8 +85,11 @@
 			</s:HGroup>
 			
 			<s:Spacer height="15"/>
+			<components:HRule width="90%"/>
+			<s:Spacer height="15"/>
+			
 			<s:HGroup width="100%" verticalAlign="middle">
-				<mx:Image toolTip="{Translations.BOW.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.BOW}"/>
+				<s:Image toolTip="{Translations.BOW.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.BOW}"/>
 				<renderers:BuildingRenderer stockBuilders="@{city.bowStockBuilders}"
 											stockCapacity="{city.bowStockCapacity}"
 											stockNextCapacity="@{city.bowStockNextCapacity}"
@@ -92,8 +102,11 @@
 			</s:HGroup>
 			
 			<s:Spacer height="15"/>
+			<components:HRule width="90%"/>
+			<s:Spacer height="15"/>
+			
 			<s:HGroup width="100%" verticalAlign="middle">
-				<mx:Image toolTip="{Translations.SWORD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.SWORD}"/>
+				<s:Image toolTip="{Translations.SWORD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.SWORD}"/>
 				<renderers:BuildingRenderer stockBuilders="@{city.swordStockBuilders}"
 											stockCapacity="{city.swordStockCapacity}"
 											stockNextCapacity="@{city.swordStockNextCapacity}"
@@ -106,8 +119,11 @@
 			</s:HGroup>
 			
 			<s:Spacer height="15"/>
+			<components:HRule width="90%"/>
+			<s:Spacer height="15"/>
+			
 			<s:HGroup width="100%" verticalAlign="middle">
-				<mx:Image toolTip="{Translations.ARMOR.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.ARMOR}"/>
+				<s:Image toolTip="{Translations.ARMOR.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.ARMOR}"/>
 				<renderers:BuildingRenderer stockBuilders="@{city.armorStockBuilders}"
 											stockCapacity="{city.armorStockCapacity}"
 											stockNextCapacity="@{city.armorStockNextCapacity}"

@@ -299,8 +299,8 @@ package com.uralys.tribes.core
 			var lastMoveY:int = Utils.getYFromCellUID(lastMove.cellUID);
 			
 			var distance:int = Math.abs(lastMoveX - Session.COORDINATE_X) + Math.abs(lastMoveY - Session.COORDINATE_Y);
-			
-			if(movesPending.length == 10){
+
+			if(movesPending.length + unit.moves.length >= 12){
 				FlexGlobals.topLevelApplication.message(Translations.LIMIT_NB_MOVES.getItemAt(Session.LANGUAGE));
 				
 				newMoveAdded =  true; 

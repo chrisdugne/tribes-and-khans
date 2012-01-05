@@ -37,13 +37,15 @@
 	
 	<s:HGroup width="100%" horizontalAlign="center">
 		<s:VGroup horizontalAlign="center" height="100%">
-			<s:HGroup width="200">
+			<s:HGroup>
 				<s:Button label="{Translations.NEW_MERCHANTS.getItemAt(Session.LANGUAGE)}" 
 						  click="caravanCreationGroup.newUnit(Unit.MERCHANT)"
-						  skinClass="com.uralys.tribes.skins.CustomButtonSkin"/>
-				<mx:Image toolTip=" "
+						  skinClass="com.uralys.tribes.skins.CustomButtonSkin"
+						  enabled="{Session.CURRENT_CELL_SELECTED.caravan == null &amp;&amp; Session.player.units.length &lt; Session.player.cities.length*3}"/>
+				<s:Image toolTip=" "
 						  toolTipCreate="{onCreateMerchantToolTip(event)}"
-						  source="{ImageContainer.GREEN_QUESTION}"/>
+						  source="{ImageContainer.GREEN_QUESTION}"
+						  visible="{Session.CURRENT_CELL_SELECTED.caravan != null}"/>
 			</s:HGroup>
 			<s:Button label="{Translations.DELETE.getItemAt(Session.LANGUAGE)}"
 					  skinClass="com.uralys.tribes.skins.CustomButtonSkin"

@@ -3,6 +3,9 @@
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
 		 xmlns:mx="library://ns.adobe.com/flex/mx">
 	
+	<fx:Declarations>
+		<s:Fade id="loginMenuShower" alphaFrom="0" alphaTo="1" target="{loginWindow}"/>	
+	</fx:Declarations>	
 	<fx:Script>
 		<![CDATA[
 			import com.uralys.tribes.commons.Names;
@@ -24,18 +27,19 @@
 			
 			//-----------------------------------------------------------------------//
 			
-			public var loginWindow:LoginWindow = new LoginWindow();
+			[Bindable] public var loginWindow:LoginWindow = new LoginWindow();
 			public function openLoginWindow():void 
 			{
 				if(Session.player){
 					return;
 				}
 				
-				loginWindow.closeWindow(); 
-				
+				PopUpManager.removePopUp(loginWindow);
 				PopUpManager.addPopUp(loginWindow, DisplayObject(FlexGlobals.topLevelApplication), false);
-				PopUpManager.centerPopUp(loginWindow);
-				
+				loginWindow.y = Session.APPLICATION_HEIGHT/2 - loginWindow.height/2;
+				loginWindow.x = Session.APPLICATION_WIDTH/2 - loginWindow.width/2;
+				loginWindow.alpha = 0;
+				loginMenuShower.play();
 			}
 			
 			//-----------------------------------------------------------------------//

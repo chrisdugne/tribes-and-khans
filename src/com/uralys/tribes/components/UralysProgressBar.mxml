@@ -12,6 +12,7 @@
 			[Bindable] public var barSkin:Class;
 			[Bindable] public var trackSkin:Class;
 			[Bindable] public var label:String;
+			
 		]]>
 	</fx:Script>
 		<s:HGroup width="100%">
@@ -31,7 +32,6 @@
 			<s:Spacer width="12%"/>
 			<s:Label text="{label}"
 					 color="{Numbers.WHITE}"
-					 fontSize="16"
-				 	 width="80%"/>
+					 fontSize="14"/>
 		</s:HGroup>
 </s:Group>

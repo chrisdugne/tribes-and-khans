@@ -2,7 +2,6 @@
 <s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
 		 xmlns:mx="library://ns.adobe.com/flex/mx"
-		 minWidth="400"
 		 horizontalAlign="center"
 		 verticalAlign="middle"
 		 creationComplete="refresh()">
@@ -116,7 +115,7 @@
 					var secondes:int = (millisRemaining-hours*60*60*1000 - minutes*60*1000) /1000;
 					
 					buildingProgressBar.setProgress( millisSpent, endTime - beginTime );
-					buildingProgressBar.label = Translations.REMAINS.getItemAt(Session.LANGUAGE) + " : " + (hours != 0 ? hours+" h " : '')+(minutes>9 ? "" : "0")+minutes+" mn "+(secondes>9 ? "" : "0")+secondes+' s';
+					buildingProgressBar.label = (hours != 0 ? hours+" h " : '')+(minutes>9 ? "" : "0")+minutes+" mn "+(secondes>9 ? "" : "0")+secondes+' s';
 					
 					currentState = "building";
 	
@@ -173,17 +172,17 @@
 		<s:HGroup width="100%"
 				  visible.building="false"
 				  includeInLayout.building="false">
-			<mx:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}" width="25" height="25"/>
+			<s:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}" width="25" height="25"/>
 			<s:Label text="{smiths/item.peopleRequired * item.wood}"
 					 color="{smiths/item.peopleRequired * item.wood &lt;= city.wood ? Numbers.GREEN : Numbers.RED}"/>
 	
 			<s:Spacer width="20"/>
-			<mx:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}" width="25" height="25"/>
+			<s:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}" width="25" height="25"/>
 			<s:Label text="{smiths/item.peopleRequired * item.iron}"
 					 color="{smiths/item.peopleRequired * item.iron &lt;= city.iron ? Numbers.GREEN : Numbers.RED}"/>
 	
 			<s:Spacer width="20"/>
-			<mx:Image toolTip="{Translations.TIME.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.CLOCK}"/>
+			<s:Image toolTip="{Translations.TIME.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.CLOCK}"/>
 			<s:Label id="timeLabel" width="120"/>
 		</s:HGroup>
 		<s:Spacer width="90"
@@ -197,6 +196,7 @@
 						trackSkin="{WorkersProgressTrackSkin}"
 						label="" 
 						labelPlacement="bottom"
+						color="0xffffff"
 						visible.upgradeEnabled="false"
 						includeInLayout.upgradeEnabled="false"/>
 		
@@ -205,7 +205,7 @@
 			  verticalAlign="middle"
 			  horizontalAlign="center">
 		<s:Spacer width="20"/>
-		<mx:Image source="{ImageContainer.UPGRADE_ARROW}"/>
+		<s:Image source="{ImageContainer.UPGRADE_ARROW}"/>
 		<s:Label text="{stock + smiths * item.peopleRequired}/{stockCapacity}"
 				 color="{Numbers.GREEN}" width="150"/>
 		<s:Spacer width="180"/>

@@ -796,11 +796,6 @@ package com.uralys.tribes.core
 					applyZoom();
 					break;
 
-				case 1:
-					scale = 2;
-					applyZoom();
-					break;
-				
 			}
 		}
 
@@ -808,11 +803,6 @@ package com.uralys.tribes.core
 		{
 			switch(scale)
 			{
-				case 2:
-					scale = 1;
-					applyZoom();
-					break;
-				
 				case 1:
 					scale = 0.5;
 					applyZoom();
@@ -822,7 +812,6 @@ package com.uralys.tribes.core
 					scale = 0.25;
 					applyZoom();
 					break;
-				
 			}
 		}
 

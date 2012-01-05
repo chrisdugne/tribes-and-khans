@@ -49,9 +49,9 @@
 	<s:VGroup width="100%" horizontalAlign="center">
 		
 		<s:Spacer height="15"/>
-		<s:HGroup width="100%" verticalAlign="middle">
+		<s:HGroup width="100%" verticalAlign="middle" horizontalAlign="center">
 			<s:Label text="{city.bows}/{city.bowStockCapacity}" styleName="numberLabel"/>
-			<mx:Image toolTip="{Translations.BOW.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.BOW}"/>
+			<s:Image toolTip="{Translations.BOW.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.BOW}"/>
 			<renderers:SmithRenderer smiths="@{city.bowWorkers}"
 									 item="{Utils.getItem('bow')}"
 									 stock="{city.bows}"
@@ -65,9 +65,9 @@
 		</s:HGroup>
 		
 		<s:Spacer height="15"/>
-		<s:HGroup width="100%" verticalAlign="middle">
+		<s:HGroup width="100%" verticalAlign="middle" horizontalAlign="center">
 			<s:Label text="{city.swords}/{city.swordStockCapacity}" styleName="numberLabel"/>
-			<mx:Image toolTip="{Translations.SWORD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.SWORD}"/>
+			<s:Image toolTip="{Translations.SWORD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.SWORD}"/>
 			<renderers:SmithRenderer smiths="@{city.swordWorkers}"
 									 item="{Utils.getItem('sword')}"
 									 stock="{city.swords}"
@@ -81,9 +81,9 @@
 		</s:HGroup>
 		
 		<s:Spacer height="15"/>
-		<s:HGroup width="100%" verticalAlign="middle">
+		<s:HGroup width="100%" verticalAlign="middle" horizontalAlign="center">
 			<s:Label text="{city.armors}/{city.armorStockCapacity}" styleName="numberLabel"/>
-			<mx:Image toolTip="{Translations.ARMOR.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.ARMOR}"/>
+			<s:Image toolTip="{Translations.ARMOR.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.ARMOR}"/>
 			<renderers:SmithRenderer smiths="@{city.armorWorkers}"
 									 item="{Utils.getItem('armor')}"
 									 stock="{city.armors}"

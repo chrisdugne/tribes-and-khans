@@ -83,7 +83,7 @@
 			]]>
 		</fx:Script>
 	
-	<s:VGroup horizontalAlign="center">
+	<s:VGroup width="100%" horizontalAlign="center">
 		<mx:Grid verticalGap="10" horizontalGap="55" horizontalAlign="center" verticalAlign="middle">
 			<mx:GridRow >
 				<mx:GridItem/>

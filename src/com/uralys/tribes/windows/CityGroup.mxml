@@ -16,36 +16,6 @@
 			
 			[Bindable] public var selectedCity:City;
 
-			//---------------------------------------------------------------------------------------//
-			
-			
-			private function saveCityAndGoBackToBoard():void
-			{				
-				trace("-----");
-				trace("saveCityAndGoBackToBoard");
-				
-				var unitsToRecord:Array = [];
-				var army:Unit = Session.CURRENT_CELL_SELECTED.army;
-				var caravan:Unit = Session.CURRENT_CELL_SELECTED.caravan;
-				
-				// on force la validation du marchand si il existe et qu'il reste dans la ville
-				// si il est en mouvement, on ne peut pas l'editer donc pas besoin d'appeler le validateMerchants (qui casserait tout en placant le timeTo à -1) 
-				if(caravan != null 
-					&& caravan.moves.length == 1)
-				{
-					unitsToRecord.push(caravan);
-				}
-				
-				// IDEM pour army
-				if(army != null 
-					&& army.moves.length == 1)
-				{
-					unitsToRecord.push(army);
-				}
-				
-				GameManager.getInstance().saveCity(selectedCity, unitsToRecord);
-				Session.board.hideCity.play();
-			}
 
 		]]>
 	</fx:Script>
@@ -54,26 +24,18 @@
 		<s:fill>
 			<s:LinearGradient id="gradient1">
 				<s:entries>
-					<s:GradientEntry id="entry1" color="0x000000" alpha="0"/>
-					<s:GradientEntry id="entry2" color="0x000000" alpha="0.8" />
-					<s:GradientEntry id="entry3" color="0x000000" alpha="0"/>
+					<s:GradientEntry id="entry1" color="0x000000" alpha="0.4"/>
+					<s:GradientEntry id="entry2" color="0x000000" alpha="0.9"/>
+					<s:GradientEntry id="entry3" color="0x000000" alpha="0.4"/>
 				</s:entries>
 			</s:LinearGradient>
 		</s:fill>
 	</s:Rect>
 	
-	<s:VGroup height="100%"
-			  width="100%"
+	<s:VGroup left="0" right="0" top="0" bottom="0" 
 			  horizontalAlign="center"
+			  verticalAlign="middle"
 			  paddingTop="5">
-		
-		<s:HGroup>
-			<s:Button label="{Translations.VALIDATE_MODIFICATIONS.getItemAt(Session.LANGUAGE)}" 
-					  click="{saveCityAndGoBackToBoard()}"
-					  skinClass="com.uralys.tribes.skins.CustomButtonSkin"
-					  enabled="{cityForm.currentState != 'recordingUnit'}"/>
-			<s:Spacer width="450"/>
-		</s:HGroup>
 		<components:CityForm 
 			id="cityForm"
 			city="@{selectedCity}"/>

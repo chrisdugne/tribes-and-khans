@@ -48,6 +48,7 @@ package com.uralys.tribes.commons
 		[Bindable] public static var WAIT_FOR_SERVER:Boolean = false;
 		[Bindable] public static var WAIT_FOR_CONNECTION:Boolean = false; 
 		[Bindable] public static var GAME_OVER:Boolean = false;
+		[Bindable] public static var INSIDE_A_CITY:Boolean = false;
 		
 		//=====================================================//
 		

@@ -14,6 +14,9 @@ public final class ImageContainer
 	
 	[ Embed(source="resources/embed/greenBar.swf") ]  
 	[Bindable] public static var LOADING:Class;
+
+	[ Embed(source="resources/embed/borders.png") ]  
+	[Bindable] public static var BORDERS:Class;
 	
 	//   ======================================================================//
 
@@ -188,7 +191,6 @@ public final class ImageContainer
 	[Bindable] public static var LEFT_ARROW:Bitmap;
 	[Bindable] public static var RIGHT_ARROW:Bitmap;
 	[Bindable] public static var HIGHLIGHT_BOW_SHOOT:Bitmap;
-	[Bindable] public static var BORDERS:Bitmap;
 
 	//   ======================================================================//
 
@@ -245,8 +247,7 @@ public final class ImageContainer
 		 "webresources/images/edit_white.png",
 		 "webresources/images/icons/left.png",
 		 "webresources/images/icons/right.png",
-		 "webresources/images/map/highlight_bow_shoot.png",
-		 "webresources/images/map/borders.png"
+		 "webresources/images/map/highlight_bow_shoot.png"
 		 ]);
 	
 	public static var IMAGES_LOADED:Boolean = false;
@@ -390,14 +391,11 @@ public final class ImageContainer
 			case 40:
 				HIGHLIGHT_BOW_SHOOT = event.currentTarget.content;
 				break;
-			case 41:
-				BORDERS = event.currentTarget.content;
-				break;
 		}
 		
 		currentImage++;
 		
-		if(currentImage < 42)
+		if(currentImage < 41)
 			loadNextImage();
 		else
 			IMAGES_LOADED = true;

@@ -49,13 +49,14 @@
 			<s:State name="normal" id="normalState"/>
 		</fx:Declarations>
 	
-		<s:Image source="{ImageContainer.FERMIER}" x="950" y="-70" visible="{viewstack.selectedIndex == 0}" hideEffect="fader" showEffect="shower"/>
-		<s:Image source="{ImageContainer.FORGERON}" x="950" y="-70" visible="{viewstack.selectedIndex == 1 || viewstack.selectedIndex == 5}" hideEffect="fader" showEffect="shower"/>
-		<s:Image source="{ImageContainer.MARCHANDE}" x="1000" y="-70" visible="{viewstack.selectedIndex == 2}" hideEffect="fader" showEffect="shower"/>
-		<s:Image source="{ImageContainer.MARCHAND}" x="950" y="-70" visible="{viewstack.selectedIndex == 3}" hideEffect="fader" showEffect="shower"/>
-		<s:Image source="{ImageContainer.GUERRIER}" x="950" y="-70" visible="{viewstack.selectedIndex == 4}" hideEffect="fader" showEffect="shower"/>
+		<s:Image source="{ImageContainer.FERMIER}" right="-270" y="-70" visible="{viewstack.selectedIndex == 0}" hideEffect="fader" showEffect="shower"/>
+		<s:Image source="{ImageContainer.FORGERON}" right="-270" y="-70" visible="{viewstack.selectedIndex == 1 || viewstack.selectedIndex == 5}" hideEffect="fader" showEffect="shower"/>
+		<s:Image source="{ImageContainer.MARCHANDE}" right="-270" y="-70" visible="{viewstack.selectedIndex == 2}" hideEffect="fader" showEffect="shower"/>
+		<s:Image source="{ImageContainer.MARCHAND}" right="-270" y="-70" visible="{viewstack.selectedIndex == 3}" hideEffect="fader" showEffect="shower"/>
+		<s:Image source="{ImageContainer.GUERRIER}" right="-270" y="-70" visible="{viewstack.selectedIndex == 4}" hideEffect="fader" showEffect="shower"/>
 
-		<s:VGroup width="100%" horizontalAlign="center">
+		<s:VGroup width="100%" horizontalAlign="center"
+				  paddingTop="10">
 			
 			<components:CityHeader city="@{city}" id="cityHeader" width="100%"/>
 			
@@ -63,7 +64,7 @@
 			<s:TabBar id="tabs" dataProvider="{viewstack}"
 					  skinClass="com.uralys.tribes.skins.CustomTabBarSkin"/>
 				
-			<mx:ViewStack id="viewstack" width="650" height="100%">
+			<mx:ViewStack id="viewstack" width="750" height="100%">
 				
 				<components:CityResources id="resources" show="{cityHeader.updateWorkersProgressBar()}" city="@{city}"/>
 				<components:CityForge id="forge" city="@{city}"/>

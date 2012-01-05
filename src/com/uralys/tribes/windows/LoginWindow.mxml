@@ -12,7 +12,11 @@
 			   cornerRadius="15"
 			   >
 	
-	
+	<fx:Declarations>
+		<s:Fade id="loginMenuHider" alphaFrom="1" alphaTo="0" target="{this}"
+				effectEnd="{PopUpManager.removePopUp(this)}"/>	
+	</fx:Declarations>
+
 	<fx:Script>
 		<![CDATA[
 			import com.uralys.tribes.main.ImageContainer;
@@ -86,7 +90,7 @@
 			//-----------------------------------------------------------------//
 			
 			public function closeWindow():void{
-				PopUpManager.removePopUp(this);
+				loginMenuHider.play();
 			}
 			//-----------------------------------------------------------------//
 		]]>

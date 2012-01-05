@@ -108,10 +108,7 @@
 		
 		<s:VGroup horizontalAlign="center" 
 				  top="5" width="100%" height="100%"
-				  paddingBottom="5">
-			
-			<mx:SWFLoader source="{ImageContainer.LOADING}" 
-						  visible="{Session.WAIT_FOR_SERVER}"/>
+				  paddingBottom="10">
 			
 			<s:Label text="{Session.playerLoaded.name}" color="#ffffff" fontSize="26"/>
 			<mx:HRule width="70%"/>

@@ -224,9 +224,8 @@
 		]]>
 	</fx:Script>
 	
-	<s:Group id="groupDetails" height="100" width="180">
-		<s:Group id="backgroundClickReceiver" height="100" width="180"
-				 click="{selectVisibleUnit()}"/>
+	<s:Group id="groupDetails" height="100" width="180" click="{selectVisibleUnit()}">
+		
 		
 		<s:Rect left="0" right="0" top="0" bottom="0" radiusX="5" radiusY="5">
 			<s:fill>

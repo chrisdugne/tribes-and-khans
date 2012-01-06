@@ -63,6 +63,7 @@ public interface IGameService {
 	public List<Player> getArmiesBoard();
 
 	//-----------------------------------------------------------------------------------//
+	
 	public void updatePlayerProfile(String playerUID, String profile);
 	public void updateAllyProfile(String allyUID, String profile);
 

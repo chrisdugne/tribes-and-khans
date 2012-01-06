@@ -14,6 +14,7 @@
 	<fx:Script>
 		<![CDATA[		
 			import com.uralys.tribes.main.ImageContainer;
+			
 			//-------------------------------------------------------------------------------------//
 			
 			import com.uralys.tribes.commons.Numbers;
@@ -34,6 +35,7 @@
 	
 			[Bindable] public var item:Item;
 
+			[Bindable] private var potentialSmiths:int;
 			[Bindable] public var smiths:int;
 			[Bindable] public var stock:int;
 			[Bindable] public var stockCapacity:int;
@@ -54,6 +56,7 @@
 				if(beginTime == -1)
 					currentState = "upgradeEnabled";
 				else{
+					potentialSmiths = smiths;
 					setBuilding();
 				}
 			}
@@ -62,13 +65,13 @@
 			
 			protected function smithCheck(event:Event):void	
 			{
-				var peopleAdded:int = smithsSlider.value - smiths;
+				var peopleAdded:int = smithsSlider.value - potentialSmiths;
 				
 				if(city.unemployed < peopleAdded)
-					smithsSlider.value = smiths + city.unemployed;
+					smithsSlider.value = potentialSmiths + city.unemployed;
 				
-				smiths = smithsSlider.value;
-				var itemsCreated:int = smiths/item.peopleRequired;
+				potentialSmiths = smithsSlider.value;
+				var itemsCreated:int = potentialSmiths/item.peopleRequired;
 				
 				// 120 items par heure et 2 par minute
 				var hours:int = itemsCreated/120;
@@ -77,7 +80,7 @@
 				
 				timeLabel.text = (hours > 0 ? hours + ' h ' : '') + min + " mn "+ (secs != 0 ? ((secs < 10 ? '0' : '') + secs + " secs") : '');
 				
-				GameManager.getInstance().updateWorkersProgressBar();
+				//GameManager.getInstance().updateWorkersProgressBar();
 			}
 			
 			//-------------------------------------------------------------------------------------//
@@ -85,6 +88,7 @@
 			private function build():void
 			{
 				// on est en double binding : le city.stock correspondant va etre MAJ
+				smiths = potentialSmiths;
 				weaponsAdded = smiths/item.peopleRequired;
 				beginTime = new Date().getTime();
 				endTime = beginTime + weaponsAdded *30*1000; // 1 item = 30secs
@@ -93,7 +97,9 @@
 				city.iron -= weaponsAdded * item.iron;
 				
 				GameManager.getInstance().saveCity(city);
+				GameManager.getInstance().updateWorkersProgressBar();
 				
+				trace("build : " + smiths);
 				setBuilding();
 			}
 
@@ -153,7 +159,7 @@
 			  verticalAlign="middle"
 			  paddingRight.building="50">
 		
-		<s:Label text="{smiths}" 
+		<s:Label text="{potentialSmiths}" 
 				 styleName="numberLabel" 
 				 textAlign="right"
 				 minWidth="60"/>
@@ -161,9 +167,9 @@
 		<s:HSlider id="smithsSlider"
 				   showDataTip="false"
 				   liveDragging="true" 
-				   value="@{smiths}"
+				   value="@{potentialSmiths}"
 				   change="smithCheck(event)"
-				   maximum="{city.unemployed + smiths &lt; (stockCapacity - stock)/item.peopleRequired ? city.unemployed + smiths : (stockCapacity - stock)/item.peopleRequired}"
+				   maximum="{city.unemployed + potentialSmiths &lt; (stockCapacity - stock)/item.peopleRequired ? city.unemployed + potentialSmiths : (stockCapacity - stock)/item.peopleRequired}"
 				   snapInterval="1"
 				   enabled.building="false"
 				   enabled.upgradeEnabled="true"/>
@@ -173,13 +179,13 @@
 				  visible.building="false"
 				  includeInLayout.building="false">
 			<s:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}" width="25" height="25"/>
-			<s:Label text="{smiths/item.peopleRequired * item.wood}"
-					 color="{smiths/item.peopleRequired * item.wood &lt;= city.wood ? Numbers.GREEN : Numbers.RED}"/>
+			<s:Label text="{potentialSmiths/item.peopleRequired * item.wood}"
+					 color="{potentialSmiths/item.peopleRequired * item.wood &lt;= city.wood ? Numbers.GREEN : Numbers.RED}"/>
 	
 			<s:Spacer width="20"/>
 			<s:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}" width="25" height="25"/>
-			<s:Label text="{smiths/item.peopleRequired * item.iron}"
-					 color="{smiths/item.peopleRequired * item.iron &lt;= city.iron ? Numbers.GREEN : Numbers.RED}"/>
+			<s:Label text="{potentialSmiths/item.peopleRequired * item.iron}"
+					 color="{potentialSmiths/item.peopleRequired * item.iron &lt;= city.iron ? Numbers.GREEN : Numbers.RED}"/>
 	
 			<s:Spacer width="20"/>
 			<s:Image toolTip="{Translations.TIME.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.CLOCK}"/>
@@ -206,16 +212,16 @@
 			  horizontalAlign="center">
 		<s:Spacer width="20"/>
 		<s:Image source="{ImageContainer.UPGRADE_ARROW}"/>
-		<s:Label text="{stock + smiths * item.peopleRequired}/{stockCapacity}"
+		<s:Label text="{stock + potentialSmiths * item.peopleRequired}/{stockCapacity}"
 				 color="{Numbers.GREEN}" width="150"/>
 		<s:Spacer width="180"/>
 		<s:Button skinClass="{CustomButtonSkin}"
 				  label="{Translations.UPGRADE.getItemAt(Session.LANGUAGE)}"
-				  enabled="{smiths/item.peopleRequired * item.wood &lt;= city.wood
+				  enabled="{potentialSmiths/item.peopleRequired * item.wood &lt;= city.wood
 				  			&amp;&amp;
-				  			smiths/item.peopleRequired * item.iron &lt;= city.iron
+				  			potentialSmiths/item.peopleRequired * item.iron &lt;= city.iron
 				  			&amp;&amp;
-				  			smiths &gt; 0
+				  			potentialSmiths &gt; 0
 				  			}"
 				  click="build()"
 				  visible.building="false"

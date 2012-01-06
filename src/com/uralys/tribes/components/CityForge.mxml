@@ -3,7 +3,13 @@
 					xmlns:s="library://ns.adobe.com/flex/spark" 
 					xmlns:mx="library://ns.adobe.com/flex/mx"
 					xmlns:renderers="com.uralys.tribes.renderers.*"
-					label="{Translations.FORGE.getItemAt(Session.LANGUAGE)}"> 
+					label="{Translations.FORGE.getItemAt(Session.LANGUAGE)
+					+ (city.bowWorkers
+					+ city.swordWorkers
+					+ city.armorWorkers > 0 
+					? ' ('+ (city.bowWorkers
+					+ city.swordWorkers
+					+ city.armorWorkers) +')' : '')}">
 	<fx:Script>
 		<![CDATA[
 			import com.uralys.tribes.commons.Session;

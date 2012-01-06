@@ -223,6 +223,7 @@ package com.uralys.tribes.managers {
 					city.bowStockBeginTime = stock.stockBeginTime;
 					city.bowStockEndTime = stock.stockEndTime;
 					city.bowStockNextCapacity = stock.stockNextCapacity;
+					city.bowWorkers = stock.smiths;
 					city.bowsBeingBuilt = stock.itemsBeingBuilt;
 					city.bowsBeingBuiltBeginTime = stock.itemsBeingBuiltBeginTime;
 					city.bowsBeingBuiltEndTime = stock.itemsBeingBuiltEndTime;
@@ -233,6 +234,7 @@ package com.uralys.tribes.managers {
 					city.swordStockBeginTime = stock.stockBeginTime;
 					city.swordStockEndTime = stock.stockEndTime;
 					city.swordStockNextCapacity = stock.stockNextCapacity;
+					city.swordWorkers = stock.smiths;
 					city.swordsBeingBuilt = stock.itemsBeingBuilt;
 					city.swordsBeingBuiltBeginTime = stock.itemsBeingBuiltBeginTime;
 					city.swordsBeingBuiltEndTime = stock.itemsBeingBuiltEndTime;
@@ -243,6 +245,7 @@ package com.uralys.tribes.managers {
 					city.armorStockBeginTime = stock.stockBeginTime;
 					city.armorStockEndTime = stock.stockEndTime;
 					city.armorStockNextCapacity = stock.stockNextCapacity;
+					city.armorWorkers = stock.smiths;
 					city.armorsBeingBuilt = stock.itemsBeingBuilt;
 					city.armorsBeingBuiltBeginTime = stock.itemsBeingBuiltBeginTime;
 					city.armorsBeingBuiltEndTime = stock.itemsBeingBuiltEndTime;
@@ -312,15 +315,8 @@ package com.uralys.tribes.managers {
 				stock.peopleBuildingStock = 0;
 			}
 
-			// init pour passage de 1.2.14 a 1.2.15 : toRemove apres
-			if(stock.itemsBeingBuiltBeginTime == 0){
-				stock.itemsBeingBuilt = 0;
-				stock.itemsBeingBuiltBeginTime = -1;
-				stock.itemsBeingBuiltEndTime = 1;
-			}
-			else	
-				
-			if(stock.itemsBeingBuiltBeginTime != -1 && now > stock.itemsBeingBuiltEndTime){
+			if(stock.itemsBeingBuiltBeginTime != -1 && now > stock.itemsBeingBuiltEndTime)
+			{
 				stock.itemsBeingBuiltBeginTime = -1;
 				
 				switch(Utils.getItem(Utils.getStockItem(stock.stockUID)).name)
@@ -341,6 +337,7 @@ package com.uralys.tribes.managers {
 				
 				stock.itemsBeingBuilt = 0;
 			}
+			
 			
 			refreshCityStock(city,stock);
 		}
@@ -394,6 +391,7 @@ package com.uralys.tribes.managers {
 						stock.itemsBeingBuilt = city.swordsBeingBuilt;
 						stock.itemsBeingBuiltBeginTime = city.swordsBeingBuiltBeginTime;
 						stock.itemsBeingBuiltEndTime = city.swordsBeingBuiltEndTime;
+						trace("sword smith : " + stock.smiths);
 						break;
 					case "_armor_stock" :
 						stock.peopleBuildingStock = city.armorStockBuilders;

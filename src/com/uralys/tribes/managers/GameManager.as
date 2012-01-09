@@ -336,6 +336,7 @@ package com.uralys.tribes.managers {
 				}
 				
 				stock.itemsBeingBuilt = 0;
+				stock.smiths = 0;
 			}
 			
 			

@@ -65,22 +65,22 @@
 	
 	
 	<s:HGroup horizontalAlign="center" verticalAlign="middle">
-		<mx:Image source="{ImageContainer.ALL_LEFT}"
+		<s:Image source="{ImageContainer.ALL_LEFT}"
 				  click="putNone()"/>
 		<s:VGroup clipAndEnableScrolling="false">
-			<mx:Image source="{ImageContainer.LEFT}"
+			<s:Image source="{ImageContainer.LEFT}"
 					  click="putLess()" />
-			<mx:Image source="{ImageContainer.TOP_LEFT}"  
+			<s:Image source="{ImageContainer.TOP_LEFT}"  
 					  click="divide()"/> 
 		</s:VGroup>
 		<s:Label text="{data}" styleName="numberLabel" width="80" textAlign="center"/>
 		<s:VGroup clipAndEnableScrolling="true">
-			<mx:Image source="{ImageContainer.RIGHT}"
+			<s:Image source="{ImageContainer.RIGHT}"
 					  click="putMore()"/>
-			<mx:Image source="{ImageContainer.TOP_RIGHT}"
+			<s:Image source="{ImageContainer.TOP_RIGHT}"
 					  click="multiply()"/>
 		</s:VGroup>
-		<mx:Image source="{ImageContainer.ALL_RIGHT}"
+		<s:Image source="{ImageContainer.ALL_RIGHT}"
 				  click="putMax()"/>
 	</s:HGroup>
 </s:Group>

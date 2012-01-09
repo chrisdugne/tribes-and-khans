@@ -51,6 +51,7 @@
 			public function refresh():void
 			{
 				timeLabel.text = '';
+				potentialSmiths = 0;
 				Session.timer.removeEventListener(TimerEvent.TIMER, setBuilding);
 				
 				if(beginTime == -1)
@@ -79,8 +80,6 @@
 				var secs:int = (itemsCreated - min*2) * 30; // 0 ou 30
 				
 				timeLabel.text = (hours > 0 ? hours + ' h ' : '') + min + " mn "+ (secs != 0 ? ((secs < 10 ? '0' : '') + secs + " secs") : '');
-				
-				//GameManager.getInstance().updateWorkersProgressBar();
 			}
 			
 			//-------------------------------------------------------------------------------------//
@@ -134,22 +133,19 @@
 			// appelee si on a chargé la progress bar et que le temps est ecoulé
 			protected function done():void
 			{
-				trace("DONE !");
 				Session.timer.removeEventListener(TimerEvent.TIMER, setBuilding);
 				
-				trace("item.name : " + item.name);
 				for each(var _stock:Stock in city.stocks)
 				{
-					trace("stockUID : " + _stock.stockUID);
 					if(Utils.getStockItem(_stock.stockUID) == item.name){
-						trace("update");
 						GameManager.getInstance().updateStockBuildingStatus(city, _stock);
 						break;
 					}
 				}
 				
-				trace("refresh");
+				smiths = 0;
 				refresh();
+				GameManager.getInstance().updateWorkersProgressBar();
 			}
 			
 		]]>

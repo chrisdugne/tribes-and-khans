@@ -3,7 +3,21 @@
 				xmlns:s="library://ns.adobe.com/flex/spark" 
 				xmlns:mx="library://ns.adobe.com/flex/mx"
 				xmlns:renderers="com.uralys.tribes.renderers.*"
-				label="{Translations.BUILDINGS.getItemAt(Session.LANGUAGE)}" xmlns:components="com.uralys.tribes.components.*"> 
+				xmlns:components="com.uralys.tribes.components.*"
+				label="{Translations.BUILDINGS.getItemAt(Session.LANGUAGE)
+				+ (city.wheatStockBuilders
+				+ city.woodStockBuilders
+				+ city.ironStockBuilders
+				+ city.bowStockBuilders
+				+ city.swordStockBuilders
+				+ city.armorStockBuilders > 0 
+				? ' ('+ (city.wheatStockBuilders
+				+ city.woodStockBuilders
+				+ city.ironStockBuilders
+				+ city.bowStockBuilders
+				+ city.swordStockBuilders
+				+ city.armorStockBuilders) +')' : '')}">
+	 
 	<fx:Script>
 		<![CDATA[
 			import com.uralys.tribes.commons.Session;

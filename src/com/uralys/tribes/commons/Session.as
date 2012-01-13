@@ -20,7 +20,7 @@ package com.uralys.tribes.commons
 
 		//=====================================================//
 		
-		[Bindable] public static var VERSION:String = "1.3.22";
+		[Bindable] public static var VERSION:String = "1.3.23";
 		[Bindable] public static var LOGGED_IN:Boolean = false; 
 		[Bindable] public static var CONNECTED_TO_FACEBOOK:Boolean = false;
 		
@@ -51,7 +51,11 @@ package com.uralys.tribes.commons
 		[Bindable] public static var INSIDE_A_CITY:Boolean = false;
 		
 		//=====================================================//
+
+		[Bindable] public static var allCitiesInSession:ArrayCollection = new ArrayCollection(); 
 		
+		//=====================================================//
+
 		[Bindable] public static var uralysProfile:UralysProfile;
 		[Bindable] public static var player:Player;
 		[Bindable] public static var playerLoaded:Player; // le dernier joueur dont on a charge le profil TAK

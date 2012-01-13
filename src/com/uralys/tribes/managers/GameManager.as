@@ -59,7 +59,7 @@ package com.uralys.tribes.managers {
 		// CONTROLS
 		//============================================================================================//
 		
-		public function getPlayer(player:Player):void
+		public function refreshPlayerOnServerSide(player:Player):void
 		{
 			trace("------------");
 			trace("refreshing : getPlayer");
@@ -76,15 +76,18 @@ package com.uralys.tribes.managers {
 			trace("receivedPlayerToRefresh");
 			trace("------------");
 			var player:Player = event.result as Player
-			refreshPlayer(player);
+			refreshPlayerOnClientSide(player);
 		}
 		
-		public function refreshPlayer(player:Player):void
+		public function refreshPlayerOnClientSide(player:Player):void
 		{
 			trace("------------");
-			trace("refreshPlayer");
+			trace("refreshPlayerOnClientSide");
 			trace("------------");
 			Session.WAIT_FOR_SERVER = false;
+			
+			refreshCitiesInSession(player.cities);
+			
 			calculateSteps(player);
 			
 			if(Session.player.playerUID == player.playerUID){
@@ -93,7 +96,18 @@ package com.uralys.tribes.managers {
 			}
 			
 		}
-
+		
+		private function refreshCitiesInSession(cities:ArrayCollection):void
+		{
+			for each(var cityInSession:City in Session.allCitiesInSession)
+			{
+				for each(var cityInSession:City in Session.allCitiesInSession)
+				{
+					
+				}
+			}
+		}
+		
 		//============================================================================================//
 
 		public function refreshUnits():void
@@ -184,11 +198,12 @@ package com.uralys.tribes.managers {
 				calculateStep(player);
 			}
 
-			var city:City = player.cities.getItemAt(0) as City;
-			
-			initMap(city.x, city.y);
-			
-			Session.LOGGED_IN_FORCE_STEPS_DONE = true;
+			if(Session.player.playerUID == player.playerUID)
+			{
+				var city:City = player.cities.getItemAt(0) as City;
+				initMap(city.x, city.y);
+				Session.LOGGED_IN_FORCE_STEPS_DONE = true;
+			}
 		}
 		
 		private function refreshCityStock(city:City, stock:Stock):void
@@ -370,6 +385,7 @@ package com.uralys.tribes.managers {
 						stock.stockNextCapacity = city.ironStockNextCapacity;
 						stock.stockBeginTime = city.ironStockBeginTime;
 						stock.stockEndTime = city.ironStockEndTime;
+						trace("stockCapacity : " + stock.stockCapacity);
 						break;
 					case "_bow_stock" :
 						stock.peopleBuildingStock = city.bowStockBuilders;
@@ -392,7 +408,6 @@ package com.uralys.tribes.managers {
 						stock.itemsBeingBuilt = city.swordsBeingBuilt;
 						stock.itemsBeingBuiltBeginTime = city.swordsBeingBuiltBeginTime;
 						stock.itemsBeingBuiltEndTime = city.swordsBeingBuiltEndTime;
-						trace("sword smith : " + stock.smiths);
 						break;
 					case "_armor_stock" :
 						stock.peopleBuildingStock = city.armorStockBuilders;
@@ -588,7 +603,7 @@ package com.uralys.tribes.managers {
 				// l'unite nexiste plus : elle a été supprimé entre temps
 				// par exemple apres un tir d'arcs
 				// on refresh le joueur, il recevra le message.
-				getPlayer(Session.player);
+				refreshPlayerOnServerSide(Session.player);
 				return;
 			}
 			
@@ -836,8 +851,8 @@ package com.uralys.tribes.managers {
 			city.name = Translations.CITY_BUILDING_NAME.getItemAt(Session.LANGUAGE) as String;
 			city.gold = unit.gold;
 			city.wheat = unit.wheat;
-			city.wood = unit.wood - (Numbers.CITY_WOOD_BASE_PRICE + unit.size * 10);
-			city.iron = unit.iron - (Numbers.CITY_IRON_BASE_PRICE + unit.size * 10);
+			city.wood = unit.wood - (Numbers.CITY_WOOD_BASE_PRICE + unit.size * Numbers.CITY_WOOD_RATIO_PRICE);
+			city.iron = unit.iron - (Numbers.CITY_IRON_BASE_PRICE + unit.size * Numbers.CITY_IRON_RATIO_PRICE);
 			city.population = unit.size;
 			
 			city.bows = unit.bows;
@@ -1172,16 +1187,29 @@ package com.uralys.tribes.managers {
 					citiesLoaded.addItem(_cell.city);
 			}
 
-			// on en profite aussi pour rafraichir les villes en Session
+			Session.allCitiesInSession.addAll(citiesLoaded);
 
+			// on en profite aussi pour rafraichir les villes en Session
+			// et faire des refreshPlayerOnServerSide pour les joueurs voisins
 			for each(var _cityLoaded:City in citiesLoaded)
 			{
-				for each(var _city:City in Session.player.cities)
+				if(_cityLoaded.ownerUID != Session.player.playerUID)
 				{
-					if(_city.cityUID == _cityLoaded.cityUID)
+					var otherPlayer:Player = Cell(Session.map[_cityLoaded.x][_cityLoaded.y]).landOwner;
+					if(otherPlayer.lastStep < Session.player.lastStep){
+						trace("===================");
+						trace("refreshing an other Player ! : " + otherPlayer.name);
+						refreshPlayerOnServerSide(otherPlayer);
+					}
+				}
+				else{
+					for each(var _city:City in Session.player.cities)
 					{
-						_city = _cityLoaded;
-						break;
+						if(_city.cityUID == _cityLoaded.cityUID)
+						{
+							_city = _cityLoaded;
+							break;
+						}
 					}
 				}
 			}
@@ -1310,7 +1338,7 @@ package com.uralys.tribes.managers {
 
 			if(cell.nextCellUID != null && Utils.getCellInSession(cell.nextCellUID).city != null){
 				trace("nextCellUID is a city : refreshPlayer");
-				getPlayer(Session.player);
+				refreshPlayerOnServerSide(Session.player);
 				return;	
 			}
 			

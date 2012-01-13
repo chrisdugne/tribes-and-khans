@@ -82,8 +82,10 @@ package com.uralys.tribes.commons
 		
 		[Bindable] public static var CITY_MERCHANT_BASE:Number = 350;
 		[Bindable] public static var CITY_WHEAT_BASE_PRICE:Number = 1000;
-		[Bindable] public static var CITY_IRON_BASE_PRICE:Number = 10000;
-		[Bindable] public static var CITY_WOOD_BASE_PRICE:Number = 10000;
+		[Bindable] public static var CITY_IRON_BASE_PRICE:Number = 5000;
+		[Bindable] public static var CITY_IRON_RATIO_PRICE:Number = 5;
+		[Bindable] public static var CITY_WOOD_BASE_PRICE:Number = 5000;
+		[Bindable] public static var CITY_WOOD_RATIO_PRICE:Number = 5;
 		[Bindable] public static var CITY_GOLD_BASE_PRICE:Number = 500;
 	
 		//==================================================================================================//

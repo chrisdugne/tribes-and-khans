@@ -84,7 +84,7 @@
 				Session.board = this;
 				placeBoard(selectedCity.x, selectedCity.y, false);
 				
-				GameManager.getInstance().refreshPlayer(Session.player);
+				GameManager.getInstance().refreshPlayerOnClientSide(Session.player);
 			}
 	
 			//----------------------------------------------------------------------------------------//

@@ -78,7 +78,7 @@
 		
 		<s:Button label="{Translations.REFRESH.getItemAt(Session.LANGUAGE)}" 
 				  id="refreshOpponentButton"
-				  click="{GameManager.getInstance().getPlayer(Session.CURRENT_CELL_SELECTED.landOwner)}"
+				  click="{GameManager.getInstance().refreshPlayerOnServerSide(Session.CURRENT_CELL_SELECTED.landOwner)}"
 				  skinClass="com.uralys.tribes.skins.CustomButtonSkin"
 				  visible="{Session.player.playerUID != Session.CURRENT_CELL_SELECTED.landOwner.playerUID
 				  &amp;&amp; Session.CURRENT_CELL_SELECTED.landOwner.lastStep &lt; Session.player.lastStep}"/>

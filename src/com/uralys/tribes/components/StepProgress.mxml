@@ -72,5 +72,5 @@
 				barSkin="{WorkersProgressBarSkin}"
 				trackSkin="{ClassicProgressTrackSkin}"
 				label="{Translations.REMAINING_TIME.getItemAt(Session.LANGUAGE)}    --:--"/>
-	<s:Button label="plop" x="40" click="nextStep()" visible="{Session.isLocal}"/>
+	<s:Button label="Next" x="40" click="nextStep()" visible="{Session.isLocal}"/>
 </s:Group>

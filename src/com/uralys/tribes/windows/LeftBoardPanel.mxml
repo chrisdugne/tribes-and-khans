@@ -45,7 +45,7 @@
 			<s:Image source="{ImageContainer.REFRESH}"
 					 id="refreshButton"
 					 visible="{!Session.MOVE_A_UNIT &amp;&amp; !Session.WAIT_FOR_SERVER}"
-					 click="{GameManager.getInstance().getPlayer(Session.player)}"/>
+					 click="{GameManager.getInstance().refreshPlayerOnServerSide(Session.player)}"/>
 		</s:HGroup>
 
 		<components:StepProgress width="100%"/>

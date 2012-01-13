@@ -18,6 +18,7 @@
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;
 			import com.uralys.tribes.entities.City;
+			import com.uralys.tribes.entities.Stock;
 			import com.uralys.tribes.main.ImageContainer;
 			import com.uralys.tribes.managers.GameManager;
 			import com.uralys.tribes.skins.CustomButtonSkin;
@@ -30,6 +31,8 @@
 			[Bindable] public var potentialBuilders:int;
 
 			//-------------------------------------------------------------------------------------//
+
+			[Bindable] public var itemName:String;
 
 			[Bindable] public var stockBuilders:int;
 			[Bindable] public var stockCapacity:int;
@@ -92,7 +95,6 @@
 			private function setBuilding(event:TimerEvent = null):void
 			{
 				var now:Number = new Date().getTime();
-				var now:Number = new Date().getTime();
 				var millisRemaining:Number = stockEndTime - now;
 				var millisSpent:Number = stockEndTime - stockBeginTime - millisRemaining;
 				
@@ -119,22 +121,18 @@
 			// appelee si on a chargé la progress bar et que le temps est ecoulé
 			protected function done():void
 			{
-				trace("DONE !");
+				var now:Number = new Date().getTime();
 				Session.timer.removeEventListener(TimerEvent.TIMER, setBuilding);
 				
-//				trace("item.name : " + item.name);
-//				for each(var _stock:Stock in city.stocks)
-//				{
-//					trace("stockUID : " + _stock.stockUID);
-//					if(Utils.getStockItem(_stock.stockUID) == item.name){
-//						trace("update");
-//						GameManager.getInstance().updateStockBuildingStatus(city, _stock);
-//						break;
-//					}
-//				}
-				
-				trace("refresh");
+				stockBeginTime = -1;
+				stockEndTime = now;
+				stockCapacity = stockNextCapacity;
+				stockBuilders = 0;
+				potentialBuilders = 0;
+			
 				refresh();
+				GameManager.getInstance().saveCity(city);
+				GameManager.getInstance().updateWorkersProgressBar();
 			}
 
 			//-------------------------------------------------------------------------------------//
@@ -207,6 +205,11 @@
 						color="0xffffff"
 						visible.upgradeEnabled="false"
 						includeInLayout.upgradeEnabled="false"/>
+		
+		<s:Button label="Build" click="{done()}" visible="{Session.isLocal}"
+				  visible.upgradeEnabled="false"
+				  includeInLayout.upgradeEnabled="false"
+				  skinClass="com.uralys.tribes.skins.CustomButtonSkin"/>
 		
 	</s:HGroup>
 	<s:HGroup width="100%" 

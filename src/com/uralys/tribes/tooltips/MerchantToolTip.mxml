@@ -54,14 +54,14 @@
 
 		<s:HGroup>
 			<s:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}"/>
-			<s:Label text="{Session.CURRENT_CELL_SELECTED.caravan.wood} {Session.CURRENT_CELL_SELECTED.caravan.wood  &gt;= (Numbers.CITY_WOOD_BASE_PRICE + Session.CURRENT_CELL_SELECTED.caravan.size * 10) ? '' : '('+(Numbers.CITY_WOOD_BASE_PRICE + Session.CURRENT_CELL_SELECTED.caravan.size * 10)+' ' + Translations.MINIMUM.getItemAt(Session.LANGUAGE) +')'}" 
-					 color="{Session.CURRENT_CELL_SELECTED.caravan.wood &gt;= (Numbers.CITY_WOOD_BASE_PRICE + Session.CURRENT_CELL_SELECTED.caravan.size * 10) ? Numbers.GREEN : Numbers.RED}"/>
+			<s:Label text="{Session.CURRENT_CELL_SELECTED.caravan.wood} {Session.CURRENT_CELL_SELECTED.caravan.wood  &gt;= (Numbers.CITY_WOOD_BASE_PRICE + Session.CURRENT_CELL_SELECTED.caravan.size * Numbers.CITY_WOOD_RATIO_PRICE) ? '' : '('+(Numbers.CITY_WOOD_BASE_PRICE + Session.CURRENT_CELL_SELECTED.caravan.size * Numbers.CITY_WOOD_RATIO_PRICE)+' ' + Translations.MINIMUM.getItemAt(Session.LANGUAGE) +')'}" 
+					 color="{Session.CURRENT_CELL_SELECTED.caravan.wood &gt;= (Numbers.CITY_WOOD_BASE_PRICE + Session.CURRENT_CELL_SELECTED.caravan.size * Numbers.CITY_WOOD_RATIO_PRICE) ? Numbers.GREEN : Numbers.RED}"/>
 		</s:HGroup>
 
 		<s:HGroup>
 			<s:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}"/>
-			<s:Label text="{Session.CURRENT_CELL_SELECTED.caravan.iron} {Session.CURRENT_CELL_SELECTED.caravan.iron  &gt;= (Numbers.CITY_IRON_BASE_PRICE + Session.CURRENT_CELL_SELECTED.caravan.size * 10) ? '' : '('+(Numbers.CITY_IRON_BASE_PRICE + Session.CURRENT_CELL_SELECTED.caravan.size * 10)+' ' + Translations.MINIMUM.getItemAt(Session.LANGUAGE) +')'}" 
-					 color="{Session.CURRENT_CELL_SELECTED.caravan.iron &gt;= (Numbers.CITY_IRON_BASE_PRICE + Session.CURRENT_CELL_SELECTED.caravan.size * 10) ? Numbers.GREEN : Numbers.RED}"/>
+			<s:Label text="{Session.CURRENT_CELL_SELECTED.caravan.iron} {Session.CURRENT_CELL_SELECTED.caravan.iron  &gt;= (Numbers.CITY_IRON_BASE_PRICE + Session.CURRENT_CELL_SELECTED.caravan.size * Numbers.CITY_IRON_RATIO_PRICE) ? '' : '('+(Numbers.CITY_IRON_BASE_PRICE + Session.CURRENT_CELL_SELECTED.caravan.size * Numbers.CITY_IRON_RATIO_PRICE)+' ' + Translations.MINIMUM.getItemAt(Session.LANGUAGE) +')'}" 
+					 color="{Session.CURRENT_CELL_SELECTED.caravan.iron &gt;= (Numbers.CITY_IRON_BASE_PRICE + Session.CURRENT_CELL_SELECTED.caravan.size * Numbers.CITY_IRON_RATIO_PRICE) ? Numbers.GREEN : Numbers.RED}"/>
 		</s:HGroup>
 
 		<s:HGroup>

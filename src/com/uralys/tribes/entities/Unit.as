@@ -143,7 +143,7 @@ package com.uralys.tribes.entities
 		//-----------------------------------------------------------//
 		
 		/*
-			1 marchand peut porter : 25 points
+			1 marchand peut porter : 50 points
 		    1 ressource = 1 point
 			1 arme = 5 points
 		*/
@@ -157,7 +157,7 @@ package com.uralys.tribes.entities
 		
 		public function refreshTotalCarriage():void 
 		{
-			totalCarriage = (iron + wood + wheat + 5*bows + 5*armors + 5*swords);
+			totalCarriage = (iron + wood + wheat + Numbers.BOW_WEIGHT*bows + Numbers.ARMOR_WEIGHT*armors + Numbers.SWORD_WEIGHT*swords);
 		}
 		
 		//-----------------------------------------------------------//
@@ -348,8 +348,8 @@ package com.uralys.tribes.entities
 			return type == MERCHANT 
 				&& size >= Numbers.CITY_MERCHANT_BASE
 				&& wheat >= Numbers.CITY_WHEAT_BASE_PRICE + size
-				&& wood >= Numbers.CITY_WOOD_BASE_PRICE + size * 10
-				&& iron >= Numbers.CITY_IRON_BASE_PRICE + size * 10
+				&& wood >= Numbers.CITY_WOOD_BASE_PRICE + size * Numbers.CITY_WOOD_RATIO_PRICE
+				&& iron >= Numbers.CITY_IRON_BASE_PRICE + size * Numbers.CITY_IRON_RATIO_PRICE
 				&& gold >= Numbers.CITY_GOLD_BASE_PRICE + size;
 		}
 		

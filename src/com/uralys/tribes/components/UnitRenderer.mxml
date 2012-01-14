@@ -213,11 +213,17 @@
 
 			private function selectVisibleUnit():void
 			{
-				if(Session.CURRENT_CELL_SELECTED != null
-				&& Session.CURRENT_CELL_SELECTED.visibleUnit.unitUID != unit.unitUID)
-				{
-					Session.CURRENT_CELL_SELECTED.visibleUnit = unit;
-					GameManager.getInstance().refreshCellDisplay(Session.CURRENT_CELL_SELECTED);
+				try{
+					if(Session.CURRENT_CELL_SELECTED != null
+					&& Session.CURRENT_CELL_SELECTED.visibleUnit.unitUID != unit.unitUID)
+					{
+						Session.CURRENT_CELL_SELECTED.visibleUnit = unit;
+						GameManager.getInstance().refreshCellDisplay(Session.CURRENT_CELL_SELECTED);
+					}
+				}
+				catch(e:Error){
+					// Il est impossible d'accéder à la propriété ou à la méthode d'une référence d'objet nul.
+					// at com.uralys.tribes.components::UnitRenderer/selectVisibleUnit()[/Users/mad/Projects/Flex/TribesAndKhansClient/src/com/uralys/tribes/components/UnitRenderer.mxml:217
 				}
 			}
 			

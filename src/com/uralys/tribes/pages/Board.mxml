@@ -112,25 +112,40 @@
 				// on calcule si ce n'a pas été fait avant
 				GameManager.getInstance().refreshCityWorkersOnResources(false, selectedCity, false);
 				
-				//rightPanel.cellContent.enterCityForm.includeInLayout = true;
-				//rightPanel.cellContent.enterCityForm.visible = true;				
-				rightPanel.cellContent.enterCityButton.enabled = selectedCity.beginTime < new Date().getTime();
-				
-				setBuildingCityProgressBar();
+				var now:Number = new Date().getTime();
+				if(selectedCity.beginTime < now){
+					rightPanel.cellContent.enterCityButton.enabled = true;
+					Session.timer.removeEventListener(TimerEvent.TIMER, setBuildingCityProgressBar);
+				}
+				else{
+					rightPanel.cellContent.enterCityButton.enabled = false;
+					Session.timer.addEventListener(TimerEvent.TIMER, setBuildingCityProgressBar);
+				}
 			}
 				
 
-			private function setBuildingCityProgressBar():void
+			private function setBuildingCityProgressBar(event:TimerEvent = null):void
 			{
-				var millisRemaining:Number = selectedCity.beginTime - new Date().getTime(); 
-				
+				var now:Number = new Date().getTime();
+				var millisRemaining:Number = selectedCity.beginTime - now; 
 				var millisSpent:Number = Numbers.TIME_TO_BUILD_A_CITY - millisRemaining;
 				
-				var hours:int = millisRemaining/60/60/1000;
-				var minutes:int = (millisRemaining-hours*60*60*1000)/60/1000;
-				
-				rightPanel.cellContent.buildingCityProgessBar.setProgress( millisSpent, Numbers.TIME_TO_BUILD_A_CITY );
-				rightPanel.cellContent.labelBuildingCity.text = Translations.CITY_BUILDING_DONE.getItemAt(Session.LANGUAGE) + " " +(hours>9 ? "" : "0") + hours + "h"+ (minutes>9 ? "" : "0") + minutes;
+				if(millisRemaining <= 0){
+					if(event != null){
+						Session.timer.removeEventListener(TimerEvent.TIMER, setBuildingCityProgressBar);
+						GameManager.getInstance().refreshPlayerOnServerSide(Session.player);
+					}
+				}
+				else{
+					var hours:int = millisRemaining/60/60/1000;
+					var minutes:int = (millisRemaining-hours*60*60*1000)/60/1000;
+					var secondes:int = (millisRemaining-hours*60*60*1000 - minutes*60*1000) /1000;
+					
+					rightPanel.cellContent.buildingCityProgessBar.setProgress( millisSpent, Numbers.TIME_TO_BUILD_A_CITY );
+					rightPanel.cellContent.labelBuildingCity.text = (hours != 0 ? hours+" h " : '')+(minutes>9 ? "" : "0")+minutes+" mn "+(secondes>9 ? "" : "0")+secondes+' s';
+					
+					Session.timer.addEventListener(TimerEvent.TIMER, setBuildingCityProgressBar);
+				}
 			}
 			
 			//-----------------------------------------------------------//
@@ -141,7 +156,6 @@
 				cityGroup.cityForm.refreshCity();
 				appearCity.play();
 			}
-			
 			
 			//======================================================================================//
 			

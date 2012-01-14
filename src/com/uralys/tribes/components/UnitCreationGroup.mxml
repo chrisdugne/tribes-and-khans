@@ -12,6 +12,7 @@
 			import com.uralys.tribes.entities.Unit;
 			import com.uralys.tribes.main.ImageContainer;
 			import com.uralys.tribes.managers.GameManager;
+			import com.uralys.tribes.skins.ClassicProgressTrackSkin;
 			import com.uralys.tribes.skins.WorkersProgressBarSkin;
 			import com.uralys.tribes.skins.WorkersProgressTrackSkin;
 			import com.uralys.utils.Utils;
@@ -423,7 +424,7 @@
 			
 			private function getAvailableCarriage():int
 			{
-				return unit.size*25;
+				return unit.size*Numbers.TOTAL_CARAVAN_WEIGHT;
 			}
 			
 			//-------------------------------------------------------------------------//
@@ -676,11 +677,11 @@
 						label=" "
 						labelPlacement="right"
 						barSkin="{WorkersProgressBarSkin}"
-						trackSkin="{WorkersProgressTrackSkin}"
+						trackSkin="{ClassicProgressTrackSkin}"
 						trackHeight="24"
 						visible="{unit != null}"
 						creationComplete="{updateCarriageProgressBar()}"/>
-		<s:Label text="{unit.totalCarriage} / {unit.size*25}" styleName="numberLabel"/>
+		<s:Label text="{unit.totalCarriage} / {unit.size*Numbers.TOTAL_CARAVAN_WEIGHT}" styleName="numberLabel"/>
 	</s:HGroup>
 	
 </s:VGroup>

@@ -59,7 +59,7 @@ public interface IGameDAO {
 
 	//-----------------------------------------------------------------------------------//
 	
-	public String createCity(City city, String playerUID);
+	public String buildCity(City city, String playerUID);
 	public CityDTO createNewFirstCity(String playerUID);
 	public void cityIsTaken(String cityUID, String newOwnerUID, long timeToChangeOwner, int populationLost);
 	//public void checkCityOwner(String cityUID);

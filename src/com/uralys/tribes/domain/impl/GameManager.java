@@ -88,7 +88,7 @@ public class GameManager implements IGameManager {
 	//==================================================================================================//
 	
 	public String buildCity(City city, String uralysUID){
-		return gameDao.createCity(city, uralysUID);
+		return gameDao.buildCity(city, uralysUID);
 	}
 	
 	public void saveCity(City city){

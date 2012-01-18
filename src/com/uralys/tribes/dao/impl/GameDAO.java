@@ -199,6 +199,9 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 
 	//-----------------------------------------------------------------------//
 
+	/**
+	 * Apres appel ˆ cette methode, ne pas oublier createCityUnit !!
+	 */
 	private String createCity(City cityFromFlex, String playerUID, PersistenceManager pm, ServerDataDTO serverData) 
 	{
 		PlayerDTO player = pm.getObjectById(PlayerDTO.class, playerUID);
@@ -629,11 +632,18 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 	
 	//==================================================================================================//
 
-	public String createCity(City city, String playerUID)
+	public String buildCity(City city, String playerUID)
 	{
+		if(debug)Utils.print("-------------");
+		if(debug)Utils.print("buildCity");
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		
 		String cityUID = createCity(city, playerUID, pm, null);
+		CityDTO newCity = pm.getObjectById(CityDTO.class, cityUID);
 		pm.close();
+		
+		createCityUnit(playerUID, newCity);
+		
 		return cityUID;
 	}
 

@@ -241,8 +241,9 @@
 		<s:Group excludeFrom="moving,shooting" width="100%">
 			<renderers:PlayerName player="{unit.player}" left="5"/>
 			
-			<s:Image source="{unit.type == Unit.ARMY ? ImageContainer.WARRIOR1 : ImageContainer.MERCHANT1}"
-					 right="5"/>
+			<s:Image source="{unit.type == Unit.ARMY ? ImageContainer.ARMY_ALLY : ImageContainer.MERCHANT_ALLY}"
+					 right="5"
+					 bottom="0"/>
 			
 			<s:Image source="{ImageContainer.LEFT_ARROW}" click="{goLeft(unitDataViewStack)}" left="10" top="30"
 					 visible="{unit.ownerStatus == Unit.PLAYER || unit.ownerStatus == Unit.ALLY}"/>

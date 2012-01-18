@@ -52,6 +52,7 @@
 					  click="caravanCreationGroup.deleteUnit()"
 					  visible="{Session.CURRENT_CELL_SELECTED.caravan != null}"
 					  enabled="{Session.CURRENT_CELL_SELECTED.caravan.moves.length == 1}"/>
+			<s:Image source="{ImageContainer.MERCHANT_PLAYER}"/>
 		</s:VGroup>
 		<components:UnitCreationGroup id="caravanCreationGroup"
 									  unit="@{Session.CURRENT_CELL_SELECTED.caravan}"

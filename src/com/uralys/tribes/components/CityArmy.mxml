@@ -10,6 +10,7 @@
 			import com.uralys.tribes.commons.Translations;
 			import com.uralys.tribes.entities.City;
 			import com.uralys.tribes.entities.Unit;
+			import com.uralys.tribes.main.ImageContainer;
 			
 			//-------------------------------------------------------------------------//
 			
@@ -31,6 +32,8 @@
 					  click="{armyCreationGroup.deleteUnit()}"
 					  visible="{Session.CURRENT_CELL_SELECTED.army != null}"
 					  enabled="{Session.CURRENT_CELL_SELECTED.army.moves.length == 1}"/>
+			
+			<s:Image source="{ImageContainer.ARMY_PLAYER}"/>
 		</s:VGroup>
 		<components:UnitCreationGroup id="armyCreationGroup"
 									  unit="@{Session.CURRENT_CELL_SELECTED.army}"

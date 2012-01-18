@@ -102,7 +102,7 @@
 			</mx:GridRow>
 			<mx:GridRow>
 				<mx:GridItem horizontalAlign="center">
-					<mx:Image toolTip="{Translations.WHEAT.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WHEAT}"/>
+					<s:Image toolTip="{Translations.WHEAT.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WHEAT}"/>
 				</mx:GridItem>
 				<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 					<s:HGroup verticalAlign="middle">
@@ -110,7 +110,7 @@
 								 styleName="numberLabel" 
 								 textAlign="right"
 								 minWidth="60"/>
-						<s:Image source="{ImageContainer.MERCHANTS}"/>
+						<s:Image source="{ImageContainer.ARMY_ALLY}"/>
 						<s:HSlider id="wheatWorkersSlider"
 								   showDataTip="false"
 								   liveDragging="true" 
@@ -133,7 +133,7 @@
 			</mx:GridRow>
 			<mx:GridRow >
 				<mx:GridItem horizontalAlign="center">
-					<mx:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}"/>
+					<s:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}"/>
 				</mx:GridItem>
 				<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 					<s:HGroup verticalAlign="middle">
@@ -141,7 +141,7 @@
 								 styleName="numberLabel" 
 								 textAlign="right"
 								 minWidth="60"/>
-						<s:Image source="{ImageContainer.MERCHANTS}"/>
+						<s:Image source="{ImageContainer.ARMY_ALLY}"/>
 						<s:HSlider id="woodWorkersSlider"
 								   showDataTip="false"
 								   liveDragging="true" 
@@ -159,7 +159,7 @@
 			</mx:GridRow>
 			<mx:GridRow >
 				<mx:GridItem horizontalAlign="center">
-					<mx:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}"/>
+					<s:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}"/>
 				</mx:GridItem>
 				<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 					<s:HGroup verticalAlign="middle">
@@ -167,7 +167,7 @@
 								 styleName="numberLabel" 
 								 textAlign="right"
 								 minWidth="60"/>
-						<s:Image source="{ImageContainer.MERCHANTS}"/>
+						<s:Image source="{ImageContainer.ARMY_ALLY}"/>
 						<s:HSlider id="ironWorkersSlider"
 								   showDataTip="false"
 								   liveDragging="true" 

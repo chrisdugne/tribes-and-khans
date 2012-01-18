@@ -120,22 +120,22 @@ public final class ImageContainer
 
 	//   ======================================================================//
 
-	[Embed(source="resources/embed/merchant1.png")]
-	[Bindable] public static var MERCHANT1:Class;
-	
-	[Embed(source="resources/embed/merchant2.png")]
-	[Bindable] public static var MERCHANT2:Class;
-	
-	[Embed(source="resources/embed/merchant3.png")]
-	[Bindable] public static var MERCHANTS:Class;
- 
-	//   ======================================================================//
-	
-	[Embed(source="resources/embed/warrior1.png")]
-	[Bindable] public static var WARRIOR1:Class;
-	
-	[Embed(source="resources/embed/warrior2.png")]
-	[Bindable] public static var WARRIOR2:Class;
+//	[Embed(source="resources/embed/merchant1.png")]
+//	[Bindable] public static var MERCHANT1:Class;
+//	
+//	[Embed(source="resources/embed/merchant2.png")]
+//	[Bindable] public static var MERCHANT2:Class;
+//	
+//	[Embed(source="resources/embed/merchant3.png")]
+//	[Bindable] public static var MERCHANTS:Class;
+// 
+//	//   ======================================================================//
+//	
+//	[Embed(source="resources/embed/warrior1.png")]
+//	[Bindable] public static var WARRIOR1:Class;
+//	
+//	[Embed(source="resources/embed/warrior2.png")]
+//	[Bindable] public static var WARRIOR2:Class;
 
 	//   ======================================================================//
 	
@@ -218,7 +218,6 @@ public final class ImageContainer
 		 "webresources/images/map/highlight_blanc.png",
 		 "webresources/images/map/highlight_vert.png",
 		 "webresources/images/map/highlight_rouge.png",
-		 "webresources/images/logo.png",
 		 "webresources/images/persos/personnages.png",
 		 "webresources/images/persos/fermier.png",
 		 "webresources/images/persos/marchand.png",
@@ -226,23 +225,14 @@ public final class ImageContainer
 		 "webresources/images/persos/guerrier.png",
 		 "webresources/images/persos/forgeron.png",
 		 "webresources/images/minilogo.png",
-		 "webresources/images/map/border-top.png",
-		 "webresources/images/map/border-bottom.png",
-		 "webresources/images/map/border-left.png",
-		 "webresources/images/map/border-right.png",
-		 "webresources/images/persos/marchand_vert.png",
+		 "webresources/images/persos/merchant_player.png",
 		 "webresources/images/persos/marchand_bleu.png",
 		 "webresources/images/persos/marchand_rouge.png",
-		 "webresources/images/persos/guerrier_vert.png",
+		 "webresources/images/persos/army_player.png",
 		 "webresources/images/persos/guerrier_bleu.png",
 		 "webresources/images/persos/guerrier_rouge.png",
 		 "webresources/images/edit.png",
 		 "webresources/images/map/ville-moyenne.png",
-		 "webresources/images/logos/flex.png",
-		 "webresources/images/logos/appengine.png",
-		 "webresources/images/logos/icons.png",
-		 "webresources/images/logos/fonts.png",
-		 "webresources/images/logos/uralysminilogo.png",
 		 "webresources/images/logos/utopian-hedonism-logo.jpg",
 		 "webresources/images/edit_white.png",
 		 "webresources/images/icons/left.png",
@@ -300,108 +290,75 @@ public final class ImageContainer
 				break;
 			case 10:
 				HIGHLIGHT_ROUGE = event.currentTarget.content;
-				currentImage++;
 				break;
-			//case 11:
-				//LOGO = event.currentTarget.content;
-			case 12:
+			case 11:
 				GROUPE_PERSO = event.currentTarget.content;
 				break;
-			case 13:
+			case 12:
 				FERMIER = event.currentTarget.content;
 				break;
-			case 14:
+			case 13:
 				MARCHAND = event.currentTarget.content;
 				break;
-			case 15:
+			case 14:
 				MARCHANDE = event.currentTarget.content;
 				break;
-			case 16:
+			case 15:
 				GUERRIER = event.currentTarget.content;
 				break;
-			case 17:
+			case 16:
 				FORGERON = event.currentTarget.content;
 				break;
-			case 18:
+			case 17:
 				MINI_LOGO = event.currentTarget.content;
 				break;
-			case 19:
-				MAP_BORDER_TOP = event.currentTarget.content;
-				break;
-			case 20:
-				MAP_BORDER_BOTTOM = event.currentTarget.content;
-				break;
-			case 21:
-				MAP_BORDER_LEFT = event.currentTarget.content;
-				break;
-			case 22:
-				MAP_BORDER_RIGHT = event.currentTarget.content;
-				break;
-			case 23:
+			case 18:
 				MERCHANT_PLAYER = event.currentTarget.content;
 				break;
-			case 24:
+			case 19:
 				MERCHANT_ALLY = event.currentTarget.content;
 				break;
-			case 25:
+			case 20:
 				MERCHANT_ENNEMY = event.currentTarget.content;
 				break;
-			case 26:
+			case 21:
 				ARMY_PLAYER = event.currentTarget.content;
 				break;
-			case 27:
+			case 22:
 				ARMY_ALLY = event.currentTarget.content;
 				break;
-			case 28:
+			case 23:
 				ARMY_ENNEMY = event.currentTarget.content;
 				break;
-			case 29:
+			case 24:
 				EDIT = event.currentTarget.content;
 				break;
-			case 30:
+			case 25:
 				VILLE = event.currentTarget.content;
 				break;
-			case 31:
-				FLEX = event.currentTarget.content;
-				break;
-			case 32:
-				APPENGINE = event.currentTarget.content;
-				break;
-			case 33:
-				ICONS = event.currentTarget.content;
-				break;
-			case 34:
-				FONTS = event.currentTarget.content;
-				break;
-			case 35:
-				URALYS_MINI_LOGO = event.currentTarget.content;
-				break;
-			case 36:
+			case 26:
 				UH = event.currentTarget.content;
 				break;
-			case 37:
+			case 27:
 				EDIT_WHITE = event.currentTarget.content;
 				break;
-			case 38:
+			case 28:
 				LEFT_ARROW = event.currentTarget.content;
 				break;
-			case 39:
+			case 29:
 				RIGHT_ARROW = event.currentTarget.content;
 				break;
-			case 40:
+			case 30:
 				HIGHLIGHT_BOW_SHOOT = event.currentTarget.content;
 				break;
 		}
 		
 		currentImage++;
 		
-		if(currentImage < 41)
+		if(currentImage < 31)
 			loadNextImage();
 		else
 			IMAGES_LOADED = true;
 	}
-
-	
-
 }
 }

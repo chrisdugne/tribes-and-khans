@@ -41,7 +41,7 @@
 		<s:Label text="{Session.CURRENT_CELL_SELECTED.caravan.mayBuildAcity() ? Translations.MAY_BUILD_CITY.getItemAt(Session.LANGUAGE) : Translations.MAY_NOT_BUILD_CITY.getItemAt(Session.LANGUAGE)}"
 				 color="{Session.CURRENT_CELL_SELECTED.caravan.mayBuildAcity() ? Numbers.GREEN : Numbers.RED}"/>
 		<s:HGroup>
-			<s:Image toolTip="{Translations.MERCHANTS.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.MERCHANT1}"/>
+			<s:Image toolTip="{Translations.MERCHANTS.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.ARMY_ALLY}"/>
 			<s:Label text="{Session.CURRENT_CELL_SELECTED.caravan.size} {Session.CURRENT_CELL_SELECTED.caravan.size &gt;= Numbers.CITY_MERCHANT_BASE ? '' : '('+Numbers.CITY_MERCHANT_BASE+' ' + Translations.MINIMUM.getItemAt(Session.LANGUAGE) +')'}" 
 					 color="{Session.CURRENT_CELL_SELECTED.caravan.size &gt;= Numbers.CITY_MERCHANT_BASE ? Numbers.GREEN : Numbers.RED}"/>
 		</s:HGroup>

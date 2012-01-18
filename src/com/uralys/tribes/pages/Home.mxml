@@ -21,11 +21,12 @@
 	<flexlib:Fire
 		id="fire"
 		xSpeed="0"
+		ySpeed="2"
 		horizontalCenter="0"
-		verticalCenter="150"
+		verticalCenter="70"
 		colors="[0x85b78f, 0x639476, 0x445848]"
-		width="700"
-		height="400"/>
+		width="500"
+		height="500"/>
 
 
 	<s:HGroup width="100%"

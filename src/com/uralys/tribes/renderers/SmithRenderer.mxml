@@ -159,7 +159,7 @@
 				 styleName="numberLabel" 
 				 textAlign="right"
 				 minWidth="60"/>
-		<s:Image source="{ImageContainer.MERCHANTS}"/>
+		<s:Image source="{ImageContainer.ARMY_ALLY}"/>
 		<s:HSlider id="smithsSlider"
 				   showDataTip="false"
 				   liveDragging="true" 

@@ -456,7 +456,6 @@
 							 styleName="numberLabel" 
 							 textAlign="right"
 							 minWidth="60"/>
-					<mx:Image source="{unit.type == Unit.ARMY ? ImageContainer.WARRIOR1 : ImageContainer.MERCHANT1}"/>
 					<s:HSlider id="unitSlider"
 							   showDataTip="false"
 							   liveDragging="true" 

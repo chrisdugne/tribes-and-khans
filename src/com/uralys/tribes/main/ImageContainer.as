@@ -110,6 +110,9 @@ public final class ImageContainer
 	[Embed(source="resources/embed/icons/arc.png")]
 	[Bindable] public static var BOW:Class;
 
+	[Embed(source="resources/embed/icons/people.png")]
+	[Bindable] public static var PEOPLE:Class;
+
 	//   ======================================================================//
 
 	[Embed(source="resources/embed/foret7.png")]
@@ -161,7 +164,6 @@ public final class ImageContainer
 	[Bindable] public static var HIGHLIGHT_BLANC:Bitmap;
 	[Bindable] public static var HIGHLIGHT_VERT:Bitmap;
 	[Bindable] public static var HIGHLIGHT_ROUGE:Bitmap;
-	//[Bindable] public static var LOGO:Bitmap;
 	[Bindable] public static var GROUPE_PERSO:Bitmap;
 	[Bindable] public static var FERMIER:Bitmap;
 	[Bindable] public static var FORGERON:Bitmap;

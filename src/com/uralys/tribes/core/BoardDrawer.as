@@ -313,7 +313,7 @@ package com.uralys.tribes.core
 			}			
 			
 			cell.pawn.x = (Utils.getXPixel(cell.x) + 15*scale);
-			cell.pawn.y = (Utils.getYPixel(cell.y) - 40*scale);
+			cell.pawn.y = (Utils.getYPixel(cell.y) - 120*scale);
 			
 			imageUnit.scaleX = scale;
 			imageUnit.scaleY = scale;

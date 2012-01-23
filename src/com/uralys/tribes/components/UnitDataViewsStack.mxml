@@ -31,7 +31,7 @@
 							alpha="0">
 			<s:HGroup width="100%"
 					  horizontalAlign="center">
-				<s:Image source="{unit.type == Unit.ARMY ? ImageContainer.ARMY_ALLY : ImageContainer.MERCHANT_ALLY}"/>
+				<s:Image source="{ImageContainer.PEOPLE}"/>
 				<s:Label color="#FFFFFF" 
 						 left="20" 
 						 verticalCenter="2"

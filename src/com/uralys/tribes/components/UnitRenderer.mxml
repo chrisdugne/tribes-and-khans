@@ -238,12 +238,14 @@
 				<s:SolidColor color="{(unit.ownerStatus == Unit.PLAYER) ? Numbers.colorPlayer : (unit.ownerStatus == Unit.ALLY ? Numbers.colorAlly  : Numbers.colorEnnemy)}" alpha="0.4"/>
 			</s:fill>
 		</s:Rect>
-		<s:Group excludeFrom="moving,shooting" width="100%">
+		<s:Group excludeFrom="moving,shooting" width="100%" height="100" 
+				 clipAndEnableScrolling="true">
 			<renderers:PlayerName player="{unit.player}" left="5"/>
 			
-			<s:Image source="{unit.type == Unit.ARMY ? ImageContainer.ARMY_ALLY : ImageContainer.MERCHANT_ALLY}"
-					 right="5"
-					 bottom="0"/>
+			<s:Image source="{unit.type == Unit.ARMY ? ImageContainer.ARMY_PLAYER : ImageContainer.MERCHANT_PLAYER}"
+					 top="-10"
+					 right="-10"
+					 alpha="0.4"/>
 			
 			<s:Image source="{ImageContainer.LEFT_ARROW}" click="{goLeft(unitDataViewStack)}" left="10" top="30"
 					 visible="{unit.ownerStatus == Unit.PLAYER || unit.ownerStatus == Unit.ALLY}"/>

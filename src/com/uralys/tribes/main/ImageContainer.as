@@ -115,11 +115,23 @@ public final class ImageContainer
 
 	//   ======================================================================//
 
-	[Embed(source="resources/embed/foret7.png")]
-	[Bindable] public static var FORET7:Class;
+	[Embed(source="resources/embed/foret1.png")]
+	[Bindable] public static var FORET_1:Class;
 
-	[Embed(source="resources/embed/sol_ville.png")]
-	[Bindable] public static var SOL_VILLE:Class;
+	[Embed(source="resources/embed/foret05.png")]
+	[Bindable] public static var FORET_05:Class;
+
+	[Embed(source="resources/embed/foret025.png")]
+	[Bindable] public static var FORET_025:Class;
+
+	[Embed(source="resources/embed/sol_ville_1.png")]
+	[Bindable] public static var SOL_VILLE_1:Class;
+
+	[Embed(source="resources/embed/sol_ville_05.png")]
+	[Bindable] public static var SOL_VILLE_05:Class;
+
+	[Embed(source="resources/embed/sol_ville_025.png")]
+	[Bindable] public static var SOL_VILLE_025:Class;
 
 	//   ======================================================================//
 

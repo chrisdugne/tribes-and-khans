@@ -51,109 +51,109 @@
 		<s:VGroup width="100%" height="100%" horizontalAlign="center">
 			
 			<s:Spacer height="15"/>
-			<s:HGroup width="100%" verticalAlign="middle">
-				<s:Image toolTip="{Translations.WHEAT.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WHEAT}"/>
-				<renderers:BuildingRenderer stockBuilders="@{city.wheatStockBuilders}"
-											stockCapacity="@{city.wheatStockCapacity}"
-											stockNextCapacity="@{city.wheatStockNextCapacity}"
-											stockBeginTime="@{city.wheatStockBeginTime}"
-											stockEndTime="@{city.wheatStockEndTime}"
-											ratioUpgrade="20"
-											itemName="wheat"
-											city="{city}"
-											id="wheatBuildingRenderer"
-											/>
-			</s:HGroup>
+			<renderers:BuildingRenderer stockBuilders="@{city.wheatStockBuilders}"
+										stockCapacity="@{city.wheatStockCapacity}"
+										stockNextCapacity="@{city.wheatStockNextCapacity}"
+										stockBeginTime="@{city.wheatStockBeginTime}"
+										stockEndTime="@{city.wheatStockEndTime}"
+										ratioUpgrade="20"
+										itemName="wheat"
+										imageToolTip="{Translations.WHEAT.getItemAt(Session.LANGUAGE)}"
+										image="{ImageContainer.WHEAT}"
+										city="{city}"
+										id="wheatBuildingRenderer"
+										width="100%" 
+										/>
 			
 			<s:Spacer height="15"/>
 			<components:HRule width="90%"/>
 			<s:Spacer height="15"/>
 			
-			<s:HGroup width="100%" verticalAlign="middle">
-				<s:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}"/>
-				<renderers:BuildingRenderer stockBuilders="@{city.woodStockBuilders}"
-											stockCapacity="@{city.woodStockCapacity}"
-											stockNextCapacity="@{city.woodStockNextCapacity}"
-											stockBeginTime="@{city.woodStockBeginTime}"
-											stockEndTime="@{city.woodStockEndTime}"
-											ratioUpgrade="20"
-											itemName="wood"
-											city="{city}"
-											id="woodBuildingRenderer"
-											/>
-			</s:HGroup>
+			<renderers:BuildingRenderer stockBuilders="@{city.woodStockBuilders}"
+										stockCapacity="@{city.woodStockCapacity}"
+										stockNextCapacity="@{city.woodStockNextCapacity}"
+										stockBeginTime="@{city.woodStockBeginTime}"
+										stockEndTime="@{city.woodStockEndTime}"
+										ratioUpgrade="20"
+										itemName="wood"
+										imageToolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}"
+										image="{ImageContainer.WOOD}"
+										city="{city}"
+										id="woodBuildingRenderer"
+										width="100%" 
+										/>
 			
 			<s:Spacer height="15"/>
 			<components:HRule width="90%"/>
 			<s:Spacer height="15"/>
 			
-			<s:HGroup width="100%" verticalAlign="middle">
-				<s:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}"/>
-				<renderers:BuildingRenderer stockBuilders="@{city.ironStockBuilders}"
-											stockCapacity="@{city.ironStockCapacity}"
-											stockNextCapacity="@{city.ironStockNextCapacity}"
-											stockBeginTime="@{city.ironStockBeginTime}"
-											stockEndTime="@{city.ironStockEndTime}"
-											ratioUpgrade="20"
-											itemName="iron"
-											city="{city}"
-											id="ironBuildingRenderer"
-											/>
-			</s:HGroup>
+			<renderers:BuildingRenderer stockBuilders="@{city.ironStockBuilders}"
+										stockCapacity="@{city.ironStockCapacity}"
+										stockNextCapacity="@{city.ironStockNextCapacity}"
+										stockBeginTime="@{city.ironStockBeginTime}"
+										stockEndTime="@{city.ironStockEndTime}"
+										ratioUpgrade="20"
+										itemName="iron"
+										imageToolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}"
+										image="{ImageContainer.IRON}"
+										city="{city}"
+										id="ironBuildingRenderer"
+										width="100%" 
+										/>
 			
 			<s:Spacer height="15"/>
 			<components:HRule width="90%"/>
 			<s:Spacer height="15"/>
 			
-			<s:HGroup width="100%" verticalAlign="middle">
-				<s:Image toolTip="{Translations.BOW.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.BOW}"/>
-				<renderers:BuildingRenderer stockBuilders="@{city.bowStockBuilders}"
-											stockCapacity="@{city.bowStockCapacity}"
-											stockNextCapacity="@{city.bowStockNextCapacity}"
-											stockBeginTime="@{city.bowStockBeginTime}"
-											stockEndTime="@{city.bowStockEndTime}"
-											ratioUpgrade="2"
-											itemName="bow"
-											city="{city}"
-											id="bowBuildingRenderer"
-											/>
-			</s:HGroup>
+			<renderers:BuildingRenderer stockBuilders="@{city.bowStockBuilders}"
+										stockCapacity="@{city.bowStockCapacity}"
+										stockNextCapacity="@{city.bowStockNextCapacity}"
+										stockBeginTime="@{city.bowStockBeginTime}"
+										stockEndTime="@{city.bowStockEndTime}"
+										ratioUpgrade="2"
+										itemName="bow"
+										imageToolTip="{Translations.BOW.getItemAt(Session.LANGUAGE)}"
+										image="{ImageContainer.BOW}"
+										city="{city}"
+										id="bowBuildingRenderer"
+										width="100%" 
+										/>
 			
 			<s:Spacer height="15"/>
 			<components:HRule width="90%"/>
 			<s:Spacer height="15"/>
 			
-			<s:HGroup width="100%" verticalAlign="middle">
-				<s:Image toolTip="{Translations.SWORD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.SWORD}"/>
-				<renderers:BuildingRenderer stockBuilders="@{city.swordStockBuilders}"
-											stockCapacity="@{city.swordStockCapacity}"
-											stockNextCapacity="@{city.swordStockNextCapacity}"
-											stockBeginTime="@{city.swordStockBeginTime}"
-											stockEndTime="@{city.swordStockEndTime}"
-											ratioUpgrade="2"
-											itemName="sword"
-											city="{city}"
-											id="swordBuildingRenderer"
-											/>
-			</s:HGroup>
+			<renderers:BuildingRenderer stockBuilders="@{city.swordStockBuilders}"
+										stockCapacity="@{city.swordStockCapacity}"
+										stockNextCapacity="@{city.swordStockNextCapacity}"
+										stockBeginTime="@{city.swordStockBeginTime}"
+										stockEndTime="@{city.swordStockEndTime}"
+										ratioUpgrade="2"
+										itemName="sword"
+										imageToolTip="{Translations.SWORD.getItemAt(Session.LANGUAGE)}"
+										image="{ImageContainer.SWORD}"
+										city="{city}"
+										id="swordBuildingRenderer"
+										width="100%" 
+										/>
 			
 			<s:Spacer height="15"/>
 			<components:HRule width="90%"/>
 			<s:Spacer height="15"/>
 			
-			<s:HGroup width="100%" verticalAlign="middle">
-				<s:Image toolTip="{Translations.ARMOR.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.ARMOR}"/>
-				<renderers:BuildingRenderer stockBuilders="@{city.armorStockBuilders}"
-											stockCapacity="@{city.armorStockCapacity}"
-											stockNextCapacity="@{city.armorStockNextCapacity}"
-											stockBeginTime="@{city.armorStockBeginTime}"
-											stockEndTime="@{city.armorStockEndTime}"
-											ratioUpgrade="2"
-											itemName="armor"
-											city="{city}"
-											id="armorBuildingRenderer"
-											/>
-			</s:HGroup>
+			<renderers:BuildingRenderer stockBuilders="@{city.armorStockBuilders}"
+										stockCapacity="@{city.armorStockCapacity}"
+										stockNextCapacity="@{city.armorStockNextCapacity}"
+										stockBeginTime="@{city.armorStockBeginTime}"
+										stockEndTime="@{city.armorStockEndTime}"
+										ratioUpgrade="2"
+										itemName="armor"
+										imageToolTip="{Translations.ARMOR.getItemAt(Session.LANGUAGE)}"
+										image="{ImageContainer.ARMOR}"
+										city="{city}"
+										id="armorBuildingRenderer"
+										width="100%" 
+										/>
 		</s:VGroup>
 	</s:Scroller>
 </s:NavigatorContent>

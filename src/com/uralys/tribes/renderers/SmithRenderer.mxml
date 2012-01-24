@@ -4,7 +4,9 @@
 		 xmlns:mx="library://ns.adobe.com/flex/mx"
 		 horizontalAlign="center"
 		 verticalAlign="middle"
-		 creationComplete="refresh()">
+		 paddingLeft="20"
+		 paddingRight="20"
+		 creationComplete="refresh()" xmlns:components="com.uralys.tribes.components.*">
 	
 	<fx:Declarations>
 		<s:State name="upgradeEnabled"/>
@@ -45,6 +47,11 @@
 			[Bindable] public var endTime:Number;
 			
 			[Bindable] public var city:City;
+			
+			[Bindable] public var imageToolTip:String;
+			[Bindable] public var image:Class;
+
+			[Bindable] public var showLastLine:Boolean = true;
 			
 			//-------------------------------------------------------------------------------------//
 
@@ -154,21 +161,25 @@
 	<s:HGroup width="100%" 
 			  verticalAlign="middle"
 			  paddingRight.building="50">
-		
-		<s:Label text="{potentialSmiths}" 
-				 styleName="numberLabel" 
-				 textAlign="right"
-				 minWidth="60"/>
-		<s:Image source="{ImageContainer.ARMY_ALLY}"/>
-		<s:HSlider id="smithsSlider"
-				   showDataTip="false"
-				   liveDragging="true" 
-				   value="@{potentialSmiths}"
-				   change="smithCheck(event)"
-				   maximum="{city.unemployed + potentialSmiths &lt; (stockCapacity - stock)/item.peopleRequired ? city.unemployed + potentialSmiths : (stockCapacity - stock)/item.peopleRequired}"
-				   snapInterval="1"
-				   enabled.building="false"
-				   enabled.upgradeEnabled="true"/>
+
+		<s:VGroup horizontalAlign="center">
+			<s:HGroup verticalAlign="middle" width="130">		
+				<s:Label text="{potentialSmiths}" 
+						 styleName="numberLabel" 
+						 textAlign="right"
+						 minWidth="60"/>
+				<s:Image source="{ImageContainer.PEOPLE}"/>
+			</s:HGroup>
+			<s:HSlider id="smithsSlider"
+					   showDataTip="false"
+					   liveDragging="true" 
+					   value="@{potentialSmiths}"
+					   change="smithCheck(event)"
+					   maximum="{city.unemployed + potentialSmiths &lt; (stockCapacity - stock)/item.peopleRequired ? city.unemployed + potentialSmiths : (stockCapacity - stock)/item.peopleRequired}"
+					   snapInterval="1"
+					   enabled.building="false"
+					   enabled.upgradeEnabled="true"/>
+		</s:VGroup>
 		
 		<s:Spacer width="100%"/>
 		<s:HGroup width="100%"
@@ -206,11 +217,14 @@
 	<s:HGroup width="100%" 
 			  verticalAlign="middle"
 			  horizontalAlign="center">
-		<s:Spacer width="20"/>
+		
+		<s:Label text="{stock}/{stockCapacity}" styleName="numberLabel"/>
+		<s:Image toolTip="{Translations.SWORD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.SWORD}"/>
 		<s:Image source="{ImageContainer.UPGRADE_ARROW}"/>
 		<s:Label text="{stock + potentialSmiths * item.peopleRequired}/{stockCapacity}"
 				 color="{Numbers.GREEN}" width="150"/>
-		<s:Spacer width="180"/>
+		
+		<s:Spacer width="100%"/>
 		<s:Button skinClass="{CustomButtonSkin}"
 				  label="{Translations.UPGRADE.getItemAt(Session.LANGUAGE)}"
 				  enabled="{potentialSmiths/item.peopleRequired * item.wood &lt;= city.wood
@@ -224,4 +238,5 @@
 				  includeInLayout.building="false"
 				  />
 	</s:HGroup>
+	<components:HRule width="100%" visible="{showLastLine}"/>
 </s:VGroup>

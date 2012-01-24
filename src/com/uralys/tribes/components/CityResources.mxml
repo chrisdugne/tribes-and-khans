@@ -105,12 +105,15 @@
 					<s:Image toolTip="{Translations.WHEAT.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WHEAT}"/>
 				</mx:GridItem>
 				<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-					<s:HGroup verticalAlign="middle">
-						<s:Label text="{city.peopleCreatingWheat}"
-								 styleName="numberLabel" 
-								 textAlign="right"
-								 minWidth="60"/>
-						<s:Image source="{ImageContainer.ARMY_ALLY}"/>
+					<s:VGroup horizontalAlign="center" width="140">
+						<s:HGroup verticalAlign="middle" width="120">
+							<s:Label text="{city.peopleCreatingWheat}"
+									 styleName="numberLabel" 
+									 textAlign="left"
+									 minWidth="60"/>
+							<s:Spacer width="100%"/>
+							<s:Image source="{ImageContainer.PEOPLE}"/>
+						</s:HGroup>
 						<s:HSlider id="wheatWorkersSlider"
 								   showDataTip="false"
 								   liveDragging="true" 
@@ -118,7 +121,7 @@
 								   value="{city.peopleCreatingWheat}"
 								   maximum="{city.population}"
 								   snapInterval="1"/>
-					</s:HGroup>
+					</s:VGroup>
 				</mx:GridItem>
 				<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 					<s:HGroup verticalAlign="middle">
@@ -136,12 +139,15 @@
 					<s:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}"/>
 				</mx:GridItem>
 				<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-					<s:HGroup verticalAlign="middle">
-						<s:Label text="{city.peopleCreatingWood}"
-								 styleName="numberLabel" 
-								 textAlign="right"
-								 minWidth="60"/>
-						<s:Image source="{ImageContainer.ARMY_ALLY}"/>
+					<s:VGroup horizontalAlign="center" width="140">
+						<s:HGroup verticalAlign="middle" width="120">
+							<s:Label text="{city.peopleCreatingWood}"
+									 styleName="numberLabel" 
+									 textAlign="left"
+									 minWidth="60"/>
+							<s:Spacer width="100%"/>
+							<s:Image source="{ImageContainer.PEOPLE}"/>
+						</s:HGroup>
 						<s:HSlider id="woodWorkersSlider"
 								   showDataTip="false"
 								   liveDragging="true" 
@@ -149,7 +155,7 @@
 								   value="{city.peopleCreatingWood}"
 								   maximum="{city.population}"
 								   snapInterval="1"/> 
-					</s:HGroup>
+					</s:VGroup>
 				</mx:GridItem>
 				<mx:GridItem horizontalAlign="center" verticalAlign="middle"> 
 					<s:Label text="+ {city.woodEarned}"
@@ -162,12 +168,15 @@
 					<s:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}"/>
 				</mx:GridItem>
 				<mx:GridItem horizontalAlign="center" verticalAlign="middle">
-					<s:HGroup verticalAlign="middle">
-						<s:Label text="{city.peopleCreatingIron}"
-								 styleName="numberLabel" 
-								 textAlign="right"
-								 minWidth="60"/>
-						<s:Image source="{ImageContainer.ARMY_ALLY}"/>
+					<s:VGroup horizontalAlign="center" width="140">
+						<s:HGroup verticalAlign="middle" width="120">
+							<s:Label text="{city.peopleCreatingIron}"
+									 styleName="numberLabel" 
+									 textAlign="left"
+									 minWidth="60"/>
+							<s:Spacer width="100%"/>
+							<s:Image source="{ImageContainer.PEOPLE}"/>
+						</s:HGroup>
 						<s:HSlider id="ironWorkersSlider"
 								   showDataTip="false"
 								   liveDragging="true" 
@@ -175,7 +184,7 @@
 								   value="{city.peopleCreatingIron}"
 								   maximum="{city.population}"
 								   snapInterval="1"/>
-					</s:HGroup>
+					</s:VGroup>
 				</mx:GridItem>
 				<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 					<s:Label text="+ {city.ironEarned}"

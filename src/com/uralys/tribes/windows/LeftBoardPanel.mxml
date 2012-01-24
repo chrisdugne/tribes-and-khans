@@ -38,6 +38,10 @@
 					 id="zoomInButton"
 					 visible="{!Session.MOVE_A_UNIT &amp;&amp; !Session.WAIT_FOR_SERVER}"
 					 click="{BoardDrawer.getInstance().zoom()}"/>
+			<s:HSlider value="{BoardDrawer.getInstance().scale}"
+					   minimum="0.25"
+					   maximum="1"
+					   enabled="false"/>
 			<s:Image source="{ImageContainer.ZOOM_OUT}"
 					 id="zoomOutButton"
 					 visible="{!Session.MOVE_A_UNIT &amp;&amp; !Session.WAIT_FOR_SERVER}"

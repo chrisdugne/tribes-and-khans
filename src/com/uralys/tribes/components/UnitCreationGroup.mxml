@@ -456,6 +456,7 @@
 							 styleName="numberLabel" 
 							 textAlign="right"
 							 minWidth="60"/>
+					<s:Image source="{ImageContainer.PEOPLE}"/>
 					<s:HSlider id="unitSlider"
 							   showDataTip="false"
 							   liveDragging="true" 
@@ -495,7 +496,7 @@
 				</mx:GridRow>
 				<mx:GridRow>
 					<mx:GridItem horizontalAlign="center">
-						<mx:Image toolTip="{Translations.BOW.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.BOW}" width="25" height="25"/>
+						<s:Image toolTip="{Translations.BOW.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.BOW}" width="25" height="25"/>
 					</mx:GridItem>
 					<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 						<s:HGroup verticalAlign="middle">
@@ -519,7 +520,7 @@
 				</mx:GridRow>
 				<mx:GridRow>
 					<mx:GridItem horizontalAlign="center">
-						<mx:Image toolTip="{Translations.SWORD.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.SWORD}" width="25" height="25"/>
+						<s:Image toolTip="{Translations.SWORD.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.SWORD}" width="25" height="25"/>
 					</mx:GridItem>
 					<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 						<s:HGroup verticalAlign="middle">
@@ -543,7 +544,7 @@
 				</mx:GridRow>
 				<mx:GridRow>
 					<mx:GridItem horizontalAlign="center">
-						<mx:Image toolTip="{Translations.ARMOR.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.ARMOR}" width="25" height="25"/>
+						<s:Image toolTip="{Translations.ARMOR.getItemAt(Session.LANGUAGE)}s" source="{ImageContainer.ARMOR}" width="25" height="25"/>
 					</mx:GridItem>
 					<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 						<s:HGroup verticalAlign="middle">
@@ -567,7 +568,7 @@
 				</mx:GridRow>
 				<mx:GridRow>
 					<mx:GridItem horizontalAlign="center">
-						<mx:Image toolTip="{Translations.WHEAT.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WHEAT}" width="25" height="25"/>
+						<s:Image toolTip="{Translations.WHEAT.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WHEAT}" width="25" height="25"/>
 					</mx:GridItem>
 					<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 						<s:HGroup verticalAlign="middle">
@@ -591,7 +592,7 @@
 				</mx:GridRow>
 				<mx:GridRow>
 					<mx:GridItem horizontalAlign="center">
-						<mx:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}" width="25" height="25"/>
+						<s:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}" width="25" height="25"/>
 					</mx:GridItem>
 					<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 						<s:HGroup verticalAlign="middle">
@@ -615,7 +616,7 @@
 				</mx:GridRow>
 				<mx:GridRow>
 					<mx:GridItem horizontalAlign="center">
-						<mx:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}" width="25" height="25"/>
+						<s:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}" width="25" height="25"/>
 					</mx:GridItem>
 					<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 						<s:HGroup verticalAlign="middle">
@@ -639,7 +640,7 @@
 				</mx:GridRow>
 				<mx:GridRow>
 					<mx:GridItem horizontalAlign="center">
-						<mx:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
+						<s:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
 					</mx:GridItem>
 					<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 						<s:HGroup verticalAlign="middle">

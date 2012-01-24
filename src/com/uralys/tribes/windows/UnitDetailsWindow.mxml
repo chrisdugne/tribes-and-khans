@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<windows:ResizableTitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   xmlns:windows="com.uralys.tribes.windows.*"
+			   skinClass="com.uralys.tribes.skins.WindowSkin"
+			   close="{closeWindow()}"
+			   width="200"
+			   height="510"
+			   backgroundAlpha="0.7"
+			   backgroundColor="#000000"
+			   cornerRadius="15"
+			   >
+	
+	
+	<fx:Script>
+		<![CDATA[
+			import com.uralys.tribes.commons.Session;
+			import com.uralys.tribes.commons.Translations;
+			import com.uralys.tribes.entities.Unit;
+			import com.uralys.tribes.main.ImageContainer;
+			
+			import mx.managers.PopUpManager;
+			
+			//-----------------------------------------------------------------//
+
+			[Bindable] public var unit:Unit;
+			
+			//-----------------------------------------------------------------//
+			
+			public function closeWindow():void{
+				PopUpManager.removePopUp(this);
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:VGroup width="100%" height="100%"
+			  paddingTop="20"
+			  paddingLeft="40"
+			  paddingRight="40"
+			  horizontalAlign="center">
+		
+		<s:Image source="{unit.type == Unit.ARMY ? ImageContainer.ARMY_PLAYER : ImageContainer.MERCHANT_PLAYER}"/>
+		
+		<s:HGroup verticalAlign="middle" width="100%">
+			<s:Image toolTip="{unit.type == Unit.ARMY ? Translations.NB_ARMY.getItemAt(Session.LANGUAGE) : Translations.NB_CARAVAN.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.PEOPLE}" width="25" height="25"/>
+			<s:Spacer width="100%"/>
+			<s:Label text="{unit.size}" 
+					 styleName="numberLabel" 
+					 textAlign="right"
+					 minWidth="60"/>		
+		</s:HGroup>
+
+		<s:HGroup verticalAlign="middle" width="100%">
+			<s:Image toolTip="{Translations.BOWS.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.BOW}" width="25" height="25"/>
+			<s:Spacer width="100%"/>
+			<s:Label text="{unit.bows}" 
+					 styleName="numberLabel" 
+					 textAlign="right"
+					 minWidth="60"/>		
+		</s:HGroup>
+
+		<s:HGroup verticalAlign="middle" width="100%">
+			<s:Image toolTip="{Translations.SWORDS.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.SWORD}" width="25" height="25"/>
+			<s:Spacer width="100%"/>
+			<s:Label text="{unit.bows}" 
+					 styleName="numberLabel" 
+					 textAlign="right"
+					 minWidth="60"/>		
+		</s:HGroup>
+
+		<s:HGroup verticalAlign="middle" width="100%">
+			<s:Image toolTip="{Translations.ARMORS.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.ARMOR}" width="25" height="25"/>
+			<s:Spacer width="100%"/>
+			<s:Label text="{unit.bows}" 
+					 styleName="numberLabel" 
+					 textAlign="right"
+					 minWidth="60"/>		
+		</s:HGroup>
+
+		<s:HGroup verticalAlign="middle" width="100%">
+			<s:Image toolTip="{Translations.WHEAT.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WHEAT}" width="25" height="25"/>
+			<s:Spacer width="100%"/>
+			<s:Label text="{unit.bows}" 
+					 styleName="numberLabel" 
+					 textAlign="right"
+					 minWidth="60"/>		
+		</s:HGroup>
+
+		<s:HGroup verticalAlign="middle" width="100%">
+			<s:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}" width="25" height="25"/>
+			<s:Spacer width="100%"/>
+			<s:Label text="{unit.bows}" 
+					 styleName="numberLabel" 
+					 textAlign="right"
+					 minWidth="60"/>		
+		</s:HGroup>
+
+		<s:HGroup verticalAlign="middle" width="100%">
+			<s:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}" width="25" height="25"/>
+			<s:Spacer width="100%"/>
+			<s:Label text="{unit.bows}" 
+					 styleName="numberLabel" 
+					 textAlign="right"
+					 minWidth="60"/>		
+		</s:HGroup>
+
+		<s:HGroup verticalAlign="middle" width="100%">
+			<s:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
+			<s:Spacer width="100%"/>
+			<s:Label text="{unit.gold}" 
+					 styleName="numberLabel" 
+					 textAlign="right"
+					 minWidth="60"/>		
+		</s:HGroup>
+	</s:VGroup>
+	
+</windows:ResizableTitleWindow>

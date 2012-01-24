@@ -44,6 +44,10 @@
 			[Bindable] public var city:City;
 			[Bindable] public var ratioUpgrade:int;
 			
+			[Bindable] public var imageToolTip:String;
+			[Bindable] public var image:Class;
+			
+			
 			//-------------------------------------------------------------------------------------//
 
 			public function refresh():void{
@@ -156,19 +160,24 @@
 			  verticalAlign="middle"
 			  paddingRight.building="50">
 		
-		<s:Label text="{potentialBuilders}" 
-				 styleName="numberLabel" 
-				 textAlign="right"
-				 minWidth="60"/>
-		<s:Image source="{ImageContainer.ARMY_ALLY}"/>
-		<s:HSlider id="stockBuildersSlider"
-				   showDataTip="false"
-				   liveDragging="true" 
-				   value="{potentialBuilders}"
-				   change="stockBuildersCheck(event)"
-				   snapInterval="1"
-				   enabled.building="false"
-				   enabled.upgradeEnabled="true"/>
+		<s:VGroup horizontalAlign="center">
+			<s:HGroup verticalAlign="middle" width="130">
+				<s:Label text="{potentialBuilders}" 
+						 styleName="numberLabel" 
+						 textAlign="left"
+						 minWidth="60"/>
+				<s:Spacer width="100%"/>
+				<s:Image source="{ImageContainer.PEOPLE}"/>
+			</s:HGroup>
+			<s:HSlider id="stockBuildersSlider"
+					   showDataTip="false"
+					   liveDragging="true" 
+					   value="{potentialBuilders}"
+					   change="stockBuildersCheck(event)"
+					   snapInterval="1"
+					   enabled.building="false"
+					   enabled.upgradeEnabled="true"/>
+		</s:VGroup>
 		
 		<s:Spacer width="100%"/>
 		<s:HGroup width="100%"
@@ -216,6 +225,7 @@
 			  verticalAlign="middle"
 			  horizontalAlign="center">
 		<s:Spacer width="20%"/>
+		<s:Image toolTip="{imageToolTip}" source="{image}"/>
 		<s:Label text="{stockCapacity}"/>
 		<s:Image source="{ImageContainer.UPGRADE_ARROW}"/>
 		<s:Label text="{potentialBuilders * ratioUpgrade}"

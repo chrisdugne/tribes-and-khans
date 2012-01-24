@@ -52,55 +52,50 @@
 		]]>
 	</fx:Script>
 	
-	<s:VGroup width="100%" horizontalAlign="center">
+	<s:VGroup width="100%" horizontalAlign="center" gap="15" paddingTop="15">
 		
-		<s:Spacer height="15"/>
-		<s:HGroup width="100%" verticalAlign="middle" horizontalAlign="center">
-			<s:Label text="{city.bows}/{city.bowStockCapacity}" styleName="numberLabel"/>
-			<s:Image toolTip="{Translations.BOW.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.BOW}"/>
-			<renderers:SmithRenderer smiths="@{city.bowWorkers}"
-									 item="{Utils.getItem('bow')}"
-									 stock="{city.bows}"
-									 stockCapacity="{city.bowStockCapacity}"
-									 weaponsAdded="@{city.bowsBeingBuilt}"
-									 beginTime="@{city.bowsBeingBuiltBeginTime}"
-									 endTime="@{city.bowsBeingBuiltEndTime}"
-									 city="{city}"
-									 id="bowsBuildingRenderer"
-									 />
-		</s:HGroup>
+		<renderers:SmithRenderer smiths="@{city.bowWorkers}"
+								 item="{Utils.getItem('bow')}"
+								 stock="{city.bows}"
+								 stockCapacity="{city.bowStockCapacity}"
+								 weaponsAdded="@{city.bowsBeingBuilt}"
+								 beginTime="@{city.bowsBeingBuiltBeginTime}"
+								 endTime="@{city.bowsBeingBuiltEndTime}"
+								 city="{city}"
+								 imageToolTip="{Translations.BOW.getItemAt(Session.LANGUAGE)}"
+								 image="{ImageContainer.BOW}"
+								 width="100%" 
+								 id="bowsBuildingRenderer"
+								 />
+	
+		<renderers:SmithRenderer smiths="@{city.swordWorkers}"
+								 item="{Utils.getItem('sword')}"
+								 stock="{city.swords}"
+								 stockCapacity="{city.swordStockCapacity}"
+								 weaponsAdded="@{city.swordsBeingBuilt}"
+								 beginTime="@{city.swordsBeingBuiltBeginTime}"
+								 endTime="@{city.swordsBeingBuiltEndTime}"
+								 city="{city}"
+								 imageToolTip="{Translations.SWORD.getItemAt(Session.LANGUAGE)}"
+								 image="{ImageContainer.SWORD}"
+								 id="swordsBuildingRenderer"
+								 width="100%" 
+								 />
 		
-		<s:Spacer height="15"/>
-		<s:HGroup width="100%" verticalAlign="middle" horizontalAlign="center">
-			<s:Label text="{city.swords}/{city.swordStockCapacity}" styleName="numberLabel"/>
-			<s:Image toolTip="{Translations.SWORD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.SWORD}"/>
-			<renderers:SmithRenderer smiths="@{city.swordWorkers}"
-									 item="{Utils.getItem('sword')}"
-									 stock="{city.swords}"
-									 stockCapacity="{city.swordStockCapacity}"
-									 weaponsAdded="@{city.swordsBeingBuilt}"
-									 beginTime="@{city.swordsBeingBuiltBeginTime}"
-									 endTime="@{city.swordsBeingBuiltEndTime}"
-									 city="{city}"
-									 id="swordsBuildingRenderer"
-									 />
-		</s:HGroup>
-		
-		<s:Spacer height="15"/>
-		<s:HGroup width="100%" verticalAlign="middle" horizontalAlign="center">
-			<s:Label text="{city.armors}/{city.armorStockCapacity}" styleName="numberLabel"/>
-			<s:Image toolTip="{Translations.ARMOR.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.ARMOR}"/>
-			<renderers:SmithRenderer smiths="@{city.armorWorkers}"
-									 item="{Utils.getItem('armor')}"
-									 stock="{city.armors}"
-									 stockCapacity="{city.armorStockCapacity}"
-									 weaponsAdded="@{city.armorsBeingBuilt}"
-									 beginTime="@{city.armorsBeingBuiltBeginTime}"
-									 endTime="@{city.armorsBeingBuiltEndTime}"
-									 city="{city}"
-									 id="armorsBuildingRenderer"
-									 />
-		</s:HGroup>
+		<renderers:SmithRenderer smiths="@{city.armorWorkers}"
+								 item="{Utils.getItem('armor')}"
+								 stock="{city.armors}"
+								 stockCapacity="{city.armorStockCapacity}"
+								 weaponsAdded="@{city.armorsBeingBuilt}"
+								 beginTime="@{city.armorsBeingBuiltBeginTime}"
+								 endTime="@{city.armorsBeingBuiltEndTime}"
+								 city="{city}"
+								 imageToolTip="{Translations.ARMOR.getItemAt(Session.LANGUAGE)}"
+								 image="{ImageContainer.ARMOR}"
+								 width="100%" 
+								 showLastLine="false"
+								 id="armorsBuildingRenderer"
+								 />
 		
 	</s:VGroup>
 	

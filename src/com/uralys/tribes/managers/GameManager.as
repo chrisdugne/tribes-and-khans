@@ -1190,17 +1190,17 @@ package com.uralys.tribes.managers {
 			Session.allCitiesInSession.addAll(citiesLoaded);
 
 			// on en profite aussi pour rafraichir les villes en Session
-			// et faire des refreshPlayerOnServerSide pour les joueurs voisins
 			for each(var _cityLoaded:City in citiesLoaded)
 			{
 				if(_cityLoaded.ownerUID != Session.player.playerUID)
 				{
-					var otherPlayer:Player = Cell(Session.map[_cityLoaded.x][_cityLoaded.y]).landOwner;
-					if(otherPlayer.lastStep < Session.player.lastStep){
-						trace("===================");
-						trace("refreshing an other Player ! : " + otherPlayer.name);
-						refreshPlayerOnServerSide(otherPlayer);
-					}
+					// deprecated (cf Cortex tache 29) : faire des refreshPlayerOnServerSide pour les joueurs voisins
+//					var otherPlayer:Player = Cell(Session.map[_cityLoaded.x][_cityLoaded.y]).landOwner;
+//					if(otherPlayer.lastStep < Session.player.lastStep){
+//						trace("===================");
+//						trace("refreshing an other Player ! : " + otherPlayer.name);
+//						refreshPlayerOnServerSide(otherPlayer);
+//					}
 				}
 				else{
 					for each(var _city:City in Session.player.cities)

@@ -198,46 +198,47 @@ package com.uralys.tribes.core
 			var image:Image = new Image();
 			var placeCity:Boolean = false;
 			
-			switch(_cell.type){
+			switch(_cell.type)
+			{
 				case 0:
 					// forest
-					image.source = ImageContainer.FORET7;
 
-//					switch(Utils.random(6)){
-//						case 1:
-//							image.source = ImageContainer.FORET7;
-//							break;
-//						case 2:
-//							image.source = ImageContainer.FORET7;
-//							break;
-//						case 3:
-//							image.source = ImageContainer.FORET7;
-//							break;
-//						case 4:
-//							image.source = ImageContainer.FORET7;
-//							break;
-//						case 5:
-//							image.source = ImageContainer.FORET7;
-//							break;
-//						default:
-//							image.source = ImageContainer.FORET7;
-//							break;
-//						
-//					}
+					switch(scale){
+						case 1:
+							image.source = ImageContainer.FORET_1;
+							break;
+						case 0.5:
+							image.source = ImageContainer.FORET_05;
+							break;
+						case 0.25:
+							image.source = ImageContainer.FORET_025;
+							break;
+					}
 
 					break;
+
 				case 1:
 					//city
 					placeCity = true;
-					image.source = ImageContainer.SOL_VILLE;
+
+					switch(scale){
+						case 1:
+							image.source = ImageContainer.SOL_VILLE_1;
+							break;
+						case 0.5:
+							image.source = ImageContainer.SOL_VILLE_05;
+							break;
+						case 0.25:
+							image.source = ImageContainer.SOL_VILLE_025;
+							break;
+					}
+
 					break;
 			}
 			
 			
 			image.x = Utils.getXPixel(_cell.x);
 			image.y = Utils.getYPixel(_cell.y);
-			image.scaleX = scale;
-			image.scaleY = scale;
 			
 			// decalage des tuiles ville de 22 vers le haut
 			if(placeCity){
@@ -310,7 +311,7 @@ package com.uralys.tribes.core
 					
 					break;
 				}
-			}			
+			}
 			
 			cell.pawn.x = (Utils.getXPixel(cell.x) + 15*scale);
 			cell.pawn.y = (Utils.getYPixel(cell.y) - 120*scale);

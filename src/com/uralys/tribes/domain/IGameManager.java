@@ -47,7 +47,7 @@ public interface IGameManager {
 
 	//-----------------------------------------------------------------------------------//
 	
-	public void changeName(String uralysUID, String newName);
+	public boolean changeName(String uralysUID, String newName);
 	public void changeCityName(String cityUID, String newName);
 	public void changeMusicOn(String uralysUID, boolean musicOn);
 

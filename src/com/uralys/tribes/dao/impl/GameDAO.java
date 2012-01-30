@@ -971,13 +971,30 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		}
 	}
 
-	public void changeName(String uralysUID, String newName) 
+	public boolean changeName(String uralysUID, String newName) 
 	{
-		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
-		PlayerDTO playerDTO = pm.getObjectById(PlayerDTO.class, uralysUID);
+		newName = newName.trim();
 		
-		playerDTO.setName(newName);
+		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
+		boolean existPlayer = getPlayerByName(newName, pm) != null;
+		
+		if(!existPlayer){
+			PlayerDTO playerDTO = pm.getObjectById(PlayerDTO.class, uralysUID);
+			playerDTO.setName(newName);
+		}
+		
 		pm.close();
+		
+		return !existPlayer;
+	}
+
+	private PlayerDTO getPlayerByName(String playerName, PersistenceManager pm)  
+	{
+		Query q = pm.newQuery("select from " + PlayerDTO.class.getName() + " where name == :playerName");
+		q.setUnique(true);
+		
+		PlayerDTO player = (PlayerDTO) q.execute(playerName);
+		return player;
 	}
 	
 	public void changeCityName(String cityUID, String newName) 

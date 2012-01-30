@@ -423,8 +423,8 @@ public class GameManager implements IGameManager {
 
 	//==================================================================================================//
 
-	public void changeName(String uralysUID, String newName) {
-		gameDao.changeName(uralysUID, newName);
+	public boolean changeName(String uralysUID, String newName) {
+		return gameDao.changeName(uralysUID, newName);
 	}
 	
 	public void changeCityName(String cityUID, String newName) {

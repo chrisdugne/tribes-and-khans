@@ -86,26 +86,17 @@ package com.uralys.tribes.managers {
 			trace("------------");
 			Session.WAIT_FOR_SERVER = false;
 			
-			refreshCitiesInSession(player.cities);
-			
 			calculateSteps(player);
 			
 			if(Session.player.playerUID == player.playerUID){
 				Session.player = player;
 				refreshUnits();
 			}
-			
-		}
-		
-		private function refreshCitiesInSession(cities:ArrayCollection):void
-		{
-			for each(var cityInSession:City in Session.allCitiesInSession)
-			{
-				for each(var cityInSession:City in Session.allCitiesInSession)
-				{
-					
-				}
+			else{
+				// a optimiser peut etre, pour l'instant gros refresh
+				refreshPlayerOnServerSide(Session.player);
 			}
+			
 		}
 		
 		//============================================================================================//
@@ -810,14 +801,35 @@ package com.uralys.tribes.managers {
 			gameWrapper.deleteUnits(Session.player.uralysUID, unitUIDs);
 		}
 
-		public function changeName():void{
-			var gameWrapper:RemoteObject = getGameWrapper();
-			gameWrapper.changeName(Session.player.uralysUID, Session.player.name);			
-		}
-
 		public function changeCityName(newName:String):void{
 			var gameWrapper:RemoteObject = getGameWrapper();
 			gameWrapper.changeCityName(Session.board.selectedCity.cityUID, newName);			
+		}
+
+		private var nameChosen:String;
+		public function changeName(name:String):void
+		{
+			nameChosen = name;
+			
+			var gameWrapper:RemoteObject = getGameWrapper();
+			gameWrapper.changeName.addEventListener("result", nameChanged);
+			gameWrapper.changeName(Session.player.uralysUID, nameChosen);			
+		}
+		
+		private function nameChanged(event:ResultEvent):void
+		{
+			var nameHasBeenChanged:Boolean = event.result;
+			trace(nameHasBeenChanged);
+			
+			// nom deja pris
+			if(!nameHasBeenChanged)
+			{
+				FlexGlobals.topLevelApplication.message(Translations.NAME_EXISTS.getItemAt(Session.LANGUAGE));
+			}
+			else{
+				Session.board.hideChangeName.play();
+				Session.player.name = nameChosen;
+			}
 		}
 		
 		//--------------------------------------------------------------------------------//

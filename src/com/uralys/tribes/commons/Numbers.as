@@ -56,9 +56,21 @@ package com.uralys.tribes.commons
 		
 		    exemple avec pop 1000 - workers : 200 ble 200 fer 600 bois 
 			step 
-			ble : wheatSpent  : 10
-			      wheatEarned : workers/20;
+			ble : wheatSpent  : 1000/100 = 10
+			      wheatEarned : workers/20 = 200/20 = 10
 		
+		
+		conso ble 1/100h/5min
+		crea ble  5/100h/5min
+		bois 	  3/100h/5min
+		fer 	  2/100h/5min
+		
+		contree = 1or /10min
+		
+		1 ble achat : 2 = 20min avec 1 contree = 5min avec 4 contrees 		 ====> 1h = 4 contrees
+		1 bois achat : 3.33 = 33min avec 1 contree = 5min avec 6.5 contrees  ====> 1h = 6.5 contrees
+		1 fer achat : 5 = 50min avec 1 contree = 5min avec 10 contrees 		 ====> 1h = 10 contrees
+
 		*/
 		
 		[Bindable] public static var FEED_COEFF:Number = 1/100;
@@ -73,12 +85,13 @@ package com.uralys.tribes.commons
 		[Bindable] public static var SWORD_PRICE_BUY:Number = 30;
 		[Bindable] public static var ARMOR_PRICE_BUY:Number = 50;
 	
-		[Bindable] public static var WHEAT_PRICE_SELL:Number = 1.8;
-		[Bindable] public static var WOOD_PRICE_SELL:Number = 3;
-		[Bindable] public static var IRON_PRICE_SELL:Number = 4.5;
-		[Bindable] public static var BOW_PRICE_SELL:Number = 18;
-		[Bindable] public static var SWORD_PRICE_SELL:Number = 27;
-		[Bindable] public static var ARMOR_PRICE_SELL:Number = 45;
+		// 80%
+		[Bindable] public static var WHEAT_PRICE_SELL:Number = 1.6;
+		[Bindable] public static var WOOD_PRICE_SELL:Number = 2.7;
+		[Bindable] public static var IRON_PRICE_SELL:Number = 4.3;
+		[Bindable] public static var BOW_PRICE_SELL:Number = 16;
+		[Bindable] public static var SWORD_PRICE_SELL:Number = 23;
+		[Bindable] public static var ARMOR_PRICE_SELL:Number = 40;
 		
 		[Bindable] public static var CITY_MERCHANT_BASE:Number = 500;
 		[Bindable] public static var CITY_WHEAT_BASE_PRICE:Number = 1000;

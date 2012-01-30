@@ -200,10 +200,10 @@
 		
 		
 		<s:Move id="hideChangeName" target="{changeNameWindow}" xTo="-375"/>
-		<s:Move id="showChangeName" target="{changeNameWindow}" xTo="0"/>
+		<s:Move id="showChangeName" target="{changeNameWindow}" xTo="{Session.APPLICATION_WIDTH/2 - changeNameWindow.width/2}"/>
 
 		<s:Move id="hideCityChangeName" target="{changeCityNameWindow}" xTo="-375"/>
-		<s:Move id="showCityChangeName" target="{changeCityNameWindow}" xTo="0"/>
+		<s:Move id="showCityChangeName" target="{changeCityNameWindow}" xTo="{Session.APPLICATION_WIDTH/2 - changeCityNameWindow.width/2}"/>
 
 		<s:Move id="hidePlayerUnits" target="{playerUnits}" xTo="-600"/>
 		<s:Move id="showPlayerUnits" target="{playerUnits}" xTo="0"/>

@@ -54,6 +54,12 @@ public class Translations{
 									"How to play",
 									"How to play"]);
 
+	[Bindable]
+	public static var NAME_EXISTS:ArrayCollection = new ArrayCollection(
+									["Nom déjà existant",
+									"Name exists",
+									"Name exists"]);
+
 
 	[Bindable]
 	public static var OPEN_TAB:ArrayCollection = new ArrayCollection(

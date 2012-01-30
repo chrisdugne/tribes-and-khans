@@ -30,9 +30,7 @@
 				{
 					if(type == 1) // change player name
 					{
-						Session.player.name = nameInput.text;
-						Session.board.hideChangeName.play();
-						GameManager.getInstance().changeName();
+						GameManager.getInstance().changeName(nameInput.text);
 					}	
 					else if(type == 2) // change city name
 					{

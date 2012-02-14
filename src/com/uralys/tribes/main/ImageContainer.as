@@ -101,6 +101,14 @@ public final class ImageContainer
 
 	//   ======================================================================//
 
+	[Embed(source="resources/embed/pions.open.png")]
+	[Bindable] public static var PIONS_OPEN:Class;  
+
+	[Embed(source="resources/embed/pions.close.png")]
+	[Bindable] public static var PIONS_CLOSE:Class;  
+
+	//   ======================================================================//
+
 	[Embed(source="resources/embed/icons/epee.png")]
 	[Bindable] public static var SWORD:Class;
 
@@ -154,6 +162,23 @@ public final class ImageContainer
 
 	//   ======================================================================//
 	
+	[Embed(source="resources/embed/persos/fermier.png")]
+	[Bindable] public static var FERMIER:Class;
+
+	[Embed(source="resources/embed/persos/forgeron.png")]
+	[Bindable] public static var FORGERON:Class;
+
+	[Embed(source="resources/embed/persos/marchand.png")]
+	[Bindable] public static var MARCHAND:Class;
+
+	[Embed(source="resources/embed/persos/marchande.png")]
+	[Bindable] public static var MARCHANDE:Class;
+
+	[Embed(source="resources/embed/persos/guerrier.png")]
+	[Bindable] public static var GUERRIER:Class;
+	
+	//   ======================================================================//
+
 	[Embed(source="resources/embed/question-mark.png")]
 	[Bindable] public static var GREEN_QUESTION:Class;
 
@@ -177,11 +202,6 @@ public final class ImageContainer
 	[Bindable] public static var HIGHLIGHT_VERT:Bitmap;
 	[Bindable] public static var HIGHLIGHT_ROUGE:Bitmap;
 	[Bindable] public static var GROUPE_PERSO:Bitmap;
-	[Bindable] public static var FERMIER:Bitmap;
-	[Bindable] public static var FORGERON:Bitmap;
-	[Bindable] public static var MARCHAND:Bitmap;
-	[Bindable] public static var MARCHANDE:Bitmap;
-	[Bindable] public static var GUERRIER:Bitmap;
 	[Bindable] public static var MINI_LOGO:Bitmap;
 	[Bindable] public static var MAP_BORDER_TOP:Bitmap;
 	[Bindable] public static var MAP_BORDER_BOTTOM:Bitmap;
@@ -233,11 +253,6 @@ public final class ImageContainer
 		 "webresources/images/map/highlight_vert.png",
 		 "webresources/images/map/highlight_rouge.png",
 		 "webresources/images/persos/personnages.png",
-		 "webresources/images/persos/fermier.png",
-		 "webresources/images/persos/marchand.png",
-		 "webresources/images/persos/marchande.png",
-		 "webresources/images/persos/guerrier.png",
-		 "webresources/images/persos/forgeron.png",
 		 "webresources/images/minilogo.png",
 		 "webresources/images/persos/merchant_player.png",
 		 "webresources/images/persos/marchand_bleu.png",
@@ -309,67 +324,52 @@ public final class ImageContainer
 				GROUPE_PERSO = event.currentTarget.content;
 				break;
 			case 12:
-				FERMIER = event.currentTarget.content;
-				break;
-			case 13:
-				MARCHAND = event.currentTarget.content;
-				break;
-			case 14:
-				MARCHANDE = event.currentTarget.content;
-				break;
-			case 15:
-				GUERRIER = event.currentTarget.content;
-				break;
-			case 16:
-				FORGERON = event.currentTarget.content;
-				break;
-			case 17:
 				MINI_LOGO = event.currentTarget.content;
 				break;
-			case 18:
+			case 13:
 				MERCHANT_PLAYER = event.currentTarget.content;
 				break;
-			case 19:
+			case 14:
 				MERCHANT_ALLY = event.currentTarget.content;
 				break;
-			case 20:
+			case 15:
 				MERCHANT_ENNEMY = event.currentTarget.content;
 				break;
-			case 21:
+			case 16:
 				ARMY_PLAYER = event.currentTarget.content;
 				break;
-			case 22:
+			case 17:
 				ARMY_ALLY = event.currentTarget.content;
 				break;
-			case 23:
+			case 18:
 				ARMY_ENNEMY = event.currentTarget.content;
 				break;
-			case 24:
+			case 19:
 				EDIT = event.currentTarget.content;
 				break;
-			case 25:
+			case 20:
 				VILLE = event.currentTarget.content;
 				break;
-			case 26:
+			case 21:
 				UH = event.currentTarget.content;
 				break;
-			case 27:
+			case 22:
 				EDIT_WHITE = event.currentTarget.content;
 				break;
-			case 28:
+			case 23:
 				LEFT_ARROW = event.currentTarget.content;
 				break;
-			case 29:
+			case 24:
 				RIGHT_ARROW = event.currentTarget.content;
 				break;
-			case 30:
+			case 25:
 				HIGHLIGHT_BOW_SHOOT = event.currentTarget.content;
 				break;
 		}
 		
 		currentImage++;
 		
-		if(currentImage < 31)
+		if(currentImage < 26)
 			loadNextImage();
 		else
 			IMAGES_LOADED = true;

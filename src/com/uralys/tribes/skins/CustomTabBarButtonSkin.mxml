@@ -105,17 +105,17 @@
     <s:Rect id="fill" left="1" right="1" top="1" bottom="1" radiusX="2">
         <s:fill>
             <s:LinearGradient rotation="90">
-                <s:GradientEntry color="0x54391D" 
-                               color.selectedUpStates="0x81492F"
-                               color.overStates="0x71492F" 
-                               color.downStates="0x61492F" 
+                <s:GradientEntry color="0x572a2c" 
+                               color.selectedUpStates="0x5f9173"
+                               color.overStates="0x6c4442" 
+                               color.downStates="0x799b82" 
                                alpha="0.85" 
                                alpha.overAndSelected="1" />
-                <s:GradientEntry color="0x58391D" 
-                               color.selectedUpStates="0x81492F"
-                               color.over="0x61492F" 
-                               color.overAndSelected="0x91492F"
-                               color.downStates="0x61492F" 
+                <s:GradientEntry color="0x754f4b" 
+                               color.selectedUpStates="0x405841"
+                               color.over="0x799b82" 
+                               color.overAndSelected="0x799b82"
+                               color.downStates="0x7d5751" 
                                alpha="0.85"
                                alpha.overAndSelected="1" />
             </s:LinearGradient>

@@ -5,7 +5,7 @@
 				autoDrawBackground="false"
 				useHandCursor="true"
 				buttonMode="true"
-				width="200"
+				width="240"
 				click="onClick(event)">
 	
 	<s:states>
@@ -36,13 +36,16 @@
 	
 	<s:Label id="labelCell" 
 			 color="#ffffff" 
-			 left="5" 
+			 left="2" 
 			 text="[ {(data as City).x} , {(data as City).y} ]"
 			 />
 
 	<s:Label id="cityNameLabel" 
 			 color="#ffffff" 
-			 right="5" 
+			 right="2"
+			 width="120"
+			 showTruncationTip="true"
+			 maxDisplayedLines="1"
 			 text="{(data as City).name}"
 			 />
 	

@@ -111,13 +111,13 @@
     <s:Rect id="fill" left="1" right="1" top="1" bottom="1" radiusX="2">
         <s:fill>
             <s:LinearGradient rotation="90">
-                <s:GradientEntry color="0x54391D" 
-                                 color.over="0x61492F" 
-                                 color.down="0x61492F" 
+                <s:GradientEntry color="0x572a2c" 
+                                 color.over="0x6c4442" 
+                                 color.down="0x799b82" 
                                  alpha="0.85" />
-                <s:GradientEntry color="0x58391D" 
-                                 color.over="0x61492F" 
-                                 color.down="0x61492F" 
+                <s:GradientEntry color="0x754f4b" 
+                                 color.over="0x799b82" 
+                                 color.down="0x7d5751" 
                                  alpha="0.85" />
             </s:LinearGradient>
         </s:fill>

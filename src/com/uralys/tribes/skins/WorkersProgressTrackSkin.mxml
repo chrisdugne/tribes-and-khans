@@ -57,7 +57,7 @@ in accordance with the terms of the license agreement accompanying it.
 	<!-- layer 3: fill --> 
 	<s:Rect left="2" right="2" top="2" bottom="2" >
 		<s:fill>
-			<s:SolidColor color="0x880011" alpha="0.8" />
+			<s:SolidColor color="0x913c3e" alpha="0.8" />
 		</s:fill>
 	</s:Rect>
 	

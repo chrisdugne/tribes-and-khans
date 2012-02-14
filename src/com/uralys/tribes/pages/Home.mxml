@@ -35,13 +35,10 @@
 		<s:Image source="{ImageContainer.BORDERS}"/> 
 	</s:HGroup>
 
-	<!--
-	<s:Image source="{ImageContainer.LOGO}"
-			 id="logoImage"
-			 y="{centerGroup.y + centerGroup.height - 280}"
-			 click="{FlexGlobals.topLevelApplication.header.openLoginWindow()}"
-			 horizontalCenter="0"/>
-	-->
+	<s:Image source="{ImageContainer.MARCHANDE}"
+			 id="marchandeImage"
+			 horizontalCenter="300"
+			 verticalCenter="-40"/>
 
 	<s:Image source="{ImageContainer.LOGO}"
 			 id="logoImage"

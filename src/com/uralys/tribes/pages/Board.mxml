@@ -205,7 +205,7 @@
 		<s:Move id="hideCityChangeName" target="{changeCityNameWindow}" xTo="-375"/>
 		<s:Move id="showCityChangeName" target="{changeCityNameWindow}" xTo="{Session.APPLICATION_WIDTH/2 - changeCityNameWindow.width/2}"/>
 
-		<s:Move id="hidePlayerUnits" target="{playerUnits}" xTo="-600"/>
+		<s:Move id="hidePlayerUnits" target="{playerUnits}" xTo="-250"/>
 		<s:Move id="showPlayerUnits" target="{playerUnits}" xTo="0"/>
 		
 	</fx:Declarations>
@@ -297,26 +297,18 @@
 		</s:Group>
 	</s:Group>
 	
-	<!-- =============================================================================================== -->
-	
-	<s:Image source="{ImageContainer.ARROW_RIGHT}" 
-			 id="openPlayerUnitsButton" 
-			 alpha="0.6"
-			 click="{showPlayerUnits.play()}"
-			 left="0"
-			 top="300"/>
-	
 	<!-- ====================================================================================== -->
 	
-	<windows:PlayerUnits id="playerUnits" x="-600" y="{Session.HEADER_HEIGHT}"/>
-	<windows:CityGroup id="cityGroup" x="2500" y="{Session.HEADER_HEIGHT}"
-					   width="{Session.APPLICATION_WIDTH}"
-					   height="{Session.APPLICATION_HEIGHT - Session.HEADER_HEIGHT - Session.FOOTER_HEIGHT}"
-					   selectedCity="@{selectedCity}"/>
+	<windows:PlayerUnits id="playerUnits" x="0" y="{Session.HEADER_HEIGHT}"/>
 
 	<windows:LeftBoardPanel
 				id="leftPanel"
 				bottom="{Session.FOOTER_HEIGHT}"/>
+
+	<windows:CityGroup id="cityGroup" x="2500" y="{Session.HEADER_HEIGHT}"
+					   width="{Session.APPLICATION_WIDTH}"
+					   height="{Session.APPLICATION_HEIGHT - Session.HEADER_HEIGHT - Session.FOOTER_HEIGHT}"
+					   selectedCity="@{selectedCity}"/>
 
 	<windows:RightBoardPanel
 				id="rightPanel"

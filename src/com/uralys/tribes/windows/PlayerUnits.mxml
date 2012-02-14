@@ -4,8 +4,7 @@
 							  xmlns:mx="library://ns.adobe.com/flex/mx"
 							  xmlns:windows="com.uralys.tribes.windows.*"
 							  xmlns:components="com.uralys.tribes.components.*"
-							  skinClass="com.uralys.tribes.skins.WindowSkin"
-							  close="{closeWindow()}"
+							  skinClass="com.uralys.tribes.skins.NotClosableWindowSkin"
 							  width="250"
 							  height="{Session.APPLICATION_HEIGHT - Session.FOOTER_HEIGHT - Session.HEADER_HEIGHT - Session.board.leftPanel.height}"
 							  cornerRadius="10">
@@ -13,18 +12,7 @@
 	<fx:Script>
 		<![CDATA[
 			import com.uralys.tribes.commons.Session;
-			import com.uralys.tribes.commons.Translations;
 			import com.uralys.tribes.main.ImageContainer;
-			import com.uralys.tribes.skins.CustomButtonSkin;
-			
-			import mx.managers.PopUpManager;
-			
-			//-----------------------------------------------------------------//
-			
-			public function closeWindow():void{
-				Session.board.hidePlayerUnits.play()
-			}
-			
 		]]>
 	</fx:Script>
 
@@ -34,4 +22,11 @@
 			  paddingLeft="10">
 		<components:PlayerUnitsAndCities/>
 	</s:VGroup>
+	
+	<s:Image source="{x == 0 ? ImageContainer.PIONS_CLOSE : ImageContainer.PIONS_OPEN}" 
+			 id="openPlayerUnitsButton" 
+			 alpha="0.6"
+			 click="{x == 0 ? Session.board.hidePlayerUnits.play() : Session.board.showPlayerUnits.play()}"
+			 top="0"
+			 right="-60"/>
 </windows:ResizableTitleWindow>

@@ -33,7 +33,8 @@
 					  visible="{Session.CURRENT_CELL_SELECTED.army != null}"
 					  enabled="{Session.CURRENT_CELL_SELECTED.army.moves.length == 1}"/>
 			
-			<s:Image source="{ImageContainer.ARMY_PLAYER}"/>
+			<s:Image source="{ImageContainer.ARMY_PLAYER}"
+					 visible="{Session.CURRENT_CELL_SELECTED.army != null}"/>
 		</s:VGroup>
 		<components:UnitCreationGroup id="armyCreationGroup"
 									  unit="@{Session.CURRENT_CELL_SELECTED.army}"

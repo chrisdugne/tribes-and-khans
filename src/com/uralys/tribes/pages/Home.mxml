@@ -35,10 +35,10 @@
 		<s:Image source="{ImageContainer.BORDERS}"/> 
 	</s:HGroup>
 
-	<s:Image source="{ImageContainer.MARCHANDE}"
+	<s:Image source="{ImageContainer.MARCHAND}"
 			 id="marchandeImage"
 			 horizontalCenter="300"
-			 verticalCenter="-40"/>
+			 verticalCenter="0"/>
 
 	<s:Image source="{ImageContainer.LOGO}"
 			 id="logoImage"

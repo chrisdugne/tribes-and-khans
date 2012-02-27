@@ -210,6 +210,7 @@
 		]]>
 	</fx:Script>
 	
+	
 	<s:HGroup width="100%" height="100%" horizontalAlign="center">
 		<s:TabBar id="tabsMarket" dataProvider="{viewstackMarket}"
 				  skinClass="com.uralys.tribes.skins.CustomTabBarSkin"/>

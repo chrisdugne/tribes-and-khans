@@ -40,15 +40,22 @@
 					bowBuildingRenderer.refresh();
 					swordBuildingRenderer.refresh();
 					armorBuildingRenderer.refresh();
-					
 				}
 			}
 		]]>
 	</fx:Script>
 	
+	<s:Rect width="100%" height="340" radiusX="7" radiusY="7">
+		<s:fill>
+			<s:SolidColor alpha="0.3" color="#000000"/>
+		</s:fill>
+	</s:Rect>
+	
 	<s:Scroller height="{Session.APPLICATION_HEIGHT/2}" width="100%" 
 				maxWidth="{Session.APPLICATION_WIDTH - 380}"><!-- 480 = 230 + 250 = width left et right panel-->
-		<s:VGroup width="100%" height="100%" horizontalAlign="center">
+		<s:VGroup width="100%" height="100%" horizontalAlign="center"
+				  paddingLeft="10"
+				  paddingRight="10">
 			
 			<s:Spacer height="15"/>
 			<renderers:BuildingRenderer stockBuilders="@{city.wheatStockBuilders}"

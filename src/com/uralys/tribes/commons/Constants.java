@@ -8,7 +8,8 @@ public class Constants {
 	public final static long SERVER_STEP = 10;
 
 	// temps en minutes requis de presence sur une case pour recuperer une contree
-	public final static long LAND_TIME = 60;
+	//public final static long LAND_TIME = 60;
+	public final static long LAND_TIME = 1;
 
 	// distance utilisée pour le placement des joueurs
 	public static final int PLAYER_DISTANCE = 10;

@@ -751,7 +751,8 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 
 	
 	@SuppressWarnings("unchecked")
-	public void deleteUnits(String uralysUID, List<String> toDeleteUnitUIDs){
+	public void deleteUnits(String uralysUID, List<String> toDeleteUnitUIDs)
+	{
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		PlayerDTO playerDTO = pm.getObjectById(PlayerDTO.class, uralysUID);
 
@@ -774,9 +775,22 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 				Query query = pm.newQuery("select from " + MoveDTO.class.getName() + " where :uids.contains(key)");
 				List<MoveDTO> moves = (List<MoveDTO>) query.execute(unitDTO.getMoveUIDs());
 				
-				for(MoveDTO moveDTO : moves){
-					deleteMove(moveDTO.getMoveUID());
+				String lastCellUID = null;
+				for(MoveDTO moveDTO : moves)
+				{
+					lastCellUID = moveDTO.getCellUID();
+					deleteMove(moveDTO.getMoveUID());			
 				}
+				
+				if(lastCellUID != null)
+				{
+					// normalement toutes les unites ont au moin 1 move donc on passe toujours ici
+					if(debug)Utils.print("on supprime le challenger sur la derniere case");
+					CellDTO cell =  pm.getObjectById(CellDTO.class, lastCellUID);
+					cell.setChallengerUID(null);
+					cell.setTimeFromChallenging(-1);
+				}
+				
 			}
 			
 			pm.deletePersistent(unitDTO);
@@ -800,9 +814,22 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 			Query query = pm.newQuery("select from " + MoveDTO.class.getName() + " where :uids.contains(key)");
 			List<MoveDTO> moves = (List<MoveDTO>) query.execute(unitDTO.getMoveUIDs());
 			
-			for(MoveDTO moveDTO : moves){
-				deleteMove(moveDTO.getMoveUID());
+			String lastCellUID = null;
+			for(MoveDTO moveDTO : moves)
+			{
+				lastCellUID = moveDTO.getCellUID();
+				deleteMove(moveDTO.getMoveUID());			
 			}
+			
+			if(lastCellUID != null)
+			{
+				// normalement toutes les unites ont au moin 1 move donc on passe toujours ici
+				if(debug)Utils.print("on supprime le challenger sur la derniere case");
+				CellDTO cell =  pm.getObjectById(CellDTO.class, lastCellUID);
+				cell.setChallengerUID(null);
+				cell.setTimeFromChallenging(-1);
+			}
+			
 		}
 		
 		pm.deletePersistent(unitDTO);
@@ -941,9 +968,23 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		UnitDTO unitDTO = pm.getObjectById(UnitDTO.class, unitUID);
 		
-		for(MoveDTO moveDTO : unitDTO.getMoves()){
-			deleteMove(moveDTO.getMoveUID());
+		String lastCellUID = null;
+		for(MoveDTO moveDTO : unitDTO.getMoves())
+		{
+			lastCellUID = moveDTO.getCellUID();
+			deleteMove(moveDTO.getMoveUID());			
 		}
+		
+		if(lastCellUID != null)
+		{
+			// normalement toutes les unites ont au moin 1 move donc on passe toujours ici
+			if(debug)Utils.print("on supprime le challenger sur la derniere case");
+			CellDTO cell =  pm.getObjectById(CellDTO.class, lastCellUID);
+			cell.setChallengerUID(null);
+			cell.setTimeFromChallenging(-1);
+		}
+		
+		pm.close();
 	}
 
 		

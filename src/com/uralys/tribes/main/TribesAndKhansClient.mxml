@@ -18,6 +18,7 @@
 	<fx:Script>
 		<![CDATA[ 
 			import com.uralys.tribes.commons.Names;
+			import com.uralys.tribes.commons.Numbers;
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;
 			import com.uralys.tribes.core.MusicPlayer;
@@ -46,6 +47,8 @@
 				addEventListener(Event.RESIZE, resizeHandler); 
 				
 				Session.isLocal = url == "http://localhost:8888/webresources/flex.debug/TribesAndKhansClient.swf";
+				trace("islocal : " + Session.isLocal);
+				trace("--->  " + Numbers.BASE_TIME_PER_MOVE_MILLIS);
 				
 				Session.APPLICATION_WIDTH = FlexGlobals.topLevelApplication.width;
 				Session.APPLICATION_HEIGHT = FlexGlobals.topLevelApplication.height;

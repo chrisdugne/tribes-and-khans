@@ -39,6 +39,5 @@
 		<components:CityForm 
 			id="cityForm"
 			city="@{selectedCity}"/>
-		<s:Spacer height="55"/>
 	</s:VGroup>
 </s:Group>

@@ -1174,7 +1174,9 @@ package com.uralys.tribes.managers {
 			}
 			
 			// si Session.CURRENT_CELL_SELECTED n'avait pas pu etre selectionné avant loadCells, on le peut ici.
-			Session.CURRENT_CELL_SELECTED = Session.map[Session.CENTER_X][Session.CENTER_Y];
+			// sauf si on est dans une ville ! le refresh est inutile et meme problematique
+			if(!Session.INSIDE_A_CITY)
+				Session.CURRENT_CELL_SELECTED = Session.map[Session.CENTER_X][Session.CENTER_Y];
 			
 			//------------------------------------------------//
 			

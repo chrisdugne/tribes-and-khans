@@ -3,7 +3,9 @@
 				xmlns:s="library://ns.adobe.com/flex/spark" 
 				xmlns:mx="library://ns.adobe.com/flex/mx"
 				xmlns:components="com.uralys.tribes.components.*"
-				label="{Translations.MERCHANTS.getItemAt(Session.LANGUAGE)}"> 
+				label="{Translations.MERCHANTS.getItemAt(Session.LANGUAGE)
+				+ (Session.CURRENT_CELL_SELECTED.caravan != null
+				? ' ('+ Session.CURRENT_CELL_SELECTED.caravan.size +')' : '')}"> 
 	<fx:Script>
 		<![CDATA[
 			import com.uralys.tribes.commons.Numbers;

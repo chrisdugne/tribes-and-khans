@@ -232,6 +232,7 @@ package com.uralys.tribes.core
 			
 			for each(var newMove:Move in movesPending)
 			{
+				trace("--->  " + Numbers.BASE_TIME_PER_MOVE_MILLIS);
 				var timeFrom:Number = previousMove.timeFrom + Numbers.BASE_TIME_PER_MOVE_MILLIS * Numbers.BASE_SPEED/unit.speed;
 				
 				newMove.timeFrom = timeFrom;

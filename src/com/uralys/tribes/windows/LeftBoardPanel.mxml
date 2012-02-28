@@ -34,18 +34,18 @@
 			  paddingTop="5">
 
 		<s:HGroup width="100%" horizontalAlign="right" paddingRight="10">
-			<s:Image source="{ImageContainer.ZOOM_IN}"
-					 id="zoomInButton"
-					 visible="{!Session.MOVE_A_UNIT &amp;&amp; !Session.WAIT_FOR_SERVER}"
-					 click="{BoardDrawer.getInstance().zoom()}"/>
-			<s:HSlider value="{BoardDrawer.getInstance().scale}"
-					   minimum="0.25"
-					   maximum="1"
-					   enabled="false"/>
 			<s:Image source="{ImageContainer.ZOOM_OUT}"
 					 id="zoomOutButton"
 					 visible="{!Session.MOVE_A_UNIT &amp;&amp; !Session.WAIT_FOR_SERVER}"
 					 click="BoardDrawer.getInstance().unzoom()"/>
+			<s:HSlider value="{BoardDrawer.getInstance().scale*100}"
+					   minimum="25"
+					   maximum="100"
+					   enabled="false"/>
+			<s:Image source="{ImageContainer.ZOOM_IN}"
+					 id="zoomInButton"
+					 visible="{!Session.MOVE_A_UNIT &amp;&amp; !Session.WAIT_FOR_SERVER}"
+					 click="{BoardDrawer.getInstance().zoom()}"/>
 			<s:Image source="{ImageContainer.REFRESH}"
 					 id="refreshButton"
 					 visible="{!Session.MOVE_A_UNIT &amp;&amp; !Session.WAIT_FOR_SERVER}"

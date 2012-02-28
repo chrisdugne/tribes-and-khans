@@ -17,18 +17,21 @@ package com.uralys.tribes.commons
 	
 		// temps de deplacement de base (pour une vitesse de base de 3 cases par heure)
 		[Bindable]
-		//public static var BASE_TIME_PER_MOVE_MILLIS:int = Session.isLocal ? 1000*3 : 20*60*1000;
-		public static var BASE_TIME_PER_MOVE_MILLIS:int = 20*60*1000;
+		//public static var BASE_TIME_PER_MOVE_MILLIS:int = 20*60*1000;
+		public static var BASE_TIME_PER_MOVE_MILLIS:int = 1000*5;
+
 		[Bindable]
-		//public static var BASE_TIME_FOR_LAND_CONQUEST_MILLIS:int = Session.isLocal ? 2*1000 : 60*60*1000;
-		public static var BASE_TIME_FOR_LAND_CONQUEST_MILLIS:int = 60*60*1000;
+		//public static var BASE_TIME_FOR_LAND_CONQUEST_MILLIS:int = 60*60*1000;
+		public static var BASE_TIME_FOR_LAND_CONQUEST_MILLIS:int = 60*1000;
 
 		// tir accessible toutes les 10 minutes
-		public static var BASE_TIME_FOR_SHOOTING:int = 10*60*1000;
+		//public static var BASE_TIME_FOR_SHOOTING:int = 10*60*1000;
+		public static var BASE_TIME_FOR_SHOOTING:int = 20*1000;
 	
 		// une ville se construit en 12h
 		[Bindable]
-		public static var TIME_TO_BUILD_A_CITY:int = 12*60*60*1000;
+		//public static var TIME_TO_BUILD_A_CITY:int = 12*60*60*1000;
+		public static var TIME_TO_BUILD_A_CITY:int = 20*1000;
 	
 		// Main data  ==============================================================
 		// Colors			[Bindable] public static var CLASSIC_COLOR:Number = 0x9C9C9C;

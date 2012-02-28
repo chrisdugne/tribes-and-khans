@@ -219,7 +219,7 @@
 			  horizontalAlign="center">
 		
 		<s:Label text="{stock}/{stockCapacity}" styleName="numberLabel"/>
-		<s:Image toolTip="{Translations.SWORD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.SWORD}"/>
+		<s:Image toolTip="{imageToolTip}" source="{image}"/>
 		<s:Image source="{ImageContainer.UPGRADE_ARROW}"/>
 		<s:Label text="{stock + potentialSmiths * item.peopleRequired}/{stockCapacity}"
 				 color="{Numbers.GREEN}" width="150"/>

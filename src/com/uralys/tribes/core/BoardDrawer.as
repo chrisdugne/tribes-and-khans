@@ -117,9 +117,9 @@ package com.uralys.tribes.core
 				{
 					var _cell:Cell = Session.map[Session.firstCellX+i][Session.firstCellY+j];
 					
-					
 					drawNorthFrontiers(_cell); 
 					drawCell(_cell); 
+					drawLands(_cell); 
 					
 					// draw cell content
 					if(_cell.cellUID.indexOf("cell_") != -1)
@@ -130,69 +130,9 @@ package com.uralys.tribes.core
 				}
 			}
 
-			
-//			for(var j:int=0; j < Session.nbTilesByEdge; j++)
-//			{
-//				for(var i:int=0; i < Session.nbTilesByEdge; i++)
-//				{
-//					var _cell:Cell = Session.map[Session.firstCellX+i][Session.firstCellY+j];
-//					
-//					if(_cell.type == 1)
-//						drawCity(_cell.city);
-//				}
-//
-//				// draw forests grounds
-//				for(var i:int=0; i < Session.nbTilesByEdge; i++)
-//				{
-//					var _cell:Cell = Session.map[Session.firstCellX+i][Session.firstCellY+j];
-//					
-//					if(_cell.type == 0){
-//						drawCell(_cell);
-//					}
-//				}
-//				
-//			}
-			
-//			
-//			for(var j:int=0; j < Session.nbTilesByEdge; j++)
-//			{
-//				// draw units
-//				for(var i:int=0; i < Session.nbTilesByEdge; i++)
-//				{
-//					var _cell:Cell = Session.map[Session.firstCellX+i][Session.firstCellY+j];
-//					
-//					if(_cell.cellUID.indexOf("cell_") == -1)
-//						continue;
-//					
-//					refreshCellDisplay(_cell);
-//				}
-//			}
-//			
-//			redrawAllLands();
 			Session.WAIT_FOR_SERVER = false;
 		}
 		
-//		public function redrawAllLands():void
-//		{
-//			Session.board.mapLayer.removeAllElements();
-//				
-//			for(var j:int=0; j < Session.nbTilesByEdge; j++)
-//			{
-//				// draw lands
-//				for(var i:int=0; i < Session.nbTilesByEdge; i++)
-//				{
-//					var _cell:Cell = Session.map[Session.firstCellX+i][Session.firstCellY+j];
-//					
-//					if(_cell.cellUID.indexOf("cell_") == -1)
-//						continue;
-//					
-//					
-//					drawLandAndBounds(_cell);
-//				}
-//			}
-//		}
-
-			
 		private function drawCell(_cell:Cell):void
 		{
 			var image:Image = new Image();
@@ -253,7 +193,6 @@ package com.uralys.tribes.core
 		
 		public function resetCellDisplay(cell:Cell):void{
 			try{
-				trace("resetCellDisplay");
 				cell.pawn.removeElementAt(1);				
 				Session.board.pawnLayer.removeElement(cell.pawn);
 			}
@@ -263,11 +202,7 @@ package com.uralys.tribes.core
 		
 		public function refreshCellDisplay(cell:Cell):void
 		{
-			trace("---");
-			trace("boardDrawer refreshCellDisplay ===> " + cell.cellUID);
-
 			if(cell.visibleUnit == null){
-				trace("-- no unit - no pawn --");
 				return; // no unit
 			}
 			
@@ -320,7 +255,6 @@ package com.uralys.tribes.core
 			imageUnit.scaleY = scale;
 			imageUnit.mouseEnabled = false;
 			
-			trace("adding pawn on the board (timeTo : "+cell.pawn.timeTo+")");
 			cell.pawn.addElement(imageUnit);
 			
 			Session.board.pawnLayer.addElement(cell.pawn);
@@ -484,7 +418,7 @@ package com.uralys.tribes.core
 		
 		//------------------------------------------------------------------------------------//
 		
-		private function drawLandAndBounds(_cell:Cell):void
+		private function drawLands(_cell:Cell):void
 		{
 			if(_cell.landOwner != null)
 			{
@@ -506,130 +440,6 @@ package com.uralys.tribes.core
 				image.scaleY = scale;
 				
 				Session.board.mapLayer.addElement(image);
-				
-				//----------------//
-				// frontier NO	
-				
-				try{
-					if(Session.map[_cell.x - 1][_cell.y - 1] != null 
-					&& (Session.map[_cell.x - 1][_cell.y - 1].landOwner == null
-					|| Session.map[_cell.x - 1][_cell.y - 1].landOwner.playerUID != _cell.landOwner.playerUID))
-					{
-						var imageNO:Image = new Image();
-						imageNO.x = Utils.getXPixel(_cell.x);
-						imageNO.y = Utils.getYPixel(_cell.y);
-						imageNO.source = ImageContainer.getImage(ImageContainer.FRONTIER_NO);
-						imageNO.scaleX = scale;
-						imageNO.scaleY = scale;
-						
-						Session.board.mapLayer.addElement(imageNO);
-					}
-				}
-				catch(e:Error){}
-				
-				
-				//----------------//
-				// frontier SO	
-				
-				try{
-					if(Session.map[_cell.x - 1][_cell.y + 1] != null
-					&& (Session.map[_cell.x - 1][_cell.y + 1].landOwner == null
-					|| Session.map[_cell.x - 1][_cell.y + 1].landOwner.playerUID != _cell.landOwner.playerUID))
-					{
-						var imageSO:Image = new Image();
-						imageSO.x = Utils.getXPixel(_cell.x);
-						imageSO.y = Utils.getYPixel(_cell.y);
-						imageSO.source = ImageContainer.getImage(ImageContainer.FRONTIER_SO);
-						imageSO.scaleX = scale;
-						imageSO.scaleY = scale;
-						
-						Session.board.mapLayer.addElement(imageSO);
-					}
-				}
-				catch(e:Error){}
-					
-				//----------------//
-				// frontier N
-				
-				try{
-					if(Session.map[_cell.x][_cell.y - 2] != null 
-					&& (Session.map[_cell.x][_cell.y - 2].landOwner == null
-					|| Session.map[_cell.x][_cell.y - 2].landOwner.playerUID != _cell.landOwner.playerUID))
-					{
-						var imageN:Image = new Image();
-						imageN.x = Utils.getXPixel(_cell.x);
-						imageN.y = Utils.getYPixel(_cell.y);
-						imageN.source = ImageContainer.getImage(ImageContainer.FRONTIER_N);
-						imageN.scaleX = scale;
-						imageN.scaleY = scale;
-						
-						Session.board.mapLayer.addElement(imageN);
-					}
-				}
-				catch(e:Error){}
-				
-				//----------------//
-				// frontier S
-				
-				try{
-					if(Session.map[_cell.x][_cell.y + 2] != null 
-					&& (Session.map[_cell.x][_cell.y + 2].landOwner == null
-					|| Session.map[_cell.x][_cell.y + 2].landOwner.playerUID != _cell.landOwner.playerUID))
-					{
-						var imageS:Image = new Image();
-						imageS.x = Utils.getXPixel(_cell.x);
-						imageS.y = Utils.getYPixel(_cell.y);
-						imageS.source = ImageContainer.getImage(ImageContainer.FRONTIER_S);
-						imageS.scaleX = scale;
-						imageS.scaleY = scale;
-						
-						Session.board.mapLayer.addElement(imageS);
-					}
-				}
-				catch(e:Error){}
-				
-				//----------------//
-				// frontier NE
-				
-				
-				try{
-					if(Session.map[_cell.x + 1][_cell.y - 1] != null 
-					&& (Session.map[_cell.x + 1][_cell.y - 1].landOwner == null
-						|| Session.map[_cell.x + 1][_cell.y - 1].landOwner.playerUID != _cell.landOwner.playerUID))
-					{
-						var imageNE:Image = new Image();
-						imageNE.x = Utils.getXPixel(_cell.x);
-						imageNE.y = Utils.getYPixel(_cell.y);
-						imageNE.source = ImageContainer.getImage(ImageContainer.FRONTIER_NE);
-						imageNE.scaleX = scale;
-						imageNE.scaleY = scale;
-						
-						Session.board.mapLayer.addElement(imageNE);
-					}
-				}
-				catch(e:Error){}
-				
-				//----------------//
-				// frontier SE
-				
-					
-				try{
-					if(Session.map[_cell.x + 1][_cell.y + 1] != null 
-					&& (Session.map[_cell.x + 1][_cell.y + 1].landOwner == null
-					|| Session.map[_cell.x + 1][_cell.y + 1].landOwner.playerUID != _cell.landOwner.playerUID))
-					{
-						var imageSE:Image = new Image();
-						imageSE.x = Utils.getXPixel(_cell.x);
-						imageSE.y = Utils.getYPixel(_cell.y);
-						imageSE.source = ImageContainer.getImage(ImageContainer.FRONTIER_SE);
-						imageSE.scaleX = scale;
-						imageSE.scaleY = scale;
-						
-						Session.board.mapLayer.addElement(imageSE);
-					}
-				}
-				catch(e:Error){}
-				
 			}
 		}
 		

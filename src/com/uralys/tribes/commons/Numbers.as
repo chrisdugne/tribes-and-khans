@@ -6,11 +6,11 @@ package com.uralys.tribes.commons
 	public class Numbers{
 
 	
-		public static var SERVER_START:Number = 1306434887434;
+		public static var SERVER_START:Number = 1326434887434;
 	
 		// step toutes les 10 minutes
 		[Bindable]
-		public static var TIME_PER_STEP:int = 10;
+		public static var TIME_PER_STEP:int = 1;
 	
 		[Bindable]
 		public static var BASE_SPEED:int = 3;

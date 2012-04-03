@@ -201,7 +201,6 @@ public final class ImageContainer
 	[Bindable] public static var HIGHLIGHT_BLANC:Bitmap;
 	[Bindable] public static var HIGHLIGHT_VERT:Bitmap;
 	[Bindable] public static var HIGHLIGHT_ROUGE:Bitmap;
-	[Bindable] public static var GROUPE_PERSO:Bitmap;
 	[Bindable] public static var MINI_LOGO:Bitmap;
 	[Bindable] public static var MAP_BORDER_TOP:Bitmap;
 	[Bindable] public static var MAP_BORDER_BOTTOM:Bitmap;
@@ -252,14 +251,13 @@ public final class ImageContainer
 		 "webresources/images/map/highlight_blanc.png",
 		 "webresources/images/map/highlight_vert.png",
 		 "webresources/images/map/highlight_rouge.png",
-		 "webresources/images/persos/personnages.png",
 		 "webresources/images/minilogo.png",
 		 "webresources/images/persos/merchant_player.png",
-		 "webresources/images/persos/marchand_bleu.png",
-		 "webresources/images/persos/marchand_rouge.png",
+		 "webresources/images/persos/merchant_ally.png",
+		 "webresources/images/persos/merchant_ennemy.png",
 		 "webresources/images/persos/army_player.png",
-		 "webresources/images/persos/guerrier_bleu.png",
-		 "webresources/images/persos/guerrier_rouge.png",
+		 "webresources/images/persos/army_ally.png",
+		 "webresources/images/persos/army_ennemy.png",
 		 "webresources/images/edit.png",
 		 "webresources/images/map/ville-moyenne.png",
 		 "webresources/images/logos/utopian-hedonism-logo.jpg",
@@ -321,55 +319,52 @@ public final class ImageContainer
 				HIGHLIGHT_ROUGE = event.currentTarget.content;
 				break;
 			case 11:
-				GROUPE_PERSO = event.currentTarget.content;
-				break;
-			case 12:
 				MINI_LOGO = event.currentTarget.content;
 				break;
-			case 13:
+			case 12:
 				MERCHANT_PLAYER = event.currentTarget.content;
 				break;
-			case 14:
+			case 13:
 				MERCHANT_ALLY = event.currentTarget.content;
 				break;
-			case 15:
+			case 14:
 				MERCHANT_ENNEMY = event.currentTarget.content;
 				break;
-			case 16:
+			case 15:
 				ARMY_PLAYER = event.currentTarget.content;
 				break;
-			case 17:
+			case 16:
 				ARMY_ALLY = event.currentTarget.content;
 				break;
-			case 18:
+			case 17:
 				ARMY_ENNEMY = event.currentTarget.content;
 				break;
-			case 19:
+			case 18:
 				EDIT = event.currentTarget.content;
 				break;
-			case 20:
+			case 19:
 				VILLE = event.currentTarget.content;
 				break;
-			case 21:
+			case 20:
 				UH = event.currentTarget.content;
 				break;
-			case 22:
+			case 21:
 				EDIT_WHITE = event.currentTarget.content;
 				break;
-			case 23:
+			case 22:
 				LEFT_ARROW = event.currentTarget.content;
 				break;
-			case 24:
+			case 23:
 				RIGHT_ARROW = event.currentTarget.content;
 				break;
-			case 25:
+			case 24:
 				HIGHLIGHT_BOW_SHOOT = event.currentTarget.content;
 				break;
 		}
 		
 		currentImage++;
 		
-		if(currentImage < 26)
+		if(currentImage < 25)
 			loadNextImage();
 		else
 			IMAGES_LOADED = true;

@@ -376,7 +376,6 @@ package com.uralys.tribes.managers {
 						stock.stockNextCapacity = city.ironStockNextCapacity;
 						stock.stockBeginTime = city.ironStockBeginTime;
 						stock.stockEndTime = city.ironStockEndTime;
-						trace("stockCapacity : " + stock.stockCapacity);
 						break;
 					case "_bow_stock" :
 						stock.peopleBuildingStock = city.bowStockBuilders;

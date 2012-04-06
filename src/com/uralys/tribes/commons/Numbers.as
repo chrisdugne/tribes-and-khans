@@ -10,6 +10,7 @@ package com.uralys.tribes.commons
 	
 		// step toutes les 10 minutes
 		[Bindable]
+		//public static var TIME_PER_STEP:int = 10;
 		public static var TIME_PER_STEP:int = 1;
 	
 		[Bindable]
@@ -51,24 +52,37 @@ package com.uralys.tribes.commons
 		
 		
 		/*
-			toutes les 5 min : ressources et constructions
-			
-			100 personnes mangent 1 de ble toutes les 5 min
-		                         12 / h
-								288 / 24h 
+		conso ble 1/100h/10min
+		crea ble  5/100h/10min
+		bois 	  3/100h/10min
+		fer 	  2/100h/10min
 		
-		    exemple avec pop 1000 - workers : 200 ble 200 fer 600 bois 
-			step 
-			ble : wheatSpent  : 1000/100 = 10
-			      wheatEarned : workers/20 = 200/20 = 10
+		contree = 1or/contree /10min
 		
+		- constructions
 		
-		conso ble 1/100h/5min
-		crea ble  5/100h/5min
-		bois 	  3/100h/5min
-		fer 	  2/100h/5min
+		arc 	5 bois + 
+		epee 	3 fer
+		armure 	5 fer
 		
-		contree = 1or /10min
+		- prix : nb or par unité
+		
+		achat
+		WHEAT_PRICE_BUY:Number = 2;
+		WOOD_PRICE_BUY:Number = 3.33;
+		IRON_PRICE_BUY:Number = 5;
+		BOW_PRICE_BUY:Number = 20;
+		SWORD_PRICE_BUY:Number = 30;
+		ARMOR_PRICE_BUY:Number = 50;
+		
+		vente = 80% achat
+		WHEAT_PRICE_SELL:Number = 1.6;
+		WOOD_PRICE_SELL:Number = 2.7;
+		IRON_PRICE_SELL:Number = 4.3;
+		BOW_PRICE_SELL:Number = 16;
+		SWORD_PRICE_SELL:Number = 23;
+		ARMOR_PRICE_SELL:Number = 40;
+		
 		
 		1 ble achat : 2 = 20min avec 1 contree = 5min avec 4 contrees 		 ====> 1h = 4 contrees
 		1 bois achat : 3.33 = 33min avec 1 contree = 5min avec 6.5 contrees  ====> 1h = 6.5 contrees
@@ -91,7 +105,7 @@ package com.uralys.tribes.commons
 		// 80%
 		[Bindable] public static var WHEAT_PRICE_SELL:Number = 1.6;
 		[Bindable] public static var WOOD_PRICE_SELL:Number = 2.7;
-		[Bindable] public static var IRON_PRICE_SELL:Number = 4.3;
+		[Bindable] public static var IRON_PRICE_SELL:Number = 4;
 		[Bindable] public static var BOW_PRICE_SELL:Number = 16;
 		[Bindable] public static var SWORD_PRICE_SELL:Number = 23;
 		[Bindable] public static var ARMOR_PRICE_SELL:Number = 40;
@@ -141,18 +155,21 @@ package com.uralys.tribes.commons
 		//==================================================================================================//
 		// Item data
 		
+		[Bindable] public static var BOW_TIME:int = 5*1000;
 		[Bindable] public static var BOW_WOOD:int;
 		[Bindable] public static var BOW_IRON:int;
 		[Bindable] public static var BOW_PRICE:Number;
 		[Bindable] public static var BOW_VALUE:int;
 		[Bindable] public static var BOW_PEOPLE_REQUIRED:int;
 	
+		[Bindable] public static var SWORD_TIME:int = 10*1000;
 		[Bindable] public static var SWORD_WOOD:int;
 		[Bindable] public static var SWORD_IRON:int;
 		[Bindable] public static var SWORD_PRICE:Number;
 		[Bindable] public static var SWORD_VALUE:int;
 		[Bindable] public static var SWORD_PEOPLE_REQUIRED:int;
 	
+		[Bindable] public static var ARMOR_TIME:int = 15*1000;
 		[Bindable] public static var ARMOR_WOOD:int;
 		[Bindable] public static var ARMOR_IRON:int;
 		[Bindable] public static var ARMOR_PRICE:Number;

@@ -2,11 +2,13 @@
 <s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
 		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:components="com.uralys.tribes.components.*"
 		 horizontalAlign="center"
 		 verticalAlign="middle"
 		 paddingLeft="20"
 		 paddingRight="20"
-		 creationComplete="refresh()" xmlns:components="com.uralys.tribes.components.*">
+		 creationComplete="refresh()" 
+		 >
 	
 	<fx:Declarations>
 		<s:State name="upgradeEnabled"/>
@@ -15,16 +17,13 @@
 	
 	<fx:Script>
 		<![CDATA[		
-			import com.uralys.tribes.main.ImageContainer;
-			
-			//-------------------------------------------------------------------------------------//
-			
 			import com.uralys.tribes.commons.Numbers;
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;
 			import com.uralys.tribes.entities.City;
 			import com.uralys.tribes.entities.Item;
 			import com.uralys.tribes.entities.Stock;
+			import com.uralys.tribes.main.ImageContainer;
 			import com.uralys.tribes.managers.GameManager;
 			import com.uralys.tribes.skins.CustomButtonSkin;
 			import com.uralys.tribes.skins.WorkersProgressBarSkin;
@@ -42,6 +41,7 @@
 			[Bindable] public var stock:int;
 			[Bindable] public var stockCapacity:int;
 			[Bindable] public var weaponsAdded:int;
+			[Bindable] public var timeForThisWeapon:Number; // ms
 
 			[Bindable] public var beginTime:Number;
 			[Bindable] public var endTime:Number;
@@ -57,7 +57,6 @@
 
 			public function refresh():void
 			{
-				timeLabel.text = '';
 				potentialSmiths = 0;
 				Session.timer.removeEventListener(TimerEvent.TIMER, setBuilding);
 				
@@ -67,6 +66,9 @@
 					potentialSmiths = smiths;
 					setBuilding();
 				}
+				
+				// 60 items par heure et 1 par minute
+				timeLabel.text = 'timeForThisWeapon';
 			}
 
 			//-------------------------------------------------------------------------------------//
@@ -75,18 +77,12 @@
 			{
 				var peopleAdded:int = smithsSlider.value - potentialSmiths;
 				
-				if(city.unemployed < peopleAdded)
-					smithsSlider.value = potentialSmiths + city.unemployed;
+				if(city.availableSmiths < peopleAdded)
+					smithsSlider.value = potentialSmiths + city.availableSmiths;
 				
 				potentialSmiths = smithsSlider.value;
 				var itemsCreated:int = potentialSmiths/item.peopleRequired;
 				
-				// 120 items par heure et 2 par minute
-				var hours:int = itemsCreated/120;
-				var min:int = itemsCreated/2 - hours*120;
-				var secs:int = (itemsCreated - min*2) * 30; // 0 ou 30
-				
-				timeLabel.text = (hours > 0 ? hours + ' h ' : '') + min + " mn "+ (secs != 0 ? ((secs < 10 ? '0' : '') + secs + " secs") : '');
 			}
 			
 			//-------------------------------------------------------------------------------------//
@@ -97,7 +93,7 @@
 				smiths = potentialSmiths;
 				weaponsAdded = smiths/item.peopleRequired;
 				beginTime = new Date().getTime();
-				endTime = beginTime + weaponsAdded *30*1000; // 1 item = 30secs
+				endTime = beginTime + timeForThisWeapon;
 				
 				city.wood -= weaponsAdded * item.wood;
 				city.iron -= weaponsAdded * item.iron;
@@ -155,8 +151,12 @@
 				GameManager.getInstance().updateWorkersProgressBar();
 			}
 			
+			//-------------------------------------------------------------------------------------//
+			
 		]]>
 	</fx:Script>
+	
+	
 	
 	<s:HGroup width="100%" 
 			  verticalAlign="middle"

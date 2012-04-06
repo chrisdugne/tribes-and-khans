@@ -12,6 +12,7 @@
 					+ city.armorWorkers) +')' : '')}">
 	<fx:Script>
 		<![CDATA[
+			import com.uralys.tribes.commons.Numbers;
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;
 			import com.uralys.tribes.entities.City;
@@ -67,6 +68,7 @@
 								 weaponsAdded="@{city.bowsBeingBuilt}"
 								 beginTime="@{city.bowsBeingBuiltBeginTime}"
 								 endTime="@{city.bowsBeingBuiltEndTime}"
+								 timeForThisWeapon="{Numbers.BOW_TIME}"
 								 city="{city}"
 								 imageToolTip="{Translations.BOW.getItemAt(Session.LANGUAGE)}"
 								 image="{ImageContainer.BOW}"
@@ -81,6 +83,7 @@
 								 weaponsAdded="@{city.swordsBeingBuilt}"
 								 beginTime="@{city.swordsBeingBuiltBeginTime}"
 								 endTime="@{city.swordsBeingBuiltEndTime}"
+								 timeForThisWeapon="{Numbers.SWORD_TIME}"
 								 city="{city}"
 								 imageToolTip="{Translations.SWORD.getItemAt(Session.LANGUAGE)}"
 								 image="{ImageContainer.SWORD}"
@@ -95,6 +98,7 @@
 								 weaponsAdded="@{city.armorsBeingBuilt}"
 								 beginTime="@{city.armorsBeingBuiltBeginTime}"
 								 endTime="@{city.armorsBeingBuiltEndTime}"
+								 timeForThisWeapon="{Numbers.ARMOR_TIME}"
 								 city="{city}"
 								 imageToolTip="{Translations.ARMOR.getItemAt(Session.LANGUAGE)}"
 								 image="{ImageContainer.ARMOR}"

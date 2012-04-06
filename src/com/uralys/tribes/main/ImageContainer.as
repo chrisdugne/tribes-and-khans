@@ -161,23 +161,6 @@ public final class ImageContainer
 //	[Bindable] public static var WARRIOR2:Class;
 
 	//   ======================================================================//
-	
-	[Embed(source="resources/embed/persos/fermier.png")]
-	[Bindable] public static var FERMIER:Class;
-
-	[Embed(source="resources/embed/persos/forgeron.png")]
-	[Bindable] public static var FORGERON:Class;
-
-	[Embed(source="resources/embed/persos/marchand.png")]
-	[Bindable] public static var MARCHAND:Class;
-
-	[Embed(source="resources/embed/persos/marchande.png")]
-	[Bindable] public static var MARCHANDE:Class;
-
-	[Embed(source="resources/embed/persos/guerrier.png")]
-	[Bindable] public static var GUERRIER:Class;
-	
-	//   ======================================================================//
 
 	[Embed(source="resources/embed/question-mark.png")]
 	[Bindable] public static var GREEN_QUESTION:Class;
@@ -224,6 +207,12 @@ public final class ImageContainer
 	[Bindable] public static var LEFT_ARROW:Bitmap;
 	[Bindable] public static var RIGHT_ARROW:Bitmap;
 	[Bindable] public static var HIGHLIGHT_BOW_SHOOT:Bitmap;
+	
+	[Bindable] public static var FERMIER:Class;
+	[Bindable] public static var FORGERON:Class;
+	[Bindable] public static var MARCHAND:Class;
+	[Bindable] public static var MARCHANDE:Class;
+	[Bindable] public static var GUERRIER:Class;
 
 	//   ======================================================================//
 
@@ -264,7 +253,12 @@ public final class ImageContainer
 		 "webresources/images/edit_white.png",
 		 "webresources/images/icons/left.png",
 		 "webresources/images/icons/right.png",
-		 "webresources/images/map/highlight_bow_shoot.png"
+		 "webresources/images/map/highlight_bow_shoot.png",
+		 "webresources/images/persos/fermier.png",
+		 "webresources/images/persos/forgeron.png",
+		 "webresources/images/persos/marchand.png",
+		 "webresources/images/persos/marchande.png",
+		 "webresources/images/persos/guerrier.png"
 		 ]);
 	
 	public static var IMAGES_LOADED:Boolean = false;

@@ -70,7 +70,7 @@ package com.uralys.tribes.entities
 	
 		public function get population():int {
 			refreshUnemployed();
-			refreshAvailableAsSmith();
+			refreshAvailableSmiths();
 			return _population;
 		}
 	
@@ -117,7 +117,6 @@ package com.uralys.tribes.entities
 		public function set peopleCreatingWheat(o:int):void {
 			_peopleCreatingWheat = o;
 			refreshUnemployed();
-			refreshAvailableAsSmith();
 		}
 	
 		public function get peopleCreatingWood():int {
@@ -127,7 +126,6 @@ package com.uralys.tribes.entities
 		public function set peopleCreatingWood(o:int):void {
 			_peopleCreatingWood = o;
 			refreshUnemployed();
-			refreshAvailableAsSmith();
 		}
 	
 		public function get peopleCreatingIron():int {
@@ -137,7 +135,6 @@ package com.uralys.tribes.entities
 		public function set peopleCreatingIron(o:int):void {
 			_peopleCreatingIron = o;
 			refreshUnemployed();
-			refreshAvailableAsSmith();
 		}
 	
 		public function get x():int {
@@ -275,20 +272,6 @@ package com.uralys.tribes.entities
 		}
 		
 		
-		public function get availableAsSmith():int{
-			return _availableAsSmith;
-		}
-
-		public function set availableAsSmith(o:int):void{
-			_availableAsSmith = o;
-		}
-		
-		public function refreshAvailableAsSmith():void
-		{
-			availableAsSmith = _population - peopleCreatingWheat
-										   - peopleCreatingWood
-										   - peopleCreatingIron
-		}
 		
 		//---------------------------------------------------------------//
 		
@@ -606,6 +589,7 @@ package com.uralys.tribes.entities
 		private var _bowsBeingBuiltEndTime:Number;
 		
 		public function set bowWorkers(o:int):void{
+			refreshAvailableSmiths();
 			_bowWorkers = o;
 		}
 
@@ -691,6 +675,7 @@ package com.uralys.tribes.entities
 		private var _swordsBeingBuiltEndTime:Number;
 		
 		public function set swordWorkers(o:int):void{
+			refreshAvailableSmiths();
 			_swordWorkers = o;
 		}
 
@@ -776,6 +761,7 @@ package com.uralys.tribes.entities
 		private var _armorsBeingBuiltEndTime:Number;
 		
 		public function set armorWorkers(o:int):void{
+			refreshAvailableSmiths();
 			_armorWorkers = o;
 		}
 
@@ -873,5 +859,47 @@ package com.uralys.tribes.entities
 		{
 			_wheatExpected = value;
 		}
+
+		//---------------------------------------------------------------//
+
+		protected var _bonusSmith:Boolean;
+
+		public function get bonusSmith():Boolean
+		{
+			return _bonusSmith;
+		}
+		
+		public function set bonusSmith(value:Boolean):void
+		{
+			_bonusSmith = value;
+		}
+
+		//---------------------------------------------------------------//
+		
+		protected var _availableSmiths:int;
+		
+		public function get availableSmiths():int
+		{
+			return _availableSmiths;
+		}
+		
+		public function set availableSmiths(value:int):void
+		{
+			_availableSmiths = value;
+		}
+
+		public function refreshAvailableSmiths():void
+		{
+			availableSmiths = Math.min(unemployed, smiths
+										- bowWorkers
+										- swordWorkers
+										- armorWorkers);
+		}
+		
+		public function get smiths():int
+		{
+			return (_population/100) * (1 + bonusSmith ? 0 : 0.2);
+		}
+
 	}
 }

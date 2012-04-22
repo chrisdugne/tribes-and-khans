@@ -39,10 +39,11 @@
 				<s:Image source="{ImageContainer.MINI_LOGO}"/>
 				<s:Label text="{Translations.CREATOR.getItemAt(Session.LANGUAGE)}" 
 						 styleName="bigGreen2Style"/>
-				<s:Image source="{ImageContainer.URALYS_MINI_LOGO}"
-						  click="navigateToURL(new URLRequest('http://www.uralys.com'),'_new');"
-						  buttonMode="true"
-						  useHandCursor="true"/>		
+				
+				<s:Label text="Christophe Dugne-Esquevin" styleName="littleWhiteStyle"
+						 click="navigateToURL(new URLRequest('http://www.uralys.com'),'_new');"
+						 buttonMode="true"
+						 useHandCursor="true"/>		
 				
 				
 				<s:Label text="{Translations.GRAPHIST.getItemAt(Session.LANGUAGE)}"

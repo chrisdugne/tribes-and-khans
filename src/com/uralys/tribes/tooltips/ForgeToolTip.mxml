@@ -3,16 +3,22 @@
 			xmlns:mx="library://ns.adobe.com/flex/mx"  
 			xmlns:s="library://ns.adobe.com/flex/spark" 
 			implements="mx.core.IToolTip"
-			width="100%" height="100%">
+			width="100%" height="100%"
+			creationComplete="init()">
  
 	<fx:Script>
 		<![CDATA[
-			import com.uralys.tribes.main.ImageContainer;
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;
+			import com.uralys.tribes.main.ImageContainer;
+			
+			import mx.events.FlexEvent;
 			
 			[Bindable]
 			public var itemName:String;
+
+			[Bindable]
+			private var translatedItemName:String;
 
 			[Bindable]
 			public var woodCost:int;
@@ -27,6 +33,22 @@
             public function set text(value:String):void {
    	
             }
+			
+			protected function init():void
+			{
+				if(itemName == "bow"){
+					translatedItemName = String(Translations.BOW.getItemAt(Session.LANGUAGE));
+				}
+					
+				else if(itemName == "sword"){
+					translatedItemName = String(Translations.SWORD.getItemAt(Session.LANGUAGE));
+				}
+					
+				else if(itemName == "armor"){
+					translatedItemName = String(Translations.ARMOR.getItemAt(Session.LANGUAGE));
+				}
+			}
+			
 		]]>
 	</fx:Script>
 	
@@ -35,17 +57,17 @@
 			<s:SolidColorStroke color="0x000000" weight="1" scaleMode="normal"/>
 		</s:stroke>			
 		<s:fill>
-			<s:SolidColor color="{0x000000}" alpha="0.7"/>
+			<s:SolidColor color="{0x000000}" alpha="0.9"/>
 		</s:fill>
 	</s:Rect>
  
 	<s:HGroup horizontalAlign="center" verticalAlign="middle" width="100%" height="100%"
 			  paddingLeft="10" paddingRight="10">
 					
-		<s:Label text="{itemName}" styleName="whiteNumberLabel"/>
-		<mx:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}"/>
+		<s:Label text="{translatedItemName}" styleName="whiteNumberLabel"/>
+		<s:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}"/>
 		<s:Label text="{woodCost}" styleName="whiteNumberLabel"/>
-		<mx:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}"/>
+		<s:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}"/>
 		<s:Label text="{ironCost}" styleName="whiteNumberLabel"/>
 	</s:HGroup>
 	

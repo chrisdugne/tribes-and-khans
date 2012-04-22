@@ -185,10 +185,6 @@ public final class ImageContainer
 	[Bindable] public static var HIGHLIGHT_VERT:Bitmap;
 	[Bindable] public static var HIGHLIGHT_ROUGE:Bitmap;
 	[Bindable] public static var MINI_LOGO:Bitmap;
-	[Bindable] public static var MAP_BORDER_TOP:Bitmap;
-	[Bindable] public static var MAP_BORDER_BOTTOM:Bitmap;
-	[Bindable] public static var MAP_BORDER_LEFT:Bitmap;
-	[Bindable] public static var MAP_BORDER_RIGHT:Bitmap;
 	[Bindable] public static var MERCHANT_PLAYER:Bitmap;
 	[Bindable] public static var MERCHANT_ALLY:Bitmap;
 	[Bindable] public static var MERCHANT_ENNEMY:Bitmap;
@@ -196,23 +192,17 @@ public final class ImageContainer
 	[Bindable] public static var ARMY_ALLY:Bitmap;
 	[Bindable] public static var ARMY_ENNEMY:Bitmap;
 	[Bindable] public static var EDIT:Bitmap;
-	[Bindable] public static var VILLE:Bitmap;
-	[Bindable] public static var FLEX:Bitmap;
-	[Bindable] public static var APPENGINE:Bitmap;
-	[Bindable] public static var ICONS:Bitmap;
-	[Bindable] public static var FONTS:Bitmap;
-	[Bindable] public static var URALYS_MINI_LOGO:Bitmap;
 	[Bindable] public static var UH:Bitmap;
 	[Bindable] public static var EDIT_WHITE:Bitmap;
 	[Bindable] public static var LEFT_ARROW:Bitmap;
 	[Bindable] public static var RIGHT_ARROW:Bitmap;
 	[Bindable] public static var HIGHLIGHT_BOW_SHOOT:Bitmap;
 	
-	[Bindable] public static var FERMIER:Class;
-	[Bindable] public static var FORGERON:Class;
-	[Bindable] public static var MARCHAND:Class;
-	[Bindable] public static var MARCHANDE:Class;
-	[Bindable] public static var GUERRIER:Class;
+	[Bindable] public static var FERMIER:Bitmap;
+	[Bindable] public static var FORGERON:Bitmap;
+	[Bindable] public static var MARCHAND:Bitmap;
+	[Bindable] public static var MARCHANDE:Bitmap;
+	[Bindable] public static var GUERRIER:Bitmap;
 
 	//   ======================================================================//
 
@@ -248,7 +238,6 @@ public final class ImageContainer
 		 "webresources/images/persos/army_ally.png",
 		 "webresources/images/persos/army_ennemy.png",
 		 "webresources/images/edit.png",
-		 "webresources/images/map/ville-moyenne.png",
 		 "webresources/images/logos/utopian-hedonism-logo.jpg",
 		 "webresources/images/edit_white.png",
 		 "webresources/images/icons/left.png",
@@ -337,28 +326,40 @@ public final class ImageContainer
 				EDIT = event.currentTarget.content;
 				break;
 			case 19:
-				VILLE = event.currentTarget.content;
-				break;
-			case 20:
 				UH = event.currentTarget.content;
 				break;
-			case 21:
+			case 20:
 				EDIT_WHITE = event.currentTarget.content;
 				break;
-			case 22:
+			case 21:
 				LEFT_ARROW = event.currentTarget.content;
 				break;
-			case 23:
+			case 22:
 				RIGHT_ARROW = event.currentTarget.content;
 				break;
-			case 24:
+			case 23:
 				HIGHLIGHT_BOW_SHOOT = event.currentTarget.content;
+				break;
+			case 24:
+				FERMIER = event.currentTarget.content;
+				break;
+			case 25:
+				FORGERON = event.currentTarget.content;
+				break;
+			case 26:
+				MARCHAND = event.currentTarget.content;
+				break;
+			case 27:
+				MARCHANDE = event.currentTarget.content;
+				break;
+			case 28:
+				GUERRIER = event.currentTarget.content;
 				break;
 		}
 		
 		currentImage++;
 		
-		if(currentImage < 25)
+		if(currentImage < 29)
 			loadNextImage();
 		else
 			IMAGES_LOADED = true;

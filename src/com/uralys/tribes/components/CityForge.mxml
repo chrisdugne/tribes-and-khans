@@ -30,25 +30,15 @@
 			
 			public function refresh():void
 			{
-				if(bowsBuildingRenderer != null){
+				if(bowsBuildingRenderer != null)
+				{
+					city.refreshAvailableSmiths();	
 					bowsBuildingRenderer.refresh();
 					swordsBuildingRenderer.refresh();
 					armorsBuildingRenderer.refresh();
 				}
 			}
 			
-			//-------------------------------------------------------------------------//
-			// toolTip creation pour la forge
-			
-			private function onCreateForgeToolTip(e:ToolTipEvent, itemName:String, woodCost:int, ironCost:int):void 
-			{
-				var toolTip:ForgeToolTip = new ForgeToolTip();
-				toolTip.itemName = itemName;
-				toolTip.woodCost = woodCost;
-				toolTip.ironCost = ironCost;
-				
-				e.toolTip = toolTip;
-			}
 			
 		]]>
 	</fx:Script>
@@ -70,7 +60,6 @@
 								 endTime="@{city.bowsBeingBuiltEndTime}"
 								 timeForThisWeapon="{Numbers.BOW_TIME}"
 								 city="{city}"
-								 imageToolTip="{Translations.BOW.getItemAt(Session.LANGUAGE)}"
 								 image="{ImageContainer.BOW}"
 								 width="100%" 
 								 id="bowsBuildingRenderer"
@@ -85,7 +74,6 @@
 								 endTime="@{city.swordsBeingBuiltEndTime}"
 								 timeForThisWeapon="{Numbers.SWORD_TIME}"
 								 city="{city}"
-								 imageToolTip="{Translations.SWORD.getItemAt(Session.LANGUAGE)}"
 								 image="{ImageContainer.SWORD}"
 								 id="swordsBuildingRenderer"
 								 width="100%" 
@@ -100,7 +88,6 @@
 								 endTime="@{city.armorsBeingBuiltEndTime}"
 								 timeForThisWeapon="{Numbers.ARMOR_TIME}"
 								 city="{city}"
-								 imageToolTip="{Translations.ARMOR.getItemAt(Session.LANGUAGE)}"
 								 image="{ImageContainer.ARMOR}"
 								 width="100%" 
 								 showLastLine="false"

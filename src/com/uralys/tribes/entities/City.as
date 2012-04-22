@@ -898,7 +898,9 @@ package com.uralys.tribes.entities
 		
 		public function get smiths():int
 		{
-			return (_population/100) * (1 + bonusSmith ? 0 : 0.2);
+			var rate:Number = bonusSmith ? 1.2 : 1;
+			var baseSmiths:Number = _population/100;
+			return baseSmiths * rate;
 		}
 
 	}

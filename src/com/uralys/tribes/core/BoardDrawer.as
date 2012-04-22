@@ -263,7 +263,18 @@ package com.uralys.tribes.core
 		public function drawCity(city:City):void
 		{
 			var image:Image = new Image();
-			image.source = ImageContainer.getImage(ImageContainer.VILLE);
+			
+			switch(scale){
+				case 1:
+					image.source = ImageContainer.SOL_VILLE_1;
+					break;
+				case 0.5:
+					image.source = ImageContainer.SOL_VILLE_05;
+					break;
+				case 0.25:
+					image.source = ImageContainer.SOL_VILLE_025;
+					break;
+			}
 			
 			var cityPx:int = Utils.getXPixel(city.x);
 			var cityPy:int = Utils.getYPixel(city.y);

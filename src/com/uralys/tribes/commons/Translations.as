@@ -616,6 +616,12 @@ public class Translations{
 									"Smiths"]);
 
 	[Bindable]
+	public static var SMITHS_AVAILABLE:ArrayCollection = new ArrayCollection(
+									["Forgerons disponibles",
+									"Available smiths",
+									"Available smiths"]);
+
+	[Bindable]
 	public static var AVAILABLE_SMITHS:ArrayCollection = new ArrayCollection(
 									["Disponibles",
 									"Available",

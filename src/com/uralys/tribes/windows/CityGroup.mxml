@@ -34,8 +34,7 @@
 	
 	<s:VGroup left="0" right="0" top="0" bottom="0" 
 			  horizontalAlign="center"
-			  verticalAlign="middle"
-			  paddingTop="5">
+			  paddingTop="15">
 		<components:CityForm 
 			id="cityForm"
 			city="@{selectedCity}"/>

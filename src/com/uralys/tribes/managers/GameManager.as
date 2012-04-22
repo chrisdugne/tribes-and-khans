@@ -281,6 +281,9 @@ package com.uralys.tribes.managers {
 			
 			for each(var city:City in player.cities)
 			{
+				if(!catchUpCalculation)
+					city.calculationDone = false;
+					
 				city.wheat += city.wheatEarned - city.wheatRequiredToFeed;
 				city.wood += city.woodEarned;
 				city.iron += city.ironEarned;

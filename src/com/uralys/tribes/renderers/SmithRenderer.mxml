@@ -28,9 +28,11 @@
 			import com.uralys.tribes.skins.CustomButtonSkin;
 			import com.uralys.tribes.skins.WorkersProgressBarSkin;
 			import com.uralys.tribes.skins.WorkersProgressTrackSkin;
+			import com.uralys.tribes.tooltips.ForgeToolTip;
 			import com.uralys.utils.Utils;
 			
 			import mx.core.mx_internal;
+			import mx.events.ToolTipEvent;
 		
 			//-------------------------------------------------------------------------------------//
 	
@@ -58,6 +60,8 @@
 			public function refresh():void
 			{
 				potentialSmiths = 0;
+				smithsSlider.value = 0;
+				
 				Session.timer.removeEventListener(TimerEvent.TIMER, setBuilding);
 				
 				if(beginTime == -1)
@@ -67,8 +71,14 @@
 					setBuilding();
 				}
 				
-				// 60 items par heure et 1 par minute
-				timeLabel.text = 'timeForThisWeapon';
+
+				var hours:int = timeForThisWeapon/60/60/1000;
+				var minutes:int = (timeForThisWeapon-hours*60*60*1000)/60/1000;
+				var secondes:int = (timeForThisWeapon-hours*60*60*1000 - minutes*60*1000) /1000;
+				
+				timeLabel.text = (hours != 0 ? hours+" h " : '')+(minutes>9 ? "" : "0")+minutes+" mn "+(secondes>9 ? "" : "0")+secondes+' s';
+
+				smithsSlider.maximum = Math.min(city.availableSmiths, ((stockCapacity - stock)/item.peopleRequired));
 			}
 
 			//-------------------------------------------------------------------------------------//
@@ -77,12 +87,12 @@
 			{
 				var peopleAdded:int = smithsSlider.value - potentialSmiths;
 				
-				if(city.availableSmiths < peopleAdded)
-					smithsSlider.value = potentialSmiths + city.availableSmiths;
+				if(city.availableSmiths - potentialSmiths < peopleAdded)
+					smithsSlider.value = potentialSmiths + peopleAdded;
 				
 				potentialSmiths = smithsSlider.value;
-				var itemsCreated:int = potentialSmiths/item.peopleRequired;
 				
+				var itemsCreated:int = potentialSmiths/item.peopleRequired;
 			}
 			
 			//-------------------------------------------------------------------------------------//
@@ -100,8 +110,8 @@
 				
 				GameManager.getInstance().saveCity(city);
 				GameManager.getInstance().updateWorkersProgressBar();
-				
-				trace("build : " + smiths);
+				Session.board.cityGroup.cityForm.forge.refresh();
+
 				setBuilding();
 			}
 
@@ -147,12 +157,22 @@
 				}
 				
 				smiths = 0;
-				refresh();
+				Session.board.cityGroup.cityForm.forge.refresh();
 				GameManager.getInstance().updateWorkersProgressBar();
 			}
 			
-			//-------------------------------------------------------------------------------------//
+			//-------------------------------------------------------------------------//
+			// toolTip creation pour la forge
 			
+			private function onCreateForgeToolTip(e:ToolTipEvent, itemName:String, woodCost:int, ironCost:int):void 
+			{
+				var toolTip:ForgeToolTip = new ForgeToolTip();
+				toolTip.itemName = itemName;
+				toolTip.woodCost = woodCost;
+				toolTip.ironCost = ironCost;
+				
+				e.toolTip = toolTip;
+			}
 		]]>
 	</fx:Script>
 	
@@ -168,14 +188,14 @@
 						 styleName="numberLabel" 
 						 textAlign="right"
 						 minWidth="60"/>
-				<s:Image source="{ImageContainer.PEOPLE}"/>
+				<s:Image source="{ImageContainer.PEOPLE}"
+						 toolTip="{Translations.SMITHS_AVAILABLE.getItemAt(Session.LANGUAGE)} : {city.availableSmiths}"/>
 			</s:HGroup>
 			<s:HSlider id="smithsSlider"
 					   showDataTip="false"
 					   liveDragging="true" 
 					   value="@{potentialSmiths}"
 					   change="smithCheck(event)"
-					   maximum="{city.unemployed + potentialSmiths &lt; (stockCapacity - stock)/item.peopleRequired ? city.unemployed + potentialSmiths : (stockCapacity - stock)/item.peopleRequired}"
 					   snapInterval="1"
 					   enabled.building="false"
 					   enabled.upgradeEnabled="true"/>
@@ -218,13 +238,15 @@
 			  verticalAlign="middle"
 			  horizontalAlign="center">
 		
+		<s:Image toolTip=" "
+				 toolTipCreate="{onCreateForgeToolTip(event, item.name, item.wood, item.iron)}"
+				 source="{image}"/>
 		<s:Label text="{stock}/{stockCapacity}" styleName="numberLabel"/>
-		<s:Image toolTip="{imageToolTip}" source="{image}"/>
-		<s:Image source="{ImageContainer.UPGRADE_ARROW}"/>
-		<s:Label text="{stock + potentialSmiths * item.peopleRequired}/{stockCapacity}"
-				 color="{Numbers.GREEN}" width="150"/>
 		
 		<s:Spacer width="100%"/>
+		<s:Image source="{ImageContainer.UPGRADE_ARROW}"/>
+		<s:Label text="{stock + potentialSmiths * item.peopleRequired}/{stockCapacity}"
+				 color="{buildButton.enabled ? Numbers.GREEN : Numbers.RED}" width="150"/>
 		<s:Button skinClass="{CustomButtonSkin}"
 				  label="{Translations.UPGRADE.getItemAt(Session.LANGUAGE)}"
 				  enabled="{potentialSmiths/item.peopleRequired * item.wood &lt;= city.wood
@@ -236,6 +258,7 @@
 				  click="build()"
 				  visible.building="false"
 				  includeInLayout.building="false"
+				  id="buildButton"
 				  />
 	</s:HGroup>
 	<components:HRule width="100%" visible="{showLastLine}"/>

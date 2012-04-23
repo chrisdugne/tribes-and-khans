@@ -4,7 +4,8 @@
 		xmlns:mx="library://ns.adobe.com/flex/mx" 
 		xmlns:renderers="com.uralys.tribes.renderers.*"
 		paddingTop="10" xmlns:components="com.uralys.tribes.components.*"
-		horizontalAlign="center">
+		horizontalAlign="center"
+		gap="0">
 	<fx:Script>
 		<![CDATA[
 			import com.uralys.tribes.commons.Numbers;

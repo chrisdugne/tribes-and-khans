@@ -1126,9 +1126,9 @@ public class Translations{
 
 	[Bindable]
 	public static var GRAPHIST:ArrayCollection = new ArrayCollection(
-									["Graphiste",
-									"Graphist",
-									"Graphist"]);
+									["Graphistes",
+									"Graphists",
+									"Graphists"]);
 
 	[Bindable]
 	public static var TOOLS:ArrayCollection = new ArrayCollection(

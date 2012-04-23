@@ -113,7 +113,7 @@
 									 textAlign="left"
 									 minWidth="60"/>
 							<s:Spacer width="100%"/>
-							<s:Image source="{ImageContainer.PEOPLE}"/>
+							<s:Image source="{ImageContainer.PEOPLE35}"/>
 						</s:HGroup>
 						<s:HSlider id="wheatWorkersSlider"
 								   showDataTip="false"
@@ -147,7 +147,7 @@
 									 textAlign="left"
 									 minWidth="60"/>
 							<s:Spacer width="100%"/>
-							<s:Image source="{ImageContainer.PEOPLE}"/>
+							<s:Image source="{ImageContainer.PEOPLE35}"/>
 						</s:HGroup>
 						<s:HSlider id="woodWorkersSlider"
 								   showDataTip="false"
@@ -176,7 +176,7 @@
 									 textAlign="left"
 									 minWidth="60"/>
 							<s:Spacer width="100%"/>
-							<s:Image source="{ImageContainer.PEOPLE}"/>
+							<s:Image source="{ImageContainer.PEOPLE35}"/>
 						</s:HGroup>
 						<s:HSlider id="ironWorkersSlider"
 								   showDataTip="false"

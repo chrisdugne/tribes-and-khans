@@ -456,7 +456,7 @@
 							 styleName="numberLabel" 
 							 textAlign="right"
 							 minWidth="60"/>
-					<s:Image source="{ImageContainer.PEOPLE}"/>
+					<s:Image source="{ImageContainer.PEOPLE35}"/>
 					<s:HSlider id="unitSlider"
 							   showDataTip="false"
 							   liveDragging="true" 

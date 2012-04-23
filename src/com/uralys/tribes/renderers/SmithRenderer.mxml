@@ -188,7 +188,7 @@
 						 styleName="numberLabel" 
 						 textAlign="right"
 						 minWidth="60"/>
-				<s:Image source="{ImageContainer.PEOPLE}"
+				<s:Image source="{ImageContainer.PEOPLE35}"
 						 toolTip="{Translations.SMITHS_AVAILABLE.getItemAt(Session.LANGUAGE)} : {city.availableSmiths}"/>
 			</s:HGroup>
 			<s:HSlider id="smithsSlider"
@@ -205,12 +205,12 @@
 		<s:HGroup width="100%"
 				  visible.building="false"
 				  includeInLayout.building="false">
-			<s:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}" width="25" height="25"/>
+			<s:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD35}"/>
 			<s:Label text="{potentialSmiths/item.peopleRequired * item.wood}"
 					 color="{potentialSmiths/item.peopleRequired * item.wood &lt;= city.wood ? Numbers.GREEN : Numbers.RED}"/>
 	
 			<s:Spacer width="20"/>
-			<s:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}" width="25" height="25"/>
+			<s:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON35}"/>
 			<s:Label text="{potentialSmiths/item.peopleRequired * item.iron}"
 					 color="{potentialSmiths/item.peopleRequired * item.iron &lt;= city.iron ? Numbers.GREEN : Numbers.RED}"/>
 	

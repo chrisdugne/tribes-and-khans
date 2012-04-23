@@ -31,7 +31,7 @@
 							alpha="0">
 			<s:HGroup width="100%"
 					  horizontalAlign="center">
-				<s:Image source="{ImageContainer.PEOPLE}"/>
+				<s:Image source="{ImageContainer.PEOPLE35}"/>
 				<s:Label color="#FFFFFF" 
 						 left="20" 
 						 verticalCenter="2"

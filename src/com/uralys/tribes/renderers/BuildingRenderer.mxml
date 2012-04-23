@@ -167,7 +167,7 @@
 						 textAlign="left"
 						 minWidth="60"/>
 				<s:Spacer width="100%"/>
-				<s:Image source="{ImageContainer.PEOPLE}"/>
+				<s:Image source="{ImageContainer.PEOPLE35}"/>
 			</s:HGroup>
 			<s:HSlider id="stockBuildersSlider"
 					   showDataTip="false"

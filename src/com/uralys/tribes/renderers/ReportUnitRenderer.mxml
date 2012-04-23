@@ -21,36 +21,36 @@
 		]]>
 	</fx:Script>
 	
-	<s:HGroup>
+	<s:HGroup width="100%" verticalAlign="middle">
 		<renderers:PlayerName player="{new Player(unit.ownerUID, unit.ownerName)}"/>
-	</s:HGroup>
-	<s:HGroup width="100%">
-		<s:Image source="{unit.type == Unit.ARMY ? ImageContainer.ARMY_ALLY : ImageContainer.MERCHANT_ALLY}"/>
+		<s:Image source="{unit.type == Unit.ARMY ? ImageContainer.ARMY_PLAYER : ImageContainer.MERCHANT_PLAYER}"
+				 height="90"/>
+		<s:Image source="{ImageContainer.PEOPLE35}" visible="{unit.size &gt; 0}"/>
 		<s:Label text="{unit.size}" visible="{unit.size &gt; 0}" color="#ffffff"/>
 		
-		<s:Image source="{ImageContainer.BOW}" visible="{unit.bows &gt; 0}"/>
+		<s:Image source="{ImageContainer.BOW35}" visible="{unit.bows &gt; 0}"/>
 		<s:Label text="{unit.bows}" visible="{unit.bows &gt; 0}" color="#ffffff"/>
 		
-		<s:Image source="{ImageContainer.SWORD}" visible="{unit.swords &gt; 0}"/>
+		<s:Image source="{ImageContainer.SWORD35}" visible="{unit.swords &gt; 0}"/>
 		<s:Label text="{unit.swords}" visible="{unit.swords &gt; 0}" color="#ffffff"/>
 		
-		<s:Image source="{ImageContainer.ARMOR}" visible="{unit.armors &gt; 0}"/>
+		<s:Image source="{ImageContainer.ARMOR35}" visible="{unit.armors &gt; 0}"/>
 		<s:Label text="{unit.armors}" visible="{unit.armors &gt; 0}" color="#ffffff"/>
 		
 		<s:Spacer width="100%"/>
 		<s:Label text="{unit.value} pts" visible="{unit.value &gt; 0}" color="#ffffff"/>
 	</s:HGroup>
-	<s:HGroup width="100%">
-		<s:Image source="{ImageContainer.WHEAT}" visible="{unit.wheat &gt; 0}"/>
+	<s:HGroup width="100%" verticalAlign="middle">
+		<s:Image source="{ImageContainer.WHEAT35}" visible="{unit.wheat &gt; 0}"/>
 		<s:Label text="{unit.wheat}" visible="{unit.wheat &gt; 0}" color="#ffffff"/>
 		
-		<s:Image source="{ImageContainer.WOOD}" visible="{unit.wood &gt; 0}"/>
+		<s:Image source="{ImageContainer.WOOD35}" visible="{unit.wood &gt; 0}"/>
 		<s:Label text="{unit.wood}" visible="{unit.wood &gt; 0}" color="#ffffff"/>
 		
-		<s:Image source="{ImageContainer.IRON}" visible="{unit.iron &gt; 0}"/>
+		<s:Image source="{ImageContainer.IRON35}" visible="{unit.iron &gt; 0}"/>
 		<s:Label text="{unit.iron}" visible="{unit.iron &gt; 0}" color="#ffffff"/>
 		
-		<s:Image source="{ImageContainer.GOLD}" visible="{unit.gold &gt; 0}"/>
+		<s:Image source="{ImageContainer.GOLD35}" visible="{unit.gold &gt; 0}"/>
 		<s:Label text="{unit.gold}" visible="{unit.gold &gt; 0}" color="#ffffff"/>
 	</s:HGroup>
 </s:VGroup>

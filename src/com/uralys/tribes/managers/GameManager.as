@@ -1382,7 +1382,8 @@ package com.uralys.tribes.managers {
 				Session.map[cell.x][cell.y] = cell;
 			}
 			
-			BoardClickAnalyser.getInstance().simulateClick(); // rafraichit l'information sur la case courante.
+			if(!Session.INSIDE_A_CITY)
+				BoardClickAnalyser.getInstance().simulateClick(); // rafraichit l'information sur la case courante.
 		}
 		
 		//===================================================================================//

@@ -12,6 +12,7 @@
 		
 		<fx:Script>
 			<![CDATA[
+				import com.uralys.tribes.commons.Numbers;
 				import com.uralys.tribes.commons.Session;
 				import com.uralys.tribes.commons.Translations;
 				import com.uralys.tribes.main.ImageContainer;
@@ -40,22 +41,41 @@
 				<s:Label text="{Translations.CREATOR.getItemAt(Session.LANGUAGE)}" 
 						 styleName="bigGreen2Style"/>
 				
-				<s:Label text="Christophe Dugne-Esquevin" styleName="littleWhiteStyle"
+				<s:Label text="Christophe Dugne-Esquevin"
+						 id="labelChris"
 						 click="navigateToURL(new URLRequest('http://www.uralys.com'),'_new');"
 						 buttonMode="true"
-						 useHandCursor="true"/>		
+						 useHandCursor="true"
+						 color="{Numbers.CLASSIC_COLOR}"
+						 mouseOver="{labelChris.setStyle('color', '#ffffff')}"
+						 mouseOut="{labelChris.setStyle('color', Numbers.CLASSIC_COLOR)}"/>		
 				
 				
 				<s:Label text="{Translations.GRAPHIST.getItemAt(Session.LANGUAGE)}"
 						 styleName="bigGreen2Style"/>
 				
 				<s:HGroup width="100%" horizontalAlign="center">
-					<s:Label text="Adrien Thollot" styleName="littleWhiteStyle"
+					<s:Label text="Illustrations : Adrien Thollot"
+							 id="labelAdrien"
 							 click="navigateToURL(new URLRequest('http://adritho.blogspot.com/'),'_new');"
 							 buttonMode="true"
-							 useHandCursor="true"/>		
+							 useHandCursor="true"
+							 color="{Numbers.CLASSIC_COLOR}"
+							 mouseOver="{labelAdrien.setStyle('color', '#ffffff')}"
+							 mouseOut="{labelAdrien.setStyle('color', Numbers.CLASSIC_COLOR)}"/>		
 				</s:HGroup>
 						  
+				
+				<s:HGroup width="100%" horizontalAlign="center">
+					<s:Label text="Icônes : Philippe Lim"
+							 id="labelPhil"
+							 click="navigateToURL(new URLRequest('http://issuu.com/philou75/docs/lim_philippe_-_book_2012'),'_new');"
+							 buttonMode="true"
+							 useHandCursor="true"
+							 color="{Numbers.CLASSIC_COLOR}"
+							 mouseOver="{labelPhil.setStyle('color', '#ffffff')}"
+							 mouseOut="{labelPhil.setStyle('color', Numbers.CLASSIC_COLOR)}"/>		
+				</s:HGroup>
 				
 				
 				<s:Label x="{Session.LANGUAGE == 0 ? 300 : 325}" y="420" text="{Translations.MUSIC.getItemAt(Session.LANGUAGE)}" styleName="bigGreen2Style"/>

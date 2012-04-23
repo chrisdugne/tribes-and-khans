@@ -76,6 +76,18 @@ public final class ImageContainer
 	[Embed(source="resources/embed/icons/gold.png")]
 	[Bindable] public static var GOLD:Class;
 
+	[Embed(source="resources/embed/icons/wheat35.png")]
+	[Bindable] public static var WHEAT35:Class;
+
+	[Embed(source="resources/embed/icons/wood35.png")]
+	[Bindable] public static var WOOD35:Class;
+
+	[Embed(source="resources/embed/icons/iron35.png")]
+	[Bindable] public static var IRON35:Class;
+
+	[Embed(source="resources/embed/icons/gold35.png")]
+	[Bindable] public static var GOLD35:Class;
+
 	//   ======================================================================//
 
 	[Embed(source="resources/embed/icons/cross.png")]
@@ -109,17 +121,29 @@ public final class ImageContainer
 
 	//   ======================================================================//
 
-	[Embed(source="resources/embed/icons/epee.png")]
+	[Embed(source="resources/embed/icons/sword.png")]
 	[Bindable] public static var SWORD:Class;
 
-	[Embed(source="resources/embed/icons/armure.png")]
+	[Embed(source="resources/embed/icons/armor.png")]
 	[Bindable] public static var ARMOR:Class;
 
-	[Embed(source="resources/embed/icons/arc.png")]
+	[Embed(source="resources/embed/icons/bow.png")]
 	[Bindable] public static var BOW:Class;
 
 	[Embed(source="resources/embed/icons/people.png")]
 	[Bindable] public static var PEOPLE:Class;
+
+	[Embed(source="resources/embed/icons/sword35.png")]
+	[Bindable] public static var SWORD35:Class;
+
+	[Embed(source="resources/embed/icons/armor35.png")]
+	[Bindable] public static var ARMOR35:Class;
+
+	[Embed(source="resources/embed/icons/bow35.png")]
+	[Bindable] public static var BOW35:Class;
+
+	[Embed(source="resources/embed/icons/people35.png")]
+	[Bindable] public static var PEOPLE35:Class;
 
 	//   ======================================================================//
 

@@ -30,19 +30,11 @@
 			import com.uralys.tribes.main.ImageContainer;
 			import com.uralys.tribes.managers.GameManager;
 			import com.uralys.tribes.skins.CustomButtonSkin;
-			import com.uralys.tribes.skins.WorkersProgressBarSkin;
-			import com.uralys.tribes.skins.WorkersProgressTrackSkin;
 			import com.uralys.tribes.windows.UnitDetailsWindow;
-			import com.uralys.utils.Utils;
 			
 			import mx.containers.ViewStack;
 			import mx.core.FlexGlobals;
-			import mx.effects.easing.Quadratic;
-			import mx.events.ItemClickEvent;
 			import mx.managers.PopUpManager;
-			import mx.utils.ObjectUtil;
-			
-			import spark.components.IItemRenderer;
 			
 			//-------------------------------------------------------------------------------------//
 			
@@ -259,7 +251,8 @@
 					 alpha="0.4"/>
 			
 			<renderers:PlayerName player="{unit.player}" left="5"/>
-			<s:Image source="{ImageContainer.ZOOM_IN}" right="5" click="openDetails()"/>
+			<s:Image source="{ImageContainer.ZOOM_IN}" right="5" click="openDetails()"
+					 visible="{unit.ownerStatus == Unit.PLAYER || unit.ownerStatus == Unit.ALLY}"/>
 			
 			
 			<s:Image source="{ImageContainer.LEFT_ARROW}" click="{goLeft(unitDataViewStack)}" left="10" top="30"

@@ -2,6 +2,8 @@
 <s:NavigatorContent xmlns:fx="http://ns.adobe.com/mxml/2009" 
 					xmlns:s="library://ns.adobe.com/flex/spark" 
 					xmlns:mx="library://ns.adobe.com/flex/mx"
+					creationComplete="refresh(true)"
+					show="refresh()"
 					label="{Translations.RESOURCES.getItemAt(Session.LANGUAGE)
 					+ (city.peopleCreatingWheat
 					+ city.peopleCreatingWood
@@ -25,7 +27,16 @@
 				
 				//----------------------------------------------------------//
 				
-				protected function wheatWorkersCheck(event:Event):void	
+				protected function refresh(creationComplete:Boolean = false):void
+				{
+					wheatWorkersCheck(creationComplete);
+					woodWorkersCheck(creationComplete);
+					ironWorkersCheck(creationComplete);
+				}
+
+				//----------------------------------------------------------//
+				
+				protected function wheatWorkersCheck(creationComplete:Boolean = false):void	
 				{
 					var peopleAdded:int = wheatWorkersSlider.value - city.peopleCreatingWheat;
 					
@@ -39,7 +50,8 @@
 					city.wheatRequiredToFeed = (city.population + city.unitsToFeed) * Numbers.FEED_COEFF;
 					city.wheatExpected = city.wheat + city.wheatEarned - city.wheatRequiredToFeed;
 					
-					GameManager.getInstance().updateWorkersProgressBar();
+					if(!creationComplete)
+						GameManager.getInstance().updateWorkersProgressBar();
 				}
 				
 				protected function pickUpPeopleInPeopleCreatingWheat(peopleToPickUp:int):void{
@@ -51,7 +63,7 @@
 				
 				//-------------------------------------------------------------------------//
 				
-				protected function woodWorkersCheck(event:Event):void	{
+				protected function woodWorkersCheck(creationComplete:Boolean = false):void	{
 					
 					var peopleAdded:int = woodWorkersSlider.value - city.peopleCreatingWood;
 					
@@ -65,12 +77,13 @@
 					if(labelStarvation.visible)
 						city.woodEarned /= 2;
 					
-					GameManager.getInstance().updateWorkersProgressBar();
+					if(!creationComplete)
+						GameManager.getInstance().updateWorkersProgressBar();
 				}
 				
 				//-------------------------------------------------------------------------//
 				
-				protected function ironWorkersCheck(event:Event):void	
+				protected function ironWorkersCheck(creationComplete:Boolean = false):void	
 				{
 					var peopleAdded:int = ironWorkersSlider.value - city.peopleCreatingIron;
 					
@@ -84,7 +97,8 @@
 					if(labelStarvation.visible)
 						city.ironEarned /= 2;
 					
-					GameManager.getInstance().updateWorkersProgressBar();
+					if(!creationComplete)
+						GameManager.getInstance().updateWorkersProgressBar();
 				}
 			]]>
 		</fx:Script>
@@ -118,7 +132,7 @@
 						<s:HSlider id="wheatWorkersSlider"
 								   showDataTip="false"
 								   liveDragging="true" 
-								   change="wheatWorkersCheck(event)"
+								   change="wheatWorkersCheck()"
 								   value="{city.peopleCreatingWheat}"
 								   maximum="{city.population}"
 								   snapInterval="1"/>
@@ -152,7 +166,7 @@
 						<s:HSlider id="woodWorkersSlider"
 								   showDataTip="false"
 								   liveDragging="true" 
-								   change="woodWorkersCheck(event)"
+								   change="woodWorkersCheck()"
 								   value="{city.peopleCreatingWood}"
 								   maximum="{city.population}"
 								   snapInterval="1"/> 
@@ -181,7 +195,7 @@
 						<s:HSlider id="ironWorkersSlider"
 								   showDataTip="false"
 								   liveDragging="true" 
-								   change="ironWorkersCheck(event)"
+								   change="ironWorkersCheck()"
 								   value="{city.peopleCreatingIron}"
 								   maximum="{city.population}"
 								   snapInterval="1"/>

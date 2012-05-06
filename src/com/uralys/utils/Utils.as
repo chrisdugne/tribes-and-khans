@@ -5,14 +5,11 @@ package com.uralys.utils
 import com.uralys.tribes.commons.Numbers;
 import com.uralys.tribes.commons.Session;
 import com.uralys.tribes.core.BoardDrawer;
-import com.uralys.tribes.core.UnitMover;
 import com.uralys.tribes.entities.Ally;
 import com.uralys.tribes.entities.Cell;
 import com.uralys.tribes.entities.Item;
 import com.uralys.tribes.entities.Message;
-import com.uralys.tribes.entities.Move;
 import com.uralys.tribes.entities.Player;
-import com.uralys.tribes.entities.Unit;
 
 import flash.display.BitmapData;
 import flash.display.Sprite;
@@ -20,7 +17,6 @@ import flash.display.Sprite;
 import mx.collections.ArrayCollection;
 import mx.collections.Sort;
 import mx.collections.SortField;
-import mx.utils.ObjectUtil;
 
 public class Utils
 {

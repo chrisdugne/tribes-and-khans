@@ -3,6 +3,7 @@
 					xmlns:s="library://ns.adobe.com/flex/spark" 
 					xmlns:mx="library://ns.adobe.com/flex/mx"
 					xmlns:renderers="com.uralys.tribes.renderers.*"
+					show="refresh()"
 					label="{Translations.FORGE.getItemAt(Session.LANGUAGE)
 					+ (city.bowWorkers
 					+ city.swordWorkers

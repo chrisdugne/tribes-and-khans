@@ -18,7 +18,6 @@
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;
 			import com.uralys.tribes.entities.City;
-			import com.uralys.tribes.entities.Stock;
 			import com.uralys.tribes.main.ImageContainer;
 			import com.uralys.tribes.managers.GameManager;
 			import com.uralys.tribes.skins.CustomButtonSkin;

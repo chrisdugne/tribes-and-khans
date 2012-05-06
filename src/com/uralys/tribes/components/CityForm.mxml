@@ -49,8 +49,8 @@
 			<s:State name="normal" id="normalState"/>
 		</fx:Declarations>
 	
-		<s:Image source="{ImageContainer.getImage(ImageContainer.FERMIER)}" right="-270" y="-70" visible="{viewstack.selectedIndex == 0}" hideEffect="fader" showEffect="shower"/>
-		<s:Image source="{ImageContainer.getImage(ImageContainer.FORGERON)}" right="-270" y="-70" visible="{viewstack.selectedIndex == 1 || viewstack.selectedIndex == 5}" hideEffect="fader" showEffect="shower"/>
+		<s:Image source="{ImageContainer.getImage(ImageContainer.MARCHANDE)}" right="-270" y="-70" visible="{viewstack.selectedIndex == 0}" hideEffect="fader" showEffect="shower"/>
+		<s:Image source="{ImageContainer.getImage(ImageContainer.MARCHAND)}" right="-270" y="-70" visible="{viewstack.selectedIndex == 1 || viewstack.selectedIndex == 5}" hideEffect="fader" showEffect="shower"/>
 		<s:Image source="{ImageContainer.getImage(ImageContainer.MARCHANDE)}" right="-270" y="30" visible="{viewstack.selectedIndex == 2}" hideEffect="fader" showEffect="shower"/>
 		<s:Image source="{ImageContainer.getImage(ImageContainer.MARCHAND)}" right="-270" y="-70" visible="{viewstack.selectedIndex == 3}" hideEffect="fader" showEffect="shower"/>
 		<s:Image source="{ImageContainer.getImage(ImageContainer.GUERRIER)}" right="-270" y="-70" visible="{viewstack.selectedIndex == 4}" hideEffect="fader" showEffect="shower"/>

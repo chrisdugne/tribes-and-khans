@@ -64,7 +64,7 @@
 		<s:HGroup verticalAlign="middle" width="100%">
 			<s:Image toolTip="{Translations.SWORDS.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.SWORD35}"/>
 			<s:Spacer width="100%"/>
-			<s:Label text="{unit.bows}" 
+			<s:Label text="{unit.swords}" 
 					 styleName="numberLabel" 
 					 textAlign="right"
 					 minWidth="60"/>		
@@ -73,7 +73,7 @@
 		<s:HGroup verticalAlign="middle" width="100%">
 			<s:Image toolTip="{Translations.ARMORS.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.ARMOR35}"/>
 			<s:Spacer width="100%"/>
-			<s:Label text="{unit.bows}" 
+			<s:Label text="{unit.armors}" 
 					 styleName="numberLabel" 
 					 textAlign="right"
 					 minWidth="60"/>		
@@ -82,7 +82,7 @@
 		<s:HGroup verticalAlign="middle" width="100%">
 			<s:Image toolTip="{Translations.WHEAT.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WHEAT35}"/>
 			<s:Spacer width="100%"/>
-			<s:Label text="{unit.bows}" 
+			<s:Label text="{unit.wheat}" 
 					 styleName="numberLabel" 
 					 textAlign="right"
 					 minWidth="60"/>		
@@ -91,7 +91,7 @@
 		<s:HGroup verticalAlign="middle" width="100%">
 			<s:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD35}"/>
 			<s:Spacer width="100%"/>
-			<s:Label text="{unit.bows}" 
+			<s:Label text="{unit.wood}" 
 					 styleName="numberLabel" 
 					 textAlign="right"
 					 minWidth="60"/>		
@@ -100,7 +100,7 @@
 		<s:HGroup verticalAlign="middle" width="100%">
 			<s:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON35}"/>
 			<s:Spacer width="100%"/>
-			<s:Label text="{unit.bows}" 
+			<s:Label text="{unit.iron}" 
 					 styleName="numberLabel" 
 					 textAlign="right"
 					 minWidth="60"/>		

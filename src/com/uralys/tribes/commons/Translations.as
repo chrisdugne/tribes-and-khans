@@ -165,6 +165,17 @@ public class Translations{
 									["Choisir une case cible !",
 									"Choose a target cell !",
 									"Choose a target cell !"]);
+
+	[Bindable]
+	public static var SHOOT_PROCEEDING:ArrayCollection = new ArrayCollection(
+									["Tirs en cours. Rapport dans 3 secondes.",
+									"Shooting on the target. Report within 3 secs.",
+									"Shooting on the target. Report within 3 secs."]);
+	[Bindable]
+	public static var NO_TARGET:ArrayCollection = new ArrayCollection(
+									["Pas de cible possible",
+									"No available target",
+									"No available target"]);
 	[Bindable]
 	public static var LIMIT_NB_MOVES:ArrayCollection = new ArrayCollection(
 									["10 déplacements en mémoire maximum",

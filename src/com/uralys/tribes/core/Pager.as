@@ -3,9 +3,6 @@ package com.uralys.tribes.core
 
 import com.uralys.tribes.commons.*;
 
-import mx.core.IVisualElement;
-import mx.utils.ObjectUtil;
-
 import spark.components.Group;
 
 /**

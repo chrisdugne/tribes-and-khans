@@ -17,7 +17,6 @@
 	<fx:Script>
 		<![CDATA[
 			import com.uralys.tribes.entities.City;
-			import com.uralys.utils.Utils;
 			
 			import mx.events.ItemClickEvent;
 			

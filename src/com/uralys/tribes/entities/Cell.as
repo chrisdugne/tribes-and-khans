@@ -1,16 +1,6 @@
 package com.uralys.tribes.entities
 {
-	import com.uralys.tribes.commons.Numbers;
-	import com.uralys.tribes.commons.Session;
-	import com.uralys.tribes.core.UnitMover;
-	import com.uralys.tribes.managers.GameManager;
 	import com.uralys.tribes.renderers.Pawn;
-	import com.uralys.tribes.tooltips.MerchantToolTip;
-	import com.uralys.utils.Utils;
-	
-	import mx.collections.ArrayCollection;
-	import mx.controls.Image;
-	import mx.utils.ObjectUtil;
 	
 	[Bindable]
 	[RemoteClass(alias="com.uralys.tribes.entities.Cell")]

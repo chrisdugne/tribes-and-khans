@@ -7,14 +7,17 @@ package com.uralys.tribes.commons
 
 	
 		public static var SERVER_START:Number = 1326434887434;
+
+		[Bindable]
+		public static var BASE_SPEED:int = 3;
+
+		// Main data  ==============================================================
 	
 		// step toutes les 10 minutes
 		[Bindable]
 		//public static var TIME_PER_STEP:int = 10;
 		public static var TIME_PER_STEP:int = 1;
 	
-		[Bindable]
-		public static var BASE_SPEED:int = 3;
 	
 		// temps de deplacement de base (pour une vitesse de base de 3 cases par heure)
 		[Bindable]
@@ -34,7 +37,7 @@ package com.uralys.tribes.commons
 		//public static var TIME_TO_BUILD_A_CITY:int = 12*60*60*1000;
 		public static var TIME_TO_BUILD_A_CITY:int = 20*1000;
 	
-		// Main data  ==============================================================
+		// ==============================================================
 		// Colors			[Bindable] public static var CLASSIC_COLOR:Number = 0x9C9C9C;
 		[Bindable] public static var GREEN:Number = 0x348C4F;
 		[Bindable] public static var BLUE:Number = 0x5C7FBF;
@@ -155,6 +158,7 @@ package com.uralys.tribes.commons
 		//==================================================================================================//
 		// Item data
 		
+		//[Bindable] public static var BOW_TIME:int = 20*60*1000;
 		[Bindable] public static var BOW_TIME:int = 5*1000;
 		[Bindable] public static var BOW_WOOD:int;
 		[Bindable] public static var BOW_IRON:int;
@@ -162,6 +166,7 @@ package com.uralys.tribes.commons
 		[Bindable] public static var BOW_VALUE:int;
 		[Bindable] public static var BOW_PEOPLE_REQUIRED:int;
 	
+		//[Bindable] public static var SWORD_TIME:int = 30*60*1000;
 		[Bindable] public static var SWORD_TIME:int = 10*1000;
 		[Bindable] public static var SWORD_WOOD:int;
 		[Bindable] public static var SWORD_IRON:int;
@@ -169,6 +174,7 @@ package com.uralys.tribes.commons
 		[Bindable] public static var SWORD_VALUE:int;
 		[Bindable] public static var SWORD_PEOPLE_REQUIRED:int;
 	
+		//[Bindable] public static var ARMOR_TIME:int = 45*60*1000;
 		[Bindable] public static var ARMOR_TIME:int = 15*1000;
 		[Bindable] public static var ARMOR_WOOD:int;
 		[Bindable] public static var ARMOR_IRON:int;

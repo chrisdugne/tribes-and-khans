@@ -8,14 +8,9 @@ package com.uralys.tribes.managers {
 	import com.uralys.tribes.entities.UralysProfile;
 	import com.uralys.tribes.pages.Board;
 	
-	import flash.sampler.getGetterInvocationCount;
-	
-	import mx.collections.ArrayCollection;
 	import mx.core.FlexGlobals;
-	import mx.rpc.events.FaultEvent;
 	import mx.rpc.events.ResultEvent;
 	import mx.rpc.remoting.mxml.RemoteObject;
-	import mx.utils.ObjectUtil;
 	
 	[Bindable]
 	public class AccountManager{
@@ -141,7 +136,6 @@ package com.uralys.tribes.managers {
 			}
 			else{
 				Session.player = player;
-				trace(ObjectUtil.toString(Session.player));
 				finalizeLogin();
 			}
 				

@@ -15,27 +15,14 @@
 			
 			import com.uralys.tribes.commons.Numbers;
 			import com.uralys.tribes.commons.Session;
-			import com.uralys.tribes.commons.Translations;
 			import com.uralys.tribes.core.BoardClickAnalyser;
 			import com.uralys.tribes.core.BoardDrawer;
-			import com.uralys.tribes.core.Pager;
-			import com.uralys.tribes.core.UnitMover;
-			import com.uralys.tribes.entities.Cell;
 			import com.uralys.tribes.entities.City;
-			import com.uralys.tribes.entities.Game;
-			import com.uralys.tribes.entities.Move;
-			import com.uralys.tribes.entities.Player;
-			import com.uralys.tribes.entities.Unit;
 			import com.uralys.tribes.main.ImageContainer;
 			import com.uralys.tribes.managers.GameManager;
-			import com.uralys.tribes.renderers.Pawn;
-			import com.uralys.tribes.skins.ClassicProgressBarSkin;
-			import com.uralys.tribes.skins.CustomProgressTrackSkin;
 			import com.uralys.utils.Utils;
 			
-			import mx.containers.TitleWindow;
 			import mx.core.FlexGlobals;
-			import mx.events.ItemClickEvent;
 			
 			//---------------------------------------------------------------------------------------//
 			

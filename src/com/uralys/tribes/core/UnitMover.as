@@ -5,21 +5,17 @@ package com.uralys.tribes.core
 	import com.uralys.tribes.commons.Translations;
 	import com.uralys.tribes.components.UnitRenderer;
 	import com.uralys.tribes.entities.Cell;
-	import com.uralys.tribes.entities.City;
 	import com.uralys.tribes.entities.Move;
-	import com.uralys.tribes.entities.Player;
 	import com.uralys.tribes.entities.Unit;
 	import com.uralys.tribes.managers.GameManager;
 	import com.uralys.utils.Map;
 	import com.uralys.utils.Utils;
 	
-	import flash.events.Event;
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
 	
 	import mx.collections.ArrayCollection;
 	import mx.core.FlexGlobals;
-	import mx.utils.ObjectUtil;
 
 	public class UnitMover
 	{
@@ -357,6 +353,7 @@ package com.uralys.tribes.core
 		}
 		
 		//--------------------------------------------------------------------------//
+		// click sur une des cibles possibles
 		
 		[Bindable] private static var unitRendererShooting:UnitRenderer;
 		

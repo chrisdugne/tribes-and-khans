@@ -1,15 +1,11 @@
 package com.uralys.tribes.core
 {
-	import com.uralys.tribes.commons.Numbers;
 	import com.uralys.tribes.commons.Session;
 	import com.uralys.tribes.commons.Translations;
 	import com.uralys.tribes.entities.Cell;
 	import com.uralys.tribes.entities.City;
-	import com.uralys.tribes.entities.Player;
 	import com.uralys.tribes.entities.Unit;
 	import com.uralys.tribes.managers.GameManager;
-	import com.uralys.tribes.pages.Board;
-	import com.uralys.utils.Map;
 	import com.uralys.utils.Utils;
 	
 	import flash.events.MouseEvent;
@@ -17,9 +13,6 @@ package com.uralys.tribes.core
 	
 	import mx.core.FlexGlobals;
 	import mx.events.ItemClickEvent;
-	import mx.utils.ObjectUtil;
-	
-	import spark.components.Group;
 
 	/**
 		BoardClickListener

@@ -1,50 +1,26 @@
 package com.uralys.tribes.core
 {
 	import com.dncompute.graphics.GraphicsUtil;
-	import com.uralys.tribes.commons.Numbers;
 	import com.uralys.tribes.commons.Session;
 	import com.uralys.tribes.commons.Translations;
 	import com.uralys.tribes.entities.Cell;
 	import com.uralys.tribes.entities.City;
-	import com.uralys.tribes.entities.Game;
 	import com.uralys.tribes.entities.Move;
-	import com.uralys.tribes.entities.Player;
 	import com.uralys.tribes.entities.Unit;
 	import com.uralys.tribes.main.ImageContainer;
 	import com.uralys.tribes.managers.GameManager;
-	import com.uralys.tribes.pages.Board;
 	import com.uralys.tribes.renderers.MoveHighLight;
-	import com.uralys.tribes.renderers.Pawn;
-	import com.uralys.utils.Map;
 	import com.uralys.utils.Utils;
 	
-	import flash.display.Sprite;
-	import flash.events.MouseEvent;
 	import flash.events.TimerEvent;
 	import flash.geom.Point;
 	import flash.utils.Timer;
 	
 	import mx.collections.ArrayCollection;
-	import mx.collections.SortField;
 	import mx.controls.Image;
 	import mx.core.FlexGlobals;
-	import mx.core.IVisualElement;
-	import mx.core.UIComponent;
-	import mx.events.EffectEvent;
-	import mx.events.ToolTipEvent;
 	import mx.graphics.GradientEntry;
 	import mx.graphics.RadialGradientStroke;
-	import mx.graphics.SolidColor;
-	import mx.graphics.SolidColorStroke;
-	import mx.utils.ObjectUtil;
-	
-	import spark.components.Button;
-	import spark.components.Group;
-	import spark.components.Label;
-	import spark.effects.Move;
-	import spark.primitives.Ellipse;
-	import spark.primitives.Line;
-	import spark.primitives.Rect;
 
 	/**
 		BoardDrawer draws all the entities of the game on the board.
@@ -510,96 +486,55 @@ package com.uralys.tribes.core
 
 		public function drawBowsToShoot():void
 		{
-			trace("-------");
 			currentBowsToShoot = new ArrayCollection();
-			trace("drawBowsToShoot : currentBowsToShoot " + currentBowsToShoot.length);
 			
 			var cell:Cell = Session.CURRENT_CELL_SELECTED;
 			
-			var imageNorth:Image = new Image();
-			var imageSouth:Image = new Image();
-			var imageNorthEast:Image = new Image();
-			var imageNorthWest:Image = new Image();
-			var imageSouthEast:Image = new Image();
-			var imageSouthWest:Image = new Image();
+			var nbdraws:int = 0;
 			
-			imageNorth.source = ImageContainer.getImage(ImageContainer.HIGHLIGHT_BOW_SHOOT);
-			imageSouth.source = ImageContainer.getImage(ImageContainer.HIGHLIGHT_BOW_SHOOT);
-			imageNorthEast.source = ImageContainer.getImage(ImageContainer.HIGHLIGHT_BOW_SHOOT);
-			imageNorthWest.source = ImageContainer.getImage(ImageContainer.HIGHLIGHT_BOW_SHOOT);
-			imageSouthEast.source = ImageContainer.getImage(ImageContainer.HIGHLIGHT_BOW_SHOOT);
-			imageSouthWest.source = ImageContainer.getImage(ImageContainer.HIGHLIGHT_BOW_SHOOT);
+			nbdraws += tryToDrawBowCell(cell.x, cell.y + 2);
+			nbdraws += tryToDrawBowCell(cell.x + 1, cell.y - 1);
+			nbdraws += tryToDrawBowCell(cell.x - 1, cell.y - 1);
+			nbdraws += tryToDrawBowCell(cell.x + 1, cell.y + 1);
+			nbdraws += tryToDrawBowCell(cell.x - 1, cell.y + 1);
+			nbdraws += tryToDrawBowCell(cell.x, cell.y - 2);
 			
-			var northPx:int = Utils.getXPixel(cell.x);
-			var northPy:int = Utils.getYPixel(cell.y - 2);
-
-			var southPx:int = Utils.getXPixel(cell.x);
-			var southPy:int = Utils.getYPixel(cell.y + 2);
-
-			var northEastPx:int = Utils.getXPixel(cell.x + 1);
-			var northEastPy:int = Utils.getYPixel(cell.y - 1);
-
-			var northWestPx:int = Utils.getXPixel(cell.x - 1);
-			var northWestPy:int = Utils.getYPixel(cell.y - 1);
+			if(nbdraws == 0)
+				FlexGlobals.topLevelApplication.message(Translations.NO_TARGET.getItemAt(Session.LANGUAGE));
 			
-			var southEastPx:int = Utils.getXPixel(cell.x + 1);
-			var southEastPy:int = Utils.getYPixel(cell.y + 1);
-
-			var southWestPx:int = Utils.getXPixel(cell.x - 1);
-			var southWestPy:int = Utils.getYPixel(cell.y + 1);
+		}
+		
+		private function tryToDrawBowCell(x:int, y:int):int
+		{
+			trace("tryToDrawBowCell : " + x + " | " + y);
 			
-			imageNorth.x = northPx;
-			imageNorth.y = northPy;
-			imageNorth.scaleX = scale;
-			imageNorth.scaleY = scale;
-
-			imageSouth.x = southPx;
-			imageSouth.y = southPy;
-			imageSouth.scaleX = scale;
-			imageSouth.scaleY = scale;
-
-			imageNorthEast.x = northEastPx;
-			imageNorthEast.y = northEastPy;
-			imageNorthEast.scaleX = scale;
-			imageNorthEast.scaleY = scale;
-
-			imageNorthWest.x = northWestPx;
-			imageNorthWest.y = northWestPy;
-			imageNorthWest.scaleX = scale;
-			imageNorthWest.scaleY = scale;
-
-			imageSouthEast.x = southEastPx;
-			imageSouthEast.y = southEastPy;
-			imageSouthEast.scaleX = scale;
-			imageSouthEast.scaleY = scale;
-
-			imageSouthWest.x = southWestPx;
-			imageSouthWest.y = southWestPy;
-			imageSouthWest.scaleX = scale;
-			imageSouthWest.scaleY = scale;
+			try{
+				var px:int = Utils.getXPixel(x);
+				var py:int = Utils.getYPixel(y);
+				
+				if(Session.map[x][y].army || Session.map[x][y].caravan)
+				{
+					drawBowTarget(px, py);
+					return 1;
+				}
+			}
+			catch(e:Error){} // cell doesnt exist():void
+				return 0;
+		}
+		
+		private function drawBowTarget(x:int, y:int):void
+		{
+			trace("drawBowTarget : " + x + " | " + y);
+			var image:Image = new Image();			
+			image.source = ImageContainer.getImage(ImageContainer.HIGHLIGHT_BOW_SHOOT);
 			
+			image.x = x;
+			image.y = y;
+			image.scaleX = scale;
+			image.scaleY = scale;
 			
-			trace("Session.board.pawnLayer : " + Session.board.pawnLayer.numElements);
-
-			Session.board.pawnLayer.addElement(imageNorth);
-			Session.board.pawnLayer.addElement(imageSouth);
-			Session.board.pawnLayer.addElement(imageNorthEast);
-			Session.board.pawnLayer.addElement(imageNorthWest);
-			Session.board.pawnLayer.addElement(imageSouthEast);
-			Session.board.pawnLayer.addElement(imageSouthWest);
-			
-			
-			trace("Session.board.pawnLayer : " + Session.board.pawnLayer.numElements);
-			trace("currentBowsToShoot.length : " + currentBowsToShoot.length);
-			
-			currentBowsToShoot.addItem(imageNorth);
-			currentBowsToShoot.addItem(imageSouth);
-			currentBowsToShoot.addItem(imageNorthEast);
-			currentBowsToShoot.addItem(imageNorthWest);
-			currentBowsToShoot.addItem(imageSouthEast);
-			currentBowsToShoot.addItem(imageSouthWest);
-
-			trace("currentBowsToShoot.length : " + currentBowsToShoot.length);
+			Session.board.pawnLayer.addElement(image);
+			currentBowsToShoot.addItem(image);
 		}
 		
 		//==================================================================================================//

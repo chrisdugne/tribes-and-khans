@@ -7,30 +7,25 @@ package com.uralys.tribes.managers {
 	import com.uralys.tribes.commons.Translations;
 	import com.uralys.tribes.core.BoardClickAnalyser;
 	import com.uralys.tribes.core.BoardDrawer;
-	import com.uralys.tribes.core.Pager;
 	import com.uralys.tribes.core.UnitMover;
 	import com.uralys.tribes.entities.Ally;
 	import com.uralys.tribes.entities.Cell;
 	import com.uralys.tribes.entities.City;
-	import com.uralys.tribes.entities.Game;
-	import com.uralys.tribes.entities.Item;
 	import com.uralys.tribes.entities.Move;
 	import com.uralys.tribes.entities.MoveResult;
 	import com.uralys.tribes.entities.Player;
 	import com.uralys.tribes.entities.Stock;
 	import com.uralys.tribes.entities.Unit;
-	import com.uralys.tribes.pages.Board;
 	import com.uralys.tribes.renderers.Pawn;
 	import com.uralys.utils.Utils;
 	
+	import flash.events.TimerEvent;
+	import flash.utils.Timer;
+	
 	import mx.collections.ArrayCollection;
-	import mx.controls.Alert;
 	import mx.core.FlexGlobals;
-	import mx.rpc.CallResponder;
-	import mx.rpc.events.FaultEvent;
 	import mx.rpc.events.ResultEvent;
 	import mx.rpc.remoting.mxml.RemoteObject;
-	import mx.utils.ObjectUtil;
 
 	[Bindable]
 	public class GameManager{
@@ -161,6 +156,9 @@ package com.uralys.tribes.managers {
 			var nbStepsSinceBeginning:int = timeSpentMillis/(Numbers.TIME_PER_STEP*60*1000);
 			var nbStepsMissed:int = nbStepsSinceBeginning - player.lastStep;
 			
+			trace("nbStepsSinceBeginning : " + nbStepsSinceBeginning);
+			trace("player.lastStep : " + player.lastStep);
+			
 			for each(var city:City in player.cities)
 			{
 				trace("MAJ des stocks : ("+city.stocks.length+" depots)");
@@ -276,9 +274,6 @@ package com.uralys.tribes.managers {
 		
 		private function calculateCitiesStep(player:Player, catchUpCalculation:Boolean = false):void
 		{
-			trace("------------------------");
-			trace("calculateCitiesStep");
-			
 			for each(var city:City in player.cities)
 			{
 				if(!catchUpCalculation)
@@ -666,8 +661,6 @@ package com.uralys.tribes.managers {
 		
 		public function refreshCityWorkersOnResources(forceCalculation:Boolean, city:City, starvation:Boolean):void
 		{
-			trace("--------");
-			trace("refreshCityResources");
 			if(!forceCalculation && city.calculationDone)
 				return;
 			
@@ -702,9 +695,6 @@ package com.uralys.tribes.managers {
 		
 		private function calculatePopulation(population:int, starvation:Boolean):int 
 		{
-			trace("------");
-			trace("calculatePopulation");
-			
 			if(starvation)
 				return population - population/20;
 			else if(population < 10000)
@@ -1489,6 +1479,19 @@ package com.uralys.tribes.managers {
 		{
 			var gameWrapper:RemoteObject = getGameWrapper();
 			gameWrapper.shoot(shooter, target, cellUID);
+			
+			var timer:Timer = new Timer(2000, 1);
+			timer.addEventListener(TimerEvent.TIMER_COMPLETE, refresh);
+			timer.start();
+			
+			FlexGlobals.topLevelApplication.message(Translations.SHOOT_PROCEEDING.getItemAt(Session.LANGUAGE));
+		}
+
+		//---------------------------------------------------------------------//		
+		
+		protected function refresh(event:TimerEvent = null):void
+		{
+			refreshPlayerOnServerSide(Session.player);
 		}
 	}
 }

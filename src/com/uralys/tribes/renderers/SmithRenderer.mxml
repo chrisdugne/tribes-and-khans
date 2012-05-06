@@ -68,6 +68,7 @@
 					currentState = "upgradeEnabled";
 				else{
 					potentialSmiths = smiths;
+					smithsSlider.value = smiths;
 					setBuilding();
 				}
 				
@@ -79,6 +80,10 @@
 				timeLabel.text = (hours != 0 ? hours+" h " : '')+(minutes>9 ? "" : "0")+minutes+" mn "+(secondes>9 ? "" : "0")+secondes+' s';
 
 				smithsSlider.maximum = Math.min(city.availableSmiths, ((stockCapacity - stock)/item.peopleRequired));
+				trace("refreshing " + smithsSlider.maximum);
+				trace("item.name " + item.name);
+				trace("stockCapacity " + stockCapacity);
+				trace("item.peopleRequired " + item.peopleRequired);
 			}
 
 			//-------------------------------------------------------------------------------------//

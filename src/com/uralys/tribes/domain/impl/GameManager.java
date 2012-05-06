@@ -374,6 +374,7 @@ public class GameManager implements IGameManager {
 		report.getNextUnit().setOwnerName(target.getPlayer().getName());
 		report.getNextUnit().setSize(newSize);
 		
+		gameDao.sendReport(report, shooter.getPlayer().getUralysUID(), new Date().getTime());
 		gameDao.sendReport(report, target.getPlayer().getUralysUID(), new Date().getTime());
 	}
 	//==================================================================================================//

@@ -54,6 +54,12 @@ package com.uralys.tribes.managers {
 		// CONTROLS
 		//============================================================================================//
 		
+		public function refreshAll(event:TimerEvent = null):void
+		{
+			refreshPlayerOnServerSide(Session.player);
+		}
+
+		
 		public function refreshPlayerOnServerSide(player:Player):void
 		{
 			trace("------------");
@@ -89,7 +95,7 @@ package com.uralys.tribes.managers {
 			}
 			else{
 				// a optimiser peut etre, pour l'instant gros refresh
-				refreshPlayerOnServerSide(Session.player);
+				refreshAll();
 			}
 			
 		}
@@ -460,7 +466,8 @@ package com.uralys.tribes.managers {
 			Session.WAIT_FOR_SERVER = false;
 			Session.allyLoaded = event.result as Ally;
 			
-			if(Session.player.ally.allyUID == Session.allyLoaded.allyUID)
+			if(Session.player && Session.player.ally 
+			&& Session.player.ally.allyUID == Session.allyLoaded.allyUID)
 				Session.player.ally = Session.allyLoaded;
 		}
 		
@@ -591,7 +598,7 @@ package com.uralys.tribes.managers {
 				// l'unite nexiste plus : elle a été supprimé entre temps
 				// par exemple apres un tir d'arcs
 				// on refresh le joueur, il recevra le message.
-				refreshPlayerOnServerSide(Session.player);
+				refreshAll();
 				return;
 			}
 			
@@ -1343,8 +1350,8 @@ package com.uralys.tribes.managers {
 			trace("refreshCellFromServer : " + cell.cellUID + " | " + cell.nextCellUID);
 
 			if(cell.nextCellUID != null && Utils.getCellInSession(cell.nextCellUID).city != null){
-				trace("nextCellUID is a city : refreshPlayer");
-				refreshPlayerOnServerSide(Session.player);
+				trace("nextCellUID is a city : refreshAll");
+				refreshAll();
 				return;	
 			}
 			
@@ -1481,7 +1488,7 @@ package com.uralys.tribes.managers {
 			gameWrapper.shoot(shooter, target, cellUID);
 			
 			var timer:Timer = new Timer(2000, 1);
-			timer.addEventListener(TimerEvent.TIMER_COMPLETE, refresh);
+			timer.addEventListener(TimerEvent.TIMER_COMPLETE, refreshAll);
 			timer.start();
 			
 			FlexGlobals.topLevelApplication.message(Translations.SHOOT_PROCEEDING.getItemAt(Session.LANGUAGE));
@@ -1489,9 +1496,5 @@ package com.uralys.tribes.managers {
 
 		//---------------------------------------------------------------------//		
 		
-		protected function refresh(event:TimerEvent = null):void
-		{
-			refreshPlayerOnServerSide(Session.player);
-		}
 	}
 }

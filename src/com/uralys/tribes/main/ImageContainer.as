@@ -20,7 +20,7 @@ public final class ImageContainer
 	
 	//   ======================================================================//
 
-	[Embed(source="resources/embed/mail.png")]
+	[Embed(source="resources/embed/icons/mail.png")]
 	[Bindable] public static var MAIL_BOX:Class;
 
 	[Embed(source="resources/embed/logo.png")]
@@ -34,7 +34,7 @@ public final class ImageContainer
 	[Embed(source="resources/embed/zoom_out.png")]
 	[Bindable] public static var ZOOM_OUT:Class;
 
-	[Embed(source="resources/embed/refresh.png")]
+	[Embed(source="resources/embed/refresh.png")] 
 	[Bindable] public static var REFRESH:Class;
 	
 	//   ======================================================================//
@@ -50,8 +50,32 @@ public final class ImageContainer
 	
 	//   ======================================================================//
 
+	[Embed(source="resources/embed/icons/settings.png")]
+	[Bindable] public static var SETTINGS:Class;
+
 	[Embed(source="resources/embed/icons/volume.png")]
 	[Bindable] public static var HP:Class;
+
+	[Embed(source="resources/embed/icons/forum.png")]
+	[Bindable] public static var FORUM:Class;
+
+	[Embed(source="resources/embed/icons/profile.png")]
+	[Bindable] public static var PROFILE:Class;
+
+	[Embed(source="resources/embed/icons/podium.png")]
+	[Bindable] public static var PODIUM:Class;
+
+	[Embed(source="resources/embed/icons/ally.png")]
+	[Bindable] public static var ALLY:Class;
+
+	[Embed(source="resources/embed/icons/info.png")]
+	[Bindable] public static var INFO:Class;
+
+	[Embed(source="resources/embed/icons/cross.png")]
+	[Bindable] public static var CROSS:Class;
+
+
+	//   ======================================================================//
 
 //	[Embed(source="resources/embed/buttons/ville-left.png")]
 //	[Bindable] public static var CITY_BUTTON_LEFT:Class;
@@ -89,9 +113,6 @@ public final class ImageContainer
 	[Bindable] public static var GOLD35:Class;
 
 	//   ======================================================================//
-
-	[Embed(source="resources/embed/icons/cross.png")]
-	[Bindable] public static var CROSS:Class;
 
 	[Embed(source="resources/embed/clock.png")]
 	[Bindable] public static var CLOCK:Class;  

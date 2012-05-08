@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<windows:ResizableTitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
+							  xmlns:s="library://ns.adobe.com/flex/spark" 
+							  xmlns:mx="library://ns.adobe.com/flex/mx" 
+							  xmlns:windows="com.uralys.tribes.windows.*"
+							  skinClass="com.uralys.tribes.skins.WindowSkin"
+							  close="{closeWindow();MusicPlayer.getInstance().playMusic()}"
+							  width="640"
+							  height="430">
+		
+		<!--  ================================================================================================== -->
+		
+		<fx:Script>
+			<![CDATA[
+				import com.uralys.tribes.commons.Names;
+				import com.uralys.tribes.commons.Session;
+				import com.uralys.tribes.core.MusicPlayer;
+				import com.uralys.tribes.main.ImageContainer;
+				import com.uralys.tribes.managers.AccountManager;
+				
+				import mx.events.FlexEvent;
+				import mx.managers.PopUpManager;
+				
+				//-----------------------------------------------------------------//
+				
+				private var frUrl:String = "http://www.youtube.com/v/xF0Uh4uu4uY?version=3&rel=0";
+				private var enUrl:String = "http://www.youtube.com/v/4v4_DOWykkw?version=3&rel=0";
+
+				//-----------------------------------------------------------------//
+				
+				public function closeWindow():void
+				{
+					PopUpManager.removePopUp(this);
+					reset();
+				}
+				
+				//-----------------------------------------------------------------//
+				
+				private function reset(event:FlexEvent = null):void
+				{
+					try{
+						youtubevid.unloadAndStop();
+					}
+					catch(e:Error){}
+
+					
+					if(!youtubevid)
+					{
+						addEventListener(FlexEvent.CREATION_COMPLETE, reset);						
+						return;
+					}
+					
+					Security.allowDomain(Session.LANGUAGE == 0 ? frUrl : enUrl);
+					youtubevid.load(Session.LANGUAGE == 0 ? frUrl : enUrl);   
+				}
+				
+				//--------------------------------------------------------------------------------------//
+				
+				private function french():void {
+					changeLanguage(0);
+				}
+				
+				private function english():void {
+					changeLanguage(1);
+				}
+				
+				private function us():void {
+					changeLanguage(2);				
+				}
+				
+				private function changeLanguage(lang:int):void {
+					if(Session.LOGGED_IN)
+						AccountManager.getInstance().changeLanguage(Session.uralysProfile.uralysUID, lang);
+					
+					Session.LANGUAGE = lang;
+					var sharedObject:SharedObject = SharedObject.getLocal(Names.SHARED_OBJECT_NAME);
+					sharedObject.data.lastLanguage = lang;
+					
+					reset();
+				}
+			]]>
+		</fx:Script>
+	
+	<s:HGroup
+		y="-15"
+		verticalAlign="middle">
+		
+		<s:Image id="frenchButton" source="{ImageContainer.FR_FLAG}" click="french()" visible="{Session.LANGUAGE != 0}" width="25"/>
+		<s:Image id="englishButton" source="{ImageContainer.EN_FLAG}" click="english()" visible="{Session.LANGUAGE != 1}" width="25"/>
+		<s:Image id="usButton" source="{ImageContainer.US_FLAG}" click="us()" visible="{Session.LANGUAGE != 2}" width="25"/>
+	</s:HGroup>
+		
+	<s:SWFLoader id="youtubevid" verticalCenter="0"/>
+
+</windows:ResizableTitleWindow>

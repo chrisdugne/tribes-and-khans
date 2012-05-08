@@ -22,7 +22,12 @@
 	</fx:Script>
 	
 	<s:HGroup width="100%" verticalAlign="middle">
-		<renderers:PlayerName player="{new Player(unit.ownerUID, unit.ownerName)}"/>
+		
+		<s:VGroup horizontalAlign="center">
+			<renderers:PlayerName player="{new Player(unit.ownerUID, unit.ownerName)}"/>
+			<s:Label text="{unit.value} pts" visible="{unit.value &gt; 0}" color="#ffffff"/>
+		</s:VGroup>
+		
 		<s:Image source="{unit.type == Unit.ARMY ? ImageContainer.ARMY_PLAYER : ImageContainer.MERCHANT_PLAYER}"
 				 height="90"/>
 		<s:Image source="{ImageContainer.PEOPLE35}" visible="{unit.size &gt; 0}"/>
@@ -37,8 +42,6 @@
 		<s:Image source="{ImageContainer.ARMOR35}" visible="{unit.armors &gt; 0}"/>
 		<s:Label text="{unit.armors}" visible="{unit.armors &gt; 0}" color="#ffffff"/>
 		
-		<s:Spacer width="100%"/>
-		<s:Label text="{unit.value} pts" visible="{unit.value &gt; 0}" color="#ffffff"/>
 	</s:HGroup>
 	<s:HGroup width="100%" verticalAlign="middle">
 		<s:Image source="{ImageContainer.WHEAT35}" visible="{unit.wheat &gt; 0}"/>

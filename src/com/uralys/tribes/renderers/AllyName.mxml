@@ -3,9 +3,9 @@
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
 		 xmlns:mx="library://ns.adobe.com/flex/mx"
 		 text="{ally.name}"
-		 color="#ffffff"
+		 color="#90c49b"
 		 mouseOver="{this.setStyle('color', '#668FB3')}"
-		 mouseOut="{this.setStyle('color', '#ffffff')}"
+		 mouseOut="{this.setStyle('color', '#90c49b')}"
 		 click="openProfile()">
 	
 	<fx:Script>

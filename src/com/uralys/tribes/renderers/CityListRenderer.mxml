@@ -33,19 +33,14 @@
 		]]>
 	</fx:Script>
 	
-	<s:Label id="labelCell" 
-			 color="#ffffff" 
-			 left="2" 
-			 text="[ {(data as City).x} , {(data as City).y} ]"
-			 />
-
 	<s:Label id="cityNameLabel" 
 			 color="#ffffff" 
-			 right="2"
+			 left="2" 
 			 width="120"
 			 showTruncationTip="true"
 			 maxDisplayedLines="1"
 			 text="{(data as City).name}"
+			 toolTip="[ {(data as City).x} , {(data as City).y} ]"
 			 />
 	
 </s:ItemRenderer>

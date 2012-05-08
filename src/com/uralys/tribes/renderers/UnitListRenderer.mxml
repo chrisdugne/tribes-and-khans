@@ -5,7 +5,7 @@
 				autoDrawBackground="false"
 				useHandCursor="true"
 				buttonMode="true"
-				width="240"
+				width="100"
 				click="onClick(event)" xmlns:components="com.uralys.tribes.components.*">
 	
 	
@@ -40,14 +40,18 @@
 		paddingLeft="2"
 		paddingRight="2"
 		verticalAlign="middle"
-		width="100%">
-		<s:Label id="labelCell" 
-				 color="#ffffff" 
-				 text="[ {Utils.getXFromCellUID((data as Unit).currentCaseUID)} , {Utils.getYFromCellUID((data as Unit).currentCaseUID)} ]"
-				 />
-		<s:Spacer width="100%"/>
+		width="100%" 
+		toolTip="[ {Utils.getXFromCellUID((data as Unit).currentCaseUID)} , {Utils.getYFromCellUID((data as Unit).currentCaseUID)} ]"
+		>
 		<s:Image source="{(data as Unit).type == Unit.ARMY ? ImageContainer.ARMY_PLAYER : ImageContainer.MERCHANT_PLAYER}"
-				 height="35"/>
+				 height="35" 
+				 width="15" 
+				 />
+		<s:Spacer width="20"/>
+		<s:Label id="labelCell" 
+				 color="#ffffff"
+				 text="{(data as Unit).name}"
+				 />
 		
 	</s:HGroup>
 	

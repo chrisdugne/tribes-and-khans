@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<components:ImageButton xmlns:fx="http://ns.adobe.com/mxml/2009" 
+						xmlns:s="library://ns.adobe.com/flex/spark" 
+						xmlns:mx="library://ns.adobe.com/flex/mx" 
+						xmlns:components="com.uralys.tribes.components.*"
+						skinClass="{ImageButtonSkin}"
+						buttonMode="true"
+						imageSkin="{btnGo}" 
+						imageSkinDisabled="{btnGoDisabled}"
+						imageSkinDown="{btnGoDisabled}" 
+						imageSkinOver="{btnGoOver}"
+						>
+	<fx:Script>
+		<![CDATA[
+			import com.uralys.tribes.skins.ImageButtonSkin;
+
+			[Embed('resources/embed/buttons/close_ON.png')]
+			[Bindable]public var btnGo:Class;
+			
+			[Embed('resources/embed/buttons/close_over.png')]
+			[Bindable]public var btnGoOver:Class;
+			
+			[Embed('resources/embed/buttons/close_OFF.png')]
+			[Bindable]public var btnGoDisabled:Class;
+		]]>
+	</fx:Script>
+</components:ImageButton>

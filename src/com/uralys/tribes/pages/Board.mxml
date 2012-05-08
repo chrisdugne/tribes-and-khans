@@ -120,7 +120,7 @@
 				if(millisRemaining <= 0){
 					if(event != null){
 						Session.timer.removeEventListener(TimerEvent.TIMER, setBuildingCityProgressBar);
-						GameManager.getInstance().refreshPlayerOnServerSide(Session.player);
+						GameManager.getInstance().refreshAll();
 					}
 				}
 				else{

@@ -26,7 +26,7 @@
 	</fx:Script>
 	
 	<s:Label text="{Translations.MY_CITIES.getItemAt(Session.LANGUAGE)}"/>
-	<s:Scroller height="200">
+	<s:Scroller height="{(Session.APPLICATION_HEIGHT - Session.FOOTER_HEIGHT - Session.HEADER_HEIGHT - Session.board.leftPanel.height)/3}">
 		<s:Group>
 			<s:List id="citiesList"
 					itemRenderer="com.uralys.tribes.renderers.CityListRenderer"
@@ -43,7 +43,7 @@
 	</s:Scroller>
 	<s:Label text="{Translations.MY_UNITS.getItemAt(Session.LANGUAGE)}"
 			 visible="{Session.player.units.length > 0}"/>
-	<s:Scroller height="200">
+	<s:Scroller height="{(Session.APPLICATION_HEIGHT - Session.FOOTER_HEIGHT - Session.HEADER_HEIGHT - Session.board.leftPanel.height)/2}">
 		<s:Group>
 			<s:List id="unitsList"
 					itemRenderer="com.uralys.tribes.renderers.UnitListRenderer"

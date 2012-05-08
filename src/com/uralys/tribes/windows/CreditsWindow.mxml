@@ -6,7 +6,7 @@
 							  skinClass="com.uralys.tribes.skins.WindowSkin"
 							  close="{closeWindow()}"
 							  width="500"
-							  height="620">
+							  height="650">
 		
 		<!--  ================================================================================================== -->
 		
@@ -85,7 +85,7 @@
 						 buttonMode="true"
 						 useHandCursor="true"/>
 				
-				<s:Label x="75" y="455" text="Utopian Hedonism (2011)" 
+				<s:Label x="75" y="455" text="Utopian Hedonism (2012)" 
 						 styleName="normalWhiteStyle"
 						 click="navigateToURL(new URLRequest('http://onesheet.com/utopian-hedonism/'),'_new');"
 						 buttonMode="true"

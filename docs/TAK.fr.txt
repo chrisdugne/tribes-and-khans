@@ -8,18 +8,18 @@ Vous utilisez également la population pour construire des armes dans la forge, 
 
 Dans la forge, utilisez de nouveau les sliders pour construire les arcs, les épées et les armures.
 Le nombre de forgerons maximum représente environ 1% de votre population totale.
-Nous avons environ 1200 habitants, donc nous pouvons créer 12 arcs, ce qui consommera 48 unités de bois et prendra 20 minutes.
+Ici nous avons environ 1200 habitants, donc nous pouvons créer 12 arcs, ce qui consommera 48 unités de bois et prendra 20 minutes.
 
 Voici le marché : vous pourrez acheter ou vendre des ressources et des armes, selon l'onglet Achat/Vente
 Utilisez les sliders pour choisir votre échange et valider l'opération.
 Dans cet exemple nous achetons 48 unités de bois et 28 unités de fer contre 299 unités d'or.
 
 Pour créer une armée, utilisez les sliders pour choisir le nombre de guerriers et leur attribuer armes et ressources à transporter.
-Ici nous créons une armée de 93 homees munis de 21 arcs.
+Ici nous créons une armée de 93 hommes munis de 21 arcs.
 Meme principe pour une caravane de marchands. Les marchands se deplacent plus vite que les armées mais n'utilisent pas les armes lors des combats.
 
-Pour déplacer vos troupes, choisissez en cliquant en bas à droite dans la petite fenetre sur le bouton "deplacer".
-Puis, en cliquant sur les cases adjacentes sur la carte vous déterminer le chemin que parcourera votre troupe.
+Déplacer vos troupes en utilisant le bouton "deplacer" en bas à droite.
+Puis, en cliquant sur les cases adjacentes sur la carte, vous déterminez le chemin que parcourera votre troupe.
 Lorsqu'une armée reste pendant une heure sur une case à coté de vos contrées, elle transforme cette case en contrée.
 Plus vous avez de contrées plus votre royaume gagne d'or toutes les 10 minutes.
 Au départ votre premiere contrée est votre ville.

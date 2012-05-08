@@ -46,6 +46,8 @@ package com.uralys.tribes.windows
 		//--------------------------------------------------------------------------
 
 		public var acceptResize:Boolean = true;
+		[Bindable] public var alpha1:Number = 0.3;
+		[Bindable] public var alpha2:Number = 0.9;
 		
 		//----------------------------------
 		//  Resize Handle

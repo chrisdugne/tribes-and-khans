@@ -23,14 +23,15 @@
 -->
 <s:SparkSkin xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark" 
     xmlns:fb="http://ns.adobe.com/flashbuilder/2009" blendMode="normal" mouseEnabled="false"
-    minWidth="76" minHeight="76" alpha.disabled="0.5" alpha.disabledWithControlBar="0.5">
+    minWidth="76" minHeight="76" alpha.disabled="0.5" alpha.disabledWithControlBar="0.5"
+	xmlns:buttons="com.uralys.tribes.components.buttons.*">
     
     <fx:Metadata>
         <![CDATA[ 
         /** 
          * @copy spark.skins.spark.ApplicationSkin#hostComponent
          */
-        [HostComponent("spark.components.TitleWindow")]
+        [HostComponent("com.uralys.tribes.windows.ResizableTitleWindow")]
         ]]>
     </fx:Metadata> 
     
@@ -174,9 +175,9 @@
 			<s:fill>
 				<s:LinearGradient id="backgroundFill">
 					<s:entries>
-						<s:GradientEntry id="entry1" color="0x000000" alpha="0.3"/>
-						<s:GradientEntry id="entry2" color="0x000000" alpha="0.9" />
-						<s:GradientEntry id="entry3" color="0x000000" alpha="0.3"/>
+						<s:GradientEntry id="entry1" color="0x000000" alpha="{hostComponent.alpha1}"/>
+						<s:GradientEntry id="entry2" color="0x000000" alpha="{hostComponent.alpha2}" />
+						<s:GradientEntry id="entry3" color="0x000000" alpha="{hostComponent.alpha1}"/>
 					</s:entries>
 				</s:LinearGradient>
 			</s:fill>
@@ -195,8 +196,9 @@
 			-->
 			<s:HGroup width="100%" id="dummyIdNotToBeMoveArea">
 				<s:Spacer width="100%"/>
-	            <s:Button id="closeButton" skinClass="com.uralys.tribes.skins.TitleWindowCloseButtonSkin"
-	                      width="15" height="15" right="7" top="7" />
+				<buttons:CrossButton
+					id="closeButton"
+					width="15" height="15" right="7" top="7" />
 			</s:HGroup>
 			
             <!--

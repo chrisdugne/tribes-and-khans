@@ -1,0 +1,30 @@
+Welcome to Tribes and Khans.
+You will build a kingdom and fight your ennemies with your allies.
+You start the game controling a city. Click on the bottom right button to enter your city.
+
+You choose to dispatch the inhabitants within the different resources : use the sliders to select the number of workers on the wheat, the wood an the iron.
+Resources are received every 10 minutes.
+Use the population as well to build weapons in the forge, to build up armies and merchant caravans, and to grow up your city with buildings and upgrades.
+
+In the Forge, use the sliders again to build bows, swords and armors.
+The smiths in your city represent one percent of the total inhabitants.
+Here, we got 1200 inhabitants, so we can build up 12 bows, which will consume 48 wood units and will take 20 minutes.
+
+Here is the market : you can buy or sell resources and weapons, within the buy/sell tab.
+Use the sliders to create your deal, and click the button to confirm it.
+In this example, we buy 48 wood units and 28 iron units, which costs 299 gold units.
+
+To create an army, use the sliders to select the number of warriors and then to equip this army with weapons and resources to carry on.
+Here we choose 93 men equiped with 21 bows.
+This is the same way for merchant caravans. Merchants move faster but don't use the weapons to fight.
+
+Move your troops using the 'move' button, on the bottom right.
+Then, draw the path for your unit by clicking on the board, cell by cell.
+Your first land is your city.
+When an army stays 1 hour on a cell next to your lands without moving, it conquers the land.
+The more lands you have, the more gold your kingdom earns every 10 minutes.
+
+That's it, you know the Tribes and Khans basics !
+Build up your kingdoms with new cities, be part of an ally to get stronger against your ennemies !
+
+

@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<windows:ResizableTitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
+							  xmlns:s="library://ns.adobe.com/flex/spark" 
+							  xmlns:mx="library://ns.adobe.com/flex/mx" 
+							  xmlns:windows="com.uralys.tribes.windows.*"
+							  skinClass="com.uralys.tribes.skins.WindowSkin"
+							  close="{closeWindow()}"
+							  width="600"
+							  height="520"
+							  alpha1="0.6">
+		
+		<!--  ================================================================================================== -->
+		
+		<fx:Script>
+			<![CDATA[
+				import com.uralys.tribes.commons.Numbers;
+				import com.uralys.tribes.commons.Session;
+				import com.uralys.tribes.commons.Translations;
+				import com.uralys.tribes.main.ImageContainer;
+				
+				import mx.managers.PopUpManager;
+				
+				//-----------------------------------------------------------------//
+				
+				public function closeWindow():void{
+					PopUpManager.removePopUp(this);
+				}
+				
+				//-----------------------------------------------------------------//
+			]]>
+		</fx:Script>
+		<s:Group width="100%" height="100%">
+			
+			<s:VGroup horizontalAlign="center" width="100%"
+					  gap="5"
+					  height="100%"
+					  paddingTop="10"
+					  paddingBottom="10"
+					  paddingLeft="30"
+					  paddingRight="30">
+				
+				<s:HGroup>
+					<s:Label text="100"/>
+					<s:Image toolTip="{Translations.WORKERS.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.PEOPLE}" width="25" height="25"/>
+					<s:Spacer width="10"/>
+					<s:Label text="{Translations.CONSUME.getItemAt(Session.LANGUAGE)}"/>
+					<s:Spacer width="10"/>
+					<s:Label text="1"/>
+					<s:Image toolTip="{Translations.WHEAT.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WHEAT}" width="25" height="25"/>
+					<s:Spacer width="10"/>
+					<s:Label text="{Translations.EVERY_STEP.getItemAt(Session.LANGUAGE)}"/>
+				</s:HGroup>
+				
+				<s:Spacer height="20"/>
+				
+				<s:HGroup>
+					<s:Label text="100"/>
+					<s:Image toolTip="{Translations.WORKERS.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.PEOPLE}" width="25" height="25"/>
+					<s:Spacer width="10"/>
+					<s:Label text="{Translations.PRODUCE.getItemAt(Session.LANGUAGE)}"/>
+					<s:Spacer width="10"/>
+					<s:Label text="5"/>
+					<s:Image toolTip="{Translations.WHEAT.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WHEAT}" width="25" height="25"/>
+					<s:Spacer width="10"/>
+					<s:Label text="{Translations.EVERY_STEP.getItemAt(Session.LANGUAGE)}"/>
+				</s:HGroup>
+
+				<s:HGroup>
+					<s:Label text="100"/>
+					<s:Image toolTip="{Translations.WORKERS.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.PEOPLE}" width="25" height="25"/>
+					<s:Label text="{Translations.PRODUCE.getItemAt(Session.LANGUAGE)}"/>
+					<s:Label text="3"/>
+					<s:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}" width="25" height="25"/>
+					<s:Label text="{Translations.EVERY_STEP.getItemAt(Session.LANGUAGE)}"/>
+				</s:HGroup>
+
+				<s:HGroup>
+					<s:Label text="100"/>
+					<s:Image toolTip="{Translations.WORKERS.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.PEOPLE}" width="25" height="25"/>
+					<s:Label text="{Translations.PRODUCE.getItemAt(Session.LANGUAGE)}"/>
+					<s:Label text="2"/>
+					<s:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}" width="25" height="25"/>
+					<s:Label text="{Translations.EVERY_STEP.getItemAt(Session.LANGUAGE)}"/>
+				</s:HGroup>
+
+				<s:HGroup>
+					<s:Label text="1"/>
+					<s:Label text="{Translations.LAND.getItemAt(Session.LANGUAGE)}"/>
+					<s:Label text="{Translations.PRODUCE_SING.getItemAt(Session.LANGUAGE)}"/>
+					<s:Label text="1"/>
+					<s:Image toolTip="{Translations.GOLD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.GOLD}" width="25" height="25"/>
+					<s:Label text="{Translations.EVERY_STEP.getItemAt(Session.LANGUAGE)}"/>
+				</s:HGroup>
+				
+				<s:Spacer height="20"/>
+
+				<s:HGroup>
+					<s:Label text="1"/>
+					<s:Image toolTip="{Translations.BOW.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.BOW}" width="25" height="25"/>
+					<s:Spacer width="10"/>
+					<s:Label text="{Translations.REQUIRES.getItemAt(Session.LANGUAGE)}"/>
+					<s:Spacer width="10"/>
+					<s:Label text="4"/>
+					<s:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}" width="25" height="25"/>
+					<s:Spacer width="10"/>
+					<s:Label text="1"/>
+					<s:Image toolTip="{Translations.SMITHS.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.PEOPLE}" width="25" height="25"/>
+					<s:Spacer width="10"/>
+					<s:Label text="20 minutes"/>
+				</s:HGroup>
+
+				<s:HGroup>
+					<s:Label text="1"/>
+					<s:Image toolTip="{Translations.SWORD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.SWORD}" width="25" height="25"/>
+					<s:Spacer width="10"/>
+					<s:Label text="{Translations.REQUIRES.getItemAt(Session.LANGUAGE)}"/>
+					<s:Spacer width="10"/>
+					<s:Label text="1"/>
+					<s:Image toolTip="{Translations.WOOD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.WOOD}" width="25" height="25"/>
+					<s:Spacer width="10"/>
+					<s:Label text="3"/>
+					<s:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}" width="25" height="25"/>
+					<s:Spacer width="10"/>
+					<s:Label text="1"/>
+					<s:Image toolTip="{Translations.SMITHS.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.PEOPLE}" width="25" height="25"/>
+					<s:Spacer width="10"/>
+					<s:Label text="30 minutes"/>
+				</s:HGroup>
+
+				<s:HGroup>
+					<s:Label text="1"/>
+					<s:Image toolTip="{Translations.ARMOR.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.ARMOR}" width="25" height="25"/>
+					<s:Spacer width="10"/>
+					<s:Label text="{Translations.REQUIRES.getItemAt(Session.LANGUAGE)}"/>
+					<s:Spacer width="10"/>
+					<s:Label text="6"/>
+					<s:Image toolTip="{Translations.IRON.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.IRON}" width="25" height="25"/>
+					<s:Spacer width="10"/>
+					<s:Label text="1"/>
+					<s:Image toolTip="{Translations.SMITHS.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.PEOPLE}" width="25" height="25"/>
+					<s:Spacer width="10"/>
+					<s:Label text="45 minutes"/>
+				</s:HGroup>
+				
+				<s:Spacer height="20"/>
+				
+				<s:HGroup>
+					<s:Label text="1"/>
+					<s:Image toolTip="{Translations.BOW.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.BOW}" width="25" height="25"/>
+					<s:Spacer width="10"/>
+					<s:Label text="{Translations.ADD.getItemAt(Session.LANGUAGE)}"/>
+					<s:Spacer width="10"/>
+					<s:Label text="1 pt"/>
+					<s:Spacer width="10"/>
+					<s:Label text="{Translations.TO.getItemAt(Session.LANGUAGE)}"/>
+					<s:Spacer width="10"/>
+					<s:Label text="1"/>
+					<s:Image toolTip="{Translations.WARRIORS.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.PEOPLE}" width="25" height="25"/>
+					<s:Spacer width="10"/>
+				</s:HGroup>
+				
+				<s:HGroup>
+					<s:Label text="1"/>
+					<s:Image toolTip="{Translations.SWORD.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.SWORD}" width="25" height="25"/>
+					<s:Spacer width="10"/>
+					<s:Label text="{Translations.ADD.getItemAt(Session.LANGUAGE)}"/>
+					<s:Spacer width="10"/>
+					<s:Label text="2 pts"/>
+					<s:Spacer width="10"/>
+					<s:Label text="{Translations.TO.getItemAt(Session.LANGUAGE)}"/>
+					<s:Spacer width="10"/>
+					<s:Label text="1"/>
+					<s:Image toolTip="{Translations.WARRIORS.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.PEOPLE}" width="25" height="25"/>
+					<s:Spacer width="10"/>
+				</s:HGroup>
+				
+				<s:HGroup>
+					<s:Label text="1"/>
+					<s:Image toolTip="{Translations.ARMOR.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.ARMOR}" width="25" height="25"/>
+					<s:Spacer width="10"/>
+					<s:Label text="{Translations.ADD.getItemAt(Session.LANGUAGE)}"/>
+					<s:Spacer width="10"/>
+					<s:Label text="3 pts"/>
+					<s:Spacer width="10"/>
+					<s:Label text="{Translations.TO.getItemAt(Session.LANGUAGE)}"/>
+					<s:Spacer width="10"/>
+					<s:Label text="1"/>
+					<s:Image toolTip="{Translations.WARRIORS.getItemAt(Session.LANGUAGE)}" source="{ImageContainer.PEOPLE}" width="25" height="25"/>
+					<s:Spacer width="10"/>
+				</s:HGroup>
+			</s:VGroup>	
+		</s:Group>
+	
+</windows:ResizableTitleWindow>

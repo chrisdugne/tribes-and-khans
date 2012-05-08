@@ -7,18 +7,49 @@
 			import com.uralys.tribes.commons.Numbers;
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;
-			import com.uralys.tribes.windows.CreditsWindow;
+			import com.uralys.tribes.core.MusicPlayer;
+			import com.uralys.tribes.main.ImageContainer;
+			import com.uralys.tribes.windows.InfoWindow;
+			import com.uralys.tribes.windows.SettingsWindow;
+			import com.uralys.tribes.windows.YoutubeWindow;
 			
 			import mx.core.FlexGlobals;
 			import mx.managers.PopUpManager;
 			
-			public var creditsWindow:CreditsWindow = new CreditsWindow();
-			private function openCreditsWindow():void 
+			//-----------------------------------------------------------------------------------//
+
+			public var settingsWindow:SettingsWindow = new SettingsWindow();
+			private function openSettingsWindow():void 
 			{
-				creditsWindow.closeWindow();
+				settingsWindow.closeWindow();
 				
-				PopUpManager.addPopUp(creditsWindow, DisplayObject(FlexGlobals.topLevelApplication), false);
-				PopUpManager.centerPopUp(creditsWindow);
+				PopUpManager.addPopUp(settingsWindow, DisplayObject(FlexGlobals.topLevelApplication), false);
+				PopUpManager.centerPopUp(settingsWindow);
+				settingsWindow.y = Session.HEADER_HEIGHT;
+				
+			}
+			
+			//-----------------------------------------------------------------------------------//
+
+			public var infoWindow:InfoWindow = new InfoWindow();
+			private function openInfoWindow():void 
+			{
+				infoWindow.closeWindow();
+				
+				PopUpManager.addPopUp(infoWindow, DisplayObject(FlexGlobals.topLevelApplication), false);
+				PopUpManager.centerPopUp(infoWindow);
+			}
+
+			//-----------------------------------------------------------------------------------//
+			
+			public var youtubeWindow:YoutubeWindow = new YoutubeWindow();
+			private function openYoutubeWindow():void 
+			{
+				MusicPlayer.getInstance().stopMusic()
+				youtubeWindow.closeWindow();
+				
+				PopUpManager.addPopUp(youtubeWindow, DisplayObject(FlexGlobals.topLevelApplication), false);
+				PopUpManager.centerPopUp(youtubeWindow);
 				
 			}
 		]]>
@@ -35,40 +66,45 @@
 			</s:LinearGradient>
 		</s:fill>
 	</s:Rect>
-	
+
 	<s:HGroup
 		width="100%"
-		paddingLeft="10" paddingRight="10" paddingBottom="-20"
+		paddingRight="30" 
 		height="{Session.FOOTER_HEIGHT}"
-		verticalAlign="top"
-		horizontalAlign="center">
+		verticalAlign="middle">
 		
-		<s:Label text="Uralys"
-				 id="labelUralys"
-				 click="navigateToURL(new URLRequest('http://www.uralys.com'), '_new');"
+		
+		
+		<s:Spacer width="50"/>
+		<s:Label text="{Translations.HOW_TO_PLAY.getItemAt(Session.LANGUAGE)}"
+				 id="labelHowTo"
+				 click="{openYoutubeWindow()}"
 				 color="{Numbers.CLASSIC_COLOR}"
-				 mouseOver="{labelUralys.setStyle('color', '#ffffff')}"
-				 mouseOut="{labelUralys.setStyle('color', Numbers.CLASSIC_COLOR)}"/>
-		<s:Spacer width="10%"/>
-		<s:Label text="Credits"
-				 id="labelCredits"
-				 click="openCreditsWindow()"
-				 color="{Numbers.CLASSIC_COLOR}"
-				 mouseOver="{labelCredits.setStyle('color', '#ffffff')}"
-				 mouseOut="{labelCredits.setStyle('color', Numbers.CLASSIC_COLOR)}"/>
-		<s:Spacer width="10%"/>
-		<s:Label text="{Translations.GO_TO_FORUM.getItemAt(Session.LANGUAGE)}"
-				 id="labelForum"
+				 toolTip="{Translations.OPEN_TAB.getItemAt(Session.LANGUAGE)}"
+				 mouseOver="{labelHowTo.setStyle('color', '#ffffff')}"
+				 mouseOut="{labelHowTo.setStyle('color', Numbers.CLASSIC_COLOR)}"/>
+				 
+		<s:Image source="{ImageContainer.GREEN_QUESTION}"
+				 click="{openYoutubeWindow()}"
+				 toolTip="{Translations.OPEN_TAB.getItemAt(Session.LANGUAGE)}"
+				 mouseOver="{labelHowTo.setStyle('color', '#ffffff')}"
+				 mouseOut="{labelHowTo.setStyle('color', Numbers.CLASSIC_COLOR)}"
+				 />
+		
+		<s:Spacer width="80%"/>
+		<s:Image source="{ImageContainer.INFO}"
+				 click="openInfoWindow()"
+				 toolTip="{Translations.INFO.getItemAt(Session.LANGUAGE)}"/>
+		
+		<s:Spacer width="10"/>
+		<s:Image source="{ImageContainer.FORUM}"
 				 click="navigateToURL(new URLRequest('http://tribesandkhans.freeforums.org/'), '_new');"
-				 color="{Numbers.CLASSIC_COLOR}"
-				 mouseOver="{labelForum.setStyle('color', '#ffffff')}"
-				 mouseOut="{labelForum.setStyle('color', Numbers.CLASSIC_COLOR)}"/>
-		<s:Spacer width="20%"/>
-		<s:Label text=" Tribes And Khans 2011   -    version {Session.VERSION}" 
-				 id="labelTitle"
-				 color="{Numbers.CLASSIC_COLOR}"
-				 click="navigateToURL(new URLRequest('http://tribes-and-khans.tumblr.com'), '_new');"
-				 mouseOver="{labelTitle.setStyle('color', '#ffffff')}"
-				 mouseOut="{labelTitle.setStyle('color', Numbers.CLASSIC_COLOR)}"/>
+				 toolTip="{Translations.GO_TO_FORUM.getItemAt(Session.LANGUAGE)}"/>
+		
+		<s:Spacer width="10"/>
+		<s:Image source="{ImageContainer.SETTINGS}" 
+				 click="openSettingsWindow()"
+				 toolTip="{Translations.SETTINGS.getItemAt(Session.LANGUAGE)}"/>
+		
 	</s:HGroup>
 </s:Group>

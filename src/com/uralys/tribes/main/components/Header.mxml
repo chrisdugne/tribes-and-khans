@@ -124,12 +124,6 @@
 				
 			}
 			
-			private function music():void {
-				MusicPlayer.getInstance().switchState();
-				
-				if(Session.LOGGED_IN)
-					AccountManager.getInstance().changeMusicOn(Session.uralysProfile.uralysUID, Session.player.musicOn);
-			}
 		]]>
 	</fx:Script>
 	
@@ -156,84 +150,42 @@
 		<s:Image id="englishButton" source="{ImageContainer.EN_FLAG}" click="english()" visible="{Session.LANGUAGE != 1}" width="25"/>
 		<s:Image id="usButton" source="{ImageContainer.US_FLAG}" click="us()" visible="{Session.LANGUAGE != 2}" width="25"/>
 		
-		<s:Image id="soundOnButton" source="{ImageContainer.HP}" click="{music()}"/>
-		<s:Label text="{MusicPlayer.getInstance().volume &gt; 0 ? 'On' : 'Off'}" click="{music()}"
-				 id="labelVolume"
-				 mouseOver="{labelVolume.setStyle('color', '#ffffff')}"
-				 mouseOut="{labelVolume.setStyle('color', Numbers.CLASSIC_COLOR)}"/>
-		<s:HSlider id="volumeSlider" 
-				   maximum="100" 
-				   showDataTip="false"
-				   value="{MusicPlayer.getInstance().volume * 100}" 
-				   change="{MusicPlayer.getInstance().changeVolume()}"
-				   height="20"/>
-		
-		<s:Spacer width="10"/>
-		<s:Label text="{Translations.HOW_TO_PLAY.getItemAt(Session.LANGUAGE)}"
-				 id="labelHowTo"
-				 click="navigateToURL(new URLRequest('http://www.uralys.com/tribes-and-khans.'+ (Session.LANGUAGE == 0 ? 'fr' : 'en') +'.html'), '_new');"
-				 color="{Numbers.CLASSIC_COLOR}"
-				 toolTip="{Translations.OPEN_TAB.getItemAt(Session.LANGUAGE)}"
-				 mouseOver="{labelHowTo.setStyle('color', '#ffffff')}"
-				 mouseOut="{labelHowTo.setStyle('color', Numbers.CLASSIC_COLOR)}"/>
-		<s:Image source="{ImageContainer.GREEN_QUESTION}"
-				  click="navigateToURL(new URLRequest('http://www.uralys.com/tribes-and-khans.'+ (Session.LANGUAGE == 0 ? 'fr' : 'en') +'.html'), '_new');"
-				  toolTip="{Translations.OPEN_TAB.getItemAt(Session.LANGUAGE)}"
-				  mouseOver="{labelHowTo.setStyle('color', '#ffffff')}"
-				  mouseOut="{labelHowTo.setStyle('color', Numbers.CLASSIC_COLOR)}"
-				  />
-		
 		<s:Spacer width="100%"/>
-		<s:Label text="{Translations.MY_ALLY.getItemAt(Session.LANGUAGE)}"
-				 id="labelAlly"
+		<s:Image source="{ImageContainer.ALLY}"
 				 click="openAllyProfileWindow(Session.player.ally.allyUID)"
-				 color="{Numbers.CLASSIC_COLOR}"
-				 toolTip="{Translations.PROFILE.getItemAt(Session.LANGUAGE)}"
-				 mouseOver="{labelAlly.setStyle('color', '#ffffff')}"
-				 mouseOut="{labelAlly.setStyle('color', Numbers.CLASSIC_COLOR)}"
+				 toolTip="{Translations.MY_ALLY.getItemAt(Session.LANGUAGE)}"
 				 visible="{Session.LOGGED_IN &amp;&amp; Session.player.ally != null}"/>
 		
-		<s:Spacer width="30"/>
-		<s:Label text="{Translations.MY_PROFILE.getItemAt(Session.LANGUAGE)}"
-				 id="labelProfile"
+		<s:Spacer width="10"/>
+		<s:Image source="{ImageContainer.PROFILE}"
 				 click="openPlayerProfileWindow(Session.player.playerUID)"
-				 color="{Numbers.CLASSIC_COLOR}"
 				 toolTip="{Translations.PROFILE.getItemAt(Session.LANGUAGE)}"
-				 mouseOver="{labelProfile.setStyle('color', '#ffffff')}"
-				 mouseOut="{labelProfile.setStyle('color', Numbers.CLASSIC_COLOR)}"
 				 visible="{Session.LOGGED_IN}"/>
+
+		<s:Spacer width="10"/>
+		<s:Image source="{ImageContainer.PODIUM}"
+				 click="{openBoardsWindow()}"
+				 toolTip="{Translations.BOARDS.getItemAt(Session.LANGUAGE)}"/>
 		
-		<s:Spacer width="30"/>
+		<s:Spacer width="10"/>
 		<s:Image source="{ImageContainer.MAIL_BOX}"
 				  click="openMailBox()"
 				  mouseOver="{labelMessages.setStyle('color', '#ffffff')}"
 				  mouseOut="{labelMessages.setStyle('color', Numbers.CLASSIC_COLOR)}"
+				  toolTip="{Translations.MESSAGES.getItemAt(Session.LANGUAGE)}"
 				  visible="{Session.LOGGED_IN}"
+				  includeInLayout="{Session.LOGGED_IN}"
 				  />
 		<s:Label text="({Session.player.newMessages.length})"
 				 id="labelMessages"
 				 click="openMailBox()"
 				 color="{Numbers.CLASSIC_COLOR}"
-				 toolTip="{Translations.OPEN_TAB.getItemAt(Session.LANGUAGE)}"
+				  toolTip="{Translations.MESSAGES.getItemAt(Session.LANGUAGE)}"
 				 mouseOver="{labelMessages.setStyle('color', '#ffffff')}"
 				 mouseOut="{labelMessages.setStyle('color', Numbers.CLASSIC_COLOR)}"
+				 includeInLayout="{Session.LOGGED_IN}"
 				 visible="{Session.LOGGED_IN}"/>
 		
-		<s:Spacer width="30"/>
-		<s:Label text="{Translations.BOARDS.getItemAt(Session.LANGUAGE)}"
-				 id="labelBoards"
-				 color="{Numbers.CLASSIC_COLOR}"
-				 click="{openBoardsWindow()}"
-				 mouseOver="{labelBoards.setStyle('color', '#ffffff')}"
-				 mouseOut="{labelBoards.setStyle('color', Numbers.CLASSIC_COLOR)}"/>
-		
-		<s:Spacer width="30"/>
-		<s:Label text="{Session.player ? Translations.LOG_AS.getItemAt(Session.LANGUAGE) + ' : '+ Session.uralysProfile.email : Translations.LOG_IN.getItemAt(Session.LANGUAGE)}"
-				 id="labelLogin"
-				 color="{Numbers.CLASSIC_COLOR}"
-				 click="{openLoginWindow()}"
-				 mouseOver="{labelLogin.setStyle('color', '#ffffff')}"
-				 mouseOut="{labelLogin.setStyle('color', Numbers.CLASSIC_COLOR)}"/>
 	</s:HGroup>	
 
 </s:Group>	

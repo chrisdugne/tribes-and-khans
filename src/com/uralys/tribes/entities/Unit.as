@@ -40,6 +40,7 @@ package com.uralys.tribes.entities
 		protected var _type:int; // 1 armee,  2 marchand
 		private var _player:Player;
 
+		protected var _name:String;
 		protected var _size:int;
 		protected var _speed:int;
 
@@ -116,6 +117,17 @@ package com.uralys.tribes.entities
 	
 		public function set type(o:int):void {
 			_type = o;
+		}
+		
+		public function get name():String
+		{
+			return _name;
+		}
+		
+		public function set name(value:String):void
+		{
+			isModified = true;
+			_name = value;
 		}
 	
 		//-----------------------------------------------------------//
@@ -420,5 +432,7 @@ package com.uralys.tribes.entities
 				(moves.getItemAt(0) as Move).timeTo = -1; 			
 			}
 		}
+
+
 	}
 }

@@ -167,7 +167,11 @@ package com.uralys.tribes.core
 		// ---------------------------------------------------------------------//
 		// affichage des pions (armées-marchands)
 		
-		public function resetCellDisplay(cell:Cell):void{
+		public function resetCellDisplay(cell:Cell):void
+		{
+			if(cell == null)
+				return;
+			
 			try{
 				cell.pawn.removeElementAt(1);				
 				Session.board.pawnLayer.removeElement(cell.pawn);
@@ -178,6 +182,9 @@ package com.uralys.tribes.core
 		
 		public function refreshCellDisplay(cell:Cell):void
 		{
+			if(cell == null)
+				return;
+			
 			if(cell.visibleUnit == null){
 				return; // no unit
 			}

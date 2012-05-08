@@ -47,6 +47,12 @@ public class Translations{
 									["Profil Uralys créé. Bienvenue !",
 									"Uralys profile created. Welcome !",
 									"Uralys profile created. Welcome !"]);
+
+	[Bindable]
+	public static var SETTINGS:ArrayCollection = new ArrayCollection(
+									["Paramètres",
+									"Settings",
+									"Settings"]);
 	
 	[Bindable]
 	public static var HOW_TO_PLAY:ArrayCollection = new ArrayCollection(
@@ -122,6 +128,11 @@ public class Translations{
 									["Aller sur le forum",
 									"Go to the forum",
 									"Go to the forum"]);
+	[Bindable]
+	public static var INFO:ArrayCollection = new ArrayCollection(
+									["Info",
+									"Info",
+									"Info"]);
 
 	[Bindable]
 	public static var BOARDS:ArrayCollection = new ArrayCollection(
@@ -198,6 +209,17 @@ public class Translations{
 									["Contrées",
 									"Lands",
 									"Lands"]);
+	[Bindable]
+	public static var LAND:ArrayCollection = new ArrayCollection(
+									["Contrée",
+									"Land",
+									"Land"]);
+
+	[Bindable]
+	public static var LAND_IS_TAKEN:ArrayCollection = new ArrayCollection(
+									["Contrée colonisée : rafraichissement",
+									"Land conquered : refresh",
+									"Land conquered : refresh"]);
 
 	[Bindable]
 	public static var SHOOT:ArrayCollection = new ArrayCollection(
@@ -257,6 +279,12 @@ public class Translations{
 									"Edit your profile"]);
 
 	[Bindable]
+	public static var MESSAGES:ArrayCollection = new ArrayCollection(
+									["Messages",
+									"Messages",
+									"Messages"]);
+
+	[Bindable]
 	public static var WRITE_MESSAGE:ArrayCollection = new ArrayCollection(
 									["Ecrire un message à ",
 									"Write a message to ",
@@ -285,6 +313,31 @@ public class Translations{
 									"Remains",
 									"Remains"]);
 	
+	//-----------------------------------------------------------------------------------//
+
+	[Bindable]
+	public static var CONSUME:ArrayCollection = new ArrayCollection(
+									["consomment",
+									"consume",
+									"consume"]);
+
+	[Bindable]
+	public static var PRODUCE:ArrayCollection = new ArrayCollection(
+									["produisent",
+									"produce",
+									"produce"]);
+			
+	[Bindable]
+	public static var PRODUCE_SING:ArrayCollection = new ArrayCollection(
+									["produit",
+									"produce",
+									"produce"]);
+
+	[Bindable]
+	public static var EVERY_STEP:ArrayCollection = new ArrayCollection(
+									["toutes les 10 minutes",
+									"every 10 minutes",
+									"every 10 minutes"]);
 
 	//-----------------------------------------------------------------------------------//
 
@@ -627,6 +680,12 @@ public class Translations{
 									"Smiths"]);
 
 	[Bindable]
+	public static var WARRIORS:ArrayCollection = new ArrayCollection(
+									["Guerriers",
+									"Warriors",
+									"Warriors"]);
+	
+	[Bindable]
 	public static var SMITHS_AVAILABLE:ArrayCollection = new ArrayCollection(
 									["Forgerons disponibles",
 									"Available smiths",
@@ -776,6 +835,12 @@ public class Translations{
 									"Units"]);
 
 	[Bindable]
+	public static var UNIT:ArrayCollection = new ArrayCollection(
+									["Unité",
+									"Unit",
+									"Unit"]);
+
+	[Bindable]
 	public static var CITY:ArrayCollection = new ArrayCollection(
 									["Ville",
 									"City",
@@ -902,6 +967,16 @@ public class Translations{
 	
 	//-----------------------------------------------------------------------------------//
 
+	[Bindable]
+	public static var REQUIRES:ArrayCollection = new ArrayCollection(
+									["requiert",
+									"requires",
+									"requires"]);
+	[Bindable]
+	public static var ADD:ArrayCollection = new ArrayCollection(
+									["ajoute",
+									"adds",
+									"adds"]);
 	[Bindable]
 	public static var BOW:ArrayCollection = new ArrayCollection(
 									["Arc",

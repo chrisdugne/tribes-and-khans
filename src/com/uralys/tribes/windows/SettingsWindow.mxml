@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<windows:ResizableTitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
+							  xmlns:s="library://ns.adobe.com/flex/spark" 
+							  xmlns:mx="library://ns.adobe.com/flex/mx" 
+							  xmlns:windows="com.uralys.tribes.windows.*"
+							  skinClass="com.uralys.tribes.skins.WindowSkin"
+							  close="{closeWindow()}"
+							  width="600"
+							  height="320">
+		
+		<!--  ================================================================================================== -->
+		
+		<fx:Script>
+			<![CDATA[
+				import com.uralys.tribes.commons.Numbers;
+				import com.uralys.tribes.commons.Session;
+				import com.uralys.tribes.commons.Translations;
+				import com.uralys.tribes.core.MusicPlayer;
+				import com.uralys.tribes.main.ImageContainer;
+				import com.uralys.tribes.managers.AccountManager;
+				
+				import mx.core.FlexGlobals;
+				import mx.managers.PopUpManager;
+				
+				//-----------------------------------------------------------------//
+				
+				public function closeWindow():void{
+					PopUpManager.removePopUp(this);
+				}
+				
+				//-----------------------------------------------------------------//
+				
+				public var creditsWindow:CreditsWindow = new CreditsWindow();
+				private function openCreditsWindow():void 
+				{
+					creditsWindow.closeWindow();
+					
+					PopUpManager.addPopUp(creditsWindow, DisplayObject(FlexGlobals.topLevelApplication), false);
+					PopUpManager.centerPopUp(creditsWindow);
+					
+				}
+
+				//-----------------------------------------------------------------//
+				
+				private function music():void {
+					MusicPlayer.getInstance().switchState();
+					
+					if(Session.LOGGED_IN)
+						AccountManager.getInstance().changeMusicOn(Session.uralysProfile.uralysUID, Session.player.musicOn);
+				}
+			]]>
+		</fx:Script>
+		
+		<s:Image source="{ImageContainer.getImage(ImageContainer.MARCHANDE)}" 
+				 x="350" 
+				 verticalCenter="0"
+				 height="280"/>
+		
+		<s:Group width="100%" height="100%">
+			
+			<s:VGroup horizontalAlign="center" width="100%"
+					  gap="5"
+					  height="100%"
+					  paddingTop="10"
+					  paddingBottom="10"
+					  paddingLeft="30"
+					  paddingRight="30">
+				
+				<s:Label text=" Options"/>
+				
+				<s:Spacer width="30"/>
+				<s:Label text="{Session.player ? Translations.LOG_AS.getItemAt(Session.LANGUAGE) + ' : '+ Session.uralysProfile.email : Translations.LOG_IN.getItemAt(Session.LANGUAGE)}"
+						 id="labelLogin"
+						 visible="{Session.player}"
+						 color="{Numbers.CLASSIC_COLOR}"
+						 mouseOver="{labelLogin.setStyle('color', '#ffffff')}"
+						 mouseOut="{labelLogin.setStyle('color', Numbers.CLASSIC_COLOR)}"/>
+				
+				<s:HGroup>
+					
+					<s:Image id="soundOnButton" source="{ImageContainer.HP}" click="{music()}"/>
+					<s:Label text="{MusicPlayer.getInstance().volume &gt; 0 ? 'On' : 'Off'}" click="{music()}"
+							 id="labelVolume"
+							 mouseOver="{labelVolume.setStyle('color', '#ffffff')}"
+							 mouseOut="{labelVolume.setStyle('color', Numbers.CLASSIC_COLOR)}"/>
+					<s:HSlider id="volumeSlider" 
+							   maximum="100" 
+							   showDataTip="false"
+							   value="{MusicPlayer.getInstance().volume * 100}" 
+							   change="{MusicPlayer.getInstance().changeVolume()}"
+							   height="20"/>
+					
+				</s:HGroup>
+				
+				<s:Spacer height="100%"/>
+				<s:Label text="Credits"
+						 id="labelCredits"
+						 click="openCreditsWindow()"
+						 color="{Numbers.CLASSIC_COLOR}"
+						 mouseOver="{labelCredits.setStyle('color', '#ffffff')}"
+						 mouseOut="{labelCredits.setStyle('color', Numbers.CLASSIC_COLOR)}"/>
+				
+				<s:Label text=" Tribes And Khans 2012   -    version {Session.VERSION}" 
+						 id="labelTitle"
+						 color="{Numbers.CLASSIC_COLOR}"
+						 click="navigateToURL(new URLRequest('http://tribes-and-khans.tumblr.com'), '_new');"
+						 mouseOver="{labelTitle.setStyle('color', '#ffffff')}"
+						 mouseOut="{labelTitle.setStyle('color', Numbers.CLASSIC_COLOR)}"/>
+				
+				
+			</s:VGroup>	
+		</s:Group>
+	
+</windows:ResizableTitleWindow>

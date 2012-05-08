@@ -7,8 +7,6 @@
 
 	<fx:Script>
 		<![CDATA[
-			//----------------------------------------------------------------------------------//
-			
 			import com.uralys.tribes.commons.Numbers;
 			import com.uralys.tribes.commons.Session;
 			import com.uralys.tribes.commons.Translations;
@@ -16,6 +14,7 @@
 			import com.uralys.tribes.entities.Cell;
 			import com.uralys.tribes.entities.Move;
 			import com.uralys.tribes.entities.Unit;
+			import com.uralys.tribes.managers.GameManager;
 			import com.uralys.tribes.skins.ClassicProgressBarSkin;
 			import com.uralys.tribes.skins.ConqueringLandProgressBarSkin;
 			import com.uralys.tribes.skins.CustomProgressTrackSkin;
@@ -24,6 +23,7 @@
 			import flash.events.TimerEvent;
 			import flash.utils.Timer;
 			
+			import mx.core.FlexGlobals;
 			import mx.skins.spark.ProgressBarTrackSkin;
 			
 			//----------------------------------------------------------------------------------//
@@ -82,7 +82,9 @@
 				cell.landOwner = cell.challenger;
 				cell.timeFromChallenging = -1;
 				cell.challenger = null;
-				BoardDrawer.getInstance().refreshDisplay();
+				
+				FlexGlobals.topLevelApplication.message(Translations.LAND_IS_TAKEN.getItemAt(Session.LANGUAGE), 3);
+				GameManager.getInstance().refreshAll();
 			}
 			
 			protected function getMillisRemaining():Number

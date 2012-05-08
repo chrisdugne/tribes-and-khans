@@ -3,7 +3,7 @@
 			   xmlns:s="library://ns.adobe.com/flex/spark" 
 			   xmlns:mx="library://ns.adobe.com/flex/mx"
 			   xmlns:windows="com.uralys.tribes.windows.*"
-			   skinClass="com.uralys.tribes.skins.TransparentWindowSkin"
+			   skinClass="com.uralys.tribes.skins.WindowSkin"
 			   close="{closeWindow()}"
 			   width="540"
 			   height="180"

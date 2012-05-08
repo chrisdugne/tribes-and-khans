@@ -15,27 +15,27 @@ package com.uralys.tribes.commons
 	
 		// step toutes les 10 minutes
 		[Bindable]
-		//public static var TIME_PER_STEP:int = 10;
-		public static var TIME_PER_STEP:int = 1;
+		public static var TIME_PER_STEP:int = 10;
+		//public static var TIME_PER_STEP:int = 1;
 	
 	
 		// temps de deplacement de base (pour une vitesse de base de 3 cases par heure)
 		[Bindable]
-		//public static var BASE_TIME_PER_MOVE_MILLIS:int = 20*60*1000;
-		public static var BASE_TIME_PER_MOVE_MILLIS:int = 1000*5;
+		public static var BASE_TIME_PER_MOVE_MILLIS:int = 20*60*1000;
+		//public static var BASE_TIME_PER_MOVE_MILLIS:int = 1000*5;
 
 		[Bindable]
-		//public static var BASE_TIME_FOR_LAND_CONQUEST_MILLIS:int = 60*60*1000;
-		public static var BASE_TIME_FOR_LAND_CONQUEST_MILLIS:int = 60*1000;
+		public static var BASE_TIME_FOR_LAND_CONQUEST_MILLIS:int = 60*60*1000;
+		//public static var BASE_TIME_FOR_LAND_CONQUEST_MILLIS:int = 60*1000;
 
 		// tir accessible toutes les 10 minutes
-		//public static var BASE_TIME_FOR_SHOOTING:int = 10*60*1000;
-		public static var BASE_TIME_FOR_SHOOTING:int = 20*1000;
+		public static var BASE_TIME_FOR_SHOOTING:int = 10*60*1000;
+		//public static var BASE_TIME_FOR_SHOOTING:int = 20*1000;
 	
 		// une ville se construit en 12h
 		[Bindable]
-		//public static var TIME_TO_BUILD_A_CITY:int = 12*60*60*1000;
-		public static var TIME_TO_BUILD_A_CITY:int = 20*1000;
+		public static var TIME_TO_BUILD_A_CITY:int = 12*60*60*1000;
+		//public static var TIME_TO_BUILD_A_CITY:int = 20*1000;
 	
 		// ==============================================================
 		// Colors			[Bindable] public static var CLASSIC_COLOR:Number = 0x9C9C9C;
@@ -158,24 +158,24 @@ package com.uralys.tribes.commons
 		//==================================================================================================//
 		// Item data
 		
-		//[Bindable] public static var BOW_TIME:int = 20*60*1000;
-		[Bindable] public static var BOW_TIME:int = 5*1000;
+		[Bindable] public static var BOW_TIME:int = 20*60*1000;
+		//[Bindable] public static var BOW_TIME:int = 5*1000;
 		[Bindable] public static var BOW_WOOD:int;
 		[Bindable] public static var BOW_IRON:int;
 		[Bindable] public static var BOW_PRICE:Number;
 		[Bindable] public static var BOW_VALUE:int;
 		[Bindable] public static var BOW_PEOPLE_REQUIRED:int;
 	
-		//[Bindable] public static var SWORD_TIME:int = 30*60*1000;
-		[Bindable] public static var SWORD_TIME:int = 10*1000;
+		[Bindable] public static var SWORD_TIME:int = 30*60*1000;
+		//[Bindable] public static var SWORD_TIME:int = 10*1000;
 		[Bindable] public static var SWORD_WOOD:int;
 		[Bindable] public static var SWORD_IRON:int;
 		[Bindable] public static var SWORD_PRICE:Number;
 		[Bindable] public static var SWORD_VALUE:int;
 		[Bindable] public static var SWORD_PEOPLE_REQUIRED:int;
 	
-		//[Bindable] public static var ARMOR_TIME:int = 45*60*1000;
-		[Bindable] public static var ARMOR_TIME:int = 15*1000;
+		[Bindable] public static var ARMOR_TIME:int = 45*60*1000;
+		//[Bindable] public static var ARMOR_TIME:int = 15*1000;
 		[Bindable] public static var ARMOR_WOOD:int;
 		[Bindable] public static var ARMOR_IRON:int;
 		[Bindable] public static var ARMOR_PRICE:Number;

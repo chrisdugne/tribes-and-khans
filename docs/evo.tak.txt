@@ -1,0 +1,5 @@
+- reports : en rouge ce quon perd
+- classement unites tuees attaque/def
+- bonus grace au classement : points de gloire : classement
+- cases autour : choix pour bonus de recoltes ressources + travailleurs
+- murs de protection/ remparts 3 niveaux pour la ville.

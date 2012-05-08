@@ -37,6 +37,7 @@
 				var newUnit:Unit = new Unit();
 				newUnit.initNewUnit(city.x, city.y);
 				
+				newUnit.name = Translations.UNIT.getItemAt(Session.LANGUAGE) + " " + (Session.player.units.length+1);
 				newUnit.size = 0; 
 				newUnit.speed = type == Unit.ARMY ? Numbers.ARMY_BASE_SPEED : Numbers.MERCHANT_BASE_SPEED;
 				newUnit.type = type;
@@ -448,7 +449,7 @@
 			 visible="{unit != null}">
 		<mx:GridRow>
 			<mx:GridItem >
-				<s:Label text="{unit.type == Unit.ARMY ? Translations.NB_ARMY.getItemAt(Session.LANGUAGE) : Translations.NB_CARAVAN.getItemAt(Session.LANGUAGE)}" />
+				<s:TextInput maxChars="12" width="140" text="@{unit.name}" restrict="[0-9,a-z,A-Z,/ ]"/>
 			</mx:GridItem>
 			<mx:GridItem horizontalAlign="center" verticalAlign="middle">
 				<s:HGroup verticalAlign="middle">

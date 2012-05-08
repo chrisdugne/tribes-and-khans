@@ -95,13 +95,19 @@ public class MusicPlayer
 			channel.addEventListener(Event.SOUND_COMPLETE, nextMusic);
 		}
 
+		public function stopMusic():void 
+		{	
+			channel.stop();
+			channel.removeEventListener(Event.SOUND_COMPLETE, nextMusic);
+		}
+		
 		private function nextMusic(event:Event):void{			
 			playMusic();
 		}
 
 		public function changeVolume():void
 		{
-			var pourcentageValue:int = FlexGlobals.topLevelApplication.header.volumeSlider.value;
+			var pourcentageValue:int = FlexGlobals.topLevelApplication.footer.settingsWindow.volumeSlider.value;
 			
 			volumeRecorded = pourcentageValue/100;
 			volume = pourcentageValue/100;

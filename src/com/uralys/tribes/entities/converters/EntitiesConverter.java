@@ -260,6 +260,7 @@ public class EntitiesConverter {
 		Unit unit = new Unit();
 
 		unit.setUnitUID(unitDTO.getUnitUID());
+		unit.setName(unitDTO.getName());
 		unit.setSize(unitDTO.getSize());
 		unit.setSpeed(unitDTO.getSpeed());
 

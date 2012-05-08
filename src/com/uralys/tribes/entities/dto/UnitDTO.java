@@ -52,6 +52,7 @@ public class UnitDTO {
 	@Persistent private String messageUID;
 	
 	@Persistent private int type;
+	@Persistent private String name;
 	@Persistent private int speed;
 	@Persistent private int size;
 	@Persistent private String playerUID;
@@ -179,6 +180,12 @@ public class UnitDTO {
 	}
 	public void setMessageUID(String messageUID) {
 		this.messageUID = messageUID;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 	//-----------------------------------------------------------------------------------//

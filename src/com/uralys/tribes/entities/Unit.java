@@ -23,6 +23,7 @@ public class Unit {
 	private int type;
 	private Player player;
 
+	private String name;
 	private int size;
 	private int speed;
 
@@ -209,10 +210,19 @@ public class Unit {
 		this.endTime = endTime;
 	}
 	
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+	
 	//-----------------------------------------------------------------------------------//
 
 	public boolean equals(Unit unit){
 		return unit.getUnitUID().equals(unitUID);
 	}
+
 
 }

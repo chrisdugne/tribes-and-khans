@@ -663,6 +663,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		unitDTO.setUnitUID(unit.getUnitUID());
 		unitDTO.setPlayerUID(unit.getPlayer().getUralysUID());
 		
+		unitDTO.setName(unit.getName());
 		unitDTO.setType(unit.getType());
 		unitDTO.setSize(unit.getSize());
 		unitDTO.setSpeed(unit.getSpeed());
@@ -702,6 +703,7 @@ public class GameDAO  extends MainDAO implements IGameDAO {
 		PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 		UnitDTO unitDTO = pm.getObjectById(UnitDTO.class, unit.getUnitUID());
 		
+		unitDTO.setName(unit.getName());
 		unitDTO.setSize(unit.getSize());
 		unitDTO.setSpeed(unit.getSpeed());
 	

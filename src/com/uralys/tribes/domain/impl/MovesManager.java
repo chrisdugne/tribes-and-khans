@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.uralys.tribes.commons.Constants;
 import com.uralys.tribes.dao.IGameDAO;
 import com.uralys.tribes.domain.IMovesManager;
 import com.uralys.tribes.entities.Cell;
@@ -435,6 +436,7 @@ public class MovesManager implements IMovesManager{
 			nextUnit = new Unit();
 			nextUnit.setSpeed(unitRemaining.getSpeed());
 			nextUnit.setType(unitRemaining.getType());
+			nextUnit.setName(unitRemaining.getName());
 			nextUnit.setSize((int)(unitRemaining.getSize()*rateRemaining));
 			
 			nextUnit.setArmors((int)((unit.getArmors() + unitMet.getArmors())*rateRemaining));
@@ -481,11 +483,11 @@ public class MovesManager implements IMovesManager{
 		
 		if(attackADefendedCity){
 			if(debug)Utils.print(" - bonus pour l'ennemy dans sa ville " + unitMet.getUnitUID());	
-			valueOfTheEnnemy += city.getPopulation()/10;
+			valueOfTheEnnemy += city.getPopulation()/Constants.WARRIOR_WORTH_MEN;
 		}
 		else if(defendACity){
 			if(debug)Utils.print(" - bonus pour la unit dans sa ville " + unit.getUnitUID());	
-			valueOfTheUnit += city.getPopulation()/10;
+			valueOfTheUnit += city.getPopulation()/Constants.WARRIOR_WORTH_MEN;
 		}
 		// sinon, si on attaque une ville, elle n'est pas defendue, c'est la cityUnit
 
@@ -499,7 +501,7 @@ public class MovesManager implements IMovesManager{
 			
 			if(defendACity){
 				if(debug)Utils.print("The city is lost...");
-				gameDao.cityIsTaken(city.getCityUID(), unitMet.getPlayer().getUralysUID(), lastMove.getTimeFrom(), city.getPopulation()/10);
+				gameDao.cityIsTaken(city.getCityUID(), unitMet.getPlayer().getUralysUID(), lastMove.getTimeFrom(), city.getPopulation()/Constants.WARRIOR_WORTH_MEN);
 			}
 		}
 		else{
@@ -511,7 +513,7 @@ public class MovesManager implements IMovesManager{
 		
 			if(attackACity){
 				if(debug)Utils.print("The city is won !");
-				gameDao.cityIsTaken(city.getCityUID(), unit.getPlayer().getUralysUID(), lastMove.getTimeFrom(), city.getPopulation()/10);
+				gameDao.cityIsTaken(city.getCityUID(), unit.getPlayer().getUralysUID(), lastMove.getTimeFrom(), city.getPopulation()/Constants.WARRIOR_WORTH_MEN);
 			}
 		}
 		
@@ -553,9 +555,13 @@ public class MovesManager implements IMovesManager{
 		
 		if(unit.getPlayer().getAlly() == null){
 			nextUnit.setPlayer(unit.getPlayer());
+			nextUnit.setName(unit.getName());
 		}
 		else{
-			nextUnit.getPlayer().setUralysUID(getNewOwner(unitMet, unit));
+			String ownerUID = getNewOwner(unitMet, unit);
+			nextUnit.getPlayer().setUralysUID(ownerUID);
+			
+			nextUnit.setName(ownerUID.equals(unit.getPlayer().getUralysUID()) ? unit.getName() : unitMet.getName());
 		}
 
 		//------------------------------------//
@@ -640,7 +646,7 @@ public class MovesManager implements IMovesManager{
 	private int getValue(Unit unit) {
 		
 		if(unit.getType() == Unit.CITY){
-			return unit.getSize()/10;
+			return unit.getSize()/Constants.WARRIOR_WORTH_MEN;
 		}
 		else
 			return unit.getSize() 

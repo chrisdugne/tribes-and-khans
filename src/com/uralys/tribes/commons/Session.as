@@ -20,7 +20,7 @@ package com.uralys.tribes.commons
 
 		//=====================================================//
 		
-		[Bindable] public static var VERSION:String = "1.3.46";
+		[Bindable] public static var VERSION:String = "1.3.46.5";
 		[Bindable] public static var LOGGED_IN:Boolean = false; 
 		[Bindable] public static var CONNECTED_TO_FACEBOOK:Boolean = false;
 		
@@ -47,6 +47,7 @@ package com.uralys.tribes.commons
 		[Bindable] public static var LOGGED_IN_FORCE_STEPS_DONE:Boolean = false; 
 		[Bindable] public static var WAIT_FOR_SERVER:Boolean = false;
 		[Bindable] public static var WAIT_FOR_CONNECTION:Boolean = false; 
+		[Bindable] public static var WAIT_FOR_UNIT_SAVED:Boolean = false; // pour attendre le retour du service avant d'autoriser le deplacement
 		[Bindable] public static var GAME_OVER:Boolean = false;
 		[Bindable] public static var INSIDE_A_CITY:Boolean = false;
 		

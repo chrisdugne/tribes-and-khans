@@ -61,7 +61,8 @@
 			<s:TextArea id="message" maxChars="400"
 						width="100%"
 						height="100%"/>
-			<s:Button label="Send" click="send()"/>
+			<s:Button label="Send" click="send()"
+					  skinClass="com.uralys.tribes.skins.CustomButtonSkin"/>
 		</s:VGroup>
 	</s:Group>
 	

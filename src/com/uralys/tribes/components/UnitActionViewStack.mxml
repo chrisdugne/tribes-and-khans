@@ -178,7 +178,8 @@
 				
 				<s:Button label="{Translations.MOVE.getItemAt(Session.LANGUAGE)}"
 						  skinClass="{CustomButtonSkin}"
-						  click="moveUnit()"/>
+						  click="moveUnit()"
+						  enabled="{!Session.WAIT_FOR_UNIT_SAVED}"/>
 				
 			</s:VGroup>
 		</s:NavigatorContent>
@@ -213,6 +214,7 @@
 				<s:Button label="{Translations.SHOOT.getItemAt(Session.LANGUAGE)}"
 						  skinClass="{CustomButtonSkin}"
 						  click="shoot()"
+						  enabled="{!Session.WAIT_FOR_UNIT_SAVED}"
 						  includeInLayout="{shotEnabled}"
 						  visible="{shotEnabled}"/>
 				

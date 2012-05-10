@@ -518,6 +518,7 @@ package com.uralys.tribes.managers {
 			currentUnitBeingSaved = unit;
 			
 			unit.status = Unit.FREE;
+			Session.WAIT_FOR_UNIT_SAVED = true;
 			
 			for each(var move:Move in unit.moves){
 				if(move.moveUID.indexOf("NEW_") != -1)
@@ -842,6 +843,7 @@ package com.uralys.tribes.managers {
 			var gameWrapper:RemoteObject = getGameWrapper();
 			gameWrapper.saveCity(city);
 			gameWrapper.saveCity.addEventListener("result", tryToRecordNextUnitInCity);
+			Session.WAIT_FOR_UNIT_SAVED = true;
 		}
 		
 		private function tryToRecordNextUnitInCity(event:ResultEvent = null):void
@@ -849,6 +851,9 @@ package com.uralys.tribes.managers {
 			if(unitsToRecord != null && unitsToRecord.length > 0){
 				var unitToRecord:Unit = unitsToRecord.shift();
 				validateUnit(unitToRecord);
+			}
+			else{
+				Session.WAIT_FOR_UNIT_SAVED = false;
 			}
 		}
 		

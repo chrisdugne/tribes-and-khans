@@ -83,8 +83,10 @@ public class EntitiesConverter {
 
 		List<Unit> units = new ArrayList<Unit>();
 
+		Utils.print("-------------------------------------------------");
 		for (UnitDTO unitDTO : playerDTO.getUnits()) {
 			units.add(convertUnitDTO(unitDTO));
+			Utils.print("unit : " + unitDTO.getUnitUID());
 		}
 
 		player.setUnits(units);

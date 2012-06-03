@@ -135,7 +135,7 @@ public class GameManager implements IGameManager {
 		Player player = EntitiesConverter.convertPlayerDTO(playerDTO, true);
 
 		if(player.getCities().size() == 0){
-			if(debug)Utils.print("Creation de la nouvelle premier ville");
+			if(debug)Utils.print("Creation de la nouvelle premiere ville");
 			player.getCities().add(EntitiesConverter.convertCityDTO(gameDao.createNewFirstCity(uralysUID), true));
 		}
 		

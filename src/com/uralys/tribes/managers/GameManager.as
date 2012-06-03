@@ -111,6 +111,11 @@ package com.uralys.tribes.managers {
 			
 			for each(var unit:Unit in Session.player.units)
 			{
+				trace("unit : " + unit.unitUID);
+			}
+			
+			for each(var unit:Unit in Session.player.units)
+			{
 				
 				var unitExists:Boolean = refreshUnitStatus(unit);
 				trace("status : " + unit.status);
@@ -348,7 +353,6 @@ package com.uralys.tribes.managers {
 				stock.itemsBeingBuilt = 0;
 				stock.smiths = 0;
 			}
-			
 			
 			refreshCityStock(city,stock);
 		}
@@ -630,6 +634,13 @@ package com.uralys.tribes.managers {
 			{
 				unit.status = Unit.FUTURE;
 				trace(" ====> Unit.FUTURE");
+				return false;
+			}
+
+			else if(unit.moves.length == 0)
+			{
+				unit.status = Unit.DESTROYED;
+				trace(" ====> Unit WiTHOUT ANY MOVE !!!! ---> ACT AS DESTROYED ...");
 				return false;
 			}
 

@@ -54,6 +54,8 @@
 				}
 				
 				GameManager.getInstance().saveCity(Session.board.selectedCity, unitsToRecord);
+				
+				Session.board.cityGroup.cityForm.leaveCity();
 				Session.board.hideCity.play();
 			}
 		]]>

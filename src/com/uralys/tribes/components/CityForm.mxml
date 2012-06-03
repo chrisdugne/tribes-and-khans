@@ -39,6 +39,13 @@
 					city.wheatExpected = city.wheat + city.wheatEarned - city.wheatRequiredToFeed;
 				}
 				
+				//-------------------------------------------------------------------------//
+				// to remove the event listeners for the current City
+				
+				public function leaveCity():void
+				{
+					buildings.leaveCity();
+				}
 			]]>
 		</fx:Script>
 	

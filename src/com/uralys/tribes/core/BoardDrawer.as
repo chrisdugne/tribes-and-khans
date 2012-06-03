@@ -38,7 +38,7 @@ package com.uralys.tribes.core
 
 		//=====================================================================================//
 
-		[Bindable] public var scale:Number = 1;
+		[Bindable] public var scale:Number = 0.5;
 		
 		//=====================================================================================//
 	
@@ -161,7 +161,7 @@ package com.uralys.tribes.core
 				image.y -= 22 * scale;
 			}
 
-			Session.board.mapLayer.addElement(image);
+			Session.board.mapLayer.callLater(Session.board.mapLayer.addElement, [image]);
 		}
 
 		// ---------------------------------------------------------------------//

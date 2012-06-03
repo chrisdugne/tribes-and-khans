@@ -250,7 +250,7 @@ package com.uralys.tribes.entities
 				units.removeItemAt(indexFound);
 			}
 			
-			units.addItem(unitRefreshed);
+			units.addItemAt(unitRefreshed, indexFound);
 		}	
 		
 		//-------------------------------------------------------//

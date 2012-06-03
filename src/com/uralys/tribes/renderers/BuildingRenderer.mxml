@@ -49,7 +49,8 @@
 			
 			//-------------------------------------------------------------------------------------//
 
-			public function refresh():void{
+			public function refresh():void
+			{
 				if(stockBeginTime == -1)
 					currentState = "upgradeEnabled";
 				else{
@@ -150,6 +151,15 @@
 				var array:Array = [workersLimit, woodLimit, ironLimit];
 
 				stockBuildersSlider.maximum = Math.min.apply(null, array);
+			}
+
+			//-------------------------------------------------------------------------------------//
+			// to remove the event listeners for the current City
+			
+			public function leaveCity():void
+			{
+				potentialBuilders = 0;
+				Session.timer.removeEventListener(TimerEvent.TIMER, setBuilding);
 			}
 			
 		]]>

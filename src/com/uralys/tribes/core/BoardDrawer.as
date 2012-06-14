@@ -161,7 +161,7 @@ package com.uralys.tribes.core
 				image.y -= 22 * scale;
 			}
 
-			Session.board.mapLayer.callLater(Session.board.mapLayer.addElement, [image]);
+			Session.board.mapLayer.addElement(image);
 		}
 
 		// ---------------------------------------------------------------------//

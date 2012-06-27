@@ -46,12 +46,14 @@
 			// to remove the event listeners for the current City
 			public function leaveCity():void
 			{
-				wheatBuildingRenderer.leaveCity();
-				woodBuildingRenderer.leaveCity();
-				ironBuildingRenderer.leaveCity();
-				bowBuildingRenderer.leaveCity();
-				swordBuildingRenderer.leaveCity();
-				armorBuildingRenderer.leaveCity();
+				if(wheatBuildingRenderer != null){
+					wheatBuildingRenderer.leaveCity();
+					woodBuildingRenderer.leaveCity();
+					ironBuildingRenderer.leaveCity();
+					bowBuildingRenderer.leaveCity();
+					swordBuildingRenderer.leaveCity();
+					armorBuildingRenderer.leaveCity();
+				}
 			}
 		]]>
 	</fx:Script>

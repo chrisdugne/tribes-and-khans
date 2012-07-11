@@ -38,13 +38,21 @@ public class ProfileDAO extends MainDAO implements IProfileDAO{
 		
 		profile.setKey(KeyFactory.keyToString(key));
 		profile.setUralysUID(uralysUID);
-		profile.setFacebookUID(Utils.checkEmail(email) ? null : email);
 		profile.setEmail(email);
 		profile.setShaPwd(shaPwd);
 
 		profile.setLanguage(0);
-		
-		profile.setSurname("New Player");
+
+		if(email.contains("@"))
+		{
+			profile.setFacebookUID(null);
+			profile.setSurname(email.split("@")[0]);
+		}
+		else
+		{
+			profile.setFacebookUID(email);
+			profile.setSurname("New Player");
+		}
 		
 		profile.setLastLog(new Date().getTime());
 

@@ -1,7 +1,9 @@
 
-## Archive
+## Oldies
 
-An old game put here as archive.
+An old Flex3 game put on github for archive.
+
+Still keeping the idea in mind for a freshly baked 2.0, who knows...
 
 ## Links
 

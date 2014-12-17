@@ -1,4 +1,8 @@
 
+## Archive
+
+An old game put here as archive.
+
 ## Links
 
 - A game by http://uralys.com

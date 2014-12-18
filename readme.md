@@ -10,7 +10,7 @@ Still keeping the idea in mind for a freshly baked 2.0, who knows...
 
 ## Links
 
-- A game by http://uralys.com
+- A game by [Uralys](http://uralys.com)
 - More info on the [project](http://www.uralys.com/projects/tribes-and-khans)
 - Version 1.2 [here](http://s2.tribes-and-khans.uralys.com/)
 - Version 1.3 [here](http://s3.tribes-and-khans.uralys.com/)
